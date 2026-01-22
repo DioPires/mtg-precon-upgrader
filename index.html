@@ -1,0 +1,5446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTG Precon Upgrade Guides</title>
+  <!-- Privacy-respecting analytics (Plausible) - uncomment and set your domain to enable -->
+  <!-- <script defer data-domain="YOUR-DOMAIN.com" src="https://plausible.io/js/script.js"></script> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Fira+Code:wght@400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0d0d1a;
+      --bg-primary: #1a1a2e;
+      --bg-elevated: #16213e;
+      --bg-surface: #1e2746;
+      --border-subtle: #2a2a4a;
+      --border-glow: #9d4edd;
+      --text-primary: #e0e0e0;
+      --text-secondary: #888;
+      --text-muted: #555;
+      --accent-purple: #9d4edd;
+      --accent-purple-dim: rgba(157, 78, 221, 0.3);
+      --accent-red: #f87171;
+      --accent-red-dim: rgba(248, 113, 113, 0.15);
+      --accent-green: #4ade80;
+      --accent-green-dim: rgba(74, 222, 128, 0.15);
+      --accent-gold: #fbbf24;
+      --accent-gold-dim: rgba(251, 191, 36, 0.2);
+      --accent-blue: #60a5fa;
+      --colorless: #a8b5c4;
+
+      /* Bracket colors */
+      --bracket-exhibition: #4ade80;
+      --bracket-core: #facc15;
+      --bracket-upgraded: #f97316;
+      --bracket-optimized: #a78bfa;
+      --bracket-cedh: #ef4444;
+
+      /* Tilt effect variables */
+      --tilt-max-angle: 15deg;
+      --tilt-scale: 1.05;
+      --tilt-perspective: 1000px;
+      --tilt-transition-out: 0.4s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(157, 78, 221, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(157, 78, 221, 0.05) 0%, transparent 50%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-family: 'Cinzel', serif;
+      color: var(--accent-purple);
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+      text-shadow: 0 0 40px rgba(157, 78, 221, 0.3);
+    }
+
+    header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .selector-section {
+      background: var(--bg-elevated);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .selector-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .selector-row label {
+      font-weight: 600;
+      color: var(--accent-purple);
+      font-family: 'Cinzel', serif;
+    }
+
+    select {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      min-width: 200px;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    select:hover, select:focus {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 12px rgba(157, 78, 221, 0.2);
+      outline: none;
+    }
+
+    .commander-info {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .commander-info h3 {
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-family: 'Cinzel', serif;
+    }
+
+    .commander-info .alt-commander {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .bracket-info {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 12px;
+      background: var(--bg-surface);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .bracket-info .upgrade-arrow {
+      color: var(--accent-green);
+      margin: 0 8px;
+    }
+
+    /* === BRACKET VISUALIZATION === */
+    .bracket-visualization {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .bracket-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .bracket-label {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .bracket-info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.7rem;
+      font-style: italic;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .bracket-info-icon:hover {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    .bracket-bar {
+      position: relative;
+      display: flex;
+      height: 28px;
+      border-radius: 14px;
+      background: var(--bg-deep);
+      overflow: visible;
+      margin: 28px 0 36px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .bracket-segment {
+      flex: 1;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .bracket-segment:first-child {
+      border-radius: 14px 0 0 14px;
+    }
+
+    .bracket-segment:last-child {
+      border-radius: 0 14px 14px 0;
+    }
+
+    /* Base segment colors (dimmed state) */
+    .bracket-segment.exhibition {
+      background: linear-gradient(135deg, var(--bracket-exhibition), #22c55e);
+      opacity: 0.15;
+    }
+
+    .bracket-segment.core {
+      background: linear-gradient(135deg, var(--bracket-core), #eab308);
+      opacity: 0.15;
+    }
+
+    .bracket-segment.upgraded {
+      background: linear-gradient(135deg, var(--bracket-upgraded), #ea580c);
+      opacity: 0.15;
+    }
+
+    .bracket-segment.optimized {
+      background: linear-gradient(135deg, var(--bracket-optimized), #8b5cf6);
+      opacity: 0.15;
+    }
+
+    .bracket-segment.cedh {
+      background: linear-gradient(135deg, var(--bracket-cedh), #dc2626);
+      opacity: 0.15;
+    }
+
+    /* Filled/active state - full brightness with glow */
+    .bracket-segment.filled {
+      opacity: 1;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .bracket-segment.filled.exhibition {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 12px rgba(74, 222, 128, 0.4);
+    }
+
+    .bracket-segment.filled.core {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 12px rgba(250, 204, 21, 0.4);
+    }
+
+    .bracket-segment.filled.upgraded {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 12px rgba(249, 115, 22, 0.4);
+    }
+
+    .bracket-segment.filled.optimized {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 12px rgba(167, 139, 250, 0.4);
+    }
+
+    .bracket-segment.filled.cedh {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 12px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Target marker - glowing vertical line */
+    .bracket-target-marker {
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      width: 3px;
+      background: var(--accent-purple);
+      border-radius: 2px;
+      box-shadow: 0 0 10px var(--accent-purple), 0 0 20px var(--accent-purple-dim);
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
+      z-index: 2;
+    }
+
+    .bracket-target-marker.hidden {
+      display: none;
+    }
+
+    /* Larger, pill-styled indicators */
+    .bracket-indicator {
+      position: absolute;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: left 0.3s ease;
+      padding: 5px 10px;
+      background: var(--bg-elevated);
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+      z-index: 3;
+      font-family: 'Source Sans 3', sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    .bracket-indicator.current {
+      top: -32px;
+      color: var(--accent-green);
+      transform: translateX(-50%);
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    .bracket-indicator.target {
+      bottom: -32px;
+      color: var(--accent-purple);
+      transform: translateX(-50%);
+      border-color: rgba(157, 78, 221, 0.3);
+    }
+
+    .bracket-indicator.hidden {
+      display: none;
+    }
+
+    /* Bracket Info Modal */
+    .bracket-info-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bracket-info-modal.visible {
+      display: flex;
+    }
+
+    .bracket-info-modal-content {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .bracket-info-modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .bracket-info-modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .bracket-info-modal h3 {
+      margin: 0 0 16px;
+      color: var(--text-primary);
+    }
+
+    .bracket-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .bracket-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .bracket-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .bracket-dot.exhibition { background: var(--bracket-exhibition); }
+    .bracket-dot.core { background: var(--bracket-core); }
+    .bracket-dot.upgraded { background: var(--bracket-upgraded); }
+    .bracket-dot.optimized { background: var(--bracket-optimized); }
+    .bracket-dot.cedh { background: var(--bracket-cedh); }
+
+    .bracket-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .bracket-legend span {
+      flex: 1;
+      text-align: center;
+    }
+
+    .bracket-legend span.active {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .commander-cards {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .commander-card-preview {
+      width: 300px;
+      border-radius: 8px;
+      border: 2px solid var(--accent-purple);
+      box-shadow: 0 4px 12px rgba(157, 78, 221, 0.3);
+    }
+
+    .mana-cost {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 8px;
+    }
+
+    .mana-symbol-img {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: var(--bg-elevated);
+      border: 2px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      font-family: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .tab-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .tab-subtitle {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+
+    .tab:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+      border-color: var(--accent-purple);
+      color: white;
+      box-shadow: 0 4px 20px rgba(157, 78, 221, 0.3);
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 20px;
+    }
+
+    @media (max-width: 1000px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      .preview-panel {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        width: 200px;
+      }
+      .preview-image-container {
+        aspect-ratio: 488/680 !important;
+      }
+    }
+
+    .cards-section {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .game-changer-star {
+      color: var(--accent-gold);
+      font-size: 0.9rem;
+      animation: starPulse 2s ease-in-out infinite;
+      text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+      position: relative;
+      cursor: help;
+    }
+
+    /* Enhanced Game Changer tooltip */
+    .game-changer-star[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px 12px;
+      background: linear-gradient(135deg, var(--accent-gold-dim), rgba(251, 191, 36, 0.3));
+      border: 1px solid var(--accent-gold);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: none;
+    }
+
+    .game-changer-star[data-tooltip]:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    /* Game Changer warning badge for card groups */
+    .game-changer-warning {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 8px;
+      padding: 2px 8px;
+      background: var(--accent-gold-dim);
+      border: 1px solid var(--accent-gold);
+      border-radius: 10px;
+      font-size: 0.7rem;
+      color: var(--accent-gold);
+    }
+
+    @keyframes starPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+    }
+
+    /* Preview panel */
+    .preview-panel {
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+
+    .preview-card {
+      background: var(--bg-elevated);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .preview-card h3 {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+
+    .preview-image-container {
+      width: 100%;
+      aspect-ratio: 488/680;
+      background: var(--bg-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      padding: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .preview-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 10px;
+    }
+
+    .preview-image-container img.loaded {
+      opacity: 1;
+    }
+
+    .preview-placeholder {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .preview-card-name {
+      margin-top: 10px;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    /* Upgrade Overview */
+    .upgrade-overview {
+      background: var(--bg-elevated);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .overview-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .tier-tabs {
+      display: flex;
+      gap: 10px;
+    }
+
+    .overview-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .overview-stats .stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .overview-stats .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .overview-stats .stat-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: 'Cinzel', serif;
+    }
+
+    .overview-stats .stat-value.cost {
+      color: var(--accent-green);
+    }
+
+    .overview-stats .stat-value.changers {
+      color: var(--accent-gold);
+    }
+
+    .overview-legend {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+    }
+
+    .overview-legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .overview-legend .star {
+      color: var(--accent-gold);
+    }
+
+    .overview-legend .diamond {
+      color: var(--colorless);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: var(--text-secondary);
+    }
+
+    .error {
+      background: rgba(59, 18, 25, 0.8);
+      border: 1px solid var(--accent-red);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      color: #fca5a5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 40px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    footer a {
+      color: var(--accent-purple);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* === GUIDE VIEW STYLES === */
+    .guide-view {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .guide-strategy {
+      background: var(--bg-elevated);
+      border-radius: 12px;
+      padding: 20px 24px;
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-purple);
+    }
+
+    .guide-strategy p {
+      color: var(--text-primary);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .guide-section {
+      background: var(--bg-elevated);
+      border-radius: 12px;
+      padding: 20px 24px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .guide-section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .guide-section.cuts .guide-section-title {
+      color: var(--accent-red);
+    }
+
+    .guide-section.adds .guide-section-title {
+      color: var(--accent-green);
+    }
+
+    .guide-section.synergies .guide-section-title {
+      color: var(--accent-purple);
+    }
+
+    .card-groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card-group {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .card-group.highlighted {
+      border-color: var(--accent-gold);
+      background: linear-gradient(135deg, var(--bg-surface), rgba(251, 191, 36, 0.05));
+    }
+
+    .card-group-header {
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-group-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-group.highlighted .card-group-name {
+      color: var(--accent-gold);
+    }
+
+    .card-group-description {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .guide-card {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(42, 42, 74, 0.3);
+      cursor: pointer;
+      transition: background 0.15s;
+      margin: 0 -8px;
+      padding-left: 8px;
+      padding-right: 8px;
+      border-radius: 6px;
+    }
+
+    .guide-card:last-child {
+      border-bottom: none;
+    }
+
+    .guide-card:hover {
+      background: rgba(157, 78, 221, 0.08);
+    }
+
+    .guide-card-image {
+      width: 70px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      background: var(--bg-primary);
+    }
+
+    .guide-card-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .guide-card-name {
+      color: var(--accent-blue);
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .guide-card-name a,
+    .guide-card-name a:visited {
+      color: var(--text-primary);
+      text-decoration: underline;
+      text-decoration-color: var(--accent-green);
+      text-underline-offset: 2px;
+    }
+
+    .guide-card-name a:hover {
+      color: var(--accent-green);
+      text-decoration-color: var(--accent-green);
+    }
+
+    .guide-card-reason {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .guide-card-price {
+      font-size: 0.8rem;
+      color: var(--accent-green);
+      font-weight: 500;
+    }
+
+    /* Synergies */
+    .synergies-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .synergy-item {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .synergy-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--accent-purple);
+      margin-bottom: 8px;
+    }
+
+    .synergy-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .synergy-card-tag {
+      background: var(--bg-elevated);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: var(--accent-blue);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .synergy-card-tag:hover {
+      border-color: var(--accent-blue);
+      background: rgba(96, 165, 250, 0.1);
+    }
+
+    /* Interactive Synergy Explorer */
+    .synergy-explorer-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .synergy-explorer-btn {
+      padding: 6px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .synergy-explorer-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+
+    .synergy-explorer-btn.active {
+      background: var(--accent-purple-dim);
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    .synergy-explorer-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Synergy highlight effect */
+    .synergy-highlight {
+      background: rgba(157, 78, 221, 0.25) !important;
+      border-color: var(--accent-purple) !important;
+      box-shadow: 0 0 12px rgba(157, 78, 221, 0.4);
+      animation: synergyPulse 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes synergyPulse {
+      0% { box-shadow: 0 0 8px rgba(157, 78, 221, 0.3); }
+      100% { box-shadow: 0 0 16px rgba(157, 78, 221, 0.5); }
+    }
+
+    /* Dim non-related cards in explore mode */
+    .explore-mode-active .synergy-card-tag:not(.synergy-highlight):not(.synergy-selected) {
+      opacity: 0.4;
+    }
+
+    .explore-mode-active .guide-card:not(.synergy-highlight):not(.synergy-selected) {
+      opacity: 0.5;
+    }
+
+    /* Selected card indicator */
+    .synergy-selected {
+      border-color: var(--accent-gold) !important;
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.5) !important;
+    }
+
+    /* Synergy section header flex */
+    .synergies-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .synergies-header .guide-section-title {
+      margin-bottom: 0;
+    }
+
+    /* Card Substitution Suggestions */
+    .card-substitute {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 6px 8px;
+      background: rgba(96, 165, 250, 0.1);
+      border: 1px dashed var(--accent-blue);
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+
+    .card-substitute-label {
+      color: var(--accent-blue);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .card-substitute-name {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .card-substitute-name:hover {
+      color: var(--accent-blue);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .card-substitute-price {
+      color: var(--accent-green);
+      font-size: 0.7rem;
+    }
+
+    .card-substitute-tradeoff {
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      font-style: italic;
+    }
+
+    .card-substitute-toggle {
+      background: none;
+      border: none;
+      color: var(--accent-blue);
+      font-size: 0.7rem;
+      cursor: pointer;
+      padding: 2px 4px;
+      margin-left: auto;
+    }
+
+    .card-substitute-toggle:hover {
+      text-decoration: underline;
+    }
+
+    /* Share Button */
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-left: 8px;
+    }
+
+    .share-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+
+    .share-btn.success {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .share-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Share tooltip */
+    .share-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--accent-green);
+      border-radius: 6px;
+      color: var(--accent-green);
+      font-size: 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 100;
+      margin-bottom: 8px;
+    }
+
+    .share-tooltip.visible {
+      opacity: 1;
+    }
+
+    .synergy-description {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Mobile responsive for guide view */
+    @media (max-width: 768px) {
+      .card-groups {
+        grid-template-columns: 1fr;
+      }
+
+      .guide-card-image {
+        width: 55px;
+      }
+
+      .overview-top {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .tier-tabs {
+        justify-content: center;
+      }
+
+      .overview-stats {
+        justify-content: center;
+      }
+    }
+
+    /* === DECK LIST STYLES === */
+    .decklist-content {
+      columns: 2;
+      column-gap: 24px;
+      font-size: 0.9rem;
+    }
+
+    .decklist-category {
+      break-inside: avoid;
+      margin-bottom: 16px;
+    }
+
+    .decklist-category-title {
+      color: var(--accent-purple);
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .decklist-card {
+      padding: 4px 0;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .decklist-card:hover {
+      color: var(--accent-blue);
+    }
+
+    .decklist-card.cut {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .decklist-card.added {
+      color: var(--accent-green);
+    }
+
+    .decklist-card.commander {
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+
+    .decklist-card.alternate-commander {
+      color: var(--accent-purple);
+    }
+
+    .alternate-label {
+      color: var(--text-secondary);
+      font-weight: 400;
+      font-size: 0.85em;
+    }
+
+    .decklist-card a,
+    .decklist-card a:visited {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: var(--accent-green);
+      text-underline-offset: 2px;
+    }
+
+    .decklist-card a:hover {
+      color: var(--accent-green);
+    }
+
+    @media (max-width: 768px) {
+      .decklist-content {
+        columns: 1;
+      }
+    }
+
+    /* Deck list in guide view - 3 columns */
+    .guide-section.decklist .decklist-content {
+      columns: 3;
+      column-gap: 24px;
+    }
+
+    .guide-section.decklist .guide-section-title {
+      color: var(--accent-purple);
+    }
+
+    @media (max-width: 1000px) {
+      .guide-section.decklist .decklist-content {
+        columns: 2;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .guide-section.decklist .decklist-content {
+        columns: 1;
+      }
+    }
+
+    /* === SKELETON LOADING STATES === */
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        var(--bg-surface) 25%,
+        var(--bg-elevated) 50%,
+        var(--bg-surface) 75%
+      );
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 6px;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-card-group {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .skeleton-title {
+      height: 20px;
+      width: 60%;
+      margin-bottom: 12px;
+    }
+
+    .skeleton-card {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(42, 42, 74, 0.3);
+    }
+
+    .skeleton-card:last-child {
+      border-bottom: none;
+    }
+
+    .skeleton-card-image {
+      width: 70px;
+      height: 98px;
+      flex-shrink: 0;
+    }
+
+    .skeleton-card-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .skeleton-card-name {
+      height: 16px;
+      width: 80%;
+    }
+
+    .skeleton-card-reason {
+      height: 12px;
+      width: 100%;
+    }
+
+    .skeleton-synergy {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .skeleton-synergy-title {
+      height: 18px;
+      width: 40%;
+      margin-bottom: 12px;
+    }
+
+    .skeleton-synergy-tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .skeleton-tag {
+      height: 24px;
+      width: 80px;
+    }
+
+    .skeleton-synergy-desc {
+      height: 14px;
+      width: 90%;
+    }
+
+    .skeleton-strategy {
+      height: 60px;
+      width: 100%;
+    }
+
+    .skeleton-decklist {
+      columns: 3;
+      column-gap: 24px;
+    }
+
+    .skeleton-decklist-category {
+      break-inside: avoid;
+      margin-bottom: 16px;
+    }
+
+    .skeleton-decklist-title {
+      height: 14px;
+      width: 50%;
+      margin-bottom: 8px;
+    }
+
+    .skeleton-decklist-card {
+      height: 12px;
+      width: 85%;
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 1000px) {
+      .skeleton-decklist {
+        columns: 2;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .skeleton-decklist {
+        columns: 1;
+      }
+    }
+
+    .loading-placeholder {
+      display: none;
+    }
+
+    .is-loading .loading-placeholder {
+      display: block;
+    }
+
+    .is-loading .loaded-content {
+      display: none;
+    }
+
+    /* === 3D CARD TILT EFFECT === */
+    .commander-card-preview {
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow;
+      transition: transform var(--tilt-transition-out) cubic-bezier(0.23, 1, 0.32, 1),
+                  box-shadow var(--tilt-transition-out) cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .commander-card-preview.tilting {
+      transition: none;
+    }
+
+    .preview-image-container {
+      perspective: var(--tilt-perspective);
+    }
+
+    .preview-image-container img {
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow;
+      transition: transform var(--tilt-transition-out) cubic-bezier(0.23, 1, 0.32, 1),
+                  box-shadow var(--tilt-transition-out) cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .preview-image-container img.tilting {
+      transition: none;
+    }
+
+    .guide-card-image {
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform var(--tilt-transition-out) cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .guide-card-image.tilting {
+      transition: none;
+    }
+
+    /* Glare overlay for tilt effect */
+    .tilt-glare {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .tilt-glare-inner {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0) 80%
+      );
+    }
+
+    /* Accessibility: reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      .commander-card-preview,
+      .preview-image-container img,
+      .guide-card-image {
+        transition: none !important;
+        transform: none !important;
+      }
+
+      .tilt-glare {
+        display: none !important;
+      }
+    }
+
+    /* === DECK STATISTICS === */
+    .deck-stats .guide-section-title {
+      color: var(--accent-blue);
+    }
+
+    .deck-stats-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .deck-stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stats-panel {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .stats-panel-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    /* Mana Curve Chart */
+    .mana-curve-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 120px;
+      padding: 0 8px;
+      gap: 4px;
+    }
+
+    .mana-bar-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+    }
+
+    .mana-bar-wrapper {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .mana-bar {
+      width: 80%;
+      min-height: 4px;
+      background: linear-gradient(180deg, var(--accent-purple), #7c3aed);
+      border-radius: 4px 4px 0 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .mana-bar:hover {
+      transform: scaleX(1.1);
+      box-shadow: 0 0 12px rgba(157, 78, 221, 0.5);
+    }
+
+    .mana-bar-count {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent-purple);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .mana-bar:hover .mana-bar-count {
+      opacity: 1;
+    }
+
+    .mana-bar-label {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    .mana-curve-legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .mana-curve-legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .curve-avg span,
+    .curve-total span {
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+
+    /* Category Bars */
+    .category-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .category-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 4px 0;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+
+    .category-bar-item:hover {
+      background: rgba(157, 78, 221, 0.08);
+    }
+
+    .category-bar-label {
+      width: 100px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .category-bar-track {
+      flex: 1;
+      height: 16px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .category-bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.4s ease-out;
+      position: relative;
+    }
+
+    .category-bar-fill.ramp { background: linear-gradient(90deg, #22c55e, #4ade80); }
+    .category-bar-fill.removal { background: linear-gradient(90deg, #dc2626, #f87171); }
+    .category-bar-fill.card-draw { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+    .category-bar-fill.board-wipes { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .category-bar-fill.graveyard-hate { background: linear-gradient(90deg, #4b5563, #9ca3af); }
+    .category-bar-fill.finishers { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+    .category-bar-fill.protection { background: linear-gradient(90deg, #0891b2, #22d3d8); }
+
+    .category-bar-count {
+      width: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: left;
+      flex-shrink: 0;
+    }
+
+    /* Category Tooltip */
+    .category-tooltip {
+      position: fixed;
+      z-index: 1000;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px;
+      max-width: 250px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .category-tooltip.visible {
+      opacity: 1;
+    }
+
+    .category-tooltip-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent-purple);
+      margin-bottom: 8px;
+    }
+
+    .category-tooltip-cards {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Skeleton for deck stats */
+    .skeleton-stats-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .skeleton-stats-panel {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .skeleton-stats-title {
+      height: 18px;
+      width: 60%;
+      margin: 0 auto 16px;
+    }
+
+    .skeleton-mana-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 120px;
+      gap: 8px;
+    }
+
+    .skeleton-mana-bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .skeleton-category-bar {
+      height: 24px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .skeleton-stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* === DECK EXPORT BUTTONS === */
+    .decklist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .decklist-header .guide-section-title {
+      margin-bottom: 0;
+    }
+
+    .export-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .export-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .export-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+      background: var(--bg-elevated);
+    }
+
+    .export-btn.success {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .adds-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .adds-section-header .guide-section-title {
+      margin-bottom: 0;
+    }
+
+    .export-dropdown {
+      position: relative;
+    }
+
+    .export-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 4px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      min-width: 180px;
+      z-index: 100;
+      display: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .export-dropdown-menu.open {
+      display: block;
+    }
+
+    .export-dropdown-item {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .export-dropdown-item:first-child {
+      border-radius: 8px 8px 0 0;
+    }
+
+    .export-dropdown-item:last-child {
+      border-radius: 0 0 8px 8px;
+    }
+
+    .export-dropdown-item:hover {
+      background: var(--bg-surface);
+    }
+
+    .export-dropdown-item small {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-top: 2px;
+    }
+
+    /* === FILTER BAR === */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .filter-select {
+      padding: 6px 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .filter-select:hover, .filter-select:focus {
+      border-color: var(--accent-purple);
+      outline: none;
+    }
+
+    .filter-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .filter-checkbox input {
+      accent-color: var(--accent-purple);
+    }
+
+    .filter-checkbox:hover {
+      color: var(--text-primary);
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      padding: 4px 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+
+    .filter-chip.active {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+      color: white;
+    }
+
+    .filter-clear {
+      padding: 4px 10px;
+      background: none;
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .filter-clear:hover {
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+
+    /* === QUICK SEARCH MODAL === */
+    .search-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1001;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+
+    .search-modal.open {
+      display: flex;
+    }
+
+    .search-container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .search-input-wrapper svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-secondary);
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .search-input {
+      flex: 1;
+      background: none;
+      border: none;
+      font-size: 1rem;
+      color: var(--text-primary);
+      font-family: inherit;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-shortcut {
+      padding: 4px 8px;
+      background: var(--bg-surface);
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .search-results {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .search-result-group {
+      padding: 8px 0;
+    }
+
+    .search-result-group-title {
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .search-result {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .search-result:hover, .search-result.selected {
+      background: var(--bg-surface);
+    }
+
+    .search-result-name {
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .search-result-name mark {
+      background: var(--accent-purple-dim);
+      color: var(--accent-purple);
+      border-radius: 2px;
+    }
+
+    .search-result-tag {
+      padding: 2px 8px;
+      background: var(--bg-elevated);
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .search-result-tag.add {
+      color: var(--accent-green);
+    }
+
+    .search-result-tag.cut {
+      color: var(--accent-red);
+    }
+
+    .search-empty {
+      padding: 24px 16px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* === TIER COMPARISON VIEW === */
+    .comparison-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      cursor: pointer;
+    }
+
+    .comparison-toggle input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 20px;
+      background: var(--bg-elevated);
+      border: 2px solid var(--border-subtle);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 12px;
+      height: 12px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .comparison-toggle input:checked + .toggle-switch {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+    }
+
+    .comparison-toggle input:checked + .toggle-switch::after {
+      left: 22px;
+      background: white;
+    }
+
+    .toggle-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      user-select: none;
+    }
+
+    .comparison-view {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .comparison-column {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .comparison-column-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--accent-purple);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .comparison-card {
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+
+    .comparison-card:hover {
+      background: rgba(157, 78, 221, 0.1);
+    }
+
+    .comparison-card.unique-full {
+      color: var(--accent-green);
+      background: var(--accent-green-dim);
+    }
+
+    .comparison-card.unique-midrange {
+      color: var(--accent-gold);
+      background: var(--accent-gold-dim);
+    }
+
+    .comparison-card.shared {
+      color: var(--text-secondary);
+    }
+
+    .comparison-legend {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 0.8rem;
+    }
+
+    .comparison-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .comparison-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .comparison-legend-dot.full {
+      background: var(--accent-green);
+    }
+
+    .comparison-legend-dot.midrange {
+      background: var(--accent-gold);
+    }
+
+    .comparison-legend-dot.shared {
+      background: var(--text-secondary);
+    }
+
+    .comparison-price-diff {
+      text-align: center;
+      padding: 12px;
+      margin-top: 16px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .comparison-price-diff .diff {
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .comparison-view {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* === PRINT STYLES === */
+    .print-btn {
+      padding: 8px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .print-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+      }
+
+      .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+
+      header, .selector-section, .upgrade-overview, .preview-panel,
+      .guide-strategy, .guide-section.adds, .guide-section.cuts,
+      .guide-section.synergies, .guide-section.deck-stats,
+      .filter-bar, .export-buttons, .print-btn,
+      footer {
+        display: none !important;
+      }
+
+      .main-content {
+        display: block !important;
+      }
+
+      .guide-section.decklist {
+        break-inside: avoid;
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+      }
+
+      .guide-section-title {
+        color: black !important;
+        font-size: 18pt !important;
+        margin-bottom: 12pt !important;
+      }
+
+      .decklist-content {
+        columns: 3 !important;
+        font-size: 10pt !important;
+      }
+
+      .decklist-category-title {
+        color: black !important;
+        font-weight: bold !important;
+      }
+
+      .decklist-card {
+        color: black !important;
+      }
+
+      .decklist-card.added::before {
+        content: "★ ";
+      }
+
+      /* Hide normal adds section when printing shopping list */
+      body.print-shopping-list .guide-section.adds .card-groups,
+      body.print-shopping-list .guide-section.adds .adds-section-header,
+      body.print-shopping-list .guide-section.adds .loading-placeholder {
+        display: none !important;
+      }
+
+      /* Show shopping list when printing */
+      body.print-shopping-list .shopping-list-print {
+        display: block !important;
+      }
+
+      /* Also hide other sections when printing shopping list */
+      body.print-shopping-list header,
+      body.print-shopping-list .selector-section,
+      body.print-shopping-list .upgrade-overview,
+      body.print-shopping-list .preview-panel,
+      body.print-shopping-list .guide-strategy,
+      body.print-shopping-list .guide-section.cuts,
+      body.print-shopping-list .guide-section.synergies,
+      body.print-shopping-list .guide-section.deck-stats,
+      body.print-shopping-list .guide-section.decklist,
+      body.print-shopping-list .filter-bar,
+      body.print-shopping-list footer {
+        display: none !important;
+      }
+
+      body.print-shopping-list .guide-section.adds {
+        display: block !important;
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+      }
+    }
+
+    /* Shopping list - hidden by default */
+    .shopping-list-print {
+      display: none;
+    }
+
+    .adds-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Print-specific shopping list styles */
+    @media print {
+      .shopping-list-print {
+        font-family: Arial, sans-serif;
+        color: black;
+      }
+
+      .shopping-list-header {
+        text-align: center;
+        margin-bottom: 20pt;
+        padding-bottom: 10pt;
+        border-bottom: 2px solid #333;
+      }
+
+      .shopping-list-header h2 {
+        font-size: 18pt;
+        margin: 0 0 5pt;
+        color: black;
+      }
+
+      .shopping-list-meta {
+        font-size: 11pt;
+        color: #555;
+      }
+
+      .shopping-list-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10pt;
+      }
+
+      .shopping-list-table th,
+      .shopping-list-table td {
+        padding: 6pt 8pt;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .shopping-list-table th {
+        font-weight: bold;
+        border-bottom: 2px solid #333;
+        background: #f5f5f5;
+      }
+
+      .shopping-list-table .checkbox-col {
+        width: 30pt;
+        text-align: center;
+      }
+
+      .shopping-list-table .checkbox-col::after {
+        content: "☐";
+        font-size: 14pt;
+      }
+
+      .shopping-list-table tbody tr td:first-child::after {
+        content: "☐";
+        font-size: 14pt;
+      }
+
+      .shopping-list-table .qty-col {
+        width: 40pt;
+        text-align: center;
+      }
+
+      .shopping-list-table .price-col {
+        width: 80pt;
+        text-align: right;
+      }
+
+      .shopping-list-table .card-col {
+        font-weight: 500;
+      }
+
+      .shopping-list-table tbody tr:nth-child(even) {
+        background: #fafafa;
+      }
+
+      .shopping-list-table .game-changer-row {
+        background: #fff8e1 !important;
+      }
+
+      .shopping-list-table .game-changer-row .card-col::before {
+        content: "★ ";
+        color: #f59e0b;
+      }
+
+      .shopping-list-table .total-row {
+        font-weight: bold;
+        border-top: 2px solid #333;
+      }
+
+      .shopping-list-table .total-row td {
+        padding-top: 10pt;
+      }
+
+      .shopping-list-footer {
+        margin-top: 20pt;
+        font-size: 8pt;
+        color: #888;
+        text-align: center;
+      }
+    }
+
+    /* === MOBILE FULL-SCREEN PREVIEW MODAL === */
+    .mobile-preview-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1002;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .mobile-preview-modal.open {
+      display: flex;
+    }
+
+    .mobile-preview-content {
+      max-width: 350px;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .mobile-preview-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .mobile-preview-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .mobile-preview-name {
+      text-align: center;
+      color: white;
+      margin-top: 12px;
+      font-size: 1.1rem;
+    }
+
+    /* Larger tap targets on mobile */
+    @media (max-width: 768px) {
+      .decklist-card {
+        padding: 10px 0;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+      }
+
+      .guide-card {
+        padding: 12px 8px;
+        min-height: 44px;
+      }
+
+      .synergy-card-tag {
+        padding: 8px 12px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-group {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .filter-chips {
+        width: 100%;
+      }
+
+      .export-buttons {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* === ACCESSIBILITY IMPROVEMENTS === */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Focus visible outlines */
+    :focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
+    }
+
+    /* Skip to content link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      padding: 8px 16px;
+      background: var(--accent-purple);
+      color: white;
+      z-index: 1003;
+      transition: top 0.2s;
+    }
+
+    .skip-link:focus {
+      top: 0;
+    }
+
+    /* Ensure interactive elements are focusable */
+    .guide-card, .synergy-card-tag, .decklist-card, .bracket-info-icon,
+    .export-btn, .filter-chip, .comparison-card {
+      outline: none;
+    }
+
+    .guide-card:focus-visible, .synergy-card-tag:focus-visible,
+    .decklist-card:focus-visible, .bracket-info-icon:focus-visible,
+    .export-btn:focus-visible, .filter-chip:focus-visible,
+    .comparison-card:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
+    }
+
+    /* aria-live region for card preview */
+    #preview-announcement {
+      position: absolute;
+      left: -9999px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip to content link for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Aria-live region for screen reader announcements -->
+  <div id="preview-announcement" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Quick Search Modal -->
+  <div class="search-modal" id="search-modal" role="dialog" aria-labelledby="search-title" aria-modal="true">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+        </svg>
+        <input type="text" class="search-input" id="search-input" placeholder="Search cards..." aria-label="Search cards">
+        <span class="search-shortcut">ESC to close</span>
+      </div>
+      <div class="search-results" id="search-results">
+        <div class="search-empty">Type to search cards in the current deck...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Full-Screen Card Preview Modal -->
+  <div class="mobile-preview-modal" id="mobile-preview-modal" role="dialog" aria-labelledby="mobile-preview-title" aria-modal="true">
+    <div class="mobile-preview-content">
+      <button class="mobile-preview-close" aria-label="Close preview">&times;</button>
+      <img id="mobile-preview-image" src="" alt="">
+      <div class="mobile-preview-name" id="mobile-preview-name"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>MTG Precon Upgrade Guides</h1>
+      <p>Visual deck upgrade guides with card previews</p>
+    </header>
+
+    <div class="selector-section">
+      <div class="selector-row">
+        <label for="precon-select">Select Precon:</label>
+        <select id="precon-select">
+          <option value="">Loading...</option>
+        </select>
+      </div>
+      <div class="commander-info" id="commander-info" style="display: none;">
+        <h3 id="commander-name"></h3>
+        <div class="alt-commander" id="alt-commander"></div>
+        <div class="bracket-visualization" id="bracket-visualization">
+          <div class="bracket-header">
+            <span class="bracket-label" id="bracket-label">Loading...</span>
+            <span class="bracket-info-icon" title="EDH power level brackets: 1=Exhibition (precon-level), 2=Core (focused), 3=Upgraded (optimized mana/synergy), 4=Optimized (high power), 5=cEDH (competitive)">i</span>
+          </div>
+          <div class="bracket-bar">
+            <div class="bracket-segment exhibition" data-bracket="1"></div>
+            <div class="bracket-segment core" data-bracket="2"></div>
+            <div class="bracket-segment upgraded" data-bracket="3"></div>
+            <div class="bracket-segment optimized" data-bracket="4"></div>
+            <div class="bracket-segment cedh" data-bracket="5"></div>
+            <div class="bracket-target-marker" id="bracket-target-marker"></div>
+            <div class="bracket-indicator current" id="bracket-current-indicator">▼ Current</div>
+            <div class="bracket-indicator target" id="bracket-target-indicator">▲ Target</div>
+          </div>
+          <div class="bracket-legend">
+            <span data-bracket="1">Exhibition</span>
+            <span data-bracket="2">Core</span>
+            <span data-bracket="3">Upgraded</span>
+            <span data-bracket="4">Optimized</span>
+            <span data-bracket="5">cEDH</span>
+          </div>
+        </div>
+        <div class="bracket-info-modal" id="bracket-info-modal">
+          <div class="bracket-info-modal-content">
+            <button class="bracket-info-modal-close" id="bracket-info-modal-close">&times;</button>
+            <h3>Commander Bracket System</h3>
+            <div class="bracket-info-list">
+              <div class="bracket-info-item">
+                <span class="bracket-dot exhibition"></span>
+                <strong>Bracket 1 - Exhibition:</strong> Precon-level, casual play
+              </div>
+              <div class="bracket-info-item">
+                <span class="bracket-dot core"></span>
+                <strong>Bracket 2 - Core:</strong> Focused strategy, some upgrades
+              </div>
+              <div class="bracket-info-item">
+                <span class="bracket-dot upgraded"></span>
+                <strong>Bracket 3 - Upgraded:</strong> Optimized mana, strong synergy
+              </div>
+              <div class="bracket-info-item">
+                <span class="bracket-dot optimized"></span>
+                <strong>Bracket 4 - Optimized:</strong> High power, efficient combos
+              </div>
+              <div class="bracket-info-item">
+                <span class="bracket-dot cedh"></span>
+                <strong>Bracket 5 - cEDH:</strong> Competitive, fast wins
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="commander-cards" id="commander-cards">
+          <!-- Populated by JS with commander card images -->
+        </div>
+      </div>
+    </div>
+
+    <div class="upgrade-overview" id="upgrade-overview" style="display: none;">
+      <div class="overview-top">
+        <div class="tier-tabs">
+          <button class="tab active" data-upgrade="full" id="tab-full">
+            <span class="tab-name">Full Upgrade</span>
+            <span class="tab-subtitle"></span>
+          </button>
+          <button class="tab" data-upgrade="midrange" id="tab-midrange">
+            <span class="tab-name">Mid-Range</span>
+            <span class="tab-subtitle"></span>
+          </button>
+          <label class="comparison-toggle">
+            <input type="checkbox" id="compare-tiers">
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Compare</span>
+          </label>
+          <button class="share-btn" id="share-btn" aria-label="Share this build" style="position: relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            Share
+            <span class="share-tooltip" id="share-tooltip">Link copied!</span>
+          </button>
+        </div>
+        <div class="overview-stats">
+          <div class="stat">
+            <span class="stat-label">Cost</span>
+            <span class="stat-value cost" id="summary-cost">$0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Game Changers</span>
+            <span class="stat-value changers" id="summary-changers">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="overview-legend">
+        <span class="legend-item"><span class="star">★</span> = Game Changer</span>
+        <span class="legend-item"><span class="diamond">◇</span> = Colorless</span>
+      </div>
+    </div>
+
+    <div class="main-content" id="main-content" style="display: none;">
+      <div class="cards-section">
+        <!-- Guide View -->
+        <div class="guide-view" id="guide-view">
+          <div class="guide-strategy" id="guide-strategy">
+            <div class="loading-placeholder" id="strategy-skeleton">
+              <div class="skeleton skeleton-strategy"></div>
+            </div>
+            <p class="loaded-content" id="strategy-content"></p>
+          </div>
+
+          <div class="guide-section adds">
+            <div class="adds-section-header">
+              <h2 class="guide-section-title" id="adds-header">What We're Adding</h2>
+              <div class="adds-buttons">
+                <button class="export-btn" id="print-shopping-btn" aria-label="Print shopping list">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
+                    <rect x="9" y="3" width="6" height="4" rx="1"></rect>
+                    <path d="M9 12h6"></path>
+                    <path d="M9 16h6"></path>
+                  </svg>
+                  Shopping List
+                </button>
+              <button class="export-btn" id="export-adds-btn" aria-label="Export list for Cardmarket">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export List
+              </button>
+              </div>
+            </div>
+            <!-- Print-only Shopping List -->
+            <div class="shopping-list-print" id="shopping-list-print">
+              <div class="shopping-list-header">
+                <h2>Shopping List</h2>
+                <div class="shopping-list-meta">
+                  <span id="shopping-list-precon"></span> — <span id="shopping-list-tier"></span>
+                </div>
+              </div>
+              <table class="shopping-list-table">
+                <thead>
+                  <tr>
+                    <th class="checkbox-col"></th>
+                    <th class="card-col">Card Name</th>
+                    <th class="qty-col">Qty</th>
+                    <th class="price-col">Est. Price</th>
+                  </tr>
+                </thead>
+                <tbody id="shopping-list-body"></tbody>
+                <tfoot>
+                  <tr class="total-row">
+                    <td colspan="3">Estimated Total:</td>
+                    <td id="shopping-list-total"></td>
+                  </tr>
+                </tfoot>
+              </table>
+              <div class="shopping-list-footer">
+                <p>Generated from MTG Precon Upgrade Guide</p>
+              </div>
+            </div>
+            <div class="loading-placeholder" id="add-groups-skeleton">
+              <div class="card-groups">
+                <div class="skeleton-card-group">
+                  <div class="skeleton skeleton-title"></div>
+                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
+                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
+                </div>
+                <div class="skeleton-card-group">
+                  <div class="skeleton skeleton-title"></div>
+                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
+                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card-groups loaded-content" id="add-groups"></div>
+          </div>
+
+          <div class="guide-section cuts">
+            <h2 class="guide-section-title" id="cuts-header">Why We're Cutting</h2>
+            <div class="loading-placeholder" id="cut-groups-skeleton">
+              <div class="card-groups">
+                <div class="skeleton-card-group">
+                  <div class="skeleton skeleton-title"></div>
+                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
+                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
+                </div>
+                <div class="skeleton-card-group">
+                  <div class="skeleton skeleton-title"></div>
+                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
+                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card-groups loaded-content" id="cut-groups"></div>
+          </div>
+
+          <div class="guide-section synergies">
+            <div class="synergies-header">
+              <h2 class="guide-section-title">Key Synergies</h2>
+              <div class="synergy-explorer-toggle">
+                <button class="synergy-explorer-btn" id="explore-mode-btn" aria-pressed="false" title="Click any card to highlight related synergies">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="M21 21l-4.35-4.35"></path>
+                  </svg>
+                  Explore Mode
+                </button>
+              </div>
+            </div>
+            <div class="loading-placeholder" id="synergies-skeleton">
+              <div class="synergies-list">
+                <div class="skeleton-synergy">
+                  <div class="skeleton skeleton-synergy-title"></div>
+                  <div class="skeleton-synergy-tags"><div class="skeleton skeleton-tag"></div><div class="skeleton skeleton-tag"></div></div>
+                  <div class="skeleton skeleton-synergy-desc"></div>
+                </div>
+                <div class="skeleton-synergy">
+                  <div class="skeleton skeleton-synergy-title"></div>
+                  <div class="skeleton-synergy-tags"><div class="skeleton skeleton-tag"></div><div class="skeleton skeleton-tag"></div><div class="skeleton skeleton-tag"></div></div>
+                  <div class="skeleton skeleton-synergy-desc"></div>
+                </div>
+              </div>
+            </div>
+            <div class="synergies-list loaded-content" id="synergies-list"></div>
+          </div>
+
+          <div class="guide-section deck-stats" id="deck-stats-section">
+            <h2 class="guide-section-title">Deck Statistics</h2>
+            <div class="loading-placeholder" id="deck-stats-skeleton">
+              <div class="skeleton-stats-container">
+                <div class="skeleton-stats-panel">
+                  <div class="skeleton skeleton-stats-title"></div>
+                  <div class="skeleton-mana-bars">
+                    <div class="skeleton skeleton-mana-bar" style="height: 30%"></div>
+                    <div class="skeleton skeleton-mana-bar" style="height: 60%"></div>
+                    <div class="skeleton skeleton-mana-bar" style="height: 100%"></div>
+                    <div class="skeleton skeleton-mana-bar" style="height: 80%"></div>
+                    <div class="skeleton skeleton-mana-bar" style="height: 50%"></div>
+                    <div class="skeleton skeleton-mana-bar" style="height: 30%"></div>
+                    <div class="skeleton skeleton-mana-bar" style="height: 20%"></div>
+                  </div>
+                </div>
+                <div class="skeleton-stats-panel">
+                  <div class="skeleton skeleton-stats-title"></div>
+                  <div class="skeleton skeleton-category-bar"></div>
+                  <div class="skeleton skeleton-category-bar"></div>
+                  <div class="skeleton skeleton-category-bar"></div>
+                  <div class="skeleton skeleton-category-bar"></div>
+                </div>
+              </div>
+            </div>
+            <div class="deck-stats-container loaded-content" id="deck-stats-content">
+              <div class="stats-panel mana-curve-panel">
+                <h3 class="stats-panel-title">Mana Value Distribution</h3>
+                <div class="mana-curve-chart" id="mana-curve-chart"></div>
+                <div class="mana-curve-legend">
+                  <span class="curve-avg">Avg: <span id="avg-cmc">0.0</span></span>
+                  <span class="curve-total">Non-land: <span id="nonland-count">0</span></span>
+                </div>
+              </div>
+              <div class="stats-panel categories-panel">
+                <h3 class="stats-panel-title">Functional Breakdown</h3>
+                <div class="category-bars" id="category-bars"></div>
+              </div>
+            </div>
+          </div>
+          <div id="category-tooltip" class="category-tooltip">
+            <div class="category-tooltip-title"></div>
+            <div class="category-tooltip-cards"></div>
+          </div>
+
+          <div class="guide-section decklist" id="decklist-section">
+            <div class="decklist-header">
+              <h2 class="guide-section-title">Full Upgraded Deck List <span class="count" id="decklist-count">100</span></h2>
+              <div class="export-buttons">
+                <button class="export-btn" id="print-btn" aria-label="Print deck list">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9V2h12v7"></path>
+                    <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                  </svg>
+                  Print
+                </button>
+                <div class="export-dropdown">
+                  <button class="export-btn" id="copy-deck-btn" aria-haspopup="true" aria-expanded="false">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                    </svg>
+                    Copy Deck
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  <div class="export-dropdown-menu" id="copy-deck-menu" role="menu">
+                    <button class="export-dropdown-item" data-format="plain" role="menuitem">Plain Text<small>1x Card Name format</small></button>
+                    <button class="export-dropdown-item" data-format="arena" role="menuitem">Arena/MTGO<small>No quantity prefix</small></button>
+                    <button class="export-dropdown-item" data-format="moxfield" role="menuitem">Moxfield Import<small>Opens in new tab</small></button>
+                    <button class="export-dropdown-item" data-format="archidekt" role="menuitem">Archidekt Import<small>Opens in new tab</small></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar" id="filter-bar">
+              <div class="filter-group">
+                <span class="filter-label">CMC</span>
+                <select class="filter-select" id="filter-cmc" aria-label="Filter by mana cost">
+                  <option value="all">All</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7+">7+</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <span class="filter-label">Type</span>
+                <div class="filter-chips" id="filter-type-chips" role="group" aria-label="Filter by card type">
+                  <button class="filter-chip active" data-type="all" aria-pressed="true">All</button>
+                  <button class="filter-chip" data-type="Creature" aria-pressed="false">Creature</button>
+                  <button class="filter-chip" data-type="Artifact" aria-pressed="false">Artifact</button>
+                  <button class="filter-chip" data-type="Enchantment" aria-pressed="false">Enchant</button>
+                  <button class="filter-chip" data-type="Instant" aria-pressed="false">Instant</button>
+                  <button class="filter-chip" data-type="Sorcery" aria-pressed="false">Sorcery</button>
+                  <button class="filter-chip" data-type="Land" aria-pressed="false">Land</button>
+                </div>
+              </div>
+              <div class="filter-group">
+                <span class="filter-label">Sort</span>
+                <select class="filter-select" id="filter-sort" aria-label="Sort deck list">
+                  <option value="type">By Type</option>
+                  <option value="name">By Name</option>
+                  <option value="cmc">By CMC</option>
+                </select>
+              </div>
+              <label class="filter-checkbox">
+                <input type="checkbox" id="filter-added-only">
+                Added Only
+              </label>
+              <button class="filter-clear" id="filter-clear" aria-label="Clear all filters">Clear Filters</button>
+            </div>
+
+            <div class="loading-placeholder" id="decklist-skeleton">
+              <div class="skeleton-decklist">
+                <div class="skeleton-decklist-category">
+                  <div class="skeleton skeleton-decklist-title"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                </div>
+                <div class="skeleton-decklist-category">
+                  <div class="skeleton skeleton-decklist-title"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                </div>
+                <div class="skeleton-decklist-category">
+                  <div class="skeleton skeleton-decklist-title"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                  <div class="skeleton skeleton-decklist-card"></div>
+                </div>
+              </div>
+            </div>
+            <div class="decklist-content loaded-content" id="decklist-content"></div>
+          </div>
+        </div>
+
+        <!-- Tier Comparison View (Hidden by default) -->
+        <div class="comparison-view-container" id="comparison-view-container" style="display: none;">
+          <div class="comparison-legend">
+            <span class="comparison-legend-item"><span class="comparison-legend-dot full"></span> Only in Full</span>
+            <span class="comparison-legend-item"><span class="comparison-legend-dot midrange"></span> Only in Mid-Range</span>
+            <span class="comparison-legend-item"><span class="comparison-legend-dot shared"></span> In Both</span>
+          </div>
+          <div class="comparison-view" id="comparison-view">
+            <div class="comparison-column" id="comparison-full">
+              <h3 class="comparison-column-title">Full Upgrade</h3>
+              <div class="comparison-cards" id="comparison-full-cards"></div>
+            </div>
+            <div class="comparison-column" id="comparison-midrange">
+              <h3 class="comparison-column-title">Mid-Range</h3>
+              <div class="comparison-cards" id="comparison-midrange-cards"></div>
+            </div>
+          </div>
+          <div class="comparison-price-diff" id="comparison-price-diff"></div>
+        </div>
+
+      </div>
+
+      <div class="preview-panel">
+        <div class="preview-card">
+          <h3>Card Preview</h3>
+          <div class="preview-image-container" id="preview-container">
+            <span class="preview-placeholder">Hover over a card name</span>
+          </div>
+          <div class="preview-card-name" id="preview-name"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading" id="loading">Loading precon data...</div>
+    <div class="error" id="error" style="display: none;"></div>
+
+    <footer>
+      <p>Card images and data provided by <a href="https://scryfall.com" target="_blank">Scryfall</a></p>
+      <p>To add more precons, create a folder in <code>data/precons/</code> and add entry to <code>data/index.json</code></p>
+    </footer>
+  </div>
+
+  <script>
+    // === UTILITY FUNCTIONS ===
+    function debounce(fn, delay) {
+      let timeoutId;
+      return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    function throttle(fn, limit) {
+      let inThrottle;
+      return function(...args) {
+        if (!inThrottle) {
+          fn.apply(this, args);
+          inThrottle = true;
+          setTimeout(() => inThrottle = false, limit);
+        }
+      };
+    }
+
+    // Privacy-respecting analytics tracking
+    function trackEvent(eventName, props = {}) {
+      // Plausible Analytics - only tracks if script is loaded
+      if (typeof window.plausible === 'function') {
+        window.plausible(eventName, { props });
+      }
+      // Also log in dev mode for debugging
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('[Analytics]', eventName, props);
+      }
+    }
+
+    // === STATE ===
+    let preconIndex = null;  // Lightweight manifest
+    let loadedPrecons = {};  // Cache of full precon data
+    let currentPrecon = null;
+    let currentPreconId = null;
+    let synergyGraph = new Map(); // For interactive synergy explorer
+    let currentUpgrade = 'full';
+    let currentHoveredCard = null;
+
+    // === PRECON-SPECIFIC TAB LABELS ===
+    const customTabLabels = {
+      'endless-punishment': {
+        full: 'Pain Amplified',
+        midrange: "Punisher's Paradise"
+      }
+      // Other precons use default labels: "Full Upgrade" / "Mid-Range"
+    };
+
+    // === BRACKET CONFIGURATION ===
+    const BRACKET_CONFIG = {
+      1: { name: 'Exhibition', class: 'exhibition' },
+      2: { name: 'Core', class: 'core' },
+      3: { name: 'Upgraded', class: 'upgraded' },
+      4: { name: 'Optimized', class: 'optimized' },
+      5: { name: 'cEDH', class: 'cedh' }
+    };
+
+    function parseBracket(bracketStr) {
+      // Parse "1-2" → {min: 1, max: 2} or "3" → {min: 3, max: 3}
+      if (!bracketStr) return { min: 1, max: 1 };
+      const str = String(bracketStr);
+      if (str.includes('-')) {
+        const [min, max] = str.split('-').map(Number);
+        return { min, max };
+      }
+      const val = parseInt(str, 10);
+      return { min: val, max: val };
+    }
+
+    function renderBracketVisualization() {
+      if (!currentPrecon) return;
+
+      const current = parseBracket(currentPrecon.currentBracket);
+      const target = parseBracket(currentPrecon.targetBracket);
+
+      // Update label
+      const bracketLabel = document.getElementById('bracket-label');
+      const targetName = BRACKET_CONFIG[target.max]?.name || 'Unknown';
+      bracketLabel.textContent = `Bracket ${target.max}: ${targetName}`;
+
+      // Update segment filled states (filled if bracket <= current.max)
+      document.querySelectorAll('.bracket-segment').forEach(segment => {
+        const bracket = parseInt(segment.dataset.bracket, 10);
+        segment.classList.toggle('filled', bracket <= target.max);
+      });
+
+      // Update legend active states
+      document.querySelectorAll('.bracket-legend span').forEach(span => {
+        const bracket = parseInt(span.dataset.bracket, 10);
+        const isInTargetRange = bracket >= target.min && bracket <= target.max;
+        span.classList.toggle('active', isInTargetRange);
+      });
+
+      // Position indicators (each segment is 20% width, center at 10% + (bracket-1)*20%)
+      const currentIndicator = document.getElementById('bracket-current-indicator');
+      const targetIndicator = document.getElementById('bracket-target-indicator');
+      const targetMarker = document.getElementById('bracket-target-marker');
+
+      // Current indicator: position at the center of the current range
+      const currentCenter = ((current.min + current.max) / 2 - 1) * 20 + 10;
+      currentIndicator.style.left = `${currentCenter}%`;
+
+      // Target indicator and marker: position at the center of the target range
+      const targetCenter = ((target.min + target.max) / 2 - 1) * 20 + 10;
+      targetIndicator.style.left = `${targetCenter}%`;
+      targetMarker.style.left = `${targetCenter}%`;
+
+      // Hide target indicator and marker if same as current
+      const samePosition = current.min === target.min && current.max === target.max;
+      targetIndicator.classList.toggle('hidden', samePosition);
+      targetMarker.classList.toggle('hidden', samePosition);
+    }
+
+    // === 3D CARD TILT EFFECT ===
+    class TiltEffect {
+      constructor(element, options = {}) {
+        this.element = element;
+        this.options = {
+          maxTilt: options.maxTilt || 15,
+          scale: options.scale || 1.05,
+          perspective: options.perspective || 1000,
+          glare: options.glare !== undefined ? options.glare : true,
+          ...options
+        };
+
+        this.rafId = null;
+        this.currentTransform = { rotateX: 0, rotateY: 0, scale: 1 };
+
+        // Check for reduced motion preference
+        this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (this.prefersReducedMotion) return;
+
+        this.setupGlare();
+        this.bindEvents();
+      }
+
+      setupGlare() {
+        if (!this.options.glare) return;
+
+        // Create glare overlay if it doesn't exist
+        if (!this.element.querySelector('.tilt-glare')) {
+          const glare = document.createElement('div');
+          glare.className = 'tilt-glare';
+          glare.innerHTML = '<div class="tilt-glare-inner"></div>';
+
+          // Make parent relative if needed
+          const computedStyle = window.getComputedStyle(this.element);
+          if (computedStyle.position === 'static') {
+            this.element.style.position = 'relative';
+          }
+
+          this.element.appendChild(glare);
+          this.glareElement = glare;
+          this.glareInner = glare.querySelector('.tilt-glare-inner');
+        }
+      }
+
+      bindEvents() {
+        this.onMouseMove = this.handleMouseMove.bind(this);
+        this.onMouseLeave = this.handleMouseLeave.bind(this);
+        this.onMouseEnter = this.handleMouseEnter.bind(this);
+
+        this.element.addEventListener('mousemove', this.onMouseMove);
+        this.element.addEventListener('mouseleave', this.onMouseLeave);
+        this.element.addEventListener('mouseenter', this.onMouseEnter);
+      }
+
+      handleMouseEnter() {
+        this.element.classList.add('tilting');
+      }
+
+      handleMouseMove(e) {
+        if (this.rafId) return;
+
+        this.rafId = requestAnimationFrame(() => {
+          this.updateTransform(e);
+          this.rafId = null;
+        });
+      }
+
+      updateTransform(e) {
+        const rect = this.element.getBoundingClientRect();
+
+        // Calculate cursor position relative to card center (-1 to 1 range)
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const normalizedX = (e.clientX - centerX) / (rect.width / 2);
+        const normalizedY = (e.clientY - centerY) / (rect.height / 2);
+
+        // Calculate rotation (invert Y for natural tilt feel)
+        const rotateX = -normalizedY * this.options.maxTilt;
+        const rotateY = normalizedX * this.options.maxTilt;
+
+        // Apply transform
+        this.element.style.transform = `
+          perspective(${this.options.perspective}px)
+          rotateX(${rotateX}deg)
+          rotateY(${rotateY}deg)
+          scale(${this.options.scale})
+        `;
+
+        // Dynamic shadow (shifts opposite to tilt)
+        const shadowX = -normalizedX * 10;
+        const shadowY = -normalizedY * 10;
+        this.element.style.boxShadow = `
+          ${shadowX}px ${shadowY}px 30px rgba(157, 78, 221, 0.4),
+          0 4px 15px rgba(0, 0, 0, 0.3)
+        `;
+
+        // Update glare position
+        if (this.glareElement && this.glareInner) {
+          this.glareElement.style.opacity = '1';
+          const glareX = 50 + normalizedX * 30;
+          const glareY = 50 + normalizedY * 30;
+          this.glareInner.style.background = `radial-gradient(
+            circle at ${glareX}% ${glareY}%,
+            rgba(255, 255, 255, 0.25) 0%,
+            rgba(255, 255, 255, 0) 80%
+          )`;
+        }
+      }
+
+      handleMouseLeave() {
+        if (this.rafId) {
+          cancelAnimationFrame(this.rafId);
+          this.rafId = null;
+        }
+
+        this.element.classList.remove('tilting');
+
+        // Reset transform with smooth transition
+        this.element.style.transform = '';
+        this.element.style.boxShadow = '';
+
+        // Hide glare
+        if (this.glareElement) {
+          this.glareElement.style.opacity = '0';
+        }
+      }
+
+      destroy() {
+        if (this.rafId) {
+          cancelAnimationFrame(this.rafId);
+        }
+        this.element.removeEventListener('mousemove', this.onMouseMove);
+        this.element.removeEventListener('mouseleave', this.onMouseLeave);
+        this.element.removeEventListener('mouseenter', this.onMouseEnter);
+        if (this.glareElement) {
+          this.glareElement.remove();
+        }
+      }
+    }
+
+    function initializeTiltEffect(element, options) {
+      if (!element || element._tiltEffect) return;
+      element._tiltEffect = new TiltEffect(element, options);
+    }
+
+    function initializeCommanderTilt() {
+      document.querySelectorAll('.commander-card-preview').forEach(img => {
+        if (!img._tiltInitialized) {
+          initializeTiltEffect(img, { maxTilt: 12, scale: 1.03, glare: true });
+          img._tiltInitialized = true;
+        }
+      });
+    }
+
+    function initializeGuideThumbnailTilt() {
+      document.querySelectorAll('.guide-card-image').forEach(img => {
+        if (!img._tiltInitialized) {
+          initializeTiltEffect(img, { maxTilt: 8, scale: 1.08, glare: false });
+          img._tiltInitialized = true;
+        }
+      });
+    }
+
+    // === DECK STATISTICS ===
+    const CATEGORY_CONFIG = [
+      { id: 'ramp', name: 'Ramp', class: 'ramp' },
+      { id: 'removal', name: 'Removal', class: 'removal' },
+      { id: 'card-draw', name: 'Card Draw', class: 'card-draw' },
+      { id: 'board-wipes', name: 'Board Wipes', class: 'board-wipes' },
+      { id: 'graveyard-hate', name: 'Graveyard Hate', class: 'graveyard-hate' },
+      { id: 'finishers', name: 'Finishers', class: 'finishers' },
+      { id: 'protection', name: 'Protection', class: 'protection' }
+    ];
+
+    // Known ramp cards by name
+    const KNOWN_RAMP_CARDS = new Set([
+      'Sol Ring', 'Mana Vault', 'Mana Crypt', 'Arcane Signet', 'Mind Stone',
+      'Thought Vessel', 'Hedron Archive', 'Thran Dynamo', 'Worn Powerstone',
+      'Everflowing Chalice', 'Basalt Monolith', 'Grim Monolith', 'Coalition Relic',
+      "Commander's Sphere", 'Coldsteel Heart', 'Fellwar Stone', 'Prismatic Lens',
+      'Cultivate', 'Kodama\'s Reach', 'Rampant Growth', 'Farseek', 'Nature\'s Lore',
+      'Three Visits', 'Sakura-Tribe Elder', 'Wood Elves', 'Farhaven Elf',
+      'Birds of Paradise', 'Llanowar Elves', 'Elvish Mystic', 'Elves of Deep Shadow',
+      'Urza\'s Incubator', 'Semblance Anvil', 'Eye of Ugin', 'Eldrazi Temple',
+      'Ancient Tomb', 'Temple of the False God', 'Nykthos, Shrine to Nyx',
+      'Cabal Coffers', 'Cabal Stronghold', 'Crypt Ghast', 'Nirkana Revenant',
+      'Forsaken Monument', 'Ugin, the Ineffable'
+    ]);
+
+    function categorizeCard(cardName, metadata) {
+      const categories = [];
+      const name = cardName.toLowerCase();
+      const oracle = (metadata?.oracle_text || '').toLowerCase();
+      const typeLine = (metadata?.type_line || '').toLowerCase();
+      const cmc = metadata?.cmc ?? 0;
+
+      // Ramp detection
+      if (KNOWN_RAMP_CARDS.has(cardName) ||
+          oracle.includes('add {') ||
+          oracle.includes('add one mana') ||
+          oracle.includes('search your library for a basic land') ||
+          oracle.includes('search your library for a land') ||
+          (oracle.includes('mana') && oracle.includes('add')) ||
+          oracle.includes('costs {') && oracle.includes('less to cast')) {
+        categories.push('ramp');
+      }
+
+      // Removal detection
+      if ((oracle.includes('destroy target') && !oracle.includes('destroy target land')) ||
+          oracle.includes('exile target') ||
+          oracle.includes('deals damage to any target') ||
+          oracle.includes('deals damage to target creature') ||
+          (oracle.includes('destroy') && oracle.includes('creature')) ||
+          name.includes('path to exile') ||
+          name.includes('swords to plowshares')) {
+        categories.push('removal');
+      }
+
+      // Card draw detection
+      if (oracle.includes('draw a card') ||
+          oracle.includes('draw cards') ||
+          oracle.includes('draw two cards') ||
+          oracle.includes('draw three cards') ||
+          oracle.includes('draws a card') ||
+          oracle.includes('draw x cards') ||
+          name.includes('rhystic study') ||
+          name.includes('mystic remora')) {
+        categories.push('card-draw');
+      }
+
+      // Board wipes detection
+      if (oracle.includes('destroy all creatures') ||
+          oracle.includes('destroy all nonland') ||
+          oracle.includes('exile all') ||
+          oracle.includes('deals damage to each creature') ||
+          oracle.includes('all creatures get -') ||
+          name.includes('wrath') ||
+          name.includes('damnation') ||
+          name.includes('blasphemous act')) {
+        categories.push('board-wipes');
+      }
+
+      // Graveyard hate detection
+      if ((oracle.includes('exile') && oracle.includes('graveyard')) ||
+          oracle.includes('exile all cards from') ||
+          oracle.includes('exile target card from a graveyard') ||
+          name.includes('bojuka bog') ||
+          name.includes('rest in peace') ||
+          name.includes('leyline of the void') ||
+          name.includes('scavenger grounds')) {
+        categories.push('graveyard-hate');
+      }
+
+      // Finishers detection (CMC 6+ with Eldrazi or annihilator, or big threats)
+      if ((cmc >= 6 && typeLine.includes('eldrazi')) ||
+          oracle.includes('annihilator') ||
+          (cmc >= 7 && typeLine.includes('creature') && oracle.includes('when')) ||
+          name.includes('kozilek') ||
+          name.includes('ulamog') ||
+          name.includes('emrakul') ||
+          name.includes('it that betrays') ||
+          name.includes('void winnower') ||
+          name.includes('blightsteel colossus')) {
+        categories.push('finishers');
+      }
+
+      // Protection detection
+      if (oracle.includes('hexproof') ||
+          oracle.includes('shroud') ||
+          oracle.includes('indestructible') ||
+          oracle.includes('can\'t be countered') ||
+          oracle.includes('protection from') ||
+          oracle.includes('can\'t be the target') ||
+          name.includes('lightning greaves') ||
+          name.includes('swiftfoot boots') ||
+          name.includes('heroic intervention')) {
+        categories.push('protection');
+      }
+
+      return categories;
+    }
+
+    function calculateDeckStats(deckCards) {
+      // Initialize mana curve (0-10+)
+      const manaCurve = {};
+      for (let i = 0; i <= 10; i++) {
+        manaCurve[i] = { count: 0, cards: [] };
+      }
+
+      // Initialize categories
+      const categories = {};
+      CATEGORY_CONFIG.forEach(cat => {
+        categories[cat.id] = { count: 0, cards: [] };
+      });
+
+      let totalCmc = 0;
+      let nonLandCount = 0;
+
+      deckCards.forEach(card => {
+        const metadata = cardMetadataCache.get(card.name);
+        if (!metadata) return;
+
+        const typeLine = (metadata.type_line || '').toLowerCase();
+        const isLand = typeLine.includes('land');
+
+        // Skip lands for mana curve and average
+        if (!isLand) {
+          const cmc = Math.floor(metadata.cmc || 0);
+          const bucket = Math.min(cmc, 10);
+          manaCurve[bucket].count++;
+          manaCurve[bucket].cards.push(card.name);
+          totalCmc += cmc;
+          nonLandCount++;
+        }
+
+        // Categorize all cards (including lands for things like graveyard hate)
+        const cardCategories = categorizeCard(card.name, metadata);
+        cardCategories.forEach(catId => {
+          if (categories[catId]) {
+            categories[catId].count++;
+            categories[catId].cards.push(card.name);
+          }
+        });
+      });
+
+      const avgCmc = nonLandCount > 0 ? (totalCmc / nonLandCount).toFixed(2) : '0.00';
+
+      return { manaCurve, categories, avgCmc, nonLandCount };
+    }
+
+    function renderDeckStats() {
+      if (!currentPrecon) return;
+
+      const statsSection = document.getElementById('deck-stats-section');
+      if (!statsSection) return;
+
+      // Build the current deck list (base - cuts + adds)
+      const upgrade = currentPrecon.upgrades[currentUpgrade];
+      const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
+      const addNames = new Set(upgrade.adds.map(c => c.name));
+
+      let deckCards = currentPrecon.baseDeck
+        .filter(card => !cutNames.has(card.name))
+        .map(card => ({ name: card.name }));
+
+      upgrade.adds.forEach(card => {
+        deckCards.push({ name: card.name });
+      });
+
+      // Add commanders
+      deckCards.push({ name: currentPrecon.commander });
+      if (currentPrecon.alternateCommander) {
+        deckCards.push({ name: currentPrecon.alternateCommander });
+      }
+
+      // Calculate stats
+      const stats = calculateDeckStats(deckCards);
+
+      // Render mana curve
+      renderManaCurve(stats.manaCurve);
+
+      // Update summary stats
+      document.getElementById('avg-cmc').textContent = stats.avgCmc;
+      document.getElementById('nonland-count').textContent = stats.nonLandCount;
+
+      // Render category bars
+      renderCategoryBars(stats.categories);
+    }
+
+    function renderManaCurve(manaCurve) {
+      const chart = document.getElementById('mana-curve-chart');
+      if (!chart) return;
+
+      // Find max count for scaling
+      const maxCount = Math.max(...Object.values(manaCurve).map(m => m.count), 1);
+
+      let html = '';
+      for (let i = 0; i <= 10; i++) {
+        const data = manaCurve[i];
+        const heightPercent = (data.count / maxCount) * 100;
+        const label = i === 10 ? '10+' : String(i);
+
+        html += `
+          <div class="mana-bar-container">
+            <div class="mana-bar-wrapper">
+              <div class="mana-bar" style="height: ${Math.max(heightPercent, 3)}%"
+                   data-cmc="${i}" data-cards="${data.cards.join(', ')}"
+                   title="${data.count} card${data.count !== 1 ? 's' : ''} at ${label} mana">
+                <span class="mana-bar-count">${data.count}</span>
+              </div>
+            </div>
+            <div class="mana-bar-label">${label}</div>
+          </div>
+        `;
+      }
+
+      chart.innerHTML = html;
+
+      // Add click handlers to show cards in preview
+      chart.querySelectorAll('.mana-bar').forEach(bar => {
+        bar.addEventListener('click', () => {
+          const cards = bar.dataset.cards.split(', ').filter(c => c);
+          if (cards.length > 0) {
+            showCardPreview(cards[0]);
+          }
+        });
+      });
+    }
+
+    function renderCategoryBars(categories) {
+      const container = document.getElementById('category-bars');
+      if (!container) return;
+
+      // Find max count for scaling
+      const maxCount = Math.max(...Object.values(categories).map(c => c.count), 1);
+
+      let html = '';
+      CATEGORY_CONFIG.forEach(config => {
+        const data = categories[config.id];
+        const widthPercent = (data.count / maxCount) * 100;
+
+        html += `
+          <div class="category-bar-item" data-category="${config.id}"
+               data-cards="${data.cards.join('|')}">
+            <span class="category-bar-label">${config.name}</span>
+            <div class="category-bar-track">
+              <div class="category-bar-fill ${config.class}" style="width: ${widthPercent}%"></div>
+            </div>
+            <span class="category-bar-count">${data.count}</span>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Add hover/click handlers
+      const tooltip = document.getElementById('category-tooltip');
+      container.querySelectorAll('.category-bar-item').forEach(item => {
+        item.addEventListener('mouseenter', (e) => {
+          const category = item.dataset.category;
+          const cards = item.dataset.cards.split('|').filter(c => c);
+          const config = CATEGORY_CONFIG.find(c => c.id === category);
+
+          if (cards.length > 0 && tooltip) {
+            tooltip.querySelector('.category-tooltip-title').textContent = `${config.name} (${cards.length})`;
+            tooltip.querySelector('.category-tooltip-cards').textContent = cards.slice(0, 10).join(', ') +
+              (cards.length > 10 ? `, +${cards.length - 10} more` : '');
+
+            // Position tooltip
+            const rect = item.getBoundingClientRect();
+            tooltip.style.left = `${rect.right + 10}px`;
+            tooltip.style.top = `${rect.top}px`;
+            tooltip.classList.add('visible');
+          }
+        });
+
+        item.addEventListener('mouseleave', () => {
+          if (tooltip) {
+            tooltip.classList.remove('visible');
+          }
+        });
+
+        item.addEventListener('click', () => {
+          const cards = item.dataset.cards.split('|').filter(c => c);
+          if (cards.length > 0) {
+            showCardPreview(cards[0]);
+          }
+        });
+      });
+    }
+
+    // === CACHES ===
+    const imageCache = new Map();
+    const cardMetadataCache = new Map();
+
+    // === RATE LIMITING ===
+    const requestQueue = [];
+    let isProcessingQueue = false;
+    const RATE_LIMIT_DELAY = 100; // 100ms between requests (10 per second)
+
+    // === DOM ELEMENTS ===
+    const preconSelect = document.getElementById('precon-select');
+    const commanderInfo = document.getElementById('commander-info');
+    const commanderName = document.getElementById('commander-name');
+    const altCommander = document.getElementById('alt-commander');
+    const commanderCards = document.getElementById('commander-cards');
+    const upgradeOverview = document.getElementById('upgrade-overview');
+    const mainContent = document.getElementById('main-content');
+    const summaryCost = document.getElementById('summary-cost');
+    const summaryChangers = document.getElementById('summary-changers');
+    const previewContainer = document.getElementById('preview-container');
+    const previewName = document.getElementById('preview-name');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const guideView = document.getElementById('guide-view');
+    const guideStrategy = document.getElementById('guide-strategy');
+    const tabFull = document.getElementById('tab-full');
+    const tabMidrange = document.getElementById('tab-midrange');
+    const cutGroups = document.getElementById('cut-groups');
+    const addGroups = document.getElementById('add-groups');
+    const synergiesList = document.getElementById('synergies-list');
+    const decklistContent = document.getElementById('decklist-content');
+    const decklistCount = document.getElementById('decklist-count');
+
+    // === SCRYFALL API ===
+    async function fetchCardMetadata(cardName) {
+      // Check cache first
+      if (cardMetadataCache.has(cardName)) {
+        return cardMetadataCache.get(cardName);
+      }
+
+      // Return a promise that will be resolved when the request is processed
+      return new Promise((resolve) => {
+        requestQueue.push({ cardName, resolve });
+        processQueue();
+      });
+    }
+
+    async function processQueue() {
+      if (isProcessingQueue || requestQueue.length === 0) return;
+
+      isProcessingQueue = true;
+
+      while (requestQueue.length > 0) {
+        const { cardName, resolve } = requestQueue.shift();
+
+        // Check cache again (might have been fetched while waiting)
+        if (cardMetadataCache.has(cardName)) {
+          resolve(cardMetadataCache.get(cardName));
+          continue;
+        }
+
+        try {
+          const response = await fetch(
+            `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`
+          );
+
+          if (!response.ok) {
+            const fallback = { type_line: 'Unknown', cmc: '?', colors: [], mana_cost: '', oracle_text: '' };
+            cardMetadataCache.set(cardName, fallback);
+            resolve(fallback);
+          } else {
+            const data = await response.json();
+            const metadata = {
+              type_line: data.type_line || 'Unknown',
+              cmc: data.cmc ?? '?',
+              colors: data.colors || [],
+              mana_cost: data.mana_cost || '',
+              oracle_text: data.oracle_text || ''
+            };
+            cardMetadataCache.set(cardName, metadata);
+            resolve(metadata);
+          }
+        } catch (err) {
+          const fallback = { type_line: 'Unknown', cmc: '?', colors: [], mana_cost: '', oracle_text: '' };
+          cardMetadataCache.set(cardName, fallback);
+          resolve(fallback);
+        }
+
+        // Rate limit delay
+        if (requestQueue.length > 0) {
+          await new Promise(r => setTimeout(r, RATE_LIMIT_DELAY));
+        }
+      }
+
+      isProcessingQueue = false;
+    }
+
+    // Batch fetch using Scryfall's Collection API (up to 75 cards per request)
+    async function fetchCardMetadataBatch(cardNames) {
+      // Filter out already cached cards
+      const uncachedNames = cardNames.filter(name => !cardMetadataCache.has(name));
+
+      if (uncachedNames.length === 0) return;
+
+      // Scryfall collection API accepts up to 75 cards per request
+      const BATCH_SIZE = 75;
+      const batches = [];
+
+      for (let i = 0; i < uncachedNames.length; i += BATCH_SIZE) {
+        batches.push(uncachedNames.slice(i, i + BATCH_SIZE));
+      }
+
+      // Process batches with rate limiting (100ms between batches)
+      for (const batch of batches) {
+        try {
+          const response = await fetch('https://api.scryfall.com/cards/collection', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              identifiers: batch.map(name => ({ name }))
+            })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            data.data.forEach(card => {
+              const metadata = {
+                type_line: card.type_line || 'Unknown',
+                cmc: card.cmc ?? '?',
+                colors: card.colors || [],
+                mana_cost: card.mana_cost || '',
+                oracle_text: card.oracle_text || ''
+              };
+              cardMetadataCache.set(card.name, metadata);
+            });
+          }
+        } catch (err) {
+          console.error('Batch fetch failed:', err);
+        }
+
+        // Rate limit between batches
+        if (batches.indexOf(batch) < batches.length - 1) {
+          await new Promise(r => setTimeout(r, RATE_LIMIT_DELAY));
+        }
+      }
+    }
+
+    // === HELPER FUNCTIONS ===
+    function getCardmarketUrl(cardName) {
+      const formattedName = cardName
+        .replace(/,/g, '')      // Remove commas
+        .replace(/\s+/g, '-');  // Replace spaces with hyphens
+      return `https://www.cardmarket.com/en/Magic/Cards/${formattedName}?sellerType=1,2&sellerReputation=2&language=1&minCondition=2`;
+    }
+
+    function renderManaCost(manaCost) {
+      if (!manaCost) return '';
+      // Parse {2}{G}{G} into Scryfall SVG images
+      return manaCost.replace(/\{([^}]+)\}/g, (match, symbol) => {
+        const svgUrl = `https://svgs.scryfall.io/card-symbols/${encodeURIComponent(symbol)}.svg`;
+        return `<img class="mana-symbol-img" src="${svgUrl}" alt="${symbol}" title="${symbol}">`;
+      });
+    }
+
+    function updateTabLabels(preconId) {
+      // First check for hardcoded labels, then fall back to JSON data, then defaults
+      const hardcodedLabels = customTabLabels[preconId];
+      const fullUpgrade = currentPrecon?.upgrades?.full;
+      const midrangeUpgrade = currentPrecon?.upgrades?.midrange;
+
+      // Get names (priority: hardcoded > JSON > default)
+      const fullName = hardcodedLabels?.full || fullUpgrade?.name || 'Full Upgrade';
+      const midrangeName = hardcodedLabels?.midrange || midrangeUpgrade?.name || 'Mid-Range';
+
+      // Get subtitles from JSON (only if available)
+      const fullSubtitle = fullUpgrade?.subtitle || '';
+      const midrangeSubtitle = midrangeUpgrade?.subtitle || '';
+
+      // Update tab contents with two-line layout
+      tabFull.querySelector('.tab-name').textContent = fullName;
+      tabFull.querySelector('.tab-subtitle').textContent = fullSubtitle;
+      tabMidrange.querySelector('.tab-name').textContent = midrangeName;
+      tabMidrange.querySelector('.tab-subtitle').textContent = midrangeSubtitle;
+    }
+
+    // === PRECON LOADING ===
+    async function loadPreconIndex() {
+      try {
+        const response = await fetch('data/index.json');
+        if (!response.ok) throw new Error('Failed to load precon index');
+        preconIndex = await response.json();
+
+        loading.style.display = 'none';
+        populatePreconSelector();
+      } catch (err) {
+        loading.style.display = 'none';
+        error.style.display = 'block';
+        error.textContent = `Error loading precon index: ${err.message}. Make sure you're running a local server (e.g., python -m http.server 8000)`;
+      }
+    }
+
+    async function loadPreconData(preconId) {
+      if (loadedPrecons[preconId]) {
+        return loadedPrecons[preconId];  // Return cached
+      }
+
+      const response = await fetch(`data/precons/${preconId}/deck.json`);
+      if (!response.ok) throw new Error(`Failed to load ${preconId}`);
+      const data = await response.json();
+      loadedPrecons[preconId] = data;  // Cache it
+      return data;
+    }
+
+    function populatePreconSelector() {
+      preconSelect.innerHTML = '<option value="">-- Select a Precon --</option>';
+
+      preconIndex.precons.forEach(precon => {
+        const option = document.createElement('option');
+        option.value = precon.id;
+        option.textContent = precon.name;
+        preconSelect.appendChild(option);
+      });
+
+      // Auto-select first precon if only one exists
+      if (preconIndex.precons.length === 1) {
+        preconSelect.value = preconIndex.precons[0].id;
+        selectPrecon(preconIndex.precons[0].id);
+      }
+    }
+
+    async function selectPrecon(preconId) {
+      if (!preconId) {
+        // Handle empty selection
+        commanderInfo.style.display = 'none';
+        upgradeOverview.style.display = 'none';
+        mainContent.style.display = 'none';
+        return;
+      }
+
+      try {
+        // Show loading state while fetching
+        loading.style.display = 'block';
+        loading.textContent = 'Loading precon data...';
+
+        currentPreconId = preconId;
+        currentPrecon = await loadPreconData(preconId);
+
+        // Update tab labels for this precon
+        updateTabLabels(preconId);
+
+        loading.style.display = 'none';
+
+        // Update commander info
+        commanderName.textContent = `Commander: ${currentPrecon.commander}`;
+        altCommander.textContent = currentPrecon.alternateCommander
+          ? `Alternate: ${currentPrecon.alternateCommander}`
+          : '';
+        renderBracketVisualization();
+        commanderInfo.style.display = 'block';
+
+        // Render commander card images
+        let commanderCardsHtml = '';
+        const commanderImageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(currentPrecon.commander)}`;
+        commanderCardsHtml += `<img class="commander-card-preview" src="${commanderImageUrl}" alt="${currentPrecon.commander}" loading="lazy" />`;
+
+        if (currentPrecon.alternateCommander) {
+          const altCommanderImageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(currentPrecon.alternateCommander)}`;
+          commanderCardsHtml += `<img class="commander-card-preview" src="${altCommanderImageUrl}" alt="${currentPrecon.alternateCommander}" loading="lazy" />`;
+        }
+        commanderCards.innerHTML = commanderCardsHtml;
+
+        // Initialize tilt effect after DOM is ready
+        setTimeout(() => initializeCommanderTilt(), 0);
+
+        // Show content
+        upgradeOverview.style.display = 'block';
+        mainContent.style.display = 'grid';
+
+        // Render content based on current view
+        renderContent();
+
+        // Update URL hash
+        updateUrlHash();
+        savePreferences();
+      } catch (err) {
+        loading.style.display = 'none';
+        error.style.display = 'block';
+        error.textContent = `Error loading precon: ${err.message}`;
+      }
+    }
+
+    function renderDeckList() {
+      if (!currentPrecon || !currentPrecon.baseDeck) return;
+
+      const upgrade = currentPrecon.upgrades[currentUpgrade];
+      const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
+      const addNames = new Set(upgrade.adds.map(c => c.name));
+
+      // Build the upgraded deck list
+      // Start with base deck, remove cuts
+      let deckList = currentPrecon.baseDeck
+        .filter(card => !cutNames.has(card.name))
+        .map(card => ({ ...card, isAdded: false }));
+
+      // Add the new cards
+      upgrade.adds.forEach(card => {
+        // Determine type from the card metadata cache or default
+        const metadata = cardMetadataCache.get(card.name);
+        let type = 'Unknown';
+        if (metadata && metadata.type_line) {
+          // Extract primary type
+          const typeLine = metadata.type_line;
+          if (typeLine.includes('Creature')) type = 'Creature';
+          else if (typeLine.includes('Land')) type = 'Land';
+          else if (typeLine.includes('Artifact')) type = 'Artifact';
+          else if (typeLine.includes('Enchantment')) type = 'Enchantment';
+          else if (typeLine.includes('Instant')) type = 'Instant';
+          else if (typeLine.includes('Sorcery')) type = 'Sorcery';
+          else if (typeLine.includes('Planeswalker')) type = 'Planeswalker';
+        }
+        deckList.push({ name: card.name, type: type, isAdded: true });
+      });
+
+      // Group by type
+      const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
+      const grouped = {};
+
+      deckList.forEach(card => {
+        const type = card.type || 'Other';
+        if (!grouped[type]) grouped[type] = [];
+        grouped[type].push(card);
+      });
+
+      // Sort cards within each category alphabetically
+      Object.keys(grouped).forEach(type => {
+        grouped[type].sort((a, b) => a.name.localeCompare(b.name));
+      });
+
+      // Calculate total count (accounting for Wastes quantity)
+      let totalCount = 0;
+      deckList.forEach(card => {
+        totalCount += card.quantity || 1;
+      });
+      decklistCount.textContent = totalCount;
+
+      // Get commander names to filter from Creatures
+      const commanderNames = new Set([currentPrecon.commander]);
+      if (currentPrecon.alternateCommander) {
+        commanderNames.add(currentPrecon.alternateCommander);
+      }
+
+      // Render categorized deck list
+      let html = '';
+
+      // Add Commander section first
+      html += `<div class="decklist-category">`;
+      html += `<div class="decklist-category-title">Commander</div>`;
+      html += `<div class="decklist-card commander" data-card-name="${currentPrecon.commander}"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${currentPrecon.commander}</a></div>`;
+      if (currentPrecon.alternateCommander) {
+        html += `<div class="decklist-card alternate-commander" data-card-name="${currentPrecon.alternateCommander}"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${currentPrecon.alternateCommander}</a> <span class="alternate-label">(Alternate)</span></div>`;
+      }
+      html += `</div>`;
+
+      typeOrder.forEach(type => {
+        if (grouped[type] && grouped[type].length > 0) {
+          // Filter out commanders from Creature category
+          const filteredCards = type === 'Creature'
+            ? grouped[type].filter(card => !commanderNames.has(card.name))
+            : grouped[type];
+
+          if (filteredCards.length === 0) return;
+
+          const categoryCount = filteredCards.reduce((sum, c) => sum + (c.quantity || 1), 0);
+          html += `<div class="decklist-category">`;
+          html += `<div class="decklist-category-title">${type}s (${categoryCount})</div>`;
+          filteredCards.forEach(card => {
+            const addedClass = card.isAdded ? ' added' : '';
+            const quantity = card.quantity ? `${card.quantity}x ` : '';
+            const cardmarketUrl = getCardmarketUrl(card.name);
+            html += `<div class="decklist-card${addedClass}" data-card-name="${card.name}">${quantity}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${card.name}</a></div>`;
+          });
+          html += `</div>`;
+        }
+      });
+
+      // Handle any 'Other' types
+      if (grouped['Other'] && grouped['Other'].length > 0) {
+        html += `<div class="decklist-category">`;
+        html += `<div class="decklist-category-title">Other (${grouped['Other'].length})</div>`;
+        grouped['Other'].forEach(card => {
+          const addedClass = card.isAdded ? ' added' : '';
+          const cardmarketUrl = getCardmarketUrl(card.name);
+          html += `<div class="decklist-card${addedClass}" data-card-name="${card.name}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${card.name}</a></div>`;
+        });
+        html += `</div>`;
+      }
+
+      decklistContent.innerHTML = html;
+
+      // Add hover events to deck list cards
+      document.querySelectorAll('.decklist-card').forEach(card => {
+        card.addEventListener('mouseenter', () => showCardPreview(card.dataset.cardName));
+        card.addEventListener('click', () => showCardPreview(card.dataset.cardName));
+      });
+    }
+
+    // === RENDER CONTENT ===
+    async function renderContent() {
+      await renderGuide();
+
+      // Track precon view
+      trackEvent('precon_view', {
+        precon: currentPreconId,
+        tier: currentUpgrade,
+        device: window.innerWidth < 768 ? 'mobile' : 'desktop'
+      });
+
+      // Render deck statistics
+      renderDeckStats();
+
+      // Update summary stats
+      if (currentPrecon) {
+        const upgrade = currentPrecon.upgrades[currentUpgrade];
+        summaryCost.textContent = upgrade.cost;
+        summaryChangers.textContent = upgrade.gameChangers;
+      }
+
+      // Apply any active filters
+      if (filterState.cmc !== 'all' || filterState.type !== 'all' || filterState.addedOnly || filterState.sort !== 'type') {
+        applyFilters();
+      }
+
+      // Save preferences
+      savePreferences();
+    }
+
+    // === GUIDE VIEW RENDERING ===
+    async function renderGuide() {
+      if (!currentPrecon) return;
+
+      // Show loading state
+      guideView.classList.add('is-loading');
+
+      const upgrade = currentPrecon.upgrades[currentUpgrade];
+      const guideContent = currentPrecon.guideContent;
+
+      // Collect all card names for pre-fetching metadata
+      const allCardNames = new Set();
+
+      // Add cards from cut categories
+      guideContent.cutCategories.forEach(category => {
+        category.cards.forEach(cardName => allCardNames.add(cardName));
+      });
+
+      // Add cards from add categories
+      upgrade.addCategories.forEach(category => {
+        category.cards.forEach(cardName => allCardNames.add(cardName));
+      });
+
+      // Add remaining base deck cards for deck stats
+      const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
+      currentPrecon.baseDeck.forEach(card => {
+        if (!cutNames.has(card.name)) {
+          allCardNames.add(card.name);
+        }
+      });
+
+      // Add commanders
+      allCardNames.add(currentPrecon.commander);
+      if (currentPrecon.alternateCommander) {
+        allCardNames.add(currentPrecon.alternateCommander);
+      }
+
+      // Pre-fetch metadata for all cards using batch API
+      await fetchCardMetadataBatch(Array.from(allCardNames));
+
+      // Render strategy overview
+      document.getElementById('strategy-content').innerHTML = guideContent.strategyOverview;
+
+      // Update section headers with card counts
+      const addsCount = upgrade.adds.length;
+      const cutsCount = currentPrecon.cuts.length;
+      document.getElementById('adds-header').textContent = `What We're Adding (${addsCount} cards)`;
+      document.getElementById('cuts-header').textContent = `Why We're Cutting (${cutsCount} cards)`;
+
+      // Render add categories (now first)
+      renderAddGroups(upgrade.addCategories, upgrade.adds);
+
+      // Render cut categories
+      renderCutGroups(guideContent.cutCategories);
+
+      // Render synergies
+      renderSynergies(upgrade.synergies);
+
+      // Render full deck list
+      renderDeckList();
+
+      // Hide loading state
+      guideView.classList.remove('is-loading');
+    }
+
+    function renderCutGroups(categories) {
+      cutGroups.innerHTML = categories.map(category => {
+        const cardsHtml = category.cards.map(cardName => {
+          const cardData = currentPrecon.cuts.find(c => c.name === cardName);
+          const metadata = cardMetadataCache.get(cardName);
+          const manaCost = metadata?.mana_cost || null;
+          return createGuideCardHtml(cardName, cardData?.reason || '', null, false, false, manaCost);
+        }).join('');
+
+        return `
+          <div class="card-group">
+            <div class="card-group-header">
+              <div class="card-group-name">${category.name}</div>
+              <div class="card-group-description">${category.description}</div>
+            </div>
+            ${cardsHtml}
+          </div>
+        `;
+      }).join('');
+
+      // Add hover events to guide cards
+      addGuideCardHoverEvents();
+    }
+
+    function renderAddGroups(categories, adds) {
+      addGroups.innerHTML = categories.map(category => {
+        const cardsHtml = category.cards.map(cardName => {
+          const cardData = adds.find(c => c.name === cardName);
+          const metadata = cardMetadataCache.get(cardName);
+          const manaCost = metadata?.mana_cost || null;
+          return createGuideCardHtml(
+            cardName,
+            cardData?.reason || '',
+            cardData?.price || null,
+            cardData?.isGameChanger || false,
+            true, // isAdd = true for Cardmarket links
+            manaCost,
+            cardData?.substitutes || null
+          );
+        }).join('');
+
+        const highlightClass = category.isHighlighted ? 'highlighted' : '';
+        const targetBracket = currentPrecon?.targetBracket || '3';
+        const starIcon = category.isHighlighted ? `<span class="game-changer-star" data-tooltip="Game Changers move deck to Bracket ${targetBracket}">★</span>` : '';
+        const gameChangerCount = category.cards?.filter(name => {
+          const cardData = adds.find(a => a.name === name);
+          return cardData?.isGameChanger;
+        }).length || 0;
+        const warningBadge = category.isHighlighted && gameChangerCount > 1
+          ? `<span class="game-changer-warning">${gameChangerCount} power cards</span>`
+          : '';
+
+        return `
+          <div class="card-group ${highlightClass}">
+            <div class="card-group-header">
+              <div class="card-group-name">${starIcon}${category.name}${warningBadge}</div>
+            </div>
+            ${cardsHtml}
+          </div>
+        `;
+      }).join('');
+
+      // Add hover events to guide cards
+      addGuideCardHoverEvents();
+    }
+
+    function createGuideCardHtml(cardName, reason, price, isGameChanger, isAdd = false, manaCost = null, substitutes = null) {
+      const encodedName = encodeURIComponent(cardName);
+      const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedName}&version=small`;
+      const targetBracket = currentPrecon?.targetBracket || '3';
+      const tooltipText = `Game Changer: Moves deck to Bracket ${targetBracket}`;
+      const starHtml = isGameChanger ? `<span class="game-changer-star" data-tooltip="${tooltipText}" title="${tooltipText}">★</span>` : '';
+      const priceHtml = price ? `<div class="guide-card-price">${price}</div>` : '';
+      const manaCostHtml = manaCost ? `<span class="mana-cost">${renderManaCost(manaCost)}</span>` : '';
+
+      // Wrap card name in Cardmarket link for adds
+      const cardNameHtml = isAdd
+        ? `<a href="${getCardmarketUrl(cardName)}" target="_blank" rel="noopener noreferrer">${cardName}</a>`
+        : cardName;
+
+      // Create substitute suggestion HTML
+      let substituteHtml = '';
+      if (substitutes && substitutes.length > 0) {
+        const sub = substitutes[0]; // Show first substitute
+        substituteHtml = `
+          <div class="card-substitute" title="${sub.tradeoff}">
+            <span class="card-substitute-label">Budget:</span>
+            <span class="card-substitute-name" data-card-name="${sub.name}">${sub.name}</span>
+            <span class="card-substitute-price">${sub.price}</span>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="guide-card" data-card-name="${cardName}" tabindex="0" role="button" aria-label="View ${cardName}">
+          <img class="guide-card-image" src="${imageUrl}" alt="${cardName}" loading="lazy" />
+          <div class="guide-card-info">
+            <div class="guide-card-name">${starHtml}${cardNameHtml}${manaCostHtml}</div>
+            <div class="guide-card-reason">${reason}</div>
+            ${priceHtml}
+            ${substituteHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    // Build synergy graph for interactive explorer
+    function buildSynergyGraph(synergies) {
+      const graph = new Map();
+      const cardToSynergies = new Map(); // Maps card name to synergy info
+
+      synergies.forEach(synergy => {
+        synergy.cards.forEach(card => {
+          if (!graph.has(card)) graph.set(card, new Set());
+          if (!cardToSynergies.has(card)) cardToSynergies.set(card, []);
+
+          cardToSynergies.get(card).push({ title: synergy.title, description: synergy.description });
+
+          synergy.cards.forEach(related => {
+            if (related !== card) graph.get(card).add(related);
+          });
+        });
+      });
+
+      return { graph, cardToSynergies };
+    }
+
+    // Highlight synergy cards in explore mode
+    function highlightSynergyCards(cardName) {
+      // Remove existing highlights
+      document.querySelectorAll('.synergy-highlight, .synergy-selected').forEach(el => {
+        el.classList.remove('synergy-highlight', 'synergy-selected');
+      });
+
+      if (!cardName || !synergyGraph.has(cardName)) return;
+
+      // Mark the selected card
+      document.querySelectorAll(`[data-card-name="${cardName}"]`).forEach(el => {
+        el.classList.add('synergy-selected');
+      });
+
+      // Highlight related cards
+      const related = synergyGraph.get(cardName);
+      if (related) {
+        related.forEach(relatedCard => {
+          document.querySelectorAll(`[data-card-name="${relatedCard}"]`).forEach(el => {
+            el.classList.add('synergy-highlight');
+          });
+        });
+      }
+    }
+
+    // Clear all synergy highlights
+    function clearSynergyHighlights() {
+      document.querySelectorAll('.synergy-highlight, .synergy-selected').forEach(el => {
+        el.classList.remove('synergy-highlight', 'synergy-selected');
+      });
+    }
+
+    let exploreModeActive = false;
+
+    function renderSynergies(synergies) {
+      // Build synergy graph for explore mode
+      const { graph, cardToSynergies } = buildSynergyGraph(synergies);
+      synergyGraph = graph;
+
+      synergiesList.innerHTML = synergies.map(synergy => {
+        const cardTags = synergy.cards.map(cardName =>
+          `<span class="synergy-card-tag" data-card-name="${cardName}" tabindex="0" role="button">${cardName}</span>`
+        ).join('');
+
+        return `
+          <div class="synergy-item">
+            <div class="synergy-title">${synergy.title}</div>
+            <div class="synergy-cards">${cardTags}</div>
+            <div class="synergy-description">${synergy.description}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Add events to synergy card tags
+      document.querySelectorAll('.synergy-card-tag').forEach(tag => {
+        tag.addEventListener('mouseenter', () => showCardPreview(tag.dataset.cardName));
+        tag.addEventListener('click', (e) => {
+          showCardPreview(tag.dataset.cardName);
+          if (exploreModeActive) {
+            e.stopPropagation();
+            highlightSynergyCards(tag.dataset.cardName);
+          }
+        });
+        tag.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            showCardPreview(tag.dataset.cardName);
+            if (exploreModeActive) {
+              highlightSynergyCards(tag.dataset.cardName);
+            }
+          }
+        });
+      });
+    }
+
+    function addGuideCardHoverEvents() {
+      document.querySelectorAll('.guide-card').forEach(card => {
+        card.addEventListener('mouseenter', () => showCardPreview(card.dataset.cardName));
+        card.addEventListener('click', (e) => {
+          // Don't trigger card preview if clicking on substitute
+          if (e.target.closest('.card-substitute-name')) return;
+          showCardPreview(card.dataset.cardName);
+          if (exploreModeActive && synergyGraph.has(card.dataset.cardName)) {
+            highlightSynergyCards(card.dataset.cardName);
+          }
+        });
+        // Keyboard navigation
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            showCardPreview(card.dataset.cardName);
+            if (exploreModeActive && synergyGraph.has(card.dataset.cardName)) {
+              highlightSynergyCards(card.dataset.cardName);
+            }
+          }
+        });
+      });
+
+      // Add hover events for substitute card names
+      document.querySelectorAll('.card-substitute-name').forEach(sub => {
+        sub.addEventListener('mouseenter', () => showCardPreview(sub.dataset.cardName));
+        sub.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showCardPreview(sub.dataset.cardName);
+        });
+      });
+
+      // Initialize tilt effect for guide card thumbnails
+      initializeGuideThumbnailTilt();
+    }
+
+    // === CARD PREVIEW ===
+    function showCardPreview(cardName) {
+      currentHoveredCard = cardName;
+      previewName.textContent = cardName;
+
+      // Check cache first
+      if (imageCache.has(cardName)) {
+        displayImage(imageCache.get(cardName));
+        return;
+      }
+
+      // Show loading state
+      previewContainer.innerHTML = '<span class="preview-placeholder">Loading...</span>';
+
+      // Fetch from Scryfall
+      const encodedName = encodeURIComponent(cardName);
+      const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedName}`;
+
+      const img = new Image();
+      img.onload = () => {
+        imageCache.set(cardName, imageUrl);
+        if (currentHoveredCard === cardName) {
+          displayImage(imageUrl);
+        }
+      };
+      img.onerror = () => {
+        if (currentHoveredCard === cardName) {
+          previewContainer.innerHTML = '<span class="preview-placeholder">Image not found</span>';
+        }
+      };
+      img.src = imageUrl;
+    }
+
+    function displayImage(url) {
+      previewContainer.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = currentHoveredCard;
+      img.onload = () => {
+        img.classList.add('loaded');
+        // Initialize tilt for preview image
+        initializeTiltEffect(img, { maxTilt: 15, scale: 1.02, glare: true });
+      };
+      previewContainer.appendChild(img);
+    }
+
+    // === EVENT LISTENERS ===
+    // Tier tabs (Full/Mid-Range)
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentUpgrade = tab.dataset.upgrade;
+
+        // Track tier change
+        trackEvent('tier_change', { precon: currentPreconId, tier: currentUpgrade });
+
+        // Disable comparison view when switching tabs
+        const compareCheckbox = document.getElementById('compare-tiers');
+        if (compareCheckbox && compareCheckbox.checked) {
+          compareCheckbox.checked = false;
+          toggleComparisonView(false);
+        }
+
+        renderContent();
+        updateUrlHash();
+        savePreferences();
+      });
+    });
+
+    preconSelect.addEventListener('change', (e) => {
+      selectPrecon(e.target.value);
+    });
+
+    // Close preview on tap elsewhere (mobile)
+    document.addEventListener('touchstart', (e) => {
+      if (!e.target.closest('.card-name') && !e.target.closest('.preview-panel')) {
+        previewContainer.innerHTML = '<span class="preview-placeholder">Tap a card name</span>';
+        previewName.textContent = '';
+        currentHoveredCard = null;
+      }
+    });
+
+    // === BRACKET INFO MODAL ===
+    document.querySelector('.bracket-info-icon').addEventListener('click', () => {
+      document.getElementById('bracket-info-modal').classList.add('visible');
+    });
+
+    document.getElementById('bracket-info-modal-close').addEventListener('click', () => {
+      document.getElementById('bracket-info-modal').classList.remove('visible');
+    });
+
+    document.getElementById('bracket-info-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'bracket-info-modal') {
+        e.target.classList.remove('visible');
+      }
+    });
+
+    // === URL DEEP LINKING ===
+    function parseUrlHash() {
+      const hash = window.location.hash.slice(1);
+      if (!hash) return { precon: null, tier: null };
+
+      const params = {};
+      hash.split('&').forEach(part => {
+        const [key, value] = part.split('=');
+        if (key && value) {
+          params[key] = decodeURIComponent(value);
+        }
+      });
+
+      return {
+        precon: params.precon || null,
+        tier: params.tier || null
+      };
+    }
+
+    function updateUrlHash() {
+      if (!currentPreconId) return;
+
+      const hash = `precon=${encodeURIComponent(currentPreconId)}&tier=${encodeURIComponent(currentUpgrade)}`;
+      history.replaceState(null, '', `#${hash}`);
+    }
+
+    // === FILTER STATE ===
+    let filterState = {
+      cmc: 'all',
+      type: 'all',
+      sort: 'type',
+      addedOnly: false
+    };
+
+    // === DECK EXPORT FUNCTIONS ===
+    function generateDecklistExport(format) {
+      if (!currentPrecon) return '';
+
+      const upgrade = currentPrecon.upgrades[currentUpgrade];
+      const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
+
+      // Build the deck list
+      let deckCards = currentPrecon.baseDeck
+        .filter(card => !cutNames.has(card.name))
+        .map(card => ({ name: card.name, quantity: card.quantity || 1 }));
+
+      upgrade.adds.forEach(card => {
+        deckCards.push({ name: card.name, quantity: 1 });
+      });
+
+      // Add commander(s)
+      const commanderSection = [];
+      commanderSection.push(currentPrecon.commander);
+      if (currentPrecon.alternateCommander) {
+        commanderSection.push(currentPrecon.alternateCommander);
+      }
+
+      switch (format) {
+        case 'plain':
+          let plainText = '// Commander\n';
+          commanderSection.forEach(c => plainText += `1x ${c}\n`);
+          plainText += '\n// Deck\n';
+          deckCards.forEach(card => plainText += `${card.quantity}x ${card.name}\n`);
+          return plainText;
+
+        case 'arena':
+          let arenaText = 'Commander\n';
+          commanderSection.forEach(c => arenaText += `1 ${c}\n`);
+          arenaText += '\nDeck\n';
+          deckCards.forEach(card => arenaText += `${card.quantity} ${card.name}\n`);
+          return arenaText;
+
+        case 'moxfield':
+        case 'archidekt':
+          // For these, we'll generate a text list and open in new tab
+          let importText = '';
+          commanderSection.forEach(c => importText += `1 ${c} *CMDR*\n`);
+          deckCards.forEach(card => importText += `${card.quantity} ${card.name}\n`);
+          return importText;
+
+        default:
+          return '';
+      }
+    }
+
+    async function copyToClipboard(text, button) {
+      try {
+        await navigator.clipboard.writeText(text);
+        button.classList.add('success');
+        const originalText = button.innerHTML;
+        button.innerHTML = button.innerHTML.replace(/Copy|Shopping|Export List/, 'Copied!');
+        setTimeout(() => {
+          button.classList.remove('success');
+          button.innerHTML = originalText;
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy to clipboard. Please try again.');
+      }
+    }
+
+    function generateAddsListExport() {
+      if (!currentPrecon) return '';
+
+      const upgrade = currentPrecon.upgrades[currentUpgrade];
+
+      // Cardmarket format: one card per line, quantity prefix
+      return upgrade.adds.map(card => `1 ${card.name}`).join('\n');
+    }
+
+    function openMoxfieldImport(deckList) {
+      // Moxfield doesn't have a direct import URL, but we can copy and redirect
+      copyToClipboard(deckList, document.getElementById('copy-deck-btn'));
+      window.open('https://www.moxfield.com/decks/new', '_blank');
+    }
+
+    function openArchidektImport(deckList) {
+      // Archidekt has an import feature
+      copyToClipboard(deckList, document.getElementById('copy-deck-btn'));
+      window.open('https://archidekt.com/decks', '_blank');
+    }
+
+    // === QUICK SEARCH ===
+    let searchResults = [];
+    let selectedResultIndex = -1;
+
+    function openSearch() {
+      const modal = document.getElementById('search-modal');
+      const input = document.getElementById('search-input');
+      modal.classList.add('open');
+      input.value = '';
+      input.focus();
+      updateSearchResults('');
+    }
+
+    function closeSearch() {
+      document.getElementById('search-modal').classList.remove('open');
+      selectedResultIndex = -1;
+    }
+
+    function updateSearchResults(query) {
+      if (!currentPrecon) return;
+
+      const resultsContainer = document.getElementById('search-results');
+      const upgrade = currentPrecon.upgrades[currentUpgrade];
+      const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
+
+      if (!query.trim()) {
+        resultsContainer.innerHTML = '<div class="search-empty">Type to search cards in the current deck...</div>';
+        searchResults = [];
+        return;
+      }
+
+      const queryLower = query.toLowerCase();
+      searchResults = [];
+
+      // Search in adds
+      upgrade.adds.forEach(card => {
+        if (card.name.toLowerCase().includes(queryLower)) {
+          searchResults.push({ name: card.name, type: 'add' });
+        }
+      });
+
+      // Search in cuts
+      currentPrecon.cuts.forEach(card => {
+        if (card.name.toLowerCase().includes(queryLower)) {
+          searchResults.push({ name: card.name, type: 'cut' });
+        }
+      });
+
+      // Search in remaining deck
+      currentPrecon.baseDeck.forEach(card => {
+        if (!cutNames.has(card.name) && card.name.toLowerCase().includes(queryLower)) {
+          searchResults.push({ name: card.name, type: 'deck' });
+        }
+      });
+
+      if (searchResults.length === 0) {
+        resultsContainer.innerHTML = '<div class="search-empty">No cards found matching your search.</div>';
+        return;
+      }
+
+      // Group results
+      const adds = searchResults.filter(r => r.type === 'add');
+      const cuts = searchResults.filter(r => r.type === 'cut');
+      const deck = searchResults.filter(r => r.type === 'deck');
+
+      let html = '';
+
+      if (adds.length > 0) {
+        html += '<div class="search-result-group">';
+        html += '<div class="search-result-group-title">Added Cards</div>';
+        adds.forEach((result, i) => {
+          const highlighted = highlightMatch(result.name, query);
+          html += `<div class="search-result" data-index="${searchResults.indexOf(result)}" data-card="${result.name}">
+            <span class="search-result-name">${highlighted}</span>
+            <span class="search-result-tag add">Add</span>
+          </div>`;
+        });
+        html += '</div>';
+      }
+
+      if (cuts.length > 0) {
+        html += '<div class="search-result-group">';
+        html += '<div class="search-result-group-title">Cut Cards</div>';
+        cuts.forEach(result => {
+          const highlighted = highlightMatch(result.name, query);
+          html += `<div class="search-result" data-index="${searchResults.indexOf(result)}" data-card="${result.name}">
+            <span class="search-result-name">${highlighted}</span>
+            <span class="search-result-tag cut">Cut</span>
+          </div>`;
+        });
+        html += '</div>';
+      }
+
+      if (deck.length > 0) {
+        html += '<div class="search-result-group">';
+        html += '<div class="search-result-group-title">In Deck</div>';
+        deck.forEach(result => {
+          const highlighted = highlightMatch(result.name, query);
+          html += `<div class="search-result" data-index="${searchResults.indexOf(result)}" data-card="${result.name}">
+            <span class="search-result-name">${highlighted}</span>
+            <span class="search-result-tag">Deck</span>
+          </div>`;
+        });
+        html += '</div>';
+      }
+
+      resultsContainer.innerHTML = html;
+
+      // Add click handlers
+      resultsContainer.querySelectorAll('.search-result').forEach(result => {
+        result.addEventListener('click', () => {
+          selectSearchResult(result.dataset.card);
+        });
+      });
+
+      selectedResultIndex = -1;
+    }
+
+    function highlightMatch(text, query) {
+      const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return text.replace(regex, '<mark>$1</mark>');
+    }
+
+    function selectSearchResult(cardName) {
+      closeSearch();
+      showCardPreview(cardName);
+
+      // Try to scroll to the card in the deck list
+      const cardElement = document.querySelector(`[data-card-name="${cardName}"]`);
+      if (cardElement) {
+        cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        cardElement.style.outline = '2px solid var(--accent-purple)';
+        setTimeout(() => {
+          cardElement.style.outline = '';
+        }, 2000);
+      }
+    }
+
+    function navigateSearchResults(direction) {
+      if (searchResults.length === 0) return;
+
+      selectedResultIndex += direction;
+      if (selectedResultIndex < 0) selectedResultIndex = searchResults.length - 1;
+      if (selectedResultIndex >= searchResults.length) selectedResultIndex = 0;
+
+      document.querySelectorAll('.search-result').forEach((el, i) => {
+        el.classList.toggle('selected', parseInt(el.dataset.index) === selectedResultIndex);
+      });
+    }
+
+    // === TIER COMPARISON VIEW ===
+    function renderComparisonView() {
+      if (!currentPrecon) return;
+
+      const fullUpgrade = currentPrecon.upgrades.full;
+      const midrangeUpgrade = currentPrecon.upgrades.midrange;
+
+      const fullAdds = new Set(fullUpgrade.adds.map(c => c.name));
+      const midrangeAdds = new Set(midrangeUpgrade.adds.map(c => c.name));
+
+      const onlyInFull = [...fullAdds].filter(name => !midrangeAdds.has(name));
+      const onlyInMidrange = [...midrangeAdds].filter(name => !fullAdds.has(name));
+      const shared = [...fullAdds].filter(name => midrangeAdds.has(name));
+
+      // Render full column
+      const fullCardsContainer = document.getElementById('comparison-full-cards');
+      let fullHtml = '';
+
+      onlyInFull.forEach(name => {
+        fullHtml += `<div class="comparison-card unique-full" data-card-name="${name}">${name}</div>`;
+      });
+      shared.forEach(name => {
+        fullHtml += `<div class="comparison-card shared" data-card-name="${name}">${name}</div>`;
+      });
+      fullCardsContainer.innerHTML = fullHtml;
+
+      // Render midrange column
+      const midrangeCardsContainer = document.getElementById('comparison-midrange-cards');
+      let midrangeHtml = '';
+
+      onlyInMidrange.forEach(name => {
+        midrangeHtml += `<div class="comparison-card unique-midrange" data-card-name="${name}">${name}</div>`;
+      });
+      shared.forEach(name => {
+        midrangeHtml += `<div class="comparison-card shared" data-card-name="${name}">${name}</div>`;
+      });
+      midrangeCardsContainer.innerHTML = midrangeHtml;
+
+      // Calculate price difference
+      const fullCost = parseFloat(fullUpgrade.cost?.replace('$', '').replace(',', '') || '0');
+      const midrangeCost = parseFloat(midrangeUpgrade.cost?.replace('$', '').replace(',', '') || '0');
+      const diff = fullCost - midrangeCost;
+
+      document.getElementById('comparison-price-diff').innerHTML =
+        `Full Upgrade: ${fullUpgrade.cost} | Mid-Range: ${midrangeUpgrade.cost} | ` +
+        `<span class="diff">Difference: $${diff.toFixed(2)}</span>`;
+
+      // Add hover events
+      document.querySelectorAll('.comparison-card').forEach(card => {
+        card.addEventListener('mouseenter', () => showCardPreview(card.dataset.cardName));
+        card.addEventListener('click', () => showCardPreview(card.dataset.cardName));
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+      });
+    }
+
+    function toggleComparisonView(show) {
+      const guideView = document.getElementById('guide-view');
+      const comparisonView = document.getElementById('comparison-view-container');
+
+      if (show) {
+        guideView.style.display = 'none';
+        comparisonView.style.display = 'block';
+        renderComparisonView();
+      } else {
+        guideView.style.display = 'flex';
+        comparisonView.style.display = 'none';
+      }
+    }
+
+    // === FILTER AND SORT DECK LIST ===
+    function applyFilters() {
+      if (!currentPrecon || !currentPrecon.baseDeck) return;
+
+      const upgrade = currentPrecon.upgrades[currentUpgrade];
+      const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
+      const addNames = new Set(upgrade.adds.map(c => c.name));
+
+      // Build the upgraded deck list
+      let deckList = currentPrecon.baseDeck
+        .filter(card => !cutNames.has(card.name))
+        .map(card => ({ ...card, isAdded: false }));
+
+      // Add the new cards
+      upgrade.adds.forEach(card => {
+        const metadata = cardMetadataCache.get(card.name);
+        let type = 'Unknown';
+        if (metadata && metadata.type_line) {
+          const typeLine = metadata.type_line;
+          if (typeLine.includes('Creature')) type = 'Creature';
+          else if (typeLine.includes('Land')) type = 'Land';
+          else if (typeLine.includes('Artifact')) type = 'Artifact';
+          else if (typeLine.includes('Enchantment')) type = 'Enchantment';
+          else if (typeLine.includes('Instant')) type = 'Instant';
+          else if (typeLine.includes('Sorcery')) type = 'Sorcery';
+          else if (typeLine.includes('Planeswalker')) type = 'Planeswalker';
+        }
+        deckList.push({ name: card.name, type: type, isAdded: true });
+      });
+
+      // Apply filters
+      let filtered = deckList.filter(card => {
+        // CMC filter
+        if (filterState.cmc !== 'all') {
+          const metadata = cardMetadataCache.get(card.name);
+          const cmc = Math.floor(metadata?.cmc || 0);
+          if (filterState.cmc === '7+') {
+            if (cmc < 7) return false;
+          } else {
+            if (cmc !== parseInt(filterState.cmc)) return false;
+          }
+        }
+
+        // Type filter
+        if (filterState.type !== 'all') {
+          const metadata = cardMetadataCache.get(card.name);
+          const typeLine = metadata?.type_line || '';
+          if (!typeLine.includes(filterState.type)) return false;
+        }
+
+        // Added only filter
+        if (filterState.addedOnly && !card.isAdded) return false;
+
+        return true;
+      });
+
+      // Apply sorting
+      switch (filterState.sort) {
+        case 'name':
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'cmc':
+          filtered.sort((a, b) => {
+            const cmcA = cardMetadataCache.get(a.name)?.cmc || 0;
+            const cmcB = cardMetadataCache.get(b.name)?.cmc || 0;
+            return cmcA - cmcB;
+          });
+          break;
+        case 'type':
+        default:
+          // Keep grouped by type (already done in original render)
+          break;
+      }
+
+      // Render filtered list
+      renderFilteredDeckList(filtered);
+    }
+
+    function renderFilteredDeckList(cards) {
+      const commanderNames = new Set([currentPrecon.commander]);
+      if (currentPrecon.alternateCommander) {
+        commanderNames.add(currentPrecon.alternateCommander);
+      }
+
+      // Group by type if sorting by type
+      if (filterState.sort === 'type') {
+        const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
+        const grouped = {};
+
+        cards.forEach(card => {
+          const metadata = cardMetadataCache.get(card.name);
+          let type = 'Other';
+          if (metadata && metadata.type_line) {
+            const typeLine = metadata.type_line;
+            if (typeLine.includes('Creature')) type = 'Creature';
+            else if (typeLine.includes('Land')) type = 'Land';
+            else if (typeLine.includes('Artifact')) type = 'Artifact';
+            else if (typeLine.includes('Enchantment')) type = 'Enchantment';
+            else if (typeLine.includes('Instant')) type = 'Instant';
+            else if (typeLine.includes('Sorcery')) type = 'Sorcery';
+            else if (typeLine.includes('Planeswalker')) type = 'Planeswalker';
+          }
+          if (!grouped[type]) grouped[type] = [];
+          grouped[type].push(card);
+        });
+
+        // Sort cards within each category
+        Object.keys(grouped).forEach(type => {
+          grouped[type].sort((a, b) => a.name.localeCompare(b.name));
+        });
+
+        let html = '';
+
+        // Add Commander section first (only if not filtering)
+        if (!filterState.addedOnly && filterState.type === 'all' && filterState.cmc === 'all') {
+          html += `<div class="decklist-category">`;
+          html += `<div class="decklist-category-title">Commander</div>`;
+          html += `<div class="decklist-card commander" data-card-name="${currentPrecon.commander}" tabindex="0" role="button"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${currentPrecon.commander}</a></div>`;
+          if (currentPrecon.alternateCommander) {
+            html += `<div class="decklist-card alternate-commander" data-card-name="${currentPrecon.alternateCommander}" tabindex="0" role="button"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${currentPrecon.alternateCommander}</a> <span class="alternate-label">(Alternate)</span></div>`;
+          }
+          html += `</div>`;
+        }
+
+        typeOrder.forEach(type => {
+          if (grouped[type] && grouped[type].length > 0) {
+            const filteredCards = type === 'Creature'
+              ? grouped[type].filter(card => !commanderNames.has(card.name))
+              : grouped[type];
+
+            if (filteredCards.length === 0) return;
+
+            const categoryCount = filteredCards.reduce((sum, c) => sum + (c.quantity || 1), 0);
+            html += `<div class="decklist-category">`;
+            html += `<div class="decklist-category-title">${type}s (${categoryCount})</div>`;
+            filteredCards.forEach(card => {
+              const addedClass = card.isAdded ? ' added' : '';
+              const quantity = card.quantity ? `${card.quantity}x ` : '';
+              const cardmarketUrl = getCardmarketUrl(card.name);
+              html += `<div class="decklist-card${addedClass}" data-card-name="${card.name}" tabindex="0" role="button">${quantity}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${card.name}</a></div>`;
+            });
+            html += `</div>`;
+          }
+        });
+
+        if (grouped['Other'] && grouped['Other'].length > 0) {
+          html += `<div class="decklist-category">`;
+          html += `<div class="decklist-category-title">Other (${grouped['Other'].length})</div>`;
+          grouped['Other'].forEach(card => {
+            const addedClass = card.isAdded ? ' added' : '';
+            const cardmarketUrl = getCardmarketUrl(card.name);
+            html += `<div class="decklist-card${addedClass}" data-card-name="${card.name}" tabindex="0" role="button"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${card.name}</a></div>`;
+          });
+          html += `</div>`;
+        }
+
+        decklistContent.innerHTML = html;
+      } else {
+        // Flat list for name/cmc sort
+        let html = '<div class="decklist-category">';
+        cards.forEach(card => {
+          if (commanderNames.has(card.name)) return;
+          const addedClass = card.isAdded ? ' added' : '';
+          const quantity = card.quantity ? `${card.quantity}x ` : '';
+          const metadata = cardMetadataCache.get(card.name);
+          const cmcDisplay = filterState.sort === 'cmc' && metadata ? ` (${Math.floor(metadata.cmc || 0)})` : '';
+          const cardmarketUrl = getCardmarketUrl(card.name);
+          html += `<div class="decklist-card${addedClass}" data-card-name="${card.name}" tabindex="0" role="button">${quantity}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${card.name}</a>${cmcDisplay}</div>`;
+        });
+        html += '</div>';
+        decklistContent.innerHTML = html;
+      }
+
+      // Update count
+      decklistCount.textContent = cards.length;
+
+      // Re-attach hover events
+      document.querySelectorAll('.decklist-card').forEach(card => {
+        card.addEventListener('mouseenter', () => showCardPreview(card.dataset.cardName));
+        card.addEventListener('click', () => showCardPreview(card.dataset.cardName));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            showCardPreview(card.dataset.cardName);
+          }
+        });
+      });
+    }
+
+    function resetFilters() {
+      filterState = { cmc: 'all', type: 'all', sort: 'type', addedOnly: false };
+
+      document.getElementById('filter-cmc').value = 'all';
+      document.getElementById('filter-sort').value = 'type';
+      document.getElementById('filter-added-only').checked = false;
+
+      document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.type === 'all');
+        chip.setAttribute('aria-pressed', chip.dataset.type === 'all');
+      });
+
+      renderDeckList();
+    }
+
+    // === LOCALSTORAGE PERSISTENCE ===
+    function savePreferences() {
+      const prefs = {
+        lastPrecon: currentPreconId,
+        lastTier: currentUpgrade,
+        filters: filterState
+      };
+      localStorage.setItem('mtg-upgrade-prefs', JSON.stringify(prefs));
+    }
+
+    function loadPreferences() {
+      const stored = localStorage.getItem('mtg-upgrade-prefs');
+      if (!stored) return null;
+
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return null;
+      }
+    }
+
+    // === MOBILE PREVIEW MODAL ===
+    function showMobilePreview(cardName) {
+      if (window.innerWidth > 768) return; // Only on mobile
+
+      const modal = document.getElementById('mobile-preview-modal');
+      const img = document.getElementById('mobile-preview-image');
+      const name = document.getElementById('mobile-preview-name');
+
+      const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cardName)}`;
+      img.src = imageUrl;
+      img.alt = cardName;
+      name.textContent = cardName;
+
+      modal.classList.add('open');
+    }
+
+    function closeMobilePreview() {
+      document.getElementById('mobile-preview-modal').classList.remove('open');
+    }
+
+    // === ACCESSIBILITY: ANNOUNCE CARD PREVIEW ===
+    function announcePreview(cardName) {
+      const announcement = document.getElementById('preview-announcement');
+      if (announcement) {
+        announcement.textContent = `Showing preview for ${cardName}`;
+      }
+    }
+
+    // Enhance showCardPreview to announce for screen readers
+    const originalShowCardPreview = showCardPreview;
+    showCardPreview = function(cardName) {
+      originalShowCardPreview(cardName);
+      announcePreview(cardName);
+
+      // On mobile, show full-screen modal
+      if (window.innerWidth <= 768) {
+        showMobilePreview(cardName);
+      }
+    };
+
+    // === EVENT LISTENERS FOR NEW FEATURES ===
+
+    // Export dropdown
+    document.getElementById('copy-deck-btn')?.addEventListener('click', (e) => {
+      const menu = document.getElementById('copy-deck-menu');
+      const isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      e.currentTarget.setAttribute('aria-expanded', !isOpen);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.export-dropdown')) {
+        document.getElementById('copy-deck-menu')?.classList.remove('open');
+        document.getElementById('copy-deck-btn')?.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Export format buttons
+    document.querySelectorAll('.export-dropdown-item').forEach(item => {
+      item.addEventListener('click', async (e) => {
+        const format = e.currentTarget.dataset.format;
+        const deckList = generateDecklistExport(format);
+
+        // Track export event
+        trackEvent('deck_export', { format, precon: currentPreconId, tier: currentUpgrade });
+
+        if (format === 'moxfield') {
+          openMoxfieldImport(deckList);
+        } else if (format === 'archidekt') {
+          openArchidektImport(deckList);
+        } else {
+          await copyToClipboard(deckList, document.getElementById('copy-deck-btn'));
+        }
+
+        document.getElementById('copy-deck-menu').classList.remove('open');
+      });
+    });
+
+
+    // Export adds list button
+    document.getElementById('export-adds-btn')?.addEventListener('click', async (e) => {
+      trackEvent('shopping_list_export', { precon: currentPreconId, tier: currentUpgrade });
+      const list = generateAddsListExport();
+      await copyToClipboard(list, e.currentTarget);
+    });
+
+    // Print button
+    document.getElementById('print-btn')?.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Print Shopping List button
+    document.getElementById('print-shopping-btn')?.addEventListener('click', () => {
+      if (!currentPrecon) return;
+
+      const upgrade = currentPrecon.upgrades[currentUpgrade];
+
+      // Populate shopping list metadata
+      document.getElementById('shopping-list-precon').textContent = currentPrecon.name;
+      document.getElementById('shopping-list-tier').textContent = upgrade.name;
+
+      // Generate shopping list rows
+      const tbody = document.getElementById('shopping-list-body');
+      let totalLow = 0;
+      let totalHigh = 0;
+
+      tbody.innerHTML = upgrade.adds.map(card => {
+        const isGameChanger = card.isGameChanger || false;
+        const rowClass = isGameChanger ? 'game-changer-row' : '';
+
+        // Parse price range (e.g., "$50-80" -> {low: 50, high: 80})
+        let priceDisplay = card.price || '—';
+        if (card.price) {
+          const priceMatch = card.price.match(/\$?(\d+)(?:-(\d+))?/);
+          if (priceMatch) {
+            const low = parseInt(priceMatch[1], 10);
+            const high = priceMatch[2] ? parseInt(priceMatch[2], 10) : low;
+            totalLow += low;
+            totalHigh += high;
+          }
+        }
+
+        return `
+          <tr class="${rowClass}">
+            <td class="checkbox-col"></td>
+            <td class="card-col">${card.name}</td>
+            <td class="qty-col">1</td>
+            <td class="price-col">${priceDisplay}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Set total
+      const totalDisplay = totalLow === totalHigh
+        ? `$${totalLow}`
+        : `$${totalLow}-${totalHigh}`;
+      document.getElementById('shopping-list-total').textContent = totalDisplay;
+
+      // Add print class and print
+      document.body.classList.add('print-shopping-list');
+      window.print();
+
+      // Remove class after print dialog closes
+      setTimeout(() => {
+        document.body.classList.remove('print-shopping-list');
+      }, 100);
+    });
+
+    // Filter controls
+    document.getElementById('filter-cmc')?.addEventListener('change', (e) => {
+      filterState.cmc = e.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('filter-sort')?.addEventListener('change', (e) => {
+      filterState.sort = e.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('filter-added-only')?.addEventListener('change', (e) => {
+      filterState.addedOnly = e.target.checked;
+      applyFilters();
+    });
+
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(c => {
+          c.classList.remove('active');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        chip.classList.add('active');
+        chip.setAttribute('aria-pressed', 'true');
+        filterState.type = chip.dataset.type;
+        applyFilters();
+      });
+    });
+
+    document.getElementById('filter-clear')?.addEventListener('click', resetFilters);
+
+    // Synergy Explorer Mode toggle
+    document.getElementById('explore-mode-btn')?.addEventListener('click', (e) => {
+      exploreModeActive = !exploreModeActive;
+      const btn = e.currentTarget;
+      btn.classList.toggle('active', exploreModeActive);
+      btn.setAttribute('aria-pressed', exploreModeActive);
+
+      // Toggle explore mode class on synergies section
+      const synergiesSection = document.querySelector('.guide-section.synergies');
+      synergiesSection?.classList.toggle('explore-mode-active', exploreModeActive);
+
+      // Also toggle on cards sections for visual dimming
+      document.querySelector('.guide-section.adds')?.classList.toggle('explore-mode-active', exploreModeActive);
+
+      if (!exploreModeActive) {
+        clearSynergyHighlights();
+      }
+
+      trackEvent('explore_mode', { active: exploreModeActive, precon: currentPreconId });
+    });
+
+    // Clear highlights when clicking outside cards in explore mode
+    document.addEventListener('click', (e) => {
+      if (exploreModeActive &&
+          !e.target.closest('.synergy-card-tag') &&
+          !e.target.closest('.guide-card') &&
+          !e.target.closest('.synergy-explorer-btn')) {
+        clearSynergyHighlights();
+      }
+    });
+
+    // Compare tiers toggle
+    document.getElementById('compare-tiers')?.addEventListener('change', (e) => {
+      toggleComparisonView(e.target.checked);
+    });
+
+    // Share button
+    document.getElementById('share-btn')?.addEventListener('click', async (e) => {
+      if (!currentPreconId) return;
+
+      // Build share URL
+      const url = new URL(window.location.href);
+      url.hash = `precon=${encodeURIComponent(currentPreconId)}&tier=${encodeURIComponent(currentUpgrade)}`;
+
+      try {
+        await navigator.clipboard.writeText(url.toString());
+
+        // Show success feedback
+        const btn = e.currentTarget;
+        const tooltip = document.getElementById('share-tooltip');
+        btn.classList.add('success');
+        tooltip.classList.add('visible');
+
+        // Track share event
+        trackEvent('share_build', { precon: currentPreconId, tier: currentUpgrade });
+
+        // Reset after delay
+        setTimeout(() => {
+          btn.classList.remove('success');
+          tooltip.classList.remove('visible');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy share URL:', err);
+        // Fallback: select and prompt copy
+        prompt('Copy this link to share:', url.toString());
+      }
+    });
+
+    // Quick search keyboard shortcut
+    document.addEventListener('keydown', (e) => {
+      // Cmd/Ctrl + K to open search
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openSearch();
+      }
+
+      // ESC to close modals
+      if (e.key === 'Escape') {
+        closeSearch();
+        closeMobilePreview();
+      }
+    });
+
+    // Search modal
+    document.getElementById('search-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'search-modal') {
+        closeSearch();
+      }
+    });
+
+    // Debounced search to reduce API calls and improve performance
+    const debouncedSearch = debounce((value) => updateSearchResults(value), 150);
+    document.getElementById('search-input')?.addEventListener('input', (e) => {
+      debouncedSearch(e.target.value);
+    });
+
+    document.getElementById('search-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        navigateSearchResults(1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        navigateSearchResults(-1);
+      } else if (e.key === 'Enter' && selectedResultIndex >= 0) {
+        e.preventDefault();
+        selectSearchResult(searchResults[selectedResultIndex].name);
+      }
+    });
+
+    // Mobile preview modal close
+    document.querySelector('.mobile-preview-close')?.addEventListener('click', closeMobilePreview);
+    document.getElementById('mobile-preview-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'mobile-preview-modal') {
+        closeMobilePreview();
+      }
+    });
+
+    // Update URL hash on tab change
+    const originalTabClickHandler = document.querySelectorAll('.tab');
+    originalTabClickHandler.forEach(tab => {
+      tab.addEventListener('click', () => {
+        setTimeout(updateUrlHash, 0);
+        savePreferences();
+      });
+    });
+
+    // === INITIALIZE ===
+    async function initializeApp() {
+      // Load preferences first
+      const prefs = loadPreferences();
+      const urlParams = parseUrlHash();
+
+      // Load precon index
+      await loadPreconIndex();
+
+      // Determine which precon/tier to load
+      const preconToLoad = urlParams.precon || prefs?.lastPrecon;
+      const tierToLoad = urlParams.tier || prefs?.lastTier || 'full';
+
+      // If we have a precon to load from URL or preferences
+      if (preconToLoad && preconIndex?.precons.some(p => p.id === preconToLoad)) {
+        preconSelect.value = preconToLoad;
+
+        // Set the tier before loading
+        if (tierToLoad === 'midrange') {
+          currentUpgrade = 'midrange';
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelector('.tab[data-upgrade="midrange"]')?.classList.add('active');
+        }
+
+        await selectPrecon(preconToLoad);
+        updateUrlHash();
+      }
+
+      // Load filter preferences
+      if (prefs?.filters) {
+        filterState = { ...filterState, ...prefs.filters };
+        document.getElementById('filter-cmc').value = filterState.cmc;
+        document.getElementById('filter-sort').value = filterState.sort;
+        document.getElementById('filter-added-only').checked = filterState.addedOnly;
+
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+          chip.classList.toggle('active', chip.dataset.type === filterState.type);
+          chip.setAttribute('aria-pressed', chip.dataset.type === filterState.type);
+        });
+      }
+    }
+
+    initializeApp();
+  </script>
+</body>
+</html>
