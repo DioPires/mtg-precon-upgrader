@@ -2764,16 +2764,9 @@
 
     <div class="upgrade-overview" id="upgrade-overview" style="display: none;">
       <div class="overview-top">
-        <div class="tier-tabs">
-          <button class="tab active" data-upgrade="full" id="tab-full">
-            <span class="tab-name">Full Upgrade</span>
-            <span class="tab-subtitle"></span>
-          </button>
-          <button class="tab" data-upgrade="midrange" id="tab-midrange">
-            <span class="tab-name">Mid-Range</span>
-            <span class="tab-subtitle"></span>
-          </button>
-          <label class="comparison-toggle">
+        <div class="tier-tabs" id="tier-tabs">
+          <!-- Tabs generated dynamically by generateTabs() -->
+          <label class="comparison-toggle" id="comparison-toggle-label">
             <input type="checkbox" id="compare-tiers">
             <span class="toggle-switch"></span>
             <span class="toggle-label">Compare</span>
@@ -3183,14 +3176,10 @@
     let currentUpgrade = 'full';
     let currentHoveredCard = null;
 
-    // === PRECON-SPECIFIC TAB LABELS ===
-    const customTabLabels = {
-      'endless-punishment': {
-        full: 'Pain Amplified',
-        midrange: "Punisher's Paradise"
-      }
-      // Other precons use default labels: "Full Upgrade" / "Mid-Range"
-    };
+    // === HELPER FUNCTIONS ===
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
     // === BRACKET CONFIGURATION ===
     const BRACKET_CONFIG = {
@@ -3753,8 +3742,6 @@
     const error = document.getElementById('error');
     const guideView = document.getElementById('guide-view');
     const guideStrategy = document.getElementById('guide-strategy');
-    const tabFull = document.getElementById('tab-full');
-    const tabMidrange = document.getElementById('tab-midrange');
     const cutGroups = document.getElementById('cut-groups');
     const addGroups = document.getElementById('add-groups');
     const synergiesList = document.getElementById('synergies-list');
@@ -3892,25 +3879,74 @@
       });
     }
 
-    function updateTabLabels(preconId) {
-      // First check for hardcoded labels, then fall back to JSON data, then defaults
-      const hardcodedLabels = customTabLabels[preconId];
-      const fullUpgrade = currentPrecon?.upgrades?.full;
-      const midrangeUpgrade = currentPrecon?.upgrades?.midrange;
+    // === DYNAMIC TAB GENERATION ===
+    function generateTabs(upgrades, selectedTier) {
+      const tierTabs = document.getElementById('tier-tabs');
+      const comparisonToggle = document.getElementById('comparison-toggle-label');
 
-      // Get names (priority: hardcoded > JSON > default)
-      const fullName = hardcodedLabels?.full || fullUpgrade?.name || 'Full Upgrade';
-      const midrangeName = hardcodedLabels?.midrange || midrangeUpgrade?.name || 'Mid-Range';
+      // Clear existing tabs (but keep comparison toggle)
+      tierTabs.querySelectorAll('.tab').forEach(t => t.remove());
 
-      // Get subtitles from JSON (only if available)
-      const fullSubtitle = fullUpgrade?.subtitle || '';
-      const midrangeSubtitle = midrangeUpgrade?.subtitle || '';
+      // Sort tiers: full > midrange > budget > others
+      const tierOrder = ['full', 'midrange', 'budget'];
+      const availableTiers = Object.keys(upgrades)
+        .sort((a, b) => {
+          const aIdx = tierOrder.indexOf(a);
+          const bIdx = tierOrder.indexOf(b);
+          return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
+        });
 
-      // Update tab contents with two-line layout
-      tabFull.querySelector('.tab-name').textContent = fullName;
-      tabFull.querySelector('.tab-subtitle').textContent = fullSubtitle;
-      tabMidrange.querySelector('.tab-name').textContent = midrangeName;
-      tabMidrange.querySelector('.tab-subtitle').textContent = midrangeSubtitle;
+      // Validate selectedTier exists, fallback to first tier
+      if (!availableTiers.includes(selectedTier)) {
+        selectedTier = availableTiers[0];
+      }
+      currentUpgrade = selectedTier;
+
+      // Create tab buttons
+      availableTiers.forEach(tierId => {
+        const tier = upgrades[tierId];
+        const btn = document.createElement('button');
+        btn.className = 'tab' + (tierId === currentUpgrade ? ' active' : '');
+        btn.dataset.upgrade = tierId;
+        btn.innerHTML = `
+          <span class="tab-name">${tier.name || capitalize(tierId)}</span>
+          <span class="tab-subtitle">${tier.subtitle || ''}</span>
+        `;
+        btn.addEventListener('click', handleTabClick);
+        // Insert before comparison toggle
+        tierTabs.insertBefore(btn, comparisonToggle);
+      });
+
+      // Show/hide comparison toggle (only works with full + midrange)
+      const hasFullAndMidrange = upgrades.full && upgrades.midrange;
+      comparisonToggle.style.display = hasFullAndMidrange ? '' : 'none';
+
+      // If comparison was on but no longer valid, turn it off
+      const compareCheckbox = document.getElementById('compare-tiers');
+      if (!hasFullAndMidrange && compareCheckbox?.checked) {
+        compareCheckbox.checked = false;
+        toggleComparisonView(false);
+      }
+    }
+
+    function handleTabClick(e) {
+      const tab = e.currentTarget;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentUpgrade = tab.dataset.upgrade;
+
+      trackEvent('tier_change', { precon: currentPreconId, tier: currentUpgrade });
+
+      // Disable comparison view when switching tabs
+      const compareCheckbox = document.getElementById('compare-tiers');
+      if (compareCheckbox?.checked) {
+        compareCheckbox.checked = false;
+        toggleComparisonView(false);
+      }
+
+      renderContent();
+      updateUrlHash();
+      savePreferences();
     }
 
     // === PRECON LOADING ===
@@ -3975,8 +4011,8 @@
         currentPreconId = preconId;
         currentPrecon = await loadPreconData(preconId);
 
-        // Update tab labels for this precon
-        updateTabLabels(preconId);
+        // Generate tabs dynamically based on available upgrade tiers
+        generateTabs(currentPrecon.upgrades, currentUpgrade);
 
         loading.style.display = 'none';
 
@@ -4514,28 +4550,7 @@
     }
 
     // === EVENT LISTENERS ===
-    // Tier tabs (Full/Mid-Range)
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentUpgrade = tab.dataset.upgrade;
-
-        // Track tier change
-        trackEvent('tier_change', { precon: currentPreconId, tier: currentUpgrade });
-
-        // Disable comparison view when switching tabs
-        const compareCheckbox = document.getElementById('compare-tiers');
-        if (compareCheckbox && compareCheckbox.checked) {
-          compareCheckbox.checked = false;
-          toggleComparisonView(false);
-        }
-
-        renderContent();
-        updateUrlHash();
-        savePreferences();
-      });
-    });
+    // Note: Tab click handlers are attached dynamically in generateTabs()
 
     preconSelect.addEventListener('change', (e) => {
       selectPrecon(e.target.value);
@@ -5455,12 +5470,8 @@
       if (preconToLoad && preconIndex?.precons.some(p => p.id === preconToLoad)) {
         preconSelect.value = preconToLoad;
 
-        // Set the tier before loading
-        if (tierToLoad === 'midrange') {
-          currentUpgrade = 'midrange';
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          document.querySelector('.tab[data-upgrade="midrange"]')?.classList.add('active');
-        }
+        // Set the tier before loading (generateTabs will validate it exists)
+        currentUpgrade = tierToLoad;
 
         await selectPrecon(preconToLoad);
         updateUrlHash();
