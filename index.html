@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MTG Precon Upgrade Guides</title>
   <!-- Privacy-respecting analytics (Plausible) - uncomment and set your domain to enable -->
   <!-- <script defer data-domain="YOUR-DOMAIN.com" src="https://plausible.io/js/script.js"></script> -->
@@ -1182,7 +1182,27 @@
       }
 
       .tier-tabs {
+        flex-wrap: wrap;
         justify-content: center;
+        gap: 8px;
+      }
+
+      .tier-tabs .tab {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 120px;
+        max-width: 160px;
+      }
+
+      .tier-tabs .comparison-toggle {
+        margin-left: 0;
+      }
+
+      .tier-tabs .share-btn {
+        margin-left: 0;
+      }
+
+      .preview-panel {
+        display: none;
       }
 
       .overview-stats {
