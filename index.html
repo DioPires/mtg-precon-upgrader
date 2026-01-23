@@ -1520,13 +1520,18 @@
     @media (prefers-reduced-motion: reduce) {
       .commander-card-preview,
       .preview-image-container img,
-      .guide-card-image {
+      .guide-card-image,
+      .ranking-card-image {
         transition: none !important;
         transform: none !important;
       }
 
       .tilt-glare {
         display: none !important;
+      }
+
+      .ranking-hover-preview {
+        transition: none !important;
       }
     }
 
@@ -2619,22 +2624,6 @@
       outline-offset: 2px;
     }
 
-    /* Skip to content link */
-    .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 0;
-      padding: 8px 16px;
-      background: var(--accent-purple);
-      color: white;
-      z-index: 1003;
-      transition: top 0.2s;
-    }
-
-    .skip-link:focus {
-      top: 0;
-    }
-
     /* Ensure interactive elements are focusable */
     .guide-card, .synergy-card-tag, .decklist-card, .bracket-info-icon,
     .export-btn, .filter-chip, .comparison-card {
@@ -2654,12 +2643,498 @@
       position: absolute;
       left: -9999px;
     }
+
+    /* === VIEW TOGGLE === */
+    .view-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0.25rem;
+      background: var(--bg-elevated);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .view-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .view-toggle-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .view-toggle-btn.active {
+      background: var(--accent-purple);
+      color: white;
+      box-shadow: 0 2px 8px rgba(157, 78, 221, 0.3);
+    }
+
+    .view-toggle-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* === RANKINGS VIEW === */
+    .rankings-view {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .rankings-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .rankings-header h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: var(--accent-gold);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .rankings-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .rankings-loading {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 2rem;
+    }
+
+    .rankings-error {
+      text-align: center;
+      padding: 2rem;
+      color: var(--accent-red);
+    }
+
+    .rankings-error button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: var(--accent-purple);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Rankings Section */
+    .rankings-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .rankings-section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border-subtle);
+    }
+
+    .rankings-section-icon {
+      font-size: 1.5rem;
+    }
+
+    .rankings-section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    /* Ranking Card */
+    .ranking-card {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .ranking-card:hover {
+      border-color: var(--accent-purple-dim);
+      transform: translateY(-2px);
+    }
+
+    .ranking-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-gold) 0%, #d4a017 100%);
+      color: var(--bg-deep);
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .ranking-badge.silver {
+      background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+    }
+
+    .ranking-badge.bronze {
+      background: linear-gradient(135deg, #cd7f32 0%, #a56329 100%);
+    }
+
+    .ranking-card-image {
+      width: 100px;
+      height: 140px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--bg-surface);
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                  box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
+    }
+
+    .ranking-card-image.tilting {
+      transition: none;
+    }
+
+    .ranking-card-placeholder {
+      width: 100px;
+      height: 140px;
+      border-radius: 8px;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      text-align: center;
+      padding: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* Floating hover preview for ranking cards */
+    .ranking-hover-preview {
+      position: fixed;
+      z-index: 1001;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      will-change: transform, opacity;
+    }
+
+    .ranking-hover-preview.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .ranking-hover-preview img {
+      width: 250px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
+                  0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .ranking-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ranking-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .ranking-card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .ranking-card-price {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: var(--accent-green);
+      white-space: nowrap;
+    }
+
+    .ranking-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .ranking-card-set {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .ranking-card-commander {
+      color: var(--accent-purple);
+    }
+
+    .ranking-reasons {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 0.75rem 0;
+    }
+
+    .ranking-reasons li {
+      position: relative;
+      padding-left: 1.25rem;
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .ranking-reasons li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--accent-green);
+      font-weight: bold;
+    }
+
+    .ranking-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .ranking-source a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .ranking-source a:hover {
+      text-decoration: underline;
+    }
+
+    /* Value Card Specific */
+    .ranking-card.value-card .ranking-card-price {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.1rem;
+    }
+
+    .ranking-card.value-card .value-ratio {
+      font-size: 0.75rem;
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .ranking-card.value-card .single-value {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Set Recommendations */
+    .set-recommendations {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .set-card {
+      padding: 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    .set-card-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.35rem;
+    }
+
+    .set-card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--accent-gold);
+      margin-bottom: 0.35rem;
+    }
+
+    .set-card-reason {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Sources List */
+    .sources-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .source-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+
+    .source-icon {
+      width: 40px;
+      height: 40px;
+      background: #ff0000;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .source-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .source-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .source-channel {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .source-video {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source-views {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .source-item a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .source-item:hover {
+      border-color: var(--accent-purple-dim);
+    }
+
+    /* Rankings Last Updated */
+    .rankings-last-updated {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Mobile Rankings */
+    @media (max-width: 600px) {
+      .view-toggle {
+        width: calc(100% - 2rem);
+        margin: 0 1rem 1rem 1rem;
+      }
+
+      .view-toggle-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+
+      .ranking-card {
+        flex-direction: column;
+      }
+
+      .ranking-card-image {
+        width: 80px;
+        height: 112px;
+        align-self: center;
+      }
+
+      .ranking-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+      }
+
+      .ranking-card {
+        position: relative;
+        padding-top: 0.5rem;
+      }
+
+      .ranking-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ranking-card-price {
+        margin-top: 0.25rem;
+      }
+
+      .set-recommendations {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Skip to content link for accessibility -->
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-
   <!-- Aria-live region for screen reader announcements -->
   <div id="preview-announcement" aria-live="polite" aria-atomic="true"></div>
 
@@ -2689,11 +3164,35 @@
     </div>
   </div>
 
+  <!-- Floating Preview for Ranking Cards -->
+  <div class="ranking-hover-preview" id="ranking-hover-preview">
+    <img src="" alt="" id="ranking-hover-image">
+  </div>
+
   <div class="container">
     <header>
       <h1>MTG Precon Upgrade Guides</h1>
       <p>Visual deck upgrade guides with card previews</p>
     </header>
+
+    <div class="view-toggle" id="view-toggle">
+      <button class="view-toggle-btn active" data-view="guide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Upgrade Guides
+      </button>
+      <button class="view-toggle-btn" data-view="rankings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+        </svg>
+        Creator Rankings
+      </button>
+    </div>
 
     <div class="selector-section">
       <div class="selector-row">
@@ -3110,6 +3609,17 @@
       </div>
     </div>
 
+    <!-- Rankings View (Hidden by default) -->
+    <div class="rankings-view" id="rankings-view" style="display: none;">
+      <div class="rankings-header">
+        <h2>Creator Rankings</h2>
+        <p class="rankings-subtitle">Top precon recommendations from MTG content creators</p>
+      </div>
+      <div class="rankings-content" id="rankings-content">
+        <div class="rankings-loading">Loading rankings data...</div>
+      </div>
+    </div>
+
     <div class="loading" id="loading">Loading precon data...</div>
     <div class="error" id="error" style="display: none;"></div>
 
@@ -3175,6 +3685,11 @@
     let synergyGraph = new Map(); // For interactive synergy explorer
     let currentUpgrade = 'full';
     let currentHoveredCard = null;
+
+    // Rankings view state
+    let currentView = 'guide';  // 'guide' or 'rankings'
+    let rankingsData = null;
+    let rankingsLoaded = false;
 
     // === HELPER FUNCTIONS ===
     function capitalize(str) {
@@ -3405,6 +3920,22 @@
         if (!img._tiltInitialized) {
           initializeTiltEffect(img, { maxTilt: 8, scale: 1.08, glare: false });
           img._tiltInitialized = true;
+        }
+      });
+    }
+
+    function initializeRankingCardTilt() {
+      document.querySelectorAll('.ranking-card-image').forEach(img => {
+        if (!img._tiltInitialized) {
+          initializeTiltEffect(img, { maxTilt: 12, scale: 1.15, glare: true });
+          img._tiltInitialized = true;
+
+          // Add hover preview events (desktop only)
+          img.addEventListener('mouseenter', (e) => {
+            showRankingHoverPreview(e, img.src, img.alt);
+          });
+          img.addEventListener('mousemove', updateRankingPreviewPosition);
+          img.addEventListener('mouseleave', hideRankingHoverPreview);
         }
       });
     }
@@ -5453,8 +5984,355 @@
       });
     });
 
+    // === RANKINGS VIEW ===
+    function handleRankingImageError(img) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'ranking-card-placeholder';
+      placeholder.textContent = img.alt || 'Card';
+      img.replaceWith(placeholder);
+    }
+
+    // Floating preview for ranking card images
+    let rankingPreviewRafId = null;
+    const loadedNormalImages = new Map(); // Cache for loaded normal images
+
+    function showRankingHoverPreview(e, imageUrl, cardName) {
+      const preview = document.getElementById('ranking-hover-preview');
+      const img = document.getElementById('ranking-hover-image');
+      if (!preview || !img) return;
+
+      // Get normal URL for this card
+      const normalUrl = imageUrl.replace('version=small', 'version=normal');
+
+      // Check if we already have the normal image cached
+      if (loadedNormalImages.has(normalUrl)) {
+        img.src = normalUrl;
+      } else {
+        // Show small image immediately for instant feedback
+        img.src = imageUrl;
+
+        // Load normal image in background, swap when ready
+        const preloader = new Image();
+        preloader.onload = () => {
+          loadedNormalImages.set(normalUrl, true);
+          // Only swap if preview is still visible and showing this card
+          if (preview.classList.contains('visible') && img.alt === cardName) {
+            img.src = normalUrl;
+          }
+        };
+        preloader.src = normalUrl;
+      }
+
+      img.alt = cardName;
+      updateRankingPreviewPosition(e);
+      preview.classList.add('visible');
+    }
+
+    function hideRankingHoverPreview() {
+      const preview = document.getElementById('ranking-hover-preview');
+      if (preview) {
+        preview.classList.remove('visible');
+      }
+      if (rankingPreviewRafId) {
+        cancelAnimationFrame(rankingPreviewRafId);
+        rankingPreviewRafId = null;
+      }
+    }
+
+    function updateRankingPreviewPosition(e) {
+      if (rankingPreviewRafId) return;
+
+      rankingPreviewRafId = requestAnimationFrame(() => {
+        const preview = document.getElementById('ranking-hover-preview');
+        if (!preview || !preview.classList.contains('visible')) {
+          rankingPreviewRafId = null;
+          return;
+        }
+
+        const previewWidth = 250;
+        const previewHeight = 350;
+        const offset = 20;
+        const padding = 10;
+
+        let x = e.clientX + offset;
+        let y = e.clientY - previewHeight / 2;
+
+        // Flip to left side if would overflow right
+        if (x + previewWidth + padding > window.innerWidth) {
+          x = e.clientX - previewWidth - offset;
+        }
+        // Clamp vertical position
+        if (y < padding) {
+          y = padding;
+        }
+        if (y + previewHeight + padding > window.innerHeight) {
+          y = window.innerHeight - previewHeight - padding;
+        }
+
+        preview.style.left = x + 'px';
+        preview.style.top = y + 'px';
+        rankingPreviewRafId = null;
+      });
+    }
+
+    async function loadRankingsData() {
+      if (rankingsLoaded && rankingsData) {
+        return rankingsData;
+      }
+
+      try {
+        const response = await fetch('data/creator-rankings.json');
+        if (!response.ok) throw new Error('Failed to load rankings data');
+        rankingsData = await response.json();
+        rankingsLoaded = true;
+        return rankingsData;
+      } catch (err) {
+        console.error('Error loading rankings:', err);
+        return null;
+      }
+    }
+
+    function renderRankings(data) {
+      const content = document.getElementById('rankings-content');
+      if (!data) {
+        content.innerHTML = `
+          <div class="rankings-error">
+            <p>Failed to load rankings data.</p>
+            <button onclick="loadAndRenderRankings()">Retry</button>
+          </div>
+        `;
+        return;
+      }
+
+      const topPreconsHtml = data.topPrecons.map((precon, index) => {
+        const badgeClass = index === 0 ? '' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+        const encodedCommander = encodeURIComponent(precon.commander);
+        const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedCommander}&version=small`;
+        const reasonsHtml = precon.reasons.map(r => `<li>${r}</li>`).join('');
+
+        return `
+          <div class="ranking-card">
+            <div class="ranking-badge ${badgeClass}">#${precon.rank}</div>
+            <img class="ranking-card-image" src="${imageUrl}" alt="${precon.commander}" loading="lazy" onerror="handleRankingImageError(this)">
+            <div class="ranking-card-content">
+              <div class="ranking-card-header">
+                <h3 class="ranking-card-name">${precon.name}</h3>
+                <span class="ranking-card-price">${precon.price}</span>
+              </div>
+              <div class="ranking-card-meta">
+                <span class="ranking-card-set">${precon.set}</span>
+                <span class="ranking-card-commander">${precon.commander}</span>
+              </div>
+              <ul class="ranking-reasons">${reasonsHtml}</ul>
+              <div class="ranking-source">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <a href="${precon.sourceUrl}" target="_blank" rel="noopener noreferrer">${precon.source}</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const bestValueHtml = data.bestValue.map(precon => {
+        const encodedCommander = encodeURIComponent(precon.commander);
+        const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedCommander}&version=small`;
+        const highlightsHtml = precon.highlights.map(h => `<li>${h}</li>`).join('');
+
+        return `
+          <div class="ranking-card value-card">
+            <img class="ranking-card-image" src="${imageUrl}" alt="${precon.commander}" loading="lazy" onerror="handleRankingImageError(this)">
+            <div class="ranking-card-content">
+              <div class="ranking-card-header">
+                <h3 class="ranking-card-name">${precon.name}</h3>
+                <div class="ranking-card-price">
+                  <span>${precon.price}</span>
+                  <span class="value-ratio">${precon.valueRatio} value</span>
+                  <span class="single-value">Singles: ${precon.singleValue}</span>
+                </div>
+              </div>
+              <div class="ranking-card-meta">
+                <span class="ranking-card-set">${precon.set}</span>
+                <span class="ranking-card-commander">${precon.commander}</span>
+              </div>
+              <ul class="ranking-reasons">${highlightsHtml}</ul>
+              <div class="ranking-source">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <a href="${precon.sourceUrl}" target="_blank" rel="noopener noreferrer">${precon.source}</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const setRecsHtml = `
+        <div class="set-recommendations">
+          <div class="set-card">
+            <div class="set-card-label">Best Set 2024</div>
+            <div class="set-card-name">${data.setRecommendations.best2024.name}</div>
+            <div class="set-card-reason">${data.setRecommendations.best2024.reason}</div>
+          </div>
+          <div class="set-card">
+            <div class="set-card-label">Best Quality</div>
+            <div class="set-card-name">${data.setRecommendations.bestQuality.name}</div>
+            <div class="set-card-reason">${data.setRecommendations.bestQuality.caveat}</div>
+          </div>
+          <div class="set-card">
+            <div class="set-card-label">2025 Sleeper Hit</div>
+            <div class="set-card-name">${data.setRecommendations.sleeper2025.name}</div>
+            <div class="set-card-reason">${data.setRecommendations.sleeper2025.reason}</div>
+          </div>
+        </div>
+      `;
+
+      const sourcesHtml = data.sources.map(source => `
+        <a href="${source.url}" target="_blank" rel="noopener noreferrer" class="source-item">
+          <div class="source-icon">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </div>
+          <div class="source-info">
+            <div class="source-channel">${source.channel}</div>
+            <div class="source-video">${source.video}</div>
+          </div>
+          <div class="source-views">${source.views} views</div>
+        </a>
+      `).join('');
+
+      content.innerHTML = `
+        <div class="rankings-section">
+          <div class="rankings-section-header">
+            <span class="rankings-section-icon">&#127942;</span>
+            <h3 class="rankings-section-title">Top Precons of All Time</h3>
+          </div>
+          ${topPreconsHtml}
+        </div>
+
+        <div class="rankings-section">
+          <div class="rankings-section-header">
+            <span class="rankings-section-icon">&#128176;</span>
+            <h3 class="rankings-section-title">Best Value Right Now</h3>
+          </div>
+          ${bestValueHtml}
+        </div>
+
+        <div class="rankings-section">
+          <div class="rankings-section-header">
+            <span class="rankings-section-icon">&#128230;</span>
+            <h3 class="rankings-section-title">Set Recommendations</h3>
+          </div>
+          ${setRecsHtml}
+        </div>
+
+        <div class="rankings-section">
+          <div class="rankings-section-header">
+            <span class="rankings-section-icon">&#128250;</span>
+            <h3 class="rankings-section-title">Sources</h3>
+          </div>
+          <div class="sources-list">
+            ${sourcesHtml}
+          </div>
+        </div>
+
+        <div class="rankings-last-updated">
+          Last updated: ${data.lastUpdated}
+        </div>
+      `;
+
+      trackEvent('view_rankings');
+
+      // Initialize tilt effect on card images
+      setTimeout(() => initializeRankingCardTilt(), 100);
+    }
+
+    async function loadAndRenderRankings() {
+      const content = document.getElementById('rankings-content');
+      content.innerHTML = '<div class="rankings-loading">Loading rankings data...</div>';
+
+      const data = await loadRankingsData();
+      renderRankings(data);
+    }
+
+    function switchView(view) {
+      if (currentView === view) return;
+
+      currentView = view;
+      const selectorSection = document.querySelector('.selector-section');
+      const upgradeOverview = document.getElementById('upgrade-overview');
+      const mainContent = document.getElementById('main-content');
+      const rankingsView = document.getElementById('rankings-view');
+
+      // Update toggle buttons
+      document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === view);
+      });
+
+      if (view === 'rankings') {
+        // Hide guide sections
+        selectorSection.style.display = 'none';
+        upgradeOverview.style.display = 'none';
+        mainContent.style.display = 'none';
+
+        // Show rankings view
+        rankingsView.style.display = 'block';
+
+        // Load rankings if not loaded
+        if (!rankingsLoaded) {
+          loadAndRenderRankings();
+        }
+
+        // Update URL hash
+        window.location.hash = 'view=rankings';
+      } else {
+        // Show guide sections
+        selectorSection.style.display = '';
+
+        // Only show overview/content if a precon is selected
+        if (currentPrecon) {
+          upgradeOverview.style.display = '';
+          mainContent.style.display = '';
+        }
+
+        // Hide rankings
+        rankingsView.style.display = 'none';
+
+        // Update URL hash (restore precon hash or clear)
+        if (currentPreconId) {
+          updateUrlHash();
+        } else {
+          window.location.hash = '';
+        }
+      }
+
+      trackEvent('switch_view', { view });
+    }
+
+    function initViewToggle() {
+      document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          switchView(btn.dataset.view);
+        });
+      });
+
+      // Check URL hash for initial view
+      const hash = window.location.hash.slice(1);
+      if (hash === 'view=rankings') {
+        switchView('rankings');
+      }
+    }
+
     // === INITIALIZE ===
     async function initializeApp() {
+      // Initialize view toggle
+      initViewToggle();
+
+      // Check if we should show rankings view from URL
+      const hash = window.location.hash.slice(1);
+      if (hash === 'view=rankings') {
+        // Rankings view will be activated by initViewToggle
+        // Just load precon index for when user switches back
+        await loadPreconIndex();
+        return;
+      }
+
       // Load preferences first
       const prefs = loadPreferences();
       const urlParams = parseUrlHash();
