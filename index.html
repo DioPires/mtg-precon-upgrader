@@ -1449,6 +1449,12 @@
       font-size: 0.85em;
     }
 
+    .decklist-mv {
+      color: var(--text-muted);
+      font-size: 0.85em;
+      margin-left: 6px;
+    }
+
     .decklist-card a,
     .decklist-card a:visited {
       color: inherit;
@@ -5001,6 +5007,12 @@
       }
     }
 
+    function getMvDisplay(cardName) {
+      const metadata = cardMetadataCache.get(cardName);
+      if (!metadata || metadata.cmc == null) return '';
+      return `<span class="decklist-mv">(${Math.floor(metadata.cmc)})</span>`;
+    }
+
     function renderDeckList() {
       if (!currentPrecon) return;
 
@@ -5076,9 +5088,9 @@
       // Add Commander section first
       html += `<div class="decklist-category">`;
       html += `<div class="decklist-category-title">Commander</div>`;
-      html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a></div>`;
+      html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a>${getMvDisplay(currentPrecon.commander)}</div>`;
       if (currentPrecon.alternateCommander) {
-        html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a> <span class="alternate-label">(Alternate)</span></div>`;
+        html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a>${getMvDisplay(currentPrecon.alternateCommander)} <span class="alternate-label">(Alternate)</span></div>`;
       }
       html += `</div>`;
 
@@ -5098,7 +5110,7 @@
             const addedClass = card.isAdded ? ' added' : '';
             const quantity = card.quantity ? `${card.quantity}x ` : '';
             const cardmarketUrl = getCardmarketUrl(card.name);
-            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a></div>`;
+            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
           });
           html += `</div>`;
         }
@@ -5111,7 +5123,7 @@
         grouped['Other'].forEach(card => {
           const addedClass = card.isAdded ? ' added' : '';
           const cardmarketUrl = getCardmarketUrl(card.name);
-          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a></div>`;
+          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
         });
         html += `</div>`;
       }
@@ -5973,9 +5985,9 @@
         if (!filterState.addedOnly && filterState.type === 'all' && filterState.cmc === 'all') {
           html += `<div class="decklist-category">`;
           html += `<div class="decklist-category-title">Commander</div>`;
-          html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}" tabindex="0" role="button"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a></div>`;
+          html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}" tabindex="0" role="button"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a>${getMvDisplay(currentPrecon.commander)}</div>`;
           if (currentPrecon.alternateCommander) {
-            html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}" tabindex="0" role="button"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a> <span class="alternate-label">(Alternate)</span></div>`;
+            html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}" tabindex="0" role="button"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a>${getMvDisplay(currentPrecon.alternateCommander)} <span class="alternate-label">(Alternate)</span></div>`;
           }
           html += `</div>`;
         }
@@ -5995,7 +6007,7 @@
               const addedClass = card.isAdded ? ' added' : '';
               const quantity = card.quantity ? `${card.quantity}x ` : '';
               const cardmarketUrl = getCardmarketUrl(card.name);
-              html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a></div>`;
+              html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
             });
             html += `</div>`;
           }
@@ -6007,7 +6019,7 @@
           grouped['Other'].forEach(card => {
             const addedClass = card.isAdded ? ' added' : '';
             const cardmarketUrl = getCardmarketUrl(card.name);
-            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a></div>`;
+            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
           });
           html += `</div>`;
         }
@@ -6021,9 +6033,9 @@
           const addedClass = card.isAdded ? ' added' : '';
           const quantity = card.quantity ? `${card.quantity}x ` : '';
           const metadata = cardMetadataCache.get(card.name);
-          const cmcDisplay = filterState.sort === 'cmc' && metadata ? ` (${Math.floor(metadata.cmc || 0)})` : '';
+          const isLand = metadata && metadata.type_line && metadata.type_line.includes('Land');
           const cardmarketUrl = getCardmarketUrl(card.name);
-          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${escapeHtml(cmcDisplay)}</div>`;
+          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${!isLand ? getMvDisplay(card.name) : ''}</div>`;
         });
         html += '</div>';
         decklistContent.innerHTML = html;
