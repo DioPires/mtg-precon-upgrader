@@ -4,6 +4,19 @@
 
 A web application that provides upgrade guides for MTG Commander preconstructed decks and recommended commander deck builds. The app displays card recommendations, synergies, cuts (for precons), and shopping lists for upgrading precons to Bracket 3 or building commander decks up to Bracket 4.
 
+## Plan Mode
+
+- Extremely concise plans. Sacrifice grammar for concision.
+- Reasoning and plan must be sound. Iterate as many times as needed until they are.
+- For unresolved questions, ask using AskUserQuestion tool.
+- The workflow for Plan Mode is the following:
+    - I give/ask you one or several issues/questions to work on
+    - You work on your initial answer
+    - For each issue/question I gave you, you generate 3 to 5 verification questions that would expose errors or inconsistencies in your answer
+    - Answer each verification question independently
+    - Provide your final revised answer based on the verification
+    - If it makes sense, parallelize the answering of each verification question
+
 ## Architecture
 
 - **Frontend**: Single-page vanilla JS app (`index.html`)

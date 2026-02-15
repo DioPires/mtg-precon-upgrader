@@ -596,7 +596,7 @@
       left: 50%;
       transform: translateX(-50%);
       padding: 8px 12px;
-      background: linear-gradient(135deg, var(--accent-gold-dim), rgba(251, 191, 36, 0.3));
+      background: linear-gradient(135deg, #3d3012, #4a3815);
       border: 1px solid var(--accent-gold);
       border-radius: 6px;
       color: var(--text-primary);
@@ -842,6 +842,8 @@
       border: 1px solid var(--border-subtle);
     }
 
+    body.commander-deck .guide-section.cuts { display: none; }
+
     .guide-section-title {
       font-family: 'Cinzel', serif;
       font-size: 1.15rem;
@@ -910,6 +912,7 @@
 
     .guide-card {
       display: flex;
+      align-items: flex-start;
       gap: 12px;
       padding: 10px 0;
       border-bottom: 1px solid rgba(42, 42, 74, 0.3);
@@ -970,6 +973,23 @@
       font-size: 0.8rem;
       color: var(--text-secondary);
       line-height: 1.4;
+    }
+
+    .guide-card-reason a.reason-card-link,
+    .guide-card-reason a.reason-card-link:visited {
+      color: var(--text-primary);
+      text-decoration: underline;
+      text-decoration-color: var(--accent-green);
+      text-underline-offset: 2px;
+    }
+
+    .guide-card-reason a.reason-card-link:hover {
+      color: var(--accent-green);
+    }
+
+    .guide-card-reason .mana-symbol-img {
+      width: 14px;
+      height: 14px;
     }
 
     .guide-card-price {
@@ -3924,6 +3944,25 @@
       return deck?.type === 'commander';
     }
 
+    // Build cut quantity map: card name → total quantity to cut
+    function buildCutMap(cuts) {
+      const map = new Map();
+      cuts.forEach(c => map.set(c.name, (map.get(c.name) || 0) + (c.quantity || 1)));
+      return map;
+    }
+
+    // Apply cuts to baseDeck, supporting partial quantity cuts (e.g. Wastes 15 → 10)
+    function applyBaseDeckCuts(baseDeck, cuts) {
+      const cutMap = buildCutMap(cuts);
+      return baseDeck.reduce((kept, card) => {
+        const baseQty = card.quantity || 1;
+        const cutQty = cutMap.get(card.name) || 0;
+        if (cutQty >= baseQty) return kept;
+        kept.push({ ...card, quantity: baseQty - cutQty });
+        return kept;
+      }, []);
+    }
+
     // === BRACKET CONFIGURATION ===
     const BRACKET_CONFIG = {
       1: { name: 'Exhibition', class: 'exhibition' },
@@ -4394,9 +4433,7 @@
       if (isCmd) {
         deckCards = (upgrade.decklist || []).map(card => ({ name: card.name, quantity: card.quantity || 1 }));
       } else {
-        const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
-        deckCards = currentPrecon.baseDeck
-          .filter(card => !cutNames.has(card.name))
+        deckCards = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts)
           .map(card => ({ name: card.name, quantity: card.quantity || 1 }));
         upgrade.adds.forEach(card => {
           deckCards.push({ name: card.name, quantity: 1 });
@@ -4818,6 +4855,31 @@
       });
     }
 
+    function renderReasonText(reason) {
+      if (!reason) return '';
+      // Pass 1: Find "CardName ({mana})" patterns — link card name + render mana as SVGs
+      const cardManaRegex = /([A-Z][a-zA-Z'''\u2019\-]+(?:\s+[a-zA-Z'''\u2019\-]+)*)\s*\((\{[WUBRGCXS0-9\/]+\}(?:\{[WUBRGCXS0-9\/]+\})*)\)/g;
+      let result = '';
+      let lastIndex = 0;
+      let match;
+      while ((match = cardManaRegex.exec(reason)) !== null) {
+        // Escape text before this match
+        result += escapeHtml(reason.slice(lastIndex, match.index));
+        const cardName = match[1];
+        const manaCost = match[2];
+        const url = getCardmarketUrl(cardName);
+        result += `<a class="reason-card-link" href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(cardName)}</a> (${renderManaCost(manaCost)})`;
+        lastIndex = match.index + match[0].length;
+      }
+      result += escapeHtml(reason.slice(lastIndex));
+      // Pass 2: Convert remaining standalone {X} mana symbols to SVGs
+      result = result.replace(/\{([WUBRGCXS0-9\/]+)\}/g, (m, symbol) => {
+        const svgUrl = `https://svgs.scryfall.io/card-symbols/${encodeURIComponent(symbol)}.svg`;
+        return `<img class="mana-symbol-img" src="${svgUrl}" alt="${symbol}" title="${symbol}">`;
+      });
+      return result;
+    }
+
     // === DYNAMIC TAB GENERATION ===
     function generateTabs(upgrades, selectedTier) {
       const tierTabs = document.getElementById('tier-tabs');
@@ -5031,9 +5093,7 @@
       } else {
         // Precon: compute baseDeck - cuts + adds
         if (!currentPrecon.baseDeck) return;
-        const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
-        deckList = currentPrecon.baseDeck
-          .filter(card => !cutNames.has(card.name))
+        deckList = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts)
           .map(card => ({ ...card, isAdded: false }));
 
         // Add the new cards
@@ -5108,7 +5168,7 @@
           html += `<div class="decklist-category-title">${escapeHtml(type)}s (${categoryCount})</div>`;
           filteredCards.forEach(card => {
             const addedClass = card.isAdded ? ' added' : '';
-            const quantity = card.quantity ? `${card.quantity}x ` : '';
+            const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
             const cardmarketUrl = getCardmarketUrl(card.name);
             html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
           });
@@ -5179,23 +5239,18 @@
       const allCardNames = new Set();
 
       if (isCmd) {
-        // Commander deck: collect from deckCategories and decklist
-        if (guideContent.deckCategories) {
-          guideContent.deckCategories.forEach(category => {
-            category.cards.forEach(cardName => allCardNames.add(cardName));
-          });
-        }
+        // Commander deck: collect from decklist
         if (upgrade.decklist) {
           upgrade.decklist.forEach(card => allCardNames.add(card.name));
         }
       } else {
         // Precon: collect from cutCategories and baseDeck
-        guideContent.cutCategories.forEach(category => {
+        (upgrade.cutCategories || guideContent.cutCategories).forEach(category => {
           category.cards.forEach(cardName => allCardNames.add(cardName));
         });
-        const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
+        const cutMap = buildCutMap(upgrade.cuts || currentPrecon.cuts);
         currentPrecon.baseDeck.forEach(card => {
-          if (!cutNames.has(card.name)) {
+          if ((cutMap.get(card.name) || 0) < (card.quantity || 1)) {
             allCardNames.add(card.name);
           }
         });
@@ -5230,26 +5285,18 @@
       }
 
       if (isCmd) {
-        document.getElementById('adds-header').textContent = `Key Cards (${addsCount} highlighted)`;
-        document.getElementById('cuts-header').textContent = 'Deck Themes';
-        addsSection.setAttribute('aria-label', 'Key cards section');
-        cutsSection.setAttribute('aria-label', 'Deck themes section');
+        document.getElementById('adds-header').textContent = 'Deck Themes';
+        addsSection.setAttribute('aria-label', 'Deck themes section');
+        renderCommanderThemeGroups(upgrade.addCategories, upgrade.adds);
+        cutGroups.innerHTML = '';
       } else {
-        const cutsCount = currentPrecon.cuts.length;
+        const cutsCount = (upgrade.cuts || currentPrecon.cuts).length;
         document.getElementById('adds-header').textContent = `What We're Adding (${addsCount} cards)`;
         document.getElementById('cuts-header').textContent = `Why We're Cutting (${cutsCount} cards)`;
         addsSection.setAttribute('aria-label', 'Cards being added');
         cutsSection.setAttribute('aria-label', 'Cards being cut');
-      }
-
-      // Render add categories (both types)
-      renderAddGroups(upgrade.addCategories, upgrade.adds);
-
-      // Render cut categories or deck themes
-      if (isCmd) {
-        renderDeckThemeGroups(guideContent.deckCategories || []);
-      } else {
-        renderCutGroups(guideContent.cutCategories);
+        renderAddGroups(upgrade.addCategories, upgrade.adds);
+        renderCutGroups(upgrade.cutCategories || guideContent.cutCategories, upgrade.cuts || currentPrecon.cuts);
       }
 
       // Render synergies
@@ -5262,10 +5309,10 @@
       guideView.classList.remove('is-loading');
     }
 
-    function renderCutGroups(categories) {
+    function renderCutGroups(categories, cuts) {
       cutGroups.innerHTML = categories.map(category => {
         const cardsHtml = category.cards.map(cardName => {
-          const cardData = currentPrecon.cuts.find(c => c.name === cardName);
+          const cardData = cuts.find(c => c.name === cardName);
           const metadata = cardMetadataCache.get(cardName);
           const manaCost = metadata?.mana_cost || null;
           return createGuideCardHtml(cardName, cardData?.reason || '', null, false, false, manaCost);
@@ -5305,6 +5352,92 @@
         `;
       }).join('');
 
+      addGuideCardHoverEvents();
+    }
+
+    function renderCommanderThemeGroups(categories, adds) {
+      const addsMap = new Map(adds.map(a => [a.name, a]));
+      const categorizedCards = new Set();
+
+      let html = categories.map(category => {
+        category.cards.forEach(c => categorizedCards.add(c));
+
+        const gameChangerCount = category.cards.filter(name => {
+          const cardData = addsMap.get(name);
+          return cardData?.isGameChanger;
+        }).length;
+
+        const targetBracket = currentPrecon?.upgrades?.[currentUpgrade]?.bracket || currentPrecon?.targetBracket || '3';
+        const gcBadge = gameChangerCount > 0
+          ? `<span class="game-changer-warning">${escapeHtml(String(gameChangerCount))} Game Changer${gameChangerCount > 1 ? 's' : ''}</span>`
+          : '';
+
+        const cardsHtml = category.cards.map(cardName => {
+          const cardData = addsMap.get(cardName);
+          const metadata = cardMetadataCache.get(cardName);
+          const manaCost = metadata?.mana_cost || null;
+
+          if (cardData) {
+            return createGuideCardHtml(
+              cardName,
+              cardData.reason || '',
+              cardData.price || null,
+              cardData.isGameChanger || false,
+              true,
+              manaCost,
+              cardData.substitutes || null,
+              cardData.sources || null
+            );
+          } else {
+            return createGuideCardHtml(cardName, '', null, false, false, manaCost);
+          }
+        }).join('');
+
+        const descriptionHtml = category.description
+          ? `<div class="card-group-description">${escapeHtml(category.description)}</div>`
+          : '';
+
+        return `
+          <div class="card-group">
+            <div class="card-group-header">
+              <div class="card-group-name">${escapeHtml(category.name)}${gcBadge}</div>
+              ${descriptionHtml}
+            </div>
+            ${cardsHtml}
+          </div>
+        `;
+      }).join('');
+
+      // Orphan safety net: cards in adds not in any category
+      const orphans = adds.filter(a => !categorizedCards.has(a.name));
+      if (orphans.length > 0) {
+        const orphanCardsHtml = orphans.map(cardData => {
+          const metadata = cardMetadataCache.get(cardData.name);
+          const manaCost = metadata?.mana_cost || null;
+          return createGuideCardHtml(
+            cardData.name,
+            cardData.reason || '',
+            cardData.price || null,
+            cardData.isGameChanger || false,
+            true,
+            manaCost,
+            cardData.substitutes || null,
+            cardData.sources || null
+          );
+        }).join('');
+
+        html += `
+          <div class="card-group">
+            <div class="card-group-header">
+              <div class="card-group-name">Other Highlights</div>
+              <div class="card-group-description">Additional notable cards in this build.</div>
+            </div>
+            ${orphanCardsHtml}
+          </div>
+        `;
+      }
+
+      addGroups.innerHTML = html;
       addGuideCardHoverEvents();
     }
 
@@ -5386,7 +5519,7 @@
           <img class="guide-card-image" src="${imageUrl}" alt="${safeCardName}" loading="lazy" />
           <div class="guide-card-info">
             <div class="guide-card-name">${starHtml}${cardNameHtml}${manaCostHtml}</div>
-            <div class="guide-card-reason">${escapeHtml(reason)}</div>
+            <div class="guide-card-reason">${renderReasonText(reason)}</div>
             ${priceHtml}
             ${substituteHtml}
             ${sourceHtml}
@@ -5607,9 +5740,7 @@
           name: card.name, quantity: card.quantity || 1
         }));
       } else {
-        const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
-        deckCards = currentPrecon.baseDeck
-          .filter(card => !cutNames.has(card.name))
+        deckCards = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts)
           .map(card => ({ name: card.name, quantity: card.quantity || 1 }));
         upgrade.adds.forEach(card => {
           deckCards.push({ name: card.name, quantity: 1 });
@@ -5741,8 +5872,9 @@
         });
       } else {
         // Precon: search in cuts and remaining baseDeck
-        const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
-        currentPrecon.cuts.forEach(card => {
+        const tierCuts = upgrade.cuts || currentPrecon.cuts;
+        const cutNames = new Set(tierCuts.map(c => c.name));
+        tierCuts.forEach(card => {
           if (card.name.toLowerCase().includes(queryLower)) {
             searchResults.push({ name: card.name, type: 'cut' });
           }
@@ -5767,14 +5899,14 @@
       let html = '';
 
       if (adds.length > 0) {
-        const addGroupLabel = isCmd ? 'Key Cards' : 'Added Cards';
+        const addGroupLabel = isCmd ? 'Deck Themes' : 'Added Cards';
         html += `<div class="search-result-group" role="group" aria-label="${addGroupLabel}">`;
         html += `<div class="search-result-group-title">${addGroupLabel}</div>`;
         adds.forEach((result, i) => {
           const highlighted = highlightMatch(result.name, query);
           html += `<div class="search-result" data-index="${searchResults.indexOf(result)}" data-card="${escapeHtml(result.name)}">
             <span class="search-result-name">${highlighted}</span>
-            <span class="search-result-tag add">${isCmd ? 'Key' : 'Add'}</span>
+            <span class="search-result-tag add">${isCmd ? 'Theme' : 'Add'}</span>
           </div>`;
         });
         html += '</div>';
@@ -5869,9 +6001,7 @@
         }));
       } else {
         if (!currentPrecon.baseDeck) return;
-        const cutNames = new Set(currentPrecon.cuts.map(c => c.name));
-        deckList = currentPrecon.baseDeck
-          .filter(card => !cutNames.has(card.name))
+        deckList = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts)
           .map(card => ({ ...card, isAdded: false }));
 
         upgrade.adds.forEach(card => {
@@ -6005,7 +6135,7 @@
             html += `<div class="decklist-category-title">${escapeHtml(type)}s (${categoryCount})</div>`;
             filteredCards.forEach(card => {
               const addedClass = card.isAdded ? ' added' : '';
-              const quantity = card.quantity ? `${card.quantity}x ` : '';
+              const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
               const cardmarketUrl = getCardmarketUrl(card.name);
               html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
             });
@@ -6031,7 +6161,7 @@
         cards.forEach(card => {
           if (commanderNames.has(card.name)) return;
           const addedClass = card.isAdded ? ' added' : '';
-          const quantity = card.quantity ? `${card.quantity}x ` : '';
+          const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
           const metadata = cardMetadataCache.get(card.name);
           const isLand = metadata && metadata.type_line && metadata.type_line.includes('Land');
           const cardmarketUrl = getCardmarketUrl(card.name);
