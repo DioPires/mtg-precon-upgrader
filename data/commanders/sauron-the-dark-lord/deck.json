@@ -21,7 +21,7 @@
       {
         "name": "Card Advantage",
         "description": "Drawing cards and filling the graveyard to fuel the engine",
-        "cards": ["Phyrexian Arena", "Demand Answers", "Frantic Search", "Relic of Sauron", "Thirst for Discovery", "Thrill of Possibility", "Brainstorm"]
+        "cards": ["Phyrexian Arena", "Demand Answers", "Frantic Search", "Relic of Sauron", "Thirst for Discovery", "Opt", "Brainstorm"]
       },
       {
         "name": "Sacrifice & Drain",
@@ -72,7 +72,7 @@
         {
           "name": "Value & Card Draw",
           "description": "Keeping your hand full to outpace the table with card advantage and efficient tutors.",
-          "cards": ["Demonic Tutor", "Rhystic Study", "The One Ring", "Notion Thief", "Phyrexian Arena", "Dark Ritual", "Demand Answers", "Frantic Search", "Relic of Sauron", "Thirst for Discovery", "Thrill of Possibility", "Brainstorm", "Consult the Star Charts", "Treason of Isengard"]
+          "cards": ["Demonic Tutor", "Rhystic Study", "The One Ring", "Notion Thief", "Phyrexian Arena", "Dark Ritual", "Demand Answers", "Frantic Search", "Relic of Sauron", "Thirst for Discovery", "Opt", "Brainstorm", "Consult the Star Charts", "Treason of Isengard"]
         },
         {
           "name": "Army Buffs & Evasion",
@@ -87,7 +87,7 @@
         {
           "name": "Reanimation",
           "description": "Bringing back creatures from the graveyard after Ring temptation fills it.",
-          "cards": ["Living Death", "Reanimate", "Victimize", "The Soul Stone"]
+          "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together"]
         },
         {
           "name": "Spellslinger Payoffs",
@@ -97,7 +97,7 @@
         {
           "name": "Mana Base & Lands",
           "description": "Utility lands, premium fixing, and mana rocks for consistent mana.",
-          "cards": ["Talisman of Creativity", "Barad-dûr", "The Black Gate", "Rivendell", "Bloodstained Mire", "Scalding Tarn", "Gloomlake Verge", "Restless Reef"]
+          "cards": ["Fellwar Stone", "Talisman of Creativity", "Barad-dûr", "The Black Gate", "Rivendell", "Bloodstained Mire", "Scalding Tarn", "Gloomlake Verge", "Restless Reef"]
         }
       ],
       "synergies": [
@@ -129,8 +129,8 @@
         },
         {
           "title": "Graveyard Recursion",
-          "cards": ["Living Death", "Reanimate", "Victimize", "The Soul Stone"],
-          "description": "Ring temptation fills your graveyard with creatures. Living Death and Reanimate bring them back, and The Soul Stone reanimates a creature every upkeep once harnessed — often resetting Sauron's ETB amass trigger if he died.",
+          "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together"],
+          "description": "Ring temptation fills your graveyard with creatures. Reanimate brings back any creature for 1 mana. Stitch Together returns a creature to battlefield with Threshold (trivial with Ring looting). Breach the Multiverse mills everyone 10, then steals a creature from each graveyard — one-sided reanimation that doesn't help opponents.",
           "sources": [
             {
               "type": "edhrec",
@@ -333,11 +333,11 @@
           "sources": [{ "type": "edhrec", "name": "EDHREC Ramp", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "32% inclusion, completes Talisman cycle" }]
         },
         {
-          "name": "The Soul Stone",
-          "price": "$50-60",
+          "name": "Fellwar Stone",
+          "price": "$1-2",
           "isGameChanger": false,
-          "reason": "Indestructible 2-mana rock that taps for {B} — Sauron's primary color. Survives board wipes and artifact removal. Once harnessed (exile the Army token + {6}{B}), it reanimates a creature every upkeep for free. (Budget alternative: Fellwar Stone ({2}) — taps for any color opponents produce, ~$1-2.)",
-          "sources": [{ "type": "scryfall", "name": "Scryfall", "url": "https://scryfall.com/card/spm/66/the-soul-stone", "detail": "Marvel Spider-Man set, 2025" }]
+          "reason": "2-mana rock that taps for any color an opponent's lands could produce — effectively a second Arcane Signet in multiplayer. Reliable colored mana every turn for a fraction of The Soul Stone's price.",
+          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Common 2-mana rock in Grixis builds" }]
         },
         {
           "name": "Demand Answers",
@@ -368,18 +368,18 @@
           "sources": [{ "type": "ai-inferred", "name": "Synergy Analysis", "detail": "Redundant evasion for Army token" }]
         },
         {
-          "name": "Living Death",
-          "price": "$3-5",
+          "name": "Breach the Multiverse",
+          "price": "$1-2",
           "isGameChanger": false,
-          "reason": "Wipes the board then reanimates everything from graveyards. Devastating after filling your graveyard via Ring temptation.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "34% inclusion" }]
+          "reason": "Mills each player 10, then reanimate a creature or planeswalker from each graveyard. One-sided reanimation that doesn't help opponents — unlike Living Death in a deck with only ~12 creatures. The mill fuels future Reanimate and Stitch Together targets.",
+          "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "One-sided mass reanimation for creature-light builds" }]
         },
         {
-          "name": "Victimize",
-          "price": "$0.50-1",
+          "name": "Stitch Together",
+          "price": "$2-3",
           "isGameChanger": false,
-          "reason": "Sacrifice one creature to reanimate two. Excellent with expendable tokens or utility creatures.",
-          "sources": [{ "type": "youtube", "name": "MTGGoldfish Budget Build", "url": "https://www.youtube.com/watch?v=4i1JC7IdwBI" }]
+          "reason": "Returns a creature from graveyard to hand for {B}{B} — or directly to battlefield with Threshold (7+ cards in graveyard). Trivial to achieve with Ring temptation looting every combat. No sacrifice required unlike Victimize.",
+          "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "24% inclusion in Sauron reanimator builds" }]
         },
         {
           "name": "Counterspell",
@@ -466,11 +466,11 @@
           "sources": [{ "type": "ai-inferred", "name": "Card Draw Upgrade", "detail": "Instant-speed draw replacing Night's Whisper" }]
         },
         {
-          "name": "Thrill of Possibility",
-          "price": "$0.25-0.50",
+          "name": "Opt",
+          "price": "$0.25",
           "isGameChanger": false,
-          "reason": "Instant-speed discard 1, draw 2. Triggers Saruman's amass and fills the graveyard at instant speed for just 2 mana.",
-          "sources": [{ "type": "ai-inferred", "name": "Card Draw Upgrade", "detail": "Instant-speed draw that triggers Saruman" }]
+          "reason": "1-mana instant: scry 1, draw 1. Leaves mana open for counterspells while providing card selection. Triggers Saruman's amass for just {U}.",
+          "sources": [{ "type": "ai-inferred", "name": "Card Draw Optimization", "detail": "Replaces Thrill of Possibility — cheaper mana cost, better with counterspell-heavy plan" }]
         },
         {
           "name": "Brainstorm",
@@ -593,18 +593,18 @@
         { "name": "Orcish Medicine", "type": "Instant" },
         { "name": "Soothing of Sméagol", "type": "Instant" },
         { "name": "Thirst for Discovery", "type": "Instant" },
-        { "name": "Thrill of Possibility", "type": "Instant" },
+        { "name": "Opt", "type": "Instant" },
         { "name": "Brainstorm", "type": "Instant" },
         { "name": "Consult the Star Charts", "type": "Instant" },
         { "name": "Demonic Tutor", "type": "Sorcery" },
-        { "name": "Living Death", "type": "Sorcery" },
+        { "name": "Breach the Multiverse", "type": "Sorcery" },
         { "name": "Claim the Precious", "type": "Sorcery" },
         { "name": "Summons of Saruman", "type": "Sorcery" },
         { "name": "Treason of Isengard", "type": "Sorcery" },
         { "name": "Demand Answers", "type": "Instant" },
         { "name": "Withering Torment", "type": "Instant" },
         { "name": "Blasphemous Act", "type": "Sorcery" },
-        { "name": "Victimize", "type": "Sorcery" },
+        { "name": "Stitch Together", "type": "Sorcery" },
         { "name": "Toxic Deluge", "type": "Sorcery" },
         { "name": "Ponder", "type": "Sorcery" },
         { "name": "Sol Ring", "type": "Artifact" },
@@ -617,7 +617,7 @@
         { "name": "Talisman of Creativity", "type": "Artifact" },
         { "name": "Relic of Sauron", "type": "Artifact" },
         { "name": "Commander's Sphere", "type": "Artifact" },
-        { "name": "The Soul Stone", "type": "Artifact" },
+        { "name": "Fellwar Stone", "type": "Artifact" },
         { "name": "Whispersilk Cloak", "type": "Artifact" },
         { "name": "Lightning Greaves", "type": "Artifact" },
         { "name": "Swiftfoot Boots", "type": "Artifact" },
