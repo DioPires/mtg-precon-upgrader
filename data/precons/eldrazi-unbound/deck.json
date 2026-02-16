@@ -125,8 +125,8 @@
       "name": "Titan Convergence",
       "subtitle": "Cascading Inevitability",
       "bracket": "4",
-      "cost": "$500-800",
-      "gameChangers": 5,
+      "cost": "$200-350",
+      "gameChangers": 2,
       "sources": [
         { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top cards and synergies for Kozilek" },
         { "type": "edhrec", "name": "EDHREC Zhulodok Page", "url": "https://edhrec.com/commanders/zhulodok-void-gorger", "detail": "Top cards and synergies for Zhulodok" },
@@ -170,7 +170,7 @@
         { "name": "Burnished Hart", "reason": "6 mana total for 2 basics, too slow" },
         { "name": "Solemn Simulacrum", "reason": "Too slow for Bracket 4" },
         { "name": "Ornithopter of Paradise", "reason": "Outclassed by better mana rocks" },
-        { "name": "Palladium Myr", "reason": "Outclassed by Metalworker, Basalt Monolith" },
+        { "name": "Palladium Myr", "reason": "Outclassed by Basalt Monolith" },
         { "name": "Meteor Golem", "reason": "7 MV single-target removal, inefficient" },
         { "name": "Ancient Stone Idol", "reason": "Big vanilla, no cast trigger, no synergy" },
         { "name": "Phyrexian Triniform", "reason": "No cast trigger, tokens on death don't help cascade" },
@@ -202,7 +202,7 @@
         {
           "name": "Game Changers",
           "isHighlighted": true,
-          "cards": ["Ancient Tomb", "Mana Vault", "The One Ring", "Grim Monolith", "Mishra's Workshop"]
+          "cards": ["Mana Vault", "The One Ring"]
         },
         {
           "name": "Eldrazi Titans",
@@ -218,11 +218,11 @@
         },
         {
           "name": "Infinite Mana Combos",
-          "cards": ["Basalt Monolith", "Metalworker", "Voltaic Key", "Rings of Brighthearth", "Staff of Domination", "Krark-Clan Ironworks"]
+          "cards": ["Basalt Monolith", "Voltaic Key", "Rings of Brighthearth", "Staff of Domination", "Krark-Clan Ironworks"]
         },
         {
           "name": "Engine & Value",
-          "cards": ["Sensei's Divining Top", "Clock of Omens", "Unwinding Clock", "Wandering Archaic", "Spine of Ish Sah", "Glaring Fleshraker", "It That Heralds the End"]
+          "cards": ["Sensei's Divining Top", "Clock of Omens", "Unwinding Clock", "Wandering Archaic", "Spine of Ish Sah", "Glaring Fleshraker", "It That Heralds the End", "Extraplanar Lens", "Semblance Anvil"]
         },
         {
           "name": "Board Wipe & Interaction",
@@ -230,7 +230,7 @@
         },
         {
           "name": "Upgraded Lands",
-          "cards": ["Eye of Ugin", "Sanctum of Ugin", "Planar Nexus", "Scorched Ruins", "Cavern of Souls", "Gemstone Caverns", "Strip Mine"]
+          "cards": ["Eye of Ugin", "Sanctum of Ugin", "Planar Nexus", "Scorched Ruins", "Cavern of Souls", "Gemstone Caverns", "Strip Mine", "Ugin's Labyrinth", "Urza's Saga"]
         }
       ],
       "synergies": [
@@ -262,15 +262,6 @@
           ]
         },
         {
-          "title": "Infinite Mana: Metalworker + Staff",
-          "cards": ["Metalworker", "Staff of Domination"],
-          "description": "Tap Metalworker with 3+ artifacts in hand for 6+ mana, untap with Staff for 3 = infinite mana, infinite draw, infinite life.",
-          "sources": [
-            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Metalworker combo line" },
-            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Staff of Domination infinite engine" }
-          ]
-        },
-        {
           "title": "Flash Cascade Storm",
           "cards": ["Shimmer Myr", "Vedalken Orrery", "Glaring Fleshraker"],
           "description": "Cast 7+ MV Eldrazi at instant speed on opponents' turns. Each cascade spawns tokens + 1 damage per opponent via Fleshraker. With Echoes, 4+ damage per chain.",
@@ -298,13 +289,12 @@
       ],
       "adds": [
         {
-          "name": "Ancient Tomb",
-          "price": "$50-80",
-          "isGameChanger": true,
-          "reason": "Fast colorless mana, perfect for Eldrazi",
-          "substitutes": [{"name": "Ugin's Labyrinth", "price": "$10-15", "tradeoff": "Needs 7+ MV colorless card in hand (easy in this deck), no life loss"}],
+          "name": "Ugin's Labyrinth",
+          "price": "$10-15",
+          "isGameChanger": false,
+          "reason": "Conditional 2 mana land — imprint a 7+ MV colorless card (easy in this deck) to tap for CC with no life loss",
           "sources": [
-            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top mana acceleration" },
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top mana acceleration land" },
             { "type": "edhrec", "name": "EDHREC Zhulodok Page", "url": "https://edhrec.com/commanders/zhulodok-void-gorger" }
           ]
         },
@@ -329,22 +319,23 @@
           ]
         },
         {
-          "name": "Grim Monolith",
-          "price": "$80-120",
-          "isGameChanger": true,
-          "reason": "Fast ramp, combo piece with Rings of Brighthearth",
+          "name": "Extraplanar Lens",
+          "price": "$8-10",
+          "isGameChanger": false,
+          "reason": "Doubles mana from Wastes — imprint a Wastes so each remaining Wastes taps for CC. Massive ramp in a deck with 10+ Wastes",
           "sources": [
-            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top mana acceleration" },
-            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Infinite mana combo piece" }
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Mana doubling for mono-colorless" },
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Budget replacement for Grim Monolith with different acceleration axis" }
           ]
         },
         {
-          "name": "Mishra's Workshop",
-          "price": "$150-200",
-          "isGameChanger": true,
-          "reason": "Land that taps for 3 mana for artifact spells",
+          "name": "Urza's Saga",
+          "price": "$35-40",
+          "isGameChanger": false,
+          "reason": "Enchantment land that tutors 0-1 cost artifacts (Sol Ring, Voltaic Key, Mana Vault) directly onto the battlefield. Also creates growing Construct tokens",
           "sources": [
-            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Best-in-slot colorless fast mana land for artifact-heavy deck" }
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Artifact tutor land" },
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Tutors key fast mana pieces, replaces Mishra's Workshop" }
           ]
         },
         {
@@ -502,12 +493,13 @@
           ]
         },
         {
-          "name": "Metalworker",
-          "price": "$20-30",
+          "name": "Semblance Anvil",
+          "price": "$1-2",
           "isGameChanger": false,
-          "reason": "Reveal artifacts from hand for 2 colorless each. Infinite with Staff of Domination",
+          "reason": "Imprint an artifact to reduce all artifact spells by 2. Turns 4-drops into 2-drops and makes big Eldrazi artifacts much cheaper",
           "sources": [
-            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top mana creature for artifact decks" }
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Cost reduction for artifact-heavy decks" },
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Budget replacement for Metalworker with broad cost reduction" }
           ]
         },
         {
@@ -532,7 +524,7 @@
           "name": "Staff of Domination",
           "price": "$5-8",
           "isGameChanger": false,
-          "reason": "Draw/untap/life engine. Infinite with Metalworker (3+ artifacts in hand)",
+          "reason": "Draw/untap/life engine. Versatile artifact that draws cards, gains life, and untaps creatures",
           "sources": [
             { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Combo finisher with Metalworker" }
           ]
@@ -699,8 +691,9 @@
     "midrange": {
       "name": "Resonance Engine",
       "subtitle": "Trigger Doubling",
+      "bracket": "3",
       "cost": "$80-120",
-      "gameChangers": 2,
+      "gameChangers": 1,
       "sources": [
         { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top cards and synergies" },
         { "type": "edhrec", "name": "EDHREC Zhulodok Page", "url": "https://edhrec.com/commanders/zhulodok-void-gorger", "detail": "Top cards and synergies" },
@@ -712,7 +705,7 @@
         {
           "name": "Game Changers",
           "isHighlighted": true,
-          "cards": ["Ancient Tomb", "The One Ring"]
+          "cards": ["The One Ring"]
         },
         {
           "name": "Eldrazi Titans",
@@ -720,7 +713,7 @@
         },
         {
           "name": "Utility & Tutors",
-          "cards": ["Eye of Ugin", "Sanctum of Ugin", "Conduit of Ruin", "Liberator, Urza's Battlethopter", "Lithoform Engine", "Strionic Resonator"]
+          "cards": ["Eye of Ugin", "Sanctum of Ugin", "Conduit of Ruin", "Liberator, Urza's Battlethopter", "Lithoform Engine", "Strionic Resonator", "Ugin's Labyrinth"]
         }
       ],
       "synergies": [
@@ -754,11 +747,10 @@
       ],
       "adds": [
         {
-          "name": "Ancient Tomb",
-          "price": "$50-80",
-          "isGameChanger": true,
-          "reason": "Fast colorless mana, perfect for Eldrazi",
-          "substitutes": [{"name": "Ugin's Labyrinth", "price": "$10-15", "tradeoff": "Needs 7+ MV colorless card in hand (easy in this deck), no life loss"}],
+          "name": "Ugin's Labyrinth",
+          "price": "$10-15",
+          "isGameChanger": false,
+          "reason": "Conditional 2 mana land — imprint a 7+ MV colorless card (easy in this deck) to tap for CC with no life loss",
           "sources": [
             { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion" },
             { "type": "edhrec", "name": "EDHREC Zhulodok Page", "url": "https://edhrec.com/commanders/zhulodok-void-gorger" }

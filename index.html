@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MTG Precon Upgrade Guides</title>
   <!-- Privacy-respecting analytics (Plausible) - uncomment and set your domain to enable -->
   <!-- <script defer data-domain="YOUR-DOMAIN.com" src="https://plausible.io/js/script.js"></script> -->
@@ -64,13 +64,16 @@
         radial-gradient(ellipse at 80% 100%, rgba(157, 78, 221, 0.05) 0%, transparent 50%);
       color: var(--text-primary);
       min-height: 100vh;
-      line-height: 1.6;
+      line-height: 1.5;
+      font-kerning: normal;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 20px;
+      padding: clamp(12px, 3vw, 24px);
     }
 
     header {
@@ -83,9 +86,10 @@
     header h1 {
       font-family: 'Cinzel', serif;
       color: var(--accent-purple);
-      font-size: 2.5rem;
+      font-size: clamp(1.8rem, 1.5rem + 1.5vw, 2.5rem);
       font-weight: 700;
       letter-spacing: 0.05em;
+      text-wrap: balance;
       margin-bottom: 10px;
       text-shadow: 0 0 40px rgba(157, 78, 221, 0.3);
     }
@@ -740,6 +744,7 @@
       font-size: 1.1rem;
       font-weight: 600;
       font-family: 'Cinzel', serif;
+      font-variant-numeric: tabular-nums;
     }
 
     .overview-stats .stat-value.cost {
@@ -808,11 +813,6 @@
       text-decoration: underline;
     }
 
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 1.8rem;
-      }
-    }
 
     /* === GUIDE VIEW STYLES === */
     .guide-view {
@@ -832,7 +832,8 @@
     .guide-strategy p {
       color: var(--text-primary);
       font-size: 1rem;
-      line-height: 1.7;
+      line-height: 1.6;
+      max-width: 65ch;
     }
 
     .guide-section {
@@ -849,6 +850,7 @@
       font-size: 1.15rem;
       font-weight: 500;
       margin-bottom: 16px;
+      text-wrap: balance;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -908,6 +910,7 @@
       font-size: 0.8rem;
       color: var(--text-secondary);
       margin-top: 4px;
+      max-width: 65ch;
     }
 
     .guide-card {
@@ -996,6 +999,7 @@
       font-size: 0.8rem;
       color: var(--accent-green);
       font-weight: 500;
+      font-variant-numeric: tabular-nums;
     }
 
     /* Synergies */
@@ -1153,12 +1157,12 @@
 
     .card-substitute-price {
       color: var(--accent-green);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
     }
 
     .card-substitute-tradeoff {
       color: var(--text-secondary);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-style: italic;
     }
 
@@ -1166,7 +1170,7 @@
       background: none;
       border: none;
       color: var(--accent-blue);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       cursor: pointer;
       padding: 2px 4px;
       margin-left: auto;
@@ -1371,6 +1375,7 @@
     .synergy-description {
       font-size: 0.85rem;
       color: var(--text-secondary);
+      max-width: 65ch;
     }
 
     /* Mobile responsive for guide view */
@@ -1473,6 +1478,41 @@
       color: var(--text-muted);
       font-size: 0.85em;
       margin-left: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .decklist-card.selected {
+      background: rgba(157, 78, 221, 0.1);
+      border-radius: 3px;
+    }
+
+    .decklist-checkbox {
+      margin-right: 6px;
+      accent-color: var(--accent-purple);
+      cursor: pointer;
+      vertical-align: middle;
+    }
+
+    .selection-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .selection-controls button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 2px 4px;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .selection-controls button:hover {
+      color: var(--accent-purple);
     }
 
     .decklist-card a,
@@ -2443,6 +2483,11 @@
         content: "★ ";
       }
 
+      .decklist-checkbox,
+      .selection-controls {
+        display: none !important;
+      }
+
       /* Hide normal adds section when printing shopping list */
       body.print-shopping-list .guide-section.adds .card-groups,
       body.print-shopping-list .guide-section.adds .adds-section-header,
@@ -2508,7 +2553,7 @@
     /* Print-specific shopping list styles */
     @media print {
       .shopping-list-print {
-        font-family: Arial, sans-serif;
+        font-family: 'Source Sans 3', system-ui, sans-serif;
         color: black;
       }
 
@@ -3588,7 +3633,7 @@
                       <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                       <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
                     </svg>
-                    Copy Deck
+                    <span id="copy-deck-label">Copy Deck</span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
@@ -3658,6 +3703,11 @@
                 </div>
               </div>
               <button class="filter-clear" id="filter-clear" aria-label="Clear all filters">Clear Filters</button>
+            </div>
+
+            <div class="selection-controls" id="selection-controls">
+              <button id="select-all-btn" type="button">Select All</button>
+              <button id="clear-selection-btn" type="button">Clear</button>
             </div>
 
             <div class="loading-placeholder" id="decklist-skeleton">
@@ -3921,6 +3971,62 @@
     let synergyGraph = new Map(); // For interactive synergy explorer
     let currentUpgrade = 'full';
     let currentHoveredCard = null;
+    const selectedCards = new Set();
+
+    function toggleCardSelection(cardName) {
+      if (selectedCards.has(cardName)) {
+        selectedCards.delete(cardName);
+      } else {
+        selectedCards.add(cardName);
+      }
+      // Update checkbox and highlight for this card
+      document.querySelectorAll(`.decklist-card[data-card-name="${CSS.escape(cardName)}"]`).forEach(el => {
+        const cb = el.querySelector('.decklist-checkbox');
+        if (cb) cb.checked = selectedCards.has(cardName);
+        el.classList.toggle('selected', selectedCards.has(cardName));
+      });
+      updateCopyButtonState();
+    }
+
+    function clearSelection() {
+      selectedCards.clear();
+      document.querySelectorAll('.decklist-card.selected').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('.decklist-checkbox').forEach(cb => cb.checked = false);
+      updateCopyButtonState();
+    }
+
+    function selectAllVisible() {
+      document.querySelectorAll('#decklist-content .decklist-card').forEach(el => {
+        const name = el.dataset.cardName;
+        if (name) {
+          selectedCards.add(name);
+          el.classList.add('selected');
+          const cb = el.querySelector('.decklist-checkbox');
+          if (cb) cb.checked = true;
+        }
+      });
+      updateCopyButtonState();
+    }
+
+    function updateCopyButtonState() {
+      const label = document.getElementById('copy-deck-label');
+      if (!label) return;
+      label.textContent = selectedCards.size > 0
+        ? `Copy Selected (${selectedCards.size})`
+        : 'Copy Deck';
+    }
+
+    function restoreCheckboxState() {
+      if (selectedCards.size === 0) return;
+      document.querySelectorAll('#decklist-content .decklist-card').forEach(el => {
+        const name = el.dataset.cardName;
+        if (name && selectedCards.has(name)) {
+          el.classList.add('selected');
+          const cb = el.querySelector('.decklist-checkbox');
+          if (cb) cb.checked = true;
+        }
+      });
+    }
 
     // Rankings view state
     let currentView = 'guide';  // 'guide' or 'rankings'
@@ -4671,6 +4777,11 @@
         }
       });
       decklistContent.addEventListener('click', (e) => {
+        if (e.target.closest('.decklist-checkbox')) {
+          const cb = e.target.closest('.decklist-checkbox');
+          toggleCardSelection(cb.dataset.cardName);
+          return;
+        }
         const card = e.target.closest('.decklist-card');
         if (card && !e.target.closest('a')) {
           showCardPreview(card.dataset.cardName);
@@ -4842,6 +4953,7 @@
     function getCardmarketUrl(cardName) {
       const formattedName = cardName
         .replace(/,/g, '')      // Remove commas
+        .replace(/'/g, '')      // Remove apostrophes
         .replace(/\s+/g, '-');  // Replace spaces with hyphens
       return `https://www.cardmarket.com/en/Magic/Cards/${formattedName}?sellerType=1,2&sellerReputation=2&language=1&minCondition=2`;
     }
@@ -4887,13 +4999,15 @@
       // Clear existing tabs
       tierTabs.querySelectorAll('.tab').forEach(t => t.remove());
 
-      // Sort tiers: full > midrange > others > budget (budget always last)
-      const tierOrder = ['full', 'midrange'];
+      // Sort by bracket descending, budget always last
+      const fallbackBracket = currentPrecon?.targetBracket;
       const availableTiers = Object.keys(upgrades)
         .sort((a, b) => {
-          const aIdx = a === 'budget' ? 1000 : tierOrder.indexOf(a);
-          const bIdx = b === 'budget' ? 1000 : tierOrder.indexOf(b);
-          return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
+          if (a === 'budget') return 1;
+          if (b === 'budget') return -1;
+          const aBracket = parseBracket(upgrades[a].bracket || fallbackBracket).max;
+          const bBracket = parseBracket(upgrades[b].bracket || fallbackBracket).max;
+          return bBracket - aBracket;
         });
 
       // Validate selectedTier exists, fallback to first tier
@@ -4925,6 +5039,7 @@
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       currentUpgrade = tab.dataset.upgrade;
+      clearSelection();
 
       trackEvent('tier_change', { precon: currentPreconId, tier: currentUpgrade });
 
@@ -5018,6 +5133,7 @@
         loading.textContent = 'Loading deck data...';
 
         currentPreconId = preconId;
+        clearSelection();
         currentPrecon = await loadPreconData(preconId);
 
         const isCmd = isCommanderDeck(currentPrecon);
@@ -5148,9 +5264,9 @@
       // Add Commander section first
       html += `<div class="decklist-category">`;
       html += `<div class="decklist-category-title">Commander</div>`;
-      html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a>${getMvDisplay(currentPrecon.commander)}</div>`;
+      html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(currentPrecon.commander)}"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a>${getMvDisplay(currentPrecon.commander)}</div>`;
       if (currentPrecon.alternateCommander) {
-        html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a>${getMvDisplay(currentPrecon.alternateCommander)} <span class="alternate-label">(Alternate)</span></div>`;
+        html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a>${getMvDisplay(currentPrecon.alternateCommander)} <span class="alternate-label">(Alternate)</span></div>`;
       }
       html += `</div>`;
 
@@ -5170,7 +5286,7 @@
             const addedClass = card.isAdded ? ' added' : '';
             const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
             const cardmarketUrl = getCardmarketUrl(card.name);
-            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
+            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
           });
           html += `</div>`;
         }
@@ -5183,12 +5299,13 @@
         grouped['Other'].forEach(card => {
           const addedClass = card.isAdded ? ' added' : '';
           const cardmarketUrl = getCardmarketUrl(card.name);
-          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
+          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
         });
         html += `</div>`;
       }
 
       decklistContent.innerHTML = html;
+      restoreCheckboxState();
     }
 
     // === RENDER CONTENT ===
@@ -5747,25 +5864,40 @@
         });
       }
 
+      // Filter to selected cards only if any are selected
+      if (selectedCards.size > 0) {
+        deckCards = deckCards.filter(card => selectedCards.has(card.name));
+      }
+
       // Add commander(s)
       const commanderSection = [];
-      commanderSection.push(currentPrecon.commander);
-      if (currentPrecon.alternateCommander) {
+      if (selectedCards.size === 0 || selectedCards.has(currentPrecon.commander)) {
+        commanderSection.push(currentPrecon.commander);
+      }
+      if (currentPrecon.alternateCommander && (selectedCards.size === 0 || selectedCards.has(currentPrecon.alternateCommander))) {
         commanderSection.push(currentPrecon.alternateCommander);
       }
 
       switch (format) {
         case 'plain':
-          let plainText = '// Commander\n';
-          commanderSection.forEach(c => plainText += `1x ${c}\n`);
-          plainText += '\n// Deck\n';
+          let plainText = '';
+          if (commanderSection.length > 0) {
+            plainText += '// Commander\n';
+            commanderSection.forEach(c => plainText += `1x ${c}\n`);
+            plainText += '\n';
+          }
+          plainText += '// Deck\n';
           deckCards.forEach(card => plainText += `${card.quantity}x ${card.name}\n`);
           return plainText;
 
         case 'arena':
-          let arenaText = 'Commander\n';
-          commanderSection.forEach(c => arenaText += `1 ${c}\n`);
-          arenaText += '\nDeck\n';
+          let arenaText = '';
+          if (commanderSection.length > 0) {
+            arenaText += 'Commander\n';
+            commanderSection.forEach(c => arenaText += `1 ${c}\n`);
+            arenaText += '\n';
+          }
+          arenaText += 'Deck\n';
           deckCards.forEach(card => arenaText += `${card.quantity} ${card.name}\n`);
           return arenaText;
 
@@ -5787,7 +5919,7 @@
         await navigator.clipboard.writeText(text);
         button.classList.add('success');
         const originalText = button.innerHTML;
-        button.innerHTML = button.innerHTML.replace(/Copy|Shopping|Export List/, 'Copied!');
+        button.innerHTML = button.innerHTML.replace(/Copy Deck|Copy Selected \(\d+\)|Shopping|Export List/, 'Copied!');
         setTimeout(() => {
           button.classList.remove('success');
           button.innerHTML = originalText;
@@ -6115,9 +6247,9 @@
         if (!filterState.addedOnly && filterState.type === 'all' && filterState.cmc === 'all') {
           html += `<div class="decklist-category">`;
           html += `<div class="decklist-category-title">Commander</div>`;
-          html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}" tabindex="0" role="button"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a>${getMvDisplay(currentPrecon.commander)}</div>`;
+          html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(currentPrecon.commander)}"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a>${getMvDisplay(currentPrecon.commander)}</div>`;
           if (currentPrecon.alternateCommander) {
-            html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}" tabindex="0" role="button"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a>${getMvDisplay(currentPrecon.alternateCommander)} <span class="alternate-label">(Alternate)</span></div>`;
+            html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a>${getMvDisplay(currentPrecon.alternateCommander)} <span class="alternate-label">(Alternate)</span></div>`;
           }
           html += `</div>`;
         }
@@ -6137,7 +6269,7 @@
               const addedClass = card.isAdded ? ' added' : '';
               const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
               const cardmarketUrl = getCardmarketUrl(card.name);
-              html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
+              html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
             });
             html += `</div>`;
           }
@@ -6149,7 +6281,7 @@
           grouped['Other'].forEach(card => {
             const addedClass = card.isAdded ? ' added' : '';
             const cardmarketUrl = getCardmarketUrl(card.name);
-            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
+            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
           });
           html += `</div>`;
         }
@@ -6165,7 +6297,7 @@
           const metadata = cardMetadataCache.get(card.name);
           const isLand = metadata && metadata.type_line && metadata.type_line.includes('Land');
           const cardmarketUrl = getCardmarketUrl(card.name);
-          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${!isLand ? getMvDisplay(card.name) : ''}</div>`;
+          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${!isLand ? getMvDisplay(card.name) : ''}</div>`;
         });
         html += '</div>';
         decklistContent.innerHTML = html;
@@ -6178,6 +6310,7 @@
       decklistCount.textContent = totalCount;
 
       // Hover/click/keyboard handled by delegated listeners on decklistContent
+      restoreCheckboxState();
     }
 
     function resetFilters() {
@@ -6313,6 +6446,10 @@
     document.getElementById('print-btn')?.addEventListener('click', () => {
       window.print();
     });
+
+    // Selection controls
+    document.getElementById('select-all-btn')?.addEventListener('click', () => selectAllVisible());
+    document.getElementById('clear-selection-btn')?.addEventListener('click', () => clearSelection());
 
     // Print Shopping List button
     document.getElementById('print-shopping-btn')?.addEventListener('click', () => {
