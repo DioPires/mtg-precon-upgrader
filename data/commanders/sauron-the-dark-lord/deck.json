@@ -67,7 +67,7 @@
         {
           "name": "Amass Engine",
           "description": "Cards that grow or benefit from the Orc Army token. Orcish Bowmasters creates its own Army.",
-          "cards": ["Call of the Ring", "Saruman, the White Hand", "Witch-king of Angmar", "Grishnákh, Brash Instigator", "Corsairs of Umbar", "Fall of Cair Andros", "Lord of the Nazgûl", "Mauhúr, Uruk-hai Captain", "Gothmog, Morgul Lieutenant", "March from the Black Gate", "Warg Rider", "Lazotep Sliver", "Orcish Bowmasters"]
+          "cards": ["Call of the Ring", "Saruman, the White Hand", "Witch-king of Angmar", "Grishnákh, Brash Instigator", "Corsairs of Umbar", "Lord of the Nazgûl", "Mauhúr, Uruk-hai Captain", "Gothmog, Morgul Lieutenant", "March from the Black Gate", "Warg Rider", "Lazotep Sliver", "Orcish Bowmasters"]
         },
         {
           "name": "Value & Card Draw",
@@ -87,7 +87,7 @@
         {
           "name": "Reanimation",
           "description": "Bringing back creatures from the graveyard after Ring temptation fills it.",
-          "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together"]
+          "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together", "Animate Dead"]
         },
         {
           "name": "Spellslinger Payoffs",
@@ -97,7 +97,7 @@
         {
           "name": "Mana Base & Lands",
           "description": "Utility lands, premium fixing, and mana rocks for consistent mana.",
-          "cards": ["Fellwar Stone", "Talisman of Creativity", "Barad-dûr", "The Black Gate", "Rivendell", "Bloodstained Mire", "Scalding Tarn", "Gloomlake Verge", "Restless Reef"]
+          "cards": ["Fellwar Stone", "Talisman of Creativity", "Barad-dûr", "The Black Gate", "Rivendell", "Bloodstained Mire", "Scalding Tarn", "Gloomlake Verge", "Restless Reef", "Agna Qel'a"]
         }
       ],
       "synergies": [
@@ -129,8 +129,8 @@
         },
         {
           "title": "Graveyard Recursion",
-          "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together"],
-          "description": "Ring temptation fills your graveyard with creatures. Reanimate brings back any creature for 1 mana. Stitch Together returns a creature to battlefield with Threshold (trivial with Ring looting). Breach the Multiverse mills everyone 10, then steals a creature from each graveyard — one-sided reanimation that doesn't help opponents.",
+          "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together", "Animate Dead"],
+          "description": "Ring temptation fills your graveyard with creatures. Reanimate brings back any creature for 1 mana. Animate Dead does the same from any graveyard for {1}{B}. Stitch Together returns a creature to battlefield with Threshold (trivial with Ring looting). Breach the Multiverse mills everyone 10, then steals a creature from each graveyard — four reanimation pieces ensure consistent graveyard leverage.",
           "sources": [
             {
               "type": "edhrec",
@@ -249,11 +249,14 @@
           "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "40% inclusion" }]
         },
         {
-          "name": "Fall of Cair Andros",
+          "name": "Animate Dead",
           "price": "$1-3",
           "isGameChanger": false,
-          "reason": "Amass saga that creates a large Army token and gives trample. Each chapter adds value.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+          "reason": "Cheap reanimation from any graveyard for {1}{B}. Always has targets in multiplayer. Ring temptation looting fills graveyards constantly, making this a reliable 2-mana threat. Can reanimate Sauron to dodge commander tax.",
+          "sources": [
+            { "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Reanimation redundancy for 906 Reanimator-themed Sauron decks" },
+            { "type": "ai-inferred", "name": "Reanimation Axis Analysis", "detail": "Replaces Fall of Cair Andros — addresses deck's weakest axis (only 3 reanimation pieces)" }
+          ]
         },
         {
           "name": "Claim the Precious",
@@ -569,6 +572,13 @@
           "isGameChanger": false,
           "reason": "UB creature-land that becomes a 4/5 Serpent with mill 2 on attack. The mill feeds graveyard synergies (Living Death, Reanimate, Ring temptation). Shifts a BR source to UB.",
           "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Smoldering Marsh — tapped-for-tapped swap that adds late-game creature threat and mill synergy" }]
+        },
+        {
+          "name": "Agna Qel'a",
+          "price": "$0.50-1",
+          "isGameChanger": false,
+          "reason": "Utility land that enters untapped with any basic (10 basics = trivial). Repeatable loot activation ({2}{U}, {T}) fills the graveyard for Reanimate, Stitch Together, Animate Dead, and Breach the Multiverse. Replaces Temple of Deceit — upgrades from always-tapped scry-once to conditionally-untapped repeatable loot.",
+          "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Temple of Deceit — repeatable loot > one-time scry, almost always untapped with 10 basics" }]
         }
       ],
       "decklist": [
@@ -629,7 +639,7 @@
         { "name": "Fiery Inscription", "type": "Enchantment" },
         { "name": "Dark Ritual", "type": "Instant" },
         { "name": "Aqueous Form", "type": "Enchantment" },
-        { "name": "Fall of Cair Andros", "type": "Enchantment" },
+        { "name": "Animate Dead", "type": "Enchantment" },
         { "name": "Dreadhorde Invasion", "type": "Enchantment" },
         { "name": "Frantic Search", "type": "Instant" },
         { "name": "Reality Shift", "type": "Instant" },
@@ -654,7 +664,7 @@
         { "name": "Luxury Suite", "type": "Land" },
         { "name": "Training Center", "type": "Land" },
         { "name": "Sunken Hollow", "type": "Land" },
-        { "name": "Temple of Deceit", "type": "Land" },
+        { "name": "Agna Qel'a", "type": "Land" },
         { "name": "Bojuka Bog", "type": "Land" },
         { "name": "Bloodstained Mire", "type": "Land" },
         { "name": "Scalding Tarn", "type": "Land" },
