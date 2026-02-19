@@ -2113,6 +2113,17 @@
       margin-bottom: 0;
     }
 
+    .cuts-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .cuts-section-header .guide-section-title {
+      margin-bottom: 0;
+    }
+
     .export-dropdown {
       position: relative;
     }
@@ -4237,7 +4248,17 @@
           </section>
 
           <section class="guide-section cuts" aria-labelledby="cuts-header">
-            <h2 class="guide-section-title" id="cuts-header">Why We're Cutting</h2>
+            <div class="cuts-section-header">
+              <h2 class="guide-section-title" id="cuts-header">Why We're Cutting</h2>
+              <button class="export-btn" id="export-cuts-btn" aria-label="Export cuts list">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export Cuts
+              </button>
+            </div>
             <div class="loading-placeholder" id="cut-groups-skeleton">
               <div class="card-groups">
                 <div class="skeleton-card-group">
@@ -6721,7 +6742,7 @@
         await navigator.clipboard.writeText(text);
         button.classList.add('success');
         const originalText = button.innerHTML;
-        button.innerHTML = button.innerHTML.replace(/Copy Deck|Copy Selected \(\d+\)|Shopping|Export List/, 'Copied!');
+        button.innerHTML = button.innerHTML.replace(/Copy Deck|Copy Selected \(\d+\)|Shopping|Export List|Export Cuts/, 'Copied!');
         setTimeout(() => {
           button.classList.remove('success');
           button.innerHTML = originalText;
@@ -6739,6 +6760,13 @@
 
       // Cardmarket format: one card per line, quantity prefix
       return upgrade.adds.map(card => `1 ${card.name}`).join('\n');
+    }
+
+    function generateCutsListExport() {
+      if (!currentPrecon) return '';
+      const cuts = currentPrecon.cuts;
+      if (!cuts) return '';
+      return cuts.map(c => `${c.quantity || 1} ${c.name}`).join('\n');
     }
 
     function openMoxfieldImport(deckList) {
@@ -7241,6 +7269,13 @@
     document.getElementById('export-adds-btn')?.addEventListener('click', async (e) => {
       trackEvent('shopping_list_export', { precon: currentPreconId, tier: currentUpgrade });
       const list = generateAddsListExport();
+      await copyToClipboard(list, e.currentTarget);
+    });
+
+    // Export cuts list button
+    document.getElementById('export-cuts-btn')?.addEventListener('click', async (e) => {
+      trackEvent('cuts_list_export', { precon: currentPreconId, tier: currentUpgrade });
+      const list = generateCutsListExport();
       await copyToClipboard(list, e.currentTarget);
     });
 
