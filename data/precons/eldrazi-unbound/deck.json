@@ -146,7 +146,7 @@
         {
           "name": "Underpowered Creatures",
           "description": "Too slow or too small for Bracket 4 power level",
-          "cards": ["Crashing Drawbridge", "Scaretiller", "Geode Golem", "Burnished Hart", "Solemn Simulacrum", "Ornithopter of Paradise", "Palladium Myr", "Meteor Golem", "Ancient Stone Idol", "Phyrexian Triniform", "Soul of New Phyrexia", "Myriad Construct", "Oblivion Sower"]
+          "cards": ["Crashing Drawbridge", "Scaretiller", "Geode Golem", "Burnished Hart", "Solemn Simulacrum", "Ornithopter of Paradise", "Palladium Myr", "Meteor Golem", "Ancient Stone Idol", "Phyrexian Triniform", "Soul of New Phyrexia", "Myriad Construct", "Oblivion Sower", "Steel Hellkite", "Endbringer"]
         },
         {
           "name": "Inefficient Artifacts & Spells",
@@ -156,7 +156,7 @@
         {
           "name": "Suboptimal Lands",
           "description": "Replaced with lands that produce more mana or provide utility",
-          "cards": ["Forge of Heroes", "Ruins of Oran-Rief", "Temple of the False God", "Tomb of the Spirit Dragon", "Bonders' Enclave", "Sea Gate Wreckage", "Geier Reach Sanitarium", "Mage-Ring Network", "Wastes"]
+          "cards": ["Forge of Heroes", "Ruins of Oran-Rief", "Temple of the False God", "Tomb of the Spirit Dragon", "Bonders' Enclave", "Sea Gate Wreckage", "Geier Reach Sanitarium", "Mage-Ring Network", "Wastes", "Guildless Commons", "Tyrite Sanctum"]
         }
       ],
       "cuts": [
@@ -197,7 +197,11 @@
         { "name": "Sea Gate Wreckage", "reason": "Conditional, only works when hellbent" },
         { "name": "Geier Reach Sanitarium", "reason": "Gives opponents cards" },
         { "name": "Mage-Ring Network", "reason": "Too slow, charge counters" },
-        { "name": "Wastes", "reason": "Reduce from 15 to 10 to make room for utility lands", "quantity": 5 }
+        { "name": "Wastes", "reason": "Reduce from 15 to 10 to make room for utility lands", "quantity": 5 },
+        { "name": "Guildless Commons", "reason": "Bounce land: ETB tapped + bounces a land = 2 tempo turns lost" },
+        { "name": "Tyrite Sanctum", "reason": "Multiple turns to add indestructible counter; too slow at Bracket 4" },
+        { "name": "Steel Hellkite", "reason": "6 MV (no cascade trigger), needs combat damage for removal" },
+        { "name": "Endbringer", "reason": "6 MV (no cascade trigger), modest tap abilities for Bracket 4" }
       ],
       "addCategories": [
         {
@@ -223,15 +227,15 @@
         },
         {
           "name": "Engine & Value",
-          "cards": ["Sensei's Divining Top", "Clock of Omens", "Unwinding Clock", "Wandering Archaic", "Spine of Ish Sah", "Glaring Fleshraker", "It That Heralds the End", "Extraplanar Lens", "Semblance Anvil"]
+          "cards": ["Sensei's Divining Top", "Clock of Omens", "Unwinding Clock", "Wandering Archaic", "Spine of Ish Sah", "Glaring Fleshraker", "It That Heralds the End", "Extraplanar Lens", "Semblance Anvil", "Conduit of Ruin"]
         },
         {
           "name": "Board Wipe & Interaction",
-          "cards": ["Ugin, the Spirit Dragon", "Eldrazi Confluence", "Conduit of Ruin"]
+          "cards": ["Ugin, the Spirit Dragon", "Eldrazi Confluence", "Scour from Existence", "Karn, the Great Creator"]
         },
         {
           "name": "Upgraded Lands",
-          "cards": ["Eye of Ugin", "Sanctum of Ugin", "Planar Nexus", "Scorched Ruins", "Cavern of Souls", "Gemstone Caverns", "Strip Mine", "Ugin's Labyrinth", "Urza's Saga"]
+          "cards": ["Eye of Ugin", "Sanctum of Ugin", "Planar Nexus", "Scorched Ruins", "Cavern of Souls", "Gemstone Caverns", "Strip Mine", "Ugin's Labyrinth", "Urza's Saga", "Buried Ruin", "Inventors' Fair"]
         }
       ],
       "synergies": [
@@ -624,6 +628,26 @@
           ]
         },
         {
+          "name": "Scour from Existence",
+          "price": "$0.50-1",
+          "isGameChanger": false,
+          "reason": "7 MV instant that exiles any target permanent. The high cost is a feature — triggers Zhulodok cascade! Fills instant-speed permanent exile gap",
+          "sources": [
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Colorless permanent exile" },
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Steel Hellkite — instant speed, triggers cascade, exiles anything" }
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "price": "$5-8",
+          "isGameChanger": false,
+          "reason": "4 MV planeswalker. Static: opponents can't activate artifact abilities (shuts down Sol Rings, Treasures, mana rocks). -2: retrieve artifacts from exile",
+          "sources": [
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Artifact hate planeswalker" },
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Endbringer — shuts down opponent artifacts + retrieves your exiled pieces" }
+          ]
+        },
+        {
           "name": "Eye of Ugin",
           "price": "$8-12",
           "isGameChanger": false,
@@ -685,6 +709,26 @@
           "reason": "Destroy any land",
           "sources": [
             { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top utility land" }
+          ]
+        },
+        {
+          "name": "Buried Ruin",
+          "price": "$1-2",
+          "isGameChanger": false,
+          "reason": "Land that taps for C, sacrifices to return an artifact from graveyard. Recurs combo pieces (Basalt Monolith, Rings of Brighthearth) after removal",
+          "sources": [
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Artifact recursion land" },
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Guildless Commons for tempo improvement + combo piece recursion" }
+          ]
+        },
+        {
+          "name": "Inventors' Fair",
+          "price": "$3-5",
+          "isGameChanger": false,
+          "reason": "Legendary land, taps for C, metalcraft (trivial with 26+ artifacts): pay {4}, tap, sacrifice to tutor any artifact to hand. Finds any combo piece",
+          "sources": [
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Artifact tutor land" },
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Tyrite Sanctum — tutor land far more impactful than slow indestructible counter" }
           ]
         }
       ]
