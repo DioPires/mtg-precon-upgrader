@@ -112,9 +112,9 @@ The mana base is critical in Rakdos - you need to be deploying threats consisten
 ### 15. Feed the Swarm
 - **CMC**: 2
 - **Type**: Sorcery
-- **Problem**: Sorcery speed, only destroys (doesn't exile), loses life
-- **Better Option**: Withering Torment - instant speed, exiles, same life loss
-- **Verdict**: Strictly worse than the replacement
+- **Problem**: Sorcery speed, only destroys, loses life equal to target's MV
+- **Better Option**: Withering Torment ({2}{B} instant) - destroys creature or enchantment, you lose 2 life (fixed cost)
+- **Verdict**: Withering Torment is an instant-speed upgrade (costs 1 more mana)
 
 ---
 

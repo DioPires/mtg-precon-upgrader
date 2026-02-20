@@ -94,7 +94,7 @@
     { "name": "Mountain", "type": "Land", "quantity": 8 }
   ],
   "guideContent": {
-    "strategyOverview": "This upgrade transforms Endless Punishment from a casual Bracket 1-2 precon into a focused Bracket 3 group slug powerhouse. We're removing underperformers and slow lands while adding damage multipliers, a late-game infinite combo, and a premium mana base. The Lord of Pain rewards you for dealing damage to opponents with card draw and life drain, making damage multiplication effects extremely powerful.",
+    "strategyOverview": "This upgrade transforms Endless Punishment from a casual Bracket 1-2 precon into a focused group slug powerhouse. We're removing underperformers and slow lands while adding damage multipliers, punisher effects, and a premium mana base. The Lord of Pain prevents opponent lifegain and deals damage equal to the first spell cast each turn to a chosen player, making damage multiplication effects devastating. Valgavoth draws cards whenever opponents lose life on their turns, providing a card advantage engine.",
     "cutCategories": [
       {
         "name": "Underperformers",
@@ -122,7 +122,7 @@
     { "name": "Fellwar Stone", "reason": "Unreliable in 2-color, replaced by better ramp" },
     { "name": "Thought Vessel", "reason": "No max hand size rarely matters in this deck" },
     { "name": "Rakdos Signet", "reason": "Replaced by better ramp options" },
-    { "name": "Feed the Swarm", "reason": "Withering Torment is an instant-speed upgrade (destroys creature or enchantment, costs 1 more mana)" },
+    { "name": "Feed the Swarm", "reason": "Withering Torment is an instant-speed upgrade ({2}{B}, destroys creature or enchantment, you lose 2 life)" },
     { "name": "Exotic Orchard", "reason": "Unreliable fixing in 2-color deck" },
     { "name": "Terramorphic Expanse", "reason": "Too slow, ETB tapped and fetches tapped basic" },
     { "name": "Bloodfell Caves", "reason": "ETB tapped, 1 life is negligible" },
@@ -136,7 +136,7 @@
       "cost": "$120-180",
       "bracket": "3 (Verified)",
       "gameChangers": 0,
-      "description": "Maximum damage multiplication with a late-game infinite combo (Grievous Wound + Wound Reflection). Premium mana base for consistent early plays. Damage doublers and triplers make even small pings devastating.",
+      "description": "Maximum damage multiplication with a lethal combo (Grievous Wound + Wound Reflection + any damage). Premium mana base for consistent early plays. Damage doublers and triplers make even small pings devastating.",
       "sources": [
         { "type": "ai-inferred", "name": "Claude analysis", "detail": "Optimized from community recommendations for maximum Bracket 3 power" },
         { "type": "edhrec", "name": "EDHREC - The Lord of Pain", "url": "https://edhrec.com/commanders/the-lord-of-pain" },
@@ -144,7 +144,7 @@
       ],
       "infiniteCombo": {
         "cards": ["Grievous Wound", "Wound Reflection"],
-        "description": "Grievous Wound halves opponent's life total. Wound Reflection doubles that damage at end of turn, resulting in exactly lethal damage."
+        "description": "Enchant opponent with Grievous Wound ({3}{B}{B} Aura). Any damage to them triggers losing half their life rounded up. Wound Reflection doubles all life loss at end of turn. Any 1 damage = lethal from any life total."
       },
       "addCategories": [
         {
@@ -171,9 +171,9 @@
       ],
       "synergies": [
         {
-          "title": "Infinite Damage Combo",
+          "title": "Lethal Damage Combo",
           "cards": ["Grievous Wound", "Wound Reflection"],
-          "description": "Grievous Wound halves life total, Wound Reflection doubles that loss at end of turn = exactly lethal",
+          "description": "Enchant opponent with Grievous Wound. Any damage triggers them losing half their life rounded up. Wound Reflection doubles all life loss at end of turn. Any 1 damage = lethal from any life total.",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis", "detail": "Classic Rakdos combo for group slug finisher" }
           ]
@@ -219,7 +219,7 @@
           "name": "Grievous Wound",
           "price": "$3-5",
           "isGameChanger": false,
-          "reason": "Halves life total, infinite combo with Wound Reflection",
+          "reason": "Aura ({3}{B}{B}): enchanted player can't gain life, and any damage causes them to lose half their life. Lethal combo with Wound Reflection + any damage source",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis", "detail": "Combo finisher with Wound Reflection" }
           ]
@@ -295,7 +295,7 @@
           "name": "Withering Torment",
           "price": "$1-2",
           "isGameChanger": false,
-          "reason": "Instant-speed upgrade to Feed the Swarm. Destroys creature or enchantment at instant speed, costs 1 more mana",
+          "reason": "Instant-speed upgrade to Feed the Swarm ({2}{B}). Destroys creature or enchantment, you lose 2 life",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis" }
           ]
@@ -581,7 +581,7 @@
           "name": "Withering Torment",
           "price": "$1-2",
           "isGameChanger": false,
-          "reason": "Instant-speed upgrade to Feed the Swarm. Destroys creature or enchantment, costs 1 more mana",
+          "reason": "Instant-speed upgrade to Feed the Swarm ({2}{B}). Destroys creature or enchantment, you lose 2 life",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis" }
           ]
@@ -817,7 +817,7 @@
           "name": "Withering Torment",
           "price": "$1-2",
           "isGameChanger": false,
-          "reason": "Instant-speed upgrade to Feed the Swarm. Destroys creature or enchantment, costs 1 more mana",
+          "reason": "Instant-speed upgrade to Feed the Swarm ({2}{B}). Destroys creature or enchantment, you lose 2 life",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis" }
           ]
@@ -1094,7 +1094,7 @@
           "name": "Withering Torment",
           "price": "$1-2",
           "isGameChanger": false,
-          "reason": "Instant-speed upgrade to Feed the Swarm. Destroys creature or enchantment, costs 1 more mana",
+          "reason": "Instant-speed upgrade to Feed the Swarm ({2}{B}). Destroys creature or enchantment, you lose 2 life",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis" }
           ]
@@ -1143,7 +1143,7 @@
         { "name": "Fellwar Stone", "reason": "Unreliable in 2-color" },
         { "name": "Thought Vessel", "reason": "No max hand size rarely matters" },
         { "name": "Rakdos Signet", "reason": "Replaced by Mana Vault and Crypt Ghast" },
-        { "name": "Feed the Swarm", "reason": "Withering Torment is an instant-speed upgrade" },
+        { "name": "Feed the Swarm", "reason": "Withering Torment is an instant-speed upgrade ({2}{B}, destroys creature or enchantment, you lose 2 life)" },
         { "name": "Spiteful Visions", "reason": "Gives opponents cards, outclassed by damage-only options" },
         { "name": "Exotic Orchard", "reason": "Unreliable fixing in 2-color" },
         { "name": "Terramorphic Expanse", "reason": "ETB tapped" },
@@ -1157,7 +1157,7 @@
         { "name": "Harsh Mentor", "reason": "Meta-dependent activated ability hate; fragile 2/2 body" },
         { "name": "Blood Seeker", "reason": "1 damage per creature ETB — too small for Bracket 4" },
         { "name": "Gleeful Arsonist", "reason": "1/1 with 1-damage ETB, precon filler" },
-        { "name": "Barbflare Gremlin", "reason": "Narrow artifact/enchantment ETB trigger, low impact" },
+        { "name": "Barbflare Gremlin", "reason": "4 CMC conditional mana doubler; requires being tapped to trigger, low damage rate for Bracket 4" },
         { "name": "Falkenrath Noble", "reason": "Aristocrats payoff — deck isn't sacrifice-focused" },
         { "name": "Blood Artist", "reason": "Aristocrats payoff — deck isn't sacrifice-focused" },
         { "name": "Bastion of Remembrance", "reason": "Aristocrats payoff — deck isn't sacrifice-focused" },
@@ -1204,7 +1204,7 @@
         {
           "title": "Repercussion + Blasphemous Act",
           "cards": ["Repercussion", "Blasphemous Act"],
-          "description": "13 damage per creature redirected to controller. 2 creatures per opponent = 26 damage each. With Fiery Emancipation = 78 each. Caution: also deals 13 damage per creature YOU control to you. Deploy with few or no creatures on your side.",
+          "description": "13 damage per creature, then Repercussion deals that much to the creature's controller. 2 creatures per opponent = 26 damage each. With Fiery Emancipation = 78 each. Caution: also triggers for creatures YOU control. Deploy with few or no creatures on your side.",
           "sources": [
             { "type": "edhrec", "name": "EDHREC - The Lord of Pain", "url": "https://edhrec.com/commanders/the-lord-of-pain", "detail": "Classic Rakdos combo" },
             { "type": "ai-inferred", "name": "Claude analysis", "detail": "Lethal with any damage multiplier on board" }
@@ -1262,7 +1262,7 @@
         {
           "title": "Twinflame Tyrant + Repercussion",
           "cards": ["Twinflame Tyrant", "Repercussion", "Blasphemous Act"],
-          "description": "Blasphemous Act deals 13 to each creature. Twinflame doubles that to 26 per creature. Repercussion redirects to controllers. 2 creatures per opponent = 52 damage each.",
+          "description": "Blasphemous Act deals 13 to each creature. Twinflame doubles that to 26 per creature. Repercussion deals that damage again to the creature's controller. 2 creatures per opponent = 52 damage each.",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis", "detail": "Enhanced Repercussion combo with one-sided doubling" }
           ]
@@ -1307,7 +1307,7 @@
           "name": "Mana Vault",
           "price": "$30-40",
           "isGameChanger": true,
-          "reason": "Fast mana; enables turn 3 Lord of Pain",
+          "reason": "Fast mana; enables turn 2 Lord of Pain",
           "sources": [
             { "type": "edhrec", "name": "EDHREC - The Lord of Pain", "url": "https://edhrec.com/commanders/the-lord-of-pain" }
           ]
@@ -1325,7 +1325,7 @@
           "name": "Orcish Bowmasters",
           "price": "$30-40",
           "isGameChanger": true,
-          "reason": "Flash; punishes every opponent card draw with damage and amass",
+          "reason": "Flash; punishes each opponent draw beyond the first per draw step with damage and amass",
           "sources": [
             { "type": "edhrec", "name": "EDHREC - The Lord of Pain", "url": "https://edhrec.com/commanders/the-lord-of-pain", "detail": "Top creature for punishing draws" }
           ]
@@ -1431,7 +1431,7 @@
           "name": "Repercussion",
           "price": "$5-8",
           "isGameChanger": false,
-          "reason": "Creature damage redirected to controller; combo with Blasphemous Act for massive damage",
+          "reason": "Deals damage to creature's controller equal to damage dealt to that creature; combo with Blasphemous Act for massive damage",
           "sources": [
             { "type": "edhrec", "name": "EDHREC - The Lord of Pain", "url": "https://edhrec.com/commanders/the-lord-of-pain" },
             { "type": "ai-inferred", "name": "Claude analysis", "detail": "13 damage per creature with Blasphemous Act" }
@@ -1499,7 +1499,7 @@
           "name": "Imp's Mischief",
           "price": "$3-5",
           "isGameChanger": false,
-          "reason": "Redirect single-target spell or ability. Lose life equal to spell's mana value. Critical Bracket 4 protection alongside Deflecting Swat",
+          "reason": "Change target of single-target spell with a single target. Lose life equal to spell's mana value. Critical Bracket 4 protection alongside Deflecting Swat",
           "sources": [
             { "type": "edhrec", "name": "EDHREC - The Lord of Pain", "url": "https://edhrec.com/commanders/the-lord-of-pain" },
             { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Basilisk Collar — spell redirection more impactful than dead lifelink" }
@@ -1509,7 +1509,7 @@
           "name": "Withering Torment",
           "price": "$1-2",
           "isGameChanger": false,
-          "reason": "Instant-speed upgrade to Feed the Swarm. Destroys creature or enchantment, costs 1 more mana",
+          "reason": "Instant-speed upgrade to Feed the Swarm ({2}{B}). Destroys creature or enchantment, you lose 2 life",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis" }
           ]
@@ -1638,7 +1638,7 @@
           "name": "Demand Answers",
           "price": "$0.50-1",
           "isGameChanger": false,
-          "reason": "Instant draw 2 for {1}{R}; sac artifact (Treasures) avoids Necropotence's discard exile",
+          "reason": "Instant draw 2 for {1}{R}; sac artifact (Treasures) or discard a card. Sac mode avoids Necropotence's discard exile",
           "sources": [
             { "type": "ai-inferred", "name": "Claude analysis", "detail": "Artifact sac cost synergizes with Treasure generation; instant speed upgrade over Night's Whisper" }
           ]

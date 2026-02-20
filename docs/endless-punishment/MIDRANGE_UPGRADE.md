@@ -117,11 +117,11 @@
 - **Verdict**: Accelerates the game in your favor
 
 #### 11. Withering Torment
-- **CMC**: 2
+- **CMC**: 3
 - **Type**: Instant
 - **Price**: $1-2
-- **Effect**: Exile target creature or enchantment. Lose 3 life.
-- **Why Include**: Better removal than Feed the Swarm in every way
+- **Effect**: Destroy target creature or enchantment. You lose 2 life.
+- **Why Include**: Instant-speed upgrade to Feed the Swarm (costs 1 more mana)
 - **Verdict**: Essential upgrade
 
 #### 12. Wayfarer's Bauble
@@ -209,8 +209,8 @@ OUT (15 cards):                    IN (15 cards):
 **Cards**: Sulfuric Vortex + Descent into Avernus + The Lord of Pain
 - Each upkeep: Vortex deals 2 to each player
 - Your upkeep: Descent deals X to each player, gives treasures
-- The Lord of Pain: You draw a card for each opponent taking damage
-- **Result**: Every turn you're drawing 3+ cards and dealing 6+ damage
+- The Lord of Pain: Deals damage equal to first spell's MV to chosen player each turn
+- **Result**: Every turn you're dealing 6+ damage across all opponents
 
 ### Combo 4: Spell Tax Punishment
 **Cards**: Painful Quandary + The Lord of Pain + Wound Reflection
@@ -264,7 +264,7 @@ OUT (15 cards):                    IN (15 cards):
 
 | Card | What You Lose |
 |------|---------------|
-| **Grievous Wound** | The infinite combo - no instant kill |
+| **Grievous Wound** | The lethal combo (Aura + Wound Reflection + damage) |
 | **Obosh, the Preypiercer** | Odd-CMC damage doubling |
 | **Archon of Cruelty** | Big value creature |
 | **Sorin Markov** | Life total reset to 10 |

@@ -1,6 +1,6 @@
 # VERSION 1: PAIN AMPLIFIED (~$120-180)
 
-*Maximum Bracket 3 power with infinite combo finisher*
+*Maximum Bracket 3 power with lethal combo finisher*
 
 ---
 
@@ -13,18 +13,18 @@
 - **Type**: Enchantment
 - **Price**: $8-12
 - **Effect**: At the beginning of each end step, each opponent loses life equal to the life they lost this turn.
-- **Why Include**: The ultimate group slug payoff. Every point of damage effectively becomes 2. Forms an infinite combo with Grievous Wound.
+- **Why Include**: The ultimate group slug payoff. Every point of damage effectively becomes 2. Forms a lethal combo with Grievous Wound + any damage source.
 - **Example**: Opponent takes 5 damage during your turn → loses 5 more at end step = 10 total
 - **Verdict**: Build-around card, makes every damage source twice as effective
 
 #### 2. Grievous Wound
-- **CMC**: 2
-- **Type**: Instant
+- **CMC**: 5
+- **Type**: Enchantment — Aura
 - **Price**: $3-5
-- **Effect**: Target player's life total becomes half their life total, rounded up.
-- **Why Include**: INFINITE COMBO with Wound Reflection. Also excellent standalone - halving 40 life is 20 damage for 2 mana.
-- **Combo**: Grievous Wound (40→20) + Wound Reflection end step (20 damage) = Lethal
-- **Verdict**: Combo piece AND excellent standalone value
+- **Effect**: Enchant player. Enchanted player can't gain life. Whenever enchanted player is dealt damage, they lose half their life, rounded up.
+- **Why Include**: LETHAL COMBO with Wound Reflection. Enchant an opponent, then any damage source triggers half-life loss. Also prevents their lifegain.
+- **Combo**: Enchant opponent with Grievous Wound → deal any damage → they lose half life → Wound Reflection doubles life lost at end step = Lethal
+- **Verdict**: Combo piece that also shuts down lifegain
 
 #### 3. Obosh, the Preypiercer
 - **CMC**: 5
@@ -66,10 +66,10 @@
 - **Type**: Creature - Human Wizard
 - **Price**: $2-4
 - **Stats**: 4/2
-- **Effect**: At the beginning of your postcombat main phase, black and/or red spells you cast this turn cost X less to cast, where X is the amount of life you lost this turn.
+- **Effect**: {T}: Spells you cast this turn that are black and/or red cost {X} less to cast, where X is the amount of life you lost this turn. Activate only as a sorcery.
 - **Why Include**: Group slug decks often deal damage to themselves - convert that into mana discount!
 - **Synergy**: Pain lands, Phyrexian Arena, etc. all reduce your spell costs
-- **Example**: Lose 5 life from various sources → cast a 7-drop for 2 mana
+- **Example**: Lose 5 life from various sources → tap Rowan → cast a 7-drop for 2 mana
 - **Verdict**: Turns self-damage into acceleration
 
 ---
@@ -144,13 +144,13 @@
 ### Utility (2 cards)
 
 #### 14. Withering Torment
-- **CMC**: 2
+- **CMC**: 3
 - **Type**: Instant
 - **Price**: $1-2
-- **Effect**: Destroy target creature or enchantment. Lose 3 life.
-- **Why Include**: INSTANT speed (Feed the Swarm is sorcery), EXILES (not destroys), hits enchantments
-- **Synergy**: 3 life loss synergizes with Rowan
-- **Verdict**: Strictly better than Feed the Swarm
+- **Effect**: Destroy target creature or enchantment. You lose 2 life.
+- **Why Include**: Instant speed (Feed the Swarm is sorcery), hits both creatures and enchantments
+- **Synergy**: 2 life loss synergizes with Rowan
+- **Verdict**: Instant-speed upgrade to Feed the Swarm (costs 1 more mana)
 
 #### 15. Wayfarer's Bauble
 - **CMC**: 1
@@ -189,14 +189,14 @@ OUT (15 cards):                    IN (15 cards):
 
 ## Key Combos & Synergies
 
-### Combo 1: The Infinite Kill (Grievous Wound + Wound Reflection)
-**Cards**: Grievous Wound + Wound Reflection
-- Target opponent with Grievous Wound at any life total
-- Their life becomes half (40 → 20, 30 → 15, etc.)
-- At end step, Wound Reflection triggers
-- They lose life equal to life lost this turn = exactly half their starting life
-- Half + Half = Full life total = **Lethal from any life total**
-- **Note**: Instant speed Grievous Wound means you can do this at end of opponent's turn
+### Combo 1: The Lethal Kill (Grievous Wound + Wound Reflection + Damage)
+**Cards**: Grievous Wound (Aura) + Wound Reflection + any damage source
+- Enchant opponent with Grievous Wound (5 CMC Aura)
+- Deal any amount of damage to them
+- Grievous Wound triggers: they lose half their life, rounded up
+- At end step, Wound Reflection triggers: they lose life equal to life lost this turn
+- Any 1 damage = **Lethal from any life total**
+- **Note**: Requires Grievous Wound to be on the battlefield first (it's an Aura, not instant speed)
 
 ### Combo 2: Triple Damage Chain
 **Cards**: The Lord of Pain + Obosh + Wound Reflection
@@ -217,7 +217,7 @@ OUT (15 cards):                    IN (15 cards):
 **Cards**: Crypt Ghast + Spells + The Lord of Pain
 - Cast any spell, extort triggers
 - All opponents lose 1 life, you gain 3 (in 4-player)
-- Lord of Pain triggers for each opponent (draw cards)
+- Lord of Pain triggers (deals damage equal to first spell's MV to chosen player)
 - With Wound Reflection: Each opponent loses 2 total
 - **Result**: Every spell becomes a drain engine
 
@@ -253,25 +253,26 @@ OUT (15 cards):                    IN (15 cards):
 
 ---
 
-## Infinite Combo Details
+## Lethal Combo Details
 
-### Grievous Wound + Wound Reflection
+### Grievous Wound + Wound Reflection + Any Damage
 
 **Step by step:**
 1. Have Wound Reflection on the battlefield (6 mana enchantment)
-2. At any point (instant speed), cast Grievous Wound targeting an opponent
-3. That opponent's life total becomes half, rounded up (40 → 20)
-4. They "lost" 20 life this turn
+2. Enchant an opponent with Grievous Wound (5 mana Aura — also prevents their lifegain)
+3. Deal any amount of damage to the enchanted player (Lord of Pain trigger, ping, combat, anything)
+4. Grievous Wound triggers: they lose half their life, rounded up (40 → 20)
 5. At the end step, Wound Reflection triggers
-6. That opponent loses life equal to the life they lost (20)
-7. 20 - 20 = 0 = **Dead**
+6. That opponent loses life equal to the life they lost (20+)
+7. **Dead from any life total with just 1 damage**
 
 **Why this is Bracket 3 legal:**
-- Requires 8+ total mana investment (6 for Wound Reflection, 2 for Grievous Wound)
-- Both pieces are visible/can be removed
-- Not an "early game" combo - typically fires turn 6+
-- Opponents can interact (instant speed removal on Wound Reflection)
+- Requires 11+ total mana investment (6 for Wound Reflection, 5 for Grievous Wound) + a damage source
+- Three-piece combo (two enchantments + damage)
+- Both enchantments are visible/can be removed
+- Not an "early game" combo - typically fires turn 7+
+- Opponents can interact (removal on either enchantment)
 
 **Best timing:**
-- End of the turn BEFORE yours (opponent's end step)
-- This way, no one gets a chance to untap and remove Wound Reflection
+- Enchant during your main phase, then wait for any damage trigger (Lord of Pain, upkeep pings, etc.)
+- Grievous Wound also prevents the enchanted player from gaining life, shutting down recovery

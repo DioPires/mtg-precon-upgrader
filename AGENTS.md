@@ -8,7 +8,7 @@ No build step. Static files. Serve with any HTTP server or open index.html direc
 
 ## Project Overview
 
-A web application that provides upgrade guides for MTG Commander preconstructed decks and recommended commander deck builds. The app displays card recommendations, synergies, cuts (for precons), and shopping lists for upgrading precons to Bracket 3 or building commander decks up to Bracket 4.
+A web application that provides upgrade guides for MTG Commander preconstructed decks and recommended commander deck builds. The app displays card recommendations, synergies, cuts (for precons), and shopping lists for upgrading precons up to Bracket 4 or building commander decks up to Bracket 4.
 
 ## Architecture
 
@@ -83,12 +83,12 @@ Commander decks (`type: "commander"`) are full recommended builds — no baseDec
 ## Upgrade Guide Rules
 
 ### Precon Upgrades
-- **All precon tiers target Bracket 3** — strongest builds possible while staying in Bracket 3
-- **Up to 3 Game Changers allowed** per tier (per `data/game-changers.json`). Vampiric Tutor in baseDeck counts toward this limit
-- **At least 1 budget tier per precon** — affordable entry point ($40-60), 0 Game Changers
-- **Non-budget tiers = strongest Bracket 3 builds** — different tiers represent different strategic concepts/archetypes, not just different price points
+- **Each precon must have 3 tiers minimum**: 1 Bracket 4 (no GC limit), 1 Bracket 3 (up to 3 GCs), 1 Bracket 3 budget ($40-60, 0 GCs)
+- **Bracket 3 tiers**: up to 3 Game Changers allowed (per `data/game-changers.json`). Vampiric Tutor in baseDeck counts toward this limit
+- **Bracket 4 tiers**: no Game Changer limit — include as many as the strategy warrants
+- **Additional Bracket 3 tiers allowed** — alternate commanders, different strategies
 - **Alternate commander builds** are valid tiers if research suggests a different commander from the precon creates a meaningfully distinct deck
-- **Cuts are shared** — each precon has a single top-level `cuts` array used by all tiers
+- **Cuts are shared** — each precon has a single top-level `cuts` array used by all tiers. Bracket 4 tiers may define their own expanded `cuts` array within the tier object when swapping significantly more cards.
 - **No card should appear in both `adds` and `baseDeck`**
 
 ### Commander Decks
@@ -106,7 +106,7 @@ Commander decks (`type: "commander"`) are full recommended builds — no baseDec
 
 - **Budget tier** = affordable entry point (~$40-60, 0 Game Changers, Bracket 3). Focuses on high-synergy, low-cost cards
 - **Bracket 3 tiers** = strong builds with up to 3 Game Changers. Each should have a distinct identity (e.g., reanimator-focused, tribal-focused, control-focused)
-- **Bracket 4 tiers** (commander decks only) = maximum power, no GC limit. Optimized mana, best-in-slot cards, multiple synergy axes
+- **Bracket 4 tiers** = maximum power, no GC limit. Optimized mana, best-in-slot cards, multiple synergy axes
 - Tiers are NOT just price tiers — a $100 tier and a $150 tier should explore different strategies, not the same strategy at different budgets
 
 ## Source Attribution Schema

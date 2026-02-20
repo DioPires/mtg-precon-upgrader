@@ -55,7 +55,7 @@
 | **Fellwar Stone** | Unreliable in 2-color |
 | **Thought Vessel** | No max hand size rarely matters |
 | **Rakdos Signet** | Replaced by better options |
-| **Feed the Swarm** | Withering Torment is strictly better |
+| **Feed the Swarm** | Withering Torment is an instant-speed upgrade |
 
 ---
 
@@ -64,7 +64,7 @@
 | Aspect | Pain Amplified | Punisher's Paradise |
 |--------|----------------|---------------------|
 | **Cost** | $120-180 | $60-100 |
-| **Infinite Combo** | Yes (Grievous Wound + Wound Reflection) | No |
+| **Lethal Combo** | Yes (Grievous Wound + Wound Reflection + damage) | No |
 | **Mana Base** | Premium (Fetch + Shock) | Budget (no fetches) |
 | **Damage Doublers** | 2 (Obosh, Wound Reflection) | 4 (Solphim, Fiery Emancipation, Wound Reflection, Ojer Axonil) |
 | **Consistency** | Higher (better lands) | Slightly lower |
@@ -76,22 +76,23 @@
 
 ---
 
-## The Infinite Combo (Pain Amplified Only)
+## The Lethal Combo (Pain Amplified Only)
 
-### Grievous Wound + Wound Reflection
+### Grievous Wound + Wound Reflection + Any Damage
 
 **How it works:**
-1. Cast **Grievous Wound** targeting an opponent
-2. Opponent's life total is halved (e.g., 40 → 20)
-3. At end of turn, **Wound Reflection** triggers
-4. Opponent loses life equal to the life they lost this turn (20 damage)
-5. 20 life - 20 damage = 0 = **Lethal**
+1. Have **Wound Reflection** on the battlefield (6 mana enchantment)
+2. Enchant an opponent with **Grievous Wound** (5 mana Aura — also prevents their lifegain)
+3. Deal any amount of damage to the enchanted player
+4. **Grievous Wound** triggers: they lose half their life, rounded up (40 → 20)
+5. At end of turn, **Wound Reflection** triggers: they lose life equal to life lost = **Lethal**
 
 **Notes:**
-- This combo requires 8 mana total (2 for Grievous Wound, 6 for Wound Reflection already in play)
+- Three-piece combo: Grievous Wound (Aura) + Wound Reflection + any damage source
+- Requires 11+ mana total (5 for Grievous Wound, 6 for Wound Reflection already in play) + damage
 - It's a late-game combo, not early-game (Bracket 3 compliant)
-- Opponents can interact with instant-speed removal
-- Works on any life total (always exactly lethal)
+- Opponents can interact with removal on either enchantment
+- Works on any life total (any 1 damage = lethal)
 
 ---
 
