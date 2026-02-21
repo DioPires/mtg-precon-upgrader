@@ -5956,22 +5956,16 @@
         loading.style.display = 'none';
 
         // Update commander info
-        commanderName.textContent = `Commander: ${currentPrecon.commander}`;
-        altCommander.textContent = currentPrecon.alternateCommander
-          ? `Alternate: ${currentPrecon.alternateCommander}`
-          : '';
+        commanderName.textContent = `Commander: ${getEffectiveCommander()}`;
+        altCommander.textContent = '';
         renderBracketVisualization();
         commanderInfo.style.display = 'block';
 
         // Render commander card images
         let commanderCardsHtml = '';
-        const commanderImageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(currentPrecon.commander)}`;
-        commanderCardsHtml += `<img class="commander-card-preview" src="${commanderImageUrl}" alt="${escapeHtml(currentPrecon.commander)}" loading="lazy" />`;
-
-        if (currentPrecon.alternateCommander) {
-          const altCommanderImageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(currentPrecon.alternateCommander)}`;
-          commanderCardsHtml += `<img class="commander-card-preview" src="${altCommanderImageUrl}" alt="${escapeHtml(currentPrecon.alternateCommander)}" loading="lazy" />`;
-        }
+        const effectiveCmd = getEffectiveCommander();
+        const commanderImageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(effectiveCmd)}`;
+        commanderCardsHtml += `<img class="commander-card-preview" src="${commanderImageUrl}" alt="${escapeHtml(effectiveCmd)}" loading="lazy" />`;
         commanderCards.innerHTML = commanderCardsHtml;
 
         // Initialize tilt effect after DOM is ready
@@ -6073,10 +6067,8 @@
       decklistCount.textContent = totalCount + (isCmd ? 1 : 0);
 
       // Get commander names to filter from Creatures
-      const commanderNames = new Set([currentPrecon.commander]);
-      if (currentPrecon.alternateCommander) {
-        commanderNames.add(currentPrecon.alternateCommander);
-      }
+      const effCmd = getEffectiveCommander();
+      const commanderNames = new Set([effCmd]);
 
       // Render categorized deck list
       let html = '';
@@ -6084,10 +6076,7 @@
       // Add Commander section first
       html += `<div class="decklist-category">`;
       html += `<div class="decklist-category-title">Commander</div>`;
-      html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(currentPrecon.commander)}"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a>${getMvDisplay(currentPrecon.commander)}</div>`;
-      if (currentPrecon.alternateCommander) {
-        html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a>${getMvDisplay(currentPrecon.alternateCommander)} <span class="alternate-label">(Alternate)</span></div>`;
-      }
+      html += `<div class="decklist-card commander" data-card-name="${escapeHtml(effCmd)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(effCmd)}"><a href="${getCardmarketUrl(effCmd)}" target="_blank" rel="noopener noreferrer">${escapeHtml(effCmd)}</a>${getMvDisplay(effCmd)}</div>`;
       html += `</div>`;
 
       typeOrder.forEach(type => {
@@ -6198,11 +6187,8 @@
         category.cards.forEach(cardName => allCardNames.add(cardName));
       });
 
-      // Add commanders
-      allCardNames.add(currentPrecon.commander);
-      if (currentPrecon.alternateCommander) {
-        allCardNames.add(currentPrecon.alternateCommander);
-      }
+      // Add commander
+      allCardNames.add(getEffectiveCommander());
 
       // Pre-fetch metadata for all cards using batch API
       await fetchCardMetadataBatch(Array.from(allCardNames));
@@ -6692,13 +6678,11 @@
         deckCards = deckCards.filter(card => selectedCards.has(card.name));
       }
 
-      // Add commander(s)
+      // Add commander
+      const effCmdExport = getEffectiveCommander();
       const commanderSection = [];
-      if (selectedCards.size === 0 || selectedCards.has(currentPrecon.commander)) {
-        commanderSection.push(currentPrecon.commander);
-      }
-      if (currentPrecon.alternateCommander && (selectedCards.size === 0 || selectedCards.has(currentPrecon.alternateCommander))) {
-        commanderSection.push(currentPrecon.alternateCommander);
+      if (selectedCards.size === 0 || selectedCards.has(effCmdExport)) {
+        commanderSection.push(effCmdExport);
       }
 
       switch (format) {
@@ -7039,10 +7023,8 @@
     }
 
     function renderFilteredDeckList(cards) {
-      const commanderNames = new Set([currentPrecon.commander]);
-      if (currentPrecon.alternateCommander) {
-        commanderNames.add(currentPrecon.alternateCommander);
-      }
+      const effCmdFiltered = getEffectiveCommander();
+      const commanderNames = new Set([effCmdFiltered]);
 
       // Group by type if sorting by type
       if (filterState.sort === 'type') {
@@ -7077,10 +7059,7 @@
         if (!filterState.addedOnly && filterState.type === 'all' && filterState.cmc === 'all') {
           html += `<div class="decklist-category">`;
           html += `<div class="decklist-category-title">Commander</div>`;
-          html += `<div class="decklist-card commander" data-card-name="${escapeHtml(currentPrecon.commander)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(currentPrecon.commander)}"><a href="${getCardmarketUrl(currentPrecon.commander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.commander)}</a>${getMvDisplay(currentPrecon.commander)}</div>`;
-          if (currentPrecon.alternateCommander) {
-            html += `<div class="decklist-card alternate-commander" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(currentPrecon.alternateCommander)}"><a href="${getCardmarketUrl(currentPrecon.alternateCommander)}" target="_blank" rel="noopener noreferrer">${escapeHtml(currentPrecon.alternateCommander)}</a>${getMvDisplay(currentPrecon.alternateCommander)} <span class="alternate-label">(Alternate)</span></div>`;
-          }
+          html += `<div class="decklist-card commander" data-card-name="${escapeHtml(effCmdFiltered)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(effCmdFiltered)}"><a href="${getCardmarketUrl(effCmdFiltered)}" target="_blank" rel="noopener noreferrer">${escapeHtml(effCmdFiltered)}</a>${getMvDisplay(effCmdFiltered)}</div>`;
           html += `</div>`;
         }
 
