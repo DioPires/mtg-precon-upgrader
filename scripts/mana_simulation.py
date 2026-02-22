@@ -16,7 +16,7 @@ DECK_FILE = PROJECT_ROOT / "data" / "precons" / "eldrazi-unbound" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
 NUM_GAMES = 10_000
-NUM_TURNS = 5
+NUM_TURNS = 7
 
 # --- Land mana production rules ---
 
@@ -55,6 +55,27 @@ AMPLIFIER_DEFS = {
     "Forsaken Monument": {"cmc": 5},
     "Extraplanar Lens": {"cmc": 3},
 }
+
+# --- Mulligan rules (Commander London mulligan) ---
+MAX_MULLIGANS = 2  # attempt 0 = initial, 1 = free, 2 = paid (bottom 1)
+
+
+def should_mulligan(hand: list[str]) -> bool:
+    """Mulligan if 0-1 mana sources (lands + rocks)."""
+    sources = sum(1 for c in hand if c in _land_set or c in ROCK_DEFS)
+    return sources <= 1
+
+
+def choose_bottom_cards(hand: list[str], count: int, metadata: dict) -> list[str]:
+    """Choose cards to bottom (London mulligan). Bottom highest CMC non-land, non-rock cards."""
+    candidates = [c for c in hand if c not in _land_set and c not in ROCK_DEFS]
+    candidates.sort(key=lambda c: metadata.get(c, {}).get("cmc", 0), reverse=True)
+    if len(candidates) < count:
+        # Fall back to worst lands (e.g., all-source hands)
+        land_candidates = [c for c in hand if c in _land_set and c not in [x for x in candidates]]
+        land_candidates.sort(key=lambda c: land_base_mana(c, [], False, False))
+        candidates.extend(land_candidates)
+    return candidates[:count]
 
 
 def build_decklist(deck_data: dict) -> list[str]:
@@ -237,8 +258,11 @@ class GameState:
 
         return 3  # default 1-mana land
 
-    def play_turn(self, turn_number: int):
-        """Simulate one turn: untap, draw, play land, cast rocks/amplifiers, record mana."""
+    def play_turn(self, turn_number: int) -> int:
+        """Simulate one turn: untap, draw, play land, cast rocks/amplifiers, record mana.
+
+        Returns pre-deployment available mana (after land drop, before casting rocks).
+        """
         # Draw (skip on turn 1's draw since we have opening hand)
         if turn_number > 1:
             self.draw(1)
@@ -251,7 +275,6 @@ class GameState:
         hand_lands = [(self._land_priority(c), c) for c in self.hand if self._is_land(c)]
         hand_lands.sort(reverse=True)
 
-        land_played = False
         for priority, land_name in hand_lands:
             if priority < 0:
                 continue  # can't play (e.g. Scorched Ruins with <2 lands)
@@ -266,11 +289,11 @@ class GameState:
                                     key=lambda l: land_base_mana(l, self.battlefield_lands, self.has_forsaken, self.has_lens))
                         self.battlefield_lands.remove(worst)
             self.battlefield_lands.append(land_name)
-            land_played = True
             break
 
-        # Calculate available mana before casting
+        # Calculate available mana before casting (used for milestone checks)
         available = self._total_mana()
+        pre_deployment = available
 
         # Try to cast rocks/amplifiers, highest value first
         castable = self._get_castable_from_hand(available)
@@ -283,6 +306,9 @@ class GameState:
                     self.has_forsaken = True
                 elif name == "Extraplanar Lens":
                     self.has_lens = True
+                    # Exile a Wastes (imprint)
+                    if "Wastes" in self.battlefield_lands:
+                        self.battlefield_lands.remove("Wastes")
             elif name in ROCK_DEFS:
                 self.battlefield_rocks.append(name)
                 rock = ROCK_DEFS[name]
@@ -297,6 +323,7 @@ class GameState:
 
         # Record total mana available this turn (recalculate with all permanents)
         self.mana_per_turn.append(self._total_mana())
+        return pre_deployment
 
     def _total_mana(self) -> int:
         """Calculate total mana from all sources."""
@@ -359,34 +386,51 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
     mana_by_turn = {t: [] for t in range(1, NUM_TURNS + 1)}
     hand_land_counts = Counter()
     hand_source_counts = Counter()
-    mulligan_count = 0
+    mulligan_attempts = Counter()  # keyed by attempt number (0=kept, 1=free, 2=paid)
     zhulodok_turns = []
     cascade_ready_turns = []
     t2_zhulodok = 0
     t3_zhulodok = 0
 
     for _ in range(NUM_GAMES):
-        state = GameState(decklist)
-        state.draw(7)
+        # Mulligan phase (Commander London mulligan)
+        attempt = 0
+        while True:
+            state = GameState(decklist)
+            state.draw(7)
+            if should_mulligan(state.hand) and attempt < MAX_MULLIGANS:
+                attempt += 1
+                continue
+            break
 
-        # Opening hand stats
+        # London mulligan: bottom cards if paid mulligan (attempt >= 2)
+        # attempt 0 = kept first hand (7 cards)
+        # attempt 1 = free mulligan (7 cards, no penalty)
+        # attempt 2 = paid mulligan (bottom 1 → 6 cards)
+        if attempt >= 2:
+            bottom = choose_bottom_cards(state.hand, attempt - 1, metadata)
+            for card in bottom:
+                state.hand.remove(card)
+                state.library.append(card)
+
+        mulligan_attempts[attempt] += 1
+
+        # Opening hand stats (on kept hand)
         hand_stats = state.opening_hand_stats()
         hand_land_counts[hand_stats["lands"]] += 1
         hand_source_counts[hand_stats["sources"]] += 1
-        if hand_stats["lands"] <= 1:
-            mulligan_count += 1
 
         # Gemstone Caverns: if in opening hand, 50% chance of luck counter
         if "Gemstone Caverns" in state.hand:
             if random.random() < 0.5:  # not going first
                 state.hand.remove("Gemstone Caverns")
                 state.battlefield_lands.append("Gemstone Caverns")
-                # Exile a card from hand
+                # Exile worst card (highest CMC non-land)
                 if state.hand:
-                    # Exile worst card (highest CMC non-land)
                     non_lands = [c for c in state.hand if not state._is_land(c)]
                     if non_lands:
-                        state.hand.remove(non_lands[-1])
+                        worst = max(non_lands, key=lambda c: metadata.get(c, {}).get("cmc", 0))
+                        state.hand.remove(worst)
                     elif state.hand:
                         state.hand.remove(state.hand[-1])
 
@@ -394,13 +438,14 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
         zhulodok_turn = None
         cascade_turn = None
         for t in range(1, NUM_TURNS + 1):
-            state.play_turn(t)
-            mana = state.mana_per_turn[-1]
-            mana_by_turn[t].append(mana)
+            castable_mana = state.play_turn(t)
+            mana_by_turn[t].append(state.mana_per_turn[-1])
 
-            if zhulodok_turn is None and mana >= 5:
+            # Milestone checks use pre-deployment mana (what you could
+            # actually spend on a spell instead of deploying rocks)
+            if zhulodok_turn is None and castable_mana >= 6:
                 zhulodok_turn = t
-            if cascade_turn is None and mana >= 7:
+            if cascade_turn is None and castable_mana >= 7:
                 cascade_turn = t
 
         if zhulodok_turn is not None:
@@ -416,7 +461,7 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
         "mana_by_turn": mana_by_turn,
         "hand_land_counts": hand_land_counts,
         "hand_source_counts": hand_source_counts,
-        "mulligan_count": mulligan_count,
+        "mulligan_attempts": mulligan_attempts,
         "zhulodok_turns": zhulodok_turns,
         "cascade_ready_turns": cascade_ready_turns,
         "t2_zhulodok": t2_zhulodok,
@@ -477,90 +522,61 @@ def print_results(stats: dict, decklist: list[str], metadata: dict, classified: 
     for t in [3, 4, 5]:
         count = sum(1 for ct in stats["cascade_ready_turns"] if ct <= t)
         print(f"  By turn {t}: {count/total*100:.1f}%")
-    if stats["cascade_ready_turns"]:
-        print(f"  Median turn to 7+ mana: {statistics.median(stats['cascade_ready_turns']):.1f}")
+    reached = len(stats["cascade_ready_turns"])
+    never = total - reached
+    print(f"  Never by T{NUM_TURNS}: {never/total*100:.1f}%")
+    if reached:
+        print(f"  Median (among {reached/total*100:.0f}% that reached): T{statistics.median(stats['cascade_ready_turns']):.0f}")
 
     # Commander timing
-    print(f"\n--- Commander Timing (Zhulodok = 5 MV) ---")
-    if stats["zhulodok_turns"]:
-        print(f"  Median turn to 5+ mana: {statistics.median(stats['zhulodok_turns']):.1f}")
+    print(f"\n--- Commander Timing (Zhulodok = 6 MV) ---")
+    reached_z = len(stats["zhulodok_turns"])
+    never_z = total - reached_z
+    if reached_z:
+        print(f"  Median (among {reached_z/total*100:.0f}% that reached): T{statistics.median(stats['zhulodok_turns']):.0f}")
+    print(f"  Never by T{NUM_TURNS}: {never_z/total*100:.1f}%")
     print(f"  T2 Zhulodok: {stats['t2_zhulodok']/total*100:.1f}%")
     print(f"  T3 Zhulodok: {stats['t3_zhulodok']/total*100:.1f}%")
 
     # Hand quality
     print(f"\n--- Opening Hand Quality ---")
-    print(f"  Mulligan rate (0-1 lands): {stats['mulligan_count']/total*100:.1f}%")
-    print(f"\n  Land count distribution (opening 7):")
+    print(f"\n  Land count distribution (kept hand):")
     for lands in range(8):
         count = stats["hand_land_counts"].get(lands, 0)
         bar = "#" * int(count / total * 50)
         print(f"    {lands} lands: {count/total*100:>5.1f}% {bar}")
 
-    print(f"\n  Mana source count (lands + rocks in opening 7):")
+    print(f"\n  Mana source count (lands + rocks in kept hand):")
     for sources in range(8):
         count = stats["hand_source_counts"].get(sources, 0)
         if count > 0:
             print(f"    {sources} sources: {count/total*100:>5.1f}%")
+
+    # Mulligan stats
+    mull = stats["mulligan_attempts"]
+    print(f"\n--- Mulligan Stats (Commander London) ---")
+    print(f"  Kept first hand:     {mull.get(0, 0)/total*100:>5.1f}%")
+    print(f"  Free mulligan used:  {mull.get(1, 0)/total*100:>5.1f}% (redraw 7, no penalty)")
+    print(f"  Paid mulligan (→6):  {mull.get(2, 0)/total*100:>5.1f}% (redraw 7, bottom 1)")
 
     # Mana base assessment
     print(f"\n--- Mana Base Assessment ---")
     med_t1 = statistics.median(stats["mana_by_turn"][1])
     med_t3 = statistics.median(stats["mana_by_turn"][3])
     med_t5 = statistics.median(stats["mana_by_turn"][5])
-    mull_rate = stats["mulligan_count"] / total * 100
+    paid_mull_rate = mull.get(2, 0) / total * 100
 
     print(f"  Median T1: {med_t1:.0f}, T3: {med_t3:.0f}, T5: {med_t5:.0f}")
-    if mull_rate < 15:
-        print(f"  Mulligan rate {mull_rate:.1f}% — acceptable")
+    if paid_mull_rate < 5:
+        print(f"  Paid mulligan rate {paid_mull_rate:.1f}% — acceptable")
     else:
-        print(f"  Mulligan rate {mull_rate:.1f}% — consider adding lands")
+        print(f"  Paid mulligan rate {paid_mull_rate:.1f}% — consider adding lands/rocks")
 
     t3_zhulodok_pct = stats["t3_zhulodok"] / total * 100
     if t3_zhulodok_pct > 50:
         print(f"  T3 Zhulodok {t3_zhulodok_pct:.0f}% — strong acceleration")
     else:
         print(f"  T3 Zhulodok {t3_zhulodok_pct:.0f}% — may want more fast mana")
-
-
-def print_sire_swap_analysis(decklist: list[str], metadata: dict):
-    """Print the Sire of Seven Deaths swap analysis."""
-    print("\n" + "=" * 60)
-    print("SIRE OF SEVEN DEATHS SWAP ANALYSIS")
-    print("=" * 60)
-
-    target = "Ulamog, the Infinite Gyre"
-    replacement = "Sire of Seven Deaths"
-
-    print(f"\n  CUT:  {target} (MV 11, $25-35)")
-    print(f"  ADD:  {replacement} (MV 7, $0 — owned)")
-
-    print(f"\n  Why cut {target}:")
-    print(f"    - Most redundant Eldrazi: Ceaseless Hunger does same job better")
-    print(f"      (exile 2 > destroy 1, exile 20 on attack)")
-    print(f"    - Annihilator 4 still available on Kozilek, Butcher of Truth")
-    print(f"    - Graveyard shuffle safety net is overkill with 9 other big threats")
-    print(f"    - 'Destroy permanent' on cast doesn't hit indestructible")
-
-    print(f"\n  What {replacement} brings:")
-    print(f"    - 6 combat keywords (first strike, vigilance, menace, trample, reach, lifelink)")
-    print(f"    - Only lifegain source in a colorless deck")
-    print(f"    - Ward 7 life — extremely resilient to removal")
-    print(f"    - MV 7 = double cascade (same as Infinite Gyre) but 4 cheaper to hardcast")
-    print(f"    - Reach: blocks flyers (colorless decks struggle here)")
-
-    print(f"\n  What you lose:")
-    print(f"    - Annihilator 4 (still on Butcher of Truth)")
-    print(f"    - Indestructible (still on Ceaseless Hunger, Blightsteel)")
-    print(f"    - Higher MV cascade hits (11 vs 7)")
-    print(f"    - Graveyard shuffle (Butcher of Truth also has this)")
-
-    print(f"\n  Savings: $25-35")
-
-    # Cascade impact comparison
-    print(f"\n  Cascade Impact:")
-    print(f"    MV 11 cascades hit MV ≤10 → virtually any non-commander card")
-    print(f"    MV 7 cascades hit MV ≤6 → misses titans but hits rocks, utility")
-    print(f"    Net: Infinite Gyre's higher cascade ceiling is its only real advantage")
 
 
 def main():
@@ -580,9 +596,6 @@ def main():
     stats = run_simulation(decklist, metadata)
 
     print_results(stats, decklist, metadata, classified)
-    print_sire_swap_analysis(decklist, metadata)
-
-    print("\n" + "=" * 60)
 
 
 if __name__ == "__main__":
