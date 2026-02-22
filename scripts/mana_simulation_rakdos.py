@@ -7,7 +7,10 @@ efficiency turns 1-7 for the upgraded Bracket 4 Rakdos decklist.
 Commander: The Lord of Pain ({3}{B}{R}, CMC 5)
 """
 
+import itertools
 import json
+import multiprocessing
+import os
 import random
 import re
 import statistics
@@ -18,8 +21,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DECK_FILE = PROJECT_ROOT / "data" / "precons" / "endless-punishment" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
-NUM_GAMES = 10_000
-NUM_TURNS = 7
+NUM_GAMES = 100_000
+NUM_TURNS = 10
 
 # --- Mana cost parser ---
 
@@ -774,8 +777,8 @@ def print_static_analysis(decklist: list[str], metadata: dict, classified: dict)
 
 # --- Simulation ---
 
-def run_simulation(decklist: list[str], metadata: dict) -> dict:
-    """Run NUM_GAMES simulations and collect stats."""
+def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAMES) -> dict:
+    """Run num_games simulations and collect stats."""
     land_set = set()
     for name in set(decklist):
         meta = metadata.get(name, {})
@@ -787,7 +790,7 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
     b_by_turn = {t: [] for t in range(1, NUM_TURNS + 1)}
     r_by_turn = {t: [] for t in range(1, NUM_TURNS + 1)}
     hand_land_counts = Counter()
-    mulligan_attempts = Counter()  # keyed by attempt number (0=kept, 1=free, 2=paid)
+    mulligan_attempts = Counter()
 
     # Color screw tracking
     zero_b_by_turn = {t: 0 for t in range(1, NUM_TURNS + 1)}
@@ -799,12 +802,12 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
 
     # Curve efficiency
     castable_spell_by_turn = {t: 0 for t in range(1, NUM_TURNS + 1)}
-    curve_out_games = 0  # cast something every T1-T4
+    curve_out_games = 0
 
     # ETB tapped tracking
-    tapped_land_turns = {1: 0, 2: 0}  # games where first/second land entered tapped
+    tapped_land_turns = {1: 0, 2: 0}
 
-    for _ in range(NUM_GAMES):
+    for _ in range(num_games):
         state = commander_mulligan(decklist, metadata, land_set)
         mulligan_attempts[state.mulligan_attempt] += 1
 
@@ -1018,6 +1021,35 @@ def print_results(stats: dict, classified: dict, avg_cmc: float, pip_B: int, pip
         print(f"  ETB tapped T1/T2: {t1_tapped:.0f}%/{t2_tapped:.0f}% — significant tempo drag")
 
 
+def _run_chunk(args):
+    """Worker function for multiprocessing."""
+    decklist, metadata, num_games = args
+    return run_simulation(decklist, metadata, num_games)
+
+
+def merge_stats(chunks: list[dict]) -> dict:
+    """Merge stats dicts from parallel simulation chunks."""
+    merged = {}
+    first = chunks[0]
+    for key in first:
+        vals = [c[key] for c in chunks]
+        sample = vals[0]
+        if isinstance(sample, int):
+            merged[key] = sum(vals)
+        elif isinstance(sample, list):
+            merged[key] = list(itertools.chain.from_iterable(vals))
+        elif isinstance(sample, Counter):
+            merged[key] = sum(vals, Counter())
+        elif isinstance(sample, dict):
+            sub_sample = next(iter(sample.values()), None)
+            if isinstance(sub_sample, list):
+                merged[key] = {k: list(itertools.chain.from_iterable(v[k] for v in vals))
+                               for k in sample}
+            else:
+                merged[key] = {k: sum(v[k] for v in vals) for k in sample}
+    return merged
+
+
 def main():
     with open(DECK_FILE) as f:
         deck_data = json.load(f)
@@ -1030,12 +1062,17 @@ def main():
 
     classified = classify_cards(decklist, metadata)
 
-    # Static analysis
     avg_cmc, pip_B, pip_R = print_static_analysis(decklist, metadata, classified)
 
-    # Simulation
-    print(f"\nRunning {NUM_GAMES:,} game simulations...")
-    stats = run_simulation(decklist, metadata)
+    n_workers = os.cpu_count() or 4
+    chunk_size = NUM_GAMES // n_workers
+    remainder = NUM_GAMES % n_workers
+    chunks = [chunk_size + (1 if i < remainder else 0) for i in range(n_workers)]
+
+    print(f"\nRunning {NUM_GAMES:,} game simulations ({n_workers} workers)...")
+    with multiprocessing.Pool(n_workers) as pool:
+        results = pool.map(_run_chunk, [(decklist, metadata, n) for n in chunks])
+    stats = merge_stats(results)
 
     print_results(stats, classified, avg_cmc, pip_B, pip_R)
     print("\n" + "=" * 65)

@@ -5,7 +5,10 @@ Simulates 10,000 games measuring mana production turns 1-5 with the upgraded
 Bracket 4 decklist (baseDeck - cuts + adds, commander in command zone).
 """
 
+import itertools
 import json
+import multiprocessing
+import os
 import random
 import statistics
 from collections import Counter
@@ -15,8 +18,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DECK_FILE = PROJECT_ROOT / "data" / "precons" / "eldrazi-unbound" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
-NUM_GAMES = 10_000
-NUM_TURNS = 7
+NUM_GAMES = 100_000
+NUM_TURNS = 10
 
 # --- Land mana production rules ---
 
@@ -49,6 +52,12 @@ ROCK_DEFS = {
     "Darksteel Monolith": {"cmc": 4, "mana": 2, "burst": False},
     "Mana Vault": {"cmc": 1, "mana": 3, "burst": True},
     "Basalt Monolith": {"cmc": 3, "mana": 3, "burst": True},
+    "Liquimetal Torque": {"cmc": 2, "mana": 1, "burst": False},
+}
+
+# --- Land-fetch artifacts (deploy cheap, crack later for a land) ---
+LAND_FETCH_DEFS = {
+    "Wayfarer's Bauble": {"cmc": 1, "crack_cost": 2, "fetches": "Wastes"},
 }
 
 AMPLIFIER_DEFS = {
@@ -61,14 +70,14 @@ MAX_MULLIGANS = 2  # attempt 0 = initial, 1 = free, 2 = paid (bottom 1)
 
 
 def should_mulligan(hand: list[str]) -> bool:
-    """Mulligan if 0-1 mana sources (lands + rocks)."""
-    sources = sum(1 for c in hand if c in _land_set or c in ROCK_DEFS)
+    """Mulligan if 0-1 mana sources (lands + rocks + land-fetchers)."""
+    sources = sum(1 for c in hand if c in _land_set or c in ROCK_DEFS or c in LAND_FETCH_DEFS)
     return sources <= 1
 
 
 def choose_bottom_cards(hand: list[str], count: int, metadata: dict) -> list[str]:
     """Choose cards to bottom (London mulligan). Bottom highest CMC non-land, non-rock cards."""
-    candidates = [c for c in hand if c not in _land_set and c not in ROCK_DEFS]
+    candidates = [c for c in hand if c not in _land_set and c not in ROCK_DEFS and c not in LAND_FETCH_DEFS]
     candidates.sort(key=lambda c: metadata.get(c, {}).get("cmc", 0), reverse=True)
     if len(candidates) < count:
         # Fall back to worst lands (e.g., all-source hands)
@@ -119,7 +128,7 @@ def classify_cards(decklist: list[str], metadata: dict) -> dict:
     classified = {"lands": [], "rocks": [], "amplifiers": [], "spells": []}
 
     for name in decklist:
-        if name in ROCK_DEFS:
+        if name in ROCK_DEFS or name in LAND_FETCH_DEFS:
             classified["rocks"].append(name)
         elif name in AMPLIFIER_DEFS:
             classified["amplifiers"].append(name)
@@ -207,6 +216,8 @@ class GameState:
         self.has_forsaken = False
         self.has_lens = False
         self.burst_rocks_active: dict[str, bool] = {}  # name -> was cast this turn
+        self.battlefield_baubles: list[str] = []  # land-fetch artifacts waiting to crack
+        self.pending_lands: list[str] = []  # lands entering tapped (available next turn)
         self.mana_per_turn: list[int] = []
 
     def draw(self, n: int = 1):
@@ -217,7 +228,8 @@ class GameState:
     def opening_hand_stats(self) -> dict:
         lands = sum(1 for c in self.hand if self._is_land(c))
         rocks = sum(1 for c in self.hand if c in ROCK_DEFS)
-        return {"lands": lands, "rocks": rocks, "sources": lands + rocks}
+        fetchers = sum(1 for c in self.hand if c in LAND_FETCH_DEFS)
+        return {"lands": lands, "rocks": rocks, "sources": lands + rocks + fetchers}
 
     def _is_land(self, name: str) -> bool:
         return name in _land_set
@@ -263,6 +275,10 @@ class GameState:
 
         Returns pre-deployment available mana (after land drop, before casting rocks).
         """
+        # Move pending lands (entered tapped last turn) to battlefield
+        self.battlefield_lands.extend(self.pending_lands)
+        self.pending_lands = []
+
         # Draw (skip on turn 1's draw since we have opening hand)
         if turn_number > 1:
             self.draw(1)
@@ -321,6 +337,23 @@ class GameState:
                     available += rock_mana(name, self.has_forsaken)
             castable = self._get_castable_from_hand(available)
 
+        # Crack baubles on battlefield (costs 2, adds Wastes tapped — no mana this turn)
+        for bname in list(self.battlefield_baubles):
+            fetch = LAND_FETCH_DEFS[bname]
+            if available >= fetch["crack_cost"]:
+                available -= fetch["crack_cost"]
+                self.battlefield_baubles.remove(bname)
+                self.pending_lands.append(fetch["fetches"])
+
+        # Deploy baubles from hand (costs 1, no immediate mana — investment)
+        for card in list(self.hand):
+            if card in LAND_FETCH_DEFS:
+                fetch = LAND_FETCH_DEFS[card]
+                if available >= fetch["cmc"]:
+                    available -= fetch["cmc"]
+                    self.hand.remove(card)
+                    self.battlefield_baubles.append(card)
+
         # Record total mana available this turn (recalculate with all permanents)
         self.mana_per_turn.append(self._total_mana())
         return pre_deployment
@@ -371,8 +404,23 @@ class GameState:
 _land_set: set[str] = set()
 
 
-def run_simulation(decklist: list[str], metadata: dict) -> dict:
-    """Run NUM_GAMES simulations and collect stats."""
+def can_cast_from_hand(state: "GameState", available_mana: int, metadata: dict) -> list[str]:
+    """Return list of castable non-rock, non-amplifier spells from hand."""
+    castable = []
+    for card in state.hand:
+        if card in ROCK_DEFS or card in LAND_FETCH_DEFS or card in AMPLIFIER_DEFS or card in _land_set:
+            continue
+        meta = metadata.get(card, {})
+        cmc = meta.get("cmc", 0)
+        if not isinstance(cmc, (int, float)) or cmc == 0:
+            continue
+        if available_mana >= cmc:
+            castable.append(card)
+    return castable
+
+
+def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAMES) -> dict:
+    """Run num_games simulations and collect stats."""
     global _land_set
 
     # Build land set from metadata
@@ -386,13 +434,17 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
     mana_by_turn = {t: [] for t in range(1, NUM_TURNS + 1)}
     hand_land_counts = Counter()
     hand_source_counts = Counter()
-    mulligan_attempts = Counter()  # keyed by attempt number (0=kept, 1=free, 2=paid)
+    mulligan_attempts = Counter()
     zhulodok_turns = []
     cascade_ready_turns = []
     t2_zhulodok = 0
     t3_zhulodok = 0
 
-    for _ in range(NUM_GAMES):
+    # Castable spell tracking
+    castable_spell_by_turn = {t: 0 for t in range(1, NUM_TURNS + 1)}
+    curve_out_games = 0
+
+    for _ in range(num_games):
         # Mulligan phase (Commander London mulligan)
         attempt = 0
         while True:
@@ -437,6 +489,7 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
         # Simulate turns
         zhulodok_turn = None
         cascade_turn = None
+        cast_every_turn = True
         for t in range(1, NUM_TURNS + 1):
             castable_mana = state.play_turn(t)
             mana_by_turn[t].append(state.mana_per_turn[-1])
@@ -448,6 +501,14 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
             if cascade_turn is None and castable_mana >= 7:
                 cascade_turn = t
 
+            # Castable spell check (use total board mana for "could I cast a spell")
+            board_mana = state.mana_per_turn[-1]
+            castable = can_cast_from_hand(state, board_mana, metadata)
+            if castable:
+                castable_spell_by_turn[t] += 1
+            elif t <= 4:
+                cast_every_turn = False
+
         if zhulodok_turn is not None:
             zhulodok_turns.append(zhulodok_turn)
             if zhulodok_turn <= 2:
@@ -456,6 +517,8 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
                 t3_zhulodok += 1
         if cascade_turn is not None:
             cascade_ready_turns.append(cascade_turn)
+        if cast_every_turn:
+            curve_out_games += 1
 
     return {
         "mana_by_turn": mana_by_turn,
@@ -466,26 +529,16 @@ def run_simulation(decklist: list[str], metadata: dict) -> dict:
         "cascade_ready_turns": cascade_ready_turns,
         "t2_zhulodok": t2_zhulodok,
         "t3_zhulodok": t3_zhulodok,
+        "castable_spell_by_turn": castable_spell_by_turn,
+        "curve_out_games": curve_out_games,
     }
 
 
-def compute_avg_cmc(decklist: list[str], metadata: dict) -> float:
-    """Average CMC of non-land cards."""
-    cmcs = []
-    for name in decklist:
-        meta = metadata.get(name, {})
-        if "Land" not in meta.get("type_line", ""):
-            cmc = meta.get("cmc", 0)
-            if isinstance(cmc, (int, float)):
-                cmcs.append(cmc)
-    return statistics.mean(cmcs) if cmcs else 0
 
-
-def print_results(stats: dict, decklist: list[str], metadata: dict, classified: dict):
-    """Print simulation results."""
+def print_static_analysis(decklist: list[str], metadata: dict, classified: dict) -> float:
+    """Print pre-simulation static analysis. Returns avg CMC."""
     print("=" * 60)
-    print("ELDRAZI UNBOUND — TITAN CONVERGENCE MANA SIMULATION")
-    print(f"({NUM_GAMES:,} games, {NUM_TURNS} turns each)")
+    print("STATIC ANALYSIS — TITAN CONVERGENCE (BRACKET 4)")
     print("=" * 60)
 
     # Deck composition
@@ -495,88 +548,235 @@ def print_results(stats: dict, decklist: list[str], metadata: dict, classified: 
     print(f"Mana rocks: {len(classified['rocks'])}")
     print(f"Amplifiers: {len(classified['amplifiers'])}")
     print(f"Spells/creatures: {len(classified['spells'])}")
-    print(f"Avg CMC (non-land): {compute_avg_cmc(decklist, metadata):.2f}")
 
-    # Land breakdown
-    print(f"\n--- Land Breakdown ---")
-    land_counts = Counter(classified["lands"])
-    for name, count in sorted(land_counts.items()):
+    # CMC histogram
+    cmcs = []
+    for name in decklist:
+        meta = metadata.get(name, {})
+        if "Land" not in meta.get("type_line", ""):
+            cmc = meta.get("cmc", 0)
+            if isinstance(cmc, (int, float)):
+                cmcs.append(int(cmc))
+
+    avg_cmc = statistics.mean(cmcs) if cmcs else 0
+    print(f"\nAverage CMC (non-land): {avg_cmc:.2f}")
+
+    cmc_hist = Counter(cmcs)
+    print(f"\n  CMC histogram:")
+    max_cmc = max(cmc_hist.keys()) if cmc_hist else 0
+    for cmc_val in range(0, max_cmc + 1):
+        count = cmc_hist.get(cmc_val, 0)
+        if count > 0:
+            bar = "#" * count
+            print(f"    {cmc_val:>2} CMC: {count:>2} {bar}")
+
+    # Mana source inventory
+    lands = classified["lands"]
+    land_counts = Counter(lands)
+
+    two_plus_lands = []
+    one_mana_lands = []
+    zero_mana_lands = []
+    special_lands = []
+
+    for name in sorted(set(lands)):
+        count = land_counts[name]
         suffix = f" x{count}" if count > 1 else ""
-        print(f"  {name}{suffix}")
+        if name in ZERO_MANA_LANDS:
+            zero_mana_lands.append(f"    {name}{suffix}")
+        elif name in ("Eldrazi Temple", "Ugin's Labyrinth", "Scorched Ruins") or name in TRON_PIECES:
+            two_plus_lands.append(f"    {name}{suffix}")
+        elif name in ("Planar Nexus", "Urza's Workshop", "Shrine of the Forsaken Gods", "Urza's Cave"):
+            special_lands.append(f"    {name}{suffix}")
+        else:
+            one_mana_lands.append(f"    {name}{suffix}")
 
-    # Mana per turn
-    print(f"\n--- Mana Per Turn ---")
-    print(f"{'Turn':<6} {'Median':>7} {'P25':>7} {'P75':>7} {'Mean':>7}")
-    print("-" * 38)
+    print(f"\n--- Mana Source Inventory ---")
+    print(f"  2+ mana lands ({len(two_plus_lands)}):")
+    for line in two_plus_lands:
+        print(line)
+    print(f"  Conditional/scaling lands ({len(special_lands)}):")
+    for line in special_lands:
+        print(line)
+    print(f"  1-mana lands ({len(one_mana_lands)}):")
+    for line in one_mana_lands:
+        print(line)
+    if zero_mana_lands:
+        print(f"  0-mana lands ({len(zero_mana_lands)}):")
+        for line in zero_mana_lands:
+            print(line)
+
+    # Rock inventory
+    rocks = classified["rocks"]
+    rock_counts = Counter(rocks)
+    print(f"\n  Mana rocks/fetchers ({len(rocks)}):")
+    for name in sorted(set(rocks)):
+        count = rock_counts[name]
+        suffix = f" x{count}" if count > 1 else ""
+        if name in ROCK_DEFS:
+            r = ROCK_DEFS[name]
+            tag = f"(CMC {r['cmc']}, +{r['mana']}{'⚡' if r['burst'] else ''})"
+        elif name in LAND_FETCH_DEFS:
+            f = LAND_FETCH_DEFS[name]
+            tag = f"(CMC {f['cmc']}, crack {f['crack_cost']} → {f['fetches']})"
+        else:
+            tag = ""
+        print(f"    {name}{suffix} {tag}")
+
+    # Amplifiers
+    if classified["amplifiers"]:
+        print(f"\n  Amplifiers ({len(classified['amplifiers'])}):")
+        for name in classified["amplifiers"]:
+            print(f"    {name} (CMC {AMPLIFIER_DEFS[name]['cmc']})")
+
+    # Land count heuristic (Frank Karsten adapted for Commander)
+    # Count total mana sources: lands + rocks + fetchers
+    rocks = classified["rocks"]
+    total_sources = len(lands) + len(rocks)
+    recommended = round(36 + (avg_cmc - 3.0) * 2)
+    print(f"\n--- Mana Source Heuristic ---")
+    print(f"  Avg CMC: {avg_cmc:.2f}")
+    print(f"  Lands: {len(lands)}, Rocks/fetchers: {len(rocks)}, Total sources: {total_sources}")
+    print(f"  Heuristic recommendation: ~{recommended} mana sources")
+    if total_sources >= recommended:
+        print(f"  Status: adequate ({total_sources} >= {recommended})")
+    else:
+        print(f"  Status: light ({total_sources} < {recommended}, delta = {recommended - total_sources})")
+
+    return avg_cmc
+
+
+def print_results(stats: dict, decklist: list[str], metadata: dict, classified: dict, avg_cmc: float):
+    """Print simulation results."""
+    total = NUM_GAMES
+
+    print("\n" + "=" * 60)
+    print(f"MONTE CARLO SIMULATION — TITAN CONVERGENCE ({NUM_GAMES:,} games, {NUM_TURNS} turns)")
+    print("=" * 60)
+
+    # Dimension 1: Mana Base
+    print(f"\n--- Dimension 1: Mana Base Adequacy ---")
+    print(f"\n  Total mana available per turn:")
+    print(f"  {'Turn':<6} {'Median':>7} {'P25':>7} {'P75':>7} {'Mean':>7}")
+    print(f"  {'-'*34}")
     for t in range(1, NUM_TURNS + 1):
         data = stats["mana_by_turn"][t]
         med = statistics.median(data)
         p25 = statistics.quantiles(data, n=4)[0]
         p75 = statistics.quantiles(data, n=4)[2]
         mean = statistics.mean(data)
-        print(f"  T{t:<4} {med:>7.0f} {p25:>7.0f} {p75:>7.0f} {mean:>7.1f}")
+        print(f"    T{t:<4} {med:>7.0f} {p25:>7.0f} {p75:>7.0f} {mean:>7.1f}")
 
-    # Cascade readiness
-    print(f"\n--- Cascade Readiness (7+ mana) ---")
-    total = NUM_GAMES
-    for t in [3, 4, 5]:
-        count = sum(1 for ct in stats["cascade_ready_turns"] if ct <= t)
-        print(f"  By turn {t}: {count/total*100:.1f}%")
-    reached = len(stats["cascade_ready_turns"])
-    never = total - reached
-    print(f"  Never by T{NUM_TURNS}: {never/total*100:.1f}%")
-    if reached:
-        print(f"  Median (among {reached/total*100:.0f}% that reached): T{statistics.median(stats['cascade_ready_turns']):.0f}")
+    mull = stats["mulligan_attempts"]
+    print(f"\n  Mulligan stats (Commander London):")
+    print(f"    Kept first hand:     {mull.get(0, 0)/total*100:>5.1f}%")
+    print(f"    Free mulligan used:  {mull.get(1, 0)/total*100:>5.1f}% (redraw 7, no penalty)")
+    print(f"    Paid mulligan (→6):  {mull.get(2, 0)/total*100:>5.1f}% (redraw 7, bottom 1)")
 
-    # Commander timing
-    print(f"\n--- Commander Timing (Zhulodok = 6 MV) ---")
-    reached_z = len(stats["zhulodok_turns"])
-    never_z = total - reached_z
-    if reached_z:
-        print(f"  Median (among {reached_z/total*100:.0f}% that reached): T{statistics.median(stats['zhulodok_turns']):.0f}")
-    print(f"  Never by T{NUM_TURNS}: {never_z/total*100:.1f}%")
-    print(f"  T2 Zhulodok: {stats['t2_zhulodok']/total*100:.1f}%")
-    print(f"  T3 Zhulodok: {stats['t3_zhulodok']/total*100:.1f}%")
-
-    # Hand quality
-    print(f"\n--- Opening Hand Quality ---")
-    print(f"\n  Land count distribution (kept hand):")
+    print(f"\n  Opening hand (post-mulligan):")
+    print(f"    Land count distribution:")
     for lands in range(8):
         count = stats["hand_land_counts"].get(lands, 0)
-        bar = "#" * int(count / total * 50)
-        print(f"    {lands} lands: {count/total*100:>5.1f}% {bar}")
+        if count > 0:
+            bar = "#" * int(count / total * 50)
+            print(f"      {lands} lands: {count/total*100:>5.1f}% {bar}")
 
-    print(f"\n  Mana source count (lands + rocks in kept hand):")
+    print(f"\n    Mana source count (lands + rocks + fetchers):")
     for sources in range(8):
         count = stats["hand_source_counts"].get(sources, 0)
         if count > 0:
-            print(f"    {sources} sources: {count/total*100:>5.1f}%")
+            print(f"      {sources} sources: {count/total*100:>5.1f}%")
 
-    # Mulligan stats
-    mull = stats["mulligan_attempts"]
-    print(f"\n--- Mulligan Stats (Commander London) ---")
-    print(f"  Kept first hand:     {mull.get(0, 0)/total*100:>5.1f}%")
-    print(f"  Free mulligan used:  {mull.get(1, 0)/total*100:>5.1f}% (redraw 7, no penalty)")
-    print(f"  Paid mulligan (→6):  {mull.get(2, 0)/total*100:>5.1f}% (redraw 7, bottom 1)")
+    # Dimension 2: Commander & Cascade Timing
+    print(f"\n--- Dimension 2: Commander & Cascade Timing ---")
 
-    # Mana base assessment
+    print(f"\n  Commander castable (Zhulodok = 6 MV):")
+    reached_z = len(stats["zhulodok_turns"])
+    never_z = total - reached_z
+    for t in range(2, NUM_TURNS + 1):
+        count = sum(1 for zt in stats["zhulodok_turns"] if zt <= t)
+        print(f"    By T{t}: {count/total*100:.1f}%")
+    if reached_z:
+        print(f"    Median (among {reached_z/total*100:.0f}% that reached): T{statistics.median(stats['zhulodok_turns']):.0f}")
+    print(f"    Never by T{NUM_TURNS}: {never_z/total*100:.1f}%")
+
+    print(f"\n  Cascade readiness (7+ mana):")
+    for t in range(3, NUM_TURNS + 1):
+        count = sum(1 for ct in stats["cascade_ready_turns"] if ct <= t)
+        print(f"    By T{t}: {count/total*100:.1f}%")
+    reached = len(stats["cascade_ready_turns"])
+    never = total - reached
+    if reached:
+        print(f"    Median (among {reached/total*100:.0f}% that reached): T{statistics.median(stats['cascade_ready_turns']):.0f}")
+    print(f"    Never by T{NUM_TURNS}: {never/total*100:.1f}%")
+
+    # Dimension 3: Curve Efficiency
+    print(f"\n--- Dimension 3: Curve Efficiency ---")
+
+    print(f"\n  Castable spell from hand (non-rock/amplifier):")
+    for t in range(1, NUM_TURNS + 1):
+        pct = stats["castable_spell_by_turn"][t] / total * 100
+        print(f"    T{t}: {pct:.1f}%")
+
+    print(f"\n  Curve-out rate (cast something T1-T4): {stats['curve_out_games']/total*100:.1f}%")
+
+    # Assessment
     print(f"\n--- Mana Base Assessment ---")
     med_t1 = statistics.median(stats["mana_by_turn"][1])
     med_t3 = statistics.median(stats["mana_by_turn"][3])
     med_t5 = statistics.median(stats["mana_by_turn"][5])
+    med_last = statistics.median(stats["mana_by_turn"][NUM_TURNS])
     paid_mull_rate = mull.get(2, 0) / total * 100
 
-    print(f"  Median T1: {med_t1:.0f}, T3: {med_t3:.0f}, T5: {med_t5:.0f}")
-    if paid_mull_rate < 5:
-        print(f"  Paid mulligan rate {paid_mull_rate:.1f}% — acceptable")
+    print(f"\n  Median mana: T1={med_t1:.0f}, T3={med_t3:.0f}, T5={med_t5:.0f}, T{NUM_TURNS}={med_last:.0f}")
+
+    # Mana sources vs heuristic
+    total_sources = len(classified["lands"]) + len(classified["rocks"])
+    recommended = round(36 + (avg_cmc - 3.0) * 2)
+    if total_sources >= recommended:
+        print(f"  Mana sources: {total_sources} (adequate for avg CMC {avg_cmc:.2f})")
     else:
-        print(f"  Paid mulligan rate {paid_mull_rate:.1f}% — consider adding lands/rocks")
+        print(f"  Mana sources: {total_sources} (light for avg CMC {avg_cmc:.2f}, heuristic suggests ~{recommended})")
+
+    if paid_mull_rate < 5:
+        print(f"  Paid mulligan rate: {paid_mull_rate:.1f}% — acceptable")
+    else:
+        print(f"  Paid mulligan rate: {paid_mull_rate:.1f}% — consider adding lands/rocks")
 
     t3_zhulodok_pct = stats["t3_zhulodok"] / total * 100
     if t3_zhulodok_pct > 50:
-        print(f"  T3 Zhulodok {t3_zhulodok_pct:.0f}% — strong acceleration")
+        print(f"  T3 Zhulodok: {t3_zhulodok_pct:.0f}% — strong acceleration")
     else:
-        print(f"  T3 Zhulodok {t3_zhulodok_pct:.0f}% — may want more fast mana")
+        print(f"  T3 Zhulodok: {t3_zhulodok_pct:.0f}% — may want more fast mana")
+
+
+def _run_chunk(args):
+    """Worker function for multiprocessing."""
+    decklist, metadata, num_games = args
+    return run_simulation(decklist, metadata, num_games)
+
+
+def merge_stats(chunks: list[dict]) -> dict:
+    """Merge stats dicts from parallel simulation chunks."""
+    merged = {}
+    first = chunks[0]
+    for key in first:
+        vals = [c[key] for c in chunks]
+        sample = vals[0]
+        if isinstance(sample, int):
+            merged[key] = sum(vals)
+        elif isinstance(sample, list):
+            merged[key] = list(itertools.chain.from_iterable(vals))
+        elif isinstance(sample, Counter):
+            merged[key] = sum(vals, Counter())
+        elif isinstance(sample, dict):
+            sub_sample = next(iter(sample.values()), None)
+            if isinstance(sub_sample, list):
+                merged[key] = {k: list(itertools.chain.from_iterable(v[k] for v in vals))
+                               for k in sample}
+            else:
+                merged[key] = {k: sum(v[k] for v in vals) for k in sample}
+    return merged
 
 
 def main():
@@ -592,10 +792,20 @@ def main():
 
     classified = classify_cards(decklist, metadata)
 
-    print(f"\nRunning {NUM_GAMES:,} game simulations...\n")
-    stats = run_simulation(decklist, metadata)
+    avg_cmc = print_static_analysis(decklist, metadata, classified)
 
-    print_results(stats, decklist, metadata, classified)
+    n_workers = os.cpu_count() or 4
+    chunk_size = NUM_GAMES // n_workers
+    remainder = NUM_GAMES % n_workers
+    chunks = [chunk_size + (1 if i < remainder else 0) for i in range(n_workers)]
+
+    print(f"\nRunning {NUM_GAMES:,} game simulations ({n_workers} workers)...")
+    with multiprocessing.Pool(n_workers) as pool:
+        results = pool.map(_run_chunk, [(decklist, metadata, n) for n in chunks])
+    stats = merge_stats(results)
+
+    print_results(stats, decklist, metadata, classified, avg_cmc)
+    print("\n" + "=" * 60)
 
 
 if __name__ == "__main__":
