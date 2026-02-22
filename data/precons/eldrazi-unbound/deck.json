@@ -156,7 +156,7 @@
         {
           "name": "Suboptimal Lands",
           "description": "Replaced with lands that produce more mana or provide utility",
-          "cards": ["Forge of Heroes", "Ruins of Oran-Rief", "Temple of the False God", "Tomb of the Spirit Dragon", "Bonders' Enclave", "Sea Gate Wreckage", "Geier Reach Sanitarium", "Mage-Ring Network", "Wastes", "Guildless Commons", "Tyrite Sanctum", "Arch of Orazca", "Arcane Lighthouse"]
+          "cards": ["Forge of Heroes", "Ruins of Oran-Rief", "Temple of the False God", "Tomb of the Spirit Dragon", "Bonders' Enclave", "Sea Gate Wreckage", "Geier Reach Sanitarium", "Mage-Ring Network", "Wastes", "Guildless Commons", "Tyrite Sanctum", "Arch of Orazca", "Arcane Lighthouse", "Rogue's Passage"]
         }
       ],
       "cuts": [
@@ -203,7 +203,8 @@
         { "name": "Steel Hellkite", "reason": "6 MV (no cascade trigger), needs combat damage for removal" },
         { "name": "Endbringer", "reason": "6 MV (no cascade trigger), modest tap abilities for Bracket 4" },
         { "name": "Arch of Orazca", "reason": "5 mana + city's blessing for 1 card, too slow at Bracket 4" },
-        { "name": "Arcane Lighthouse", "reason": "Narrow anti-hexproof utility, deck doesn't rely on targeted removal" }
+        { "name": "Arcane Lighthouse", "reason": "Narrow anti-hexproof utility, deck doesn't rely on targeted removal" },
+        { "name": "Rogue's Passage", "reason": "5 mana for unblockable — redundant with menace, trample, flying, annihilator across 8+ creatures" }
       ],
       "addCategories": [
         {
@@ -213,7 +214,7 @@
         },
         {
           "name": "Eldrazi Titans",
-          "cards": ["Ulamog, the Ceaseless Hunger", "Kozilek, Butcher of Truth", "Ulamog, the Infinite Gyre", "Emrakul, the Promised End", "Void Winnower", "Kozilek, the Broken Reality", "Nulldrifter", "Ulamog, the Defiler", "Emrakul, the World Anew"]
+          "cards": ["Ulamog, the Ceaseless Hunger", "Kozilek, Butcher of Truth", "Sire of Seven Deaths", "Emrakul, the Promised End", "Void Winnower", "Kozilek, the Broken Reality", "Nulldrifter", "Ulamog, the Defiler", "Emrakul, the World Anew"]
         },
         {
           "name": "Cascade Amplification",
@@ -237,7 +238,7 @@
         },
         {
           "name": "Upgraded Lands",
-          "cards": ["Eye of Ugin", "Sanctum of Ugin", "Planar Nexus", "Scorched Ruins", "Cavern of Souls", "Gemstone Caverns", "Strip Mine", "Ugin's Labyrinth", "Urza's Saga", "Buried Ruin", "Inventors' Fair", "Urza's Cave", "Urza's Workshop"]
+          "cards": ["Eye of Ugin", "Sanctum of Ugin", "Planar Nexus", "Scorched Ruins", "Cavern of Souls", "Gemstone Caverns", "Strip Mine", "Ugin's Labyrinth", "Urza's Saga", "Buried Ruin", "Inventors' Fair", "Urza's Cave", "Urza's Workshop", "Thespian's Stage"]
         }
       ],
       "synergies": [
@@ -368,12 +369,12 @@
           ]
         },
         {
-          "name": "Ulamog, the Infinite Gyre",
-          "price": "$25-35",
+          "name": "Sire of Seven Deaths",
+          "price": "$0",
           "isGameChanger": false,
-          "reason": "Destroy on cast, annihilator 4, graveyard shuffle",
+          "reason": "MV 7 — triggers Zhulodok double cascade. 7/7 with first strike, vigilance, menace, trample, reach, lifelink. Ward—pay 7 life makes it extremely resilient. Only lifegain source in colorless. Replaces Ulamog, the Infinite Gyre (redundant with Ceaseless Hunger)",
           "sources": [
-            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top Eldrazi creature" }
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Sire of Seven Deaths swap: 6 combat keywords + ward 7 life + lifelink fills gaps the deck lacks; Infinite Gyre is redundant with Ceaseless Hunger" }
           ]
         },
         {
@@ -756,6 +757,16 @@
           "sources": [
             { "type": "edhrec", "name": "EDHREC Zhulodok Optimized", "url": "https://edhrec.com/commanders/zhulodok-void-gorger/optimized", "detail": "545 decks (46%), 0.22 synergy" },
             { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Ulamog's Dreadsire — immediate board impact + graveyard theft far exceeds tap-for-token" }
+          ]
+        },
+        {
+          "name": "Thespian's Stage",
+          "price": "$3-5",
+          "isGameChanger": false,
+          "reason": "2 mana to copy any land on the battlefield — becomes Eldrazi Temple (2 mana), a Tron piece (enables 7+ from Tron alone), or Scorched Ruins (4 mana). With 5 Urza lands + Planar Nexus, copying any piece assembles Tron from 2 cards instead of 3",
+          "sources": [
+            { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Utility land for copying high-output lands" },
+            { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Rogue's Passage — 5 mana unblockable is redundant with menace, trample, flying, annihilator across 8+ Eldrazi" }
           ]
         }
       ]

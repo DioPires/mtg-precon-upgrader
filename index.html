@@ -5478,6 +5478,22 @@
     const imageCache = new Map();
     const cardMetadataCache = new Map();
 
+    // Pre-load local metadata cache (eliminates Scryfall API calls for known cards)
+    async function loadLocalMetadata() {
+      try {
+        const resp = await fetch('data/card-metadata.json');
+        if (resp.ok) {
+          const data = await resp.json();
+          for (const [name, meta] of Object.entries(data)) {
+            cardMetadataCache.set(name, meta);
+          }
+          console.log(`Pre-loaded ${cardMetadataCache.size} cards from local metadata cache`);
+        }
+      } catch (e) {
+        console.warn('Local metadata cache not available, falling back to Scryfall API');
+      }
+    }
+
     // === RATE LIMITING ===
     const requestQueue = [];
     const inFlightRequests = new Map();
@@ -8596,6 +8612,9 @@
 
     // === INITIALIZE ===
     async function initializeApp() {
+      // Pre-load local card metadata (avoids Scryfall API calls for known cards)
+      await loadLocalMetadata();
+
       // Set up delegated event listeners (once, before any content loads)
       setupDelegatedListeners();
 
