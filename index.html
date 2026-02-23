@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Visual deck guides for Magic: The Gathering Commander precons with card previews, synergy analysis, mana simulations, and export tools.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
   <title>MTG Commander Deck Guides</title>
   <!-- Privacy-respecting analytics (Plausible) - uncomment and set your domain to enable -->
   <!-- <script defer data-domain="YOUR-DOMAIN.com" src="https://plausible.io/js/script.js"></script> -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://api.scryfall.com">
+  <link rel="dns-prefetch" href="https://svgs.scryfall.io">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Fira+Code:wght@400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -53,6 +57,58 @@
 
     html {
       touch-action: auto;
+    }
+
+    .skip-to-content {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent-purple);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 0 0 8px 8px;
+      z-index: 10000;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: top 0.2s;
+    }
+
+    .skip-to-content:focus {
+      top: 0;
+    }
+
+    .search-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: 12px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+
+    .search-hint:hover {
+      opacity: 1;
+    }
+
+    .search-hint kbd {
+      display: inline-block;
+      padding: 1px 5px;
+      font-size: 0.7rem;
+      font-family: inherit;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 3px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 768px) {
+      .search-hint {
+        display: none;
+      }
     }
 
     body {
@@ -206,9 +262,11 @@
       justify-content: center;
       width: 18px;
       height: 18px;
+      padding: 0;
       border-radius: 50%;
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
+      font-family: inherit;
       font-size: 0.7rem;
       font-style: italic;
       color: var(--text-secondary);
@@ -393,6 +451,11 @@
 
     .bracket-info-modal-close:hover {
       color: var(--text-primary);
+    }
+
+    .bracket-info-modal-close:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
     }
 
     .bracket-info-modal h3 {
@@ -1270,6 +1333,11 @@
     .tier-sources-toggle:hover {
       color: var(--text-primary);
     }
+
+    .tier-sources-toggle:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
+    }
     .tier-sources-toggle svg {
       transition: transform 0.2s;
     }
@@ -1335,6 +1403,11 @@
     .share-btn:hover {
       border-color: var(--accent-purple);
       color: var(--text-primary);
+    }
+
+    .share-btn:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
     }
 
     .share-btn.success {
@@ -1496,6 +1569,11 @@
 
     .selection-controls button:hover {
       color: var(--accent-purple);
+    }
+
+    .selection-controls button:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
     }
 
     .decklist-card a,
@@ -2265,6 +2343,11 @@
       color: var(--accent-red);
     }
 
+    .filter-clear:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
+    }
+
     /* === QUICK SEARCH MODAL === */
     .search-modal {
       display: none;
@@ -2681,6 +2764,11 @@
       font-size: 2rem;
       cursor: pointer;
       padding: 8px;
+    }
+
+    .mobile-preview-close:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
     }
 
     .mobile-preview-name {
@@ -3292,6 +3380,11 @@
       color: var(--text-primary);
     }
 
+    .playtest-stats-close:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
+    }
+
     .playtest-stats-section {
       margin-bottom: 20px;
     }
@@ -3884,6 +3977,7 @@
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
   <!-- Aria-live region for screen reader announcements -->
   <div id="preview-announcement" aria-live="polite" aria-atomic="true"></div>
   <div id="status-announcement" aria-live="polite" aria-atomic="true" class="visually-hidden"></div>
@@ -3955,6 +4049,7 @@
         <select id="precon-select">
           <option value="">Loading...</option>
         </select>
+        <span class="search-hint" id="search-hint" role="button" tabindex="0" aria-label="Open card search"><kbd>⌘</kbd><kbd>K</kbd> Search</span>
       </div>
       <div class="commander-info" id="commander-info" style="display: none;">
         <h2 id="commander-name"></h2>
@@ -3962,7 +4057,7 @@
         <div class="bracket-visualization" id="bracket-visualization">
           <div class="bracket-header">
             <span class="bracket-label" id="bracket-label">Loading...</span>
-            <span class="bracket-info-icon" title="EDH power level brackets: 1=Exhibition (precon-level), 2=Core (focused), 3=Upgraded (optimized mana/synergy), 4=Optimized (high power), 5=cEDH (competitive)" aria-label="EDH power level brackets information" role="img">i</span>
+            <button class="bracket-info-icon" type="button" title="EDH power level brackets: 1=Exhibition (precon-level), 2=Core (focused), 3=Upgraded (optimized mana/synergy), 4=Optimized (high power), 5=cEDH (competitive)" aria-label="EDH power level brackets information">i</button>
           </div>
           <div class="bracket-bar">
             <div class="bracket-segment exhibition" data-bracket="1"></div>
@@ -5801,7 +5896,7 @@
       // Add Commander section first
       html += `<div class="decklist-category">`;
       html += `<div class="decklist-category-title">Commander</div>`;
-      html += `<div class="decklist-card commander" data-card-name="${escapeHtml(effCmd)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(effCmd)}"><a href="${getCardmarketUrl(effCmd)}" target="_blank" rel="noopener noreferrer">${escapeHtml(effCmd)}</a>${getMvDisplay(effCmd)}</div>`;
+      html += `<div class="decklist-card commander" data-card-name="${escapeHtml(effCmd)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(effCmd)}"><a href="${getCardmarketUrl(effCmd)}" target="_blank" rel="noopener noreferrer">${escapeHtml(effCmd)}</a>${getMvDisplay(effCmd)}</div>`;
       html += `</div>`;
 
       typeOrder.forEach(type => {
@@ -5820,7 +5915,7 @@
             const addedClass = card.isAdded ? ' added' : '';
             const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
             const cardmarketUrl = getCardmarketUrl(card.name);
-            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
+            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
           });
           html += `</div>`;
         }
@@ -5833,7 +5928,7 @@
         grouped['Other'].forEach(card => {
           const addedClass = card.isAdded ? ' added' : '';
           const cardmarketUrl = getCardmarketUrl(card.name);
-          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
+          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
         });
         html += `</div>`;
       }
@@ -6458,6 +6553,7 @@
       const deck = searchResults.filter(r => r.type === 'deck');
 
       let html = '';
+      const isCmd = currentPrecon?.type === 'commander';
 
       if (adds.length > 0) {
         const addGroupLabel = isCmd ? 'Deck Themes' : 'Added Cards';
@@ -7037,8 +7133,18 @@
       if (e.key === 'Escape') {
         closeSearch();
         closeMobilePreview();
+        closeBracketInfoModal();
       }
     });
+
+    // Cmd+K search hint click/keyboard
+    const searchHint = document.getElementById('search-hint');
+    if (searchHint) {
+      searchHint.addEventListener('click', openSearch);
+      searchHint.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSearch(); }
+      });
+    }
 
     // Search modal
     document.getElementById('search-modal')?.addEventListener('click', (e) => {
@@ -8278,6 +8384,12 @@
 
     // === INITIALIZE ===
     async function initializeApp() {
+      // Update search hint for non-Mac platforms
+      if (!/Mac|iPhone|iPad/.test(navigator.userAgent)) {
+        const hint = document.getElementById('search-hint');
+        if (hint) hint.innerHTML = '<kbd>Ctrl</kbd><kbd>K</kbd> Search';
+      }
+
       // Pre-load local card metadata (avoids Scryfall API calls for known cards)
       await loadLocalMetadata();
 
@@ -8312,7 +8424,6 @@
         const allDecks = [...(preconIndex.commanders || [])];
         if (viewPrecon && allDecks.some(d => d.id === viewPrecon)) {
           preconSelect.value = viewPrecon;
-          currentView = requestedView;
           await selectPrecon(viewPrecon);
           switchView(requestedView);
         }
