@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Monte Carlo mana base simulation for Eldrazi Unbound Titan Convergence tier.
+"""Monte Carlo mana base simulation for Titan Convergence (Zhulodok, Void Gorger).
 
-Simulates 10,000 games measuring mana production turns 1-5 with the upgraded
-Bracket 4 decklist (baseDeck - cuts + adds, commander in command zone).
+Simulates 100,000 games measuring mana production turns 1-10 with the
+Bracket 4 decklist (commander in command zone).
 """
 
 import itertools
@@ -15,7 +15,7 @@ from collections import Counter
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DECK_FILE = PROJECT_ROOT / "data" / "precons" / "eldrazi-unbound" / "deck.json"
+DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "titan-convergence" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
 NUM_GAMES = 100_000
@@ -88,38 +88,15 @@ def choose_bottom_cards(hand: list[str], count: int, metadata: dict) -> list[str
 
 
 def build_decklist(deck_data: dict) -> list[str]:
-    """Build the 99-card decklist for Titan Convergence tier.
+    """Build the 99-card decklist for Titan Convergence.
 
-    baseDeck (with quantities) - commander - tier cuts + tier adds = 99 cards.
+    Reads the flat decklist array directly. Each entry has {name, type} with
+    optional quantity field. Commander is in the command zone (not in decklist).
     """
-    tier = deck_data["upgrades"]["full"]
-    commander = tier.get("commander", deck_data.get("commander"))
-
-    # Build base deck with quantities
-    base = []
-    for card in deck_data["baseDeck"]:
+    cards = []
+    for card in deck_data["decklist"]:
         qty = card.get("quantity", 1)
-        base.extend([card["name"]] * qty)
-
-    # Remove commander (in command zone)
-    cards = [c for c in base]
-    # Commander might be in baseDeck or not
-    if commander in cards:
-        cards.remove(commander)
-
-    # Apply tier-specific cuts if they exist, otherwise top-level cuts
-    cuts_list = tier.get("cuts", deck_data.get("cuts", []))
-    for cut in cuts_list:
-        name = cut["name"]
-        qty = cut.get("quantity", 1)
-        for _ in range(qty):
-            if name in cards:
-                cards.remove(name)
-
-    # Add tier adds
-    for add in tier.get("adds", []):
-        cards.append(add["name"])
-
+        cards.extend([card["name"]] * qty)
     return cards
 
 

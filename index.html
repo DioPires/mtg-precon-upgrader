@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MTG Precon Upgrade Guides</title>
+  <title>MTG Commander Deck Guides</title>
   <!-- Privacy-respecting analytics (Plausible) - uncomment and set your domain to enable -->
   <!-- <script defer data-domain="YOUR-DOMAIN.com" src="https://plausible.io/js/script.js"></script> -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -717,11 +717,6 @@
       gap: 16px;
     }
 
-    .tier-tabs {
-      display: flex;
-      gap: 10px;
-    }
-
     .overview-stats {
       display: flex;
       gap: 24px;
@@ -1397,22 +1392,6 @@
         align-items: stretch;
       }
 
-      .tier-tabs {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
-      }
-
-      .tier-tabs .tab {
-        flex: 1 1 calc(50% - 8px);
-        min-width: 120px;
-        max-width: 160px;
-      }
-
-      .tier-tabs .share-btn {
-        margin-left: 0;
-      }
-
       .preview-panel {
         display: none;
       }
@@ -1768,18 +1747,13 @@
     @media (prefers-reduced-motion: reduce) {
       .commander-card-preview,
       .preview-image-container img,
-      .guide-card-image,
-      .ranking-card-image {
+      .guide-card-image {
         transition: none !important;
         transform: none !important;
       }
 
       .tilt-glare {
         display: none !important;
-      }
-
-      .ranking-hover-preview {
-        transition: none !important;
       }
 
       /* Catch-all: disable all non-essential transitions and animations */
@@ -2540,15 +2514,13 @@
       /* Prevent content from breaking across pages */
       .card-group,
       .synergy-item,
-      .decklist-category,
-      .ranking-card {
+      .decklist-category {
         break-inside: avoid;
         page-break-inside: avoid;
       }
 
       /* Remove dark-theme visual effects in print */
       .guide-card,
-      .ranking-card,
       .synergy-card-tag {
         box-shadow: none !important;
         border: 1px solid #ccc !important;
@@ -2846,446 +2818,6 @@
     }
 
     /* === RANKINGS VIEW === */
-    .rankings-view {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-
-    .rankings-header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .rankings-header h2 {
-      font-family: 'Cinzel', serif;
-      font-size: 1.8rem;
-      color: var(--accent-gold);
-      margin: 0 0 0.5rem 0;
-    }
-
-    .rankings-subtitle {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-      margin: 0;
-    }
-
-    .rankings-loading {
-      text-align: center;
-      color: var(--text-secondary);
-      padding: 2rem;
-    }
-
-    .rankings-error {
-      text-align: center;
-      padding: 2rem;
-      color: var(--accent-red);
-    }
-
-    .rankings-error button {
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
-      background: var(--accent-purple);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    /* Rankings Section */
-    .rankings-section {
-      margin-bottom: 2.5rem;
-    }
-
-    .rankings-section-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--border-subtle);
-    }
-
-    .rankings-section-icon {
-      font-size: 1.5rem;
-    }
-
-    .rankings-section-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1.3rem;
-      color: var(--text-primary);
-      margin: 0;
-    }
-
-    /* Ranking Card */
-    .ranking-card {
-      display: flex;
-      gap: 1rem;
-      padding: 1rem;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-    }
-
-    .ranking-card:hover {
-      border-color: var(--accent-purple-dim);
-      transform: translateY(-2px);
-    }
-
-    .ranking-badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--accent-gold) 0%, #d4a017 100%);
-      color: var(--bg-deep);
-      font-family: 'Cinzel', serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .ranking-badge.silver {
-      background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
-    }
-
-    .ranking-badge.bronze {
-      background: linear-gradient(135deg, #cd7f32 0%, #a56329 100%);
-    }
-
-    .ranking-card-image {
-      width: 100px;
-      height: 140px;
-      border-radius: 8px;
-      object-fit: cover;
-      flex-shrink: 0;
-      background: var(--bg-surface);
-      transform-style: preserve-3d;
-      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
-                  box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-      cursor: pointer;
-    }
-
-    .ranking-card-image.tilting {
-      transition: none;
-      will-change: transform;
-    }
-
-    .ranking-card-placeholder {
-      width: 100px;
-      height: 140px;
-      border-radius: 8px;
-      background: var(--bg-surface);
-      border: 1px dashed var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      font-size: 0.7rem;
-      text-align: center;
-      padding: 0.5rem;
-      flex-shrink: 0;
-    }
-
-    /* Floating hover preview for ranking cards */
-    .ranking-hover-preview {
-      position: fixed;
-      z-index: 1001;
-      pointer-events: none;
-      opacity: 0;
-      transform: scale(0.95);
-      transition: opacity 0.15s ease, transform 0.15s ease;
-    }
-
-    .ranking-hover-preview.visible {
-      will-change: transform, opacity;
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .ranking-hover-preview img {
-      width: 250px;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
-                  0 0 0 1px rgba(255, 255, 255, 0.1);
-    }
-
-    .ranking-card-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .ranking-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .ranking-card-name {
-      font-family: 'Cinzel', serif;
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin: 0;
-    }
-
-    .ranking-card-price {
-      font-family: 'Fira Code', monospace;
-      font-size: 0.9rem;
-      color: var(--accent-green);
-      white-space: nowrap;
-    }
-
-    .ranking-card-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    .ranking-card-set {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .ranking-card-commander {
-      color: var(--accent-purple);
-    }
-
-    .ranking-reasons {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 0.75rem 0;
-    }
-
-    .ranking-reasons li {
-      position: relative;
-      padding-left: 1.25rem;
-      margin-bottom: 0.35rem;
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .ranking-reasons li::before {
-      content: "✓";
-      position: absolute;
-      left: 0;
-      color: var(--accent-green);
-      font-weight: bold;
-    }
-
-    .ranking-source {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .ranking-source a {
-      color: var(--accent-blue);
-      text-decoration: none;
-    }
-
-    .ranking-source a:hover {
-      text-decoration: underline;
-    }
-
-    /* Value Card Specific */
-    .ranking-card.value-card .ranking-card-price {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.1rem;
-    }
-
-    .ranking-card.value-card .value-ratio {
-      font-size: 0.75rem;
-      color: var(--accent-gold);
-      font-weight: 600;
-    }
-
-    .ranking-card.value-card .single-value {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    /* Set Recommendations */
-    .set-recommendations {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-
-    .set-card {
-      padding: 1rem;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-    }
-
-    .set-card-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.35rem;
-    }
-
-    .set-card-name {
-      font-family: 'Cinzel', serif;
-      font-size: 1.1rem;
-      color: var(--accent-gold);
-      margin-bottom: 0.35rem;
-    }
-
-    .set-card-reason {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    /* Sources List */
-    .sources-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .source-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-    }
-
-    .source-icon {
-      width: 40px;
-      height: 40px;
-      background: #ff0000;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .source-icon svg {
-      width: 24px;
-      height: 24px;
-      fill: white;
-    }
-
-    .source-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .source-channel {
-      font-weight: 600;
-      color: var(--text-primary);
-      font-size: 0.95rem;
-    }
-
-    .source-video {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .source-views {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    .source-item a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .source-item:hover {
-      border-color: var(--accent-purple-dim);
-    }
-
-    /* Rankings Last Updated */
-    .rankings-last-updated {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    /* Mobile Rankings */
-    @media (max-width: 600px) {
-      .view-toggle {
-        width: calc(100% - 2rem);
-        margin: 0 1rem 1rem 1rem;
-      }
-
-      .view-toggle-btn {
-        flex: 1;
-        justify-content: center;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.85rem;
-      }
-
-      .ranking-card {
-        flex-direction: column;
-      }
-
-      .ranking-card-image {
-        width: 80px;
-        height: 112px;
-        align-self: center;
-      }
-
-      .ranking-badge {
-        width: 32px;
-        height: 32px;
-        font-size: 0.9rem;
-        position: absolute;
-        top: 0.5rem;
-        left: 0.5rem;
-      }
-
-      .ranking-card {
-        position: relative;
-        padding-top: 0.5rem;
-      }
-
-      .ranking-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .ranking-card-price {
-        margin-top: 0.25rem;
-      }
-
-      .set-recommendations {
-        grid-template-columns: 1fr;
-      }
-    }
-
     /* === PLAYTEST VIEW === */
     .playtest-view {
       display: none;
@@ -3989,6 +3521,366 @@
         margin-right: -24px;
       }
     }
+
+    /* === ANALYTICS VIEW === */
+    .analytics-view {
+      display: none;
+    }
+
+    .analytics-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .analytics-header h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .sim-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .sim-badge .sim-count {
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+
+    .sim-chart-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .sim-chart-panel {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .sim-chart-panel .stats-panel-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .sim-chart-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .sim-chart-band {
+      fill: rgba(157, 78, 221, 0.15);
+    }
+
+    .sim-chart-median {
+      fill: none;
+      stroke: var(--accent-purple);
+      stroke-width: 2;
+    }
+
+    .sim-chart-dot {
+      fill: var(--accent-purple);
+      cursor: pointer;
+    }
+
+    .sim-chart-dot:hover {
+      fill: #b05ce6;
+      r: 5;
+    }
+
+    .sim-chart-grid {
+      stroke: var(--border-subtle);
+      stroke-width: 0.5;
+    }
+
+    .sim-chart-axis-label {
+      fill: var(--text-secondary);
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .sim-chart-tooltip {
+      position: absolute;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      pointer-events: none;
+      z-index: 100;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .sim-chart-tooltip .tt-turn {
+      font-weight: 600;
+      color: var(--accent-purple);
+    }
+
+    .sim-chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 12px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .sim-chart-legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-chart-legend .legend-band {
+      width: 16px;
+      height: 8px;
+      background: rgba(157, 78, 221, 0.25);
+      border-radius: 2px;
+    }
+
+    .sim-chart-legend .legend-line {
+      width: 16px;
+      height: 2px;
+      background: var(--accent-purple);
+      border-radius: 1px;
+    }
+
+    .sim-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .sim-metric-card {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+    }
+
+    .sim-metric-card .metric-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sim-metric-card .metric-ring {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 12px;
+    }
+
+    .sim-metric-ring-bg {
+      fill: none;
+      stroke: var(--bg-elevated);
+      stroke-width: 6;
+    }
+
+    .sim-metric-ring-fill {
+      fill: none;
+      stroke: var(--accent-purple);
+      stroke-width: 6;
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: center;
+      transition: stroke-dashoffset 1s ease-out;
+    }
+
+    .sim-metric-ring-text {
+      fill: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    .sim-metric-card .metric-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: 'Fira Code', monospace;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .sim-metric-card .metric-sub {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .sim-details {
+      margin-bottom: 24px;
+    }
+
+    .sim-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .sim-detail-panel {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .sim-detail-panel h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .sim-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .sim-bar-label {
+      width: 50px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-align: right;
+      font-family: 'Fira Code', monospace;
+      flex-shrink: 0;
+    }
+
+    .sim-bar-track {
+      flex: 1;
+      height: 14px;
+      background: var(--bg-elevated);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .sim-bar-fill {
+      height: 100%;
+      border-radius: 7px;
+      background: linear-gradient(90deg, var(--accent-purple), #7c3aed);
+      transition: width 0.6s ease-out;
+    }
+
+    .sim-bar-fill.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+    .sim-bar-fill.blue { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+    .sim-bar-fill.gold { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .sim-bar-fill.red { background: linear-gradient(90deg, #dc2626, #f87171); }
+
+    .sim-bar-pct {
+      width: 45px;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      font-family: 'Fira Code', monospace;
+      flex-shrink: 0;
+    }
+
+    .sim-assessment-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .sim-badge-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border: 1px solid;
+    }
+
+    .sim-badge-item.strong, .sim-badge-item.adequate, .sim-badge-item.excellent, .sim-badge-item.acceptable,
+    .sim-badge-item[data-verdict="on curve"], .sim-badge-item[data-verdict="ahead of curve"] {
+      background: var(--accent-green-dim);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .sim-badge-item.light, .sim-badge-item[data-verdict="behind curve"] {
+      background: var(--accent-gold-dim);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    .sim-badge-item.concerning, .sim-badge-item[data-verdict="unreliable"] {
+      background: var(--accent-red-dim);
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+
+    .analytics-empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .analytics-empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .analytics-empty-state h3 {
+      font-family: 'Cinzel', serif;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .analytics-empty-state p {
+      font-size: 0.9rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .sim-metrics-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .sim-details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .sim-metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -4023,15 +3915,10 @@
     </div>
   </div>
 
-  <!-- Floating Preview for Ranking Cards -->
-  <div class="ranking-hover-preview" id="ranking-hover-preview">
-    <img src="" alt="" id="ranking-hover-image">
-  </div>
-
   <div class="container">
     <header>
-      <h1>MTG Precon Upgrade Guides</h1>
-      <p>Visual deck upgrade guides with card previews</p>
+      <h1>MTG Commander Deck Guides</h1>
+      <p>Visual deck guides with card previews</p>
     </header>
 
     <div class="view-toggle" id="view-toggle" role="tablist" aria-label="View selection">
@@ -4045,18 +3932,20 @@
         </svg>
         Commander Decks
       </button>
-      <button class="view-toggle-btn" data-view="rankings" role="tab" aria-selected="false" id="tab-rankings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-        </svg>
-        Creator Rankings
-      </button>
       <button class="view-toggle-btn disabled" data-view="playtest" role="tab" aria-selected="false" id="tab-playtest">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
           <rect x="2" y="2" width="20" height="20" rx="2"></rect>
           <path d="M7 10h10M7 14h6"></path>
         </svg>
         <span class="btn-label">Playtest</span>
+      </button>
+      <button class="view-toggle-btn disabled" data-view="analytics" role="tab" aria-selected="false" id="tab-analytics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Analytics
       </button>
     </div>
 
@@ -4129,20 +4018,17 @@
 
     <div class="upgrade-overview" id="upgrade-overview" style="display: none;">
       <div class="overview-top">
-        <div class="tier-tabs" id="tier-tabs">
-          <!-- Tabs generated dynamically by generateTabs() -->
-          <button class="share-btn" id="share-btn" aria-label="Share this build" style="position: relative;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-            Share
-            <span class="share-tooltip" id="share-tooltip">Link copied!</span>
-          </button>
-        </div>
+        <button class="share-btn" id="share-btn" aria-label="Share this build" style="position: relative;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+          Share
+          <span class="share-tooltip" id="share-tooltip">Link copied!</span>
+        </button>
         <div class="overview-stats">
           <div class="stat">
             <span class="stat-label">Cost</span>
@@ -4206,7 +4092,7 @@
               <div class="shopping-list-header">
                 <h2>Shopping List</h2>
                 <div class="shopping-list-meta">
-                  <span id="shopping-list-precon"></span> — <span id="shopping-list-tier"></span>
+                  <span id="shopping-list-deck"></span>
                 </div>
               </div>
               <table class="shopping-list-table">
@@ -4227,7 +4113,7 @@
                 </tfoot>
               </table>
               <div class="shopping-list-footer">
-                <p>Generated from MTG Precon Upgrade Guide</p>
+                <p>Generated from MTG Commander Deck Guide</p>
               </div>
             </div>
             <div class="loading-placeholder" id="add-groups-skeleton">
@@ -4486,17 +4372,6 @@
       </div>
     </main>
 
-    <!-- Rankings View (Hidden by default) -->
-    <div class="rankings-view" id="rankings-view" style="display: none;">
-      <div class="rankings-header">
-        <h2>Creator Rankings</h2>
-        <p class="rankings-subtitle">Top precon recommendations from MTG content creators</p>
-      </div>
-      <div class="rankings-content" id="rankings-content">
-        <div class="rankings-loading">Loading rankings data...</div>
-      </div>
-    </div>
-
     <!-- Playtest View (Hidden by default) -->
     <div class="playtest-view" id="playtest-view" style="display: none;">
       <div class="playtest-info-bar">
@@ -4582,7 +4457,30 @@
       </div>
     </div>
 
-    <div class="loading" id="loading">Loading precon data...</div>
+    <!-- Analytics View -->
+    <div class="analytics-view" id="analytics-view" style="display: none;">
+      <div id="analytics-content"></div>
+      <div id="analytics-no-deck" class="analytics-empty-state" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        <h3>Select a Deck</h3>
+        <p>Choose a commander deck above to view mana simulation analytics.</p>
+      </div>
+      <div id="analytics-no-data" class="analytics-empty-state" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h3>No Simulation Data</h3>
+        <p>Mana simulation data has not been generated for this deck yet.</p>
+      </div>
+    </div>
+
+    <div class="loading" id="loading">Loading deck data...</div>
     <div class="error" id="error" style="display: none;"></div>
 
     <footer>
@@ -4775,7 +4673,6 @@
     let currentPrecon = null;
     let currentPreconId = null;
     let synergyGraph = new Map(); // For interactive synergy explorer
-    let currentUpgrade = 'full';
     let currentHoveredCard = null;
     const selectedCards = new Set();
 
@@ -4834,10 +4731,11 @@
       });
     }
 
-    // Rankings view state
-    let currentView = 'guide';  // 'guide' or 'rankings'
-    let rankingsData = null;
-    let rankingsLoaded = false;
+    let currentView = 'guide';
+
+    // Analytics state
+    let simulationCache = {};
+    let analyticsRenderVersion = 0;
 
     // TiltEffect cleanup tracking
     let activeTiltEffects = [];
@@ -4850,29 +4748,6 @@
     // === HELPER FUNCTIONS ===
     function capitalize(str) {
       return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    function isCommanderDeck(deck) {
-      return deck?.type === 'commander';
-    }
-
-    // Build cut quantity map: card name → total quantity to cut
-    function buildCutMap(cuts) {
-      const map = new Map();
-      cuts.forEach(c => map.set(c.name, (map.get(c.name) || 0) + (c.quantity || 1)));
-      return map;
-    }
-
-    // Apply cuts to baseDeck, supporting partial quantity cuts (e.g. Wastes 15 → 10)
-    function applyBaseDeckCuts(baseDeck, cuts) {
-      const cutMap = buildCutMap(cuts);
-      return baseDeck.reduce((kept, card) => {
-        const baseQty = card.quantity || 1;
-        const cutQty = cutMap.get(card.name) || 0;
-        if (cutQty >= baseQty) return kept;
-        kept.push({ ...card, quantity: baseQty - cutQty });
-        return kept;
-      }, []);
     }
 
     // === BRACKET CONFIGURATION ===
@@ -4899,11 +4774,7 @@
     function renderBracketVisualization() {
       if (!currentPrecon) return;
 
-      const isCmd = isCommanderDeck(currentPrecon);
-      const current = isCmd ? null : parseBracket(currentPrecon.currentBracket);
-      // Use per-tier bracket if available, fall back to deck-level targetBracket
-      const tierBracket = currentPrecon.upgrades?.[currentUpgrade]?.bracket;
-      const target = parseBracket(tierBracket || currentPrecon.targetBracket);
+      const target = parseBracket(currentPrecon.bracket || '3');
 
       // Update label
       const bracketLabel = document.getElementById('bracket-label');
@@ -4923,32 +4794,18 @@
         span.classList.toggle('active', isInTargetRange);
       });
 
-      // Position indicators (each segment is 20% width, center at 10% + (bracket-1)*20%)
+      // Position indicators
       const currentIndicator = document.getElementById('bracket-current-indicator');
       const targetIndicator = document.getElementById('bracket-target-indicator');
       const targetMarker = document.getElementById('bracket-target-marker');
 
       // Update bracket visualization accessible description
       const bracketViz = document.getElementById('bracket-visualization');
-      if (isCmd) {
-        bracketViz.setAttribute('aria-label', `Target bracket: ${target.max} (${targetName})`);
-        // Commander decks have no starting bracket — hide current indicator
-        currentIndicator.style.display = 'none';
-        targetIndicator.classList.add('hidden');
-        targetMarker.classList.add('hidden');
-      } else {
-        const currentName = BRACKET_CONFIG[current.max]?.name || 'Unknown';
-        bracketViz.setAttribute('aria-label', `Current bracket: ${current.max} (${currentName}), Target bracket: ${target.max} (${targetName})`);
-        // Precon: show current and target indicators
-        currentIndicator.style.display = '';
-        const currentCenter = ((current.min + current.max) / 2 - 1) * 20 + 10;
-        currentIndicator.style.left = `${currentCenter}%`;
-
-        // Hide target indicator and marker if same as current
-        const samePosition = current.min === target.min && current.max === target.max;
-        targetIndicator.classList.toggle('hidden', samePosition);
-        targetMarker.classList.toggle('hidden', samePosition);
-      }
+      bracketViz.setAttribute('aria-label', `Bracket: ${target.max} (${targetName})`);
+      // No current→target display; hide current indicator
+      currentIndicator.style.display = 'none';
+      targetIndicator.classList.add('hidden');
+      targetMarker.classList.add('hidden');
 
       // Target indicator and marker: position at the center of the target range
       const targetCenter = ((target.min + target.max) / 2 - 1) * 20 + 10;
@@ -5132,23 +4989,6 @@
         if (!img._tiltInitialized) {
           initializeTiltEffect(img, { maxTilt: 8, scale: 1.08, glare: false });
           img._tiltInitialized = true;
-        }
-      });
-    }
-
-    function initializeRankingCardTilt() {
-      cleanupTiltEffects('.ranking-card-image');
-      document.querySelectorAll('.ranking-card-image').forEach(img => {
-        if (!img._tiltInitialized) {
-          initializeTiltEffect(img, { maxTilt: 12, scale: 1.15, glare: true });
-          img._tiltInitialized = true;
-
-          // Add hover preview events (desktop only)
-          img.addEventListener('mouseenter', (e) => {
-            showRankingHoverPreview(e, img.src, img.alt);
-          });
-          img.addEventListener('mousemove', updateRankingPreviewPosition);
-          img.addEventListener('mouseleave', hideRankingHoverPreview);
         }
       });
     }
@@ -5338,19 +5178,7 @@
       const statsSection = document.getElementById('deck-stats-section');
       if (!statsSection) return;
 
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-      const isCmd = isCommanderDeck(currentPrecon);
-      let deckCards;
-
-      if (isCmd) {
-        deckCards = (upgrade.decklist || []).map(card => ({ name: card.name, quantity: card.quantity || 1 }));
-      } else {
-        deckCards = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts)
-          .map(card => ({ name: card.name, quantity: card.quantity || 1 }));
-        upgrade.adds.forEach(card => {
-          deckCards.push({ name: card.name, quantity: 1 });
-        });
-      }
+      const deckCards = (currentPrecon.decklist || []).map(card => ({ name: card.name, quantity: card.quantity || 1 }));
 
       // Calculate stats
       const stats = calculateDeckStats(deckCards);
@@ -5808,70 +5636,6 @@
       return result;
     }
 
-    // === DYNAMIC TAB GENERATION ===
-    function generateTabs(upgrades, selectedTier) {
-      const tierTabs = document.getElementById('tier-tabs');
-
-      // Clear existing tabs
-      tierTabs.querySelectorAll('.tab').forEach(t => t.remove());
-
-      // Sort by bracket descending, budget always last
-      const fallbackBracket = currentPrecon?.targetBracket;
-      const availableTiers = Object.keys(upgrades)
-        .sort((a, b) => {
-          if (a === 'budget') return 1;
-          if (b === 'budget') return -1;
-          const aBracket = parseBracket(upgrades[a].bracket || fallbackBracket).max;
-          const bBracket = parseBracket(upgrades[b].bracket || fallbackBracket).max;
-          return bBracket - aBracket;
-        });
-
-      // Validate selectedTier exists, fallback to first tier
-      if (!availableTiers.includes(selectedTier)) {
-        selectedTier = availableTiers[0];
-      }
-      currentUpgrade = selectedTier;
-
-      // Create tab buttons
-      availableTiers.forEach(tierId => {
-        const tier = upgrades[tierId];
-        const btn = document.createElement('button');
-        btn.className = 'tab' + (tierId === currentUpgrade ? ' active' : '');
-        btn.dataset.upgrade = tierId;
-        const budgetIcon = tierId === 'budget'
-          ? '<span class="tab-budget-icon" data-tooltip="Budget-friendly tier" aria-label="Budget-friendly tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></span>'
-          : '';
-        btn.innerHTML = `
-          <span class="tab-name">${escapeHtml(tier.name || capitalize(tierId))}${budgetIcon}</span>
-          <span class="tab-subtitle">${escapeHtml(tier.subtitle || '')}</span>
-        `;
-        btn.addEventListener('click', handleTabClick);
-        tierTabs.appendChild(btn);
-      });
-    }
-
-    function handleTabClick(e) {
-      const tab = e.currentTarget;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      currentUpgrade = tab.dataset.upgrade;
-      clearSelection();
-
-      // Reset playtest on tier change
-      cleanupPlaytestState();
-
-      trackEvent('tier_change', { precon: currentPreconId, tier: currentUpgrade });
-
-      if (currentView === 'playtest') {
-        initPlaytest();
-      } else {
-        renderContent();
-      }
-      updateUrlHash();
-      savePreferences();
-      announceStatus(`Switched to ${tab.querySelector('.tab-name')?.textContent || currentUpgrade} tier`);
-    }
-
     // === PRECON LOADING ===
     async function loadPreconIndex() {
       try {
@@ -5893,11 +5657,7 @@
         return loadedPrecons[preconId];  // Return cached
       }
 
-      // Determine folder based on whether it's a precon or commander deck
-      const isCmd = (preconIndex.commanders || []).some(c => c.id === preconId);
-      const folder = isCmd ? 'commanders' : 'precons';
-
-      const response = await fetch(`data/${folder}/${preconId}/deck.json`);
+      const response = await fetch(`data/commanders/${preconId}/deck.json`);
       if (!response.ok) throw new Error(`Failed to load ${preconId}`);
       const data = await response.json();
       loadedPrecons[preconId] = data;  // Cache it
@@ -5907,34 +5667,15 @@
     function populatePreconSelector() {
       preconSelect.innerHTML = '<option value="">-- Select a Deck --</option>';
 
-      // Precon Upgrades group
-      if (preconIndex.precons?.length > 0) {
-        const preconGroup = document.createElement('optgroup');
-        preconGroup.label = 'Precon Upgrades';
-        preconIndex.precons.forEach(precon => {
-          const option = document.createElement('option');
-          option.value = precon.id;
-          option.textContent = precon.name;
-          preconGroup.appendChild(option);
-        });
-        preconSelect.appendChild(preconGroup);
-      }
-
-      // Commander Decks group
-      if (preconIndex.commanders?.length > 0) {
-        const cmdGroup = document.createElement('optgroup');
-        cmdGroup.label = 'Commander Decks';
-        preconIndex.commanders.forEach(cmd => {
-          const option = document.createElement('option');
-          option.value = cmd.id;
-          option.textContent = cmd.name;
-          cmdGroup.appendChild(option);
-        });
-        preconSelect.appendChild(cmdGroup);
-      }
+      (preconIndex.commanders || []).forEach(cmd => {
+        const option = document.createElement('option');
+        option.value = cmd.id;
+        option.textContent = cmd.name;
+        preconSelect.appendChild(option);
+      });
 
       // Auto-select if only one deck exists
-      const allDecks = [...(preconIndex.precons || []), ...(preconIndex.commanders || [])];
+      const allDecks = preconIndex.commanders || [];
       if (allDecks.length === 1) {
         preconSelect.value = allDecks[0].id;
         selectPrecon(allDecks[0].id);
@@ -5963,11 +5704,7 @@
         clearSelection();
         currentPrecon = await loadPreconData(preconId);
 
-        const isCmd = isCommanderDeck(currentPrecon);
-        document.body.classList.toggle('commander-deck', isCmd);
-
-        // Generate tabs dynamically based on available upgrade tiers
-        generateTabs(currentPrecon.upgrades, currentUpgrade);
+        document.body.classList.add('commander-deck');
 
         loading.style.display = 'none';
 
@@ -5990,15 +5727,17 @@
         // Update playtest tab state
         updatePlaytestTabState();
 
-        // Show content (guard for playtest view)
+        // Show content (guard for playtest/analytics views)
         upgradeOverview.style.display = 'block';
-        if (currentView !== 'playtest') {
+        if (currentView !== 'playtest' && currentView !== 'analytics') {
           mainContent.style.display = 'grid';
         }
 
         // Render content based on current view
         if (currentView === 'playtest') {
           initPlaytest();
+        } else if (currentView === 'analytics') {
+          renderAnalyticsView();
         } else {
           renderContent();
         }
@@ -6006,8 +5745,7 @@
         // Update URL hash
         updateUrlHash();
         savePreferences();
-        const deckLabel = isCmd ? 'deck guide' : 'upgrade guide';
-        announceStatus(`Loaded ${currentPrecon.name || preconId} ${deckLabel}`);
+        announceStatus(`Loaded ${currentPrecon.name || preconId} deck guide`);
       } catch (err) {
         loading.style.display = 'none';
         error.style.display = 'block';
@@ -6024,41 +5762,12 @@
     function renderDeckList() {
       if (!currentPrecon) return;
 
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-      const isCmd = isCommanderDeck(currentPrecon);
-      let deckList;
-
-      if (isCmd) {
-        // Commander deck: use the tier's full decklist
-        if (!upgrade.decklist) return;
-        const addNames = new Set(upgrade.adds.map(c => c.name));
-        deckList = upgrade.decklist.map(card => ({
-          ...card,
-          isAdded: addNames.has(card.name)
-        }));
-      } else {
-        // Precon: compute baseDeck - cuts + adds
-        if (!currentPrecon.baseDeck) return;
-        deckList = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts)
-          .map(card => ({ ...card, isAdded: false }));
-
-        // Add the new cards
-        upgrade.adds.forEach(card => {
-          const metadata = cardMetadataCache.get(card.name);
-          let type = 'Unknown';
-          if (metadata && metadata.type_line) {
-            const typeLine = metadata.type_line;
-            if (typeLine.includes('Creature')) type = 'Creature';
-            else if (typeLine.includes('Land')) type = 'Land';
-            else if (typeLine.includes('Artifact')) type = 'Artifact';
-            else if (typeLine.includes('Enchantment')) type = 'Enchantment';
-            else if (typeLine.includes('Instant')) type = 'Instant';
-            else if (typeLine.includes('Sorcery')) type = 'Sorcery';
-            else if (typeLine.includes('Planeswalker')) type = 'Planeswalker';
-          }
-          deckList.push({ name: card.name, type: type, isAdded: true });
-        });
-      }
+      if (!currentPrecon.decklist) return;
+      const addNames = new Set(currentPrecon.adds.map(c => c.name));
+      const deckList = currentPrecon.decklist.map(card => ({
+        ...card,
+        isAdded: addNames.has(card.name)
+      }));
 
       // Group by type
       const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
@@ -6080,7 +5789,7 @@
       deckList.forEach(card => {
         totalCount += card.quantity || 1;
       });
-      decklistCount.textContent = totalCount + (isCmd ? 1 : 0);
+      decklistCount.textContent = totalCount + 1;
 
       // Get commander names to filter from Creatures
       const effCmd = getEffectiveCommander();
@@ -6140,21 +5849,19 @@
       // Track precon view
       trackEvent('precon_view', {
         precon: currentPreconId,
-        tier: currentUpgrade,
         device: window.innerWidth < 768 ? 'mobile' : 'desktop'
       });
 
       // Render deck statistics
       renderDeckStats();
 
-      // Update bracket bar for current tier (tiers may target different brackets)
+      // Update bracket bar
       renderBracketVisualization();
 
       // Update summary stats
       if (currentPrecon) {
-        const upgrade = currentPrecon.upgrades[currentUpgrade];
-        summaryCost.textContent = upgrade.cost;
-        summaryChangers.textContent = upgrade.gameChangers;
+        summaryCost.textContent = currentPrecon.cost;
+        summaryChangers.textContent = currentPrecon.gameChangers;
       }
 
       // Apply any active filters
@@ -6173,33 +5880,18 @@
       // Show loading state
       guideView.classList.add('is-loading');
 
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
       const guideContent = currentPrecon.guideContent;
-      const isCmd = isCommanderDeck(currentPrecon);
 
       // Collect all card names for pre-fetching metadata
       const allCardNames = new Set();
 
-      if (isCmd) {
-        // Commander deck: collect from decklist
-        if (upgrade.decklist) {
-          upgrade.decklist.forEach(card => allCardNames.add(card.name));
-        }
-      } else {
-        // Precon: collect from cutCategories and baseDeck
-        (upgrade.cutCategories || guideContent.cutCategories).forEach(category => {
-          category.cards.forEach(cardName => allCardNames.add(cardName));
-        });
-        const cutMap = buildCutMap(upgrade.cuts || currentPrecon.cuts);
-        currentPrecon.baseDeck.forEach(card => {
-          if ((cutMap.get(card.name) || 0) < (card.quantity || 1)) {
-            allCardNames.add(card.name);
-          }
-        });
+      // Collect from decklist
+      if (currentPrecon.decklist) {
+        currentPrecon.decklist.forEach(card => allCardNames.add(card.name));
       }
 
-      // Add cards from add categories (both types)
-      upgrade.addCategories.forEach(category => {
+      // Add cards from add categories
+      currentPrecon.addCategories.forEach(category => {
         category.cards.forEach(cardName => allCardNames.add(cardName));
       });
 
@@ -6211,87 +5903,28 @@
 
       // Render strategy overview
       document.getElementById('strategy-content').textContent = guideContent.strategyOverview;
-      renderTierSources(upgrade);
+      renderTierSources(currentPrecon);
 
-      // Update section headers with card counts
-      const addsCount = upgrade.adds.length;
+      // Update section headers
       const addsSection = document.querySelector('.guide-section.adds');
-      const cutsSection = document.querySelector('.guide-section.cuts');
-      // Update shopping list button aria-label for context
       const shoppingBtn = document.getElementById('print-shopping-btn');
       if (shoppingBtn) {
-        shoppingBtn.setAttribute('aria-label', isCmd ? 'Print full deck shopping list' : 'Print shopping list of cards to add');
+        shoppingBtn.setAttribute('aria-label', 'Print full deck shopping list');
       }
 
-      if (isCmd) {
-        document.getElementById('adds-header').textContent = 'Deck Themes';
-        addsSection.setAttribute('aria-label', 'Deck themes section');
-        renderCommanderThemeGroups(upgrade.addCategories, upgrade.adds);
-        cutGroups.innerHTML = '';
-      } else {
-        const cutsCount = (upgrade.cuts || currentPrecon.cuts).length;
-        document.getElementById('adds-header').textContent = `What We're Adding (${addsCount} cards)`;
-        document.getElementById('cuts-header').textContent = `Why We're Cutting (${cutsCount} cards)`;
-        addsSection.setAttribute('aria-label', 'Cards being added');
-        cutsSection.setAttribute('aria-label', 'Cards being cut');
-        renderAddGroups(upgrade.addCategories, upgrade.adds);
-        renderCutGroups(upgrade.cutCategories || guideContent.cutCategories, upgrade.cuts || currentPrecon.cuts);
-      }
+      document.getElementById('adds-header').textContent = 'Deck Themes';
+      addsSection.setAttribute('aria-label', 'Deck themes section');
+      renderCommanderThemeGroups(currentPrecon.addCategories, currentPrecon.adds);
+      cutGroups.innerHTML = '';
 
       // Render synergies
-      renderSynergies(upgrade.synergies);
+      renderSynergies(currentPrecon.synergies);
 
       // Render full deck list
       renderDeckList();
 
       // Hide loading state
       guideView.classList.remove('is-loading');
-    }
-
-    function renderCutGroups(categories, cuts) {
-      cutGroups.innerHTML = categories.map(category => {
-        const cardsHtml = category.cards.map(cardName => {
-          const cardData = cuts.find(c => c.name === cardName);
-          const metadata = cardMetadataCache.get(cardName);
-          const manaCost = metadata?.mana_cost || null;
-          return createGuideCardHtml(cardName, cardData?.reason || '', null, false, false, manaCost);
-        }).join('');
-
-        return `
-          <div class="card-group">
-            <div class="card-group-header">
-              <div class="card-group-name">${escapeHtml(category.name)}</div>
-              <div class="card-group-description">${escapeHtml(category.description)}</div>
-            </div>
-            ${cardsHtml}
-          </div>
-        `;
-      }).join('');
-
-      // Add hover events to guide cards
-      addGuideCardHoverEvents();
-    }
-
-    function renderDeckThemeGroups(categories) {
-      cutGroups.innerHTML = categories.map(category => {
-        const cardsHtml = category.cards.map(cardName => {
-          const metadata = cardMetadataCache.get(cardName);
-          const manaCost = metadata?.mana_cost || null;
-          return createGuideCardHtml(cardName, '', null, false, false, manaCost);
-        }).join('');
-
-        return `
-          <div class="card-group">
-            <div class="card-group-header">
-              <div class="card-group-name">${escapeHtml(category.name)}</div>
-              <div class="card-group-description">${escapeHtml(category.description)}</div>
-            </div>
-            ${cardsHtml}
-          </div>
-        `;
-      }).join('');
-
-      addGuideCardHoverEvents();
     }
 
     function renderCommanderThemeGroups(categories, adds) {
@@ -6306,7 +5939,6 @@
           return cardData?.isGameChanger;
         }).length;
 
-        const targetBracket = currentPrecon?.upgrades?.[currentUpgrade]?.bracket || currentPrecon?.targetBracket || '3';
         const gcBadge = gameChangerCount > 0
           ? `<span class="game-changer-warning">${escapeHtml(String(gameChangerCount))} Game Changer${gameChangerCount > 1 ? 's' : ''}</span>`
           : '';
@@ -6399,7 +6031,7 @@
         }).join('');
 
         const highlightClass = category.isHighlighted ? 'highlighted' : '';
-        const targetBracket = currentPrecon?.upgrades?.[currentUpgrade]?.bracket || currentPrecon?.targetBracket || '3';
+        const targetBracket = currentPrecon?.bracket || '3';
         const starIcon = category.isHighlighted ? `<span class="game-changer-star" data-tooltip="Game Changers move deck to Bracket ${escapeHtml(targetBracket)}">★</span>` : '';
         const gameChangerCount = category.cards?.filter(name => {
           const cardData = adds.find(a => a.name === name);
@@ -6427,7 +6059,7 @@
       const encodedName = encodeURIComponent(cardName);
       const safeCardName = escapeHtml(cardName);
       const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedName}&version=small`;
-      const targetBracket = escapeHtml(currentPrecon?.upgrades?.[currentUpgrade]?.bracket || currentPrecon?.targetBracket || '3');
+      const targetBracket = escapeHtml(currentPrecon?.bracket || '3');
       const tooltipText = `Game Changer: Moves deck to Bracket ${targetBracket}`;
       const starHtml = isGameChanger ? `<span class="game-changer-star" data-tooltip="${tooltipText}" title="${tooltipText}">★</span>` : '';
       const priceHtml = price ? `<div class="guide-card-price">${escapeHtml(price)}</div>` : '';
@@ -6597,7 +6229,6 @@
     }
 
     // === EVENT LISTENERS ===
-    // Note: Tab click handlers are attached dynamically in generateTabs()
 
     preconSelect.addEventListener('change', (e) => {
       selectPrecon(e.target.value);
@@ -6634,7 +6265,7 @@
     // === URL DEEP LINKING ===
     function parseUrlHash() {
       const hash = window.location.hash.slice(1);
-      if (!hash) return { precon: null, tier: null };
+      if (!hash) return { precon: null };
 
       const params = {};
       hash.split('&').forEach(part => {
@@ -6646,7 +6277,7 @@
 
       return {
         precon: params.precon || null,
-        tier: params.tier || null
+        view: params.view || null
       };
     }
 
@@ -6656,7 +6287,7 @@
       if (currentView && currentView !== 'guide') {
         hash += `view=${encodeURIComponent(currentView)}&`;
       }
-      hash += `precon=${encodeURIComponent(currentPreconId)}&tier=${encodeURIComponent(currentUpgrade)}`;
+      hash += `precon=${encodeURIComponent(currentPreconId)}`;
       history.replaceState(null, '', `#${hash}`);
     }
 
@@ -6673,21 +6304,9 @@
     function generateDecklistExport(format) {
       if (!currentPrecon) return '';
 
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-      const isCmd = isCommanderDeck(currentPrecon);
-      let deckCards;
-
-      if (isCmd) {
-        deckCards = (upgrade.decklist || []).map(card => ({
-          name: card.name, quantity: card.quantity || 1
-        }));
-      } else {
-        deckCards = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts)
-          .map(card => ({ name: card.name, quantity: card.quantity || 1 }));
-        upgrade.adds.forEach(card => {
-          deckCards.push({ name: card.name, quantity: 1 });
-        });
-      }
+      let deckCards = (currentPrecon.decklist || []).map(card => ({
+        name: card.name, quantity: card.quantity || 1
+      }));
 
       // Filter to selected cards only if any are selected
       if (selectedCards.size > 0) {
@@ -6756,10 +6375,8 @@
     function generateAddsListExport() {
       if (!currentPrecon) return '';
 
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-
       // Cardmarket format: one card per line, quantity prefix
-      return upgrade.adds.map(card => `1 ${card.name}`).join('\n');
+      return currentPrecon.adds.map(card => `1 ${card.name}`).join('\n');
     }
 
     function generateCutsListExport() {
@@ -6805,8 +6422,6 @@
       if (!currentPrecon) return;
 
       const resultsContainer = document.getElementById('search-results');
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-      const isCmd = isCommanderDeck(currentPrecon);
 
       if (!query.trim()) {
         resultsContainer.innerHTML = '<div class="search-empty">Type to search cards in the current deck...</div>';
@@ -6818,35 +6433,19 @@
       searchResults = [];
 
       // Search in adds / key cards
-      const addNames = new Set(upgrade.adds.map(c => c.name));
-      upgrade.adds.forEach(card => {
+      const addNames = new Set(currentPrecon.adds.map(c => c.name));
+      currentPrecon.adds.forEach(card => {
         if (card.name.toLowerCase().includes(queryLower)) {
           searchResults.push({ name: card.name, type: 'add' });
         }
       });
 
-      if (isCmd) {
-        // Commander deck: search the full decklist (excluding already-matched adds)
-        (upgrade.decklist || []).forEach(card => {
-          if (!addNames.has(card.name) && card.name.toLowerCase().includes(queryLower)) {
-            searchResults.push({ name: card.name, type: 'deck' });
-          }
-        });
-      } else {
-        // Precon: search in cuts and remaining baseDeck
-        const tierCuts = upgrade.cuts || currentPrecon.cuts;
-        const cutNames = new Set(tierCuts.map(c => c.name));
-        tierCuts.forEach(card => {
-          if (card.name.toLowerCase().includes(queryLower)) {
-            searchResults.push({ name: card.name, type: 'cut' });
-          }
-        });
-        currentPrecon.baseDeck.forEach(card => {
-          if (!cutNames.has(card.name) && card.name.toLowerCase().includes(queryLower)) {
-            searchResults.push({ name: card.name, type: 'deck' });
-          }
-        });
-      }
+      // Search the full decklist (excluding already-matched adds)
+      (currentPrecon.decklist || []).forEach(card => {
+        if (!addNames.has(card.name) && card.name.toLowerCase().includes(queryLower)) {
+          searchResults.push({ name: card.name, type: 'deck' });
+        }
+      });
 
       if (searchResults.length === 0) {
         resultsContainer.innerHTML = '<div class="search-empty">No cards found matching your search.</div>';
@@ -6950,38 +6549,12 @@
     function applyFilters() {
       if (!currentPrecon) return;
 
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-      const isCmd = isCommanderDeck(currentPrecon);
-      let deckList;
-
-      if (isCmd) {
-        if (!upgrade.decklist) return;
-        const addNames = new Set(upgrade.adds.map(c => c.name));
-        deckList = upgrade.decklist.map(card => ({
-          ...card,
-          isAdded: addNames.has(card.name)
-        }));
-      } else {
-        if (!currentPrecon.baseDeck) return;
-        deckList = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts)
-          .map(card => ({ ...card, isAdded: false }));
-
-        upgrade.adds.forEach(card => {
-          const metadata = cardMetadataCache.get(card.name);
-          let type = 'Unknown';
-          if (metadata && metadata.type_line) {
-            const typeLine = metadata.type_line;
-            if (typeLine.includes('Creature')) type = 'Creature';
-            else if (typeLine.includes('Land')) type = 'Land';
-            else if (typeLine.includes('Artifact')) type = 'Artifact';
-            else if (typeLine.includes('Enchantment')) type = 'Enchantment';
-            else if (typeLine.includes('Instant')) type = 'Instant';
-            else if (typeLine.includes('Sorcery')) type = 'Sorcery';
-            else if (typeLine.includes('Planeswalker')) type = 'Planeswalker';
-          }
-          deckList.push({ name: card.name, type: type, isAdded: true });
-        });
-      }
+      if (!currentPrecon.decklist) return;
+      const addNames = new Set(currentPrecon.adds.map(c => c.name));
+      let deckList = currentPrecon.decklist.map(card => ({
+        ...card,
+        isAdded: addNames.has(card.name)
+      }));
 
       // Apply filters
       let filtered = deckList.filter(card => {
@@ -7131,7 +6704,7 @@
       // Update count
       let totalCount = cards.reduce((sum, c) => sum + (c.quantity || 1), 0);
       const showCommander = !filterState.addedOnly && filterState.type === 'all' && filterState.cmc === 'all';
-      if (isCommanderDeck(currentPrecon) && showCommander) totalCount += 1;
+      if (showCommander) totalCount += 1;
       decklistCount.textContent = totalCount;
 
       // Hover/click/keyboard handled by delegated listeners on decklistContent
@@ -7161,7 +6734,6 @@
     function savePreferences() {
       const prefs = {
         lastPrecon: currentPreconId,
-        lastTier: currentUpgrade,
         filters: filterState
       };
       try { localStorage.setItem('mtg-upgrade-prefs', JSON.stringify(prefs)); } catch (e) { /* quota exceeded or private mode */ }
@@ -7245,7 +6817,7 @@
         const deckList = generateDecklistExport(format);
 
         // Track export event
-        trackEvent('deck_export', { format, precon: currentPreconId, tier: currentUpgrade });
+        trackEvent('deck_export', { format, precon: currentPreconId });
 
         if (format === 'moxfield') {
           openMoxfieldImport(deckList);
@@ -7262,14 +6834,14 @@
 
     // Export adds list button
     document.getElementById('export-adds-btn')?.addEventListener('click', async (e) => {
-      trackEvent('shopping_list_export', { precon: currentPreconId, tier: currentUpgrade });
+      trackEvent('shopping_list_export', { precon: currentPreconId });
       const list = generateAddsListExport();
       await copyToClipboard(list, e.currentTarget);
     });
 
     // Export cuts list button
     document.getElementById('export-cuts-btn')?.addEventListener('click', async (e) => {
-      trackEvent('cuts_list_export', { precon: currentPreconId, tier: currentUpgrade });
+      trackEvent('cuts_list_export', { precon: currentPreconId });
       const list = generateCutsListExport();
       await copyToClipboard(list, e.currentTarget);
     });
@@ -7287,30 +6859,22 @@
     document.getElementById('print-shopping-btn')?.addEventListener('click', () => {
       if (!currentPrecon) return;
 
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-      const isCmd = isCommanderDeck(currentPrecon);
-
       // Populate shopping list metadata
-      document.getElementById('shopping-list-precon').textContent = currentPrecon.name;
-      document.getElementById('shopping-list-tier').textContent = upgrade.name;
+      document.getElementById('shopping-list-deck').textContent = currentPrecon.name;
 
-      // Generate shopping list rows
-      // Commander decks: full decklist (building from scratch)
-      // Precons: just the adds (cards to buy)
+      // Generate shopping list rows (full decklist)
       const tbody = document.getElementById('shopping-list-body');
       let totalLow = 0;
       let totalHigh = 0;
 
-      const shoppingCards = isCmd
-        ? (upgrade.decklist || []).map(card => {
-            const addData = upgrade.adds.find(a => a.name === card.name);
-            return {
-              name: card.name,
-              price: addData?.price || null,
-              isGameChanger: addData?.isGameChanger || false
-            };
-          })
-        : upgrade.adds;
+      const shoppingCards = (currentPrecon.decklist || []).map(card => {
+        const addData = currentPrecon.adds.find(a => a.name === card.name);
+        return {
+          name: card.name,
+          price: addData?.price || null,
+          isGameChanger: addData?.isGameChanger || false
+        };
+      });
 
       tbody.innerHTML = shoppingCards.map(card => {
         const isGameChanger = card.isGameChanger || false;
@@ -7435,7 +6999,7 @@
 
       // Build share URL
       const url = new URL(window.location.href);
-      url.hash = `precon=${encodeURIComponent(currentPreconId)}&tier=${encodeURIComponent(currentUpgrade)}`;
+      url.hash = `precon=${encodeURIComponent(currentPreconId)}`;
 
       try {
         await navigator.clipboard.writeText(url.toString());
@@ -7447,7 +7011,7 @@
         tooltip.classList.add('visible');
 
         // Track share event
-        trackEvent('share_build', { precon: currentPreconId, tier: currentUpgrade });
+        trackEvent('share_build', { precon: currentPreconId });
 
         // Reset after delay
         setTimeout(() => {
@@ -7510,291 +7074,13 @@
       }
     });
 
-    // Update URL hash on tab change
-    const originalTabClickHandler = document.querySelectorAll('.tab');
-    originalTabClickHandler.forEach(tab => {
-      tab.addEventListener('click', () => {
-        setTimeout(updateUrlHash, 0);
-        savePreferences();
-      });
-    });
 
-    // === RANKINGS VIEW ===
-    function handleRankingImageError(img) {
-      const placeholder = document.createElement('div');
-      placeholder.className = 'ranking-card-placeholder';
-      placeholder.textContent = img.alt || 'Card';
-      img.replaceWith(placeholder);
-    }
 
-    // Floating preview for ranking card images
-    let rankingPreviewRafId = null;
-    const loadedNormalImages = new Map(); // Cache for loaded normal images
-
-    function showRankingHoverPreview(e, imageUrl, cardName) {
-      const preview = document.getElementById('ranking-hover-preview');
-      const img = document.getElementById('ranking-hover-image');
-      if (!preview || !img) return;
-
-      // Get normal URL for this card
-      const normalUrl = imageUrl.replace('version=small', 'version=normal');
-
-      // Check if we already have the normal image cached
-      if (loadedNormalImages.has(normalUrl)) {
-        img.src = normalUrl;
-      } else {
-        // Show small image immediately for instant feedback
-        img.src = imageUrl;
-
-        // Load normal image in background, swap when ready
-        const preloader = new Image();
-        preloader.onload = () => {
-          loadedNormalImages.set(normalUrl, true);
-          // Only swap if preview is still visible and showing this card
-          if (preview.classList.contains('visible') && img.alt === cardName) {
-            img.src = normalUrl;
-          }
-        };
-        preloader.src = normalUrl;
-      }
-
-      img.alt = cardName;
-      updateRankingPreviewPosition(e);
-      preview.classList.add('visible');
-    }
-
-    function hideRankingHoverPreview() {
-      const preview = document.getElementById('ranking-hover-preview');
-      if (preview) {
-        preview.classList.remove('visible');
-      }
-      if (rankingPreviewRafId) {
-        cancelAnimationFrame(rankingPreviewRafId);
-        rankingPreviewRafId = null;
-      }
-    }
-
-    function updateRankingPreviewPosition(e) {
-      if (rankingPreviewRafId) return;
-
-      rankingPreviewRafId = requestAnimationFrame(() => {
-        const preview = document.getElementById('ranking-hover-preview');
-        if (!preview || !preview.classList.contains('visible')) {
-          rankingPreviewRafId = null;
-          return;
-        }
-
-        const previewWidth = 250;
-        const previewHeight = 350;
-        const offset = 20;
-        const padding = 10;
-
-        let x = e.clientX + offset;
-        let y = e.clientY - previewHeight / 2;
-
-        // Flip to left side if would overflow right
-        if (x + previewWidth + padding > window.innerWidth) {
-          x = e.clientX - previewWidth - offset;
-        }
-        // Clamp vertical position
-        if (y < padding) {
-          y = padding;
-        }
-        if (y + previewHeight + padding > window.innerHeight) {
-          y = window.innerHeight - previewHeight - padding;
-        }
-
-        preview.style.left = x + 'px';
-        preview.style.top = y + 'px';
-        rankingPreviewRafId = null;
-      });
-    }
-
-    async function loadRankingsData() {
-      if (rankingsLoaded && rankingsData) {
-        return rankingsData;
-      }
-
-      try {
-        const response = await fetch('data/creator-rankings.json');
-        if (!response.ok) throw new Error('Failed to load rankings data');
-        rankingsData = await response.json();
-        rankingsLoaded = true;
-        return rankingsData;
-      } catch (err) {
-        console.error('Error loading rankings:', err);
-        return null;
-      }
-    }
-
-    function renderRankings(data) {
-      const content = document.getElementById('rankings-content');
-      if (!data) {
-        content.innerHTML = `
-          <div class="rankings-error">
-            <p>Failed to load rankings data.</p>
-            <button class="rankings-retry-btn">Retry</button>
-          </div>
-        `;
-        content.querySelector('.rankings-retry-btn').addEventListener('click', loadAndRenderRankings);
-        return;
-      }
-
-      const topPreconsHtml = data.topPrecons.map((precon, index) => {
-        const badgeClass = index === 0 ? '' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
-        const encodedCommander = encodeURIComponent(precon.commander);
-        const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedCommander}&version=small`;
-        const reasonsHtml = precon.reasons.map(r => `<li>${escapeHtml(r)}</li>`).join('');
-
-        return `
-          <div class="ranking-card">
-            <div class="ranking-badge ${badgeClass}">#${escapeHtml(String(precon.rank))}</div>
-            <img class="ranking-card-image" src="${imageUrl}" alt="${escapeHtml(precon.commander)}" loading="lazy">
-            <div class="ranking-card-content">
-              <div class="ranking-card-header">
-                <h3 class="ranking-card-name">${escapeHtml(precon.name)}</h3>
-                <span class="ranking-card-price">${escapeHtml(precon.price)}</span>
-              </div>
-              <div class="ranking-card-meta">
-                <span class="ranking-card-set">${escapeHtml(precon.set)}</span>
-                <span class="ranking-card-commander">${escapeHtml(precon.commander)}</span>
-              </div>
-              <ul class="ranking-reasons">${reasonsHtml}</ul>
-              <div class="ranking-source">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                <a href="${sanitizeUrl(precon.sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(precon.source)}</a>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      const bestValueHtml = data.bestValue.map(precon => {
-        const encodedCommander = encodeURIComponent(precon.commander);
-        const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedCommander}&version=small`;
-        const highlightsHtml = precon.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('');
-
-        return `
-          <div class="ranking-card value-card">
-            <img class="ranking-card-image" src="${imageUrl}" alt="${escapeHtml(precon.commander)}" loading="lazy">
-            <div class="ranking-card-content">
-              <div class="ranking-card-header">
-                <h3 class="ranking-card-name">${escapeHtml(precon.name)}</h3>
-                <div class="ranking-card-price">
-                  <span>${escapeHtml(precon.price)}</span>
-                  <span class="value-ratio">${escapeHtml(precon.valueRatio)} value</span>
-                  <span class="single-value">Singles: ${escapeHtml(precon.singleValue)}</span>
-                </div>
-              </div>
-              <div class="ranking-card-meta">
-                <span class="ranking-card-set">${escapeHtml(precon.set)}</span>
-                <span class="ranking-card-commander">${escapeHtml(precon.commander)}</span>
-              </div>
-              <ul class="ranking-reasons">${highlightsHtml}</ul>
-              <div class="ranking-source">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                <a href="${sanitizeUrl(precon.sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(precon.source)}</a>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      const setRecsHtml = `
-        <div class="set-recommendations">
-          <div class="set-card">
-            <div class="set-card-label">Best Set 2024</div>
-            <div class="set-card-name">${escapeHtml(data.setRecommendations.best2024.name)}</div>
-            <div class="set-card-reason">${escapeHtml(data.setRecommendations.best2024.reason)}</div>
-          </div>
-          <div class="set-card">
-            <div class="set-card-label">Best Quality</div>
-            <div class="set-card-name">${escapeHtml(data.setRecommendations.bestQuality.name)}</div>
-            <div class="set-card-reason">${escapeHtml(data.setRecommendations.bestQuality.caveat)}</div>
-          </div>
-          <div class="set-card">
-            <div class="set-card-label">2025 Sleeper Hit</div>
-            <div class="set-card-name">${escapeHtml(data.setRecommendations.sleeper2025.name)}</div>
-            <div class="set-card-reason">${escapeHtml(data.setRecommendations.sleeper2025.reason)}</div>
-          </div>
-        </div>
-      `;
-
-      const sourcesHtml = data.sources.map(source => `
-        <a href="${sanitizeUrl(source.url)}" target="_blank" rel="noopener noreferrer" class="source-item">
-          <div class="source-icon">
-            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </div>
-          <div class="source-info">
-            <div class="source-channel">${escapeHtml(source.channel)}</div>
-            <div class="source-video">${escapeHtml(source.video)}</div>
-          </div>
-          <div class="source-views">${escapeHtml(source.views)} views</div>
-        </a>
-      `).join('');
-
-      content.innerHTML = `
-        <div class="rankings-section">
-          <div class="rankings-section-header">
-            <span class="rankings-section-icon">&#127942;</span>
-            <h3 class="rankings-section-title">Top Precons of All Time</h3>
-          </div>
-          ${topPreconsHtml}
-        </div>
-
-        <div class="rankings-section">
-          <div class="rankings-section-header">
-            <span class="rankings-section-icon">&#128176;</span>
-            <h3 class="rankings-section-title">Best Value Right Now</h3>
-          </div>
-          ${bestValueHtml}
-        </div>
-
-        <div class="rankings-section">
-          <div class="rankings-section-header">
-            <span class="rankings-section-icon">&#128230;</span>
-            <h3 class="rankings-section-title">Set Recommendations</h3>
-          </div>
-          ${setRecsHtml}
-        </div>
-
-        <div class="rankings-section">
-          <div class="rankings-section-header">
-            <span class="rankings-section-icon">&#128250;</span>
-            <h3 class="rankings-section-title">Sources</h3>
-          </div>
-          <div class="sources-list">
-            ${sourcesHtml}
-          </div>
-        </div>
-
-        <div class="rankings-last-updated">
-          Last updated: ${escapeHtml(data.lastUpdated)}
-        </div>
-      `;
-
-      trackEvent('view_rankings');
-
-      // Add error handlers for ranking images (replacing inline onerror)
-      content.querySelectorAll('.ranking-card-image').forEach(img => {
-        img.addEventListener('error', function() { handleRankingImageError(this); });
-      });
-
-      // Initialize tilt effect on card images
-      setTimeout(() => initializeRankingCardTilt(), 100);
-    }
-
-    async function loadAndRenderRankings() {
-      const content = document.getElementById('rankings-content');
-      content.innerHTML = '<div class="rankings-loading">Loading rankings data...</div>';
-
-      const data = await loadRankingsData();
-      renderRankings(data);
-    }
 
     function switchView(view) {
-      // Prevent switching to playtest when disabled
+      // Prevent switching to disabled tabs
       if (view === 'playtest' && document.getElementById('tab-playtest')?.classList.contains('disabled')) return;
+      if (view === 'analytics' && document.getElementById('tab-analytics')?.classList.contains('disabled')) return;
       if (currentView === view) return;
 
       currentView = view;
@@ -7802,8 +7088,8 @@
       const selectorSection = document.querySelector('.selector-section');
       const upgradeOverview = document.getElementById('upgrade-overview');
       const mainContent = document.getElementById('main-content');
-      const rankingsView = document.getElementById('rankings-view');
       const playtestView = document.getElementById('playtest-view');
+      const analyticsView = document.getElementById('analytics-view');
 
       // Update toggle buttons
       document.querySelectorAll('.view-toggle-btn').forEach(btn => {
@@ -7816,16 +7102,10 @@
       selectorSection.style.display = 'none';
       upgradeOverview.style.display = 'none';
       mainContent.style.display = 'none';
-      rankingsView.style.display = 'none';
       playtestView.style.display = 'none';
+      analyticsView.style.display = 'none';
 
-      if (view === 'rankings') {
-        rankingsView.style.display = 'block';
-        if (!rankingsLoaded) {
-          loadAndRenderRankings();
-        }
-        window.location.hash = 'view=rankings';
-      } else if (view === 'playtest') {
+      if (view === 'playtest') {
         playtestView.style.display = 'block';
         selectorSection.style.display = '';
         if (currentPrecon) upgradeOverview.style.display = 'block';
@@ -7833,10 +7113,18 @@
           initPlaytest();
         }
         if (currentPreconId) {
-          history.replaceState(null, '', `#view=playtest&precon=${encodeURIComponent(currentPreconId)}&tier=${encodeURIComponent(currentUpgrade)}`);
+          history.replaceState(null, '', `#view=playtest&precon=${encodeURIComponent(currentPreconId)}`);
         } else {
           window.location.hash = 'view=playtest';
         }
+      } else if (view === 'analytics') {
+        analyticsView.style.display = 'block';
+        selectorSection.style.display = '';
+        if (currentPrecon) upgradeOverview.style.display = 'block';
+        if (currentPreconId) {
+          renderAnalyticsView();
+        }
+        updateUrlHash();
       } else {
         // Guide view
         selectorSection.style.display = '';
@@ -7863,14 +7151,6 @@
 
       // Initialize playtest listeners once
       initPlaytestListeners();
-
-      // Check URL hash for initial view
-      const hash = window.location.hash.slice(1);
-      if (hash === 'view=rankings') {
-        switchView('rankings');
-      } else if (hash.startsWith('view=playtest')) {
-        // Playtest will be activated after deck loads
-      }
     }
 
     // === PLAYTEST / GOLDFISH ===
@@ -7924,42 +7204,19 @@
     }
 
     function getEffectiveCommander() {
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-      return upgrade?.commander || currentPrecon.commander;
+      return currentPrecon.commander;
     }
 
     function buildPlaytestDeck() {
       if (!currentPrecon) return [];
-      const isCmd = isCommanderDeck(currentPrecon);
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
       let rawCards = [];
 
-      if (isCmd) {
-        // Commander deck: use tier decklist
-        if (upgrade.decklist) {
-          rawCards = upgrade.decklist.map(c => ({
-            name: c.name,
-            type: c.type || getCardType(c.name),
-            quantity: c.quantity || 1
-          }));
-        }
-      } else {
-        // Precon: baseDeck - cuts + adds
-        const kept = applyBaseDeckCuts(currentPrecon.baseDeck, upgrade.cuts || currentPrecon.cuts);
-        kept.forEach(c => {
-          rawCards.push({
-            name: c.name,
-            type: c.type || getCardType(c.name),
-            quantity: c.quantity || 1
-          });
-        });
-        upgrade.adds.forEach(c => {
-          rawCards.push({
-            name: c.name,
-            type: getCardType(c.name),
-            quantity: c.quantity || 1
-          });
-        });
+      if (currentPrecon.decklist) {
+        rawCards = currentPrecon.decklist.map(c => ({
+          name: c.name,
+          type: c.type || getCardType(c.name),
+          quantity: c.quantity || 1
+        }));
       }
 
       // Filter out effective commander from the 99 (alternate stays in deck)
@@ -7992,20 +7249,15 @@
     }
 
     async function initPlaytest() {
-      if (!currentPrecon || !currentUpgrade) return;
+      if (!currentPrecon) return;
 
       playtestState.cardIdCounter = 0;
 
       // Prefetch metadata for all deck cards
-      const upgrade = currentPrecon.upgrades[currentUpgrade];
-      const isCmd = isCommanderDeck(currentPrecon);
       const allNames = new Set();
 
-      if (isCmd && upgrade.decklist) {
-        upgrade.decklist.forEach(c => allNames.add(c.name));
-      } else if (currentPrecon.baseDeck) {
-        currentPrecon.baseDeck.forEach(c => allNames.add(c.name));
-        upgrade.adds.forEach(c => allNames.add(c.name));
+      if (currentPrecon.decklist) {
+        currentPrecon.decklist.forEach(c => allNames.add(c.name));
       }
       allNames.add(getEffectiveCommander());
 
@@ -8600,13 +7852,427 @@
       hidePlaytestPreview();
     }
 
+    // === ANALYTICS / SIMULATION ===
+    async function loadSimulationData(preconId) {
+      if (simulationCache[preconId]) return simulationCache[preconId];
+      if (simulationCache[preconId] === null) return null; // cached 404
+
+      try {
+        const response = await fetch(`data/commanders/${preconId}/simulation.json`);
+        if (!response.ok) {
+          simulationCache[preconId] = null;
+          return null;
+        }
+        const data = await response.json();
+        simulationCache[preconId] = data;
+        return data;
+      } catch (err) {
+        console.error('Failed to load simulation data:', err);
+        simulationCache[preconId] = null;
+        return null;
+      }
+    }
+
+    async function renderAnalyticsView() {
+      const renderVersion = ++analyticsRenderVersion;
+
+      const contentEl = document.getElementById('analytics-content');
+      const noDeckEl = document.getElementById('analytics-no-deck');
+      const noDataEl = document.getElementById('analytics-no-data');
+
+      contentEl.style.display = 'none';
+      noDeckEl.style.display = 'none';
+      noDataEl.style.display = 'none';
+      contentEl.innerHTML = '';
+
+      if (!currentPreconId || !currentPrecon) {
+        noDeckEl.style.display = '';
+        return;
+      }
+
+      const simData = await loadSimulationData(currentPreconId);
+
+      // Stale-response guard
+      if (renderVersion !== analyticsRenderVersion) return;
+
+      if (!simData) {
+        noDataEl.style.display = '';
+        return;
+      }
+
+      let html = '';
+
+      // Header
+      const numGames = simData.metadata?.numGames || 0;
+      const numTurns = simData.metadata?.numTurns || 10;
+      html += `<div class="analytics-header">
+        <h2>Mana Simulation</h2>
+        <span class="sim-badge"><span class="sim-count">${numGames.toLocaleString()}</span> games simulated</span>
+      </div>`;
+
+      // Mana chart placeholder
+      html += `<div class="sim-chart-container">
+        <div class="sim-chart-panel" id="sim-mana-chart-panel">
+          <h3 class="stats-panel-title">Available Mana by Turn</h3>
+          <div id="sim-mana-chart"></div>
+          <div class="sim-chart-legend">
+            <span><span class="legend-band"></span> P25 - P75 range</span>
+            <span><span class="legend-line"></span> Median</span>
+          </div>
+        </div>
+      </div>`;
+
+      // Metrics placeholders
+      html += `<div class="sim-metrics-grid" id="sim-metrics-grid"></div>`;
+
+      // Details placeholders
+      html += `<div class="sim-details"><div class="sim-details-grid" id="sim-details-grid"></div></div>`;
+
+      // Assessment badges
+      if (simData.assessment) {
+        html += `<div class="sim-assessment-badges" id="sim-assessment-badges"></div>`;
+      }
+
+      contentEl.innerHTML = html;
+      contentEl.style.display = '';
+
+      // Render sub-components
+      renderManaRampChart(simData.manaByTurn, numTurns);
+      renderSimMetrics(simData);
+      renderDetailedBreakdown(simData);
+      setupSimAnimations();
+    }
+
+    function renderManaRampChart(manaByTurn, numTurns) {
+      const container = document.getElementById('sim-mana-chart');
+      if (!container || !manaByTurn) return;
+
+      const turns = [];
+      for (let t = 1; t <= numTurns; t++) {
+        const data = manaByTurn[String(t)];
+        if (data) turns.push({ turn: t, ...data });
+      }
+      if (turns.length === 0) return;
+
+      const width = 600;
+      const height = 250;
+      const padL = 45;
+      const padR = 15;
+      const padT = 15;
+      const padB = 35;
+      const chartW = width - padL - padR;
+      const chartH = height - padT - padB;
+
+      const maxMana = Math.max(...turns.map(t => t.p75)) * 1.15;
+      const xScale = (i) => padL + (i / (turns.length - 1)) * chartW;
+      const yScale = (v) => padT + chartH - (v / maxMana) * chartH;
+
+      // Build band path (P25 -> P75)
+      let bandTop = turns.map((t, i) => `${i === 0 ? 'M' : 'L'}${xScale(i).toFixed(1)},${yScale(t.p75).toFixed(1)}`).join(' ');
+      let bandBot = turns.slice().reverse().map((t, i) => `L${xScale(turns.length - 1 - i).toFixed(1)},${yScale(t.p25).toFixed(1)}`).join(' ');
+      let bandPath = `${bandTop} ${bandBot} Z`;
+
+      // Median line
+      let medianPath = turns.map((t, i) => `${i === 0 ? 'M' : 'L'}${xScale(i).toFixed(1)},${yScale(t.median).toFixed(1)}`).join(' ');
+
+      // Grid lines
+      let gridLines = '';
+      const gridSteps = Math.ceil(maxMana);
+      for (let g = 0; g <= gridSteps; g += 2) {
+        const y = yScale(g);
+        if (y >= padT && y <= padT + chartH) {
+          gridLines += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${padL + chartW}" y2="${y.toFixed(1)}" class="sim-chart-grid"/>`;
+          gridLines += `<text x="${padL - 8}" y="${(y + 4).toFixed(1)}" class="sim-chart-axis-label" text-anchor="end">${g}</text>`;
+        }
+      }
+
+      // X axis labels
+      let xLabels = turns.map((t, i) => `<text x="${xScale(i).toFixed(1)}" y="${(padT + chartH + 20).toFixed(1)}" class="sim-chart-axis-label" text-anchor="middle">T${t.turn}</text>`).join('');
+
+      // Dots for hover
+      let dots = turns.map((t, i) => `<circle cx="${xScale(i).toFixed(1)}" cy="${yScale(t.median).toFixed(1)}" r="3.5" class="sim-chart-dot" data-turn="${t.turn}" data-median="${t.median}" data-p25="${t.p25}" data-p75="${t.p75}" data-mean="${t.mean}"/>`).join('');
+
+      container.innerHTML = `<div style="position:relative;">
+        <svg class="sim-chart-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
+          ${gridLines}
+          <path d="${bandPath}" class="sim-chart-band"/>
+          <path d="${medianPath}" class="sim-chart-median"/>
+          ${xLabels}
+          ${dots}
+        </svg>
+        <div class="sim-chart-tooltip" id="sim-chart-tooltip" style="display:none;"></div>
+      </div>`;
+
+      // Tooltip events
+      const tooltip = document.getElementById('sim-chart-tooltip');
+      const svg = container.querySelector('svg');
+      container.querySelectorAll('.sim-chart-dot').forEach(dot => {
+        dot.addEventListener('mouseenter', (e) => {
+          const turn = dot.dataset.turn;
+          const median = parseFloat(dot.dataset.median).toFixed(1);
+          const p25 = parseFloat(dot.dataset.p25).toFixed(1);
+          const p75 = parseFloat(dot.dataset.p75).toFixed(1);
+          const mean = parseFloat(dot.dataset.mean).toFixed(1);
+          tooltip.innerHTML = `<span class="tt-turn">Turn ${turn}</span><br>Median: ${median}<br>P25-P75: ${p25} - ${p75}<br>Mean: ${mean}`;
+          tooltip.style.display = '';
+          const rect = svg.getBoundingClientRect();
+          const dotRect = dot.getBoundingClientRect();
+          tooltip.style.left = (dotRect.left - rect.left + dotRect.width / 2) + 'px';
+          tooltip.style.top = (dotRect.top - rect.top - tooltip.offsetHeight - 8) + 'px';
+        });
+        dot.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+      });
+    }
+
+    function renderSimMetrics(simData) {
+      const grid = document.getElementById('sim-metrics-grid');
+      if (!grid) return;
+
+      let html = '';
+
+      // Commander timing ring
+      if (simData.commanderTiming) {
+        const ct = simData.commanderTiming;
+        const medTurn = ct.medianTurn || 0;
+        const maxTurn = 10;
+        const pct = Math.min(1, 1 - (medTurn - 1) / (maxTurn - 1));
+        const circ = 2 * Math.PI * 35;
+        const offset = circ * (1 - pct);
+        html += `<div class="sim-metric-card">
+          <div class="metric-label">Commander Timing</div>
+          <div class="metric-ring">
+            <svg viewBox="0 0 80 80" class="sim-chart-svg">
+              <circle cx="40" cy="40" r="35" class="sim-metric-ring-bg"/>
+              <circle cx="40" cy="40" r="35" class="sim-metric-ring-fill" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"/>
+              <text x="40" y="40" class="sim-metric-ring-text">T${medTurn}</text>
+            </svg>
+          </div>
+          <div class="metric-sub">${escapeHtml(ct.name)} (${ct.cmc} CMC)</div>
+        </div>`;
+      }
+
+      // Mulligan donut
+      if (simData.mulliganStats) {
+        const ms = simData.mulliganStats;
+        const kept = ms.keptFirst || 0;
+        const circ = 2 * Math.PI * 35;
+        const offset = circ * (1 - kept / 100);
+        html += `<div class="sim-metric-card">
+          <div class="metric-label">Keep Rate</div>
+          <div class="metric-ring">
+            <svg viewBox="0 0 80 80" class="sim-chart-svg">
+              <circle cx="40" cy="40" r="35" class="sim-metric-ring-bg"/>
+              <circle cx="40" cy="40" r="35" class="sim-metric-ring-fill" style="stroke: var(--accent-green);" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"/>
+              <text x="40" y="40" class="sim-metric-ring-text">${kept.toFixed(0)}%</text>
+            </svg>
+          </div>
+          <div class="metric-sub">Free mull: ${(ms.freeMulligan || 0).toFixed(1)}% | Paid: ${(ms.paidMulligan || 0).toFixed(1)}%</div>
+        </div>`;
+      }
+
+      // Curve-out rate
+      if (simData.curveEfficiency) {
+        const rate = simData.curveEfficiency.curveOutRate || 0;
+        html += `<div class="sim-metric-card">
+          <div class="metric-label">Curve-Out Rate</div>
+          <div class="metric-value" data-target="${rate.toFixed(1)}">${rate.toFixed(1)}%</div>
+          <div class="metric-sub">Cast a spell every turn T1-T4</div>
+        </div>`;
+      }
+
+      // Deck composition
+      if (simData.deckComposition) {
+        const dc = simData.deckComposition;
+        html += `<div class="sim-metric-card">
+          <div class="metric-label">Avg Mana Value</div>
+          <div class="metric-value">${(dc.avgCmc || 0).toFixed(2)}</div>
+          <div class="metric-sub">${dc.lands} lands | ${dc.rocks} rocks | ${dc.spells} spells</div>
+        </div>`;
+      }
+
+      // Color balance (only shown when not null)
+      if (simData.colorBalance) {
+        const cb = simData.colorBalance;
+        const colors = cb.colors || [];
+        const colorLabels = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
+        const t4Data = cb.byTurn?.['4'] || {};
+        html += `<div class="sim-metric-card">
+          <div class="metric-label">Color Mana (T4 Median)</div>
+          <div style="display:flex;gap:12px;justify-content:center;margin-top:8px;">`;
+        colors.forEach(c => {
+          const median = t4Data[c]?.median ?? 0;
+          html += `<div style="text-align:center;"><div style="font-size:1.2rem;font-weight:700;font-family:'Fira Code',monospace;">${median}</div><div class="metric-sub">${colorLabels[c] || c}</div></div>`;
+        });
+        html += `</div></div>`;
+      }
+
+      grid.innerHTML = html;
+    }
+
+    function renderDetailedBreakdown(simData) {
+      const grid = document.getElementById('sim-details-grid');
+      if (!grid) return;
+
+      let html = '';
+
+      // Opening hand land distribution
+      if (simData.openingHand?.landDistribution) {
+        const dist = simData.openingHand.landDistribution;
+        html += `<div class="sim-detail-panel"><h4>Opening Hand Lands</h4>`;
+        for (let i = 0; i <= 7; i++) {
+          const pct = dist[String(i)] || 0;
+          const barColor = (i >= 2 && i <= 4) ? 'green' : (i === 1 || i === 5) ? 'gold' : 'red';
+          html += `<div class="sim-bar-row">
+            <span class="sim-bar-label">${i} lands</span>
+            <div class="sim-bar-track"><div class="sim-bar-fill ${barColor}" style="width:${Math.min(pct, 100)}%"></div></div>
+            <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+          </div>`;
+        }
+        html += `</div>`;
+      }
+
+      // Commander by-turn %
+      if (simData.commanderTiming?.byTurn) {
+        const bt = simData.commanderTiming.byTurn;
+        html += `<div class="sim-detail-panel"><h4>Commander Castable by Turn</h4>`;
+        const turnKeys = Object.keys(bt).sort((a, b) => Number(a) - Number(b));
+        turnKeys.forEach(t => {
+          const pct = bt[t] || 0;
+          html += `<div class="sim-bar-row">
+            <span class="sim-bar-label">T${t}</span>
+            <div class="sim-bar-track"><div class="sim-bar-fill" style="width:${Math.min(pct, 100)}%"></div></div>
+            <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+          </div>`;
+        });
+        html += `</div>`;
+      }
+
+      // Castable-by-turn %
+      if (simData.curveEfficiency?.castableByTurn) {
+        const cbt = simData.curveEfficiency.castableByTurn;
+        html += `<div class="sim-detail-panel"><h4>Any Spell Castable by Turn</h4>`;
+        const turnKeys = Object.keys(cbt).sort((a, b) => Number(a) - Number(b));
+        turnKeys.forEach(t => {
+          const pct = cbt[t] || 0;
+          html += `<div class="sim-bar-row">
+            <span class="sim-bar-label">T${t}</span>
+            <div class="sim-bar-track"><div class="sim-bar-fill blue" style="width:${Math.min(pct, 100)}%"></div></div>
+            <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+          </div>`;
+        });
+        html += `</div>`;
+      }
+
+      // Color screw by turn (if multicolor)
+      if (simData.colorBalance?.colorScrewByTurn) {
+        const csbt = simData.colorBalance.colorScrewByTurn;
+        const colors = simData.colorBalance.colors || [];
+        const colorLabels = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
+        colors.forEach(color => {
+          html += `<div class="sim-detail-panel"><h4>${colorLabels[color] || color} Screw Rate by Turn</h4>`;
+          const turnKeys = Object.keys(csbt).sort((a, b) => Number(a) - Number(b));
+          turnKeys.forEach(t => {
+            const pct = csbt[t]?.[color] || 0;
+            html += `<div class="sim-bar-row">
+              <span class="sim-bar-label">T${t}</span>
+              <div class="sim-bar-track"><div class="sim-bar-fill red" style="width:${Math.min(pct, 100)}%"></div></div>
+              <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+            </div>`;
+          });
+          html += `</div>`;
+        });
+      }
+
+      // Special metrics panels
+      if (simData.specialMetrics) {
+        if (simData.specialMetrics.cascadeReadiness?.byTurn) {
+          const crByTurn = simData.specialMetrics.cascadeReadiness.byTurn;
+          const medTurn = simData.specialMetrics.cascadeReadiness.medianTurn;
+          html += `<div class="sim-detail-panel"><h4>Cascade Readiness${medTurn != null ? ` (median T${medTurn})` : ''}</h4>`;
+          const turnKeys = Object.keys(crByTurn).sort((a, b) => Number(a) - Number(b));
+          turnKeys.forEach(t => {
+            const pct = crByTurn[t] || 0;
+            html += `<div class="sim-bar-row">
+              <span class="sim-bar-label">T${t}</span>
+              <div class="sim-bar-track"><div class="sim-bar-fill gold" style="width:${Math.min(pct, 100)}%"></div></div>
+              <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+
+        if (simData.specialMetrics.etbTapped) {
+          const etb = simData.specialMetrics.etbTapped;
+          html += `<div class="sim-detail-panel"><h4>ETB Tapped Land Rate by Turn</h4>`;
+          const turnKeys = Object.keys(etb).sort((a, b) => Number(a) - Number(b));
+          turnKeys.forEach(t => {
+            const pct = etb[t] || 0;
+            html += `<div class="sim-bar-row">
+              <span class="sim-bar-label">T${t}</span>
+              <div class="sim-bar-track"><div class="sim-bar-fill gold" style="width:${Math.min(pct, 100)}%"></div></div>
+              <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+      }
+
+      grid.innerHTML = html;
+
+      // Assessment badges
+      if (simData.assessment) {
+        const badgesEl = document.getElementById('sim-assessment-badges');
+        if (badgesEl) {
+          let badgeHtml = '';
+          const a = simData.assessment;
+          if (a.manaAdequacy) {
+            badgeHtml += `<span class="sim-badge-item ${escapeHtml(a.manaAdequacy)}">Mana: ${escapeHtml(a.manaAdequacy)}</span>`;
+          }
+          if (a.mulliganVerdict) {
+            badgeHtml += `<span class="sim-badge-item ${escapeHtml(a.mulliganVerdict)}">Mulligans: ${escapeHtml(a.mulliganVerdict)}</span>`;
+          }
+          if (a.commanderTiming) {
+            badgeHtml += `<span class="sim-badge-item" data-verdict="${escapeHtml(a.commanderTiming)}">Commander: ${escapeHtml(a.commanderTiming)}</span>`;
+          }
+          badgesEl.innerHTML = badgeHtml;
+        }
+      }
+    }
+
+    function setupSimAnimations() {
+      if (!('IntersectionObserver' in window)) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Animate bar fills
+            entry.target.querySelectorAll('.sim-bar-fill').forEach(bar => {
+              const w = bar.style.width;
+              bar.style.width = '0%';
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => { bar.style.width = w; });
+              });
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.sim-detail-panel').forEach(panel => {
+        observer.observe(panel);
+      });
+    }
+
     function updatePlaytestTabState() {
       const tab = document.getElementById('tab-playtest');
-      if (!tab) return;
-      if (currentPrecon && currentUpgrade) {
-        tab.classList.remove('disabled');
-      } else {
-        tab.classList.add('disabled');
+      if (tab) {
+        tab.classList.toggle('disabled', !currentPrecon);
+      }
+      const analyticsTab = document.getElementById('tab-analytics');
+      if (analyticsTab) {
+        analyticsTab.classList.toggle('disabled', !currentPrecon);
       }
     }
 
@@ -8629,15 +8295,6 @@
       // Initialize view toggle
       initViewToggle();
 
-      // Check if we should show rankings view from URL
-      const hash = window.location.hash.slice(1);
-      if (hash === 'view=rankings') {
-        // Rankings view will be activated by initViewToggle
-        // Just load precon index for when user switches back
-        await loadPreconIndex();
-        return;
-      }
-
       // Load preferences first
       const prefs = loadPreferences();
       const urlParams = parseUrlHash();
@@ -8645,41 +8302,27 @@
       // Load precon index
       await loadPreconIndex();
 
-      // Determine which precon/tier to load
+      // Determine which precon to load
       const preconToLoad = urlParams.precon || prefs?.lastPrecon;
-      const tierToLoad = urlParams.tier || prefs?.lastTier || 'full';
+      const requestedView = urlParams.view;
 
-      // Check if playtest view requested
-      const isPlaytestView = hash.startsWith('view=playtest');
-      if (isPlaytestView) {
-        // Parse precon/tier from playtest hash
-        const params = {};
-        hash.split('&').forEach(part => {
-          const [k, v] = part.split('=');
-          if (k && v) params[k] = decodeURIComponent(v);
-        });
-        const ptPrecon = params.precon || preconToLoad;
-        const ptTier = params.tier || tierToLoad;
-
-        const allDecks = [...(preconIndex.precons || []), ...(preconIndex.commanders || [])];
-        if (ptPrecon && allDecks.some(d => d.id === ptPrecon)) {
-          preconSelect.value = ptPrecon;
-          currentUpgrade = ptTier;
-          currentView = 'playtest';
-          await selectPrecon(ptPrecon);
-          switchView('playtest');
+      // Check if a non-guide view requested
+      if (requestedView === 'playtest' || requestedView === 'analytics') {
+        const viewPrecon = urlParams.precon || preconToLoad;
+        const allDecks = [...(preconIndex.commanders || [])];
+        if (viewPrecon && allDecks.some(d => d.id === viewPrecon)) {
+          preconSelect.value = viewPrecon;
+          currentView = requestedView;
+          await selectPrecon(viewPrecon);
+          switchView(requestedView);
         }
         return;
       }
 
       // If we have a precon to load from URL or preferences
-      const allDecks = [...(preconIndex.precons || []), ...(preconIndex.commanders || [])];
+      const allDecks = [...(preconIndex.commanders || [])];
       if (preconToLoad && allDecks.some(d => d.id === preconToLoad)) {
         preconSelect.value = preconToLoad;
-
-        // Set the tier before loading (generateTabs will validate it exists)
-        currentUpgrade = tierToLoad;
-
         await selectPrecon(preconToLoad);
         updateUrlHash();
       }

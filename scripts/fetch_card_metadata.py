@@ -22,9 +22,7 @@ def collect_card_names() -> set[str]:
     """Collect all unique card names from every deck.json."""
     names = set()
 
-    deck_paths = list(DATA_DIR.glob("precons/*/deck.json")) + list(
-        DATA_DIR.glob("commanders/*/deck.json")
-    )
+    deck_paths = list(DATA_DIR.glob("commanders/*/deck.json"))
 
     for path in deck_paths:
         with open(path) as f:
@@ -34,25 +32,13 @@ def collect_card_names() -> set[str]:
         if deck.get("commander"):
             names.add(deck["commander"])
 
-        # baseDeck
-        for card in deck.get("baseDeck", []):
+        # Adds (notable/highlighted cards)
+        for card in deck.get("adds", []):
             names.add(card["name"])
 
-        # Top-level cuts
-        for card in deck.get("cuts", []):
+        # Full decklist
+        for card in deck.get("decklist", []):
             names.add(card["name"])
-
-        # Upgrades: each tier's adds, cuts, decklist, commander
-        for tier in deck.get("upgrades", {}).values():
-            if isinstance(tier, dict):
-                if tier.get("commander"):
-                    names.add(tier["commander"])
-                for card in tier.get("adds", []):
-                    names.add(card["name"])
-                for card in tier.get("cuts", []):
-                    names.add(card["name"])
-                for card in tier.get("decklist", []):
-                    names.add(card["name"])
 
     return names
 

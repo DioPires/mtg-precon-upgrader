@@ -8,12 +8,12 @@ No build step. Static files. Serve with any HTTP server or open index.html direc
 
 ## Project Overview
 
-A web application that provides upgrade guides for MTG Commander preconstructed decks and recommended commander deck builds. The app displays card recommendations, synergies, cuts (for precons), and shopping lists for upgrading precons up to Bracket 4 or building commander decks up to Bracket 4.
+A web application that provides recommended commander deck builds for Magic: The Gathering. The app displays card recommendations, synergies, and shopping lists for building commander decks up to Bracket 4.
 
 ## Architecture
 
 - **Frontend**: Single-page vanilla JS app (`index.html`)
-- **Data**: JSON files in `data/precons/{id}/deck.json` and `data/commanders/{id}/deck.json`
+- **Data**: JSON files in `data/commanders/{id}/deck.json`
 - **External API**: Scryfall for card metadata/images
 - **Hosting**: Static files (no backend)
 
@@ -22,96 +22,54 @@ A web application that provides upgrade guides for MTG Commander preconstructed 
 | File | Purpose |
 |------|---------|
 | `index.html` | Main application (HTML + CSS + JS) |
-| `data/index.json` | Deck catalog (precons + commanders) |
-| `data/precons/{id}/deck.json` | Per-precon upgrade data |
-| `data/commanders/{id}/deck.json` | Per-commander deck recommendations |
+| `data/index.json` | Deck catalog (commanders) |
+| `data/commanders/{id}/deck.json` | Per-commander deck data |
 | `data/game-changers.json` | Official Game Changers card list |
-| `docs/{id}/*.md` | Markdown documentation per precon |
-
-## Precon Data Structure
-
-```json
-{
-  "id": "eldrazi-unbound",
-  "name": "Eldrazi Unbound",
-  "commander": "Kozilek, the Great Distortion",
-  "currentBracket": "1-2",
-  "targetBracket": "3",
-  "baseDeck": [...],
-  "cuts": [...],
-  "upgrades": {
-    "full": { "adds": [...], "synergies": [...] },
-    "midrange": { "adds": [...], "synergies": [...] }
-  }
-}
-```
 
 ## Commander Deck Data Structure
 
-Commander decks (`type: "commander"`) are full recommended builds — no baseDeck or cuts. Each tier contains a complete `decklist` array.
+Each deck JSON is a flat structure with no tier/upgrade wrappers:
 
 ```json
 {
-  "id": "sauron-the-dark-lord",
+  "id": "titan-convergence",
   "type": "commander",
-  "name": "Sauron, The Dark Lord",
-  "commander": "Sauron, the Dark Lord",
-  "targetBracket": "3",
+  "name": "Titan Convergence",
+  "subtitle": "Cascading Inevitability",
+  "commander": "Zhulodok, Void Gorger",
+  "cost": "$200-350",
+  "bracket": "4",
+  "gameChangers": 2,
+  "sources": [...],
   "guideContent": {
     "strategyOverview": "...",
-    "deckCategories": [{ "name": "Amass Payoffs", "description": "...", "cards": [...] }]
+    "deckCategories": [{ "name": "Eldrazi Threats", "description": "...", "cards": [...] }]
   },
-  "upgrades": {
-    "full": {
-      "name": "Dark Dominion",
-      "cost": "$180-250",
-      "adds": [...],
-      "synergies": [...],
-      "decklist": [{ "name": "Card Name", "type": "Creature" }, ...]
-    }
-  }
+  "addCategories": [...],
+  "adds": [...],
+  "synergies": [...],
+  "decklist": [{ "name": "Card Name", "type": "Creature" }, ...]
 }
 ```
 
-**Key differences from precon data:**
-- `type: "commander"` (required) — triggers commander deck UI mode
-- No `baseDeck`, `cuts`, or `currentBracket` fields
-- `guideContent.deckCategories` replaces `cutCategories` — shows deck theme groupings instead of cut reasons
-- Each tier has a `decklist` array with the full 99 cards
-- `adds` array serves as "notable/highlighted cards" (not a diff against a base)
+**Key fields:**
+- `type: "commander"` (required)
+- `bracket` — display field indicating deck power level
+- `gameChangers` — count of Game Changer cards in the deck
+- `guideContent.deckCategories` — deck theme groupings
+- `decklist` — full 99-card list as `{name, type}` objects with optional `quantity` field
+- `adds` — notable/highlighted cards
+- `synergies` — card synergy pairs/groups
+- `sources` — attribution for the deck build
 
-## Upgrade Guide Rules
+## Deck Rules
 
-### Precon Upgrades
-- **Each precon must have 3 tiers minimum**: 1 Bracket 4 (no GC limit), 1 Bracket 3 (up to 3 GCs), 1 Bracket 3 budget ($40-60, 0 GCs)
-- **Bracket 3 tiers**: up to 3 Game Changers allowed (per `data/game-changers.json`). Vampiric Tutor in baseDeck counts toward this limit
-- **Bracket 4 tiers**: no Game Changer limit — include as many as the strategy warrants
-- **Additional Bracket 3 tiers allowed** — alternate commanders, different strategies
-- **Alternate commander builds** are valid tiers if research suggests a different commander from the precon creates a meaningfully distinct deck
-- **Cuts are shared** — each precon has a single top-level `cuts` array used by all tiers. Bracket 4 tiers may define their own expanded `cuts` array within the tier object when swapping significantly more cards.
-- **No card should appear in both `adds` and `baseDeck`**
-
-### Commander Decks
-- **Commander decks can target up to Bracket 4** — higher power ceiling since there's no precon starting point
-- **At least 3 tiers required**: 1 budget (Bracket 3, 0 GCs), at least 1 Bracket 3 tier (up to 3 GCs), at least 1 Bracket 4 tier (no GC limit)
-- **Bracket 4 tiers have no Game Changer limit** — include as many as the strategy warrants
-- **Each tier uses a per-tier `bracket` field** that controls the bracket bar display
-
-### Shared Rules
-- **Tier keys control UI ordering**: full → midrange → budget → others
-- **Display names should be strategic** (e.g., "Dark Dominion", not "Full Upgrade")
-- Tiers are NOT just price tiers — each should have a distinct strategic identity
-
-## Tier Philosophy
-
-- **Budget tier** = affordable entry point (~$40-60, 0 Game Changers, Bracket 3). Focuses on high-synergy, low-cost cards
-- **Bracket 3 tiers** = strong builds with up to 3 Game Changers. Each should have a distinct identity (e.g., reanimator-focused, tribal-focused, control-focused)
-- **Bracket 4 tiers** = maximum power, no GC limit. Optimized mana, best-in-slot cards, multiple synergy axes
-- Tiers are NOT just price tiers — a $100 tier and a $150 tier should explore different strategies, not the same strategy at different budgets
+- **Display names should be strategic** (e.g., "Dark Dominion", not "Sauron Deck")
+- Every card recommendation must be attributed via `sources`
 
 ## Source Attribution Schema
 
-Every card add, synergy, and tier must have a `sources` array for traceability.
+Every card add, synergy, and deck must have a `sources` array for traceability.
 
 **Source object shape:**
 ```json
@@ -128,17 +86,17 @@ Every card add, synergy, and tier must have a `sources` array for traceability.
 - `detail` (optional): extra context
 
 **Where sources arrays go:**
+- Per-deck: `sources` (root level)
 - Per-card: `adds[].sources`
 - Per-synergy: `synergies[].sources`
-- Per-tier: `upgrades.{tier}.sources`
 
 **When to use `ai-inferred`:** For synergy identification, strategic analysis, or card recommendations that came from Claude's analysis rather than a specific external source.
 
 ## Research Workflow
 
-When building or updating upgrade guides, use all available sources and cross-reference findings:
+When building or updating deck guides, use all available sources and cross-reference findings:
 
-1. **YouTube** — Search for precon upgrade videos, fetch transcripts, extract card recommendations
+1. **YouTube** — Search for commander deck tech videos, fetch transcripts, extract card recommendations
 2. **EDHREC** — Check commander pages for top cards, new additions from recent sets
 3. **Moxfield** — Search popular decklists for the commander
 4. **Scryfall** — Verify card names exist, check current pricing
@@ -148,20 +106,15 @@ Attribute every recommendation to its source(s). Multiple sources for the same c
 
 ## Common Tasks
 
-### Add a New Precon Guide
-1. Create `data/precons/{new-id}/deck.json`
-2. Add entry to `data/index.json` `precons` array
-3. Create markdown docs in `docs/{new-id}/`
-
 ### Add a New Commander Deck
-1. Create `data/commanders/{new-id}/deck.json` with `type: "commander"`
-2. Add entry to `data/index.json` `commanders` array (with `theme` instead of `set`)
-3. Include full 99-card `decklist` array in each tier
-4. Use `deckCategories` instead of `cutCategories` in `guideContent`
+1. Create `data/commanders/{new-id}/deck.json` with flat structure (see data structure above)
+2. Add entry to `data/index.json` `commanders` array (with `theme` and `colors`)
+3. Include full 99-card `decklist` array
+4. Use `deckCategories` in `guideContent` for deck theme groupings
 
-### Research Upgrades (with YouTube MCP)
+### Research Deck Updates (with YouTube MCP)
 1. Search YouTube for relevant videos
 2. Fetch transcripts from top results
 3. Extract card recommendations
-4. Compare with existing guide
+4. Compare with existing deck data
 5. Update deck.json with new findings

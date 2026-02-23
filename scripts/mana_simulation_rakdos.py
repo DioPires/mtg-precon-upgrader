@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Monte Carlo mana base simulation for Endless Punishment — Eternal Agony tier.
+"""Monte Carlo mana base simulation for Eternal Agony (The Lord of Pain).
 
-Simulates 10,000 games measuring mana production, color balance, and curve
-efficiency turns 1-7 for the upgraded Bracket 4 Rakdos decklist.
+Simulates 100,000 games measuring mana production, color balance, and curve
+efficiency turns 1-10 for the Bracket 4 Rakdos decklist.
 
 Commander: The Lord of Pain ({3}{B}{R}, CMC 5)
 """
@@ -18,7 +18,7 @@ from collections import Counter
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DECK_FILE = PROJECT_ROOT / "data" / "precons" / "endless-punishment" / "deck.json"
+DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "eternal-agony" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
 NUM_GAMES = 100_000
@@ -102,33 +102,15 @@ C_ONLY_LANDS = {
 
 
 def build_decklist(deck_data: dict) -> list[str]:
-    """Build the 99-card decklist for Eternal Agony tier.
+    """Build the 99-card decklist for Eternal Agony.
 
-    baseDeck (with quantities) - commander - tier cuts + tier adds = 99 cards.
+    Reads the flat decklist array directly. Each entry has {name, type} with
+    optional quantity field. Commander is in the command zone (not in decklist).
     """
-    tier = deck_data["upgrades"]["full"]
-    commander = tier.get("commander", deck_data.get("commander"))
-
-    base = []
-    for card in deck_data["baseDeck"]:
+    cards = []
+    for card in deck_data["decklist"]:
         qty = card.get("quantity", 1)
-        base.extend([card["name"]] * qty)
-
-    cards = list(base)
-    if commander in cards:
-        cards.remove(commander)
-
-    cuts_list = tier.get("cuts", deck_data.get("cuts", []))
-    for cut in cuts_list:
-        name = cut["name"]
-        qty = cut.get("quantity", 1)
-        for _ in range(qty):
-            if name in cards:
-                cards.remove(name)
-
-    for add in tier.get("adds", []):
-        cards.append(add["name"])
-
+        cards.extend([card["name"]] * qty)
     return cards
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Monte Carlo mana base simulation for Sauron, the Dark Lord — Dark Dominion tier.
+"""Monte Carlo mana base simulation for Dark Dominion (Sauron, the Dark Lord).
 
-Simulates 10,000 games measuring mana production, color balance, and curve
+Simulates 100,000 games measuring mana production, color balance, and curve
 efficiency turns 1-10 for the Bracket 4 Grixis decklist.
 
 Commander: Sauron, the Dark Lord ({3}{U}{B}{R}, CMC 6)
@@ -67,7 +67,7 @@ ROCK_DEFS = {
     "Talisman of Creativity": {"cmc": 2, "colors": frozenset({"U", "R"}), "count": 1, "burst": False},
     "Relic of Sauron":        {"cmc": 4, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
     "Commander's Sphere":     {"cmc": 3, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
-    "Fellwar Stone":          {"cmc": 2, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
+    "Mind Stone":             {"cmc": 2, "colors": frozenset({"C"}), "count": 1, "burst": False},
 }
 
 # --- Land subtype definitions (for check lands and fetch targets) ---
@@ -80,7 +80,7 @@ FETCH_LANDS = {"Bloodstained Mire", "Polluted Delta"}
 
 ALWAYS_TAPPED = {
     "Crumbling Necropolis", "Path of Ancestry", "Bojuka Bog", "Restless Reef",
-    "Mount Doom", "Minas Morgul, Dark Fortress",
+    "Minas Morgul, Dark Fortress",
     "Barad-dûr", "The Black Gate",  # tapped w/o legendary creature (not tracked)
 }
 
@@ -169,9 +169,11 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
     if name == "Bojuka Bog":
         return [frozenset({"B"})]
 
-    # Colorless utility lands (Mount Doom taps for {C}, not {R})
-    if name in {"Barad-dûr", "The Black Gate", "Minas Morgul, Dark Fortress", "Mount Doom"}:
-        return [frozenset({"C"})]
+    # LotR legendary lands — produce colored mana
+    if name in {"Barad-dûr", "The Black Gate", "Minas Morgul, Dark Fortress"}:
+        return [frozenset({"B"})]
+    if name == "Mount Doom":
+        return [frozenset({"B", "R"})]
 
     # Fetches should be cracked; if somehow on board, no mana
     if name in FETCH_LANDS:
@@ -281,10 +283,13 @@ class ManaPool:
 
 
 def build_decklist(deck_data: dict) -> list[str]:
-    """Build 99-card decklist from commander deck's Dark Dominion tier."""
-    tier = deck_data["upgrades"]["full"]
+    """Build 99-card decklist for Dark Dominion.
+
+    Reads the flat decklist array directly. Each entry has {name, type} with
+    optional quantity field. Commander is in the command zone (not in decklist).
+    """
     cards = []
-    for card in tier["decklist"]:
+    for card in deck_data["decklist"]:
         qty = card.get("quantity", 1)
         cards.extend([card["name"]] * qty)
     return cards
@@ -479,7 +484,7 @@ class GameState:
         """Try to cast mana rocks from hand, priority order (lowest CMC first)."""
         priority_order = [
             "Sol Ring",
-            "Arcane Signet", "Fellwar Stone",
+            "Arcane Signet", "Mind Stone",
             "Dimir Signet", "Rakdos Signet", "Izzet Signet",
             "Talisman of Dominance", "Talisman of Indulgence", "Talisman of Creativity",
             "Commander's Sphere",

@@ -1,12 +1,34 @@
 {
   "id": "sauron-the-dark-lord",
   "type": "commander",
-  "name": "Sauron, The Dark Lord",
+  "name": "Dark Dominion",
+  "subtitle": "Maximum Amass Synergy",
   "commander": "Sauron, the Dark Lord",
-  "alternateCommander": null,
-  "targetBracket": "4",
+  "cost": "$350-450",
+  "bracket": "4",
+  "gameChangers": 7,
+  "sources": [
+    {
+      "type": "edhrec",
+      "name": "EDHREC Sauron Page",
+      "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
+      "detail": "Top cards and synergies across 30,000+ decks"
+    },
+    {
+      "type": "youtube",
+      "name": "The Commander's Quarters - Omega Level Sauron",
+      "url": "https://www.youtube.com/watch?v=qDso2E-rnG8",
+      "detail": "Detailed deck tech and card choices"
+    },
+    {
+      "type": "article",
+      "name": "The Gamer - Sauron Deck Guide",
+      "url": "https://www.thegamer.com/magic-the-gathering-mtg-sauron-the-dark-lord-commander-deck-guide/",
+      "detail": "Card recommendations and mana base"
+    }
+  ],
   "guideContent": {
-    "strategyOverview": "Sauron, the Dark Lord is a Grixis value engine that rewards you for casting spells and attacking. Every time an opponent casts a spell, Sauron amasses Orcs, growing a single massive Army token. When your Army deals combat damage, the Ring tempts you, providing card selection and graveyard fuel. The deck builds around maximizing these triggers through amass synergies, evasion for the Army token, and leveraging the graveyard. Three tiers are available: Dark Dominion (Bracket 4) pushes maximum power with premium Game Changers, Shadow Aristocrats (Bracket 3) pivots to a sacrifice-and-drain engine using Sauron's tokens as sacrifice fodder, and Mordor Rising provides a budget-friendly entry point.",
+    "strategyOverview": "Sauron, the Dark Lord is a Grixis value engine that rewards you for casting spells and attacking. Every time an opponent casts a spell, Sauron amasses Orcs, growing a single massive Army token. When your Army deals combat damage, the Ring tempts you, providing card selection and graveyard fuel. The deck maximizes these triggers through amass synergies, evasion for the Army token, and leveraging the graveyard through reanimation.",
     "deckCategories": [
       {
         "name": "Amass Payoffs",
@@ -24,1310 +46,622 @@
         "cards": ["Phyrexian Arena", "Demand Answers", "Frantic Search", "Relic of Sauron", "Thirst for Discovery", "Opt", "Brainstorm"]
       },
       {
-        "name": "Sacrifice & Drain",
-        "description": "Converting tokens into life loss through sacrifice outlets and drain effects (Shadow Aristocrats tier)",
-        "cards": ["Mirkwood Bats", "Zulaport Cutthroat", "Blood Artist", "Goblin Bombardment", "Ashnod's Altar", "Pitiless Plunderer"]
-      },
-      {
         "name": "Ramp & Mana Base",
         "description": "Hitting 6 mana quickly to deploy Sauron on curve",
         "cards": ["Sol Ring", "Arcane Signet", "Dimir Signet", "Rakdos Signet", "Talisman of Indulgence", "Talisman of Dominance", "The Black Gate"]
       }
     ]
   },
-  "upgrades": {
-    "full": {
-      "name": "Dark Dominion",
-      "subtitle": "Maximum Amass Synergy",
-      "cost": "$350-450",
-      "bracket": "4",
-      "gameChangers": 7,
-      "description": "The strongest build for Sauron at Bracket 4. Leverages premium Game Changers including The One Ring, Orcish Bowmasters, and Rhystic Study alongside amass payoffs, efficient interaction, and an optimized mana base for overwhelming value.",
+  "addCategories": [
+    {
+      "name": "Amass Engine",
+      "description": "Cards that grow or benefit from the Orc Army token. Orcish Bowmasters creates its own Army.",
+      "cards": ["Call of the Ring", "Saruman, the White Hand", "Witch-king of Angmar", "Grishnákh, Brash Instigator", "Corsairs of Umbar", "Lord of the Nazgûl", "Mauhúr, Uruk-hai Captain", "Gothmog, Morgul Lieutenant", "March from the Black Gate", "Warg Rider", "Orcish Bowmasters"]
+    },
+    {
+      "name": "Value & Card Draw",
+      "description": "Keeping your hand full to outpace the table with card advantage and efficient tutors.",
+      "cards": ["Demonic Tutor", "Rhystic Study", "The One Ring", "Notion Thief", "Phyrexian Arena", "Dark Ritual", "Demand Answers", "Frantic Search", "Relic of Sauron", "Thirst for Discovery", "Opt", "Brainstorm", "Consult the Star Charts", "Treason of Isengard"]
+    },
+    {
+      "name": "Army Buffs & Evasion",
+      "description": "Making the Army unblockable to guarantee Ring temptation triggers every combat.",
+      "cards": ["In the Darkness Bind Them", "Aqueous Form", "Whispersilk Cloak", "Minas Morgul, Dark Fortress"]
+    },
+    {
+      "name": "Removal & Interaction",
+      "description": "Efficient interaction to protect your board and clear threats.",
+      "cards": ["Cyclonic Rift", "Fierce Guardianship", "Mana Drain", "Counterspell", "Withering Torment", "Blasphemous Act", "Saruman's Trickery", "Bitter Triumph", "Toxic Deluge", "Hero's Downfall", "Dauthi Voidwalker"]
+    },
+    {
+      "name": "Reanimation",
+      "description": "Bringing back creatures from the graveyard after Ring temptation fills it.",
+      "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together", "Animate Dead"]
+    },
+    {
+      "name": "Spellslinger Payoffs",
+      "description": "Extra damage for casting your instants and sorceries.",
+      "cards": ["Fiery Inscription"]
+    },
+    {
+      "name": "Mana Base & Lands",
+      "description": "Utility lands, premium fixing, and mana rocks for consistent mana.",
+      "cards": ["Mind Stone", "Talisman of Creativity", "Barad-dûr", "The Black Gate", "Rivendell", "Bloodstained Mire", "Polluted Delta", "Gloomlake Verge", "Restless Reef", "Agna Qel'a"]
+    }
+  ],
+  "synergies": [
+    {
+      "title": "Amass Snowball",
+      "cards": ["Sauron, the Dark Lord", "Call of the Ring", "In the Darkness Bind Them"],
+      "description": "Sauron amasses every time an opponent casts a spell. Call of the Ring tempts you on upkeep, triggering Sauron's Ring-bearer looting. In the Darkness Bind Them creates 3/3 Wraith tokens with menace over three chapters while repeatedly tempting you with the Ring, fueling Sauron's triggers.",
       "sources": [
         {
           "type": "edhrec",
-          "name": "EDHREC Sauron Page",
+          "name": "EDHREC Top Synergies",
           "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-          "detail": "Top cards and synergies across 30,000+ decks"
-        },
-        {
-          "type": "youtube",
-          "name": "The Commander's Quarters - Omega Level Sauron",
-          "url": "https://www.youtube.com/watch?v=qDso2E-rnG8",
-          "detail": "Detailed deck tech and card choices"
-        },
+          "detail": "Call of the Ring in 78% of decks"
+        }
+      ]
+    },
+    {
+      "title": "Ring Temptation Card Engine",
+      "cards": ["Sauron, the Dark Lord", "Aqueous Form", "Whispersilk Cloak"],
+      "description": "Making the Army unblockable ensures combat damage every turn, which tempts you with the Ring — looting through your deck for free card selection and graveyard fuel.",
+      "sources": [
         {
           "type": "article",
-          "name": "The Gamer - Sauron Deck Guide",
+          "name": "The Gamer - Ring Synergy",
           "url": "https://www.thegamer.com/magic-the-gathering-mtg-sauron-the-dark-lord-commander-deck-guide/",
-          "detail": "Card recommendations and mana base"
+          "detail": "Evasion + Ring temptation engine"
         }
-      ],
-      "addCategories": [
-        {
-          "name": "Amass Engine",
-          "description": "Cards that grow or benefit from the Orc Army token. Orcish Bowmasters creates its own Army.",
-          "cards": ["Call of the Ring", "Saruman, the White Hand", "Witch-king of Angmar", "Grishnákh, Brash Instigator", "Corsairs of Umbar", "Lord of the Nazgûl", "Mauhúr, Uruk-hai Captain", "Gothmog, Morgul Lieutenant", "March from the Black Gate", "Warg Rider", "Orcish Bowmasters"]
-        },
-        {
-          "name": "Value & Card Draw",
-          "description": "Keeping your hand full to outpace the table with card advantage and efficient tutors.",
-          "cards": ["Demonic Tutor", "Rhystic Study", "The One Ring", "Notion Thief", "Phyrexian Arena", "Dark Ritual", "Demand Answers", "Frantic Search", "Relic of Sauron", "Thirst for Discovery", "Opt", "Brainstorm", "Consult the Star Charts", "Treason of Isengard"]
-        },
-        {
-          "name": "Army Buffs & Evasion",
-          "description": "Making the Army unblockable to guarantee Ring temptation triggers every combat.",
-          "cards": ["In the Darkness Bind Them", "Aqueous Form", "Whispersilk Cloak", "Minas Morgul, Dark Fortress"]
-        },
-        {
-          "name": "Removal & Interaction",
-          "description": "Efficient interaction to protect your board and clear threats.",
-          "cards": ["Cyclonic Rift", "Fierce Guardianship", "Mana Drain", "Counterspell", "Withering Torment", "Blasphemous Act", "Saruman's Trickery", "Bitter Triumph", "Toxic Deluge", "Hero's Downfall", "Dauthi Voidwalker"]
-        },
-        {
-          "name": "Reanimation",
-          "description": "Bringing back creatures from the graveyard after Ring temptation fills it.",
-          "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together", "Animate Dead"]
-        },
-        {
-          "name": "Spellslinger Payoffs",
-          "description": "Extra damage for casting your instants and sorceries.",
-          "cards": ["Fiery Inscription"]
-        },
-        {
-          "name": "Mana Base & Lands",
-          "description": "Utility lands, premium fixing, and mana rocks for consistent mana.",
-          "cards": ["Fellwar Stone", "Talisman of Creativity", "Barad-dûr", "The Black Gate", "Rivendell", "Bloodstained Mire", "Polluted Delta", "Gloomlake Verge", "Restless Reef", "Agna Qel'a"]
-        }
-      ],
-      "synergies": [
-        {
-          "title": "Amass Snowball",
-          "cards": ["Sauron, the Dark Lord", "Call of the Ring", "In the Darkness Bind Them"],
-          "description": "Sauron amasses every time an opponent casts a spell. Call of the Ring tempts you on upkeep, triggering Sauron's Ring-bearer looting. In the Darkness Bind Them creates 3/3 Wraith tokens with menace over three chapters while repeatedly tempting you with the Ring, fueling Sauron's triggers.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Top Synergies",
-              "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-              "detail": "Call of the Ring in 78% of decks"
-            }
-          ]
-        },
-        {
-          "title": "Ring Temptation Card Engine",
-          "cards": ["Sauron, the Dark Lord", "Aqueous Form", "Whispersilk Cloak"],
-          "description": "Making the Army unblockable ensures combat damage every turn, which tempts you with the Ring — looting through your deck for free card selection and graveyard fuel.",
-          "sources": [
-            {
-              "type": "article",
-              "name": "The Gamer - Ring Synergy",
-              "url": "https://www.thegamer.com/magic-the-gathering-mtg-sauron-the-dark-lord-commander-deck-guide/",
-              "detail": "Evasion + Ring temptation engine"
-            }
-          ]
-        },
-        {
-          "title": "Graveyard Recursion",
-          "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together", "Animate Dead"],
-          "description": "Ring temptation fills your graveyard with creatures. Reanimate brings back any creature for 1 mana. Animate Dead does the same from any graveyard for {1}{B}. Stitch Together returns a creature to battlefield with Threshold (trivial with Ring looting). Breach the Multiverse mills everyone 10, then steals a creature from each graveyard — four reanimation pieces ensure consistent graveyard leverage.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Reanimator Theme",
-              "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-              "detail": "906 Reanimator-themed Sauron decks"
-            }
-          ]
-        },
-        {
-          "title": "Saruman's Army",
-          "cards": ["Saruman, the White Hand", "Witch-king of Angmar", "Grishnákh, Brash Instigator"],
-          "description": "Saruman amasses Orcs X when you cast noncreature spells, scaling with mana value. Witch-king's flying body deters attacks and forces opponents to sacrifice creatures that hit you. Grishnakh's ETB amasses Orcs 2 and steals an opponent's creature based on Army power.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Amass Package",
-              "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-              "detail": "Top amass synergy creatures"
-            }
-          ]
-        },
-        {
-          "title": "Orcish Bowmasters Value",
-          "cards": ["Orcish Bowmasters", "The One Ring", "Phyrexian Arena"],
-          "description": "Bowmasters punishes opponents for drawing extra cards while also creating an Orc Army token. Combined with your own card draw, it adds incremental damage and board presence.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Creature Picks",
-              "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-              "detail": "Orcish Bowmasters high synergy card"
-            }
-          ]
-        },
-        {
-          "title": "The One Ring Engine",
-          "cards": ["The One Ring", "Sauron, the Dark Lord", "Notion Thief"],
-          "description": "The One Ring draws increasing cards each turn while providing protection on ETB. Notion Thief steals opponents' draws. Together with Sauron's amass triggers from opponent casts, you out-resource the entire table.",
-          "sources": [
-            {
-              "type": "ai-inferred",
-              "name": "Power Synergy Analysis",
-              "detail": "Game Changer combo for Bracket 4"
-            }
-          ]
-        },
-        {
-          "title": "Amass Army Assault",
-          "cards": ["Gothmog, Morgul Lieutenant", "March from the Black Gate", "Warg Rider"],
-          "description": "Recurring amass triggers every combat that grow the Army token rapidly. Gothmog gives creature tokens deathtouch, Warg Rider grants menace to Orcs — making the Army nearly impossible to block profitably while it grows larger each turn.",
-          "sources": [
-            {
-              "type": "ai-inferred",
-              "name": "Amass Combat Synergy",
-              "detail": "Recurring amass triggers with evasion and deathtouch"
-            }
-          ]
-        }
-      ],
-      "adds": [
-        {
-          "name": "Cyclonic Rift",
-          "price": "$25-35",
-          "isGameChanger": true,
-          "reason": "The best blue board wipe in Commander. Overloaded, it bounces all opponents' nonland permanents, clearing the way for your Army to deal lethal.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Demonic Tutor",
-          "price": "$30-40",
-          "isGameChanger": true,
-          "reason": "Finds whatever you need — removal, finisher, or a key synergy piece — for just 2 mana.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Rhystic Study",
-          "price": "$30-40",
-          "isGameChanger": true,
-          "reason": "Draws absurd numbers of cards in multiplayer. Opponents either pay the tax or fuel your hand.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Call of the Ring",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "The Ring tempts you on every upkeep, and you may pay 2 life to draw a card when choosing a Ring-bearer. Sauron's amass triggers off the Ring temptation. The #1 synergy card for Sauron, in 78% of decks.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC #1 Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "78% inclusion, 69% synergy" }]
-        },
-        {
-          "name": "Saruman, the White Hand",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Amasses Orcs X (where X is the spell's mana value) every time you cast a noncreature spell. Scales with spell cost and stacks with Sauron's triggers. Also gives Goblins and Orcs ward {2}.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Top Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "67% inclusion" }]
-        },
-        {
-          "name": "Witch-king of Angmar",
-          "price": "$2-4",
-          "isGameChanger": false,
-          "reason": "Flying body that forces each opponent to sacrifice a creature that dealt combat damage to you, then the Ring tempts you. Can discard a card to gain indestructible until end of turn (taps it). Defensive powerhouse that triggers Ring temptation.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Top Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "57% inclusion" }]
-        },
-        {
-          "name": "Grishnákh, Brash Instigator",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "ETB amasses Orcs 2, then steals a nonlegendary creature with power less than or equal to the Army's power until end of turn. Untaps it and grants haste. Threaten effect that scales with your Army size.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "40% inclusion" }]
-        },
-        {
-          "name": "Corsairs of Umbar",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Has an activated {2}{U} ability to make a Goblin, Orc, or Pirate unblockable, and amasses Orcs 3 when it deals combat damage to a player. Solid value creature.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "40% inclusion" }]
-        },
-        {
-          "name": "Animate Dead",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "Cheap reanimation from any graveyard for {1}{B}. Always has targets in multiplayer. Ring temptation looting fills graveyards constantly, making this a reliable 2-mana threat. Can reanimate Sauron to dodge commander tax.",
-          "sources": [
-            { "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Reanimation redundancy for 906 Reanimator-themed Sauron decks" },
-            { "type": "ai-inferred", "name": "Reanimation Axis Analysis", "detail": "Replaces Fall of Cair Andros — addresses deck's weakest axis (only 3 reanimation pieces)" }
-          ]
-        },
-        {
-          "name": "Hero's Downfall",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Instant-speed destruction of creature or planeswalker for {1}{B}{B}. Hits planeswalkers that Claim the Precious misses, and instant speed is a major upgrade over sorcery speed",
-          "sources": [{ "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Claim the Precious — instant speed + hits planeswalkers" }]
-        },
-        {
-          "name": "In the Darkness Bind Them",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "Saga that creates 3/3 Wraith tokens with menace on chapters I-III while the Ring tempts you each time. Chapter IV steals a creature from each opponent until end of turn. Generates multiple bodies and Ring temptation triggers over four turns.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "High synergy with Ring temptation theme" }]
-        },
-        {
-          "name": "Orcish Bowmasters",
-          "price": "$15-25",
-          "isGameChanger": true,
-          "reason": "Creates an Orc Army and deals damage whenever an opponent draws extra cards. Premium creature that fits the Orc theme perfectly.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC High Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Phyrexian Arena",
-          "price": "$3-5",
-          "isGameChanger": false,
-          "reason": "Reliable card draw every upkeep. The life loss is negligible for the consistent card advantage.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Lord of the Nazgûl",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Creates a 3/3 Wraith token with menace whenever you cast an instant or sorcery. Flying 4/3 body that gives Wraiths protection from Ring-bearers. LotR-themed token engine.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Mauhúr, Uruk-hai Captain",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Adds one extra +1/+1 counter whenever counters are placed on an Army, Goblin, or Orc (that many plus one). Menace body that steadily accelerates Army growth.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Saruman's Trickery",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Counters a spell AND amasses Orcs 1. Interaction that also grows your Army — perfect for a deck that wants both.",
-          "sources": [{ "type": "ai-inferred", "name": "Synergy Analysis", "detail": "Counterspell + amass in one card" }]
-        },
-        {
-          "name": "Dark Ritual",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Adds 3 black mana for 1. Enables explosive early Sauron deployment or powers multiple spells in a single turn.",
-          "sources": [{ "type": "ai-inferred", "name": "Fast Mana Analysis", "detail": "Classic acceleration for 6-mana commander" }]
-        },
-        {
-          "name": "Reanimate",
-          "price": "$2-5",
-          "isGameChanger": false,
-          "reason": "Premium 1-mana reanimation from any graveyard. Life loss is negligible for bringing back Sauron or a stolen threat.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Relic of Sauron",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Mana rock that taps for any of Sauron's colors. Also has a draw+discard mode that fuels the graveyard.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Top Artifact", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "73% inclusion" }]
-        },
-        {
-          "name": "Talisman of Creativity",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Completes the Talisman cycle for Grixis — produces {U} or {R} at the cost of 1 life. 32% EDHREC inclusion in Sauron builds. A 2-mana colored rock that enables turn-4 Sauron.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Ramp", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "32% inclusion, completes Talisman cycle" }]
-        },
-        {
-          "name": "Fellwar Stone",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "2-mana rock that taps for any color an opponent's lands could produce — effectively a second Arcane Signet in multiplayer. Reliable colored mana every turn for a fraction of The Soul Stone's price.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Common 2-mana rock in Grixis builds" }]
-        },
-        {
-          "name": "Demand Answers",
-          "price": "$0.25-0.50",
-          "isGameChanger": false,
-          "reason": "Instant-speed draw 2 after sacrificing an artifact or discarding. Triggers Saruman's amass at instant speed and fuels the graveyard. Strict upgrade over Faithless Looting in a deck that wants to hold up interaction.",
-          "sources": [{ "type": "ai-inferred", "name": "Card Draw Upgrade", "detail": "Instant-speed replacement for Faithless Looting — better with counterspell-heavy game plan" }]
-        },
-        {
-          "name": "Frantic Search",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Draws 2, discards 2, untaps 3 lands. Net-neutral on mana and fuels graveyard synergies.",
-          "sources": [{ "type": "article", "name": "TCG Playmat Pros Guide", "url": "https://tcgplaymatpros.com/blogs/tcg-blog/sauron-the-dark-lord-commander-deck-guide-amass-the-armies-of-mordor" }]
-        },
-        {
-          "name": "Aqueous Form",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Makes your Army unblockable and scries on attack. Guarantees Ring temptation triggers every combat.",
-          "sources": [{ "type": "ai-inferred", "name": "Synergy Analysis", "detail": "Evasion ensures Ring temptation triggers" }]
-        },
-        {
-          "name": "Whispersilk Cloak",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "Shroud and unblockable for your Army. Protection and evasion in one equipment.",
-          "sources": [{ "type": "ai-inferred", "name": "Synergy Analysis", "detail": "Redundant evasion for Army token" }]
-        },
-        {
-          "name": "Breach the Multiverse",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Mills each player 10, then reanimate a creature or planeswalker from each graveyard. One-sided reanimation that doesn't help opponents — unlike Living Death in a deck with only ~12 creatures. The mill fuels future Reanimate and Stitch Together targets.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "One-sided mass reanimation for creature-light builds" }]
-        },
-        {
-          "name": "Stitch Together",
-          "price": "$2-3",
-          "isGameChanger": false,
-          "reason": "Returns a creature from graveyard to hand for {B}{B} — or directly to battlefield with Threshold (7+ cards in graveyard). Trivial to achieve with Ring temptation looting every combat. No sacrifice required unlike Victimize.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "24% inclusion in Sauron reanimator builds" }]
-        },
-        {
-          "name": "Counterspell",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Clean 2-mana counter. Essential protection and interaction in a blue deck.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "38% inclusion" }]
-        },
-        {
-          "name": "Bitter Triumph",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Destroys any creature or planeswalker for {1}{B} with an additional cost of discarding a card or paying 3 life. The discard fuels the graveyard, making the cost an upside in this deck.",
-          "sources": [{ "type": "ai-inferred", "name": "Removal Upgrade", "detail": "Strictly better than Go for the Throat — hits planeswalkers too" }]
-        },
-        {
-          "name": "Toxic Deluge",
-          "price": "$8-12",
-          "isGameChanger": false,
-          "reason": "Scalable board wipe that gets around indestructible. Pay X life for -X/-X to all creatures. Your Army survives if it's large enough.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Premium black board wipe" }]
-        },
-        {
-          "name": "Withering Torment",
-          "price": "$0.25-0.50",
-          "isGameChanger": false,
-          "reason": "Instant-speed creature or enchantment removal — Grixis's best answer to enchantments. Fixed 2 life loss is often better than Feed the Swarm's variable cost, and instant speed lets you hold up counterspells.",
-          "sources": [{ "type": "ai-inferred", "name": "Removal Upgrade", "detail": "Duskmourn (2024) — instant-speed Feed the Swarm replacement" }]
-        },
-        {
-          "name": "Blasphemous Act",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Often costs just 1 red mana. Board wipe that doesn't kill your large Army if it has enough counters.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Gothmog, Morgul Lieutenant",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "ETB amass Orcs 1 and gives all your creature tokens deathtouch. Makes the Army extremely difficult to block profitably.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Amass + deathtouch for tokens" }]
-        },
-        {
-          "name": "March from the Black Gate",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Amasses Orcs 1 on ETB and whenever your Army attacks. Cheap enchantment that provides recurring amass triggers every combat.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Recurring amass on attack" }]
-        },
-        {
-          "name": "Warg Rider",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Gives other Orcs and Goblins menace, and amasses Orcs 2 at the beginning of combat. Evasion plus consistent Army growth.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Menace lord + amass trigger" }]
-        },
-        {
-          "name": "Dauthi Voidwalker",
-          "price": "$4-6",
-          "isGameChanger": false,
-          "reason": "Shadow makes it nearly unblockable. Exiles all cards going to opponents' graveyards (replacement effect). Sacrifice it to play an exiled card for free. Addresses the deck's only graveyard hate weakness (Bojuka Bog) while generating card advantage for just {B}{B}.",
-          "sources": [{ "type": "ai-inferred", "name": "Post-Text-Fix Analysis", "detail": "Replaces Lazotep Sliver — afflict 2 anti-synergy with 5 evasion sources; death trigger doesn't fire on token Army" }]
-        },
-        {
-          "name": "Minas Morgul, Dark Fortress",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "Utility land that gives a creature shadow (nearly unblockable). Turns your Army into a Wraith with shadow for guaranteed combat damage and Ring temptation.",
-          "sources": [{ "type": "ai-inferred", "name": "Evasion Land", "detail": "Shadow = near-unblockable for Army token" }]
-        },
-        {
-          "name": "Fiery Inscription",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "ETB: Ring tempts you. Whenever you cast an instant or sorcery, deals 2 damage to each opponent. Spellslinger payoff that rewards your interaction-heavy game plan.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Spellslinger payoff for instant/sorcery-heavy builds" }]
-        },
-        {
-          "name": "Thirst for Discovery",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Instant-speed draw 3, discard 2 (or discard 1 basic land). Replaces sorcery-speed draw with instant flexibility, fueling the graveyard.",
-          "sources": [{ "type": "ai-inferred", "name": "Card Draw Upgrade", "detail": "Instant-speed draw replacing Night's Whisper" }]
-        },
-        {
-          "name": "Opt",
-          "price": "$0.25",
-          "isGameChanger": false,
-          "reason": "1-mana instant: scry 1, draw 1. Leaves mana open for counterspells while providing card selection. Triggers Saruman's amass for just {U}.",
-          "sources": [{ "type": "ai-inferred", "name": "Card Draw Optimization", "detail": "Replaces Thrill of Possibility — cheaper mana cost, better with counterspell-heavy plan" }]
-        },
-        {
-          "name": "Brainstorm",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Draw 3, put 2 back on top. Classic instant-speed card selection that triggers Saruman and sets up future draws.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Premium blue cantrip" }]
-        },
-        {
-          "name": "Consult the Star Charts",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Instant-speed card selection based on lands you control. With kicker, digs deep. Triggers Saruman's amass at instant speed.",
-          "sources": [{ "type": "ai-inferred", "name": "Card Draw", "detail": "Instant-speed selection with kicker upside" }]
-        },
-        {
-          "name": "Treason of Isengard",
-          "price": "$0.25-0.50",
-          "isGameChanger": false,
-          "reason": "Returns an instant or sorcery from graveyard to top of library and amasses Orcs 2 — spell recursion with Army growth. (Instant alternative: Mission Briefing ({U}{U}) — casts the spell immediately instead of putting on top.)",
-          "sources": [{ "type": "ai-inferred", "name": "Spell Recursion", "detail": "LotR spell recursion with amass upside" }]
-        },
-        {
-          "name": "Rivendell",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "Legendary land that ETBs untapped with a legendary creature (Sauron). Taps for blue and scries 2 with a legendary in play. Free card selection from a land slot.",
-          "sources": [{ "type": "ai-inferred", "name": "Thematic Land", "detail": "Scry 2 utility with Sauron on board" }]
-        },
-        {
-          "name": "The One Ring",
-          "price": "$50-65",
-          "isGameChanger": true,
-          "reason": "Indestructible artifact that draws increasing cards each turn. Protection from everything on ETB. Perfect thematic fit — The Ring tempts you, and this IS the Ring.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "High inclusion in optimized builds" }]
-        },
-        {
-          "name": "Notion Thief",
-          "price": "$2-4",
-          "isGameChanger": true,
-          "reason": "Flash creature that steals opponents' card draws. Devastating with wheel effects and shuts down opponents' draw engines while fueling yours.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC High Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Fierce Guardianship",
-          "price": "$8-12",
-          "isGameChanger": true,
-          "reason": "Free counterspell when Sauron is on the battlefield. Protects your board at zero mana cost.",
-          "sources": [{ "type": "article", "name": "TCG Playmat Pros Guide", "url": "https://tcgplaymatpros.com/blogs/tcg-blog/sauron-the-dark-lord-commander-deck-guide-amass-the-armies-of-mordor" }]
-        },
-        {
-          "name": "Mana Drain",
-          "price": "$30-50",
-          "isGameChanger": false,
-          "reason": "Premium counterspell that converts the countered spell's mana value into colorless mana on your next main phase. The mana burst helps recast Sauron (6 MV), fuel Cyclonic Rift overload, or power The One Ring activations.",
-          "sources": [{ "type": "ai-inferred", "name": "Power Level Analysis", "detail": "Bracket 4 appropriate — mana synergy with 6-MV commander and expensive activated abilities" }]
-        },
-        {
-          "name": "Barad-dûr",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Legendary land with activated ability {X}{X}{B}, {T}: Amass Orcs X, usable only if a creature died this turn. Enters untapped with a legendary creature. Amass from a land slot at mana cost.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Top Land", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Thematic land with direct amass synergy" }]
-        },
-        {
-          "name": "The Black Gate",
-          "price": "$13-18",
-          "isGameChanger": false,
-          "reason": "Legendary land that makes a creature unblockable by the player with the most life. Ensures your Army connects for Ring temptation every turn.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy Land", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Bloodstained Mire",
-          "price": "$25-35",
-          "isGameChanger": false,
-          "reason": "S-tier fetch land that finds any Swamp or Mountain — including Watery Grave, Blood Crypt, and Sunken Hollow. Perfect on-demand color fixing plus deck thinning.",
-          "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces colorless Reliquary Tower (anti-synergy with discard theme)" }]
-        },
-        {
-          "name": "Polluted Delta",
-          "price": "$18-25",
-          "isGameChanger": false,
-          "reason": "S-tier fetch land that finds any Island or Swamp — including Watery Grave, Blood Crypt (Swamp-typed), and Sunken Hollow. Shifts fetch preference from R to B with zero downside.",
-          "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Scalding Tarn — shifts UR fetch to UB fetch, better B supply alignment" }]
-        },
-        {
-          "name": "Gloomlake Verge",
-          "price": "$2-4",
-          "isGameChanger": false,
-          "reason": "UB dual land that always enters untapped. Taps for {U} unconditionally, but requires controlling an Island or Swamp to tap for {B}. With 4 Swamps, 3 Islands, Watery Grave, Blood Crypt, and Sunken Hollow, the {B} condition is met almost every game.",
-          "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Temple of Malice — shifts BR to UB, upgrades from always-tapped to conditionally untapped" }]
-        },
-        {
-          "name": "Restless Reef",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "UB creature-land that becomes a 4/4 Shark with deathtouch and mills 4 on attack. The mill feeds graveyard synergies (Reanimate, Stitch Together, Ring temptation). Shifts a BR source to UB.",
-          "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Smoldering Marsh — tapped-for-tapped swap that adds late-game creature threat and mill synergy" }]
-        },
-        {
-          "name": "Agna Qel'a",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Utility land that enters untapped with any basic (10 basics = trivial). Repeatable loot activation ({2}{U}, {T}) fills the graveyard for Reanimate, Stitch Together, Animate Dead, and Breach the Multiverse. Replaces Temple of Deceit — upgrades from always-tapped scry-once to conditionally-untapped repeatable loot.",
-          "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Temple of Deceit — repeatable loot > one-time scry, almost always untapped with 10 basics" }]
-        }
-      ],
-      "decklist": [
-        { "name": "Call of the Ring", "type": "Enchantment" },
-        { "name": "Saruman, the White Hand", "type": "Creature" },
-        { "name": "Witch-king of Angmar", "type": "Creature" },
-        { "name": "Grishnákh, Brash Instigator", "type": "Creature" },
-        { "name": "Corsairs of Umbar", "type": "Creature" },
-        { "name": "Orcish Bowmasters", "type": "Creature" },
-        { "name": "Lord of the Nazgûl", "type": "Creature" },
-        { "name": "Gothmog, Morgul Lieutenant", "type": "Creature" },
-        { "name": "Orcish Siegemaster", "type": "Creature" },
-        { "name": "Notion Thief", "type": "Creature" },
-        { "name": "Mana Drain", "type": "Instant" },
-        { "name": "Warg Rider", "type": "Creature" },
-        { "name": "Dauthi Voidwalker", "type": "Creature" },
-        { "name": "Cyclonic Rift", "type": "Instant" },
-        { "name": "Counterspell", "type": "Instant" },
-        { "name": "Fierce Guardianship", "type": "Instant" },
-        { "name": "Saruman's Trickery", "type": "Instant" },
-        { "name": "Bitter Triumph", "type": "Instant" },
-        { "name": "Orcish Medicine", "type": "Instant" },
-        { "name": "Soothing of Sméagol", "type": "Instant" },
-        { "name": "Thirst for Discovery", "type": "Instant" },
-        { "name": "Opt", "type": "Instant" },
-        { "name": "Brainstorm", "type": "Instant" },
-        { "name": "Consult the Star Charts", "type": "Instant" },
-        { "name": "Demonic Tutor", "type": "Sorcery" },
-        { "name": "Breach the Multiverse", "type": "Sorcery" },
-        { "name": "Hero's Downfall", "type": "Instant" },
-        { "name": "Summons of Saruman", "type": "Sorcery" },
-        { "name": "Treason of Isengard", "type": "Sorcery" },
-        { "name": "Demand Answers", "type": "Instant" },
-        { "name": "Withering Torment", "type": "Instant" },
-        { "name": "Blasphemous Act", "type": "Sorcery" },
-        { "name": "Stitch Together", "type": "Sorcery" },
-        { "name": "Toxic Deluge", "type": "Sorcery" },
-        { "name": "Ponder", "type": "Sorcery" },
-        { "name": "Sol Ring", "type": "Artifact" },
-        { "name": "Arcane Signet", "type": "Artifact" },
-        { "name": "Dimir Signet", "type": "Artifact" },
-        { "name": "Rakdos Signet", "type": "Artifact" },
-        { "name": "Izzet Signet", "type": "Artifact" },
-        { "name": "Talisman of Indulgence", "type": "Artifact" },
-        { "name": "Talisman of Dominance", "type": "Artifact" },
-        { "name": "Talisman of Creativity", "type": "Artifact" },
-        { "name": "Relic of Sauron", "type": "Artifact" },
-        { "name": "Commander's Sphere", "type": "Artifact" },
-        { "name": "Fellwar Stone", "type": "Artifact" },
-        { "name": "Whispersilk Cloak", "type": "Artifact" },
-        { "name": "Lightning Greaves", "type": "Artifact" },
-        { "name": "Swiftfoot Boots", "type": "Artifact" },
-        { "name": "The One Ring", "type": "Artifact" },
-        { "name": "Rhystic Study", "type": "Enchantment" },
-        { "name": "Phyrexian Arena", "type": "Enchantment" },
-        { "name": "In the Darkness Bind Them", "type": "Enchantment" },
-        { "name": "March from the Black Gate", "type": "Enchantment" },
-        { "name": "Fiery Inscription", "type": "Enchantment" },
-        { "name": "Dark Ritual", "type": "Instant" },
-        { "name": "Aqueous Form", "type": "Enchantment" },
-        { "name": "Animate Dead", "type": "Enchantment" },
-        { "name": "Dreadhorde Invasion", "type": "Enchantment" },
-        { "name": "Frantic Search", "type": "Instant" },
-        { "name": "Reality Shift", "type": "Instant" },
-        { "name": "Mauhúr, Uruk-hai Captain", "type": "Creature" },
-        { "name": "Reanimate", "type": "Sorcery" },
-        { "name": "Terminate", "type": "Instant" },
-        { "name": "Command Tower", "type": "Land" },
-        { "name": "Exotic Orchard", "type": "Land" },
-        { "name": "Crumbling Necropolis", "type": "Land" },
-        { "name": "Dragonskull Summit", "type": "Land" },
-        { "name": "Drowned Catacomb", "type": "Land" },
-        { "name": "Darkslick Shores", "type": "Land" },
-        { "name": "Mount Doom", "type": "Land" },
-        { "name": "Barad-dûr", "type": "Land" },
-        { "name": "The Black Gate", "type": "Land" },
-        { "name": "Minas Morgul, Dark Fortress", "type": "Land" },
-        { "name": "Rivendell", "type": "Land" },
-        { "name": "Watery Grave", "type": "Land" },
-        { "name": "Blood Crypt", "type": "Land" },
-        { "name": "Steam Vents", "type": "Land" },
-        { "name": "Morphic Pool", "type": "Land" },
-        { "name": "Luxury Suite", "type": "Land" },
-        { "name": "Training Center", "type": "Land" },
-        { "name": "Sunken Hollow", "type": "Land" },
-        { "name": "Agna Qel'a", "type": "Land" },
-        { "name": "Bojuka Bog", "type": "Land" },
-        { "name": "Bloodstained Mire", "type": "Land" },
-        { "name": "Polluted Delta", "type": "Land" },
-        { "name": "Gloomlake Verge", "type": "Land" },
-        { "name": "Restless Reef", "type": "Land" },
-        { "name": "Path of Ancestry", "type": "Land" },
-        { "name": "Swamp", "type": "Land", "quantity": 5 },
-        { "name": "Island", "type": "Land", "quantity": 3 },
-        { "name": "Mountain", "type": "Land", "quantity": 2 }
       ]
     },
-    "midrange": {
-      "name": "Shadow Aristocrats",
-      "subtitle": "Sacrifice & Drain Engine",
-      "cost": "$100-150",
-      "bracket": "3",
-      "gameChangers": 3,
-      "description": "A Bracket 3 build that sacrifices tokens for drain damage instead of combat. Sauron passively generates sacrifice fodder every time an opponent casts a spell. Drain effects like Mirkwood Bats, Zulaport Cutthroat, and Blood Artist convert each sacrifice into life loss for all opponents, winning through accumulated drain rather than combat.",
+    {
+      "title": "Graveyard Recursion",
+      "cards": ["Breach the Multiverse", "Reanimate", "Stitch Together", "Animate Dead"],
+      "description": "Ring temptation fills your graveyard with creatures. Reanimate brings back any creature for 1 mana. Animate Dead does the same from any graveyard for {1}{B}. Stitch Together returns a creature to battlefield with Threshold (trivial with Ring looting). Breach the Multiverse mills everyone 10, then steals a creature from each graveyard — four reanimation pieces ensure consistent graveyard leverage.",
       "sources": [
         {
           "type": "edhrec",
-          "name": "EDHREC Sauron Aristocrats Theme",
-          "url": "https://edhrec.com/commanders/sauron-the-dark-lord/aristocrats",
-          "detail": "360 Aristocrats-themed Sauron decks"
-        },
-        {
-          "type": "edhrec",
-          "name": "EDHREC Sauron Sacrifice Theme",
-          "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice",
-          "detail": "458 Sacrifice-themed Sauron decks"
-        },
-        {
-          "type": "edhrec",
-          "name": "EDHREC Average Aristocrats Decklist",
-          "url": "https://edhrec.com/average-decks/sauron-the-dark-lord/aristocrats",
-          "detail": "Average decklist for card selection baseline"
-        },
-        {
-          "type": "youtube",
-          "name": "Common Command - Sauron Aristocrats",
-          "url": "https://www.youtube.com/results?search_query=sauron+dark+lord+aristocrats+commander",
-          "detail": "Aristocrats-specific Sauron deck tech"
-        }
-      ],
-      "addCategories": [
-        {
-          "name": "Drain Payoffs",
-          "description": "Cards that drain opponents whenever tokens enter or creatures die.",
-          "cards": ["Mirkwood Bats", "Zulaport Cutthroat", "Blood Artist", "Impact Tremors", "Bastion of Remembrance", "Nadier's Nightblade"]
-        },
-        {
-          "name": "Sacrifice Outlets",
-          "description": "Free sacrifice effects to feed the drain engine and generate value.",
-          "cards": ["Goblin Bombardment", "Viscera Seer", "Carrion Feeder", "Ashnod's Altar", "Deadly Dispute", "Diabolic Intent"]
-        },
-        {
-          "name": "Value Engine",
-          "description": "Cards that generate incremental advantage from sacrifices, death triggers, and raw card draw.",
-          "cards": ["Bolas's Citadel", "Necropotence", "Pitiless Plunderer", "Mayhem Devil", "Braids, Arisen Nightmare", "Ophiomancer", "Morbid Opportunist", "Gollum, Patient Plotter", "Plaguecrafter"]
-        },
-        {
-          "name": "Amass Engine",
-          "description": "Sauron's token generators that provide sacrifice fodder every turn.",
-          "cards": ["Call of the Ring", "Saruman, the White Hand", "Witch-king of Angmar", "Fall of Cair Andros", "Dreadhorde Invasion"]
-        },
-        {
-          "name": "Removal & Interaction",
-          "description": "Keeping threats in check while the drain engine accumulates damage.",
-          "cards": ["Cyclonic Rift", "Counterspell", "Go for the Throat", "Blasphemous Act", "Feed the Swarm", "Chaos Warp", "Terminate"]
-        }
-      ],
-      "synergies": [
-        {
-          "title": "The Mirkwood Engine",
-          "cards": ["Mirkwood Bats", "Sauron, the Dark Lord", "Goblin Bombardment"],
-          "description": "Sauron amasses Orcs every time an opponent casts a spell — Mirkwood Bats drains each opponent for 1. Sacrifice the token to Goblin Bombardment for 1 damage — Bats triggers again. Each opponent spell costs them 2+ life from Bats alone, plus Bombardment damage.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Sacrifice Theme",
-              "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice",
-              "detail": "Mirkwood Bats 70% inclusion, Goblin Bombardment 65%"
-            }
-          ]
-        },
-        {
-          "title": "Plunderer's Hoard",
-          "cards": ["Pitiless Plunderer", "Goblin Bombardment", "Zulaport Cutthroat"],
-          "description": "Sacrifice creatures to Bombardment — Plunderer creates Treasure tokens (triggering Mirkwood Bats if in play), Cutthroat drains each opponent. The Treasures fuel more spells while generating incremental drain value.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Aristocrats Theme",
-              "url": "https://edhrec.com/commanders/sauron-the-dark-lord/aristocrats",
-              "detail": "Pitiless Plunderer 62%, Zulaport Cutthroat 82%"
-            }
-          ]
-        },
-        {
-          "title": "Bolas's Citadel Finisher",
-          "cards": ["Bolas's Citadel", "Mirkwood Bats", "Ashnod's Altar"],
-          "description": "Cast cards from the top of your library by paying life, chaining cheap creatures and drain pieces. Then activate the Citadel: sacrifice 10 nonland permanents — each opponent loses 10 life. Mirkwood Bats adds 10 more life loss per opponent from the sacrifices.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Combos",
-              "url": "https://edhrec.com/combos/sauron-the-dark-lord",
-              "detail": "Bolas's Citadel aristocrats finisher"
-            }
-          ]
-        },
-        {
-          "title": "Braids Value Loop",
-          "cards": ["Braids, Arisen Nightmare", "Ophiomancer", "Blood Artist"],
-          "description": "Ophiomancer creates a Snake token every upkeep. On your end step, sacrifice it to Braids: each opponent who doesn't sacrifice a matching permanent loses 2 life, you draw a card. Blood Artist drains 1 more per opponent on the sacrifice. Repeatable every turn with no mana investment.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Average Aristocrats Decklist",
-              "url": "https://edhrec.com/average-decks/sauron-the-dark-lord/aristocrats",
-              "detail": "Both Braids and Ophiomancer in average list"
-            }
-          ]
-        }
-      ],
-      "adds": [
-        {
-          "name": "Cyclonic Rift",
-          "price": "$25-35",
-          "isGameChanger": true,
-          "reason": "The best blue board wipe in Commander. Clears blockers and obstacles, buying time for the drain engine to finish the job.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Bolas's Citadel",
-          "price": "$5-8",
-          "isGameChanger": true,
-          "reason": "Pay life to cast from library, then sacrifice 10 permanents to drain 10 life per opponent. The sacrifice activation IS the win condition, and Sauron's tokens feed it.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Combos", "url": "https://edhrec.com/combos/sauron-the-dark-lord", "detail": "Aristocrats finisher" }]
-        },
-        {
-          "name": "Necropotence",
-          "price": "$8-15",
-          "isGameChanger": true,
-          "reason": "Massive card advantage engine that fuels the aristocrats strategy. Pay life to fill your hand with drain pieces and sacrifice outlets.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Mirkwood Bats",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Star of the deck. Drains 1 per opponent whenever you create OR sacrifice a token. Double-triggers off Sauron's amass and your sacrifice outlets.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Sacrifice Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice", "detail": "70-83% inclusion, 67-80% synergy" }]
-        },
-        {
-          "name": "Zulaport Cutthroat",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Classic aristocrats payoff. Each creature that dies drains all opponents for 1 life.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Aristocrats Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/aristocrats", "detail": "62-82% inclusion, 60-81% synergy" }]
-        },
-        {
-          "name": "Blood Artist",
-          "price": "$2-3",
-          "isGameChanger": false,
-          "reason": "Redundant drain effect — triggers when any creature dies, including opponents' creatures. Essential redundancy for the drain plan.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Aristocrats Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/aristocrats", "detail": "51-64% inclusion" }]
-        },
-        {
-          "name": "Goblin Bombardment",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Free, instant-speed sacrifice outlet that also deals 1 damage. No mana cost to activate — the premium sac outlet for this strategy.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Sacrifice Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice", "detail": "65-70% inclusion, 60-66% synergy" }]
-        },
-        {
-          "name": "Viscera Seer",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Free sacrifice outlet with scry 1. Filters draws while feeding the drain engine every time you sacrifice.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Aristocrats Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/aristocrats", "detail": "61-80% inclusion" }]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "price": "$3-5",
-          "isGameChanger": false,
-          "reason": "Free sacrifice for 2 colorless mana. Fuels recasting Sauron, powers Bolas's Citadel activations, and feeds every drain trigger.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Sacrifice Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice", "detail": "56-62% inclusion" }]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "price": "$2-3",
-          "isGameChanger": false,
-          "reason": "Creates a Treasure token whenever a creature you control dies. Treasure generation fuels more spells and triggers Mirkwood Bats on creation.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Sacrifice Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice", "detail": "59-62% inclusion" }]
-        },
-        {
-          "name": "Mayhem Devil",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Deals 1 damage whenever ANY player sacrifices a permanent. Punishes opponents' fetchlands and treasures while profiting from your own sacrifices.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Sacrifice Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice", "detail": "54-56% inclusion" }]
-        },
-        {
-          "name": "Impact Tremors",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Drains 1 per opponent whenever a creature enters. Triggers off every Sauron amass that creates a new Army token.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Average Aristocrats", "url": "https://edhrec.com/average-decks/sauron-the-dark-lord/aristocrats" }]
-        },
-        {
-          "name": "Bastion of Remembrance",
-          "price": "$4-6",
-          "isGameChanger": false,
-          "reason": "Enchantment-based Zulaport effect — harder to remove than a creature. Also creates a 1/1 Human token on ETB as sacrifice fodder.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Sacrifice Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice", "detail": "56% inclusion" }]
-        },
-        {
-          "name": "Nadier's Nightblade",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Drains 1 per opponent whenever a token you control leaves the battlefield. Designed for token sacrifice strategies.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Average Aristocrats", "url": "https://edhrec.com/average-decks/sauron-the-dark-lord/aristocrats" }]
-        },
-        {
-          "name": "Braids, Arisen Nightmare",
-          "price": "$2-4",
-          "isGameChanger": false,
-          "reason": "Each end step, sacrifice a permanent; each opponent may sacrifice a matching type — those who don't lose 2 life, and you draw a card for each. Recurring sacrifice with built-in card advantage.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Average Aristocrats", "url": "https://edhrec.com/average-decks/sauron-the-dark-lord/aristocrats" }]
-        },
-        {
-          "name": "Ophiomancer",
-          "price": "$3-5",
-          "isGameChanger": false,
-          "reason": "Creates a 1/1 deathtouch Snake on each upkeep if you have no Snakes. Guaranteed sacrifice fodder every turn cycle.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Average Aristocrats", "url": "https://edhrec.com/average-decks/sauron-the-dark-lord/aristocrats" }]
-        },
-        {
-          "name": "Diabolic Intent",
-          "price": "$8-12",
-          "isGameChanger": false,
-          "reason": "Sacrifice a creature to tutor any card. Aristocrats-themed tutor that doubles as a sacrifice trigger for your drain effects.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Average Aristocrats", "url": "https://edhrec.com/average-decks/sauron-the-dark-lord/aristocrats" }]
-        },
-        {
-          "name": "Deadly Dispute",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Sacrifice a creature or artifact to draw 2 cards and create a Treasure. Feeds the engine while replacing itself.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Average Aristocrats", "url": "https://edhrec.com/average-decks/sauron-the-dark-lord/aristocrats" }]
-        },
-        {
-          "name": "Plaguecrafter",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Forces each player to sacrifice a creature. Your death triggers profit from your own sacrifice, and it removes opponents' threats.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Sacrifice Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord/sacrifice" }]
-        },
-        {
-          "name": "Call of the Ring",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "The Ring tempts you on every upkeep, and you may pay 2 life to draw when choosing a Ring-bearer. Sauron amasses off the Ring temptation, creating sacrifice fodder passively — the #1 synergy card for Sauron.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC #1 Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "78% inclusion" }]
-        }
-      ],
-      "decklist": [
-        { "name": "Saruman, the White Hand", "type": "Creature" },
-        { "name": "Witch-king of Angmar", "type": "Creature" },
-        { "name": "Grishnákh, Brash Instigator", "type": "Creature" },
-        { "name": "Corsairs of Umbar", "type": "Creature" },
-        { "name": "Lord of the Nazgûl", "type": "Creature" },
-        { "name": "Gothmog, Morgul Lieutenant", "type": "Creature" },
-        { "name": "Orcish Siegemaster", "type": "Creature" },
-        { "name": "Solemn Simulacrum", "type": "Creature" },
-        { "name": "Burnished Hart", "type": "Creature" },
-        { "name": "Bloodline Necromancer", "type": "Creature" },
-        { "name": "Plaguecrafter", "type": "Creature" },
-        { "name": "Mirkwood Bats", "type": "Creature" },
-        { "name": "Zulaport Cutthroat", "type": "Creature" },
-        { "name": "Blood Artist", "type": "Creature" },
-        { "name": "Nadier's Nightblade", "type": "Creature" },
-        { "name": "Viscera Seer", "type": "Creature" },
-        { "name": "Carrion Feeder", "type": "Creature" },
-        { "name": "Pitiless Plunderer", "type": "Creature" },
-        { "name": "Mayhem Devil", "type": "Creature" },
-        { "name": "Braids, Arisen Nightmare", "type": "Creature" },
-        { "name": "Gollum, Patient Plotter", "type": "Creature" },
-        { "name": "Ophiomancer", "type": "Creature" },
-        { "name": "Morbid Opportunist", "type": "Creature" },
-        { "name": "Cyclonic Rift", "type": "Instant" },
-        { "name": "Counterspell", "type": "Instant" },
-        { "name": "Saruman's Trickery", "type": "Instant" },
-        { "name": "Go for the Throat", "type": "Instant" },
-        { "name": "Chaos Warp", "type": "Instant" },
-        { "name": "Deadly Dispute", "type": "Instant" },
-        { "name": "Frantic Search", "type": "Instant" },
-        { "name": "Terminate", "type": "Instant" },
-        { "name": "Diabolic Intent", "type": "Sorcery" },
-        { "name": "Living Death", "type": "Sorcery" },
-        { "name": "Blasphemous Act", "type": "Sorcery" },
-        { "name": "Feed the Swarm", "type": "Sorcery" },
-        { "name": "Hero's Downfall", "type": "Instant" },
-        { "name": "Demand Answers", "type": "Instant" },
-        { "name": "Night's Whisper", "type": "Sorcery" },
-        { "name": "Victimize", "type": "Sorcery" },
-        { "name": "Ponder", "type": "Sorcery" },
-        { "name": "Summons of Saruman", "type": "Sorcery" },
-        { "name": "Treason of Isengard", "type": "Sorcery" },
-        { "name": "Reanimate", "type": "Sorcery" },
-        { "name": "Sol Ring", "type": "Artifact" },
-        { "name": "Arcane Signet", "type": "Artifact" },
-        { "name": "Dimir Signet", "type": "Artifact" },
-        { "name": "Rakdos Signet", "type": "Artifact" },
-        { "name": "Izzet Signet", "type": "Artifact" },
-        { "name": "Talisman of Indulgence", "type": "Artifact" },
-        { "name": "Talisman of Dominance", "type": "Artifact" },
-        { "name": "Relic of Sauron", "type": "Artifact" },
-        { "name": "Commander's Sphere", "type": "Artifact" },
-        { "name": "Ashnod's Altar", "type": "Artifact" },
-        { "name": "Bolas's Citadel", "type": "Artifact" },
-        { "name": "Necropotence", "type": "Enchantment" },
-        { "name": "Call of the Ring", "type": "Enchantment" },
-        { "name": "Goblin Bombardment", "type": "Enchantment" },
-        { "name": "Impact Tremors", "type": "Enchantment" },
-        { "name": "Bastion of Remembrance", "type": "Enchantment" },
-        { "name": "Fall of Cair Andros", "type": "Enchantment" },
-        { "name": "One Ring to Rule Them All", "type": "Enchantment" },
-        { "name": "Dreadhorde Invasion", "type": "Enchantment" },
-        { "name": "Dark Ritual", "type": "Instant" },
-        { "name": "Phyrexian Arena", "type": "Enchantment" },
-        { "name": "Command Tower", "type": "Land" },
-        { "name": "Exotic Orchard", "type": "Land" },
-        { "name": "Crumbling Necropolis", "type": "Land" },
-        { "name": "Dragonskull Summit", "type": "Land" },
-        { "name": "Drowned Catacomb", "type": "Land" },
-        { "name": "Sulfur Falls", "type": "Land" },
-        { "name": "Mount Doom", "type": "Land" },
-        { "name": "Barad-dûr", "type": "Land" },
-        { "name": "Sunken Hollow", "type": "Land" },
-        { "name": "Smoldering Marsh", "type": "Land" },
-        { "name": "Temple of Deceit", "type": "Land" },
-        { "name": "Temple of Malice", "type": "Land" },
-        { "name": "Temple of Epiphany", "type": "Land" },
-        { "name": "Bojuka Bog", "type": "Land" },
-        { "name": "Reliquary Tower", "type": "Land" },
-        { "name": "Path of Ancestry", "type": "Land" },
-        { "name": "Dimir Aqueduct", "type": "Land" },
-        { "name": "Rakdos Carnarium", "type": "Land" },
-        { "name": "Izzet Boilerworks", "type": "Land" },
-        { "name": "Dismal Backwater", "type": "Land" },
-        { "name": "Swiftwater Cliffs", "type": "Land" },
-        { "name": "Bloodfell Caves", "type": "Land" },
-        { "name": "Swamp", "type": "Land", "quantity": 5 },
-        { "name": "Island", "type": "Land", "quantity": 4 },
-        { "name": "Mountain", "type": "Land", "quantity": 4 }
-      ]
-    },
-    "budget": {
-      "name": "Mordor Rising",
-      "subtitle": "Budget Amass Aggro",
-      "cost": "$40-60",
-      "bracket": "3",
-      "gameChangers": 0,
-      "description": "An affordable entry into Sauron built around high-synergy, low-cost amass cards and efficient interaction. Focuses on growing the Army token quickly and connecting for Ring temptation value. No Game Changers — just strong synergy on a budget.",
-      "sources": [
-        {
-          "type": "edhrec",
-          "name": "EDHREC Sauron Budget",
+          "name": "EDHREC Reanimator Theme",
           "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-          "detail": "Budget-friendly top synergy picks"
-        },
-        {
-          "type": "youtube",
-          "name": "MTGGoldfish - $69 Budget Sauron",
-          "url": "https://www.youtube.com/watch?v=4i1JC7IdwBI",
-          "detail": "Budget deck tech"
+          "detail": "906 Reanimator-themed Sauron decks"
         }
-      ],
-      "addCategories": [
+      ]
+    },
+    {
+      "title": "Saruman's Army",
+      "cards": ["Saruman, the White Hand", "Witch-king of Angmar", "Grishnákh, Brash Instigator"],
+      "description": "Saruman amasses Orcs X when you cast noncreature spells, scaling with mana value. Witch-king's flying body deters attacks and forces opponents to sacrifice creatures that hit you. Grishnakh's ETB amasses Orcs 2 and steals an opponent's creature based on Army power.",
+      "sources": [
         {
-          "name": "Amass Engine",
-          "description": "High-synergy amass cards that grow the Army token quickly on a budget.",
-          "cards": ["Call of the Ring", "Saruman, the White Hand", "Witch-king of Angmar", "Grishnákh, Brash Instigator", "Corsairs of Umbar", "Fall of Cair Andros", "Lord of the Nazgûl", "Mauhúr, Uruk-hai Captain", "Barad-dûr"]
-        },
-        {
-          "name": "Value & Card Draw",
-          "description": "Keeping your hand stocked with answers and fuel on a tight budget.",
-          "cards": ["Dark Ritual", "Demand Answers", "Relic of Sauron", "Night's Whisper", "Read the Bones", "Reanimate"]
-        },
-        {
-          "name": "Army Buffs & Evasion",
-          "description": "Ensuring the Army connects for Ring temptation triggers every combat.",
-          "cards": ["Aqueous Form", "Whispersilk Cloak", "Rogue's Passage"]
-        },
-        {
-          "name": "Removal & Interaction",
-          "description": "Affordable interaction to protect Sauron and handle threats.",
-          "cards": ["Counterspell", "Negate", "Go for the Throat", "Hero's Downfall", "Feed the Swarm", "Blasphemous Act", "Chaos Warp", "Saruman's Trickery"]
+          "type": "edhrec",
+          "name": "EDHREC Amass Package",
+          "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
+          "detail": "Top amass synergy creatures"
         }
-      ],
-      "synergies": [
+      ]
+    },
+    {
+      "title": "Orcish Bowmasters Value",
+      "cards": ["Orcish Bowmasters", "The One Ring", "Phyrexian Arena"],
+      "description": "Bowmasters punishes opponents for drawing extra cards while also creating an Orc Army token. Combined with your own card draw, it adds incremental damage and board presence.",
+      "sources": [
         {
-          "title": "Amass Snowball",
-          "cards": ["Sauron, the Dark Lord", "Call of the Ring", "Fall of Cair Andros"],
-          "description": "Sauron amasses from opponent casts while Call of the Ring tempts you on upkeep. Fall of Cair Andros converts excess noncombat damage into amass triggers, growing the Army alongside Sauron's passive.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Top Budget Synergies",
-              "url": "https://edhrec.com/commanders/sauron-the-dark-lord"
-            }
-          ]
-        },
-        {
-          "title": "Evasion Engine",
-          "cards": ["Aqueous Form", "Whispersilk Cloak", "Rogue's Passage"],
-          "description": "Budget evasion suite ensures your Army connects every turn for Ring temptation triggers. Aqueous Form adds scry for card selection.",
-          "sources": [
-            {
-              "type": "ai-inferred",
-              "name": "Budget Synergy Analysis",
-              "detail": "Affordable evasion options"
-            }
-          ]
-        },
-        {
-          "title": "Card Draw Value",
-          "cards": ["Demand Answers", "Night's Whisper", "Relic of Sauron"],
-          "description": "Instant-speed card draw that keeps your hand stocked with answers. Demand Answers sacrifices a spare artifact or discards to draw 2, while Night's Whisper and Relic of Sauron provide reliable card flow.",
-          "sources": [
-            {
-              "type": "youtube",
-              "name": "MTGGoldfish Budget Build",
-              "url": "https://www.youtube.com/watch?v=4i1JC7IdwBI"
-            }
-          ]
-        },
-        {
-          "title": "Saruman's Spell Triggers",
-          "cards": ["Saruman, the White Hand", "Saruman's Trickery", "Counterspell"],
-          "description": "Saruman amasses whenever you cast noncreature spells. Your instants and sorceries double as Army growth tools.",
-          "sources": [
-            {
-              "type": "edhrec",
-              "name": "EDHREC Amass Package",
-              "url": "https://edhrec.com/commanders/sauron-the-dark-lord"
-            }
-          ]
+          "type": "edhrec",
+          "name": "EDHREC Creature Picks",
+          "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
+          "detail": "Orcish Bowmasters high synergy card"
         }
-      ],
-      "adds": [
+      ]
+    },
+    {
+      "title": "The One Ring Engine",
+      "cards": ["The One Ring", "Sauron, the Dark Lord", "Notion Thief"],
+      "description": "The One Ring draws increasing cards each turn while providing protection on ETB. Notion Thief steals opponents' draws. Together with Sauron's amass triggers from opponent casts, you out-resource the entire table.",
+      "sources": [
         {
-          "name": "Call of the Ring",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "The #1 card for Sauron. The Ring tempts you on every upkeep, with optional card draw for 2 life when choosing a Ring-bearer. Sauron amasses off the temptation. In 78% of all Sauron decks.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC #1 Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Saruman, the White Hand",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Amasses Orcs X (where X is the spell's mana value) on every noncreature spell you cast. Scales with spell cost and dirt cheap.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Top Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Witch-king of Angmar",
-          "price": "$2-4",
-          "isGameChanger": false,
-          "reason": "Flying, forces opponents to sacrifice creatures that hit you, and the Ring tempts you on each combat damage trigger. Discards to gain indestructible until end of turn (taps it). Defensive all-star.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Top Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Grishnákh, Brash Instigator",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "ETB amasses Orcs 2, then steals a nonlegendary creature with power up to the Army's power until end of turn. Untaps it and grants haste. Scales with Army size on a budget.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Corsairs of Umbar",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Activated {2}{U} makes a Goblin, Orc, or Pirate unblockable, and amasses Orcs 3 on combat damage. Great rate for a budget build.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Lord of the Nazgûl",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Creates a 3/3 Wraith token with menace whenever you cast an instant or sorcery. Flying body and LotR-themed token engine at budget cost.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Mauhúr, Uruk-hai Captain",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Adds one extra +1/+1 counter whenever counters are placed on an Army, Goblin, or Orc (that many plus one). Menace body that accelerates amass for just 2 mana.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Saruman's Trickery",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Counters a spell AND amasses Orcs 1. Interaction that grows your Army — triggers Saruman too.",
-          "sources": [{ "type": "ai-inferred", "name": "Budget Synergy Analysis", "detail": "Counterspell + amass in one card" }]
-        },
-        {
-          "name": "Dark Ritual",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Adds 3 black mana for 1. Enables early Sauron deployment or explosive turns on a budget.",
-          "sources": [{ "type": "ai-inferred", "name": "Budget Fast Mana", "detail": "Classic acceleration for 6-mana commander" }]
-        },
-        {
-          "name": "Reanimate",
-          "price": "$2-5",
-          "isGameChanger": false,
-          "reason": "Premium 1-mana reanimation from any graveyard. Life loss is a small price for cheating in a big threat.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Aqueous Form",
-          "price": "$0.50-1",
-          "isGameChanger": false,
-          "reason": "Unblockable Army + scry 1 on attack. Guarantees Ring temptation for pennies.",
-          "sources": [{ "type": "ai-inferred", "name": "Budget Evasion", "detail": "Ensures combat triggers" }]
-        },
-        {
-          "name": "Fall of Cair Andros",
-          "price": "$1-3",
-          "isGameChanger": false,
-          "reason": "Amasses Orcs X whenever excess noncombat damage is dealt to opponents' creatures, and has a {7}{R} activated ability to deal 7 damage. Converts removal into Army growth.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Relic of Sauron",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Flexible mana rock with a draw+discard mode. In 73% of Sauron decks for good reason.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Top Artifact", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Counterspell",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Clean, efficient countermagic. Protects Sauron and your board state.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
-        },
-        {
-          "name": "Blasphemous Act",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "1-mana board wipe in most games. Your Army survives if it has 13+ counters.",
-          "sources": [{ "type": "ai-inferred", "name": "Budget Removal", "detail": "Cheap board wipe" }]
-        },
-        {
-          "name": "Demand Answers",
-          "price": "$0.25-0.50",
-          "isGameChanger": false,
-          "reason": "Instant-speed draw 2 after sacrificing an artifact or discarding. Better than Faithless Looting in a budget build that wants to hold up mana for counterspells.",
-          "sources": [{ "type": "ai-inferred", "name": "Budget Card Draw Upgrade", "detail": "Instant-speed replacement for Faithless Looting" }]
-        },
-        {
-          "name": "Barad-dûr",
-          "price": "$1-2",
-          "isGameChanger": false,
-          "reason": "Legendary land with activated ability {X}{X}{B}, {T}: Amass Orcs X, usable only if a creature died this turn. Amass from a land slot at budget cost.",
-          "sources": [{ "type": "edhrec", "name": "EDHREC Top Land", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+          "type": "ai-inferred",
+          "name": "Power Synergy Analysis",
+          "detail": "Game Changer combo for Bracket 4"
         }
-      ],
-      "decklist": [
-        { "name": "Call of the Ring", "type": "Enchantment" },
-        { "name": "Saruman, the White Hand", "type": "Creature" },
-        { "name": "Witch-king of Angmar", "type": "Creature" },
-        { "name": "Grishnákh, Brash Instigator", "type": "Creature" },
-        { "name": "Corsairs of Umbar", "type": "Creature" },
-        { "name": "Lord of the Nazgûl", "type": "Creature" },
-        { "name": "Gothmog, Morgul Lieutenant", "type": "Creature" },
-        { "name": "Orcish Siegemaster", "type": "Creature" },
-        { "name": "Solemn Simulacrum", "type": "Creature" },
-        { "name": "Burnished Hart", "type": "Creature" },
-        { "name": "Mulldrifter", "type": "Creature" },
-        { "name": "Nightscape Familiar", "type": "Creature" },
-        { "name": "Goblin Electromancer", "type": "Creature" },
-        { "name": "Bloodline Necromancer", "type": "Creature" },
-        { "name": "Plaguecrafter", "type": "Creature" },
-        { "name": "Fleshbag Marauder", "type": "Creature" },
-        { "name": "Counterspell", "type": "Instant" },
-        { "name": "Negate", "type": "Instant" },
-        { "name": "Saruman's Trickery", "type": "Instant" },
-        { "name": "Go for the Throat", "type": "Instant" },
-        { "name": "Chaos Warp", "type": "Instant" },
-        { "name": "Orcish Medicine", "type": "Instant" },
-        { "name": "Soothing of Sméagol", "type": "Instant" },
-        { "name": "Doom Blade", "type": "Instant" },
-        { "name": "Hero's Downfall", "type": "Instant" },
-        { "name": "Summons of Saruman", "type": "Sorcery" },
-        { "name": "Treason of Isengard", "type": "Sorcery" },
-        { "name": "Demand Answers", "type": "Instant" },
-        { "name": "Feed the Swarm", "type": "Sorcery" },
-        { "name": "Blasphemous Act", "type": "Sorcery" },
-        { "name": "Night's Whisper", "type": "Sorcery" },
-        { "name": "Read the Bones", "type": "Sorcery" },
-        { "name": "Ponder", "type": "Sorcery" },
-        { "name": "Preordain", "type": "Sorcery" },
-        { "name": "Victimize", "type": "Sorcery" },
-        { "name": "Dread Return", "type": "Sorcery" },
-        { "name": "Sol Ring", "type": "Artifact" },
-        { "name": "Arcane Signet", "type": "Artifact" },
-        { "name": "Dimir Signet", "type": "Artifact" },
-        { "name": "Rakdos Signet", "type": "Artifact" },
-        { "name": "Izzet Signet", "type": "Artifact" },
-        { "name": "Talisman of Indulgence", "type": "Artifact" },
-        { "name": "Talisman of Dominance", "type": "Artifact" },
-        { "name": "Relic of Sauron", "type": "Artifact" },
-        { "name": "Commander's Sphere", "type": "Artifact" },
-        { "name": "Whispersilk Cloak", "type": "Artifact" },
-        { "name": "Swiftfoot Boots", "type": "Artifact" },
-        { "name": "Aqueous Form", "type": "Enchantment" },
-        { "name": "Fall of Cair Andros", "type": "Enchantment" },
-        { "name": "One Ring to Rule Them All", "type": "Enchantment" },
-        { "name": "Dreadhorde Invasion", "type": "Enchantment" },
-        { "name": "Dark Ritual", "type": "Instant" },
-        { "name": "Frantic Search", "type": "Instant" },
-        { "name": "Reality Shift", "type": "Instant" },
-        { "name": "Mauhúr, Uruk-hai Captain", "type": "Creature" },
-        { "name": "Reanimate", "type": "Sorcery" },
-        { "name": "Terminate", "type": "Instant" },
-        { "name": "Brainstorm", "type": "Instant" },
-        { "name": "Thought Vessel", "type": "Artifact" },
-        { "name": "Mind Stone", "type": "Artifact" },
-        { "name": "Rakdos Charm", "type": "Instant" },
-        { "name": "Pilgrim's Eye", "type": "Creature" },
-        { "name": "Command Tower", "type": "Land" },
-        { "name": "Barad-dûr", "type": "Land" },
-        { "name": "Exotic Orchard", "type": "Land" },
-        { "name": "Crumbling Necropolis", "type": "Land" },
-        { "name": "Path of Ancestry", "type": "Land" },
-        { "name": "Dragonskull Summit", "type": "Land" },
-        { "name": "Drowned Catacomb", "type": "Land" },
-        { "name": "Sulfur Falls", "type": "Land" },
-        { "name": "Mount Doom", "type": "Land" },
-        { "name": "Sunken Hollow", "type": "Land" },
-        { "name": "Smoldering Marsh", "type": "Land" },
-        { "name": "Temple of Deceit", "type": "Land" },
-        { "name": "Temple of Malice", "type": "Land" },
-        { "name": "Temple of Epiphany", "type": "Land" },
-        { "name": "Bojuka Bog", "type": "Land" },
-        { "name": "Reliquary Tower", "type": "Land" },
-        { "name": "Rogue's Passage", "type": "Land" },
-        { "name": "Dimir Aqueduct", "type": "Land" },
-        { "name": "Rakdos Carnarium", "type": "Land" },
-        { "name": "Izzet Boilerworks", "type": "Land" },
-        { "name": "Dismal Backwater", "type": "Land" },
-        { "name": "Swiftwater Cliffs", "type": "Land" },
-        { "name": "Bloodfell Caves", "type": "Land" },
-        { "name": "Swamp", "type": "Land", "quantity": 5 },
-        { "name": "Island", "type": "Land", "quantity": 5 },
-        { "name": "Mountain", "type": "Land", "quantity": 4 }
+      ]
+    },
+    {
+      "title": "Amass Army Assault",
+      "cards": ["Gothmog, Morgul Lieutenant", "March from the Black Gate", "Warg Rider"],
+      "description": "Recurring amass triggers every combat that grow the Army token rapidly. Gothmog gives creature tokens deathtouch, Warg Rider grants menace to Orcs — making the Army nearly impossible to block profitably while it grows larger each turn.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Amass Combat Synergy",
+          "detail": "Recurring amass triggers with evasion and deathtouch"
+        }
       ]
     }
-  }
+  ],
+  "adds": [
+    {
+      "name": "Cyclonic Rift",
+      "price": "$25-35",
+      "isGameChanger": true,
+      "reason": "The best blue board wipe in Commander. Overloaded, it bounces all opponents' nonland permanents, clearing the way for your Army to deal lethal.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Demonic Tutor",
+      "price": "$30-40",
+      "isGameChanger": true,
+      "reason": "Finds whatever you need — removal, finisher, or a key synergy piece — for just 2 mana.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Rhystic Study",
+      "price": "$30-40",
+      "isGameChanger": true,
+      "reason": "Draws absurd numbers of cards in multiplayer. Opponents either pay the tax or fuel your hand.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Call of the Ring",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "The Ring tempts you on every upkeep, and you may pay 2 life to draw a card when choosing a Ring-bearer. Sauron's amass triggers off the Ring temptation. The #1 synergy card for Sauron, in 78% of decks.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC #1 Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "78% inclusion, 69% synergy" }]
+    },
+    {
+      "name": "Saruman, the White Hand",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Amasses Orcs X (where X is the spell's mana value) every time you cast a noncreature spell. Scales with spell cost and stacks with Sauron's triggers. Also gives Goblins and Orcs ward {2}.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Top Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "67% inclusion" }]
+    },
+    {
+      "name": "Witch-king of Angmar",
+      "price": "$2-4",
+      "isGameChanger": false,
+      "reason": "Flying body that forces each opponent to sacrifice a creature that dealt combat damage to you, then the Ring tempts you. Can discard a card to gain indestructible until end of turn (taps it). Defensive powerhouse that triggers Ring temptation.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Top Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "57% inclusion" }]
+    },
+    {
+      "name": "Grishnákh, Brash Instigator",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "ETB amasses Orcs 2, then steals a nonlegendary creature with power less than or equal to the Army's power until end of turn. Untaps it and grants haste. Threaten effect that scales with your Army size.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "40% inclusion" }]
+    },
+    {
+      "name": "Corsairs of Umbar",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Has an activated {2}{U} ability to make a Goblin, Orc, or Pirate unblockable, and amasses Orcs 3 when it deals combat damage to a player. Solid value creature.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "40% inclusion" }]
+    },
+    {
+      "name": "Animate Dead",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Cheap reanimation from any graveyard for {1}{B}. Always has targets in multiplayer. Ring temptation looting fills graveyards constantly, making this a reliable 2-mana threat. Can reanimate Sauron to dodge commander tax.",
+      "sources": [
+        { "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Reanimation redundancy for 906 Reanimator-themed Sauron decks" },
+        { "type": "ai-inferred", "name": "Reanimation Axis Analysis", "detail": "Replaces Fall of Cair Andros — addresses deck's weakest axis (only 3 reanimation pieces)" }
+      ]
+    },
+    {
+      "name": "Hero's Downfall",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Instant-speed destruction of creature or planeswalker for {1}{B}{B}. Hits planeswalkers that Claim the Precious misses, and instant speed is a major upgrade over sorcery speed",
+      "sources": [{ "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Claim the Precious — instant speed + hits planeswalkers" }]
+    },
+    {
+      "name": "In the Darkness Bind Them",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Saga that creates 3/3 Wraith tokens with menace on chapters I-III while the Ring tempts you each time. Chapter IV steals a creature from each opponent until end of turn. Generates multiple bodies and Ring temptation triggers over four turns.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "High synergy with Ring temptation theme" }]
+    },
+    {
+      "name": "Orcish Bowmasters",
+      "price": "$15-25",
+      "isGameChanger": true,
+      "reason": "Creates an Orc Army and deals damage whenever an opponent draws extra cards. Premium creature that fits the Orc theme perfectly.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC High Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Phyrexian Arena",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Reliable card draw every upkeep. The life loss is negligible for the consistent card advantage.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Lord of the Nazgûl",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Creates a 3/3 Wraith token with menace whenever you cast an instant or sorcery. Flying 4/3 body that gives Wraiths protection from Ring-bearers. LotR-themed token engine.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Mauhúr, Uruk-hai Captain",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Adds one extra +1/+1 counter whenever counters are placed on an Army, Goblin, or Orc (that many plus one). Menace body that steadily accelerates Army growth.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Saruman's Trickery",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Counters a spell AND amasses Orcs 1. Interaction that also grows your Army — perfect for a deck that wants both.",
+      "sources": [{ "type": "ai-inferred", "name": "Synergy Analysis", "detail": "Counterspell + amass in one card" }]
+    },
+    {
+      "name": "Dark Ritual",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Adds 3 black mana for 1. Enables explosive early Sauron deployment or powers multiple spells in a single turn.",
+      "sources": [{ "type": "ai-inferred", "name": "Fast Mana Analysis", "detail": "Classic acceleration for 6-mana commander" }]
+    },
+    {
+      "name": "Reanimate",
+      "price": "$2-5",
+      "isGameChanger": false,
+      "reason": "Premium 1-mana reanimation from any graveyard. Life loss is negligible for bringing back Sauron or a stolen threat.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Relic of Sauron",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Mana rock that taps for any of Sauron's colors. Also has a draw+discard mode that fuels the graveyard.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Top Artifact", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "73% inclusion" }]
+    },
+    {
+      "name": "Talisman of Creativity",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Completes the Talisman cycle for Grixis — produces {U} or {R} at the cost of 1 life. 32% EDHREC inclusion in Sauron builds. A 2-mana colored rock that enables turn-4 Sauron.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Ramp", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "32% inclusion, completes Talisman cycle" }]
+    },
+    {
+      "name": "Mind Stone",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "2-mana rock that taps for {C}. Sac for a card draw when no longer needed. More reliable than Fellwar Stone (colorless is guaranteed) and the late-game draw smooths flood.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Common 2-mana rock with draw upside" }]
+    },
+    {
+      "name": "Demand Answers",
+      "price": "$0.25-0.50",
+      "isGameChanger": false,
+      "reason": "Instant-speed draw 2 after sacrificing an artifact or discarding. Triggers Saruman's amass at instant speed and fuels the graveyard. Strict upgrade over Faithless Looting in a deck that wants to hold up interaction.",
+      "sources": [{ "type": "ai-inferred", "name": "Card Draw Upgrade", "detail": "Instant-speed replacement for Faithless Looting — better with counterspell-heavy game plan" }]
+    },
+    {
+      "name": "Frantic Search",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Draws 2, discards 2, untaps 3 lands. Net-neutral on mana and fuels graveyard synergies.",
+      "sources": [{ "type": "article", "name": "TCG Playmat Pros Guide", "url": "https://tcgplaymatpros.com/blogs/tcg-blog/sauron-the-dark-lord-commander-deck-guide-amass-the-armies-of-mordor" }]
+    },
+    {
+      "name": "Aqueous Form",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Makes your Army unblockable and scries on attack. Guarantees Ring temptation triggers every combat.",
+      "sources": [{ "type": "ai-inferred", "name": "Synergy Analysis", "detail": "Evasion ensures Ring temptation triggers" }]
+    },
+    {
+      "name": "Whispersilk Cloak",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Shroud and unblockable for your Army. Protection and evasion in one equipment.",
+      "sources": [{ "type": "ai-inferred", "name": "Synergy Analysis", "detail": "Redundant evasion for Army token" }]
+    },
+    {
+      "name": "Breach the Multiverse",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Mills each player 10, then reanimate a creature or planeswalker from each graveyard. One-sided reanimation that doesn't help opponents — unlike Living Death in a deck with only ~12 creatures. The mill fuels future Reanimate and Stitch Together targets.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "One-sided mass reanimation for creature-light builds" }]
+    },
+    {
+      "name": "Stitch Together",
+      "price": "$2-3",
+      "isGameChanger": false,
+      "reason": "Returns a creature from graveyard to hand for {B}{B} — or directly to battlefield with Threshold (7+ cards in graveyard). Trivial to achieve with Ring temptation looting every combat. No sacrifice required unlike Victimize.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Reanimator Theme", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "24% inclusion in Sauron reanimator builds" }]
+    },
+    {
+      "name": "Counterspell",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Clean 2-mana counter. Essential protection and interaction in a blue deck.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "38% inclusion" }]
+    },
+    {
+      "name": "Bitter Triumph",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Destroys any creature or planeswalker for {1}{B} with an additional cost of discarding a card or paying 3 life. The discard fuels the graveyard, making the cost an upside in this deck.",
+      "sources": [{ "type": "ai-inferred", "name": "Removal Upgrade", "detail": "Strictly better than Go for the Throat — hits planeswalkers too" }]
+    },
+    {
+      "name": "Toxic Deluge",
+      "price": "$8-12",
+      "isGameChanger": false,
+      "reason": "Scalable board wipe that gets around indestructible. Pay X life for -X/-X to all creatures. Your Army survives if it's large enough.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Premium black board wipe" }]
+    },
+    {
+      "name": "Withering Torment",
+      "price": "$0.25-0.50",
+      "isGameChanger": false,
+      "reason": "Instant-speed creature or enchantment removal — Grixis's best answer to enchantments. Fixed 2 life loss is often better than Feed the Swarm's variable cost, and instant speed lets you hold up counterspells.",
+      "sources": [{ "type": "ai-inferred", "name": "Removal Upgrade", "detail": "Duskmourn (2024) — instant-speed Feed the Swarm replacement" }]
+    },
+    {
+      "name": "Blasphemous Act",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Often costs just 1 red mana. Board wipe that doesn't kill your large Army if it has enough counters.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Gothmog, Morgul Lieutenant",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "ETB amass Orcs 1 and gives all your creature tokens deathtouch. Makes the Army extremely difficult to block profitably.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Amass + deathtouch for tokens" }]
+    },
+    {
+      "name": "March from the Black Gate",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Amasses Orcs 1 on ETB and whenever your Army attacks. Cheap enchantment that provides recurring amass triggers every combat.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Recurring amass on attack" }]
+    },
+    {
+      "name": "Warg Rider",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Gives other Orcs and Goblins menace, and amasses Orcs 2 at the beginning of combat. Evasion plus consistent Army growth.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Menace lord + amass trigger" }]
+    },
+    {
+      "name": "Dauthi Voidwalker",
+      "price": "$4-6",
+      "isGameChanger": false,
+      "reason": "Shadow makes it nearly unblockable. Exiles all cards going to opponents' graveyards (replacement effect). Sacrifice it to play an exiled card for free. Addresses the deck's only graveyard hate weakness (Bojuka Bog) while generating card advantage for just {B}{B}.",
+      "sources": [{ "type": "ai-inferred", "name": "Post-Text-Fix Analysis", "detail": "Replaces Lazotep Sliver — afflict 2 anti-synergy with 5 evasion sources; death trigger doesn't fire on token Army" }]
+    },
+    {
+      "name": "Minas Morgul, Dark Fortress",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Utility land that gives a creature shadow (nearly unblockable). Turns your Army into a Wraith with shadow for guaranteed combat damage and Ring temptation.",
+      "sources": [{ "type": "ai-inferred", "name": "Evasion Land", "detail": "Shadow = near-unblockable for Army token" }]
+    },
+    {
+      "name": "Fiery Inscription",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "ETB: Ring tempts you. Whenever you cast an instant or sorcery, deals 2 damage to each opponent. Spellslinger payoff that rewards your interaction-heavy game plan.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Spellslinger payoff for instant/sorcery-heavy builds" }]
+    },
+    {
+      "name": "Thirst for Discovery",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Instant-speed draw 3, discard 2 (or discard 1 basic land). Replaces sorcery-speed draw with instant flexibility, fueling the graveyard.",
+      "sources": [{ "type": "ai-inferred", "name": "Card Draw Upgrade", "detail": "Instant-speed draw replacing Night's Whisper" }]
+    },
+    {
+      "name": "Opt",
+      "price": "$0.25",
+      "isGameChanger": false,
+      "reason": "1-mana instant: scry 1, draw 1. Leaves mana open for counterspells while providing card selection. Triggers Saruman's amass for just {U}.",
+      "sources": [{ "type": "ai-inferred", "name": "Card Draw Optimization", "detail": "Replaces Thrill of Possibility — cheaper mana cost, better with counterspell-heavy plan" }]
+    },
+    {
+      "name": "Brainstorm",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Draw 3, put 2 back on top. Classic instant-speed card selection that triggers Saruman and sets up future draws.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Premium blue cantrip" }]
+    },
+    {
+      "name": "Consult the Star Charts",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Instant-speed card selection based on lands you control. With kicker, digs deep. Triggers Saruman's amass at instant speed.",
+      "sources": [{ "type": "ai-inferred", "name": "Card Draw", "detail": "Instant-speed selection with kicker upside" }]
+    },
+    {
+      "name": "Treason of Isengard",
+      "price": "$0.25-0.50",
+      "isGameChanger": false,
+      "reason": "Returns an instant or sorcery from graveyard to top of library and amasses Orcs 2 — spell recursion with Army growth. (Instant alternative: Mission Briefing ({U}{U}) — casts the spell immediately instead of putting on top.)",
+      "sources": [{ "type": "ai-inferred", "name": "Spell Recursion", "detail": "LotR spell recursion with amass upside" }]
+    },
+    {
+      "name": "Rivendell",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Legendary land that ETBs untapped with a legendary creature (Sauron). Taps for blue and scries 2 with a legendary in play. Free card selection from a land slot.",
+      "sources": [{ "type": "ai-inferred", "name": "Thematic Land", "detail": "Scry 2 utility with Sauron on board" }]
+    },
+    {
+      "name": "The One Ring",
+      "price": "$50-65",
+      "isGameChanger": true,
+      "reason": "Indestructible artifact that draws increasing cards each turn. Protection from everything on ETB. Perfect thematic fit — The Ring tempts you, and this IS the Ring.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Staple", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "High inclusion in optimized builds" }]
+    },
+    {
+      "name": "Notion Thief",
+      "price": "$2-4",
+      "isGameChanger": true,
+      "reason": "Flash creature that steals opponents' card draws. Devastating with wheel effects and shuts down opponents' draw engines while fueling yours.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC High Synergy", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Fierce Guardianship",
+      "price": "$8-12",
+      "isGameChanger": true,
+      "reason": "Free counterspell when Sauron is on the battlefield. Protects your board at zero mana cost.",
+      "sources": [{ "type": "article", "name": "TCG Playmat Pros Guide", "url": "https://tcgplaymatpros.com/blogs/tcg-blog/sauron-the-dark-lord-commander-deck-guide-amass-the-armies-of-mordor" }]
+    },
+    {
+      "name": "Mana Drain",
+      "price": "$30-50",
+      "isGameChanger": false,
+      "reason": "Premium counterspell that converts the countered spell's mana value into colorless mana on your next main phase. The mana burst helps recast Sauron (6 MV), fuel Cyclonic Rift overload, or power The One Ring activations.",
+      "sources": [{ "type": "ai-inferred", "name": "Power Level Analysis", "detail": "Bracket 4 appropriate — mana synergy with 6-MV commander and expensive activated abilities" }]
+    },
+    {
+      "name": "Barad-dûr",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Legendary land with activated ability {X}{X}{B}, {T}: Amass Orcs X, usable only if a creature died this turn. Enters untapped with a legendary creature. Amass from a land slot at mana cost.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Top Land", "url": "https://edhrec.com/commanders/sauron-the-dark-lord", "detail": "Thematic land with direct amass synergy" }]
+    },
+    {
+      "name": "The Black Gate",
+      "price": "$13-18",
+      "isGameChanger": false,
+      "reason": "Legendary land that makes a creature unblockable by the player with the most life. Ensures your Army connects for Ring temptation every turn.",
+      "sources": [{ "type": "edhrec", "name": "EDHREC Synergy Land", "url": "https://edhrec.com/commanders/sauron-the-dark-lord" }]
+    },
+    {
+      "name": "Bloodstained Mire",
+      "price": "$25-35",
+      "isGameChanger": false,
+      "reason": "S-tier fetch land that finds any Swamp or Mountain — including Watery Grave, Blood Crypt, and Sunken Hollow. Perfect on-demand color fixing plus deck thinning.",
+      "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces colorless Reliquary Tower (anti-synergy with discard theme)" }]
+    },
+    {
+      "name": "Polluted Delta",
+      "price": "$18-25",
+      "isGameChanger": false,
+      "reason": "S-tier fetch land that finds any Island or Swamp — including Watery Grave, Blood Crypt (Swamp-typed), and Sunken Hollow. Shifts fetch preference from R to B with zero downside.",
+      "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Scalding Tarn — shifts UR fetch to UB fetch, better B supply alignment" }]
+    },
+    {
+      "name": "Gloomlake Verge",
+      "price": "$2-4",
+      "isGameChanger": false,
+      "reason": "UB dual land that always enters untapped. Taps for {U} unconditionally, but requires controlling an Island or Swamp to tap for {B}. With 4 Swamps, 3 Islands, Watery Grave, Blood Crypt, and Sunken Hollow, the {B} condition is met almost every game.",
+      "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Temple of Malice — shifts BR to UB, upgrades from always-tapped to conditionally untapped" }]
+    },
+    {
+      "name": "Restless Reef",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "UB creature-land that becomes a 4/4 Shark with deathtouch and mills 4 on attack. The mill feeds graveyard synergies (Reanimate, Stitch Together, Ring temptation). Shifts a BR source to UB.",
+      "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Smoldering Marsh — tapped-for-tapped swap that adds late-game creature threat and mill synergy" }]
+    },
+    {
+      "name": "Agna Qel'a",
+      "price": "$0.50-1",
+      "isGameChanger": false,
+      "reason": "Utility land that enters untapped with any basic (10 basics = trivial). Repeatable loot activation ({2}{U}, {T}) fills the graveyard for Reanimate, Stitch Together, Animate Dead, and Breach the Multiverse. Replaces Temple of Deceit — upgrades from always-tapped scry-once to conditionally-untapped repeatable loot.",
+      "sources": [{ "type": "ai-inferred", "name": "Mana Base Optimization", "detail": "Replaces Temple of Deceit — repeatable loot > one-time scry, almost always untapped with 10 basics" }]
+    }
+  ],
+  "decklist": [
+    { "name": "Call of the Ring", "type": "Enchantment" },
+    { "name": "Saruman, the White Hand", "type": "Creature" },
+    { "name": "Witch-king of Angmar", "type": "Creature" },
+    { "name": "Grishnákh, Brash Instigator", "type": "Creature" },
+    { "name": "Corsairs of Umbar", "type": "Creature" },
+    { "name": "Orcish Bowmasters", "type": "Creature" },
+    { "name": "Lord of the Nazgûl", "type": "Creature" },
+    { "name": "Gothmog, Morgul Lieutenant", "type": "Creature" },
+    { "name": "Orcish Siegemaster", "type": "Creature" },
+    { "name": "Notion Thief", "type": "Creature" },
+    { "name": "Mana Drain", "type": "Instant" },
+    { "name": "Warg Rider", "type": "Creature" },
+    { "name": "Dauthi Voidwalker", "type": "Creature" },
+    { "name": "Cyclonic Rift", "type": "Instant" },
+    { "name": "Counterspell", "type": "Instant" },
+    { "name": "Fierce Guardianship", "type": "Instant" },
+    { "name": "Saruman's Trickery", "type": "Instant" },
+    { "name": "Bitter Triumph", "type": "Instant" },
+    { "name": "Orcish Medicine", "type": "Instant" },
+    { "name": "Soothing of Sméagol", "type": "Instant" },
+    { "name": "Thirst for Discovery", "type": "Instant" },
+    { "name": "Opt", "type": "Instant" },
+    { "name": "Brainstorm", "type": "Instant" },
+    { "name": "Consult the Star Charts", "type": "Instant" },
+    { "name": "Demonic Tutor", "type": "Sorcery" },
+    { "name": "Breach the Multiverse", "type": "Sorcery" },
+    { "name": "Hero's Downfall", "type": "Instant" },
+    { "name": "Summons of Saruman", "type": "Sorcery" },
+    { "name": "Treason of Isengard", "type": "Sorcery" },
+    { "name": "Demand Answers", "type": "Instant" },
+    { "name": "Withering Torment", "type": "Instant" },
+    { "name": "Blasphemous Act", "type": "Sorcery" },
+    { "name": "Stitch Together", "type": "Sorcery" },
+    { "name": "Toxic Deluge", "type": "Sorcery" },
+    { "name": "Ponder", "type": "Sorcery" },
+    { "name": "Sol Ring", "type": "Artifact" },
+    { "name": "Arcane Signet", "type": "Artifact" },
+    { "name": "Dimir Signet", "type": "Artifact" },
+    { "name": "Rakdos Signet", "type": "Artifact" },
+    { "name": "Izzet Signet", "type": "Artifact" },
+    { "name": "Talisman of Indulgence", "type": "Artifact" },
+    { "name": "Talisman of Dominance", "type": "Artifact" },
+    { "name": "Talisman of Creativity", "type": "Artifact" },
+    { "name": "Relic of Sauron", "type": "Artifact" },
+    { "name": "Commander's Sphere", "type": "Artifact" },
+    { "name": "Mind Stone", "type": "Artifact" },
+    { "name": "Whispersilk Cloak", "type": "Artifact" },
+    { "name": "Lightning Greaves", "type": "Artifact" },
+    { "name": "Swiftfoot Boots", "type": "Artifact" },
+    { "name": "The One Ring", "type": "Artifact" },
+    { "name": "Rhystic Study", "type": "Enchantment" },
+    { "name": "Phyrexian Arena", "type": "Enchantment" },
+    { "name": "In the Darkness Bind Them", "type": "Enchantment" },
+    { "name": "March from the Black Gate", "type": "Enchantment" },
+    { "name": "Fiery Inscription", "type": "Enchantment" },
+    { "name": "Dark Ritual", "type": "Instant" },
+    { "name": "Aqueous Form", "type": "Enchantment" },
+    { "name": "Animate Dead", "type": "Enchantment" },
+    { "name": "Dreadhorde Invasion", "type": "Enchantment" },
+    { "name": "Frantic Search", "type": "Instant" },
+    { "name": "Reality Shift", "type": "Instant" },
+    { "name": "Mauhúr, Uruk-hai Captain", "type": "Creature" },
+    { "name": "Reanimate", "type": "Sorcery" },
+    { "name": "Terminate", "type": "Instant" },
+    { "name": "Command Tower", "type": "Land" },
+    { "name": "Exotic Orchard", "type": "Land" },
+    { "name": "Crumbling Necropolis", "type": "Land" },
+    { "name": "Dragonskull Summit", "type": "Land" },
+    { "name": "Drowned Catacomb", "type": "Land" },
+    { "name": "Darkslick Shores", "type": "Land" },
+    { "name": "Mount Doom", "type": "Land" },
+    { "name": "Barad-dûr", "type": "Land" },
+    { "name": "The Black Gate", "type": "Land" },
+    { "name": "Minas Morgul, Dark Fortress", "type": "Land" },
+    { "name": "Rivendell", "type": "Land" },
+    { "name": "Watery Grave", "type": "Land" },
+    { "name": "Blood Crypt", "type": "Land" },
+    { "name": "Steam Vents", "type": "Land" },
+    { "name": "Morphic Pool", "type": "Land" },
+    { "name": "Luxury Suite", "type": "Land" },
+    { "name": "Training Center", "type": "Land" },
+    { "name": "Sunken Hollow", "type": "Land" },
+    { "name": "Agna Qel'a", "type": "Land" },
+    { "name": "Bojuka Bog", "type": "Land" },
+    { "name": "Bloodstained Mire", "type": "Land" },
+    { "name": "Polluted Delta", "type": "Land" },
+    { "name": "Gloomlake Verge", "type": "Land" },
+    { "name": "Restless Reef", "type": "Land" },
+    { "name": "Path of Ancestry", "type": "Land" },
+    { "name": "Swamp", "type": "Land", "quantity": 5 },
+    { "name": "Island", "type": "Land", "quantity": 3 },
+    { "name": "Mountain", "type": "Land", "quantity": 2 }
+  ]
 }
