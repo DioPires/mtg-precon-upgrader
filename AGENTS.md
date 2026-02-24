@@ -74,7 +74,7 @@ Every card add, synergy, and deck must have a `sources` array for traceability.
 **Source object shape:**
 ```json
 {
-  "type": "edhrec" | "youtube" | "draftsim" | "article" | "scryfall" | "ai-inferred" | "other",
+  "type": "edhrec" | "youtube" | "draftsim" | "article" | "scryfall" | "commanderspellbook" | "ai-inferred" | "other",
   "name": "Human-readable label",
   "url": "https://...",
   "detail": "Extra context (timestamp, section, etc.)"
@@ -98,9 +98,10 @@ When building or updating deck guides, use all available sources and cross-refer
 
 1. **YouTube** — Search for commander deck tech videos, fetch transcripts, extract card recommendations
 2. **EDHREC** — Check commander pages for top cards, new additions from recent sets
-3. **Moxfield** — Search popular decklists for the commander
-4. **Scryfall** — Verify card names exist, check current pricing
-5. **Web Search** — Articles, Reddit discussions, deck tech write-ups
+3. **Commander Spellbook** — `POST /find-my-combos` at `backend.commanderspellbook.com` with text/plain decklist. Returns `included` (combos in deck) + `almostIncluded` (1 card away). No auth, MIT license. Combo URLs: `https://commanderspellbook.com/combo/{id}/`
+4. **Moxfield** — Search popular decklists for the commander
+5. **Scryfall** — Verify card names exist, check current pricing
+6. **Web Search** — Articles, Reddit discussions, deck tech write-ups
 
 Attribute every recommendation to its source(s). Multiple sources for the same card strengthens the recommendation.
 

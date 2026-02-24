@@ -1757,35 +1757,70 @@
       color: var(--accent-green);
     }
 
-    /* Card gallery view */
+    /* Card gallery view — stacked by type */
     .decklist-gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
       padding: 8px 0;
+      align-items: start;
+    }
+    .gallery-type-section {
+      min-width: 0;
+    }
+    .gallery-type-header {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-purple);
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+    .gallery-stack {
+      position: relative;
     }
     .decklist-gallery-card {
       position: relative;
       border-radius: 8px;
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-top: -250px;
+      transition: filter 0.15s ease, outline-color 0.15s ease;
+      outline: 2px solid transparent;
+      outline-offset: -2px;
     }
-    .decklist-gallery-card:hover {
-      transform: translateY(-4px) scale(1.03);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      z-index: 2;
+    .decklist-gallery-card:first-child {
+      margin-top: 0;
     }
     .decklist-gallery-card img {
       width: 100%;
       display: block;
       border-radius: 8px;
     }
-    .decklist-gallery-card.highlighted {
-      box-shadow: 0 0 0 2px var(--accent-green), 0 0 12px var(--accent-green-dim);
+    .decklist-gallery-card.highlighted::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 14px;
+      background: var(--accent-green);
+      z-index: 3;
+      border-radius: 8px 0 0 0;
     }
-    .decklist-gallery-card.highlighted:hover {
-      box-shadow: 0 0 0 2px var(--accent-green), 0 8px 24px rgba(0,0,0,0.4);
+    .gallery-quantity-badge {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      z-index: 3;
+      pointer-events: none;
     }
 
     @media (max-width: 768px) {
@@ -1793,7 +1828,20 @@
         columns: 1;
       }
       .decklist-gallery {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+      .gallery-stack {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 4px;
+      }
+      .decklist-gallery-card {
+        margin-top: 0;
+      }
+      .decklist-gallery-card.highlighted::before {
+        height: 100%;
+        border-radius: 8px 0 0 8px;
       }
     }
 
@@ -6002,22 +6050,50 @@
       const highlightNames = new Set(currentDeck.highlights.map(c => c.name));
       const galleryEl = document.getElementById('decklist-gallery');
       const effCmd = getEffectiveCommander();
+      const commanderNames = new Set([effCmd]);
 
-      // Commander first, then all cards
-      const allCards = [
-        { name: effCmd, isHighlighted: false, isCommander: true },
-        ...currentDeck.decklist
-          .filter(c => c.name !== effCmd)
-          .map(c => ({ ...c, isHighlighted: highlightNames.has(c.name) }))
-      ];
+      const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
+      const grouped = {};
+      currentDeck.decklist.forEach(card => {
+        const type = card.type || 'Other';
+        if (!grouped[type]) grouped[type] = [];
+        grouped[type].push({ ...card, isHighlighted: highlightNames.has(card.name) });
+      });
+      Object.keys(grouped).forEach(type => {
+        grouped[type].sort((a, b) => a.name.localeCompare(b.name));
+      });
 
-      galleryEl.innerHTML = allCards.map(card => {
-        const imgUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(card.name)}`;
-        const cls = card.isHighlighted ? ' highlighted' : '';
-        return `<div class="decklist-gallery-card${cls}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">
-          <img src="${imgUrl}" alt="${escapeHtml(card.name)}" loading="lazy" />
-        </div>`;
-      }).join('');
+      function cardHtml(name, isHighlighted, quantity) {
+        const imgUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(name)}`;
+        const cls = isHighlighted ? ' highlighted' : '';
+        const badge = quantity > 1 ? `<span class="gallery-quantity-badge">${quantity}x</span>` : '';
+        return `<div class="decklist-gallery-card${cls}" data-card-name="${escapeHtml(name)}" tabindex="0" role="button" aria-label="${escapeHtml(name)}">${badge}<img src="${imgUrl}" alt="${escapeHtml(name)}" loading="lazy" /></div>`;
+      }
+
+      let html = '';
+
+      // Commander section
+      html += `<div class="gallery-type-section"><div class="gallery-type-header">Commander</div><div class="gallery-stack">${cardHtml(effCmd, false, 1)}</div></div>`;
+
+      typeOrder.forEach(type => {
+        if (!grouped[type] || grouped[type].length === 0) return;
+        const cards = type === 'Creature'
+          ? grouped[type].filter(c => !commanderNames.has(c.name))
+          : grouped[type];
+        if (cards.length === 0) return;
+        const count = cards.reduce((sum, c) => sum + (c.quantity || 1), 0);
+        html += `<div class="gallery-type-section"><div class="gallery-type-header">${escapeHtml(type)}s (${count})</div><div class="gallery-stack">`;
+        cards.forEach(card => { html += cardHtml(card.name, card.isHighlighted, card.quantity || 1); });
+        html += `</div></div>`;
+      });
+
+      if (grouped['Other'] && grouped['Other'].length > 0) {
+        html += `<div class="gallery-type-section"><div class="gallery-type-header">Other (${grouped['Other'].length})</div><div class="gallery-stack">`;
+        grouped['Other'].forEach(card => { html += cardHtml(card.name, card.isHighlighted, card.quantity || 1); });
+        html += `</div></div>`;
+      }
+
+      galleryEl.innerHTML = html;
     }
 
     function toggleDecklistView() {

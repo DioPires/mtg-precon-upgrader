@@ -70,6 +70,7 @@
       "description": "Monolith taps for 4 (3+1 from Monument), untaps for 3 = infinite colorless mana. Feed into Eye of Ugin to tutor every Eldrazi.",
       "sources": [
         { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Top combo package" },
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/4131-4547/", "detail": "Infinite colorless mana" },
         { "type": "ai-inferred", "name": "Claude analysis", "detail": "Infinite mana line identification" }
       ]
     },
@@ -79,6 +80,7 @@
       "description": "Key untaps a mana rock for 1, Rings copies Key targeting itself for 2. With any rock that taps for 4+ (e.g., Basalt Monolith + Forsaken Monument), this nets infinite mana. Thran Dynamo produces 3, enabling infinite untaps but not net mana.",
       "sources": [
         { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Rings of Brighthearth combo package" },
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/617-1766-4235-4547/", "detail": "Infinite colorless mana (full combo also requires Forsaken Monument)" },
         { "type": "ai-inferred", "name": "Claude analysis", "detail": "Three-card infinite mana combo" }
       ]
     },
@@ -105,6 +107,30 @@
       "description": "Every colorless spell you cast exiles a colored permanent. With 3+ spells per cascade chain, strip 3+ enemy permanents per turn.",
       "sources": [
         { "type": "ai-inferred", "name": "Claude analysis", "detail": "Ugin Eye of the Storms cascade interaction" }
+      ]
+    },
+    {
+      "title": "Infinite Mana: Rings-Basalt Loop",
+      "cards": ["Rings of Brighthearth", "Basalt Monolith"],
+      "description": "Tap Basalt for 3. Pay 3 to untap. Rings copies the untap for 2 (need 2 initial mana from another source). Copy untap resolves first, tap Basalt for 3 more, then original untap resolves. Nets 1 per loop.",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/4131-4235/", "detail": "Infinite colorless mana" }
+      ]
+    },
+    {
+      "title": "Artifact Storm: Top-Forge Engine",
+      "cards": ["Sensei's Divining Top", "Ugin, the Ineffable", "Mystic Forge"],
+      "description": "Ugin reduces colorless costs by 2, making Top free. Forge casts Top from library top. Tap Top to draw, putting it back on top. Repeat for infinite card draw.",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/985-2604-5078/", "detail": "Infinite card draw" }
+      ]
+    },
+    {
+      "title": "Fleshraker Storm Loop",
+      "cards": ["Sensei's Divining Top", "Glaring Fleshraker", "Mystic Forge"],
+      "description": "Forge casts Top from library for 1. Fleshraker triggers on colorless cast: creates Spawn token, deals 1 damage. Sacrifice Spawn for 1 mana to recast Top after tapping it to draw. Self-sustaining loop: infinite draw + near-infinite damage.",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/985-5078-5705/", "detail": "Infinite card draw, near-infinite damage" }
       ]
     }
   ],
