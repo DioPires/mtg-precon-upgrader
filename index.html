@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Visual deck guides for Magic: The Gathering Commander precons with card previews, synergy analysis, mana simulations, and export tools.">
+  <meta name="description" content="The Grimoire — a planeswalker's personal deck companion for Magic: The Gathering Commander.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
-  <title>MTG Commander Deck Guides</title>
-  <!-- Privacy-respecting analytics (Plausible) - uncomment and set your domain to enable -->
-  <!-- <script defer data-domain="YOUR-DOMAIN.com" src="https://plausible.io/js/script.js"></script> -->
+  <title>The Grimoire — MTG Commander Decks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://api.scryfall.com">
@@ -47,6 +45,32 @@
       --tilt-scale: 1.05;
       --tilt-perspective: 1000px;
       --tilt-transition-out: 0.4s;
+
+      /* Deck theming (overridden per-deck via body.colors-*) */
+      --deck-accent: var(--accent-purple);
+      --deck-accent-dim: var(--accent-purple-dim);
+      --deck-glow: rgba(157, 78, 221, 0.3);
+      --deck-bg-tint: rgba(157, 78, 221, 0.05);
+    }
+
+    /* Per-deck color identity theming */
+    body.colors-C {
+      --deck-accent: #a8b5c4;
+      --deck-accent-dim: rgba(168, 181, 196, 0.25);
+      --deck-glow: rgba(168, 181, 196, 0.25);
+      --deck-bg-tint: rgba(168, 181, 196, 0.04);
+    }
+    body.colors-BR {
+      --deck-accent: #e63946;
+      --deck-accent-dim: rgba(230, 57, 70, 0.2);
+      --deck-glow: rgba(230, 57, 70, 0.3);
+      --deck-bg-tint: rgba(230, 57, 70, 0.04);
+    }
+    body.colors-UBR {
+      --deck-accent: #c77dff;
+      --deck-accent-dim: rgba(199, 125, 255, 0.25);
+      --deck-glow: rgba(199, 125, 255, 0.3);
+      --deck-bg-tint: rgba(199, 125, 255, 0.04);
     }
 
     * {
@@ -57,6 +81,43 @@
 
     html {
       touch-action: auto;
+    }
+
+    /* Commander art living background */
+    #commander-bg {
+      position: fixed;
+      top: -5%;
+      left: -5%;
+      width: 110%;
+      height: 110%;
+      background-size: cover;
+      background-position: center;
+      filter: blur(40px) brightness(0.12) saturate(1.4);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.8s ease, background-image 0.8s ease;
+      pointer-events: none;
+    }
+    #commander-bg.visible {
+      opacity: 1;
+    }
+
+    #ambient-art {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 2s ease;
+      background-size: cover;
+      background-position: center;
+      filter: blur(60px) brightness(0.08) saturate(1.2);
+    }
+    #ambient-art.visible {
+      opacity: 1;
     }
 
     .skip-to-content {
@@ -116,14 +177,15 @@
       font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-deep);
       background-image:
-        radial-gradient(ellipse at 20% 0%, rgba(157, 78, 221, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 100%, rgba(157, 78, 221, 0.05) 0%, transparent 50%);
+        radial-gradient(ellipse at 20% 0%, var(--deck-bg-tint) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, var(--deck-bg-tint) 0%, transparent 50%);
       color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.5;
       font-kerning: normal;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      transition: background-image 0.6s ease;
     }
 
     .container {
@@ -141,13 +203,13 @@
 
     header h1 {
       font-family: 'Cinzel', serif;
-      color: var(--accent-purple);
+      color: var(--deck-accent);
       font-size: clamp(1.8rem, 1.5rem + 1.5vw, 2.5rem);
       font-weight: 700;
       letter-spacing: 0.05em;
       text-wrap: balance;
       margin-bottom: 10px;
-      text-shadow: 0 0 40px rgba(157, 78, 221, 0.3);
+      text-shadow: 0 0 40px var(--deck-glow);
     }
 
     header p {
@@ -163,6 +225,181 @@
       border: 1px solid var(--border-subtle);
     }
 
+    /* Deck Gallery */
+    .deck-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .deck-gallery-card {
+      position: relative;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      overflow: hidden;
+    }
+    .deck-gallery-card:hover {
+      border-color: var(--deck-accent);
+      box-shadow: 0 0 20px var(--deck-accent-dim);
+      transform: translateY(-2px);
+    }
+    .deck-gallery-card.active {
+      border-color: var(--deck-accent);
+      box-shadow: 0 0 24px var(--deck-glow), inset 0 0 12px var(--deck-accent-dim);
+    }
+    .deck-gallery-art {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .deck-gallery-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .deck-gallery-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .deck-gallery-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .deck-gallery-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .deck-gallery-colors {
+      display: flex;
+      gap: 3px;
+    }
+    .deck-gallery-pip {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .pip-W { background: #f9faf4; }
+    .pip-U { background: #0e68ab; }
+    .pip-B { background: #150b00; border-color: #555; }
+    .pip-R { background: #d3202a; }
+    .pip-G { background: #00733e; }
+    .pip-C { background: #a8b5c4; }
+    .deck-gallery-bracket {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      background: var(--deck-accent-dim);
+      color: var(--deck-accent);
+    }
+
+    /* Deck reveal sequence */
+    @keyframes commanderEntrance {
+      0%   { transform: scale(0.92); opacity: 0; filter: blur(6px); }
+      60%  { transform: scale(1.02); opacity: 1; filter: blur(0); }
+      100% { transform: scale(1); opacity: 1; filter: blur(0); }
+    }
+
+    .deck-reveal .commander-card-preview {
+      animation: commanderEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Content cascade — staggered fade-in for sections */
+    .deck-reveal .cascade-in {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: cascadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes cascadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .deck-reveal .cascade-in:nth-child(1) { animation-delay: 0.08s; }
+    .deck-reveal .cascade-in:nth-child(2) { animation-delay: 0.14s; }
+    .deck-reveal .cascade-in:nth-child(3) { animation-delay: 0.20s; }
+    .deck-reveal .cascade-in:nth-child(4) { animation-delay: 0.26s; }
+    .deck-reveal .cascade-in:nth-child(5) { animation-delay: 0.32s; }
+    .deck-reveal .cascade-in:nth-child(6) { animation-delay: 0.38s; }
+
+    /* View crossfade transitions */
+    .view-container {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .view-container.view-hidden {
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      position: absolute;
+      visibility: hidden;
+    }
+    .view-container.view-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      position: relative;
+      visibility: visible;
+    }
+
+    /* Bracket bar fill animation */
+    .bracket-animating .bracket-segment {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .bracket-animating .bracket-segment.animate-fill {
+      animation: bracketFill 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .bracket-segment.animate-fill:nth-child(2) { animation-delay: 0.06s; }
+    .bracket-segment.animate-fill:nth-child(3) { animation-delay: 0.12s; }
+    .bracket-segment.animate-fill:nth-child(4) { animation-delay: 0.18s; }
+    .bracket-segment.animate-fill:nth-child(5) { animation-delay: 0.24s; }
+    @keyframes bracketFill {
+      to { transform: scaleX(1); }
+    }
+
+    /* Playtest card drop animation */
+    @keyframes cardDrop {
+      0%   { transform: translateY(-30px) scale(0.95); opacity: 0; }
+      60%  { transform: translateY(4px) scale(1.02); opacity: 1; }
+      80%  { transform: translateY(-2px) scale(0.99); }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .playtest-card.card-entering {
+      animation: cardDrop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Hand fan-out on hover */
+    .playtest-hand:hover .playtest-hand-cards .playtest-card {
+      margin-right: 2px;
+      transition: margin 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .deck-reveal .commander-card-preview,
+      .deck-reveal .cascade-in,
+      .bracket-segment.animate-fill,
+      .playtest-card.card-entering {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .view-container {
+        transition: none !important;
+      }
+    }
+
     .selector-row {
       display: flex;
       align-items: center;
@@ -172,7 +409,7 @@
 
     .selector-row label {
       font-weight: 600;
-      color: var(--accent-purple);
+      color: var(--deck-accent);
       font-family: 'Cinzel', serif;
     }
 
@@ -190,13 +427,13 @@
     }
 
     select:hover, select:focus {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 12px rgba(157, 78, 221, 0.2);
+      border-color: var(--deck-accent);
+      box-shadow: 0 0 12px var(--deck-accent-dim);
       outline: none;
     }
 
     select:focus-visible {
-      outline: 2px solid var(--accent-purple);
+      outline: 2px solid var(--deck-accent);
       outline-offset: 2px;
     }
 
@@ -510,18 +747,55 @@
       font-weight: 600;
     }
 
+    .commander-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .commander-card-col {
+      flex-shrink: 0;
+    }
+
+    .commander-meta-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .commander-meta-col .bracket-visualization {
+      margin-top: 12px;
+    }
+
     .commander-cards {
       display: flex;
       gap: 16px;
-      margin-top: 16px;
       flex-wrap: wrap;
     }
 
     .commander-card-preview {
-      width: 300px;
+      width: 250px;
       border-radius: 8px;
       border: 2px solid var(--accent-purple);
       box-shadow: 0 4px 12px rgba(157, 78, 221, 0.3);
+    }
+
+    #deck-sigil {
+      width: 80px;
+      height: 80px;
+      margin-top: 12px;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .commander-layout {
+        flex-direction: column;
+      }
+      .commander-card-preview {
+        width: 300px;
+      }
+      #deck-sigil {
+        align-self: center;
+      }
     }
 
     .mana-cost {
@@ -764,7 +1038,7 @@
     }
 
     /* Upgrade Overview */
-    .upgrade-overview {
+    .deck-overview {
       background: var(--bg-elevated);
       border-radius: 12px;
       padding: 16px 20px;
@@ -905,8 +1179,6 @@
       border: 1px solid var(--border-subtle);
     }
 
-    body.commander-deck .guide-section.cuts { display: none; }
-
     .guide-section-title {
       font-family: 'Cinzel', serif;
       font-size: 1.15rem;
@@ -918,11 +1190,7 @@
       gap: 10px;
     }
 
-    .guide-section.cuts .guide-section-title {
-      color: var(--accent-red);
-    }
-
-    .guide-section.adds .guide-section-title {
+    .guide-section.deck-engine .guide-section-title {
       color: var(--accent-green);
     }
 
@@ -1034,35 +1302,6 @@
       text-decoration-color: var(--accent-green);
     }
 
-    .guide-card-reason {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .guide-card-reason a.reason-card-link,
-    .guide-card-reason a.reason-card-link:visited {
-      color: var(--text-primary);
-      text-decoration: underline;
-      text-decoration-color: var(--accent-green);
-      text-underline-offset: 2px;
-    }
-
-    .guide-card-reason a.reason-card-link:hover {
-      color: var(--accent-green);
-    }
-
-    .guide-card-reason .mana-symbol-img {
-      width: 14px;
-      height: 14px;
-    }
-
-    .guide-card-price {
-      font-size: 0.8rem;
-      color: var(--accent-green);
-      font-weight: 500;
-      font-variant-numeric: tabular-nums;
-    }
 
     /* Synergies */
     .synergies-list {
@@ -1187,121 +1426,51 @@
       margin-bottom: 0;
     }
 
-    /* Card Substitution Suggestions */
-    .card-substitute {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 6px;
-      padding: 6px 8px;
-      background: rgba(96, 165, 250, 0.1);
-      border: 1px dashed var(--accent-blue);
-      border-radius: 6px;
-      font-size: 0.75rem;
+    /* Synergy constellation map */
+    .synergy-map-toggle {
+      margin-top: 12px;
+      text-align: right;
     }
-
-    .card-substitute-label {
-      color: var(--accent-blue);
-      font-weight: 500;
-      white-space: nowrap;
+    #synergy-constellation {
+      margin-top: 12px;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
     }
-
-    .card-substitute-name {
-      color: var(--text-primary);
-      font-weight: 500;
-    }
-
-    .card-substitute-name:hover {
-      color: var(--accent-blue);
+    #synergy-svg .node-circle {
       cursor: pointer;
-      text-decoration: underline;
+      transition: r 0.2s ease;
     }
-
-    .card-substitute-price {
-      color: var(--accent-green);
-      font-size: 0.75rem;
+    #synergy-svg .node-circle:hover {
+      r: 8;
     }
-
-    .card-substitute-tradeoff {
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-      font-style: italic;
+    #synergy-svg .node-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 9px;
+      fill: var(--text-secondary);
+      pointer-events: none;
+      user-select: none;
     }
-
-    .card-substitute-toggle {
-      background: none;
-      border: none;
-      color: var(--accent-blue);
-      font-size: 0.75rem;
-      cursor: pointer;
-      padding: 2px 4px;
-      margin-left: auto;
+    #synergy-svg .edge-line {
+      stroke: var(--border-subtle);
+      stroke-width: 0.5;
+      opacity: 0.4;
+      transition: opacity 0.2s ease, stroke 0.2s ease;
     }
-
-    .card-substitute-toggle:hover {
-      text-decoration: underline;
+    #synergy-svg .edge-line.active {
+      stroke: var(--deck-accent);
+      stroke-width: 1.5;
+      opacity: 0.8;
+    }
+    #synergy-svg .node-circle.dimmed {
+      opacity: 0.2;
+    }
+    #synergy-svg .node-label.dimmed {
+      opacity: 0.15;
     }
 
     /* === SOURCE ATTRIBUTION === */
-    .source-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      margin-left: 6px;
-      cursor: help;
-      position: relative;
-      vertical-align: middle;
-    }
-    .source-indicator svg {
-      width: 12px;
-      height: 12px;
-      opacity: 0.6;
-    }
-    .source-indicator:hover svg,
-    .source-indicator:focus-visible svg {
-      opacity: 1;
-    }
-    .source-indicator .source-tooltip {
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 8px 12px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      color: var(--text-primary);
-      font-size: 0.75rem;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s, transform 0.2s;
-      z-index: 100;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      max-width: 300px;
-      white-space: normal;
-    }
-    .source-indicator:hover .source-tooltip,
-    .source-indicator:focus-visible .source-tooltip {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .source-tooltip-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 2px;
-    }
-    .source-tooltip-item:last-child {
-      margin-bottom: 0;
-    }
-    .source-tooltip-item a {
-      color: var(--accent-blue);
-      text-decoration: none;
-    }
-    .source-tooltip-item a:hover {
-      text-decoration: underline;
-    }
     .source-icon-youtube { color: #ff4444; }
     .source-icon-edhrec { color: var(--accent-blue); }
     .source-icon-draftsim { color: var(--accent-blue); }
@@ -1511,7 +1680,7 @@
       color: var(--text-muted);
     }
 
-    .decklist-card.added {
+    .decklist-card.highlighted {
       color: var(--accent-green);
     }
 
@@ -1588,9 +1757,43 @@
       color: var(--accent-green);
     }
 
+    /* Card gallery view */
+    .decklist-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .decklist-gallery-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .decklist-gallery-card:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      z-index: 2;
+    }
+    .decklist-gallery-card img {
+      width: 100%;
+      display: block;
+      border-radius: 8px;
+    }
+    .decklist-gallery-card.highlighted {
+      box-shadow: 0 0 0 2px var(--accent-green), 0 0 12px var(--accent-green-dim);
+    }
+    .decklist-gallery-card.highlighted:hover {
+      box-shadow: 0 0 0 2px var(--accent-green), 0 8px 24px rgba(0,0,0,0.4);
+    }
+
     @media (max-width: 768px) {
       .decklist-content {
         columns: 1;
+      }
+      .decklist-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
       }
     }
 
@@ -2154,25 +2357,14 @@
       color: var(--accent-green);
     }
 
-    .adds-section-header {
+    .engine-section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
     }
 
-    .adds-section-header .guide-section-title {
-      margin-bottom: 0;
-    }
-
-    .cuts-section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .cuts-section-header .guide-section-title {
+    .engine-section-header .guide-section-title {
       margin-bottom: 0;
     }
 
@@ -2512,8 +2704,8 @@
         padding: 0 !important;
       }
 
-      header, .selector-section, .upgrade-overview, .preview-panel,
-      .guide-strategy, .guide-section.adds, .guide-section.cuts,
+      header, .selector-section, .deck-overview, .preview-panel,
+      .guide-strategy, .guide-section.deck-engine, .guide-section.cuts,
       .guide-section.synergies, .guide-section.deck-stats,
       .filter-bar, .export-buttons, .print-btn,
       footer {
@@ -2551,47 +2743,13 @@
         color: black !important;
       }
 
-      .decklist-card.added::before {
+      .decklist-card.highlighted::before {
         content: "★ ";
       }
 
       .decklist-checkbox,
       .selection-controls {
         display: none !important;
-      }
-
-      /* Hide normal adds section when printing shopping list */
-      body.print-shopping-list .guide-section.adds .card-groups,
-      body.print-shopping-list .guide-section.adds .adds-section-header,
-      body.print-shopping-list .guide-section.adds .loading-placeholder {
-        display: none !important;
-      }
-
-      /* Show shopping list when printing */
-      body.print-shopping-list .shopping-list-print {
-        display: block !important;
-      }
-
-      /* Also hide other sections when printing shopping list */
-      body.print-shopping-list header,
-      body.print-shopping-list .selector-section,
-      body.print-shopping-list .upgrade-overview,
-      body.print-shopping-list .preview-panel,
-      body.print-shopping-list .guide-strategy,
-      body.print-shopping-list .guide-section.cuts,
-      body.print-shopping-list .guide-section.synergies,
-      body.print-shopping-list .guide-section.deck-stats,
-      body.print-shopping-list .guide-section.decklist,
-      body.print-shopping-list .filter-bar,
-      body.print-shopping-list footer {
-        display: none !important;
-      }
-
-      body.print-shopping-list .guide-section.adds {
-        display: block !important;
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
       }
 
       /* Prevent content from breaking across pages */
@@ -2610,117 +2768,9 @@
       }
     }
 
-    /* Shopping list - hidden by default */
-    .shopping-list-print {
-      display: none;
-    }
-
-    .adds-buttons {
+    .engine-buttons {
       display: flex;
       gap: 8px;
-    }
-
-    /* Print-specific shopping list styles */
-    @media print {
-      .shopping-list-print {
-        font-family: 'Source Sans 3', system-ui, sans-serif;
-        color: black;
-      }
-
-      .shopping-list-header {
-        text-align: center;
-        margin-bottom: 20pt;
-        padding-bottom: 10pt;
-        border-bottom: 2px solid #333;
-      }
-
-      .shopping-list-header h2 {
-        font-size: 18pt;
-        margin: 0 0 5pt;
-        color: black;
-      }
-
-      .shopping-list-meta {
-        font-size: 11pt;
-        color: #555;
-      }
-
-      .shopping-list-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 10pt;
-      }
-
-      .shopping-list-table th,
-      .shopping-list-table td {
-        padding: 6pt 8pt;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .shopping-list-table th {
-        font-weight: bold;
-        border-bottom: 2px solid #333;
-        background: #f5f5f5;
-      }
-
-      .shopping-list-table .checkbox-col {
-        width: 30pt;
-        text-align: center;
-      }
-
-      .shopping-list-table .checkbox-col::after {
-        content: "☐";
-        font-size: 14pt;
-      }
-
-      .shopping-list-table tbody tr td:first-child::after {
-        content: "☐";
-        font-size: 14pt;
-      }
-
-      .shopping-list-table .qty-col {
-        width: 40pt;
-        text-align: center;
-      }
-
-      .shopping-list-table .price-col {
-        width: 80pt;
-        text-align: right;
-      }
-
-      .shopping-list-table .card-col {
-        font-weight: 500;
-      }
-
-      .shopping-list-table tbody tr:nth-child(even) {
-        background: #fafafa;
-      }
-
-      .shopping-list-table .game-changer-row {
-        background: #fff8e1 !important;
-      }
-
-      .shopping-list-table .game-changer-row .card-col::before {
-        content: "★ ";
-        color: #f59e0b;
-      }
-
-      .shopping-list-table .total-row {
-        font-weight: bold;
-        border-top: 2px solid #333;
-      }
-
-      .shopping-list-table .total-row td {
-        padding-top: 10pt;
-      }
-
-      .shopping-list-footer {
-        margin-top: 20pt;
-        font-size: 8pt;
-        color: #888;
-        text-align: center;
-      }
     }
 
     /* === MOBILE FULL-SCREEN PREVIEW MODAL === */
@@ -3214,7 +3264,7 @@
 
     .playtest-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 0 20px rgba(157,78,221,0.3);
+      box-shadow: 0 0 20px var(--deck-accent-dim);
       z-index: 5;
     }
 
@@ -3225,12 +3275,13 @@
 
     .playtest-card.tapped:hover {
       transform: rotate(90deg) translateY(-8px);
-      box-shadow: 0 0 20px rgba(157,78,221,0.3);
+      box-shadow: 0 0 20px var(--deck-accent-dim);
     }
 
     .playtest-hand-cards .playtest-card {
       width: 100px;
       margin-right: -16px;
+      transition: margin 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s ease;
     }
 
     .playtest-hand-cards .playtest-card:last-child {
@@ -4011,70 +4062,81 @@
 
   <div class="container">
     <header>
-      <h1>MTG Commander Deck Guides</h1>
-      <p>Visual deck guides with card previews</p>
+      <h1>The Grimoire</h1>
+      <p>A planeswalker's personal deck companion</p>
     </header>
 
     <div class="view-toggle" id="view-toggle" role="tablist" aria-label="View selection">
       <button class="view-toggle-btn active" data-view="guide" role="tab" aria-selected="true" id="tab-guide">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-          <polyline points="10 9 9 9 8 9"></polyline>
+          <path d="M4 19.5A2.5 2.5 0 016.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"></path>
         </svg>
-        Commander Decks
+        Grimoire
       </button>
       <button class="view-toggle-btn disabled" data-view="playtest" role="tab" aria-selected="false" id="tab-playtest">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-          <rect x="2" y="2" width="20" height="20" rx="2"></rect>
-          <path d="M7 10h10M7 14h6"></path>
+          <path d="M14.5 17.5L3 6V1.5h4.5L19 13m-2.5 2.5L19 13m-2.5 2.5L14 18"></path>
+          <path d="M5 14l4 4"></path>
+          <path d="M21.5 21.5l-5-5"></path>
         </svg>
-        <span class="btn-label">Playtest</span>
+        <span class="btn-label">Battlefield</span>
       </button>
       <button class="view-toggle-btn disabled" data-view="analytics" role="tab" aria-selected="false" id="tab-analytics">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-          <line x1="18" y1="20" x2="18" y2="10"></line>
-          <line x1="12" y1="20" x2="12" y2="4"></line>
-          <line x1="6" y1="20" x2="6" y2="14"></line>
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="4"></circle>
+          <line x1="12" y1="2" x2="12" y2="6"></line>
+          <line x1="12" y1="18" x2="12" y2="22"></line>
+          <line x1="2" y1="12" x2="6" y2="12"></line>
+          <line x1="18" y1="12" x2="22" y2="12"></line>
         </svg>
-        Analytics
+        Scrying Pool
       </button>
     </div>
 
     <div class="selector-section">
-      <div class="selector-row">
-        <label for="precon-select">Select Deck:</label>
-        <select id="precon-select">
-          <option value="">Loading...</option>
-        </select>
+      <select id="deck-select" style="display:none;">
+        <option value="">Loading...</option>
+      </select>
+      <div class="deck-gallery" id="deck-gallery"></div>
+      <div class="selector-row" style="justify-content:flex-end;">
         <span class="search-hint" id="search-hint" role="button" tabindex="0" aria-label="Open card search"><kbd>⌘</kbd><kbd>K</kbd> Search</span>
       </div>
       <div class="commander-info" id="commander-info" style="display: none;">
-        <h2 id="commander-name"></h2>
-        <div class="alt-commander" id="alt-commander"></div>
-        <div class="bracket-visualization" id="bracket-visualization">
-          <div class="bracket-header">
-            <span class="bracket-label" id="bracket-label">Loading...</span>
-            <button class="bracket-info-icon" type="button" title="EDH power level brackets: 1=Exhibition (precon-level), 2=Core (focused), 3=Upgraded (optimized mana/synergy), 4=Optimized (high power), 5=cEDH (competitive)" aria-label="EDH power level brackets information">i</button>
+        <div class="commander-layout">
+          <div class="commander-card-col">
+            <div class="commander-cards" id="commander-cards">
+              <!-- Populated by JS with commander card images -->
+            </div>
           </div>
-          <div class="bracket-bar">
-            <div class="bracket-segment exhibition" data-bracket="1"></div>
-            <div class="bracket-segment core" data-bracket="2"></div>
-            <div class="bracket-segment upgraded" data-bracket="3"></div>
-            <div class="bracket-segment optimized" data-bracket="4"></div>
-            <div class="bracket-segment cedh" data-bracket="5"></div>
-            <div class="bracket-target-marker" id="bracket-target-marker"></div>
-            <div class="bracket-indicator current" id="bracket-current-indicator">▼ Current</div>
-            <div class="bracket-indicator target" id="bracket-target-indicator">▲ Target</div>
-          </div>
-          <div class="bracket-legend">
-            <span data-bracket="1">Exhibition</span>
-            <span data-bracket="2">Core</span>
-            <span data-bracket="3">Upgraded</span>
-            <span data-bracket="4">Optimized</span>
-            <span data-bracket="5">cEDH</span>
+          <div class="commander-meta-col">
+            <h2 id="commander-name"></h2>
+            <div class="alt-commander" id="alt-commander"></div>
+            <div class="bracket-visualization" id="bracket-visualization">
+              <div class="bracket-header">
+                <span class="bracket-label" id="bracket-label">Loading...</span>
+                <button class="bracket-info-icon" type="button" title="EDH power level brackets: 1=Exhibition (precon-level), 2=Core (focused), 3=Upgraded (optimized mana/synergy), 4=Optimized (high power), 5=cEDH (competitive)" aria-label="EDH power level brackets information">i</button>
+              </div>
+              <div class="bracket-bar">
+                <div class="bracket-segment exhibition" data-bracket="1"></div>
+                <div class="bracket-segment core" data-bracket="2"></div>
+                <div class="bracket-segment upgraded" data-bracket="3"></div>
+                <div class="bracket-segment optimized" data-bracket="4"></div>
+                <div class="bracket-segment cedh" data-bracket="5"></div>
+                <div class="bracket-target-marker" id="bracket-target-marker"></div>
+                <div class="bracket-indicator current" id="bracket-current-indicator">▼ Current</div>
+                <div class="bracket-indicator target" id="bracket-target-indicator">▲ Target</div>
+              </div>
+              <div class="bracket-legend">
+                <span data-bracket="1">Exhibition</span>
+                <span data-bracket="2">Core</span>
+                <span data-bracket="3">Upgraded</span>
+                <span data-bracket="4">Optimized</span>
+                <span data-bracket="5">cEDH</span>
+              </div>
+            </div>
+            <canvas id="deck-sigil" width="80" height="80" title="Deck sigil"></canvas>
           </div>
         </div>
         <div class="bracket-info-modal" id="bracket-info-modal" role="dialog" aria-modal="true" aria-label="Commander Bracket System">
@@ -4105,13 +4167,10 @@
             </div>
           </div>
         </div>
-        <div class="commander-cards" id="commander-cards">
-          <!-- Populated by JS with commander card images -->
-        </div>
       </div>
     </div>
 
-    <div class="upgrade-overview" id="upgrade-overview" style="display: none;">
+    <div class="deck-overview" id="deck-overview" style="display: none;">
       <div class="overview-top">
         <button class="share-btn" id="share-btn" aria-label="Share this build" style="position: relative;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -4159,20 +4218,11 @@
             </div>
           </div>
 
-          <section class="guide-section adds" aria-labelledby="adds-header">
-            <div class="adds-section-header">
-              <h2 class="guide-section-title" id="adds-header">What We're Adding</h2>
-              <div class="adds-buttons">
-                <button class="export-btn" id="print-shopping-btn" aria-label="Print shopping list">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
-                    <rect x="9" y="3" width="6" height="4" rx="1"></rect>
-                    <path d="M9 12h6"></path>
-                    <path d="M9 16h6"></path>
-                  </svg>
-                  Shopping List
-                </button>
-              <button class="export-btn" id="export-adds-btn" aria-label="Export list for Cardmarket">
+          <section class="guide-section deck-engine" aria-labelledby="engine-header">
+            <div class="engine-section-header">
+              <h2 class="guide-section-title" id="engine-header">Deck Engine</h2>
+              <div class="engine-buttons">
+              <button class="export-btn" id="export-engine-btn" aria-label="Export list for Cardmarket">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
                   <polyline points="7 10 12 15 17 10"></polyline>
@@ -4182,35 +4232,7 @@
               </button>
               </div>
             </div>
-            <!-- Print-only Shopping List -->
-            <div class="shopping-list-print" id="shopping-list-print">
-              <div class="shopping-list-header">
-                <h2>Shopping List</h2>
-                <div class="shopping-list-meta">
-                  <span id="shopping-list-deck"></span>
-                </div>
-              </div>
-              <table class="shopping-list-table">
-                <thead>
-                  <tr>
-                    <th class="checkbox-col"></th>
-                    <th class="card-col">Card Name</th>
-                    <th class="qty-col">Qty</th>
-                    <th class="price-col">Est. Price</th>
                   </tr>
-                </thead>
-                <tbody id="shopping-list-body"></tbody>
-                <tfoot>
-                  <tr class="total-row">
-                    <td colspan="3">Estimated Total:</td>
-                    <td id="shopping-list-total"></td>
-                  </tr>
-                </tfoot>
-              </table>
-              <div class="shopping-list-footer">
-                <p>Generated from MTG Commander Deck Guide</p>
-              </div>
-            </div>
             <div class="loading-placeholder" id="add-groups-skeleton">
               <div class="card-groups">
                 <div class="skeleton-card-group">
@@ -4228,34 +4250,6 @@
             <div class="card-groups loaded-content" id="add-groups"></div>
           </section>
 
-          <section class="guide-section cuts" aria-labelledby="cuts-header">
-            <div class="cuts-section-header">
-              <h2 class="guide-section-title" id="cuts-header">Why We're Cutting</h2>
-              <button class="export-btn" id="export-cuts-btn" aria-label="Export cuts list">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Export Cuts
-              </button>
-            </div>
-            <div class="loading-placeholder" id="cut-groups-skeleton">
-              <div class="card-groups">
-                <div class="skeleton-card-group">
-                  <div class="skeleton skeleton-title"></div>
-                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
-                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
-                </div>
-                <div class="skeleton-card-group">
-                  <div class="skeleton skeleton-title"></div>
-                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
-                  <div class="skeleton-card"><div class="skeleton skeleton-card-image"></div><div class="skeleton-card-info"><div class="skeleton skeleton-card-name"></div><div class="skeleton skeleton-card-reason"></div></div></div>
-                </div>
-              </div>
-            </div>
-            <div class="card-groups loaded-content" id="cut-groups"></div>
-          </section>
 
           <section class="guide-section synergies" aria-labelledby="synergies-header">
             <div class="synergies-header">
@@ -4285,6 +4279,24 @@
               </div>
             </div>
             <div class="synergies-list loaded-content" id="synergies-list"></div>
+            <div class="synergy-map-toggle">
+              <button class="export-btn" id="synergy-map-btn" aria-label="Toggle constellation map">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="2"></circle>
+                  <circle cx="5" cy="5" r="1.5"></circle>
+                  <circle cx="19" cy="5" r="1.5"></circle>
+                  <circle cx="5" cy="19" r="1.5"></circle>
+                  <circle cx="19" cy="19" r="1.5"></circle>
+                  <line x1="12" y1="12" x2="5" y2="5" opacity="0.3"></line>
+                  <line x1="12" y1="12" x2="19" y2="5" opacity="0.3"></line>
+                  <line x1="12" y1="12" x2="5" y2="19" opacity="0.3"></line>
+                </svg>
+                Constellation
+              </button>
+            </div>
+            <div id="synergy-constellation" style="display:none;">
+              <svg id="synergy-svg" width="100%" height="500" viewBox="0 0 800 500"></svg>
+            </div>
           </section>
 
           <section class="guide-section deck-stats" id="deck-stats-section" aria-labelledby="stats-header">
@@ -4334,7 +4346,18 @@
 
           <section class="guide-section decklist" id="decklist-section" aria-labelledby="decklist-header">
             <div class="decklist-header">
-              <h2 class="guide-section-title" id="decklist-header">Full Upgraded Deck List <span class="count" id="decklist-count">100</span></h2>
+              <h2 class="guide-section-title" id="decklist-header">Full Deck List <span class="count" id="decklist-count">100</span></h2>
+              <div class="export-buttons">
+                <button class="export-btn" id="decklist-view-toggle" aria-label="Toggle card gallery view" title="Toggle gallery view">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                  </svg>
+                  Gallery
+                </button>
+              </div>
               <div class="export-buttons">
                 <button class="export-btn" id="print-btn" aria-label="Print deck list">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -4401,10 +4424,6 @@
                   <option value="cmc">By CMC</option>
                 </select>
               </div>
-              <label class="filter-checkbox">
-                <input type="checkbox" id="filter-added-only">
-                Added Only
-              </label>
               <div class="filter-group">
                 <span class="filter-label">Role</span>
                 <div class="filter-chips" id="filter-category-chips" role="group" aria-label="Filter by deck role">
@@ -4451,6 +4470,7 @@
               </div>
             </div>
             <div class="decklist-content loaded-content" id="decklist-content"></div>
+            <div class="decklist-gallery loaded-content" id="decklist-gallery" style="display:none;"></div>
           </section>
         </div>
 
@@ -4570,17 +4590,16 @@
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        <h3>No Simulation Data</h3>
-        <p>Mana simulation data has not been generated for this deck yet.</p>
+        <h3>The Scrying Pool Is Still</h3>
+        <p>Select a deck to gaze into its depths.</p>
       </div>
     </div>
 
-    <div class="loading" id="loading">Loading deck data...</div>
+    <div class="loading" id="loading">Consulting the Grimoire...</div>
     <div class="error" id="error" style="display: none;"></div>
 
     <footer>
       <p>Card images and data provided by <a href="https://scryfall.com" target="_blank">Scryfall</a></p>
-      <p>To add more precons, create a folder in <code>data/precons/</code> and add entry to <code>data/index.json</code></p>
     </footer>
   </div>
 
@@ -4605,17 +4624,6 @@
       };
     }
 
-    // Privacy-respecting analytics tracking
-    function trackEvent(eventName, props = {}) {
-      // Plausible Analytics - only tracks if script is loaded
-      if (typeof window.plausible === 'function') {
-        window.plausible(eventName, { props });
-      }
-      // Also log in dev mode for debugging
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        console.log('[Analytics]', eventName, props);
-      }
-    }
 
     // === SECURITY: HTML ESCAPING ===
     function escapeHtml(str) {
@@ -4652,20 +4660,6 @@
       return icons[type] || icons['other'];
     }
 
-    function renderSourceIndicator(sources) {
-      if (!sources || sources.length === 0) return '';
-      const primarySource = sources[0];
-      const icon = getSourceTypeIcon(primarySource.type);
-      const tooltipItems = sources.map(s => {
-        const nameHtml = s.url
-          ? `<a href="${sanitizeUrl(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.name)}</a>`
-          : escapeHtml(s.name);
-        const detailHtml = s.detail ? ` <span class="tier-source-detail">${escapeHtml(s.detail)}</span>` : '';
-        return `<div class="source-tooltip-item">${getSourceTypeIcon(s.type)} ${nameHtml}${detailHtml}</div>`;
-      }).join('');
-      return `<span class="source-indicator" tabindex="0" role="button" aria-label="View sources"><span style="display:inline-flex">${icon}</span><div class="source-tooltip">${tooltipItems}</div></span>`;
-    }
-
     function renderTierSources(upgrade) {
       const section = document.getElementById('tier-sources-section');
       const list = document.getElementById('tier-sources-list');
@@ -4673,7 +4667,7 @@
 
       const allSources = [];
       if (upgrade.sources) allSources.push(...upgrade.sources);
-      if (upgrade.adds) upgrade.adds.forEach(a => { if (a.sources) allSources.push(...a.sources); });
+      if (upgrade.highlights) upgrade.highlights.forEach(a => { if (a.sources) allSources.push(...a.sources); });
       if (upgrade.synergies) upgrade.synergies.forEach(s => { if (s.sources) allSources.push(...s.sources); });
 
       const seen = new Set();
@@ -4763,10 +4757,10 @@
     }
 
     // === STATE ===
-    let preconIndex = null;  // Lightweight manifest
-    let loadedPrecons = {};  // Cache of full precon data
-    let currentPrecon = null;
-    let currentPreconId = null;
+    let deckIndex = null;  // Lightweight manifest
+    let loadedDecks = {};  // Cache of full deck data
+    let currentDeck = null;
+    let currentDeckId = null;
     let synergyGraph = new Map(); // For interactive synergy explorer
     let currentHoveredCard = null;
     const selectedCards = new Set();
@@ -4867,20 +4861,30 @@
     }
 
     function renderBracketVisualization() {
-      if (!currentPrecon) return;
+      if (!currentDeck) return;
 
-      const target = parseBracket(currentPrecon.bracket || '3');
+      const target = parseBracket(currentDeck.bracket || '3');
 
       // Update label
       const bracketLabel = document.getElementById('bracket-label');
       const targetName = BRACKET_CONFIG[target.max]?.name || 'Unknown';
       bracketLabel.textContent = `Bracket ${target.max}: ${targetName}`;
 
-      // Update segment filled states (filled if bracket <= target.max)
+      // Animate bracket bar fill left-to-right
+      const bracketBar = document.querySelector('.bracket-bar');
+      bracketBar.classList.add('bracket-animating');
       document.querySelectorAll('.bracket-segment').forEach(segment => {
+        segment.classList.remove('animate-fill');
         const bracket = parseInt(segment.dataset.bracket, 10);
         segment.classList.toggle('filled', bracket <= target.max);
       });
+      // Trigger reflow, then add animation class
+      void bracketBar.offsetWidth;
+      document.querySelectorAll('.bracket-segment').forEach(segment => {
+        segment.classList.add('animate-fill');
+      });
+      // Remove animating class after animation completes
+      setTimeout(() => bracketBar.classList.remove('bracket-animating'), 600);
 
       // Update legend active states
       document.querySelectorAll('.bracket-legend span').forEach(span => {
@@ -5078,15 +5082,6 @@
       });
     }
 
-    function initializeGuideThumbnailTilt() {
-      cleanupTiltEffects('.guide-card-image');
-      document.querySelectorAll('.guide-card-image').forEach(img => {
-        if (!img._tiltInitialized) {
-          initializeTiltEffect(img, { maxTilt: 8, scale: 1.08, glare: false });
-          img._tiltInitialized = true;
-        }
-      });
-    }
 
     // === DECK STATISTICS ===
     const CATEGORY_CONFIG = [
@@ -5268,12 +5263,12 @@
     }
 
     function renderDeckStats() {
-      if (!currentPrecon) return;
+      if (!currentDeck) return;
 
       const statsSection = document.getElementById('deck-stats-section');
       if (!statsSection) return;
 
-      const deckCards = (currentPrecon.decklist || []).map(card => ({ name: card.name, quantity: card.quantity || 1 }));
+      const deckCards = (currentDeck.decklist || []).map(card => ({ name: card.name, quantity: card.quantity || 1 }));
 
       // Calculate stats
       const stats = calculateDeckStats(deckCards);
@@ -5424,12 +5419,12 @@
     const RATE_LIMIT_DELAY = 100; // 100ms between requests (10 per second)
 
     // === DOM ELEMENTS ===
-    const preconSelect = document.getElementById('precon-select');
+    const deckSelect = document.getElementById('deck-select');
     const commanderInfo = document.getElementById('commander-info');
     const commanderName = document.getElementById('commander-name');
     const altCommander = document.getElementById('alt-commander');
     const commanderCards = document.getElementById('commander-cards');
-    const upgradeOverview = document.getElementById('upgrade-overview');
+    const upgradeOverview = document.getElementById('deck-overview');
     const mainContent = document.getElementById('main-content');
     const summaryCost = document.getElementById('summary-cost');
     const summaryChangers = document.getElementById('summary-changers');
@@ -5439,7 +5434,6 @@
     const error = document.getElementById('error');
     const guideView = document.getElementById('guide-view');
     const guideStrategy = document.getElementById('guide-strategy');
-    const cutGroups = document.getElementById('cut-groups');
     const addGroups = document.getElementById('add-groups');
     const synergiesList = document.getElementById('synergies-list');
     const decklistContent = document.getElementById('decklist-content');
@@ -5452,53 +5446,40 @@
     function setupDelegatedListeners() {
       const mainContent = document.getElementById('main-content');
 
-      // --- Guide cards (adds + cuts) ---
-      [addGroups, cutGroups].forEach(container => {
-        container.addEventListener('mouseover', (e) => {
+      // --- Guide cards ---
+      addGroups.addEventListener('mouseover', (e) => {
+        const card = e.target.closest('.guide-card');
+        if (card && card !== lastHoveredGuideCard) {
+          lastHoveredGuideCard = card;
+          showCardPreview(card.dataset.cardName);
+        }
+      });
+      addGroups.addEventListener('mouseout', (e) => {
+        const card = e.target.closest('.guide-card');
+        if (card === lastHoveredGuideCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+          lastHoveredGuideCard = null;
+        }
+      });
+      addGroups.addEventListener('click', (e) => {
+        const card = e.target.closest('.guide-card');
+        if (card && !e.target.closest('a')) {
+          showCardPreview(card.dataset.cardName);
+          if (exploreModeActive && synergyGraph.has(card.dataset.cardName)) {
+            highlightSynergyCards(card.dataset.cardName);
+          }
+        }
+      });
+      addGroups.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
           const card = e.target.closest('.guide-card');
-          const sub = e.target.closest('.card-substitute-name');
-          if (sub) {
-            showCardPreview(sub.dataset.cardName);
-            return;
-          }
-          if (card && card !== lastHoveredGuideCard) {
-            lastHoveredGuideCard = card;
-            showCardPreview(card.dataset.cardName);
-          }
-        });
-        container.addEventListener('mouseout', (e) => {
-          const card = e.target.closest('.guide-card');
-          if (card === lastHoveredGuideCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
-            lastHoveredGuideCard = null;
-          }
-        });
-        container.addEventListener('click', (e) => {
-          const sub = e.target.closest('.card-substitute-name');
-          if (sub) {
-            e.stopPropagation();
-            showCardPreview(sub.dataset.cardName);
-            return;
-          }
-          const card = e.target.closest('.guide-card');
-          if (card && !e.target.closest('a')) {
+          if (card) {
+            e.preventDefault();
             showCardPreview(card.dataset.cardName);
             if (exploreModeActive && synergyGraph.has(card.dataset.cardName)) {
               highlightSynergyCards(card.dataset.cardName);
             }
           }
-        });
-        container.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            const card = e.target.closest('.guide-card');
-            if (card) {
-              e.preventDefault();
-              showCardPreview(card.dataset.cardName);
-              if (exploreModeActive && synergyGraph.has(card.dataset.cardName)) {
-                highlightSynergyCards(card.dataset.cardName);
-              }
-            }
-          }
-        });
+        }
       });
 
       // --- Decklist cards ---
@@ -5529,6 +5510,35 @@
       decklistContent.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           const card = e.target.closest('.decklist-card');
+          if (card) {
+            e.preventDefault();
+            showCardPreview(card.dataset.cardName);
+          }
+        }
+      });
+
+      // --- Decklist gallery cards ---
+      const galleryEl = document.getElementById('decklist-gallery');
+      galleryEl.addEventListener('mouseover', (e) => {
+        const card = e.target.closest('.decklist-gallery-card');
+        if (card && card !== lastHoveredDeckCard) {
+          lastHoveredDeckCard = card;
+          showCardPreview(card.dataset.cardName);
+        }
+      });
+      galleryEl.addEventListener('mouseout', (e) => {
+        const card = e.target.closest('.decklist-gallery-card');
+        if (card === lastHoveredDeckCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+          lastHoveredDeckCard = null;
+        }
+      });
+      galleryEl.addEventListener('click', (e) => {
+        const card = e.target.closest('.decklist-gallery-card');
+        if (card) showCardPreview(card.dataset.cardName);
+      });
+      galleryEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const card = e.target.closest('.decklist-gallery-card');
           if (card) {
             e.preventDefault();
             showCardPreview(card.dataset.cardName);
@@ -5706,79 +5716,90 @@
       });
     }
 
-    function renderReasonText(reason) {
-      if (!reason) return '';
-      // Pass 1: Find "CardName ({mana})" patterns — link card name + render mana as SVGs
-      const cardManaRegex = /([A-Z][a-zA-Z'''\u2019\-]+(?:\s+[a-zA-Z'''\u2019\-]+)*)\s*\((\{[WUBRGCXS0-9\/]+\}(?:\{[WUBRGCXS0-9\/]+\})*)\)/g;
-      let result = '';
-      let lastIndex = 0;
-      let match;
-      while ((match = cardManaRegex.exec(reason)) !== null) {
-        // Escape text before this match
-        result += escapeHtml(reason.slice(lastIndex, match.index));
-        const cardName = match[1];
-        const manaCost = match[2];
-        const url = getCardmarketUrl(cardName);
-        result += `<a class="reason-card-link" href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(cardName)}</a> (${renderManaCost(manaCost)})`;
-        lastIndex = match.index + match[0].length;
-      }
-      result += escapeHtml(reason.slice(lastIndex));
-      // Pass 2: Convert remaining standalone {X} mana symbols to SVGs
-      result = result.replace(/\{([WUBRGCXS0-9\/]+)\}/g, (m, symbol) => {
-        const svgUrl = `https://svgs.scryfall.io/card-symbols/${encodeURIComponent(symbol)}.svg`;
-        return `<img class="mana-symbol-img" src="${svgUrl}" alt="${symbol}" title="${symbol}">`;
-      });
-      return result;
-    }
-
-    // === PRECON LOADING ===
-    async function loadPreconIndex() {
+    // === DECK LOADING ===
+    async function loadDeckIndex() {
       try {
         const response = await fetch('data/index.json');
-        if (!response.ok) throw new Error('Failed to load precon index');
-        preconIndex = await response.json();
+        if (!response.ok) throw new Error('Failed to load deck index');
+        deckIndex = await response.json();
 
         loading.style.display = 'none';
-        populatePreconSelector();
+        populateDeckSelector();
       } catch (err) {
         loading.style.display = 'none';
         error.style.display = 'block';
-        error.textContent = `Error loading precon index: ${err.message}. Make sure you're running a local server (e.g., python -m http.server 8000)`;
+        error.textContent = `Error loading deck index: ${err.message}. Make sure you're running a local server (e.g., python -m http.server 8000)`;
       }
     }
 
-    async function loadPreconData(preconId) {
-      if (loadedPrecons[preconId]) {
-        return loadedPrecons[preconId];  // Return cached
+    async function loadDeckData(deckId) {
+      if (loadedDecks[deckId]) {
+        return loadedDecks[deckId];  // Return cached
       }
 
-      const response = await fetch(`data/commanders/${preconId}/deck.json`);
-      if (!response.ok) throw new Error(`Failed to load ${preconId}`);
+      const response = await fetch(`data/commanders/${deckId}/deck.json`);
+      if (!response.ok) throw new Error(`Failed to load ${deckId}`);
       const data = await response.json();
-      loadedPrecons[preconId] = data;  // Cache it
+      loadedDecks[deckId] = data;  // Cache it
       return data;
     }
 
-    function populatePreconSelector() {
-      preconSelect.innerHTML = '<option value="">-- Select a Deck --</option>';
+    function populateDeckSelector() {
+      deckSelect.innerHTML = '<option value="">-- Select a Deck --</option>';
 
-      (preconIndex.commanders || []).forEach(cmd => {
+      const allDecks = deckIndex.commanders || [];
+      allDecks.forEach(cmd => {
         const option = document.createElement('option');
         option.value = cmd.id;
         option.textContent = cmd.name;
-        preconSelect.appendChild(option);
+        deckSelect.appendChild(option);
+      });
+
+      // Render visual deck gallery
+      const gallery = document.getElementById('deck-gallery');
+      gallery.innerHTML = allDecks.map(cmd => {
+        const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cmd.commander)}&version=art_crop`;
+        const colorPips = (cmd.colors || []).map(c =>
+          `<div class="deck-gallery-pip pip-${escapeHtml(c)}"></div>`
+        ).join('');
+        return `
+          <div class="deck-gallery-card" data-deck-id="${escapeHtml(cmd.id)}" tabindex="0" role="button" aria-label="Select ${escapeHtml(cmd.name)}">
+            <img class="deck-gallery-art" src="${artUrl}" alt="${escapeHtml(cmd.commander)}" loading="lazy" />
+            <div class="deck-gallery-info">
+              <div class="deck-gallery-name">${escapeHtml(cmd.name)}</div>
+              <div class="deck-gallery-subtitle">${escapeHtml(cmd.theme || '')}</div>
+              <div class="deck-gallery-meta">
+                <div class="deck-gallery-colors">${colorPips}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Gallery click handlers
+      gallery.querySelectorAll('.deck-gallery-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const id = card.dataset.deckId;
+          deckSelect.value = id;
+          selectDeck(id);
+        });
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            card.click();
+          }
+        });
       });
 
       // Auto-select if only one deck exists
-      const allDecks = preconIndex.commanders || [];
       if (allDecks.length === 1) {
-        preconSelect.value = allDecks[0].id;
-        selectPrecon(allDecks[0].id);
+        deckSelect.value = allDecks[0].id;
+        selectDeck(allDecks[0].id);
       }
     }
 
-    async function selectPrecon(preconId) {
-      if (!preconId) {
+    async function selectDeck(deckId) {
+      if (!deckId) {
         // Handle empty selection
         commanderInfo.style.display = 'none';
         upgradeOverview.style.display = 'none';
@@ -5793,31 +5814,63 @@
 
         // Show loading state while fetching
         loading.style.display = 'block';
-        loading.textContent = 'Loading deck data...';
+        loading.textContent = 'Consulting the Grimoire...';
 
-        currentPreconId = preconId;
+        currentDeckId = deckId;
         clearSelection();
-        currentPrecon = await loadPreconData(preconId);
+        currentDeck = await loadDeckData(deckId);
 
         document.body.classList.add('commander-deck');
 
+        // Apply per-deck color identity theming
+        document.body.className = document.body.className.replace(/\bcolors-\S+/g, '');
+        const deckMeta = (deckIndex.commanders || []).find(d => d.id === deckId);
+        if (deckMeta?.colors) {
+          document.body.classList.add('colors-' + deckMeta.colors.sort().join(''));
+        }
+
+        // Set commander art as blurred background
+        const effectiveCmd = getEffectiveCommander();
+        const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(effectiveCmd)}&version=art_crop`;
+        let bgEl = document.getElementById('commander-bg');
+        if (!bgEl) {
+          bgEl = document.createElement('div');
+          bgEl.id = 'commander-bg';
+          document.body.prepend(bgEl);
+        }
+        bgEl.style.backgroundImage = `url(${artUrl})`;
+        bgEl.classList.add('visible');
+
+        // Update gallery active state
+        document.querySelectorAll('.deck-gallery-card').forEach(card => {
+          card.classList.toggle('active', card.dataset.deckId === deckId);
+        });
+
         loading.style.display = 'none';
 
+        // Begin deck reveal sequence
+        document.body.classList.remove('deck-reveal');
+        void document.body.offsetWidth;
+        document.body.classList.add('deck-reveal');
+
         // Update commander info
-        commanderName.textContent = `Commander: ${getEffectiveCommander()}`;
+        commanderName.textContent = `Commander: ${effectiveCmd}`;
         altCommander.textContent = '';
         renderBracketVisualization();
         commanderInfo.style.display = 'block';
 
         // Render commander card images
         let commanderCardsHtml = '';
-        const effectiveCmd = getEffectiveCommander();
         const commanderImageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(effectiveCmd)}`;
         commanderCardsHtml += `<img class="commander-card-preview" src="${commanderImageUrl}" alt="${escapeHtml(effectiveCmd)}" loading="lazy" />`;
         commanderCards.innerHTML = commanderCardsHtml;
 
         // Initialize tilt effect after DOM is ready
         setTimeout(() => initializeCommanderTilt(), 0);
+
+        // Render deck sigil and start ambient art
+        renderDeckSigil();
+        startAmbientArt();
 
         // Update playtest tab state
         updatePlaytestTabState();
@@ -5837,10 +5890,15 @@
           renderContent();
         }
 
+        // Add cascade-in class to main content sections
+        mainContent.querySelectorAll('.guide-section, .sidebar-section').forEach(el => {
+          el.classList.add('cascade-in');
+        });
+
         // Update URL hash
         updateUrlHash();
         savePreferences();
-        announceStatus(`Loaded ${currentPrecon.name || preconId} deck guide`);
+        announceStatus(`Loaded ${currentDeck.name || deckId} deck guide`);
       } catch (err) {
         loading.style.display = 'none';
         error.style.display = 'block';
@@ -5855,13 +5913,13 @@
     }
 
     function renderDeckList() {
-      if (!currentPrecon) return;
+      if (!currentDeck) return;
 
-      if (!currentPrecon.decklist) return;
-      const addNames = new Set(currentPrecon.adds.map(c => c.name));
-      const deckList = currentPrecon.decklist.map(card => ({
+      if (!currentDeck.decklist) return;
+      const highlightNames = new Set(currentDeck.highlights.map(c => c.name));
+      const deckList = currentDeck.decklist.map(card => ({
         ...card,
-        isAdded: addNames.has(card.name)
+        isHighlighted: highlightNames.has(card.name)
       }));
 
       // Group by type
@@ -5912,7 +5970,7 @@
           html += `<div class="decklist-category">`;
           html += `<div class="decklist-category-title">${escapeHtml(type)}s (${categoryCount})</div>`;
           filteredCards.forEach(card => {
-            const addedClass = card.isAdded ? ' added' : '';
+            const addedClass = card.isHighlighted ? ' highlighted' : '';
             const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
             const cardmarketUrl = getCardmarketUrl(card.name);
             html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
@@ -5926,7 +5984,7 @@
         html += `<div class="decklist-category">`;
         html += `<div class="decklist-category-title">Other (${grouped['Other'].length})</div>`;
         grouped['Other'].forEach(card => {
-          const addedClass = card.isAdded ? ' added' : '';
+          const addedClass = card.isHighlighted ? ' highlighted' : '';
           const cardmarketUrl = getCardmarketUrl(card.name);
           html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
         });
@@ -5937,15 +5995,194 @@
       restoreCheckboxState();
     }
 
+    let decklistGalleryMode = false;
+
+    function renderDeckListGallery() {
+      if (!currentDeck || !currentDeck.decklist) return;
+      const highlightNames = new Set(currentDeck.highlights.map(c => c.name));
+      const galleryEl = document.getElementById('decklist-gallery');
+      const effCmd = getEffectiveCommander();
+
+      // Commander first, then all cards
+      const allCards = [
+        { name: effCmd, isHighlighted: false, isCommander: true },
+        ...currentDeck.decklist
+          .filter(c => c.name !== effCmd)
+          .map(c => ({ ...c, isHighlighted: highlightNames.has(c.name) }))
+      ];
+
+      galleryEl.innerHTML = allCards.map(card => {
+        const imgUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(card.name)}`;
+        const cls = card.isHighlighted ? ' highlighted' : '';
+        return `<div class="decklist-gallery-card${cls}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button">
+          <img src="${imgUrl}" alt="${escapeHtml(card.name)}" loading="lazy" />
+        </div>`;
+      }).join('');
+    }
+
+    function toggleDecklistView() {
+      decklistGalleryMode = !decklistGalleryMode;
+      const listEl = document.getElementById('decklist-content');
+      const galleryEl = document.getElementById('decklist-gallery');
+      const btn = document.getElementById('decklist-view-toggle');
+
+      if (decklistGalleryMode) {
+        listEl.style.display = 'none';
+        galleryEl.style.display = '';
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> List`;
+        renderDeckListGallery();
+      } else {
+        galleryEl.style.display = 'none';
+        listEl.style.display = '';
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg> Gallery`;
+      }
+    }
+
+    // Generative deck sigil — deterministic geometric symbol from deck data
+    function renderDeckSigil() {
+      const canvas = document.getElementById('deck-sigil');
+      if (!canvas || !currentDeck) return;
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const cx = size / 2;
+      const cy = size / 2;
+      ctx.clearRect(0, 0, size, size);
+
+      // Seed RNG from deck id
+      let seed = 0;
+      for (let i = 0; i < (currentDeck.id || '').length; i++) {
+        seed = ((seed << 5) - seed + currentDeck.id.charCodeAt(i)) | 0;
+      }
+      function seededRand() {
+        seed = (seed * 16807 + 0) % 2147483647;
+        return (seed & 0x7fffffff) / 2147483647;
+      }
+
+      // Derive properties from deck data
+      const deckMeta = (deckIndex.commanders || []).find(d => d.id === currentDeck.id);
+      const deckColorIds = deckMeta?.colors || ['C'];
+      const bracket = parseInt(currentDeck.bracket) || 3;
+      const deckSize = (currentDeck.decklist || []).length;
+      const creatureCount = (currentDeck.decklist || []).filter(c => c.type === 'Creature').length;
+      const landCount = (currentDeck.decklist || []).filter(c => c.type === 'Land').length;
+
+      // Color palette from deck identity
+      const colorMap = { C: '#a8b5c4', W: '#f9faf4', U: '#0e68ab', B: '#150b00', R: '#d3202a', G: '#00733e' };
+      const deckColors = deckColorIds.map(c => colorMap[c] || '#a8b5c4');
+      const accentColor = getComputedStyle(document.body).getPropertyValue('--deck-accent').trim() || '#9d4edd';
+
+      // Geometry: polygon sides from bracket (3-7)
+      const sides = bracket + 2;
+      const outerR = 48;
+      const innerR = outerR * (0.4 + creatureCount / deckSize * 0.4);
+
+      // Draw outer polygon
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      for (let i = 0; i <= sides; i++) {
+        const angle = (Math.PI * 2 * i / sides) - Math.PI / 2;
+        const x = cx + Math.cos(angle) * outerR;
+        const y = cy + Math.sin(angle) * outerR;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Draw inner star from vertices to center offset
+      ctx.globalAlpha = 0.4;
+      ctx.lineWidth = 1;
+      for (let i = 0; i < sides; i++) {
+        const angle = (Math.PI * 2 * i / sides) - Math.PI / 2;
+        const outerX = cx + Math.cos(angle) * outerR;
+        const outerY = cy + Math.sin(angle) * outerR;
+        const innerAngle = angle + Math.PI / sides;
+        const innerX = cx + Math.cos(innerAngle) * innerR;
+        const innerY = cy + Math.sin(innerAngle) * innerR;
+        ctx.beginPath();
+        ctx.moveTo(outerX, outerY);
+        ctx.lineTo(innerX, innerY);
+        ctx.stroke();
+
+        // Connect inner points
+        const nextAngle = innerAngle + Math.PI * 2 / sides;
+        const nextX = cx + Math.cos(nextAngle) * innerR;
+        const nextY = cy + Math.sin(nextAngle) * innerR;
+        ctx.beginPath();
+        ctx.moveTo(innerX, innerY);
+        ctx.lineTo(nextX, nextY);
+        ctx.stroke();
+      }
+
+      // Draw concentric rings based on land ratio
+      const rings = Math.max(1, Math.round(landCount / 10));
+      ctx.globalAlpha = 0.15;
+      for (let r = 1; r <= rings; r++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, outerR * (r / (rings + 1)), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw seed-based decorative dots
+      ctx.globalAlpha = 0.5;
+      const dotCount = Math.min(bracket * 3, 15);
+      for (let i = 0; i < dotCount; i++) {
+        const angle = seededRand() * Math.PI * 2;
+        const dist = seededRand() * outerR * 0.9;
+        const dotR = 1 + seededRand() * 2;
+        ctx.fillStyle = deckColors[Math.floor(seededRand() * deckColors.length)] || accentColor;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(angle) * dist, cy + Math.sin(angle) * dist, dotR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.globalAlpha = 1;
+    }
+
+    // Ambient card art crossfade — cycle highlight cards as faint background
+    let ambientInterval = null;
+    function startAmbientArt() {
+      stopAmbientArt();
+      if (!currentDeck?.highlights?.length) return;
+
+      let ambientEl = document.getElementById('ambient-art');
+      if (!ambientEl) {
+        ambientEl = document.createElement('div');
+        ambientEl.id = 'ambient-art';
+        document.body.prepend(ambientEl);
+      }
+
+      const cards = currentDeck.highlights
+        .slice(0, 8)
+        .map(c => c.name);
+      let idx = 0;
+
+      function cycle() {
+        if (!cards.length) return;
+        const cardName = cards[idx % cards.length];
+        const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cardName)}&version=art_crop`;
+        ambientEl.style.backgroundImage = `url(${artUrl})`;
+        ambientEl.classList.add('visible');
+        idx++;
+      }
+
+      cycle();
+      ambientInterval = setInterval(cycle, 15000);
+    }
+
+    function stopAmbientArt() {
+      if (ambientInterval) {
+        clearInterval(ambientInterval);
+        ambientInterval = null;
+      }
+      const el = document.getElementById('ambient-art');
+      if (el) el.classList.remove('visible');
+    }
+
     // === RENDER CONTENT ===
     async function renderContent() {
       await renderGuide();
-
-      // Track precon view
-      trackEvent('precon_view', {
-        precon: currentPreconId,
-        device: window.innerWidth < 768 ? 'mobile' : 'desktop'
-      });
 
       // Render deck statistics
       renderDeckStats();
@@ -5954,13 +6191,13 @@
       renderBracketVisualization();
 
       // Update summary stats
-      if (currentPrecon) {
-        summaryCost.textContent = currentPrecon.cost;
-        summaryChangers.textContent = currentPrecon.gameChangers;
+      if (currentDeck) {
+        summaryCost.textContent = currentDeck.cost;
+        summaryChangers.textContent = currentDeck.gameChangers;
       }
 
       // Apply any active filters
-      if (filterState.cmc !== 'all' || filterState.type !== 'all' || filterState.addedOnly || filterState.sort !== 'type') {
+      if (filterState.cmc !== 'all' || filterState.type !== 'all' || filterState.sort !== 'type') {
         applyFilters();
       }
 
@@ -5970,23 +6207,23 @@
 
     // === GUIDE VIEW RENDERING ===
     async function renderGuide() {
-      if (!currentPrecon) return;
+      if (!currentDeck) return;
 
       // Show loading state
       guideView.classList.add('is-loading');
 
-      const guideContent = currentPrecon.guideContent;
+      const guideContent = currentDeck.guideContent;
 
       // Collect all card names for pre-fetching metadata
       const allCardNames = new Set();
 
       // Collect from decklist
-      if (currentPrecon.decklist) {
-        currentPrecon.decklist.forEach(card => allCardNames.add(card.name));
+      if (currentDeck.decklist) {
+        currentDeck.decklist.forEach(card => allCardNames.add(card.name));
       }
 
       // Add cards from add categories
-      currentPrecon.addCategories.forEach(category => {
+      currentDeck.categories.forEach(category => {
         category.cards.forEach(cardName => allCardNames.add(cardName));
       });
 
@@ -5998,22 +6235,14 @@
 
       // Render strategy overview
       document.getElementById('strategy-content').textContent = guideContent.strategyOverview;
-      renderTierSources(currentPrecon);
+      renderTierSources(currentDeck);
 
       // Update section headers
-      const addsSection = document.querySelector('.guide-section.adds');
-      const shoppingBtn = document.getElementById('print-shopping-btn');
-      if (shoppingBtn) {
-        shoppingBtn.setAttribute('aria-label', 'Print full deck shopping list');
-      }
-
-      document.getElementById('adds-header').textContent = 'Deck Themes';
-      addsSection.setAttribute('aria-label', 'Deck themes section');
-      renderCommanderThemeGroups(currentPrecon.addCategories, currentPrecon.adds);
-      cutGroups.innerHTML = '';
-
+      document.getElementById('engine-header').textContent = 'Deck Engine';
+      document.querySelector('.guide-section.deck-engine')?.setAttribute('aria-label', 'Deck engine section');
+      renderCommanderThemeGroups(currentDeck.categories, currentDeck.highlights);
       // Render synergies
-      renderSynergies(currentPrecon.synergies);
+      renderSynergies(currentDeck.synergies);
 
       // Render full deck list
       renderDeckList();
@@ -6022,15 +6251,15 @@
       guideView.classList.remove('is-loading');
     }
 
-    function renderCommanderThemeGroups(categories, adds) {
-      const addsMap = new Map(adds.map(a => [a.name, a]));
+    function renderCommanderThemeGroups(categories, highlights) {
+      const highlightsMap = new Map(highlights.map(a => [a.name, a]));
       const categorizedCards = new Set();
 
       let html = categories.map(category => {
         category.cards.forEach(c => categorizedCards.add(c));
 
         const gameChangerCount = category.cards.filter(name => {
-          const cardData = addsMap.get(name);
+          const cardData = highlightsMap.get(name);
           return cardData?.isGameChanger;
         }).length;
 
@@ -6039,24 +6268,15 @@
           : '';
 
         const cardsHtml = category.cards.map(cardName => {
-          const cardData = addsMap.get(cardName);
+          const cardData = highlightsMap.get(cardName);
           const metadata = cardMetadataCache.get(cardName);
           const manaCost = metadata?.mana_cost || null;
-
-          if (cardData) {
-            return createGuideCardHtml(
-              cardName,
-              cardData.reason || '',
-              cardData.price || null,
-              cardData.isGameChanger || false,
-              true,
-              manaCost,
-              cardData.substitutes || null,
-              cardData.sources || null
-            );
-          } else {
-            return createGuideCardHtml(cardName, '', null, false, false, manaCost);
-          }
+          return createGuideCardHtml(
+            cardName,
+            cardData?.reason || '',
+            cardData?.isGameChanger || false,
+            manaCost
+          );
         }).join('');
 
         const descriptionHtml = category.description
@@ -6074,8 +6294,8 @@
         `;
       }).join('');
 
-      // Orphan safety net: cards in adds not in any category
-      const orphans = adds.filter(a => !categorizedCards.has(a.name));
+      // Orphan safety net: cards in highlights not in any category
+      const orphans = highlights.filter(a => !categorizedCards.has(a.name));
       if (orphans.length > 0) {
         const orphanCardsHtml = orphans.map(cardData => {
           const metadata = cardMetadataCache.get(cardData.name);
@@ -6083,12 +6303,8 @@
           return createGuideCardHtml(
             cardData.name,
             cardData.reason || '',
-            cardData.price || null,
             cardData.isGameChanger || false,
-            true,
-            manaCost,
-            cardData.substitutes || null,
-            cardData.sources || null
+            manaCost
           );
         }).join('');
 
@@ -6107,88 +6323,24 @@
       addGuideCardHoverEvents();
     }
 
-    function renderAddGroups(categories, adds) {
-      addGroups.innerHTML = categories.map(category => {
-        const cardsHtml = category.cards.map(cardName => {
-          const cardData = adds.find(c => c.name === cardName);
-          const metadata = cardMetadataCache.get(cardName);
-          const manaCost = metadata?.mana_cost || null;
-          return createGuideCardHtml(
-            cardName,
-            cardData?.reason || '',
-            cardData?.price || null,
-            cardData?.isGameChanger || false,
-            true, // isAdd = true for Cardmarket links
-            manaCost,
-            cardData?.substitutes || null,
-            cardData?.sources || null
-          );
-        }).join('');
 
-        const highlightClass = category.isHighlighted ? 'highlighted' : '';
-        const targetBracket = currentPrecon?.bracket || '3';
-        const starIcon = category.isHighlighted ? `<span class="game-changer-star" data-tooltip="Game Changers move deck to Bracket ${escapeHtml(targetBracket)}">★</span>` : '';
-        const gameChangerCount = category.cards?.filter(name => {
-          const cardData = adds.find(a => a.name === name);
-          return cardData?.isGameChanger;
-        }).length || 0;
-        const warningBadge = category.isHighlighted && gameChangerCount > 1
-          ? `<span class="game-changer-warning">${escapeHtml(String(gameChangerCount))} power cards</span>`
-          : '';
 
-        return `
-          <div class="card-group ${highlightClass}">
-            <div class="card-group-header">
-              <div class="card-group-name">${starIcon}${escapeHtml(category.name)}${warningBadge}</div>
-            </div>
-            ${cardsHtml}
-          </div>
-        `;
-      }).join('');
-
-      // Add hover events to guide cards
-      addGuideCardHoverEvents();
-    }
-
-    function createGuideCardHtml(cardName, reason, price, isGameChanger, isAdd = false, manaCost = null, substitutes = null, sources = null) {
+    function createGuideCardHtml(cardName, reason, isGameChanger, manaCost = null) {
       const encodedName = encodeURIComponent(cardName);
       const safeCardName = escapeHtml(cardName);
       const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedName}&version=small`;
-      const targetBracket = escapeHtml(currentPrecon?.bracket || '3');
+      const targetBracket = escapeHtml(currentDeck?.bracket || '3');
       const tooltipText = `Game Changer: Moves deck to Bracket ${targetBracket}`;
       const starHtml = isGameChanger ? `<span class="game-changer-star" data-tooltip="${tooltipText}" title="${tooltipText}">★</span>` : '';
-      const priceHtml = price ? `<div class="guide-card-price">${escapeHtml(price)}</div>` : '';
       const manaCostHtml = manaCost ? `<span class="mana-cost">${renderManaCost(manaCost)}</span>` : '';
-
-      // Wrap card name in Cardmarket link for adds
-      const cardNameHtml = isAdd
-        ? `<a href="${getCardmarketUrl(cardName)}" target="_blank" rel="noopener noreferrer">${safeCardName}</a>`
-        : safeCardName;
-
-      // Create substitute suggestion HTML
-      let substituteHtml = '';
-      if (substitutes && substitutes.length > 0) {
-        const sub = substitutes[0]; // Show first substitute
-        substituteHtml = `
-          <div class="card-substitute" title="${escapeHtml(sub.tradeoff)}">
-            <span class="card-substitute-label">Budget:</span>
-            <span class="card-substitute-name" data-card-name="${escapeHtml(sub.name)}">${escapeHtml(sub.name)}</span>
-            <span class="card-substitute-price">${escapeHtml(sub.price)}</span>
-          </div>
-        `;
-      }
-
-      const sourceHtml = renderSourceIndicator(sources);
+      const cardNameHtml = `<a href="${getCardmarketUrl(cardName)}" target="_blank" rel="noopener noreferrer">${safeCardName}</a>`;
+      const reasonAttr = reason ? ` title="${escapeHtml(reason)}"` : '';
 
       return `
-        <div class="guide-card" data-card-name="${safeCardName}" tabindex="0" role="button" aria-label="View ${safeCardName}">
+        <div class="guide-card" data-card-name="${safeCardName}" tabindex="0" role="button" aria-label="View ${safeCardName}"${reasonAttr}>
           <img class="guide-card-image" src="${imageUrl}" alt="${safeCardName}" loading="lazy" />
           <div class="guide-card-info">
             <div class="guide-card-name">${starHtml}${cardNameHtml}${manaCostHtml}</div>
-            <div class="guide-card-reason">${renderReasonText(reason)}</div>
-            ${priceHtml}
-            ${substituteHtml}
-            ${sourceHtml}
           </div>
         </div>
       `;
@@ -6258,13 +6410,11 @@
         const cardTags = synergy.cards.map(cardName =>
           `<span class="synergy-card-tag" data-card-name="${escapeHtml(cardName)}" tabindex="0" role="button" aria-label="View ${escapeHtml(cardName)}">${escapeHtml(cardName)}</span>`
         ).join('');
-        const sourceIndicator = synergy.sources ? renderSourceIndicator(synergy.sources) : '';
-
         return `
           <div class="synergy-item">
             <div class="synergy-title">${escapeHtml(synergy.title)}</div>
             <div class="synergy-cards">${cardTags}</div>
-            <div class="synergy-description">${escapeHtml(synergy.description)}${sourceIndicator}</div>
+            <div class="synergy-description">${escapeHtml(synergy.description)}</div>
           </div>
         `;
       }).join('');
@@ -6272,9 +6422,119 @@
     }
 
     function addGuideCardHoverEvents() {
-      // Initialize tilt effect for guide card thumbnails
       // Event delegation handles hover/click/keyboard — see setupDelegatedListeners()
-      initializeGuideThumbnailTilt();
+    }
+
+    // Synergy constellation map
+    let constellationVisible = false;
+
+    function renderConstellationMap() {
+      if (!currentDeck?.synergies?.length) return;
+      const svg = document.getElementById('synergy-svg');
+      if (!svg) return;
+
+      const W = 800, H = 500;
+      const synergies = currentDeck.synergies;
+
+      // Collect unique cards and edges
+      const cardSet = new Set();
+      const edges = [];
+      synergies.forEach(syn => {
+        syn.cards.forEach(c => cardSet.add(c));
+        for (let i = 0; i < syn.cards.length; i++) {
+          for (let j = i + 1; j < syn.cards.length; j++) {
+            edges.push([syn.cards[i], syn.cards[j]]);
+          }
+        }
+      });
+
+      const cards = Array.from(cardSet);
+      const accentColor = getComputedStyle(document.body).getPropertyValue('--deck-accent').trim() || '#9d4edd';
+
+      // Simple radial + jitter layout (no iterative simulation needed)
+      const nodes = {};
+      const centerX = W / 2, centerY = H / 2;
+      const radius = Math.min(W, H) * 0.38;
+
+      // Seed RNG from deck id for deterministic placement
+      let seed = 0;
+      for (let i = 0; i < (currentDeck.id || '').length; i++) {
+        seed = ((seed << 5) - seed + currentDeck.id.charCodeAt(i)) | 0;
+      }
+      function sRand() {
+        seed = (seed * 16807 + 0) % 2147483647;
+        return (seed & 0x7fffffff) / 2147483647;
+      }
+
+      cards.forEach((name, i) => {
+        const angle = (Math.PI * 2 * i / cards.length) - Math.PI / 2;
+        const jitterR = radius * (0.7 + sRand() * 0.3);
+        nodes[name] = {
+          x: centerX + Math.cos(angle) * jitterR,
+          y: centerY + Math.sin(angle) * jitterR,
+          name
+        };
+      });
+
+      // Build SVG
+      let svgContent = '';
+
+      // Edges
+      edges.forEach(([a, b]) => {
+        const na = nodes[a], nb = nodes[b];
+        if (na && nb) {
+          svgContent += `<line class="edge-line" data-from="${escapeHtml(a)}" data-to="${escapeHtml(b)}" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}" />`;
+        }
+      });
+
+      // Nodes
+      cards.forEach(name => {
+        const n = nodes[name];
+        const connectionCount = edges.filter(([a, b]) => a === name || b === name).length;
+        const r = Math.min(3 + connectionCount, 7);
+        svgContent += `<circle class="node-circle" data-card="${escapeHtml(name)}" cx="${n.x}" cy="${n.y}" r="${r}" fill="${accentColor}" opacity="0.7" />`;
+        svgContent += `<text class="node-label" x="${n.x}" y="${n.y - r - 3}" text-anchor="middle">${escapeHtml(name.length > 20 ? name.slice(0, 18) + '...' : name)}</text>`;
+      });
+
+      svg.innerHTML = svgContent;
+
+      // Hover interactions
+      svg.querySelectorAll('.node-circle').forEach(circle => {
+        circle.addEventListener('mouseenter', () => {
+          const cardName = circle.dataset.card;
+          // Highlight connected edges
+          svg.querySelectorAll('.edge-line').forEach(line => {
+            const isConnected = line.dataset.from === cardName || line.dataset.to === cardName;
+            line.classList.toggle('active', isConnected);
+          });
+          // Dim unconnected nodes
+          const connected = new Set([cardName]);
+          edges.forEach(([a, b]) => {
+            if (a === cardName) connected.add(b);
+            if (b === cardName) connected.add(a);
+          });
+          svg.querySelectorAll('.node-circle').forEach(n => {
+            n.classList.toggle('dimmed', !connected.has(n.dataset.card));
+          });
+          svg.querySelectorAll('.node-label').forEach(l => {
+            const labelCard = cards.find(c => l.textContent.startsWith(c.slice(0, 18)));
+            l.classList.toggle('dimmed', labelCard && !connected.has(labelCard));
+          });
+          // Also trigger card preview
+          showCardPreview(cardName);
+        });
+        circle.addEventListener('mouseleave', () => {
+          svg.querySelectorAll('.edge-line').forEach(l => l.classList.remove('active'));
+          svg.querySelectorAll('.node-circle, .node-label').forEach(n => n.classList.remove('dimmed'));
+        });
+      });
+    }
+
+    function toggleConstellationMap() {
+      constellationVisible = !constellationVisible;
+      const container = document.getElementById('synergy-constellation');
+      container.style.display = constellationVisible ? '' : 'none';
+      if (constellationVisible) renderConstellationMap();
     }
 
     // === CARD PREVIEW ===
@@ -6325,8 +6585,8 @@
 
     // === EVENT LISTENERS ===
 
-    preconSelect.addEventListener('change', (e) => {
-      selectPrecon(e.target.value);
+    deckSelect.addEventListener('change', (e) => {
+      selectDeck(e.target.value);
     });
 
     // Close preview on tap elsewhere (mobile)
@@ -6360,7 +6620,7 @@
     // === URL DEEP LINKING ===
     function parseUrlHash() {
       const hash = window.location.hash.slice(1);
-      if (!hash) return { precon: null };
+      if (!hash) return { deck: null };
 
       const params = {};
       hash.split('&').forEach(part => {
@@ -6371,18 +6631,18 @@
       });
 
       return {
-        precon: params.precon || null,
+        deck: params.deck || null,
         view: params.view || null
       };
     }
 
     function updateUrlHash() {
-      if (!currentPreconId) return;
+      if (!currentDeckId) return;
       let hash = '';
       if (currentView && currentView !== 'guide') {
         hash += `view=${encodeURIComponent(currentView)}&`;
       }
-      hash += `precon=${encodeURIComponent(currentPreconId)}`;
+      hash += `deck=${encodeURIComponent(currentDeckId)}`;
       history.replaceState(null, '', `#${hash}`);
     }
 
@@ -6391,15 +6651,14 @@
       cmc: 'all',
       type: 'all',
       sort: 'type',
-      addedOnly: false,
       category: 'all'
     };
 
     // === DECK EXPORT FUNCTIONS ===
     function generateDecklistExport(format) {
-      if (!currentPrecon) return '';
+      if (!currentDeck) return '';
 
-      let deckCards = (currentPrecon.decklist || []).map(card => ({
+      let deckCards = (currentDeck.decklist || []).map(card => ({
         name: card.name, quantity: card.quantity || 1
       }));
 
@@ -6468,17 +6727,10 @@
     }
 
     function generateAddsListExport() {
-      if (!currentPrecon) return '';
+      if (!currentDeck) return '';
 
       // Cardmarket format: one card per line, quantity prefix
-      return currentPrecon.adds.map(card => `1 ${card.name}`).join('\n');
-    }
-
-    function generateCutsListExport() {
-      if (!currentPrecon) return '';
-      const cuts = currentPrecon.cuts;
-      if (!cuts) return '';
-      return cuts.map(c => `${c.quantity || 1} ${c.name}`).join('\n');
+      return currentDeck.highlights.map(card => `1 ${card.name}`).join('\n');
     }
 
     function openMoxfieldImport(deckList) {
@@ -6514,7 +6766,7 @@
     }
 
     function updateSearchResults(query) {
-      if (!currentPrecon) return;
+      if (!currentDeck) return;
 
       const resultsContainer = document.getElementById('search-results');
 
@@ -6528,16 +6780,16 @@
       searchResults = [];
 
       // Search in adds / key cards
-      const addNames = new Set(currentPrecon.adds.map(c => c.name));
-      currentPrecon.adds.forEach(card => {
+      const highlightNames = new Set(currentDeck.highlights.map(c => c.name));
+      currentDeck.highlights.forEach(card => {
         if (card.name.toLowerCase().includes(queryLower)) {
           searchResults.push({ name: card.name, type: 'add' });
         }
       });
 
       // Search the full decklist (excluding already-matched adds)
-      (currentPrecon.decklist || []).forEach(card => {
-        if (!addNames.has(card.name) && card.name.toLowerCase().includes(queryLower)) {
+      (currentDeck.decklist || []).forEach(card => {
+        if (!highlightNames.has(card.name) && card.name.toLowerCase().includes(queryLower)) {
           searchResults.push({ name: card.name, type: 'deck' });
         }
       });
@@ -6548,35 +6800,19 @@
       }
 
       // Group results
-      const adds = searchResults.filter(r => r.type === 'add');
-      const cuts = searchResults.filter(r => r.type === 'cut');
+      const highlights = searchResults.filter(r => r.type === 'add');
       const deck = searchResults.filter(r => r.type === 'deck');
 
       let html = '';
-      const isCmd = currentPrecon?.type === 'commander';
 
-      if (adds.length > 0) {
-        const addGroupLabel = isCmd ? 'Deck Themes' : 'Added Cards';
-        html += `<div class="search-result-group" role="group" aria-label="${addGroupLabel}">`;
-        html += `<div class="search-result-group-title">${addGroupLabel}</div>`;
-        adds.forEach((result, i) => {
+      if (highlights.length > 0) {
+        html += `<div class="search-result-group" role="group" aria-label="Deck Engine">`;
+        html += `<div class="search-result-group-title">Deck Engine</div>`;
+        highlights.forEach((result, i) => {
           const highlighted = highlightMatch(result.name, query);
           html += `<div class="search-result" data-index="${searchResults.indexOf(result)}" data-card="${escapeHtml(result.name)}">
             <span class="search-result-name">${highlighted}</span>
-            <span class="search-result-tag add">${isCmd ? 'Theme' : 'Add'}</span>
-          </div>`;
-        });
-        html += '</div>';
-      }
-
-      if (cuts.length > 0) {
-        html += '<div class="search-result-group" role="group" aria-label="Cut Cards">';
-        html += '<div class="search-result-group-title">Cut Cards</div>';
-        cuts.forEach(result => {
-          const highlighted = highlightMatch(result.name, query);
-          html += `<div class="search-result" data-index="${searchResults.indexOf(result)}" data-card="${escapeHtml(result.name)}">
-            <span class="search-result-name">${highlighted}</span>
-            <span class="search-result-tag cut">Cut</span>
+            <span class="search-result-tag add">Key</span>
           </div>`;
         });
         html += '</div>';
@@ -6643,13 +6879,13 @@
 
     // === FILTER AND SORT DECK LIST ===
     function applyFilters() {
-      if (!currentPrecon) return;
+      if (!currentDeck) return;
 
-      if (!currentPrecon.decklist) return;
-      const addNames = new Set(currentPrecon.adds.map(c => c.name));
-      let deckList = currentPrecon.decklist.map(card => ({
+      if (!currentDeck.decklist) return;
+      const highlightNames = new Set(currentDeck.highlights.map(c => c.name));
+      let deckList = currentDeck.decklist.map(card => ({
         ...card,
-        isAdded: addNames.has(card.name)
+        isHighlighted: highlightNames.has(card.name)
       }));
 
       // Apply filters
@@ -6671,9 +6907,6 @@
           const typeLine = metadata?.type_line || '';
           if (!typeLine.includes(filterState.type) && !(card.type || '').includes(filterState.type)) return false;
         }
-
-        // Added only filter
-        if (filterState.addedOnly && !card.isAdded) return false;
 
         // Category filter
         if (filterState.category !== 'all') {
@@ -6741,7 +6974,7 @@
         let html = '';
 
         // Add Commander section first (only if not filtering)
-        if (!filterState.addedOnly && filterState.type === 'all' && filterState.cmc === 'all') {
+        if (filterState.type === 'all' && filterState.cmc === 'all') {
           html += `<div class="decklist-category">`;
           html += `<div class="decklist-category-title">Commander</div>`;
           html += `<div class="decklist-card commander" data-card-name="${escapeHtml(effCmdFiltered)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(effCmdFiltered)}"><a href="${getCardmarketUrl(effCmdFiltered)}" target="_blank" rel="noopener noreferrer">${escapeHtml(effCmdFiltered)}</a>${getMvDisplay(effCmdFiltered)}</div>`;
@@ -6760,7 +6993,7 @@
             html += `<div class="decklist-category">`;
             html += `<div class="decklist-category-title">${escapeHtml(type)}s (${categoryCount})</div>`;
             filteredCards.forEach(card => {
-              const addedClass = card.isAdded ? ' added' : '';
+              const addedClass = card.isHighlighted ? ' highlighted' : '';
               const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
               const cardmarketUrl = getCardmarketUrl(card.name);
               html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
@@ -6773,7 +7006,7 @@
           html += `<div class="decklist-category">`;
           html += `<div class="decklist-category-title">Other (${grouped['Other'].length})</div>`;
           grouped['Other'].forEach(card => {
-            const addedClass = card.isAdded ? ' added' : '';
+            const addedClass = card.isHighlighted ? ' highlighted' : '';
             const cardmarketUrl = getCardmarketUrl(card.name);
             html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
           });
@@ -6786,7 +7019,7 @@
         let html = '<div class="decklist-category">';
         cards.forEach(card => {
           if (commanderNames.has(card.name)) return;
-          const addedClass = card.isAdded ? ' added' : '';
+          const addedClass = card.isHighlighted ? ' highlighted' : '';
           const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
           const metadata = cardMetadataCache.get(card.name);
           const isLand = metadata && metadata.type_line && metadata.type_line.includes('Land');
@@ -6799,7 +7032,7 @@
 
       // Update count
       let totalCount = cards.reduce((sum, c) => sum + (c.quantity || 1), 0);
-      const showCommander = !filterState.addedOnly && filterState.type === 'all' && filterState.cmc === 'all';
+      const showCommander = filterState.type === 'all' && filterState.cmc === 'all';
       if (showCommander) totalCount += 1;
       decklistCount.textContent = totalCount;
 
@@ -6808,12 +7041,10 @@
     }
 
     function resetFilters() {
-      filterState = { cmc: 'all', type: 'all', sort: 'type', addedOnly: false, category: 'all' };
+      filterState = { cmc: 'all', type: 'all', sort: 'type', category: 'all' };
 
       document.getElementById('filter-cmc').value = 'all';
       document.getElementById('filter-sort').value = 'type';
-      document.getElementById('filter-added-only').checked = false;
-
       document.querySelectorAll('#filter-type-chips .filter-chip').forEach(chip => {
         chip.classList.toggle('active', chip.dataset.type === 'all');
         chip.setAttribute('aria-pressed', chip.dataset.type === 'all');
@@ -6829,14 +7060,14 @@
     // === LOCALSTORAGE PERSISTENCE ===
     function savePreferences() {
       const prefs = {
-        lastPrecon: currentPreconId,
+        lastDeck: currentDeckId,
         filters: filterState
       };
-      try { localStorage.setItem('mtg-upgrade-prefs', JSON.stringify(prefs)); } catch (e) { /* quota exceeded or private mode */ }
+      try { localStorage.setItem('grimoire-prefs', JSON.stringify(prefs)); } catch (e) { /* quota exceeded or private mode */ }
     }
 
     function loadPreferences() {
-      const stored = localStorage.getItem('mtg-upgrade-prefs');
+      const stored = localStorage.getItem('grimoire-prefs');
       if (!stored) return null;
 
       try {
@@ -6912,9 +7143,6 @@
         const format = e.currentTarget.dataset.format;
         const deckList = generateDecklistExport(format);
 
-        // Track export event
-        trackEvent('deck_export', { format, precon: currentPreconId });
-
         if (format === 'moxfield') {
           openMoxfieldImport(deckList);
         } else if (format === 'archidekt') {
@@ -6929,16 +7157,8 @@
 
 
     // Export adds list button
-    document.getElementById('export-adds-btn')?.addEventListener('click', async (e) => {
-      trackEvent('shopping_list_export', { precon: currentPreconId });
+    document.getElementById('export-engine-btn')?.addEventListener('click', async (e) => {
       const list = generateAddsListExport();
-      await copyToClipboard(list, e.currentTarget);
-    });
-
-    // Export cuts list button
-    document.getElementById('export-cuts-btn')?.addEventListener('click', async (e) => {
-      trackEvent('cuts_list_export', { precon: currentPreconId });
-      const list = generateCutsListExport();
       await copyToClipboard(list, e.currentTarget);
     });
 
@@ -6947,72 +7167,13 @@
       window.print();
     });
 
+    document.getElementById('decklist-view-toggle')?.addEventListener('click', toggleDecklistView);
+    document.getElementById('synergy-map-btn')?.addEventListener('click', toggleConstellationMap);
+
     // Selection controls
     document.getElementById('select-all-btn')?.addEventListener('click', () => selectAllVisible());
     document.getElementById('clear-selection-btn')?.addEventListener('click', () => clearSelection());
 
-    // Print Shopping List button
-    document.getElementById('print-shopping-btn')?.addEventListener('click', () => {
-      if (!currentPrecon) return;
-
-      // Populate shopping list metadata
-      document.getElementById('shopping-list-deck').textContent = currentPrecon.name;
-
-      // Generate shopping list rows (full decklist)
-      const tbody = document.getElementById('shopping-list-body');
-      let totalLow = 0;
-      let totalHigh = 0;
-
-      const shoppingCards = (currentPrecon.decklist || []).map(card => {
-        const addData = currentPrecon.adds.find(a => a.name === card.name);
-        return {
-          name: card.name,
-          price: addData?.price || null,
-          isGameChanger: addData?.isGameChanger || false
-        };
-      });
-
-      tbody.innerHTML = shoppingCards.map(card => {
-        const isGameChanger = card.isGameChanger || false;
-        const rowClass = isGameChanger ? 'game-changer-row' : '';
-
-        // Parse price range (e.g., "$50-80" -> {low: 50, high: 80})
-        let priceDisplay = card.price || '—';
-        if (card.price) {
-          const priceMatch = card.price.match(/\$?(\d+)(?:-(\d+))?/);
-          if (priceMatch) {
-            const low = parseInt(priceMatch[1], 10);
-            const high = priceMatch[2] ? parseInt(priceMatch[2], 10) : low;
-            totalLow += low;
-            totalHigh += high;
-          }
-        }
-
-        return `
-          <tr class="${rowClass}">
-            <td class="checkbox-col"></td>
-            <td class="card-col">${escapeHtml(card.name)}</td>
-            <td class="qty-col">1</td>
-            <td class="price-col">${escapeHtml(priceDisplay)}</td>
-          </tr>
-        `;
-      }).join('');
-
-      // Set total
-      const totalDisplay = totalLow === totalHigh
-        ? `$${totalLow}`
-        : `$${totalLow}-${totalHigh}`;
-      document.getElementById('shopping-list-total').textContent = totalDisplay;
-
-      // Add print class and print
-      document.body.classList.add('print-shopping-list');
-      window.print();
-
-      // Remove class after print dialog closes
-      setTimeout(() => {
-        document.body.classList.remove('print-shopping-list');
-      }, 100);
-    });
 
     // Filter controls
     document.getElementById('filter-cmc')?.addEventListener('change', (e) => {
@@ -7022,11 +7183,6 @@
 
     document.getElementById('filter-sort')?.addEventListener('change', (e) => {
       filterState.sort = e.target.value;
-      applyFilters();
-    });
-
-    document.getElementById('filter-added-only')?.addEventListener('change', (e) => {
-      filterState.addedOnly = e.target.checked;
       applyFilters();
     });
 
@@ -7070,13 +7226,11 @@
       synergiesSection?.classList.toggle('explore-mode-active', exploreModeActive);
 
       // Also toggle on cards sections for visual dimming
-      document.querySelector('.guide-section.adds')?.classList.toggle('explore-mode-active', exploreModeActive);
+      document.querySelector('.guide-section.deck-engine')?.classList.toggle('explore-mode-active', exploreModeActive);
 
       if (!exploreModeActive) {
         clearSynergyHighlights();
       }
-
-      trackEvent('explore_mode', { active: exploreModeActive, precon: currentPreconId });
     });
 
     // Clear highlights when clicking outside cards in explore mode
@@ -7091,11 +7245,11 @@
 
     // Share button
     document.getElementById('share-btn')?.addEventListener('click', async (e) => {
-      if (!currentPreconId) return;
+      if (!currentDeckId) return;
 
       // Build share URL
       const url = new URL(window.location.href);
-      url.hash = `precon=${encodeURIComponent(currentPreconId)}`;
+      url.hash = `deck=${encodeURIComponent(currentDeckId)}`;
 
       try {
         await navigator.clipboard.writeText(url.toString());
@@ -7105,9 +7259,6 @@
         const tooltip = document.getElementById('share-tooltip');
         btn.classList.add('success');
         tooltip.classList.add('visible');
-
-        // Track share event
-        trackEvent('share_build', { precon: currentPreconId });
 
         // Reset after delay
         setTimeout(() => {
@@ -7189,63 +7340,86 @@
       if (view === 'analytics' && document.getElementById('tab-analytics')?.classList.contains('disabled')) return;
       if (currentView === view) return;
 
-      currentView = view;
-      document.body.classList.toggle('playtest-mode', view === 'playtest');
-      const selectorSection = document.querySelector('.selector-section');
-      const upgradeOverview = document.getElementById('upgrade-overview');
-      const mainContent = document.getElementById('main-content');
-      const playtestView = document.getElementById('playtest-view');
-      const analyticsView = document.getElementById('analytics-view');
+      const container = document.querySelector('.container');
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // Update toggle buttons
-      document.querySelectorAll('.view-toggle-btn').forEach(btn => {
-        const isActive = btn.dataset.view === view;
-        btn.classList.toggle('active', isActive);
-        btn.setAttribute('aria-selected', String(isActive));
-      });
+      function doSwitch() {
+        currentView = view;
+        document.body.classList.toggle('playtest-mode', view === 'playtest');
+        const selectorSection = document.querySelector('.selector-section');
+        const upgradeOverview = document.getElementById('deck-overview');
+        const mainContent = document.getElementById('main-content');
+        const playtestView = document.getElementById('playtest-view');
+        const analyticsView = document.getElementById('analytics-view');
 
-      // Hide all views first
-      selectorSection.style.display = 'none';
-      upgradeOverview.style.display = 'none';
-      mainContent.style.display = 'none';
-      playtestView.style.display = 'none';
-      analyticsView.style.display = 'none';
+        // Update toggle buttons
+        document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+          const isActive = btn.dataset.view === view;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', String(isActive));
+        });
 
-      if (view === 'playtest') {
-        playtestView.style.display = 'block';
-        selectorSection.style.display = '';
-        if (currentPrecon) upgradeOverview.style.display = 'block';
-        if (!playtestActive) {
-          initPlaytest();
-        }
-        if (currentPreconId) {
-          history.replaceState(null, '', `#view=playtest&precon=${encodeURIComponent(currentPreconId)}`);
-        } else {
-          window.location.hash = 'view=playtest';
-        }
-      } else if (view === 'analytics') {
-        analyticsView.style.display = 'block';
-        selectorSection.style.display = '';
-        if (currentPrecon) upgradeOverview.style.display = 'block';
-        if (currentPreconId) {
-          renderAnalyticsView();
-        }
-        updateUrlHash();
-      } else {
-        // Guide view
-        selectorSection.style.display = '';
-        if (currentPrecon) {
-          upgradeOverview.style.display = '';
-          mainContent.style.display = '';
-        }
-        if (currentPreconId) {
+        // Hide all views first
+        selectorSection.style.display = 'none';
+        upgradeOverview.style.display = 'none';
+        mainContent.style.display = 'none';
+        playtestView.style.display = 'none';
+        analyticsView.style.display = 'none';
+
+        if (view === 'playtest') {
+          playtestView.style.display = 'block';
+          selectorSection.style.display = '';
+          if (currentDeck) upgradeOverview.style.display = 'block';
+          if (!playtestActive) {
+            initPlaytest();
+          }
+          if (currentDeckId) {
+            history.replaceState(null, '', `#view=playtest&deck=${encodeURIComponent(currentDeckId)}`);
+          } else {
+            window.location.hash = 'view=playtest';
+          }
+        } else if (view === 'analytics') {
+          analyticsView.style.display = 'block';
+          selectorSection.style.display = '';
+          if (currentDeck) upgradeOverview.style.display = 'block';
+          if (currentDeckId) {
+            renderAnalyticsView();
+          }
           updateUrlHash();
         } else {
-          window.location.hash = '';
+          // Guide view
+          selectorSection.style.display = '';
+          if (currentDeck) {
+            upgradeOverview.style.display = '';
+            mainContent.style.display = '';
+          }
+          if (currentDeckId) {
+            updateUrlHash();
+          } else {
+            window.location.hash = '';
+          }
+        }
+
+        // Fade in
+        if (!prefersReduced) {
+          container.style.opacity = '0';
+          container.style.transform = 'translateY(8px)';
+          void container.offsetWidth;
+          container.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+          container.style.opacity = '1';
+          container.style.transform = 'translateY(0)';
+          setTimeout(() => { container.style.transition = ''; }, 160);
         }
       }
 
-      trackEvent('switch_view', { view });
+      // Fade out current view, then switch
+      if (!prefersReduced) {
+        container.style.transition = 'opacity 0.12s ease';
+        container.style.opacity = '0';
+        setTimeout(doSwitch, 120);
+      } else {
+        doSwitch();
+      }
     }
 
     function initViewToggle() {
@@ -7273,7 +7447,8 @@
       cardsToBottom: 0,
       bottomSelected: [],
       cardIdCounter: 0,
-      deckCards: [] // full deck for stats
+      deckCards: [], // full deck for stats
+      prevBfIds: new Set() // track battlefield card IDs for drop animation
     };
 
     function playtestNextId() {
@@ -7310,15 +7485,15 @@
     }
 
     function getEffectiveCommander() {
-      return currentPrecon.commander;
+      return currentDeck.commander;
     }
 
     function buildPlaytestDeck() {
-      if (!currentPrecon) return [];
+      if (!currentDeck) return [];
       let rawCards = [];
 
-      if (currentPrecon.decklist) {
-        rawCards = currentPrecon.decklist.map(c => ({
+      if (currentDeck.decklist) {
+        rawCards = currentDeck.decklist.map(c => ({
           name: c.name,
           type: c.type || getCardType(c.name),
           quantity: c.quantity || 1
@@ -7355,15 +7530,15 @@
     }
 
     async function initPlaytest() {
-      if (!currentPrecon) return;
+      if (!currentDeck) return;
 
       playtestState.cardIdCounter = 0;
 
       // Prefetch metadata for all deck cards
       const allNames = new Set();
 
-      if (currentPrecon.decklist) {
-        currentPrecon.decklist.forEach(c => allNames.add(c.name));
+      if (currentDeck.decklist) {
+        currentDeck.decklist.forEach(c => allNames.add(c.name));
       }
       allNames.add(getEffectiveCommander());
 
@@ -7381,6 +7556,7 @@
       playtestState.bottomPhase = false;
       playtestState.cardsToBottom = 0;
       playtestState.bottomSelected = [];
+      playtestState.prevBfIds = new Set();
       playtestState.deckCards = [...playtestState.library];
 
       // Draw opening hand
@@ -7488,7 +7664,7 @@
     }
 
     function resetPlaytest() {
-      if (!currentPrecon) return;
+      if (!currentDeck) return;
       initPlaytest();
     }
 
@@ -7719,19 +7895,26 @@
         czCards.appendChild(createPlaytestCardEl(c, 'commandZone'));
       });
 
-      // Battlefield - split into lands and nonlands
+      // Battlefield - split into lands and nonlands, animate new entries
       const bfLands = document.getElementById('playtest-bf-lands');
       const bfNonlands = document.getElementById('playtest-bf-nonlands');
       bfLands.innerHTML = '';
       bfNonlands.innerHTML = '';
+      const currentBfIds = new Set();
       playtestState.battlefield.forEach(c => {
         const el = createPlaytestCardEl(c, 'battlefield');
+        currentBfIds.add(c.id);
+        if (!playtestState.prevBfIds.has(c.id)) {
+          el.classList.add('card-entering');
+          el.addEventListener('animationend', () => el.classList.remove('card-entering'), { once: true });
+        }
         if (isLandCard(c)) {
           bfLands.appendChild(el);
         } else {
           bfNonlands.appendChild(el);
         }
       });
+      playtestState.prevBfIds = currentBfIds;
 
       // Hand
       const handCards = document.getElementById('playtest-hand-cards');
@@ -7954,27 +8137,28 @@
       playtestState.mulliganCount = 0;
       playtestState.bottomPhase = false;
       playtestState.bottomSelected = [];
+      playtestState.prevBfIds = new Set();
       playtestState.deckCards = [];
       hidePlaytestPreview();
     }
 
     // === ANALYTICS / SIMULATION ===
-    async function loadSimulationData(preconId) {
-      if (simulationCache[preconId]) return simulationCache[preconId];
-      if (simulationCache[preconId] === null) return null; // cached 404
+    async function loadSimulationData(deckId) {
+      if (simulationCache[deckId]) return simulationCache[deckId];
+      if (simulationCache[deckId] === null) return null; // cached 404
 
       try {
-        const response = await fetch(`data/commanders/${preconId}/simulation.json`);
+        const response = await fetch(`data/commanders/${deckId}/simulation.json`);
         if (!response.ok) {
-          simulationCache[preconId] = null;
+          simulationCache[deckId] = null;
           return null;
         }
         const data = await response.json();
-        simulationCache[preconId] = data;
+        simulationCache[deckId] = data;
         return data;
       } catch (err) {
         console.error('Failed to load simulation data:', err);
-        simulationCache[preconId] = null;
+        simulationCache[deckId] = null;
         return null;
       }
     }
@@ -7991,12 +8175,12 @@
       noDataEl.style.display = 'none';
       contentEl.innerHTML = '';
 
-      if (!currentPreconId || !currentPrecon) {
+      if (!currentDeckId || !currentDeck) {
         noDeckEl.style.display = '';
         return;
       }
 
-      const simData = await loadSimulationData(currentPreconId);
+      const simData = await loadSimulationData(currentDeckId);
 
       // Stale-response guard
       if (renderVersion !== analyticsRenderVersion) return;
@@ -8374,11 +8558,11 @@
     function updatePlaytestTabState() {
       const tab = document.getElementById('tab-playtest');
       if (tab) {
-        tab.classList.toggle('disabled', !currentPrecon);
+        tab.classList.toggle('disabled', !currentDeck);
       }
       const analyticsTab = document.getElementById('tab-analytics');
       if (analyticsTab) {
-        analyticsTab.classList.toggle('disabled', !currentPrecon);
+        analyticsTab.classList.toggle('disabled', !currentDeck);
       }
     }
 
@@ -8389,6 +8573,15 @@
         const hint = document.getElementById('search-hint');
         if (hint) hint.innerHTML = '<kbd>Ctrl</kbd><kbd>K</kbd> Search';
       }
+
+      // Subtle parallax on commander background art
+      document.addEventListener('mousemove', throttle((e) => {
+        const bg = document.getElementById('commander-bg');
+        if (!bg) return;
+        const x = (e.clientX / window.innerWidth - 0.5) * 2;
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        bg.style.transform = `translate(${x * -8}px, ${y * -8}px)`;
+      }, 50));
 
       // Pre-load local card metadata (avoids Scryfall API calls for known cards)
       await loadLocalMetadata();
@@ -8411,30 +8604,30 @@
       const prefs = loadPreferences();
       const urlParams = parseUrlHash();
 
-      // Load precon index
-      await loadPreconIndex();
+      // Load deck index
+      await loadDeckIndex();
 
-      // Determine which precon to load
-      const preconToLoad = urlParams.precon || prefs?.lastPrecon;
+      // Determine which deck to load
+      const deckToLoad = urlParams.deck || prefs?.lastDeck;
       const requestedView = urlParams.view;
 
       // Check if a non-guide view requested
       if (requestedView === 'playtest' || requestedView === 'analytics') {
-        const viewPrecon = urlParams.precon || preconToLoad;
-        const allDecks = [...(preconIndex.commanders || [])];
-        if (viewPrecon && allDecks.some(d => d.id === viewPrecon)) {
-          preconSelect.value = viewPrecon;
-          await selectPrecon(viewPrecon);
+        const viewDeck = urlParams.deck || deckToLoad;
+        const allDecks = [...(deckIndex.commanders || [])];
+        if (viewDeck && allDecks.some(d => d.id === viewDeck)) {
+          deckSelect.value = viewDeck;
+          await selectDeck(viewDeck);
           switchView(requestedView);
         }
         return;
       }
 
-      // If we have a precon to load from URL or preferences
-      const allDecks = [...(preconIndex.commanders || [])];
-      if (preconToLoad && allDecks.some(d => d.id === preconToLoad)) {
-        preconSelect.value = preconToLoad;
-        await selectPrecon(preconToLoad);
+      // If we have a deck to load from URL or preferences
+      const allDecks = [...(deckIndex.commanders || [])];
+      if (deckToLoad && allDecks.some(d => d.id === deckToLoad)) {
+        deckSelect.value = deckToLoad;
+        await selectDeck(deckToLoad);
         updateUrlHash();
       }
 
@@ -8443,7 +8636,6 @@
         filterState = { ...filterState, ...prefs.filters };
         document.getElementById('filter-cmc').value = filterState.cmc;
         document.getElementById('filter-sort').value = filterState.sort;
-        document.getElementById('filter-added-only').checked = filterState.addedOnly;
 
         document.querySelectorAll('.filter-chip').forEach(chip => {
           chip.classList.toggle('active', chip.dataset.type === filterState.type);
