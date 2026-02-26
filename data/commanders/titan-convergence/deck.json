@@ -31,7 +31,7 @@
     },
     {
       "name": "Cascade Amplification",
-      "cards": ["Echoes of Eternity", "Cloudstone Curio", "Ugin, Eye of the Storms"]
+      "cards": ["Echoes of Eternity", "Cloudstone Curio", "Ugin, Eye of the Storms", "Erratic Portal"]
     },
     {
       "name": "Flash & Instant Speed",
@@ -39,11 +39,11 @@
     },
     {
       "name": "Infinite Mana Combos",
-      "cards": ["Basalt Monolith", "Voltaic Key", "Rings of Brighthearth", "Krark-Clan Ironworks"]
+      "cards": ["Basalt Monolith", "Voltaic Key", "Rings of Brighthearth", "Krark-Clan Ironworks", "Voltaic Construct"]
     },
     {
       "name": "Engine & Value",
-      "cards": ["Sensei's Divining Top", "Unwinding Clock", "Lithoform Engine", "Blightsteel Colossus", "Spine of Ish Sah", "Glaring Fleshraker", "It That Heralds the End", "Extraplanar Lens", "Urza's Incubator", "Conduit of Ruin", "Liquimetal Torque", "Wayfarer's Bauble"]
+      "cards": ["Sensei's Divining Top", "Unwinding Clock", "Lithoform Engine", "Blightsteel Colossus", "Spine of Ish Sah", "Glaring Fleshraker", "It That Heralds the End", "Extraplanar Lens", "Urza's Incubator", "Conduit of Ruin", "Liquimetal Torque", "Wayfarer's Bauble", "Foundry Inspector"]
     },
     {
       "name": "Board Wipe & Interaction",
@@ -131,6 +131,32 @@
       "description": "Forge casts Top from library for 1. Fleshraker triggers on colorless cast: creates Spawn token, deals 1 damage. Sacrifice Spawn for 1 mana to recast Top after tapping it to draw. Self-sustaining loop: infinite draw + near-infinite damage.",
       "sources": [
         { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/985-5078-5705/", "detail": "Infinite card draw, near-infinite damage" }
+      ]
+    },
+    {
+      "title": "Infinite Draw: Inspector-Forge Engine",
+      "cards": ["Sensei's Divining Top", "Foundry Inspector", "Mystic Forge"],
+      "description": "Inspector reduces Top's cost by 1 (free with Forge's top-of-library cast). Tap Top to draw, it goes on top, Forge casts it again for free. Infinite card draw without needing Ugin's cost reduction.",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/777-985-5078/", "detail": "Infinite card draw" }
+      ]
+    },
+    {
+      "title": "Karn's Construct Engine",
+      "cards": ["Voltaic Construct", "Karn, the Great Creator", "Basalt Monolith"],
+      "description": "Karn's +1 animates Basalt Monolith (or Thran Dynamo, Mana Vault) into an artifact creature. Construct pays {2} to untap it. Rock taps for 3+ mana, netting 1+ per loop = infinite colorless mana. Feed into Eye of Ugin to tutor every Eldrazi.",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/1978-4131-5089/", "detail": "Infinite mana with Basalt Monolith" },
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/1766-1978-5089/", "detail": "Infinite mana with Thran Dynamo" },
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/1978-2364-5089/", "detail": "Infinite mana with Mana Vault" }
+      ]
+    },
+    {
+      "title": "Emrakul Turn Lock",
+      "cards": ["Emrakul, the Promised End", "Erratic Portal", "Unwinding Clock", "Vedalken Orrery"],
+      "description": "Cast Emrakul to control an opponent's turn. On their end step, Portal bounces Emrakul (Orrery grants flash, Clock untaps Portal each opponent's turn). Recast Emrakul targeting next opponent. Repeat every turn cycle = permanent control of all opponents' turns.",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/1927-2636-3632-4755/", "detail": "Infinite turns via Emrakul recast loop" }
       ]
     }
   ],
@@ -627,17 +653,50 @@
         { "type": "edhrec", "name": "EDHREC Kozilek Page", "url": "https://edhrec.com/commanders/kozilek-the-great-distortion", "detail": "Budget colorless ramp staple" },
         { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Matter Reshaper — T1-playable land ramp beats a 3/2 with random death trigger in high-CMC deck" }
       ]
+    },
+    {
+      "name": "Foundry Inspector",
+      "price": "$0.50",
+      "isGameChanger": false,
+      "reason": "3 MV artifact creature — all artifact spells cost {1} less. Enables infinite draw with Top + Mystic Forge (Top becomes free). Cost reduction for 26+ artifacts in deck",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/777-985-5078/", "detail": "Infinite draw: Top + Inspector + Forge" },
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/777-5078-5642/", "detail": "Infinite draw: Top + Inspector + Echoes" },
+        { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Skittering Cicada — combo enabler + cost reduction vs vanilla beater" }
+      ]
+    },
+    {
+      "name": "Voltaic Construct",
+      "price": "$1",
+      "isGameChanger": false,
+      "reason": "4 MV artifact creature. Pay {2}: untap target artifact creature. With Karn's +1 animating a 3+ mana rock into a creature, Construct untaps it for {2}, netting mana each loop = infinite colorless mana",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/1978-4131-5089/", "detail": "Infinite mana: Construct + Karn + Basalt Monolith" },
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/1766-1978-5089/", "detail": "Infinite mana: Construct + Karn + Thran Dynamo" },
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/1978-2364-5089/", "detail": "Infinite mana: Construct + Karn + Mana Vault" },
+        { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Bane of Bala Ged — 3 infinite mana lines vs slow exile-on-attack" }
+      ]
+    },
+    {
+      "name": "Erratic Portal",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "4 MV artifact. Pay {1}, tap: return target creature to owner's hand. Bounce own Eldrazi to recast for cascade triggers. With Emrakul + Unwinding Clock + Orrery, control all opponents' turns forever",
+      "sources": [
+        { "type": "commanderspellbook", "name": "Commander Spellbook", "url": "https://commanderspellbook.com/combo/1927-2636-3632-4755/", "detail": "Infinite turns: Emrakul + Portal + Clock + Orrery" },
+        { "type": "ai-inferred", "name": "Claude analysis", "detail": "Replaces Abstruse Archaic — Lithoform Engine already fills copy role; Portal enables cascade reuse + turn lock combo" }
+      ]
     }
   ],
   "decklist": [
     { "name": "Kozilek, the Great Distortion", "type": "Creature" },
     { "name": "Artisan of Kozilek", "type": "Creature" },
-    { "name": "Bane of Bala Ged", "type": "Creature" },
+    { "name": "Voltaic Construct", "type": "Creature" },
     { "name": "It That Betrays", "type": "Creature" },
-    { "name": "Skittering Cicada", "type": "Creature" },
+    { "name": "Foundry Inspector", "type": "Creature" },
     { "name": "Duplicant", "type": "Creature" },
     { "name": "Flayer of Loyalties", "type": "Creature" },
-    { "name": "Abstruse Archaic", "type": "Creature" },
+    { "name": "Erratic Portal", "type": "Artifact" },
     { "name": "Metalwork Colossus", "type": "Creature" },
     { "name": "Ugin, the Ineffable", "type": "Planeswalker" },
     { "name": "Ugin's Mastery", "type": "Enchantment" },
