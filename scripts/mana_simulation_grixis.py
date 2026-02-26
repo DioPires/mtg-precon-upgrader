@@ -66,7 +66,6 @@ ROCK_DEFS = {
     "Talisman of Dominance":  {"cmc": 2, "colors": frozenset({"U", "B"}), "count": 1, "burst": False},
     "Talisman of Creativity": {"cmc": 2, "colors": frozenset({"U", "R"}), "count": 1, "burst": False},
     "Relic of Sauron":        {"cmc": 4, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
-    "Commander's Sphere":     {"cmc": 3, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
     "Mind Stone":             {"cmc": 2, "colors": frozenset({"C"}), "count": 1, "burst": False},
 }
 
@@ -174,6 +173,12 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
         return [frozenset({"B"})]
     if name == "Mount Doom":
         return [frozenset({"B", "R"})]
+
+    # Channel lands (legendary, produce colored mana)
+    if name == "Otawara, Soaring City":
+        return [frozenset({"U"})]
+    if name == "Takenuma, Abandoned Mire":
+        return [frozenset({"B"})]
 
     # Fetches should be cracked; if somehow on board, no mana
     if name in FETCH_LANDS:
@@ -487,7 +492,6 @@ class GameState:
             "Arcane Signet", "Mind Stone",
             "Dimir Signet", "Rakdos Signet", "Izzet Signet",
             "Talisman of Dominance", "Talisman of Indulgence", "Talisman of Creativity",
-            "Commander's Sphere",
             "Relic of Sauron",
         ]
 
