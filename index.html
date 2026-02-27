@@ -2130,7 +2130,7 @@
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-      height: 120px;
+      min-height: 135px;
       padding: 0 8px;
       gap: 4px;
     }
@@ -2186,6 +2186,13 @@
       font-size: 0.7rem;
       color: var(--text-secondary);
       margin-top: 6px;
+      text-align: center;
+    }
+
+    .mana-bar-pct {
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      opacity: 0.7;
       text-align: center;
     }
 
@@ -5322,7 +5329,7 @@
       const stats = calculateDeckStats(deckCards);
 
       // Render mana curve
-      renderManaCurve(stats.manaCurve);
+      renderManaCurve(stats.manaCurve, stats.nonLandCount);
 
       // Update summary stats
       document.getElementById('avg-cmc').textContent = stats.avgCmc;
@@ -5332,29 +5339,38 @@
       renderCategoryBars(stats.categories, stats.totalCards);
     }
 
-    function renderManaCurve(manaCurve) {
+    function renderManaCurve(manaCurve, nonLandCount) {
       const chart = document.getElementById('mana-curve-chart');
       if (!chart) return;
+
+      // Find highest occupied bucket, show at least 7 bars (0–6)
+      let maxBucket = 0;
+      for (let i = 10; i >= 0; i--) {
+        if (manaCurve[i] && manaCurve[i].count > 0) { maxBucket = i; break; }
+      }
+      const renderMax = Math.max(maxBucket, 6);
 
       // Find max count for scaling
       const maxCount = Math.max(...Object.values(manaCurve).map(m => m.count), 1);
 
       let html = '';
-      for (let i = 0; i <= 10; i++) {
+      for (let i = 0; i <= renderMax; i++) {
         const data = manaCurve[i];
         const heightPercent = (data.count / maxCount) * 100;
         const label = i === 10 ? '10+' : String(i);
+        const pct = nonLandCount > 0 ? Math.round((data.count / nonLandCount) * 100) : 0;
 
         html += `
           <div class="mana-bar-container">
             <div class="mana-bar-wrapper">
               <div class="mana-bar" style="height: ${Math.max(heightPercent, 3)}%"
                    data-cmc="${i}" data-cards="${escapeHtml(data.cards.join(', '))}"
-                   title="${escapeHtml(String(data.count))} card${data.count !== 1 ? 's' : ''} at ${escapeHtml(label)} mana">
+                   title="${escapeHtml(String(data.count))} card${data.count !== 1 ? 's' : ''} (${pct}%) at ${escapeHtml(label)} mana">
                 <span class="mana-bar-count">${escapeHtml(String(data.count))}</span>
               </div>
             </div>
             <div class="mana-bar-label">${escapeHtml(label)}</div>
+            <div class="mana-bar-pct">${pct}%</div>
           </div>
         `;
       }
