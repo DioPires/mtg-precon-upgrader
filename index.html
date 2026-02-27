@@ -2272,6 +2272,9 @@
     .category-bar-fill.graveyard-hate { background: linear-gradient(90deg, #4b5563, #9ca3af); }
     .category-bar-fill.finishers { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
     .category-bar-fill.protection { background: linear-gradient(90deg, #0891b2, #22d3d8); }
+    .category-bar-fill.counter-spells { background: linear-gradient(90deg, #6366f1, #818cf8); }
+    .category-bar-fill.reanimation { background: linear-gradient(90deg, #a855f7, #c084fc); }
+    .category-bar-fill.value { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
     .category-bar-fill.lands { background: linear-gradient(90deg, #a16207, #ca8a04); }
 
     .category-bar-count {
@@ -4474,6 +4477,7 @@
                 <span class="filter-label">Sort</span>
                 <select class="filter-select" id="filter-sort" aria-label="Sort deck list">
                   <option value="type">By Type</option>
+                  <option value="role">By Role</option>
                   <option value="name">By Name</option>
                   <option value="cmc">By CMC</option>
                 </select>
@@ -4485,11 +4489,14 @@
                   <button class="filter-chip" data-category="lands" aria-pressed="false">Lands</button>
                   <button class="filter-chip" data-category="ramp" aria-pressed="false">Ramp</button>
                   <button class="filter-chip" data-category="removal" aria-pressed="false">Removal</button>
+                  <button class="filter-chip" data-category="counter-spells" aria-pressed="false">Counters</button>
                   <button class="filter-chip" data-category="card-draw" aria-pressed="false">Draw</button>
                   <button class="filter-chip" data-category="board-wipes" aria-pressed="false">Wipes</button>
                   <button class="filter-chip" data-category="graveyard-hate" aria-pressed="false">GY Hate</button>
+                  <button class="filter-chip" data-category="reanimation" aria-pressed="false">Reanimate</button>
                   <button class="filter-chip" data-category="finishers" aria-pressed="false">Finishers</button>
                   <button class="filter-chip" data-category="protection" aria-pressed="false">Protection</button>
+                  <button class="filter-chip" data-category="value" aria-pressed="false">Value</button>
                 </div>
               </div>
               <button class="filter-clear" id="filter-clear" aria-label="Clear all filters">Clear Filters</button>
@@ -5141,12 +5148,15 @@
     const CATEGORY_CONFIG = [
       { id: 'lands', name: 'Lands', class: 'lands' },
       { id: 'ramp', name: 'Ramp', class: 'ramp' },
-      { id: 'removal', name: 'Removal', class: 'removal' },
       { id: 'card-draw', name: 'Card Draw', class: 'card-draw' },
+      { id: 'removal', name: 'Removal', class: 'removal' },
+      { id: 'counter-spells', name: 'Counter Spells', class: 'counter-spells' },
       { id: 'board-wipes', name: 'Board Wipes', class: 'board-wipes' },
       { id: 'graveyard-hate', name: 'Graveyard Hate', class: 'graveyard-hate' },
+      { id: 'reanimation', name: 'Reanimation', class: 'reanimation' },
       { id: 'finishers', name: 'Finishers', class: 'finishers' },
-      { id: 'protection', name: 'Protection', class: 'protection' }
+      { id: 'protection', name: 'Protection', class: 'protection' },
+      { id: 'value', name: 'Value', class: 'value' }
     ];
 
     // Known ramp cards by name
@@ -5212,6 +5222,30 @@
         categories.push('card-draw');
       }
 
+      // Counter spells detection
+      if (oracle.includes('counter target') ||
+          oracle.includes('counter that spell') ||
+          oracle.includes('counter all spells') ||
+          name.includes('counterspell') ||
+          name.includes('swan song') ||
+          name.includes('negate') ||
+          name.includes('mana drain') ||
+          name.includes('force of will') ||
+          name.includes('force of negation') ||
+          name.includes('fierce guardianship') ||
+          name.includes('pact of negation') ||
+          name.includes('flusterstorm') ||
+          name.includes('dispel') ||
+          name.includes('spell pierce') ||
+          name.includes('dovin\'s veto') ||
+          name.includes('arcane denial') ||
+          name.includes('delay') ||
+          name.includes('tale\'s end') ||
+          name.includes('an offer you can\'t refuse') ||
+          name.includes('wash away')) {
+        categories.push('counter-spells');
+      }
+
       // Board wipes detection
       if (oracle.includes('destroy all creatures') ||
           oracle.includes('destroy all nonland') ||
@@ -5233,6 +5267,16 @@
           name.includes('leyline of the void') ||
           name.includes('scavenger grounds')) {
         categories.push('graveyard-hate');
+      }
+
+      // Reanimation detection
+      if (oracle.includes('return target creature card from') ||
+          oracle.includes('put target creature card from a graveyard') ||
+          oracle.includes('from your graveyard to the battlefield') ||
+          name.includes('reanimate') ||
+          name.includes('animate dead') ||
+          name.includes('stitch together')) {
+        categories.push('reanimation');
       }
 
       // Finishers detection (CMC 6+ with Eldrazi or annihilator, or big threats)
@@ -5262,6 +5306,23 @@
       }
 
       return categories;
+    }
+
+    function compareByCmc(a, b) {
+      const cmcA = cardMetadataCache.get(a.name)?.cmc ?? 0;
+      const cmcB = cardMetadataCache.get(b.name)?.cmc ?? 0;
+      return cmcA - cmcB || a.name.localeCompare(b.name);
+    }
+
+    function getPrimaryRole(card) {
+      if (card.role) return card.role;
+      const metadata = cardMetadataCache.get(card.name);
+      const roles = categorizeCard(card.name, metadata);
+      const priority = CATEGORY_CONFIG.map(c => c.id);
+      for (const p of priority) {
+        if (roles.includes(p)) return p;
+      }
+      return 'other';
     }
 
     function calculateDeckStats(deckCards) {
@@ -5301,8 +5362,8 @@
           nonLandCount += qty;
         }
 
-        // Categorize all cards (including lands for things like graveyard hate)
-        const cardCategories = categorizeCard(card.name, metadata);
+        // Use stored role (single-count) or fall back to heuristic detection (multi-category)
+        const cardCategories = card.role ? [card.role] : categorizeCard(card.name, metadata);
         cardCategories.forEach(catId => {
           if (categories[catId]) {
             categories[catId].count += qty;
@@ -5322,7 +5383,7 @@
       const statsSection = document.getElementById('deck-stats-section');
       if (!statsSection) return;
 
-      const deckCards = (currentDeck.decklist || []).map(card => ({ name: card.name, quantity: card.quantity || 1 }));
+      const deckCards = (currentDeck.decklist || []).map(card => ({ name: card.name, quantity: card.quantity || 1, role: card.role }));
 
       // Calculate stats
       const stats = calculateDeckStats(deckCards);
@@ -5995,9 +6056,9 @@
         grouped[type].push(card);
       });
 
-      // Sort cards within each category alphabetically
+      // Sort cards within each category by CMC
       Object.keys(grouped).forEach(type => {
-        grouped[type].sort((a, b) => a.name.localeCompare(b.name));
+        grouped[type].sort(compareByCmc);
       });
 
       // Calculate total count (accounting for Wastes quantity)
@@ -6067,16 +6128,9 @@
       const effCmd = getEffectiveCommander();
       const commanderNames = new Set([effCmd]);
 
-      const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
-      const grouped = {};
-      currentDeck.decklist.forEach(card => {
-        const type = card.type || 'Other';
-        if (!grouped[type]) grouped[type] = [];
-        grouped[type].push({ ...card, isHighlighted: highlightNames.has(card.name) });
-      });
-      Object.keys(grouped).forEach(type => {
-        grouped[type].sort((a, b) => a.name.localeCompare(b.name));
-      });
+      const allCards = currentDeck.decklist
+        .filter(c => !commanderNames.has(c.name))
+        .map(card => ({ ...card, isHighlighted: highlightNames.has(card.name) }));
 
       function cardHtml(name, isHighlighted, quantity) {
         const imgUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(name)}`;
@@ -6085,27 +6139,66 @@
         return `<div class="decklist-gallery-card${cls}" data-card-name="${escapeHtml(name)}" tabindex="0" role="button" aria-label="${escapeHtml(name)}">${badge}<img src="${imgUrl}" alt="${escapeHtml(name)}" loading="lazy" /></div>`;
       }
 
+      function renderSection(title, cards) {
+        if (cards.length === 0) return '';
+        const count = cards.reduce((sum, c) => sum + (c.quantity || 1), 0);
+        let h = `<div class="gallery-type-section"><div class="gallery-type-header">${escapeHtml(title)} (${count})</div><div class="gallery-stack">`;
+        cards.forEach(card => { h += cardHtml(card.name, card.isHighlighted, card.quantity || 1); });
+        h += `</div></div>`;
+        return h;
+      }
+
       let html = '';
 
-      // Commander section
+      // Commander section always first
       html += `<div class="gallery-type-section"><div class="gallery-type-header">Commander</div><div class="gallery-stack">${cardHtml(effCmd, false, 1)}</div></div>`;
 
-      typeOrder.forEach(type => {
-        if (!grouped[type] || grouped[type].length === 0) return;
-        const cards = type === 'Creature'
-          ? grouped[type].filter(c => !commanderNames.has(c.name))
-          : grouped[type];
-        if (cards.length === 0) return;
-        const count = cards.reduce((sum, c) => sum + (c.quantity || 1), 0);
-        html += `<div class="gallery-type-section"><div class="gallery-type-header">${escapeHtml(type)}s (${count})</div><div class="gallery-stack">`;
-        cards.forEach(card => { html += cardHtml(card.name, card.isHighlighted, card.quantity || 1); });
-        html += `</div></div>`;
-      });
+      const sortMode = filterState.sort;
 
-      if (grouped['Other'] && grouped['Other'].length > 0) {
-        html += `<div class="gallery-type-section"><div class="gallery-type-header">Other (${grouped['Other'].length})</div><div class="gallery-stack">`;
-        grouped['Other'].forEach(card => { html += cardHtml(card.name, card.isHighlighted, card.quantity || 1); });
+      if (sortMode === 'role') {
+        const roleGroups = {};
+        allCards.forEach(card => {
+          const role = getPrimaryRole(card);
+          if (!roleGroups[role]) roleGroups[role] = [];
+          roleGroups[role].push(card);
+        });
+        Object.values(roleGroups).forEach(g => g.sort(compareByCmc));
+        const roleOrder = CATEGORY_CONFIG.map(c => c.id);
+        roleOrder.forEach(roleId => {
+          if (!roleGroups[roleId]) return;
+          const config = CATEGORY_CONFIG.find(c => c.id === roleId);
+          html += renderSection(config.name, roleGroups[roleId]);
+        });
+        if (roleGroups['other']) {
+          html += renderSection('Other', roleGroups['other']);
+        }
+      } else if (sortMode === 'name') {
+        allCards.sort((a, b) => a.name.localeCompare(b.name));
+        html += `<div class="gallery-type-section"><div class="gallery-type-header">All Cards (${allCards.reduce((s, c) => s + (c.quantity || 1), 0)})</div><div class="gallery-stack">`;
+        allCards.forEach(card => { html += cardHtml(card.name, card.isHighlighted, card.quantity || 1); });
         html += `</div></div>`;
+      } else if (sortMode === 'cmc') {
+        allCards.sort(compareByCmc);
+        html += `<div class="gallery-type-section"><div class="gallery-type-header">All Cards (${allCards.reduce((s, c) => s + (c.quantity || 1), 0)})</div><div class="gallery-stack">`;
+        allCards.forEach(card => { html += cardHtml(card.name, card.isHighlighted, card.quantity || 1); });
+        html += `</div></div>`;
+      } else {
+        // Default: group by type
+        const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
+        const grouped = {};
+        allCards.forEach(card => {
+          const type = card.type || 'Other';
+          if (!grouped[type]) grouped[type] = [];
+          grouped[type].push(card);
+        });
+        Object.values(grouped).forEach(g => g.sort(compareByCmc));
+        typeOrder.forEach(type => {
+          if (!grouped[type] || grouped[type].length === 0) return;
+          html += renderSection(type + 's', grouped[type]);
+        });
+        if (grouped['Other'] && grouped['Other'].length > 0) {
+          html += renderSection('Other', grouped['Other']);
+        }
       }
 
       galleryEl.innerHTML = html;
@@ -6288,7 +6381,7 @@
       }
 
       // Apply any active filters
-      if (filterState.cmc !== 'all' || filterState.type !== 'all' || filterState.sort !== 'type') {
+      if (filterState.cmc !== 'all' || filterState.type !== 'all' || filterState.sort !== 'type' || filterState.category !== 'all') {
         applyFilters();
       }
 
@@ -6999,11 +7092,11 @@
           if (!typeLine.includes(filterState.type) && !(card.type || '').includes(filterState.type)) return false;
         }
 
-        // Category filter
+        // Category filter (check heuristic detection AND stored role)
         if (filterState.category !== 'all') {
           const catMetadata = cardMetadataCache.get(card.name);
           const categories = categorizeCard(card.name, catMetadata);
-          if (!categories.includes(filterState.category)) return false;
+          if (!categories.includes(filterState.category) && card.role !== filterState.category) return false;
         }
 
         return true;
@@ -7015,31 +7108,56 @@
           filtered.sort((a, b) => a.name.localeCompare(b.name));
           break;
         case 'cmc':
-          filtered.sort((a, b) => {
-            const cmcA = cardMetadataCache.get(a.name)?.cmc || 0;
-            const cmcB = cardMetadataCache.get(b.name)?.cmc || 0;
-            return cmcA - cmcB;
-          });
+          filtered.sort(compareByCmc);
           break;
+        case 'role':
         case 'type':
         default:
-          // Keep grouped by type (already done in original render)
+          // Grouped rendering handled in renderFilteredDeckList
           break;
       }
 
       // Render filtered list
       renderFilteredDeckList(filtered);
+      if (decklistGalleryMode) renderDeckListGallery();
     }
 
     function renderFilteredDeckList(cards) {
       const effCmdFiltered = getEffectiveCommander();
       const commanderNames = new Set([effCmdFiltered]);
+      const showCommander = filterState.type === 'all' && filterState.cmc === 'all' && filterState.category === 'all';
 
-      // Group by type if sorting by type
+      function renderCardLine(card, showMv) {
+        const addedClass = card.isHighlighted ? ' highlighted' : '';
+        const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
+        const cardmarketUrl = getCardmarketUrl(card.name);
+        return `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${showMv ? getMvDisplay(card.name) : ''}</div>`;
+      }
+
+      function renderGroupedList(groups, groupOrder, labelFn, mvFn) {
+        let html = '';
+        if (showCommander) {
+          html += `<div class="decklist-category">`;
+          html += `<div class="decklist-category-title">Commander</div>`;
+          html += `<div class="decklist-card commander" data-card-name="${escapeHtml(effCmdFiltered)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(effCmdFiltered)}"><a href="${getCardmarketUrl(effCmdFiltered)}" target="_blank" rel="noopener noreferrer">${escapeHtml(effCmdFiltered)}</a>${getMvDisplay(effCmdFiltered)}</div>`;
+          html += `</div>`;
+        }
+        groupOrder.forEach(key => {
+          if (!groups[key] || groups[key].length === 0) return;
+          const groupCards = groups[key].filter(c => !commanderNames.has(c.name));
+          if (groupCards.length === 0) return;
+          const count = groupCards.reduce((sum, c) => sum + (c.quantity || 1), 0);
+          html += `<div class="decklist-category">`;
+          html += `<div class="decklist-category-title">${escapeHtml(labelFn(key))} (${count})</div>`;
+          groupCards.forEach(card => { html += renderCardLine(card, mvFn(key)); });
+          html += `</div>`;
+        });
+        return html;
+      }
+
       if (filterState.sort === 'type') {
         const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
         const grouped = {};
-
         cards.forEach(card => {
           const metadata = cardMetadataCache.get(card.name);
           let type = card.type || 'Other';
@@ -7056,66 +7174,46 @@
           if (!grouped[type]) grouped[type] = [];
           grouped[type].push(card);
         });
-
-        // Sort cards within each category
-        Object.keys(grouped).forEach(type => {
-          grouped[type].sort((a, b) => a.name.localeCompare(b.name));
+        Object.values(grouped).forEach(g => g.sort(compareByCmc));
+        const allKeys = [...typeOrder];
+        if (grouped['Other']) allKeys.push('Other');
+        decklistContent.innerHTML = renderGroupedList(grouped, allKeys,
+          key => key + 's',
+          key => key !== 'Land'
+        );
+      } else if (filterState.sort === 'role') {
+        const roleGroups = {};
+        cards.forEach(card => {
+          const role = getPrimaryRole(card);
+          if (!roleGroups[role]) roleGroups[role] = [];
+          roleGroups[role].push(card);
         });
-
+        Object.values(roleGroups).forEach(g => g.sort(compareByCmc));
+        const roleOrder = CATEGORY_CONFIG.map(c => c.id);
+        const allKeys = [...roleOrder.filter(id => roleGroups[id])];
+        if (roleGroups['other']) allKeys.push('other');
+        const roleLabelMap = {};
+        CATEGORY_CONFIG.forEach(c => { roleLabelMap[c.id] = c.name; });
+        roleLabelMap['other'] = 'Other';
+        decklistContent.innerHTML = renderGroupedList(roleGroups, allKeys,
+          key => roleLabelMap[key] || key,
+          key => key !== 'lands'
+        );
+      } else {
+        // Flat list for name/cmc sort
         let html = '';
-
-        // Add Commander section first (only if not filtering)
-        if (filterState.type === 'all' && filterState.cmc === 'all') {
+        if (showCommander) {
           html += `<div class="decklist-category">`;
           html += `<div class="decklist-category-title">Commander</div>`;
           html += `<div class="decklist-card commander" data-card-name="${escapeHtml(effCmdFiltered)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(effCmdFiltered)}"><a href="${getCardmarketUrl(effCmdFiltered)}" target="_blank" rel="noopener noreferrer">${escapeHtml(effCmdFiltered)}</a>${getMvDisplay(effCmdFiltered)}</div>`;
           html += `</div>`;
         }
-
-        typeOrder.forEach(type => {
-          if (grouped[type] && grouped[type].length > 0) {
-            const filteredCards = type === 'Creature'
-              ? grouped[type].filter(card => !commanderNames.has(card.name))
-              : grouped[type];
-
-            if (filteredCards.length === 0) return;
-
-            const categoryCount = filteredCards.reduce((sum, c) => sum + (c.quantity || 1), 0);
-            html += `<div class="decklist-category">`;
-            html += `<div class="decklist-category-title">${escapeHtml(type)}s (${categoryCount})</div>`;
-            filteredCards.forEach(card => {
-              const addedClass = card.isHighlighted ? ' highlighted' : '';
-              const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
-              const cardmarketUrl = getCardmarketUrl(card.name);
-              html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${type !== 'Land' ? getMvDisplay(card.name) : ''}</div>`;
-            });
-            html += `</div>`;
-          }
-        });
-
-        if (grouped['Other'] && grouped['Other'].length > 0) {
-          html += `<div class="decklist-category">`;
-          html += `<div class="decklist-category-title">Other (${grouped['Other'].length})</div>`;
-          grouped['Other'].forEach(card => {
-            const addedClass = card.isHighlighted ? ' highlighted' : '';
-            const cardmarketUrl = getCardmarketUrl(card.name);
-            html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}"><a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${getMvDisplay(card.name)}</div>`;
-          });
-          html += `</div>`;
-        }
-
-        decklistContent.innerHTML = html;
-      } else {
-        // Flat list for name/cmc sort
-        let html = '<div class="decklist-category">';
+        html += '<div class="decklist-category">';
         cards.forEach(card => {
           if (commanderNames.has(card.name)) return;
-          const addedClass = card.isHighlighted ? ' highlighted' : '';
-          const quantity = card.quantity > 1 ? `${card.quantity}x ` : '';
           const metadata = cardMetadataCache.get(card.name);
           const isLand = metadata && metadata.type_line && metadata.type_line.includes('Land');
-          const cardmarketUrl = getCardmarketUrl(card.name);
-          html += `<div class="decklist-card${addedClass}" data-card-name="${escapeHtml(card.name)}" tabindex="0" role="button"><input type="checkbox" class="decklist-checkbox" data-card-name="${escapeHtml(card.name)}">${escapeHtml(quantity)}<a href="${cardmarketUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.name)}</a>${!isLand ? getMvDisplay(card.name) : ''}</div>`;
+          html += renderCardLine(card, !isLand);
         });
         html += '</div>';
         decklistContent.innerHTML = html;
@@ -7123,7 +7221,6 @@
 
       // Update count
       let totalCount = cards.reduce((sum, c) => sum + (c.quantity || 1), 0);
-      const showCommander = filterState.type === 'all' && filterState.cmc === 'all';
       if (showCommander) totalCount += 1;
       decklistCount.textContent = totalCount;
 
@@ -7146,6 +7243,7 @@
       });
 
       renderDeckList();
+      if (decklistGalleryMode) renderDeckListGallery();
     }
 
     // === LOCALSTORAGE PERSISTENCE ===
