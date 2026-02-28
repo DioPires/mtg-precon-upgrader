@@ -5,8 +5,8 @@
   "subtitle": "Maximum Amass Synergy",
   "commander": "Sauron, the Dark Lord",
   "cost": "$350-450",
-  "bracket": "4",
-  "gameChangers": 7,
+  "bracket": "5",
+  "gameChangers": 9,
   "sources": [
     {
       "type": "edhrec",
@@ -70,7 +70,6 @@
           "Frantic Search",
           "Relic of Sauron",
           "Thirst for Discovery",
-          "Opt",
           "Consider",
           "Stinging Study",
           "Fact or Fiction",
@@ -89,7 +88,9 @@
           "Rakdos Signet",
           "Talisman of Indulgence",
           "Talisman of Dominance",
-          "The Black Gate"
+          "The Black Gate",
+          "Chrome Mox",
+          "Ancient Tomb"
         ]
       }
     ]
@@ -126,7 +127,6 @@
         "Frantic Search",
         "Relic of Sauron",
         "Thirst for Discovery",
-        "Opt",
         "Consider",
         "Consult the Star Charts",
         "Treason of Isengard",
@@ -192,7 +192,9 @@
         "Restless Reef",
         "Agna Qel'a",
         "Otawara, Soaring City",
-        "Takenuma, Abandoned Mire"
+        "Takenuma, Abandoned Mire",
+        "Chrome Mox",
+        "Ancient Tomb"
       ]
     }
   ],
@@ -849,19 +851,6 @@
       ]
     },
     {
-      "name": "Opt",
-      "price": "$0.25",
-      "isGameChanger": false,
-      "reason": "1-mana instant: scry 1, draw 1. Leaves mana open for counterspells while providing card selection. Triggers Saruman's amass for just {U}.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Card Draw Optimization",
-          "detail": "Replaces Thrill of Possibility — cheaper mana cost, better with counterspell-heavy plan"
-        }
-      ]
-    },
-    {
       "name": "Consider",
       "price": "$0.25-0.50",
       "isGameChanger": false,
@@ -1148,6 +1137,32 @@
           "detail": "Card advantage push 9→12. Draw 3 for 3 mana in Grixis"
         }
       ]
+    },
+    {
+      "name": "Ancient Tomb",
+      "price": "$40-60",
+      "isGameChanger": true,
+      "reason": "Land that taps for {C}{C} at the cost of 2 life. Accelerates Sauron from turn 5 to turn 4 with a 2-mana rock. Helps deploy The One Ring, signets, and talismans faster. Colorless mana is manageable with the deck's excellent color fixing.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Premium fast mana land. Replaces Crumbling Necropolis (always-tapped triland)"
+        }
+      ]
+    },
+    {
+      "name": "Chrome Mox",
+      "price": "$40-60",
+      "isGameChanger": true,
+      "reason": "0-cost artifact. Exile a nonartifact, nonland card from hand to produce mana of that card's colors. Turn 1 Chrome Mox enables turn 1 signet or turn 2 Rhystic Study. Card disadvantage offset by the deck's 6+ draw engines.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Premium 0-cost ramp. Replaces Opt (weakest cantrip with 6+ draw engines)"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -1257,9 +1272,9 @@
       "role": "card-draw"
     },
     {
-      "name": "Opt",
-      "type": "Instant",
-      "role": "card-draw"
+      "name": "Chrome Mox",
+      "type": "Artifact",
+      "role": "ramp"
     },
     {
       "name": "Consider",
@@ -1482,9 +1497,9 @@
       "role": "lands"
     },
     {
-      "name": "Crumbling Necropolis",
+      "name": "Ancient Tomb",
       "type": "Land",
-      "role": "lands"
+      "role": "ramp"
     },
     {
       "name": "Dragonskull Summit",
