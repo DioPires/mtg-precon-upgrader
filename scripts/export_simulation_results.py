@@ -83,6 +83,14 @@ def median_or_null(values: list):
     return r1(statistics.median(values))
 
 
+def median_turn_from_cumulative(by_turn: dict) -> int | None:
+    """First turn where cumulative castable % >= 50."""
+    for t in range(1, NUM_TURNS + 1):
+        if by_turn.get(str(t), 0) >= 50.0:
+            return t
+    return None
+
+
 def derive_assessment(result: dict) -> dict:
     """Derive qualitative assessments from simulation data."""
     # Mana adequacy: compare median mana at T4-5 to avg CMC
@@ -113,8 +121,9 @@ def derive_assessment(result: dict) -> dict:
     cmd = result["commanderTiming"]
     cmd_cmc = cmd["cmc"]
     median_turn = cmd["medianTurn"]
-    num_colors = len(result.get("colorBalance", {}).get("colors", []))
-    curve_grace = 1 if num_colors >= 4 else 0
+    cb = result.get("colorBalance") or {}
+    num_colors = len(cb.get("colors", []))
+    curve_grace = 2 if num_colors >= 4 else 0
     if median_turn is None:
         cmd_timing = "unreliable"
     elif median_turn <= cmd_cmc - 1:
@@ -212,7 +221,7 @@ def export_titan(metadata: dict) -> dict:
         "name": "Zhulodok, Void Gorger",
         "cmc": 6,
         "byTurn": cmd_by_turn,
-        "medianTurn": median_or_null(stats["zhulodok_turns"]),
+        "medianTurn": median_turn_from_cumulative(cmd_by_turn),
     }
 
     # curveEfficiency
@@ -311,7 +320,7 @@ def _export_colored(sim_module, deck_id: str, deck_name: str,
         "name": commander_name,
         "cmc": commander_cmc,
         "byTurn": cmd_by_turn,
-        "medianTurn": median_or_null(stats["commander_castable_turn"]),
+        "medianTurn": median_turn_from_cumulative(cmd_by_turn),
     }
 
     # colorBalance
