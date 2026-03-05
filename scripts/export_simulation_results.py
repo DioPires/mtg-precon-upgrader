@@ -23,6 +23,7 @@ import mana_simulation as sim_titan
 import mana_simulation_rakdos as sim_rakdos
 import mana_simulation_grixis as sim_grixis
 import mana_simulation_golgari as sim_golgari
+import mana_simulation_atraxa as sim_atraxa
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -421,6 +422,31 @@ def export_golgari(metadata: dict) -> dict:
     )
 
 
+def _export_atraxa(bracket: int, deck_id: str, deck_name: str,
+                   metadata: dict) -> dict:
+    """Export an Atraxa (WUBG) simulation for given bracket."""
+    sim_atraxa.configure_bracket(bracket)
+    return _export_colored(
+        sim_module=sim_atraxa,
+        deck_id=deck_id,
+        deck_name=deck_name,
+        commander_name="Atraxa, Praetors' Voice",
+        commander_cmc=4,
+        colors=["W", "U", "B", "G"],
+        metadata=metadata,
+    )
+
+
+def export_atraxa_b3(metadata: dict) -> dict:
+    """Export Phyrexian Perfection (Atraxa B3) simulation."""
+    return _export_atraxa(3, "phyrexian-perfection", "Phyrexian Perfection", metadata)
+
+
+def export_atraxa_b4(metadata: dict) -> dict:
+    """Export Compleated Dominion (Atraxa B4) simulation."""
+    return _export_atraxa(4, "compleated-dominion", "Compleated Dominion", metadata)
+
+
 # --- Main ---
 
 
@@ -429,6 +455,8 @@ DECKS = [
     ("eternal-agony", "Eternal Agony", export_rakdos),
     ("sauron-the-dark-lord", "Dark Dominion", export_grixis),
     ("eternal-harvest", "Eternal Harvest", export_golgari),
+    ("phyrexian-perfection", "Phyrexian Perfection", export_atraxa_b3),
+    ("compleated-dominion", "Compleated Dominion", export_atraxa_b4),
 ]
 
 
