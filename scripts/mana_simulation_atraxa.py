@@ -63,7 +63,7 @@ ROCK_DEFS_B3 = {
 ROCK_DEFS_B4 = {
     "Sol Ring":          {"cmc": 1, "colors": frozenset({"C"}), "count": 2, "burst": False},
     "Arcane Signet":     {"cmc": 2, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": False},
-    "Mox Diamond":       {"cmc": 0, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": True},
+    "Glistening Sphere": {"cmc": 3, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": False},
     "Chrome Mox":        {"cmc": 0, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": True},
     "Mana Vault":        {"cmc": 1, "colors": frozenset({"C"}), "count": 3, "burst": True},
 }
@@ -524,7 +524,7 @@ class GameState:
 
     def _try_cast_rocks(self, pool: ManaPool):
         priority_order = [
-            "Mox Diamond", "Chrome Mox",
+            "Chrome Mox",
             "Sol Ring", "Mana Vault",
             "Arcane Signet", "Fellwar Stone", "Plague Myr",
             "Glistening Sphere",
@@ -534,20 +534,6 @@ class GameState:
             if rock_name not in self.hand or rock_name not in ROCK_DEFS:
                 continue
             rdef = ROCK_DEFS[rock_name]
-
-            # Special handling for Mox Diamond (discard a land)
-            if rock_name == "Mox Diamond":
-                hand_lands = [c for c in self.hand if c in self.land_set and c != rock_name]
-                if not hand_lands:
-                    continue
-                # Discard worst land
-                hand_lands.sort(key=lambda c: self._land_play_priority(c))
-                self.hand.remove(hand_lands[0])
-                self.hand.remove(rock_name)
-                self.battlefield_rocks.append(rock_name)
-                for _ in range(rdef["count"]):
-                    pool.sources.append(rdef["colors"])
-                continue
 
             # Special handling for Chrome Mox (imprint a colored nonartifact nonland)
             if rock_name == "Chrome Mox":
