@@ -66,6 +66,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 
 - **Display names should be strategic** (e.g., "Dark Dominion", not "Sauron Deck")
 - Every card recommendation must be attributed via `sources`
+- **Card pool**: Cards printed through March 2026
 
 ## Source Attribution Schema
 
