@@ -303,9 +303,12 @@
       padding: 2px 8px;
       border-radius: 10px;
       font-weight: 600;
-      background: var(--deck-accent-dim);
-      color: var(--deck-accent);
     }
+    .deck-gallery-bracket[data-bracket="1"] { background: color-mix(in srgb, var(--bracket-exhibition) 20%, transparent); color: var(--bracket-exhibition); }
+    .deck-gallery-bracket[data-bracket="2"] { background: color-mix(in srgb, var(--bracket-core) 20%, transparent); color: var(--bracket-core); }
+    .deck-gallery-bracket[data-bracket="3"] { background: color-mix(in srgb, var(--bracket-upgraded) 20%, transparent); color: var(--bracket-upgraded); }
+    .deck-gallery-bracket[data-bracket="4"] { background: color-mix(in srgb, var(--bracket-optimized) 20%, transparent); color: var(--bracket-optimized); }
+    .deck-gallery-bracket[data-bracket="5"] { background: color-mix(in srgb, var(--bracket-cedh) 20%, transparent); color: var(--bracket-cedh); }
 
     /* Deck reveal sequence */
     @keyframes commanderEntrance {
@@ -1468,6 +1471,67 @@
     }
     #synergy-svg .node-label.dimmed {
       opacity: 0.15;
+    }
+
+    /* === COMBOS SECTION === */
+    .guide-section.combos .guide-section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .combo-count {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .combos-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .combo-item {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+    .combo-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--accent-red);
+      margin-bottom: 8px;
+    }
+    .combo-result-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-weight: 600;
+      background: var(--accent-red-dim);
+      color: var(--accent-red);
+      margin-bottom: 8px;
+    }
+    .combo-steps {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .combo-source-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-top: 8px;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+    .combo-source-link:hover {
+      opacity: 1;
+      color: var(--accent-blue);
     }
 
     /* === SOURCE ATTRIBUTION === */
@@ -2763,7 +2827,7 @@
 
       header, .selector-section, .deck-overview, .preview-panel,
       .guide-strategy, .guide-section.deck-engine, .guide-section.cuts,
-      .guide-section.synergies, .guide-section.deck-stats,
+      .guide-section.synergies, .guide-section.combos, .guide-section.deck-stats,
       .filter-bar, .export-buttons, .print-btn,
       footer {
         display: none !important;
@@ -2812,6 +2876,7 @@
       /* Prevent content from breaking across pages */
       .card-group,
       .synergy-item,
+      .combo-item,
       .decklist-category {
         break-inside: avoid;
         page-break-inside: avoid;
@@ -4356,6 +4421,14 @@
             </div>
           </section>
 
+          <section class="guide-section combos" id="combos-section" aria-labelledby="combos-header" style="display:none;">
+            <h2 class="guide-section-title" id="combos-header">
+              Combos
+              <span class="combo-count" id="combo-count"></span>
+            </h2>
+            <div class="combos-list" id="combos-list"></div>
+          </section>
+
           <section class="guide-section deck-stats" id="deck-stats-section" aria-labelledby="stats-header">
             <h2 class="guide-section-title" id="stats-header">Deck Statistics</h2>
             <div class="loading-placeholder" id="deck-stats-skeleton">
@@ -5560,6 +5633,7 @@
     const guideStrategy = document.getElementById('guide-strategy');
     const addGroups = document.getElementById('add-groups');
     const synergiesList = document.getElementById('synergies-list');
+    const combosList = document.getElementById('combos-list');
     const decklistContent = document.getElementById('decklist-content');
     const decklistCount = document.getElementById('decklist-count');
 
@@ -5686,6 +5760,34 @@
         }
       });
       synergiesList.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const tag = e.target.closest('.synergy-card-tag');
+          if (tag) {
+            e.preventDefault();
+            showCardPreview(tag.dataset.cardName);
+            if (exploreModeActive) {
+              highlightSynergyCards(tag.dataset.cardName);
+            }
+          }
+        }
+      });
+
+      // --- Combo card tags ---
+      combosList.addEventListener('mouseover', (e) => {
+        const tag = e.target.closest('.synergy-card-tag');
+        if (tag) showCardPreview(tag.dataset.cardName);
+      });
+      combosList.addEventListener('click', (e) => {
+        const tag = e.target.closest('.synergy-card-tag');
+        if (tag) {
+          showCardPreview(tag.dataset.cardName);
+          if (exploreModeActive) {
+            e.stopPropagation();
+            highlightSynergyCards(tag.dataset.cardName);
+          }
+        }
+      });
+      combosList.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           const tag = e.target.closest('.synergy-card-tag');
           if (tag) {
@@ -5886,6 +5988,9 @@
         const colorPips = (cmd.colors || []).map(c =>
           `<div class="deck-gallery-pip pip-${escapeHtml(c)}"></div>`
         ).join('');
+        const bracketPill = cmd.bracket
+          ? `<span class="deck-gallery-bracket" data-bracket="${escapeHtml(cmd.bracket)}">B${escapeHtml(cmd.bracket)}</span>`
+          : '';
         return `
           <div class="deck-gallery-card" data-deck-id="${escapeHtml(cmd.id)}" tabindex="0" role="button" aria-label="Select ${escapeHtml(cmd.name)}">
             <img class="deck-gallery-art" src="${artUrl}" alt="${escapeHtml(cmd.commander)}" loading="lazy" />
@@ -5894,6 +5999,7 @@
               <div class="deck-gallery-subtitle">${escapeHtml(cmd.theme || '')}</div>
               <div class="deck-gallery-meta">
                 <div class="deck-gallery-colors">${colorPips}</div>
+                ${bracketPill}
               </div>
             </div>
           </div>
@@ -6427,6 +6533,7 @@
       renderCommanderThemeGroups(currentDeck.categories, currentDeck.highlights);
       // Render synergies
       renderSynergies(currentDeck.synergies);
+      renderCombos(currentDeck.synergies);
 
       // Render full deck list
       renderDeckList();
@@ -6586,11 +6693,21 @@
     let exploreModeActive = false;
 
     function renderSynergies(synergies) {
-      // Build synergy graph for explore mode
+      // Build synergy graph from ALL synergies (combos + non-combos) — keeps explore mode intact
       const { graph, cardToSynergies } = buildSynergyGraph(synergies);
       synergyGraph = graph;
 
-      synergiesList.innerHTML = synergies.map(synergy => {
+      // Render only non-combo synergies (combos go in dedicated section)
+      const nonCombos = synergies.filter(s => !s.sources?.some(src => src.type === 'commanderspellbook'));
+
+      const synergiesSection = document.querySelector('.guide-section.synergies');
+      if (nonCombos.length === 0) {
+        synergiesSection.style.display = 'none';
+      } else {
+        synergiesSection.style.display = '';
+      }
+
+      synergiesList.innerHTML = nonCombos.map(synergy => {
         const cardTags = synergy.cards.map(cardName =>
           `<span class="synergy-card-tag" data-card-name="${escapeHtml(cardName)}" tabindex="0" role="button" aria-label="View ${escapeHtml(cardName)}">${escapeHtml(cardName)}</span>`
         ).join('');
@@ -6603,6 +6720,47 @@
         `;
       }).join('');
 
+    }
+
+    function renderCombos(synergies) {
+      const combos = synergies.filter(s => s.sources?.some(src => src.type === 'commanderspellbook'));
+      const combosSection = document.getElementById('combos-section');
+      const comboCount = document.getElementById('combo-count');
+
+      if (combos.length === 0) {
+        combosSection.style.display = 'none';
+        return;
+      }
+
+      combosSection.style.display = '';
+      comboCount.textContent = `(${combos.length})`;
+
+      combosList.innerHTML = combos.map(combo => {
+        const cardTags = combo.cards.map(cardName =>
+          `<span class="synergy-card-tag" data-card-name="${escapeHtml(cardName)}" tabindex="0" role="button" aria-label="View ${escapeHtml(cardName)}">${escapeHtml(cardName)}</span>`
+        ).join('');
+
+        const csbSource = combo.sources.find(s => s.type === 'commanderspellbook');
+        const resultBadge = csbSource?.detail
+          ? `<span class="combo-result-badge">${escapeHtml(csbSource.detail)}</span>`
+          : '';
+        const sourceLink = csbSource?.url
+          ? `<a class="combo-source-link" href="${escapeHtml(csbSource.url)}" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              Commander Spellbook
+            </a>`
+          : '';
+
+        return `
+          <div class="combo-item">
+            <div class="combo-title">${escapeHtml(combo.title)}</div>
+            ${resultBadge}
+            <div class="synergy-cards">${cardTags}</div>
+            <div class="combo-steps">${escapeHtml(combo.description)}</div>
+            ${sourceLink}
+          </div>
+        `;
+      }).join('');
     }
 
     function addGuideCardHoverEvents() {
@@ -7410,9 +7568,10 @@
       btn.classList.toggle('active', exploreModeActive);
       btn.setAttribute('aria-pressed', exploreModeActive);
 
-      // Toggle explore mode class on synergies section
+      // Toggle explore mode class on synergies and combos sections
       const synergiesSection = document.querySelector('.guide-section.synergies');
       synergiesSection?.classList.toggle('explore-mode-active', exploreModeActive);
+      document.getElementById('combos-section')?.classList.toggle('explore-mode-active', exploreModeActive);
 
       // Also toggle on cards sections for visual dimming
       document.querySelector('.guide-section.deck-engine')?.classList.toggle('explore-mode-active', exploreModeActive);
