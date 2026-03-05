@@ -77,7 +77,6 @@ CREATURE_RAMP = {
     "Sakura-Tribe Elder":  {"cmc": 2, "pips": {"generic": 1, "B": 0, "G": 1}, "fetch": "basic", "tapped": False},
     "Wood Elves":          {"cmc": 3, "pips": {"generic": 2, "B": 0, "G": 1}, "fetch": "forest", "tapped": False},
     "Solemn Simulacrum":   {"cmc": 4, "pips": {"generic": 4, "B": 0, "G": 0}, "fetch": "basic", "tapped": True},
-    "Satyr Wayfinder":     {"cmc": 2, "pips": {"generic": 1, "B": 0, "G": 1}, "fetch": "maybe", "tapped": False},
 }
 
 # Wight of the Reliquary: treat as a dork producing {G} (too complex to model sac)
@@ -572,7 +571,6 @@ class GameState:
             ("dork", "Birds of Paradise"),
             ("dork", WIGHT_NAME),
             ("creature_ramp", "Sakura-Tribe Elder"),
-            ("creature_ramp", "Satyr Wayfinder"),
             ("creature_ramp", "Wood Elves"),
             ("creature_ramp", "Solemn Simulacrum"),
         ]
@@ -617,19 +615,7 @@ class GameState:
                 if pool.can_cast(pips):
                     pool = pool.after_spending(pips)
                     self.hand.remove(name)
-                    if name == "Satyr Wayfinder":
-                        # 60% chance of finding a land
-                        if random.random() < 0.6:
-                            # Add land to hand (will be played next turn)
-                            b_sources = sum(1 for l in self.battlefield_lands if l in B_PRODUCING_LANDS)
-                            g_sources = sum(1 for l in self.battlefield_lands if l in G_PRODUCING_LANDS)
-                            if b_sources <= g_sources:
-                                self.hand.append("Swamp")
-                            else:
-                                self.hand.append("Forest")
-                    else:
-                        # Fetch a land to battlefield
-                        self._fetch_basic_land(cramp["fetch"], cramp["tapped"])
+                    self._fetch_basic_land(cramp["fetch"], cramp["tapped"])
 
 
 def commander_mulligan(decklist: list[str], metadata: dict, land_set: set[str]) -> GameState:
