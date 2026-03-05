@@ -22,6 +22,7 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 import mana_simulation as sim_titan
 import mana_simulation_rakdos as sim_rakdos
 import mana_simulation_grixis as sim_grixis
+import mana_simulation_golgari as sim_golgari
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -407,6 +408,19 @@ def export_grixis(metadata: dict) -> dict:
     )
 
 
+def export_golgari(metadata: dict) -> dict:
+    """Export Eternal Harvest (Golgari) simulation."""
+    return _export_colored(
+        sim_module=sim_golgari,
+        deck_id="eternal-harvest",
+        deck_name="Eternal Harvest",
+        commander_name="Meren of Clan Nel Toth",
+        commander_cmc=4,
+        colors=["B", "G"],
+        metadata=metadata,
+    )
+
+
 # --- Main ---
 
 
@@ -414,6 +428,7 @@ DECKS = [
     ("titan-convergence", "Titan Convergence", export_titan),
     ("eternal-agony", "Eternal Agony", export_rakdos),
     ("sauron-the-dark-lord", "Dark Dominion", export_grixis),
+    ("eternal-harvest", "Eternal Harvest", export_golgari),
 ]
 
 
