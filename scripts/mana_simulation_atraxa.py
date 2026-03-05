@@ -71,11 +71,29 @@ ROCK_DEFS_B4 = {
 # Active rock definitions — set by configure_bracket()
 ROCK_DEFS = {}
 
+# --- Ramp spell definitions ---
+RAMP_DEFS_B3 = {
+    "Farseek":        {"mana_cost": "{1}{G}", "fetch_type": "nonforest_typed", "tapped": True},
+    "Nature's Lore":  {"mana_cost": "{1}{G}", "fetch_type": "forest_typed", "tapped": False},
+    "Three Visits":   {"mana_cost": "{1}{G}", "fetch_type": "forest_typed", "tapped": False},
+    "Cultivate":      {"mana_cost": "{2}{G}", "fetch_type": "basic_plus_hand", "tapped": True},
+    "Kodama's Reach": {"mana_cost": "{2}{G}", "fetch_type": "basic_plus_hand", "tapped": True},
+}
+
+RAMP_DEFS_B4 = {
+    "Farseek":        {"mana_cost": "{1}{G}", "fetch_type": "nonforest_typed", "tapped": True},
+    "Nature's Lore":  {"mana_cost": "{1}{G}", "fetch_type": "forest_typed", "tapped": False},
+    "Kodama's Reach": {"mana_cost": "{2}{G}", "fetch_type": "basic_plus_hand", "tapped": True},
+}
+
+# Active ramp definitions — set by configure_bracket()
+RAMP_DEFS = {}
 
 def configure_bracket(bracket: int):
-    """Set module-level ROCK_DEFS for the given bracket."""
-    global ROCK_DEFS
+    """Set module-level ROCK_DEFS and RAMP_DEFS for the given bracket."""
+    global ROCK_DEFS, RAMP_DEFS
     ROCK_DEFS = ROCK_DEFS_B3 if bracket == 3 else ROCK_DEFS_B4
+    RAMP_DEFS = RAMP_DEFS_B3 if bracket == 3 else RAMP_DEFS_B4
 
 
 # --- Land subtype definitions ---
@@ -89,8 +107,16 @@ SWAMP_TYPED_LANDS = {"Swamp", "Watery Grave", "Overgrown Tomb", "Godless Shrine"
 FOREST_TYPED_LANDS = {"Forest", "Overgrown Tomb", "Breeding Pool", "Temple Garden",
                       "Zagoth Triome", "Indatha Triome", "Murmuring Bosk"}
 
+# Farseek fetches any land with Plains/Island/Swamp/Mountain subtype.
+# Lands with Forest type AND other types are still valid (e.g. Zagoth Triome
+# is Forest Island Swamp — Farseek fetches it via Island/Swamp type).
+FARSEEK_TYPED_LANDS = PLAINS_TYPED_LANDS | ISLAND_TYPED_LANDS | SWAMP_TYPED_LANDS
+
+# Basic land names for Cultivate/Kodama's Reach
+BASIC_LANDS = {"Plains", "Island", "Swamp", "Forest"}
+
 ALWAYS_TAPPED = {
-    "Zagoth Triome", "Indatha Triome", "Bojuka Bog", "Mirrex",
+    "Zagoth Triome", "Indatha Triome", "Bojuka Bog",
 }
 
 # Murmuring Bosk: reveals Treefolk or ETB tapped. No Treefolk in deck -> always tapped.
@@ -140,8 +166,9 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
     if name == "Forest":
         return [frozenset({"G"})]
 
-    # 4-color lands
-    if name in {"Command Tower", "Exotic Orchard"}:
+    # 4-color / rainbow lands
+    if name in {"Command Tower", "Exotic Orchard", "City of Brass",
+                "Mana Confluence", "Plaza of Heroes"}:
         return [frozenset({"W", "U", "B", "G"})]
 
     # Triomes (BUG + WBG)
@@ -204,18 +231,8 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
     if name == "Phyrexian Tower":
         return [frozenset({"C"})]
 
-    # Utility lands
-    if name == "Karn's Bastion":
-        return [frozenset({"C"})]
-    if name == "Inkmoth Nexus":
-        return [frozenset({"C"})]
-    if name == "The Seedcore":
-        return [frozenset({"C"})]
-    if name == "Rogue's Passage":
-        return [frozenset({"C"})]
-    if name == "Mirrex":
-        return [frozenset({"C"})]
-    if name == "Vault of the Archangel":
+    # Utility lands (colorless only)
+    if name in {"Karn's Bastion", "Inkmoth Nexus", "The Seedcore", "Rogue's Passage"}:
         return [frozenset({"C"})]
     if name == "Bojuka Bog":
         return [frozenset({"B"})]
@@ -424,7 +441,86 @@ class GameState:
         pool = self.compute_mana_pool()
         self._try_cast_rocks(pool)
 
+        # After rocks, try ramp spells (Farseek, Nature's Lore, etc.)
+        pool = self.compute_mana_pool()
+        self._try_cast_ramp(pool)
+
         self.mana_per_turn.append(self.compute_mana_pool())
+
+    def _find_best_fetchable(self, typed_set: set[str]) -> str | None:
+        """Find the best fetchable land in library from a typed set.
+
+        Prioritize by color coverage: pick the land that adds the most
+        colors needed for casting Atraxa (WUBG).
+        """
+        # Colors already available on battlefield
+        have_colors = set()
+        for land in self.battlefield_lands:
+            sources = compute_land_sources(land, self.battlefield_lands)
+            for s in sources:
+                have_colors.update(c for c in s if c != "C")
+
+        candidates = [c for c in self.library if c in typed_set]
+        if not candidates:
+            return None
+
+        def score(name: str) -> tuple[int, int]:
+            sources = compute_land_sources(name, [])
+            if not sources:
+                return (0, 0)
+            colors = {c for c in sources[0] if c != "C"}
+            missing_covered = len(colors - have_colors)
+            return (missing_covered, len(colors))
+
+        candidates.sort(key=score, reverse=True)
+        return candidates[0]
+
+    def _try_cast_ramp(self, pool: ManaPool):
+        """Try to cast one ramp spell from hand, fetching a land to battlefield."""
+        # Sort by CMC ascending (2-cost first for earlier impact)
+        ramp_in_hand = [(name, RAMP_DEFS[name]) for name in self.hand
+                        if name in RAMP_DEFS]
+        ramp_in_hand.sort(key=lambda x: parse_mana_cost(x[1]["mana_cost"])["total"])
+
+        for ramp_name, rdef in ramp_in_hand:
+            pips = parse_mana_cost(rdef["mana_cost"])
+            if not pool.can_cast(pips):
+                continue
+
+            fetch_type = rdef["fetch_type"]
+
+            if fetch_type == "forest_typed":
+                target = self._find_best_fetchable(FOREST_TYPED_LANDS)
+            elif fetch_type == "nonforest_typed":
+                target = self._find_best_fetchable(FARSEEK_TYPED_LANDS)
+            elif fetch_type == "basic_plus_hand":
+                target = self._find_best_fetchable(BASIC_LANDS)
+            else:
+                continue
+
+            if target is None:
+                continue
+
+            # Cast the ramp spell
+            pool = pool.after_spending(pips)
+            self.hand.remove(ramp_name)
+            self.library.remove(target)
+            self.battlefield_lands.append(target)
+            if rdef["tapped"]:
+                self.tapped_lands.add(len(self.battlefield_lands) - 1)
+
+            # basic_plus_hand: also fetch a second basic to hand
+            if fetch_type == "basic_plus_hand":
+                basics_in_lib = [c for c in self.library if c in BASIC_LANDS]
+                if basics_in_lib:
+                    # Pick the basic whose color is most needed
+                    second = self._find_best_fetchable(BASIC_LANDS)
+                    if second:
+                        self.library.remove(second)
+                        self.hand.append(second)
+
+            # Only cast one ramp spell per turn
+            return
 
     def _try_cast_rocks(self, pool: ManaPool):
         priority_order = [

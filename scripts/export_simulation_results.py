@@ -107,14 +107,19 @@ def derive_assessment(result: dict) -> dict:
         mulligan_verdict = "concerning"
 
     # Commander timing
+    # For 4+ color commanders, the simultaneous multi-pip requirement makes
+    # casting structurally harder than equivalent CMC with fewer colors.
+    # Allow +1 turn grace for 4+ color identities.
     cmd = result["commanderTiming"]
     cmd_cmc = cmd["cmc"]
     median_turn = cmd["medianTurn"]
+    num_colors = len(result.get("colorBalance", {}).get("colors", []))
+    curve_grace = 1 if num_colors >= 4 else 0
     if median_turn is None:
         cmd_timing = "unreliable"
     elif median_turn <= cmd_cmc - 1:
         cmd_timing = "ahead of curve"
-    elif median_turn <= cmd_cmc:
+    elif median_turn <= cmd_cmc + curve_grace:
         cmd_timing = "on curve"
     else:
         cmd_timing = "behind curve"
