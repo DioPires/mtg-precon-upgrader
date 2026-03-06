@@ -147,33 +147,82 @@
   "winConditions": [
     {
       "title": "Infinite Turns",
-      "cards": ["Magistrate's Scepter", "Tekuthal, Inquiry Dominus", "Contagion Engine"],
+      "cards": [
+        "Magistrate's Scepter",
+        "Tekuthal, Inquiry Dominus",
+        "Contagion Engine"
+      ],
       "description": "Magistrate's Scepter takes an extra turn when you remove 3 charge counters. Contagion Engine proliferates twice per activation, doubled by Tekuthal to 4 proliferates. Each proliferate adds a charge counter to the Scepter. One Engine activation adds 4 counters, activate Scepter to take an extra turn. Repeat every turn for infinite turns, proliferating poison on each Atraxa end step until all opponents reach 10.",
-      "sources": [{ "type": "ai-inferred", "name": "Claude analysis", "detail": "Strategic win path identification" }]
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
     },
     {
       "title": "Infinite Proliferate Loop",
-      "cards": ["Shrieking Drake", "Crystalline Crawler", "Inexorable Tide"],
+      "cards": [
+        "Shrieking Drake",
+        "Crystalline Crawler",
+        "Inexorable Tide"
+      ],
       "description": "Crystalline Crawler enters with 4 +1/+1 counters in this 4-color deck. Remove counters for mana, cast Shrieking Drake for U bouncing itself. Inexorable Tide triggers proliferate, adding a counter back to Crawler. With Tekuthal, each cast adds 2 counters for net mana positive. Repeat infinitely: each loop proliferates all poison counters. All opponents die to poison after 10 loops.",
-      "sources": [{ "type": "ai-inferred", "name": "Claude analysis", "detail": "Strategic win path identification" }]
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
     },
     {
       "title": "Blightsteel One-Shot",
-      "cards": ["Blightsteel Colossus", "Rogue's Passage"],
+      "cards": [
+        "Blightsteel Colossus",
+        "Rogue's Passage"
+      ],
       "description": "Blightsteel Colossus is an 11/11 with infect and trample. A single unblocked hit delivers 11 poison counters, killing any player instantly. Rogue's Passage makes it unblockable for 4 mana. Even without evasion, trample means any blocker still lets through lethal infect damage against most boards.",
-      "sources": [{ "type": "ai-inferred", "name": "Claude analysis", "detail": "Strategic win path identification" }]
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
     },
     {
       "title": "Vraska Poison Finish",
-      "cards": ["Vraska, Betrayal's Sting", "Atraxa, Praetors' Voice", "Tekuthal, Inquiry Dominus"],
+      "cards": [
+        "Vraska, Betrayal's Sting",
+        "Atraxa, Praetors' Voice",
+        "Tekuthal, Inquiry Dominus"
+      ],
       "description": "Vraska's ultimate gives target player 9 poison counters. With Atraxa proliferating loyalty each end step doubled by Tekuthal, Vraska reaches ultimate loyalty in 2 turns. Any opponent with 1+ existing poison counter dies immediately. Tutors (Demonic, Vampiric) reliably find Vraska when needed.",
-      "sources": [{ "type": "ai-inferred", "name": "Claude analysis", "detail": "Strategic win path identification" }]
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
     },
     {
       "title": "Tutor into Combo",
-      "cards": ["Demonic Tutor", "Vampiric Tutor", "Enlightened Tutor"],
+      "cards": [
+        "Demonic Tutor",
+        "Vampiric Tutor",
+        "Enlightened Tutor"
+      ],
       "description": "Three efficient tutors find any combo piece on demand. Enlightened Tutor fetches Magistrate's Scepter or Contagion Engine at instant speed. Demonic and Vampiric find any card. Protected by free counterspells (Force of Will, Fierce Guardianship), the deck reliably assembles infinite turns or infinite proliferate within the first 5-6 turns.",
-      "sources": [{ "type": "ai-inferred", "name": "Claude analysis", "detail": "Strategic win path identification" }]
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
     }
   ],
   "synergies": [
@@ -910,6 +959,50 @@
       "name": "Magistrate's Scepter",
       "type": "Artifact",
       "role": "combo"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Beast",
+      "type_line": "Token Creature — Beast",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "3b584d93-5681-4ecd-953c-5ef58307caab",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/b/3b584d93-5681-4ecd-953c-5ef58307caab.jpg?1752946408",
+      "produced_by": [
+        "Beast Within"
+      ]
+    },
+    {
+      "name": "Phyrexian Mite",
+      "type_line": "Token Artifact Creature — Phyrexian Mite",
+      "oracle_text": "Toxic 1 (Players dealt combat damage by this creature also get a poison counter.)\nThis creature can't block.",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "scryfall_id": "a0b4b9cc-b0a4-4383-881b-e843e5d8a8c1",
+      "image_uri": "https://cards.scryfall.io/normal/front/a/0/a0b4b9cc-b0a4-4383-881b-e843e5d8a8c1.jpg?1675957569",
+      "produced_by": [
+        "Skrelv's Hive",
+        "Vishgraz, the Doomhive"
+      ]
+    },
+    {
+      "name": "Treasure",
+      "type_line": "Token Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "cb7b5024-3a0b-4f14-977e-ba6c4c2567c9",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/b/cb7b5024-3a0b-4f14-977e-ba6c4c2567c9.jpg?1693611266",
+      "produced_by": [
+        "Smothering Tithe"
+      ]
     }
   ]
 }

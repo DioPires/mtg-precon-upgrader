@@ -1569,6 +1569,67 @@
       color: var(--accent-blue);
     }
 
+    /* === TOKENS NEEDED === */
+    .guide-section.tokens .guide-section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .token-count {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .tokens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .token-card {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .token-card-image {
+      width: 100%;
+      border-radius: 8px;
+      display: block;
+    }
+    .token-card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--deck-accent);
+    }
+    .token-card-details {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .token-card-producers {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+    }
+    .token-card-producers .producer-name {
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .token-card-producers .producer-name:hover {
+      color: var(--deck-accent);
+    }
+    @media (max-width: 768px) {
+      .tokens-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+      }
+    }
+
     /* === SOURCE ATTRIBUTION === */
     .source-icon-youtube { color: #ff4444; }
     .source-icon-edhrec { color: var(--accent-blue); }
@@ -2862,7 +2923,7 @@
 
       header, .selector-section, .deck-overview, .preview-panel,
       .guide-strategy, .guide-section.deck-engine, .guide-section.cuts,
-      .guide-section.synergies, .guide-section.combos, .guide-section.deck-stats,
+      .guide-section.synergies, .guide-section.combos, .guide-section.deck-stats, .guide-section.tokens,
       .filter-bar, .export-buttons, .print-btn,
       footer {
         display: none !important;
@@ -4512,6 +4573,14 @@
             <div class="category-tooltip-title"></div>
             <div class="category-tooltip-cards"></div>
           </div>
+
+          <section class="guide-section tokens" id="tokens-section" aria-labelledby="tokens-header" style="display:none;">
+            <h2 class="guide-section-title" id="tokens-header">
+              Tokens Needed
+              <span class="token-count" id="token-count"></span>
+            </h2>
+            <div class="tokens-grid" id="tokens-list"></div>
+          </section>
 
           <section class="guide-section decklist" id="decklist-section" aria-labelledby="decklist-header">
             <div class="decklist-header">
@@ -6594,6 +6663,7 @@
       renderWinConditions(currentDeck.winConditions || []);
       renderSynergies(currentDeck.synergies);
       renderCombos(currentDeck.synergies);
+      renderTokens(currentDeck.tokens || []);
 
       // Render full deck list
       renderDeckList();
@@ -6839,6 +6909,37 @@
             <div class="synergy-cards">${cardTags}</div>
             <div class="combo-steps">${escapeHtml(combo.description)}</div>
             ${sourceLink}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTokens(tokens) {
+      const tokensSection = document.getElementById('tokens-section');
+      const tokenCount = document.getElementById('token-count');
+
+      if (!tokens || tokens.length === 0) {
+        tokensSection.style.display = 'none';
+        return;
+      }
+
+      tokensSection.style.display = '';
+      tokenCount.textContent = `(${tokens.length})`;
+
+      document.getElementById('tokens-list').innerHTML = tokens.map(token => {
+        const pt = token.power != null && token.toughness != null
+          ? `<div class="token-card-details">${escapeHtml(token.power)}/${escapeHtml(token.toughness)}</div>`
+          : '';
+        const producers = token.produced_by.map(name =>
+          `<span class="producer-name" data-card-name="${escapeHtml(name)}" tabindex="0" role="button">${escapeHtml(name)}</span>`
+        ).join(', ');
+
+        return `
+          <div class="token-card">
+            <img class="token-card-image" src="${escapeHtml(token.image_uri)}" alt="${escapeHtml(token.name)} token" loading="lazy" />
+            <div class="token-card-name">${escapeHtml(token.name)}</div>
+            ${pt}
+            <div class="token-card-producers">Created by: ${producers}</div>
           </div>
         `;
       }).join('');
