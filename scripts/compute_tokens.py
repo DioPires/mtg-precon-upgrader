@@ -86,19 +86,22 @@ def extract_amass_types(oracle_text: str) -> set[str]:
 
 def build_token_entry(token_card: dict, produced_by: list[str]) -> dict:
     """Build a token entry from a Scryfall token card object."""
+    # For DFCs (e.g., The Ring emblem), use front face data
+    face = token_card
     image_uri = ""
-    if "image_uris" in token_card:
+    if "card_faces" in token_card and token_card["card_faces"]:
+        face = token_card["card_faces"][0]
+        image_uri = face.get("image_uris", {}).get("normal", "")
+    elif "image_uris" in token_card:
         image_uri = token_card["image_uris"].get("normal", "")
-    elif "card_faces" in token_card and token_card["card_faces"]:
-        image_uri = token_card["card_faces"][0].get("image_uris", {}).get("normal", "")
 
     return {
-        "name": token_card.get("name", "Unknown"),
-        "type_line": token_card.get("type_line", ""),
-        "oracle_text": token_card.get("oracle_text", ""),
-        "power": token_card.get("power"),
-        "toughness": token_card.get("toughness"),
-        "colors": token_card.get("colors", []),
+        "name": face.get("name", token_card.get("name", "Unknown")),
+        "type_line": face.get("type_line", token_card.get("type_line", "")),
+        "oracle_text": face.get("oracle_text", token_card.get("oracle_text", "")),
+        "power": face.get("power", token_card.get("power")),
+        "toughness": face.get("toughness", token_card.get("toughness")),
+        "colors": face.get("colors", token_card.get("colors", [])),
         "scryfall_id": token_card.get("id", ""),
         "image_uri": image_uri,
         "produced_by": sorted(produced_by),
@@ -120,6 +123,8 @@ def compute_tokens_for_deck(deck: dict) -> list[dict]:
     token_refs: dict[str, set[str]] = {}
     # amass_type -> set of producing card names
     amass_refs: dict[str, set[str]] = {}
+    # Special mechanic cards (e.g., "the Ring tempts you")
+    ring_producers: set[str] = set()
 
     for card in cards:
         name = card.get("name", "")
@@ -135,6 +140,10 @@ def compute_tokens_for_deck(deck: dict) -> list[dict]:
         oracle = card.get("oracle_text", "")
         for amass_type in extract_amass_types(oracle):
             amass_refs.setdefault(amass_type, set()).add(name)
+
+        # Check for "the Ring tempts you"
+        if "the ring tempts you" in oracle.lower():
+            ring_producers.add(name)
 
     # Fetch each unique token card
     tokens_by_id: dict[str, dict] = {}  # scryfall_id -> token entry
@@ -181,6 +190,18 @@ def compute_tokens_for_deck(deck: dict) -> list[dict]:
                 producers_by_id[tid] = set(producers)
             else:
                 print(f"    Could not find {army_name} token on Scryfall")
+
+    # Handle "the Ring tempts you" emblem
+    if ring_producers:
+        ring_id = "7215460e-8c06-47d0-94e5-d1832d0218af"
+        if ring_id not in tokens_by_id:
+            print("  Fetching The Ring emblem...")
+            ring_card = fetch_token(f"https://api.scryfall.com/cards/{ring_id}")
+            if ring_card:
+                tokens_by_id[ring_id] = ring_card
+                producers_by_id[ring_id] = set(ring_producers)
+        else:
+            producers_by_id[ring_id].update(ring_producers)
 
     # Build final token list
     tokens = []
