@@ -5743,6 +5743,7 @@
     const winconsList = document.getElementById('wincons-list');
     const synergiesList = document.getElementById('synergies-list');
     const combosList = document.getElementById('combos-list');
+    const tokensList = document.getElementById('tokens-list');
     const decklistContent = document.getElementById('decklist-content');
     const decklistCount = document.getElementById('decklist-count');
 
@@ -5924,6 +5925,25 @@
             if (exploreModeActive) {
               highlightSynergyCards(tag.dataset.cardName);
             }
+          }
+        }
+      });
+
+      // --- Token producer names ---
+      tokensList.addEventListener('mouseover', (e) => {
+        const tag = e.target.closest('.producer-name');
+        if (tag) showCardPreview(tag.dataset.cardName);
+      });
+      tokensList.addEventListener('click', (e) => {
+        const tag = e.target.closest('.producer-name');
+        if (tag) showCardPreview(tag.dataset.cardName);
+      });
+      tokensList.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const tag = e.target.closest('.producer-name');
+          if (tag) {
+            e.preventDefault();
+            showCardPreview(tag.dataset.cardName);
           }
         }
       });
