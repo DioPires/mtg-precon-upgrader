@@ -336,6 +336,7 @@
     .deck-reveal .cascade-in:nth-child(4) { animation-delay: 0.26s; }
     .deck-reveal .cascade-in:nth-child(5) { animation-delay: 0.32s; }
     .deck-reveal .cascade-in:nth-child(6) { animation-delay: 0.38s; }
+    .deck-reveal .cascade-in:nth-child(7) { animation-delay: 0.44s; }
 
     /* View crossfade transitions */
     .view-container {
@@ -1307,6 +1308,40 @@
 
 
     /* Synergies */
+    .wincons-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .wincon-item {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .wincon-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--accent-gold);
+      margin-bottom: 8px;
+    }
+
+    .wincon-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .wincon-description {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      max-width: 65ch;
+    }
+
     .synergies-list {
       display: flex;
       flex-direction: column;
@@ -4372,6 +4407,10 @@
             <div class="card-groups loaded-content" id="add-groups"></div>
           </section>
 
+          <section class="guide-section wincons" id="wincons-section" aria-labelledby="wincons-header" style="display:none;">
+            <h2 class="guide-section-title" id="wincons-header">Win Conditions</h2>
+            <div class="wincons-list" id="wincons-list"></div>
+          </section>
 
           <section class="guide-section synergies" aria-labelledby="synergies-header">
             <div class="synergies-header">
@@ -5632,6 +5671,7 @@
     const guideView = document.getElementById('guide-view');
     const guideStrategy = document.getElementById('guide-strategy');
     const addGroups = document.getElementById('add-groups');
+    const winconsList = document.getElementById('wincons-list');
     const synergiesList = document.getElementById('synergies-list');
     const combosList = document.getElementById('combos-list');
     const decklistContent = document.getElementById('decklist-content');
@@ -5740,6 +5780,25 @@
           if (card) {
             e.preventDefault();
             showCardPreview(card.dataset.cardName);
+          }
+        }
+      });
+
+      // --- Win condition card tags ---
+      winconsList.addEventListener('mouseover', (e) => {
+        const tag = e.target.closest('.synergy-card-tag');
+        if (tag) showCardPreview(tag.dataset.cardName);
+      });
+      winconsList.addEventListener('click', (e) => {
+        const tag = e.target.closest('.synergy-card-tag');
+        if (tag) showCardPreview(tag.dataset.cardName);
+      });
+      winconsList.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const tag = e.target.closest('.synergy-card-tag');
+          if (tag) {
+            e.preventDefault();
+            showCardPreview(tag.dataset.cardName);
           }
         }
       });
@@ -6531,7 +6590,8 @@
       document.getElementById('engine-header').textContent = 'Deck Engine';
       document.querySelector('.guide-section.deck-engine')?.setAttribute('aria-label', 'Deck engine section');
       renderCommanderThemeGroups(currentDeck.categories, currentDeck.highlights);
-      // Render synergies
+      // Render win conditions and synergies
+      renderWinConditions(currentDeck.winConditions || []);
       renderSynergies(currentDeck.synergies);
       renderCombos(currentDeck.synergies);
 
@@ -6688,6 +6748,27 @@
       document.querySelectorAll('.synergy-highlight, .synergy-selected').forEach(el => {
         el.classList.remove('synergy-highlight', 'synergy-selected');
       });
+    }
+
+    function renderWinConditions(winConditions) {
+      const section = document.getElementById('wincons-section');
+      if (!winConditions || winConditions.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = '';
+      winconsList.innerHTML = winConditions.map(wc => {
+        const cardTags = wc.cards.map(cardName =>
+          `<span class="synergy-card-tag" data-card-name="${escapeHtml(cardName)}" tabindex="0" role="button" aria-label="View ${escapeHtml(cardName)}">${escapeHtml(cardName)}</span>`
+        ).join('');
+        return `
+          <div class="wincon-item">
+            <div class="wincon-title">${escapeHtml(wc.title)}</div>
+            <div class="wincon-cards">${cardTags}</div>
+            <div class="wincon-description">${escapeHtml(wc.description)}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     let exploreModeActive = false;
