@@ -47,6 +47,12 @@
       "type": "ai-inferred",
       "name": "Claude analysis",
       "detail": "Donatello partner selection for token-focused strategy, synergy identification, bracket 3 optimization"
+    },
+    {
+      "type": "commanderspellbook",
+      "name": "Commander Spellbook — Combo Analysis",
+      "url": "https://commanderspellbook.com",
+      "detail": "find-my-combos API — 7 combos enabled"
     }
   ],
   "guideContent": {
@@ -89,7 +95,10 @@
         "Michelangelo, Weirdness to 11",
         "Mutagen Man, Living Ooze",
         "Hardened Scales",
-        "Ozolith, the Shattered Spire"
+        "Ozolith, the Shattered Spire",
+        "Basking Broodscale",
+        "Scurry Oak",
+        "Herd Baloth"
       ]
     },
     {
@@ -97,10 +106,9 @@
       "cards": [
         "Cyberdrive Awakener",
         "Herald of Secret Streams",
-        "Beastmaster Ascension",
         "Second Harvest",
         "Casey Jones, Back Alley Brute",
-        "Champion of Lambholt"
+        "Mechanized Production"
       ]
     },
     {
@@ -175,16 +183,37 @@
       ]
     },
     {
-      "title": "Beastmaster Ascension Overrun",
+      "title": "Infinite Token Loop",
       "cards": [
-        "Beastmaster Ascension"
+        "Basking Broodscale",
+        "Scurry Oak",
+        "Herd Baloth",
+        "Rosie Cotton of South Lane",
+        "Cathars' Crusade"
       ],
-      "description": "Beastmaster Ascension gains quest counters for each attacking creature. With a token army, a single attack puts 7+ quest counters, activating the +5/+5 buff for all creatures. Combined with Leonardo's counters, even 1/1 tokens become 8/8+ attackers.",
+      "description": "Basking Broodscale, Scurry Oak, or Herd Baloth each go infinite with either Rosie Cotton or Cathars' Crusade. A token enters → triggers +1/+1 counter → creature creates another token → repeat infinitely. Basking Broodscale also generates infinite mana via its adapt-like ability. Any of these loops produces infinite tokens and infinite +1/+1 counters for a lethal attack.",
       "sources": [
         {
-          "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Strategic win path identification"
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2433-5641/",
+          "detail": "Basking Broodscale + Rosie Cotton (and 5 related combos)"
+        }
+      ]
+    },
+    {
+      "title": "Mechanized Production Win",
+      "cards": [
+        "Mechanized Production",
+        "Mutagen Man, Living Ooze"
+      ],
+      "description": "Enchant a Mutagen token with Mechanized Production. Each upkeep creates a copy of the enchanted token, then checks if you control 8+ artifacts with the same name. With Donatello generating Mutagens passively, reaching 8 Mutagens is trivial — win the game on your upkeep without attacking.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2047-7343/",
+          "detail": "Mechanized Production + Mutagen Man"
         }
       ]
     },
@@ -372,6 +401,70 @@
           "detail": "Cost reduction synergy"
         }
       ]
+    },
+    {
+      "title": "Infinite Broodscale Engine",
+      "cards": [
+        "Basking Broodscale",
+        "Rosie Cotton of South Lane",
+        "Cathars' Crusade"
+      ],
+      "description": "Basking Broodscale creates a 1/1 token whenever a +1/+1 counter is placed on it. Rosie Cotton or Cathars' Crusade places a counter on Broodscale when the token enters → creates another token → infinite loop. Unique among the combo creatures: Broodscale also generates infinite mana via its {G} adapt ability during the loop.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2433-5641/",
+          "detail": "Basking Broodscale + Rosie Cotton"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2744-5641/",
+          "detail": "Basking Broodscale + Cathars' Crusade"
+        }
+      ]
+    },
+    {
+      "title": "Infinite Token Creatures",
+      "cards": [
+        "Scurry Oak",
+        "Herd Baloth",
+        "Rosie Cotton of South Lane",
+        "Cathars' Crusade"
+      ],
+      "description": "Scurry Oak and Herd Baloth each create a token whenever a +1/+1 counter is placed on them. Pair with Rosie Cotton (counter on token creation) or Cathars' Crusade (counter on creature ETB) for an infinite loop. Scurry Oak makes 1/1 Squirrels; Herd Baloth makes 4/4 Beasts.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2433-4186/",
+          "detail": "Scurry Oak + Rosie Cotton"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2433-3197/",
+          "detail": "Herd Baloth + Rosie Cotton"
+        }
+      ]
+    },
+    {
+      "title": "Mechanized Production Wincon",
+      "cards": [
+        "Mechanized Production",
+        "Mutagen Man, Living Ooze",
+        "Donatello, the Brains"
+      ],
+      "description": "Enchant a Mutagen token with Mechanized Production. Each upkeep copies the token and checks for 8+ same-name artifacts. Donatello and Mutagen Man generate Mutagens passively, making the threshold trivial. Alternative win condition that bypasses combat entirely.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2047-7343/",
+          "detail": "Mechanized Production + Mutagen Man"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -545,6 +638,80 @@
       ]
     },
     {
+      "name": "Basking Broodscale",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Goes infinite with Rosie Cotton or Cathars' Crusade — both already in the deck. Creates a 1/1 token whenever it gets a +1/+1 counter, and generates infinite mana via its adapt ability during the loop. The most versatile combo piece: infinite tokens, counters, AND mana.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2433-5641/",
+          "detail": "Basking Broodscale + Rosie Cotton — infinite mana, tokens, counters"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2744-5641/",
+          "detail": "Basking Broodscale + Cathars' Crusade — infinite mana, tokens, counters"
+        }
+      ]
+    },
+    {
+      "name": "Scurry Oak",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Creates a 1/1 Squirrel token whenever a +1/+1 counter is placed on it. Goes infinite with Rosie Cotton or Cathars' Crusade. Redundancy for the combo plan at just 3 mana.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2433-4186/",
+          "detail": "Scurry Oak + Rosie Cotton — infinite tokens, ETB, counters"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2744-4186/",
+          "detail": "Scurry Oak + Cathars' Crusade — infinite tokens, ETB, counters"
+        }
+      ]
+    },
+    {
+      "name": "Herd Baloth",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Creates a 4/4 Beast token whenever a +1/+1 counter is placed on it. Goes infinite with Rosie Cotton or Cathars' Crusade. At 5 mana it's the most expensive combo piece, but produces 4/4s instead of 1/1s for non-infinite scenarios.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2433-3197/",
+          "detail": "Herd Baloth + Rosie Cotton — infinite tokens, ETB, counters"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2744-3197/",
+          "detail": "Herd Baloth + Cathars' Crusade — infinite tokens, ETB, counters"
+        }
+      ]
+    },
+    {
+      "name": "Mechanized Production",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Enchant a Mutagen token. Each upkeep copies it and checks for 8+ same-name artifacts — with Donatello generating Mutagens passively, this wins the game without attacking. Alternative win condition that bypasses combat and creature-based interaction.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2047-7343/",
+          "detail": "Mechanized Production + Mutagen Man — win the game"
+        }
+      ]
+    },
+    {
       "name": "Mondrak, Glory Dominus",
       "price": "$10-15",
       "isGameChanger": false,
@@ -559,123 +726,667 @@
     }
   ],
   "decklist": [
-    { "name": "Command Tower", "type": "Land", "role": "lands" },
-    { "name": "Exotic Orchard", "type": "Land", "role": "lands" },
-    { "name": "Temple Garden", "type": "Land", "role": "lands" },
-    { "name": "Breeding Pool", "type": "Land", "role": "lands" },
-    { "name": "Otawara, Soaring City", "type": "Land", "role": "lands" },
-    { "name": "Bojuka Bog", "type": "Land" },
-    { "name": "Path of Ancestry", "type": "Land", "role": "lands" },
-    { "name": "Sunpetal Grove", "type": "Land", "role": "lands" },
-    { "name": "Canopy Vista", "type": "Land", "role": "lands" },
-    { "name": "Fortified Village", "type": "Land", "role": "lands" },
-    { "name": "Hinterland Harbor", "type": "Land", "role": "lands" },
-    { "name": "Prairie Stream", "type": "Land", "role": "lands" },
-    { "name": "Rootbound Crag", "type": "Land", "role": "lands" },
-    { "name": "Cinder Glade", "type": "Land", "role": "lands" },
-    { "name": "Thriving Grove", "type": "Land", "role": "lands" },
-    { "name": "Thriving Heath", "type": "Land", "role": "lands" },
-    { "name": "Thriving Isle", "type": "Land", "role": "lands" },
-    { "name": "Thriving Bluff", "type": "Land", "role": "lands" },
-    { "name": "Vivid Grove", "type": "Land", "role": "lands" },
-    { "name": "Vivid Meadow", "type": "Land", "role": "lands" },
-    { "name": "Vivid Creek", "type": "Land", "role": "lands" },
-    { "name": "Evolving Wilds", "type": "Land", "role": "lands" },
-    { "name": "Terramorphic Expanse", "type": "Land", "role": "lands" },
-    { "name": "Rogue's Passage", "type": "Land", "role": "lands" },
-    { "name": "Reliquary Tower", "type": "Land", "role": "lands" },
-    { "name": "Forest", "type": "Land", "role": "lands", "quantity": 4 },
-    { "name": "Plains", "type": "Land", "role": "lands", "quantity": 3 },
-    { "name": "Island", "type": "Land", "role": "lands", "quantity": 2 },
-    { "name": "Mountain", "type": "Land", "role": "lands", "quantity": 1 },
-    { "name": "Swamp", "type": "Land", "role": "lands", "quantity": 1 },
-    { "name": "Adarkar Wastes", "type": "Land", "role": "lands" },
-    { "name": "Simic Growth Chamber", "type": "Land", "role": "lands" },
-
-    { "name": "Sol Ring", "type": "Artifact", "role": "ramp" },
-    { "name": "Arcane Signet", "type": "Artifact", "role": "ramp" },
-    { "name": "Chromatic Lantern", "type": "Artifact", "role": "ramp" },
-    { "name": "Nature's Lore", "type": "Sorcery", "role": "ramp" },
-    { "name": "Kodama's Reach", "type": "Sorcery", "role": "ramp" },
-    { "name": "Cultivate", "type": "Sorcery", "role": "ramp" },
-    { "name": "Peregrin Took", "type": "Creature", "role": "value" },
-    { "name": "Everything Pizza", "type": "Artifact", "role": "ramp" },
-    { "name": "Mona Lisa, Ever Adaptable", "type": "Creature", "role": "ramp" },
-    { "name": "Ninja Pizza", "type": "Enchantment", "role": "ramp" },
-
-    { "name": "Skullclamp", "type": "Artifact", "role": "card-draw" },
-    { "name": "Mystic Remora", "type": "Enchantment", "role": "card-draw" },
-    { "name": "Mikey & Leo, Chaos & Order", "type": "Creature", "role": "card-draw" },
-    { "name": "Caretaker's Talent", "type": "Enchantment", "role": "card-draw" },
-    { "name": "Idol of Oblivion", "type": "Artifact", "role": "card-draw" },
-    { "name": "Arcade Cabinet", "type": "Artifact", "role": "value" },
-    { "name": "High Score", "type": "Enchantment", "role": "card-draw" },
-
-    { "name": "Parallel Lives", "type": "Enchantment", "role": "value" },
-    { "name": "Anointed Procession", "type": "Enchantment", "role": "value" },
-    { "name": "Mondrak, Glory Dominus", "type": "Creature", "role": "value" },
-    { "name": "Doubling Season", "type": "Enchantment", "role": "value" },
-
-    { "name": "Avenger of Zendikar", "type": "Creature", "role": "value" },
-    { "name": "Tendershoot Dryad", "type": "Creature", "role": "value" },
-    { "name": "Scute Swarm", "type": "Creature", "role": "value" },
-    { "name": "The Council of Four", "type": "Creature", "role": "value" },
-    { "name": "Tireless Tracker", "type": "Creature", "role": "value" },
-    { "name": "Rosie Cotton of South Lane", "type": "Creature", "role": "value" },
-    { "name": "Smothering Tithe", "type": "Enchantment", "role": "value" },
-    { "name": "April O'Neil, Live on the Scene", "type": "Creature", "role": "value" },
-    { "name": "Lita, Little Orphan Amphibian", "type": "Creature", "role": "value" },
-    { "name": "Endless Foot Assault", "type": "Enchantment", "role": "value" },
-    { "name": "Elspeth, Storm Slayer", "type": "Planeswalker", "role": "value" },
-
-    { "name": "Academy Manufactor", "type": "Creature", "role": "value" },
-    { "name": "Cathars' Crusade", "type": "Enchantment", "role": "value" },
-    { "name": "Aura Shards", "type": "Enchantment", "role": "value" },
-    { "name": "Michelangelo, Weirdness to 11", "type": "Creature", "role": "value" },
-    { "name": "Mutagen Man, Living Ooze", "type": "Creature", "role": "value" },
-
-    { "name": "Cyberdrive Awakener", "type": "Creature", "role": "finishers" },
-    { "name": "Herald of Secret Streams", "type": "Creature", "role": "finishers" },
-    { "name": "Beastmaster Ascension", "type": "Enchantment", "role": "finishers" },
-    { "name": "Second Harvest", "type": "Instant", "role": "finishers" },
-    { "name": "Evolution Witness", "type": "Creature", "role": "finishers" },
-
-    { "name": "Casey Jones, Back Alley Brute", "type": "Creature", "role": "value" },
-    { "name": "Vigor", "type": "Creature", "role": "value" },
-    { "name": "Hardened Scales", "type": "Enchantment", "role": "value" },
-    { "name": "Ozolith, the Shattered Spire", "type": "Artifact", "role": "value" },
-    { "name": "Champion of Lambholt", "type": "Creature", "role": "finishers" },
-    { "name": "Tempestra, Dame of Games", "type": "Creature", "role": "value" },
-    { "name": "Esper Sentinel", "type": "Creature", "role": "card-draw" },
-
-    { "name": "Cyclonic Rift", "type": "Instant", "role": "removal" },
-    { "name": "Swords to Plowshares", "type": "Instant", "role": "removal" },
-    { "name": "Beast Within", "type": "Instant", "role": "removal" },
-    { "name": "Heroic Intervention", "type": "Instant", "role": "protection" },
-    { "name": "Assassin's Trophy", "type": "Instant", "role": "removal" },
-    { "name": "Shellshock", "type": "Instant", "role": "removal" },
-    { "name": "Continue?", "type": "Instant", "role": "protection" },
-
-    { "name": "Blasphemous Act", "type": "Sorcery", "role": "board-wipes" },
-    { "name": "Vanquish the Horde", "type": "Sorcery", "role": "board-wipes" },
-    { "name": "Wave Goodbye", "type": "Sorcery", "role": "board-wipes" },
-
-    { "name": "Inspiring Call", "type": "Instant", "role": "protection" }
+    {
+      "name": "Command Tower",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Exotic Orchard",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Temple Garden",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Breeding Pool",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Otawara, Soaring City",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Bojuka Bog",
+      "type": "Land"
+    },
+    {
+      "name": "Path of Ancestry",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Sunpetal Grove",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Canopy Vista",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Fortified Village",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Hinterland Harbor",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Prairie Stream",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Rootbound Crag",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Cinder Glade",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Thriving Grove",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Thriving Heath",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Thriving Isle",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Thriving Bluff",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Vivid Grove",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Vivid Meadow",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Vivid Creek",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Evolving Wilds",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Terramorphic Expanse",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Rogue's Passage",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Reliquary Tower",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Forest",
+      "type": "Land",
+      "role": "lands",
+      "quantity": 4
+    },
+    {
+      "name": "Plains",
+      "type": "Land",
+      "role": "lands",
+      "quantity": 3
+    },
+    {
+      "name": "Island",
+      "type": "Land",
+      "role": "lands",
+      "quantity": 2
+    },
+    {
+      "name": "Mountain",
+      "type": "Land",
+      "role": "lands",
+      "quantity": 1
+    },
+    {
+      "name": "Swamp",
+      "type": "Land",
+      "role": "lands",
+      "quantity": 1
+    },
+    {
+      "name": "Adarkar Wastes",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Simic Growth Chamber",
+      "type": "Land",
+      "role": "lands"
+    },
+    {
+      "name": "Sol Ring",
+      "type": "Artifact",
+      "role": "ramp"
+    },
+    {
+      "name": "Arcane Signet",
+      "type": "Artifact",
+      "role": "ramp"
+    },
+    {
+      "name": "Chromatic Lantern",
+      "type": "Artifact",
+      "role": "ramp"
+    },
+    {
+      "name": "Nature's Lore",
+      "type": "Sorcery",
+      "role": "ramp"
+    },
+    {
+      "name": "Kodama's Reach",
+      "type": "Sorcery",
+      "role": "ramp"
+    },
+    {
+      "name": "Cultivate",
+      "type": "Sorcery",
+      "role": "ramp"
+    },
+    {
+      "name": "Peregrin Took",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Everything Pizza",
+      "type": "Artifact",
+      "role": "ramp"
+    },
+    {
+      "name": "Mona Lisa, Ever Adaptable",
+      "type": "Creature",
+      "role": "ramp"
+    },
+    {
+      "name": "Ninja Pizza",
+      "type": "Enchantment",
+      "role": "ramp"
+    },
+    {
+      "name": "Skullclamp",
+      "type": "Artifact",
+      "role": "card-draw"
+    },
+    {
+      "name": "Mystic Remora",
+      "type": "Enchantment",
+      "role": "card-draw"
+    },
+    {
+      "name": "Mikey & Leo, Chaos & Order",
+      "type": "Creature",
+      "role": "card-draw"
+    },
+    {
+      "name": "Caretaker's Talent",
+      "type": "Enchantment",
+      "role": "card-draw"
+    },
+    {
+      "name": "Idol of Oblivion",
+      "type": "Artifact",
+      "role": "card-draw"
+    },
+    {
+      "name": "Basking Broodscale",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "High Score",
+      "type": "Enchantment",
+      "role": "card-draw"
+    },
+    {
+      "name": "Parallel Lives",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Anointed Procession",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Mondrak, Glory Dominus",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Doubling Season",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Avenger of Zendikar",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Tendershoot Dryad",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Scute Swarm",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "The Council of Four",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Tireless Tracker",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Rosie Cotton of South Lane",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Smothering Tithe",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "April O'Neil, Live on the Scene",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Lita, Little Orphan Amphibian",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Endless Foot Assault",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Elspeth, Storm Slayer",
+      "type": "Planeswalker",
+      "role": "value"
+    },
+    {
+      "name": "Academy Manufactor",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Cathars' Crusade",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Aura Shards",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Michelangelo, Weirdness to 11",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Mutagen Man, Living Ooze",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Cyberdrive Awakener",
+      "type": "Creature",
+      "role": "finishers"
+    },
+    {
+      "name": "Herald of Secret Streams",
+      "type": "Creature",
+      "role": "finishers"
+    },
+    {
+      "name": "Scurry Oak",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Second Harvest",
+      "type": "Instant",
+      "role": "finishers"
+    },
+    {
+      "name": "Herd Baloth",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Casey Jones, Back Alley Brute",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Vigor",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Hardened Scales",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Ozolith, the Shattered Spire",
+      "type": "Artifact",
+      "role": "value"
+    },
+    {
+      "name": "Mechanized Production",
+      "type": "Enchantment",
+      "role": "finishers"
+    },
+    {
+      "name": "Tempestra, Dame of Games",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Esper Sentinel",
+      "type": "Creature",
+      "role": "card-draw"
+    },
+    {
+      "name": "Cyclonic Rift",
+      "type": "Instant",
+      "role": "removal"
+    },
+    {
+      "name": "Swords to Plowshares",
+      "type": "Instant",
+      "role": "removal"
+    },
+    {
+      "name": "Beast Within",
+      "type": "Instant",
+      "role": "removal"
+    },
+    {
+      "name": "Heroic Intervention",
+      "type": "Instant",
+      "role": "protection"
+    },
+    {
+      "name": "Assassin's Trophy",
+      "type": "Instant",
+      "role": "removal"
+    },
+    {
+      "name": "Shellshock",
+      "type": "Instant",
+      "role": "removal"
+    },
+    {
+      "name": "Continue?",
+      "type": "Instant",
+      "role": "protection"
+    },
+    {
+      "name": "Blasphemous Act",
+      "type": "Sorcery",
+      "role": "board-wipes"
+    },
+    {
+      "name": "Vanquish the Horde",
+      "type": "Sorcery",
+      "role": "board-wipes"
+    },
+    {
+      "name": "Wave Goodbye",
+      "type": "Sorcery",
+      "role": "board-wipes"
+    },
+    {
+      "name": "Inspiring Call",
+      "type": "Instant",
+      "role": "protection"
+    }
   ],
   "tokens": [
     {
+      "name": "Beast",
+      "type_line": "Token Creature — Beast",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "3b584d93-5681-4ecd-953c-5ef58307caab",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/b/3b584d93-5681-4ecd-953c-5ef58307caab.jpg?1752946408",
+      "produced_by": [
+        "Beast Within"
+      ]
+    },
+    {
+      "name": "Beast",
+      "type_line": "Token Creature — Beast",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "a1eff7f8-b645-41cb-bcd9-3dc1ab10200e",
+      "image_uri": "https://cards.scryfall.io/normal/front/a/1/a1eff7f8-b645-41cb-bcd9-3dc1ab10200e.jpg?1641306190",
+      "produced_by": [
+        "Herd Baloth"
+      ]
+    },
+    {
+      "name": "Clue",
+      "type_line": "Token Artifact — Clue",
+      "oracle_text": "{2}, Sacrifice this token: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "764a906c-8b27-4ffa-bdc3-7825c6919d3e",
+      "image_uri": "https://cards.scryfall.io/normal/front/7/6/764a906c-8b27-4ffa-bdc3-7825c6919d3e.jpg?1712316807",
+      "produced_by": [
+        "Academy Manufactor"
+      ]
+    },
+    {
+      "name": "Clue",
+      "type_line": "Token Artifact — Clue",
+      "oracle_text": "{2}, Sacrifice this token: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "c321b9e4-ab7e-4e8a-988f-5463c776d685",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/3/c321b9e4-ab7e-4e8a-988f-5463c776d685.jpg?1771590258",
+      "produced_by": [
+        "April O'Neil, Live on the Scene"
+      ]
+    },
+    {
+      "name": "Clue",
+      "type_line": "Token Artifact — Clue",
+      "oracle_text": "{2}, Sacrifice this token: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "15866ed4-1ca3-427f-99ba-ee26ede9ae18",
+      "image_uri": "https://cards.scryfall.io/normal/front/1/5/15866ed4-1ca3-427f-99ba-ee26ede9ae18.jpg?1752946432",
+      "produced_by": [
+        "Tireless Tracker"
+      ]
+    },
+    {
+      "name": "Eldrazi",
+      "type_line": "Token Creature — Eldrazi",
+      "oracle_text": "",
+      "power": "10",
+      "toughness": "10",
+      "colors": [],
+      "scryfall_id": "ce6d2786-ef9c-4772-bb71-697131c3c3a4",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/e/ce6d2786-ef9c-4772-bb71-697131c3c3a4.jpg?1742506258",
+      "produced_by": [
+        "Idol of Oblivion"
+      ]
+    },
+    {
+      "name": "Eldrazi Spawn",
+      "type_line": "Token Creature — Eldrazi Spawn",
+      "oracle_text": "Sacrifice this creature: Add {C}.",
+      "power": "0",
+      "toughness": "1",
+      "colors": [],
+      "scryfall_id": "e32795e1-5548-43ef-8cd6-c605a19ef708",
+      "image_uri": "https://cards.scryfall.io/normal/front/e/3/e32795e1-5548-43ef-8cd6-c605a19ef708.jpg?1717192505",
+      "produced_by": [
+        "Basking Broodscale"
+      ]
+    },
+    {
+      "name": "Food",
+      "type_line": "Token Artifact — Food",
+      "oracle_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "600d5d22-62a0-49c9-b050-90a2566e8caf",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/0/600d5d22-62a0-49c9-b050-90a2566e8caf.jpg?1712320125",
+      "produced_by": [
+        "Academy Manufactor"
+      ]
+    },
+    {
+      "name": "Food",
+      "type_line": "Token Artifact — Food",
+      "oracle_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "e2b62092-57df-4d95-b2b9-961794e7c20b",
+      "image_uri": "https://cards.scryfall.io/normal/front/e/2/e2b62092-57df-4d95-b2b9-961794e7c20b.jpg?1771590558",
+      "produced_by": [
+        "Lita, Little Orphan Amphibian",
+        "Ninja Pizza"
+      ]
+    },
+    {
+      "name": "Food",
+      "type_line": "Token Artifact — Food",
+      "oracle_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "4a029bdc-92e3-4d85-8af5-e33429a5f017",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/a/4a029bdc-92e3-4d85-8af5-e33429a5f017.jpg?1699974438",
+      "produced_by": [
+        "Peregrin Took",
+        "Rosie Cotton of South Lane"
+      ]
+    },
+    {
+      "name": "Insect",
+      "type_line": "Token Creature — Insect",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "7dab2339-52d8-4e66-87a8-181a87ab0fd3",
+      "image_uri": "https://cards.scryfall.io/normal/front/7/d/7dab2339-52d8-4e66-87a8-181a87ab0fd3.jpg?1726237690",
+      "produced_by": [
+        "Scute Swarm"
+      ]
+    },
+    {
+      "name": "Knight",
+      "type_line": "Token Creature — Knight",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "50633bba-9402-4d8c-a277-c370f25bd01f",
+      "image_uri": "https://cards.scryfall.io/normal/front/5/0/50633bba-9402-4d8c-a277-c370f25bd01f.jpg?1675455742",
+      "produced_by": [
+        "The Council of Four"
+      ]
+    },
+    {
       "name": "Mutagen",
       "type_line": "Token Artifact — Mutagen",
-      "oracle_text": "{1}, {T}, Sacrifice this artifact: Put a +1/+1 counter on target creature. Activate only as a sorcery.",
+      "oracle_text": "{1}, {T}, Sacrifice this token: Put a +1/+1 counter on target creature. Activate only as a sorcery.",
+      "power": null,
+      "toughness": null,
       "colors": [],
       "scryfall_id": "6559c423-449c-4e8e-8384-3ce78183e317",
       "image_uri": "https://cards.scryfall.io/normal/front/6/5/6559c423-449c-4e8e-8384-3ce78183e317.jpg?1760102885",
       "produced_by": [
-        "Donatello, the Brains",
         "Michelangelo, Weirdness to 11",
-        "Mutagen Man, Living Ooze",
         "Mona Lisa, Ever Adaptable",
+        "Mutagen Man, Living Ooze",
         "Shellshock"
+      ]
+    },
+    {
+      "name": "Ninja",
+      "type_line": "Token Creature — Ninja",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "B"
+      ],
+      "scryfall_id": "a7b76498-d696-40d1-b7c7-91657525b44f",
+      "image_uri": "https://cards.scryfall.io/normal/front/a/7/a7b76498-d696-40d1-b7c7-91657525b44f.jpg?1771590477",
+      "produced_by": [
+        "Endless Foot Assault"
       ]
     },
     {
@@ -684,7 +1395,9 @@
       "oracle_text": "",
       "power": "0",
       "toughness": "1",
-      "colors": ["G"],
+      "colors": [
+        "G"
+      ],
       "scryfall_id": "3db07715-d315-4361-8af5-ce68d20e6c08",
       "image_uri": "https://cards.scryfall.io/normal/front/3/d/3db07715-d315-4361-8af5-ce68d20e6c08.jpg?1767955008",
       "produced_by": [
@@ -697,90 +1410,13 @@
       "oracle_text": "",
       "power": "1",
       "toughness": "1",
-      "colors": ["G"],
-      "scryfall_id": "34032448-fe31-44c7-845c-37fea0b8e762",
-      "image_uri": "https://cards.scryfall.io/normal/front/3/4/34032448-fe31-44c7-845c-37fea0b8e762.jpg?1767955055",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "925715e5-bb94-406b-82b1-93b4d51f0cc2",
+      "image_uri": "https://cards.scryfall.io/normal/front/9/2/925715e5-bb94-406b-82b1-93b4d51f0cc2.jpg?1561757588",
       "produced_by": [
         "Tendershoot Dryad"
-      ]
-    },
-    {
-      "name": "Insect",
-      "type_line": "Token Creature — Insect",
-      "oracle_text": "",
-      "power": "1",
-      "toughness": "1",
-      "colors": ["G"],
-      "scryfall_id": "e17b804f-4dca-4101-ba8f-b732504ac488",
-      "image_uri": "https://cards.scryfall.io/normal/front/e/1/e17b804f-4dca-4101-ba8f-b732504ac488.jpg?1750188094",
-      "produced_by": [
-        "Scute Swarm"
-      ]
-    },
-    {
-      "name": "Treasure",
-      "type_line": "Token Artifact — Treasure",
-      "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.",
-      "colors": [],
-      "scryfall_id": "4837a3f1-ca7f-41e5-a5d1-729c8495b0e8",
-      "image_uri": "https://cards.scryfall.io/normal/front/4/8/4837a3f1-ca7f-41e5-a5d1-729c8495b0e8.jpg?1771590279",
-      "produced_by": [
-        "Smothering Tithe",
-        "Academy Manufactor"
-      ]
-    },
-    {
-      "name": "Food",
-      "type_line": "Token Artifact — Food",
-      "oracle_text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
-      "colors": [],
-      "scryfall_id": "e2b62092-57df-4d95-b2b9-961794e7c20b",
-      "image_uri": "https://cards.scryfall.io/normal/front/e/2/e2b62092-57df-4d95-b2b9-961794e7c20b.jpg?1771590558",
-      "produced_by": [
-        "Rosie Cotton of South Lane",
-        "Academy Manufactor",
-        "Lita, Little Orphan Amphibian",
-        "Ninja Pizza",
-        "Peregrin Took"
-      ]
-    },
-    {
-      "name": "Clue",
-      "type_line": "Token Artifact — Clue",
-      "oracle_text": "{2}, Sacrifice this artifact: Draw a card.",
-      "colors": [],
-      "scryfall_id": "c321b9e4-ab7e-4e8a-988f-5463c776d685",
-      "image_uri": "https://cards.scryfall.io/normal/front/c/3/c321b9e4-ab7e-4e8a-988f-5463c776d685.jpg?1771590258",
-      "produced_by": [
-        "Tireless Tracker",
-        "Academy Manufactor",
-        "April O'Neil, Live on the Scene"
-      ]
-    },
-    {
-      "name": "Beast",
-      "type_line": "Token Creature — Beast",
-      "oracle_text": "",
-      "power": "3",
-      "toughness": "3",
-      "colors": ["G"],
-      "scryfall_id": "3b584d93-5681-4ecd-953c-5ef58307caab",
-      "image_uri": "https://cards.scryfall.io/normal/front/3/b/3b584d93-5681-4ecd-953c-5ef58307caab.jpg?1752946408",
-      "produced_by": [
-        "Beast Within"
-      ]
-    },
-    {
-      "name": "Ninja",
-      "type_line": "Token Creature — Ninja",
-      "oracle_text": "",
-      "power": "1",
-      "toughness": "1",
-      "colors": ["B"],
-      "scryfall_id": "a7b76498-d696-40d1-b7c7-91657525b44f",
-      "image_uri": "https://cards.scryfall.io/normal/front/a/7/a7b76498-d696-40d1-b7c7-91657525b44f.jpg?1771590477",
-      "produced_by": [
-        "Endless Foot Assault"
       ]
     },
     {
@@ -789,37 +1425,54 @@
       "oracle_text": "",
       "power": "1",
       "toughness": "1",
-      "colors": ["W"],
-      "scryfall_id": "c459f2ec-2aa3-44f6-999f-b1467dd4e27c",
-      "image_uri": "https://cards.scryfall.io/normal/front/c/4/c459f2ec-2aa3-44f6-999f-b1467dd4e27c.jpg?1749245673",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "6455d903-6996-448f-9148-9068febecb00",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/4/6455d903-6996-448f-9148-9068febecb00.jpg?1742506671",
       "produced_by": [
         "Elspeth, Storm Slayer"
       ]
     },
     {
-      "name": "Knight",
-      "type_line": "Token Creature — Knight",
+      "name": "Squirrel",
+      "type_line": "Token Creature — Squirrel",
       "oracle_text": "",
-      "power": "2",
-      "toughness": "2",
-      "colors": ["W"],
-      "scryfall_id": "a7758a0b-9e85-4b4a-bf1c-ffcc6761dbad",
-      "image_uri": "https://cards.scryfall.io/normal/front/a/7/a7758a0b-9e85-4b4a-bf1c-ffcc6761dbad.jpg?1748704059",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "977ddd05-1aae-46fc-95ce-866710d1c5c6",
+      "image_uri": "https://cards.scryfall.io/normal/front/9/7/977ddd05-1aae-46fc-95ce-866710d1c5c6.jpg?1641306196",
       "produced_by": [
-        "The Council of Four"
+        "Scurry Oak"
       ]
     },
     {
-      "name": "Eldrazi",
-      "type_line": "Token Creature — Eldrazi",
-      "oracle_text": "",
-      "power": "10",
-      "toughness": "10",
+      "name": "Treasure",
+      "type_line": "Token Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
       "colors": [],
-      "scryfall_id": "3a8b3f68-43b5-4aa0-8a36-1f1c7a4abae2",
-      "image_uri": "https://cards.scryfall.io/normal/front/3/a/3a8b3f68-43b5-4aa0-8a36-1f1c7a4abae2.jpg?1752946306",
+      "scryfall_id": "7ec6f053-96f7-4e57-b2eb-4e7699a40a4f",
+      "image_uri": "https://cards.scryfall.io/normal/front/7/e/7ec6f053-96f7-4e57-b2eb-4e7699a40a4f.jpg?1712317080",
       "produced_by": [
-        "Idol of Oblivion"
+        "Academy Manufactor"
+      ]
+    },
+    {
+      "name": "Treasure",
+      "type_line": "Token Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "cb7b5024-3a0b-4f14-977e-ba6c4c2567c9",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/b/cb7b5024-3a0b-4f14-977e-ba6c4c2567c9.jpg?1693611266",
+      "produced_by": [
+        "Smothering Tithe"
       ]
     }
   ]
