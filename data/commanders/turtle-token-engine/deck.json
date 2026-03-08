@@ -1,0 +1,826 @@
+{
+  "id": "turtle-token-engine",
+  "type": "commander",
+  "name": "Mutant Multiplication",
+  "subtitle": "Multiplicative Mutation",
+  "commander": "Leonardo, the Balance",
+  "partner": "Donatello, the Brains",
+  "cost": "$200-350",
+  "bracket": "3",
+  "gameChangers": 3,
+  "sources": [
+    {
+      "type": "youtube",
+      "name": "The Command Zone #727 — TMNT Upgrade",
+      "url": "https://www.youtube.com/watch?v=lq102tK_CV8",
+      "detail": "Leo + Michelangelo build (143K views)"
+    },
+    {
+      "type": "youtube",
+      "name": "Nitpicking Nerds — Leo + April Build",
+      "url": "https://www.youtube.com/watch?v=3uZi2i0J6Uk",
+      "detail": "25K views"
+    },
+    {
+      "type": "youtube",
+      "name": "Joel are Magic — Leo + Michelangelo",
+      "url": "https://www.youtube.com/watch?v=dFQyFVHeCuo",
+      "detail": "25K views"
+    },
+    {
+      "type": "youtube",
+      "name": "Jurassic Magic — Leo + Raphael",
+      "url": "https://www.youtube.com/watch?v=sot2ir2UgOk",
+      "detail": "4K views"
+    },
+    {
+      "type": "edhrec",
+      "name": "EDHREC — Leonardo, the Balance",
+      "url": "https://edhrec.com/commanders/leonardo-the-balance"
+    },
+    {
+      "type": "scryfall",
+      "name": "Scryfall — TMC card verification",
+      "url": "https://scryfall.com/sets/tmc"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Claude analysis",
+      "detail": "Donatello partner selection for token-focused strategy, synergy identification, bracket 3 optimization"
+    }
+  ],
+  "guideContent": {
+    "strategyOverview": "Bant token engine that exploits Donatello's replacement effect — every token you create also produces a Mutagen artifact. Leonardo puts +1/+1 counters on each creature whenever a token enters, building a wide and tall board simultaneously. Token doublers like Parallel Lives and Anointed Procession multiply both the original tokens AND the bonus Mutagens exponentially. Academy Manufactor converts any Food, Clue, or Treasure into all three types, each triggering Donatello for additional Mutagens. The deck finishes games through Cyberdrive Awakener (turning Mutagen artifacts into 4/4 flyers), Herald of Secret Streams (making all countered creatures unblockable), or Cyclonic Rift into an alpha strike with the token army."
+  },
+  "categories": [
+    {
+      "name": "Token Doublers",
+      "cards": [
+        "Parallel Lives",
+        "Anointed Procession",
+        "Mondrak, Glory Dominus",
+        "Doubling Season",
+        "Elspeth, Storm Slayer"
+      ]
+    },
+    {
+      "name": "Token Generators",
+      "cards": [
+        "Avenger of Zendikar",
+        "Tendershoot Dryad",
+        "Scute Swarm",
+        "The Council of Four",
+        "Tireless Tracker",
+        "Rosie Cotton of South Lane",
+        "Smothering Tithe",
+        "April O'Neil, Live on the Scene",
+        "Lita, Little Orphan Amphibian",
+        "Endless Foot Assault",
+        "Peregrin Took"
+      ]
+    },
+    {
+      "name": "Token/Counter Synergy",
+      "cards": [
+        "Academy Manufactor",
+        "Cathars' Crusade",
+        "Aura Shards",
+        "Caretaker's Talent",
+        "Michelangelo, Weirdness to 11",
+        "Mutagen Man, Living Ooze",
+        "Hardened Scales",
+        "Ozolith, the Shattered Spire"
+      ]
+    },
+    {
+      "name": "Finishers",
+      "cards": [
+        "Cyberdrive Awakener",
+        "Herald of Secret Streams",
+        "Beastmaster Ascension",
+        "Second Harvest",
+        "Casey Jones, Back Alley Brute",
+        "Champion of Lambholt"
+      ]
+    },
+    {
+      "name": "Card Draw",
+      "cards": [
+        "Skullclamp",
+        "Mikey & Leo, Chaos & Order",
+        "Mystic Remora",
+        "Esper Sentinel",
+        "Caretaker's Talent",
+        "Idol of Oblivion"
+      ]
+    },
+    {
+      "name": "Interaction",
+      "cards": [
+        "Cyclonic Rift",
+        "Swords to Plowshares",
+        "Beast Within",
+        "Heroic Intervention",
+        "Assassin's Trophy",
+        "Aura Shards",
+        "Blasphemous Act",
+        "Vanquish the Horde"
+      ]
+    }
+  ],
+  "winConditions": [
+    {
+      "title": "Cyclonic Rift Alpha Strike",
+      "cards": [
+        "Cyclonic Rift",
+        "Leonardo, the Balance"
+      ],
+      "description": "Overload Cyclonic Rift at instant speed to bounce all opponents' nonland permanents. Swing with the token army that has been accumulating +1/+1 counters from Leonardo's triggers. The cleanest finisher — one-sided board clear into lethal combat.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
+    },
+    {
+      "title": "Cyberdrive Awakener",
+      "cards": [
+        "Cyberdrive Awakener",
+        "Donatello, the Brains"
+      ],
+      "description": "Cast Cyberdrive Awakener to turn all noncreature artifacts into 4/4 flying creatures until end of turn. With 10+ Mutagen tokens from Donatello's triggers, this represents 40+ flying damage. Must attack the same turn — no haste needed since the artifacts become creatures on your turn.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
+    },
+    {
+      "title": "Herald Unblockable Army",
+      "cards": [
+        "Herald of Secret Streams",
+        "Leonardo, the Balance"
+      ],
+      "description": "Herald of Secret Streams makes all creatures with +1/+1 counters unblockable. Leonardo's trigger puts counters on every creature whenever a token enters. With a board of 5+ creatures, each carrying multiple counters, the unblockable army deals lethal in one swing.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
+    },
+    {
+      "title": "Beastmaster Ascension Overrun",
+      "cards": [
+        "Beastmaster Ascension"
+      ],
+      "description": "Beastmaster Ascension gains quest counters for each attacking creature. With a token army, a single attack puts 7+ quest counters, activating the +5/+5 buff for all creatures. Combined with Leonardo's counters, even 1/1 tokens become 8/8+ attackers.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
+    },
+    {
+      "title": "Second Harvest Burst",
+      "cards": [
+        "Second Harvest",
+        "Leonardo, the Balance",
+        "Donatello, the Brains"
+      ],
+      "description": "Cast Second Harvest at instant speed to create a copy of each token you control. Every new token triggers Leonardo for +1/+1 counters and Donatello for bonus Mutagens. With 10 tokens on board, this doubles to 20+ and triggers a cascade of counter placement across all creatures.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
+    },
+    {
+      "title": "Counter Avalanche",
+      "cards": [
+        "Doubling Season",
+        "Cathars' Crusade",
+        "Leonardo, the Balance"
+      ],
+      "description": "Doubling Season doubles both tokens and counters. Cathars' Crusade adds +1/+1 counters for each creature ETB with no once-per-turn limit. Combined with Leonardo's triggers and token generation, a single Avenger of Zendikar creates 14+ Plant tokens, each triggering 3+ counter placements doubled by Doubling Season, resulting in 20/20+ creatures.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Strategic win path identification"
+        }
+      ]
+    }
+  ],
+  "synergies": [
+    {
+      "title": "Manufactor Assembly Line",
+      "cards": [
+        "Academy Manufactor",
+        "Donatello, the Brains"
+      ],
+      "description": "Any Food, Clue, or Treasure creation becomes all three token types via Manufactor. Donatello adds a Mutagen to the batch. Result: 4 tokens from a single trigger. With a doubler: 8 tokens.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Core engine synergy"
+        }
+      ]
+    },
+    {
+      "title": "Passive Mutagen Factory",
+      "cards": [
+        "Smothering Tithe",
+        "Donatello, the Brains"
+      ],
+      "description": "Each opponent's draw step creates a Treasure (unless they pay {2}). Donatello adds a Mutagen to each Treasure. Passive token generation that accelerates every turn cycle without spending mana.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Passive value engine"
+        }
+      ]
+    },
+    {
+      "title": "Unlimited Counter Stacking",
+      "cards": [
+        "Cathars' Crusade",
+        "Leonardo, the Balance"
+      ],
+      "description": "Cathars' Crusade has no once-per-turn limit — every creature ETB adds +1/+1 to all creatures. Combined with Leonardo's token-entry trigger, a burst of 5 creature tokens creates 5 Crusade triggers (25 total counters distributed) plus 5 Leonardo triggers. The board grows exponentially with each token wave.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Counter multiplication"
+        }
+      ]
+    },
+    {
+      "title": "Mutagen Air Force",
+      "cards": [
+        "Cyberdrive Awakener",
+        "Donatello, the Brains"
+      ],
+      "description": "Donatello accumulates Mutagen artifact tokens passively. Cyberdrive Awakener turns all noncreature artifacts into 4/4 flyers until end of turn. 10 Mutagens + other artifacts = 40+ flying damage in one swing.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Artifact-to-creature finisher"
+        }
+      ]
+    },
+    {
+      "title": "Exponential Doublers",
+      "cards": [
+        "Parallel Lives",
+        "Anointed Procession",
+        "Donatello, the Brains"
+      ],
+      "description": "With Donatello, creating 1 token becomes 1 + 1 Mutagen. A single doubler makes that 2 + 2 Mutagens (4 total). Two doublers: 4 + 4 Mutagens (8 total). Each additional doubler multiplies the entire output.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Multiplicative scaling"
+        }
+      ]
+    },
+    {
+      "title": "Rosie Cotton Chain Reaction",
+      "cards": [
+        "Rosie Cotton of South Lane",
+        "Leonardo, the Balance"
+      ],
+      "description": "Rosie puts a +1/+1 counter on another creature whenever any token is created. Leonardo puts counters on each creature when a token enters. Together, every single token creation event stacks multiple counters across the board.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Counter synergy chain"
+        }
+      ]
+    },
+    {
+      "title": "Vigor + Blasphemous Act",
+      "cards": [
+        "Vigor",
+        "Blasphemous Act"
+      ],
+      "description": "Blasphemous Act deals 13 damage to each creature. With Vigor on the battlefield, damage to your creatures is prevented and replaced with +1/+1 counters. Each of your creatures gets 13 +1/+1 counters. Opponents' creatures die.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Board wipe into pump"
+        }
+      ]
+    },
+    {
+      "title": "Tempestra Cloning",
+      "cards": [
+        "Tempestra, Dame of Games",
+        "Donatello, the Brains"
+      ],
+      "description": "Sacrifice a Mutagen token to Tempestra's ability to create a copy of any creature. The token copy entering triggers Leonardo's counters and Donatello creates another Mutagen, partially refueling the cost.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Sacrifice artifact synergy"
+        }
+      ]
+    },
+    {
+      "title": "Wave Goodbye Wipe",
+      "cards": [
+        "Wave Goodbye",
+        "Leonardo, the Balance"
+      ],
+      "description": "Wave Goodbye bounces each creature with the fewest counters. Leonardo's triggers stack +1/+1 counters on your creatures, making them survive while opponents' creatures (with 0 counters) all get bounced.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "One-sided bounce synergy"
+        }
+      ]
+    },
+    {
+      "title": "Free Mutagen Activation",
+      "cards": [
+        "Mutagen Man, Living Ooze",
+        "Donatello, the Brains"
+      ],
+      "description": "Mutagen Man creates X Mutagens on ETB and reduces Mutagen activation cost by {1} (to free). Donatello adds another Mutagen to the batch. Free activation means each Mutagen instantly becomes a +1/+1 counter on any creature.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Cost reduction synergy"
+        }
+      ]
+    }
+  ],
+  "highlights": [
+    {
+      "name": "Doubling Season",
+      "price": "$40-60",
+      "isGameChanger": false,
+      "reason": "Doubles both tokens AND counters. With Leonardo placing counters and Donatello creating Mutagen tokens, every trigger is amplified twice. The single highest-impact card for this strategy.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Parallel Lives",
+      "price": "$15-25",
+      "isGameChanger": false,
+      "reason": "Core token doubler. With Donatello: 1 token creation becomes 2 originals + 2 Mutagens. Stacks multiplicatively with Anointed Procession for 4x output.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Anointed Procession",
+      "price": "$15-25",
+      "isGameChanger": false,
+      "reason": "White Parallel Lives. Redundancy for the doubler strategy. Two doublers active = 4x token output from every creation event.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Smothering Tithe",
+      "price": "$25-35",
+      "isGameChanger": true,
+      "reason": "Game Changer #1. Creates Treasure tokens on every opponent's draw unless they pay {2}. In a 4-player game, generates 3+ Treasures per turn cycle. Each triggers Donatello for bonus Mutagens.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Cyclonic Rift",
+      "price": "$25-35",
+      "isGameChanger": true,
+      "reason": "Game Changer #2. Instant-speed overload bounces all opponents' nonland permanents. Keep your entire token army and swing for lethal. The best finisher for go-wide strategies.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Aura Shards",
+      "price": "$8-12",
+      "isGameChanger": true,
+      "reason": "Game Changer #3. Destroys an artifact or enchantment whenever a creature enters. With token generation, this removes every problematic permanent opponents control.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Academy Manufactor",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Converts any Food, Clue, or Treasure creation into all three types. Each type triggers Donatello for a Mutagen. One token trigger becomes 4 tokens (8 with a doubler).",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Core engine piece"
+        }
+      ]
+    },
+    {
+      "name": "Cyberdrive Awakener",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Turns all noncreature artifacts into 4/4 flyers until end of turn. 10 Mutagen tokens = 40 flying damage. Must attack the same turn.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Mutagen artifact finisher"
+        }
+      ]
+    },
+    {
+      "name": "Cathars' Crusade",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "No once-per-turn limit. Every creature ETB puts +1/+1 on all creatures. A burst of 5 tokens distributes 25 counters. Doubling Season doubles them to 50.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Avenger of Zendikar",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Creates Plant tokens equal to lands you control (7-10 typically). Each Plant triggers Leonardo's counters and Donatello's Mutagens. Landfall pumps all Plants. With doublers: 14-20+ tokens.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Herald of Secret Streams",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Creatures with +1/+1 counters can't be blocked. Leonardo puts counters on everything. The entire token army becomes unblockable.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Evasion finisher"
+        }
+      ]
+    },
+    {
+      "name": "Elspeth, Storm Slayer",
+      "price": "$15-25",
+      "isGameChanger": false,
+      "reason": "Token doubler on a planeswalker. Static ability doubles all token creation, stacking multiplicatively with Parallel Lives and Anointed Procession. Also creates Soldiers (+1), distributes +1/+1 counters with flying for alpha strikes (0), and removes threats (−3).",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall — Elspeth, Storm Slayer",
+          "url": "https://scryfall.com/card/fdn/16/elspeth-storm-slayer"
+        }
+      ]
+    },
+    {
+      "name": "Hardened Scales",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "At just {G}, adds +1 to every +1/+1 counter placement. Stacks with Michelangelo and Ozolith for triple amplification. Leonardo's base 1 counter per creature per token becomes 4 with all three active.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    },
+    {
+      "name": "Mondrak, Glory Dominus",
+      "price": "$10-15",
+      "isGameChanger": false,
+      "reason": "Token doubler on a 4/4 body. Can sacrifice 2 artifacts (Mutagens) to become indestructible. Doubles output while being resilient to removal.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Leonardo, the Balance",
+          "url": "https://edhrec.com/commanders/leonardo-the-balance"
+        }
+      ]
+    }
+  ],
+  "decklist": [
+    { "name": "Command Tower", "type": "Land", "role": "lands" },
+    { "name": "Exotic Orchard", "type": "Land", "role": "lands" },
+    { "name": "Temple Garden", "type": "Land", "role": "lands" },
+    { "name": "Breeding Pool", "type": "Land", "role": "lands" },
+    { "name": "Otawara, Soaring City", "type": "Land", "role": "lands" },
+    { "name": "Bojuka Bog", "type": "Land" },
+    { "name": "Path of Ancestry", "type": "Land", "role": "lands" },
+    { "name": "Sunpetal Grove", "type": "Land", "role": "lands" },
+    { "name": "Canopy Vista", "type": "Land", "role": "lands" },
+    { "name": "Fortified Village", "type": "Land", "role": "lands" },
+    { "name": "Hinterland Harbor", "type": "Land", "role": "lands" },
+    { "name": "Prairie Stream", "type": "Land", "role": "lands" },
+    { "name": "Rootbound Crag", "type": "Land", "role": "lands" },
+    { "name": "Cinder Glade", "type": "Land", "role": "lands" },
+    { "name": "Thriving Grove", "type": "Land", "role": "lands" },
+    { "name": "Thriving Heath", "type": "Land", "role": "lands" },
+    { "name": "Thriving Isle", "type": "Land", "role": "lands" },
+    { "name": "Thriving Bluff", "type": "Land", "role": "lands" },
+    { "name": "Vivid Grove", "type": "Land", "role": "lands" },
+    { "name": "Vivid Meadow", "type": "Land", "role": "lands" },
+    { "name": "Vivid Creek", "type": "Land", "role": "lands" },
+    { "name": "Evolving Wilds", "type": "Land", "role": "lands" },
+    { "name": "Terramorphic Expanse", "type": "Land", "role": "lands" },
+    { "name": "Rogue's Passage", "type": "Land", "role": "lands" },
+    { "name": "Reliquary Tower", "type": "Land", "role": "lands" },
+    { "name": "Forest", "type": "Land", "role": "lands", "quantity": 4 },
+    { "name": "Plains", "type": "Land", "role": "lands", "quantity": 3 },
+    { "name": "Island", "type": "Land", "role": "lands", "quantity": 2 },
+    { "name": "Mountain", "type": "Land", "role": "lands", "quantity": 1 },
+    { "name": "Swamp", "type": "Land", "role": "lands", "quantity": 1 },
+    { "name": "Adarkar Wastes", "type": "Land", "role": "lands" },
+    { "name": "Simic Growth Chamber", "type": "Land", "role": "lands" },
+
+    { "name": "Sol Ring", "type": "Artifact", "role": "ramp" },
+    { "name": "Arcane Signet", "type": "Artifact", "role": "ramp" },
+    { "name": "Chromatic Lantern", "type": "Artifact", "role": "ramp" },
+    { "name": "Nature's Lore", "type": "Sorcery", "role": "ramp" },
+    { "name": "Kodama's Reach", "type": "Sorcery", "role": "ramp" },
+    { "name": "Cultivate", "type": "Sorcery", "role": "ramp" },
+    { "name": "Peregrin Took", "type": "Creature", "role": "value" },
+    { "name": "Everything Pizza", "type": "Artifact", "role": "ramp" },
+    { "name": "Mona Lisa, Ever Adaptable", "type": "Creature", "role": "ramp" },
+    { "name": "Ninja Pizza", "type": "Enchantment", "role": "ramp" },
+
+    { "name": "Skullclamp", "type": "Artifact", "role": "card-draw" },
+    { "name": "Mystic Remora", "type": "Enchantment", "role": "card-draw" },
+    { "name": "Mikey & Leo, Chaos & Order", "type": "Creature", "role": "card-draw" },
+    { "name": "Caretaker's Talent", "type": "Enchantment", "role": "card-draw" },
+    { "name": "Idol of Oblivion", "type": "Artifact", "role": "card-draw" },
+    { "name": "Arcade Cabinet", "type": "Artifact", "role": "value" },
+    { "name": "High Score", "type": "Enchantment", "role": "card-draw" },
+
+    { "name": "Parallel Lives", "type": "Enchantment", "role": "value" },
+    { "name": "Anointed Procession", "type": "Enchantment", "role": "value" },
+    { "name": "Mondrak, Glory Dominus", "type": "Creature", "role": "value" },
+    { "name": "Doubling Season", "type": "Enchantment", "role": "value" },
+
+    { "name": "Avenger of Zendikar", "type": "Creature", "role": "value" },
+    { "name": "Tendershoot Dryad", "type": "Creature", "role": "value" },
+    { "name": "Scute Swarm", "type": "Creature", "role": "value" },
+    { "name": "The Council of Four", "type": "Creature", "role": "value" },
+    { "name": "Tireless Tracker", "type": "Creature", "role": "value" },
+    { "name": "Rosie Cotton of South Lane", "type": "Creature", "role": "value" },
+    { "name": "Smothering Tithe", "type": "Enchantment", "role": "value" },
+    { "name": "April O'Neil, Live on the Scene", "type": "Creature", "role": "value" },
+    { "name": "Lita, Little Orphan Amphibian", "type": "Creature", "role": "value" },
+    { "name": "Endless Foot Assault", "type": "Enchantment", "role": "value" },
+    { "name": "Elspeth, Storm Slayer", "type": "Planeswalker", "role": "value" },
+
+    { "name": "Academy Manufactor", "type": "Creature", "role": "value" },
+    { "name": "Cathars' Crusade", "type": "Enchantment", "role": "value" },
+    { "name": "Aura Shards", "type": "Enchantment", "role": "value" },
+    { "name": "Michelangelo, Weirdness to 11", "type": "Creature", "role": "value" },
+    { "name": "Mutagen Man, Living Ooze", "type": "Creature", "role": "value" },
+
+    { "name": "Cyberdrive Awakener", "type": "Creature", "role": "finishers" },
+    { "name": "Herald of Secret Streams", "type": "Creature", "role": "finishers" },
+    { "name": "Beastmaster Ascension", "type": "Enchantment", "role": "finishers" },
+    { "name": "Second Harvest", "type": "Instant", "role": "finishers" },
+    { "name": "Evolution Witness", "type": "Creature", "role": "finishers" },
+
+    { "name": "Casey Jones, Back Alley Brute", "type": "Creature", "role": "value" },
+    { "name": "Vigor", "type": "Creature", "role": "value" },
+    { "name": "Hardened Scales", "type": "Enchantment", "role": "value" },
+    { "name": "Ozolith, the Shattered Spire", "type": "Artifact", "role": "value" },
+    { "name": "Champion of Lambholt", "type": "Creature", "role": "finishers" },
+    { "name": "Tempestra, Dame of Games", "type": "Creature", "role": "value" },
+    { "name": "Esper Sentinel", "type": "Creature", "role": "card-draw" },
+
+    { "name": "Cyclonic Rift", "type": "Instant", "role": "removal" },
+    { "name": "Swords to Plowshares", "type": "Instant", "role": "removal" },
+    { "name": "Beast Within", "type": "Instant", "role": "removal" },
+    { "name": "Heroic Intervention", "type": "Instant", "role": "protection" },
+    { "name": "Assassin's Trophy", "type": "Instant", "role": "removal" },
+    { "name": "Shellshock", "type": "Instant", "role": "removal" },
+    { "name": "Continue?", "type": "Instant", "role": "protection" },
+
+    { "name": "Blasphemous Act", "type": "Sorcery", "role": "board-wipes" },
+    { "name": "Vanquish the Horde", "type": "Sorcery", "role": "board-wipes" },
+    { "name": "Wave Goodbye", "type": "Sorcery", "role": "board-wipes" },
+
+    { "name": "Inspiring Call", "type": "Instant", "role": "protection" }
+  ],
+  "tokens": [
+    {
+      "name": "Mutagen",
+      "type_line": "Token Artifact — Mutagen",
+      "oracle_text": "{1}, {T}, Sacrifice this artifact: Put a +1/+1 counter on target creature. Activate only as a sorcery.",
+      "colors": [],
+      "scryfall_id": "6559c423-449c-4e8e-8384-3ce78183e317",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/5/6559c423-449c-4e8e-8384-3ce78183e317.jpg?1760102885",
+      "produced_by": [
+        "Donatello, the Brains",
+        "Michelangelo, Weirdness to 11",
+        "Mutagen Man, Living Ooze",
+        "Mona Lisa, Ever Adaptable",
+        "Shellshock"
+      ]
+    },
+    {
+      "name": "Plant",
+      "type_line": "Token Creature — Plant",
+      "oracle_text": "",
+      "power": "0",
+      "toughness": "1",
+      "colors": ["G"],
+      "scryfall_id": "3db07715-d315-4361-8af5-ce68d20e6c08",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/d/3db07715-d315-4361-8af5-ce68d20e6c08.jpg?1767955008",
+      "produced_by": [
+        "Avenger of Zendikar"
+      ]
+    },
+    {
+      "name": "Saproling",
+      "type_line": "Token Creature — Saproling",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["G"],
+      "scryfall_id": "34032448-fe31-44c7-845c-37fea0b8e762",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/4/34032448-fe31-44c7-845c-37fea0b8e762.jpg?1767955055",
+      "produced_by": [
+        "Tendershoot Dryad"
+      ]
+    },
+    {
+      "name": "Insect",
+      "type_line": "Token Creature — Insect",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["G"],
+      "scryfall_id": "e17b804f-4dca-4101-ba8f-b732504ac488",
+      "image_uri": "https://cards.scryfall.io/normal/front/e/1/e17b804f-4dca-4101-ba8f-b732504ac488.jpg?1750188094",
+      "produced_by": [
+        "Scute Swarm"
+      ]
+    },
+    {
+      "name": "Treasure",
+      "type_line": "Token Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.",
+      "colors": [],
+      "scryfall_id": "4837a3f1-ca7f-41e5-a5d1-729c8495b0e8",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/8/4837a3f1-ca7f-41e5-a5d1-729c8495b0e8.jpg?1771590279",
+      "produced_by": [
+        "Smothering Tithe",
+        "Academy Manufactor"
+      ]
+    },
+    {
+      "name": "Food",
+      "type_line": "Token Artifact — Food",
+      "oracle_text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
+      "colors": [],
+      "scryfall_id": "e2b62092-57df-4d95-b2b9-961794e7c20b",
+      "image_uri": "https://cards.scryfall.io/normal/front/e/2/e2b62092-57df-4d95-b2b9-961794e7c20b.jpg?1771590558",
+      "produced_by": [
+        "Rosie Cotton of South Lane",
+        "Academy Manufactor",
+        "Lita, Little Orphan Amphibian",
+        "Ninja Pizza",
+        "Peregrin Took"
+      ]
+    },
+    {
+      "name": "Clue",
+      "type_line": "Token Artifact — Clue",
+      "oracle_text": "{2}, Sacrifice this artifact: Draw a card.",
+      "colors": [],
+      "scryfall_id": "c321b9e4-ab7e-4e8a-988f-5463c776d685",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/3/c321b9e4-ab7e-4e8a-988f-5463c776d685.jpg?1771590258",
+      "produced_by": [
+        "Tireless Tracker",
+        "Academy Manufactor",
+        "April O'Neil, Live on the Scene"
+      ]
+    },
+    {
+      "name": "Beast",
+      "type_line": "Token Creature — Beast",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "colors": ["G"],
+      "scryfall_id": "3b584d93-5681-4ecd-953c-5ef58307caab",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/b/3b584d93-5681-4ecd-953c-5ef58307caab.jpg?1752946408",
+      "produced_by": [
+        "Beast Within"
+      ]
+    },
+    {
+      "name": "Ninja",
+      "type_line": "Token Creature — Ninja",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["B"],
+      "scryfall_id": "a7b76498-d696-40d1-b7c7-91657525b44f",
+      "image_uri": "https://cards.scryfall.io/normal/front/a/7/a7b76498-d696-40d1-b7c7-91657525b44f.jpg?1771590477",
+      "produced_by": [
+        "Endless Foot Assault"
+      ]
+    },
+    {
+      "name": "Soldier",
+      "type_line": "Token Creature — Soldier",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["W"],
+      "scryfall_id": "c459f2ec-2aa3-44f6-999f-b1467dd4e27c",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/4/c459f2ec-2aa3-44f6-999f-b1467dd4e27c.jpg?1749245673",
+      "produced_by": [
+        "Elspeth, Storm Slayer"
+      ]
+    },
+    {
+      "name": "Knight",
+      "type_line": "Token Creature — Knight",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "colors": ["W"],
+      "scryfall_id": "a7758a0b-9e85-4b4a-bf1c-ffcc6761dbad",
+      "image_uri": "https://cards.scryfall.io/normal/front/a/7/a7758a0b-9e85-4b4a-bf1c-ffcc6761dbad.jpg?1748704059",
+      "produced_by": [
+        "The Council of Four"
+      ]
+    },
+    {
+      "name": "Eldrazi",
+      "type_line": "Token Creature — Eldrazi",
+      "oracle_text": "",
+      "power": "10",
+      "toughness": "10",
+      "colors": [],
+      "scryfall_id": "3a8b3f68-43b5-4aa0-8a36-1f1c7a4abae2",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/a/3a8b3f68-43b5-4aa0-8a36-1f1c7a4abae2.jpg?1752946306",
+      "produced_by": [
+        "Idol of Oblivion"
+      ]
+    }
+  ]
+}

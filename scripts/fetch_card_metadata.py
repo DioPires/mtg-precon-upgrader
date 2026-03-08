@@ -28,9 +28,11 @@ def collect_card_names() -> set[str]:
         with open(path) as f:
             deck = json.load(f)
 
-        # Commander
+        # Commander(s)
         if deck.get("commander"):
             names.add(deck["commander"])
+        if deck.get("partner"):
+            names.add(deck["partner"])
 
         # Adds (notable/highlighted cards)
         for card in deck.get("adds", []):

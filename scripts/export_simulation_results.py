@@ -24,6 +24,7 @@ import mana_simulation_rakdos as sim_rakdos
 import mana_simulation_grixis as sim_grixis
 import mana_simulation_golgari as sim_golgari
 import mana_simulation_atraxa as sim_atraxa
+import mana_simulation_wubrg as sim_wubrg
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -461,6 +462,19 @@ def export_atraxa_b4(metadata: dict) -> dict:
     return _export_atraxa(4, "compleated-dominion", "Compleated Dominion", metadata)
 
 
+def export_wubrg(metadata: dict) -> dict:
+    """Export Turtle Token Engine (WUBRG) simulation."""
+    return _export_colored(
+        sim_module=sim_wubrg,
+        deck_id="turtle-token-engine",
+        deck_name="Turtle Token Engine",
+        commander_name="Donatello, the Brains",
+        commander_cmc=3,
+        colors=["W", "U", "B", "R", "G"],
+        metadata=metadata,
+    )
+
+
 # --- Main ---
 
 
@@ -471,6 +485,7 @@ DECKS = [
     ("eternal-harvest", "Eternal Harvest", export_golgari),
     ("phyrexian-perfection", "Phyrexian Perfection", export_atraxa_b3),
     ("compleated-dominion", "Compleated Dominion", export_atraxa_b4),
+    ("turtle-token-engine", "Turtle Token Engine", export_wubrg),
 ]
 
 
