@@ -84,6 +84,18 @@ def extract_amass_types(oracle_text: str) -> set[str]:
     return set(re.findall(r'[Aa]mass\s+([A-Z][a-z]+)', oracle_text))
 
 
+def token_identity_key(token_card: dict) -> tuple[str, str | None, str | None]:
+    """Return (name, power, toughness) for deduplication across printings."""
+    face = token_card
+    if "card_faces" in token_card and token_card["card_faces"]:
+        face = token_card["card_faces"][0]
+    return (
+        face.get("name", token_card.get("name", "Unknown")),
+        face.get("power", token_card.get("power")),
+        face.get("toughness", token_card.get("toughness")),
+    )
+
+
 def build_token_entry(token_card: dict, produced_by: list[str]) -> dict:
     """Build a token entry from a Scryfall token card object."""
     # For DFCs (e.g., The Ring emblem), use front face data
@@ -145,9 +157,9 @@ def compute_tokens_for_deck(deck: dict) -> list[dict]:
         if "the ring tempts you" in oracle.lower():
             ring_producers.add(name)
 
-    # Fetch each unique token card
-    tokens_by_id: dict[str, dict] = {}  # scryfall_id -> token entry
-    producers_by_id: dict[str, set[str]] = {}
+    # Fetch each unique token card, deduped by (name, power, toughness)
+    tokens_by_key: dict[tuple, dict] = {}
+    producers_by_key: dict[tuple, set[str]] = {}
 
     print(f"  Fetching {len(token_refs)} unique token cards...")
     for uri, producers in token_refs.items():
@@ -157,27 +169,24 @@ def compute_tokens_for_deck(deck: dict) -> list[dict]:
         # Skip generic copy tokens (no specific physical card needed)
         if token_card.get("name") == "Copy" or token_card.get("type_line") == "Token":
             continue
-        tid = token_card.get("id", "")
-        if tid in tokens_by_id:
-            producers_by_id[tid].update(producers)
+        key = token_identity_key(token_card)
+        if key in tokens_by_key:
+            producers_by_key[key].update(producers)
         else:
-            tokens_by_id[tid] = token_card
-            producers_by_id[tid] = set(producers)
+            tokens_by_key[key] = token_card
+            producers_by_key[key] = set(producers)
 
     # Handle amass tokens
     for amass_type, producers in amass_refs.items():
         # Check if we already have this army token from all_parts
         army_name = f"{amass_type[:-1]} Army" if amass_type.endswith("s") else f"{amass_type} Army"
-        already_found = any(
-            t.get("name", "") == army_name
-            for t in tokens_by_id.values()
-        )
-        if already_found:
-            # Merge producers into existing
-            for tid, tc in tokens_by_id.items():
-                if tc.get("name", "") == army_name:
-                    producers_by_id[tid].update(producers)
-                    break
+        existing_key = None
+        for key, tc in tokens_by_key.items():
+            if key[0] == army_name:
+                existing_key = key
+                break
+        if existing_key:
+            producers_by_key[existing_key].update(producers)
         else:
             print(f"  Searching for {army_name} token...")
             token_card = search_token(f't:token t:army "{amass_type}"')
@@ -185,28 +194,29 @@ def compute_tokens_for_deck(deck: dict) -> list[dict]:
                 # Fallback: broader search
                 token_card = search_token(f't:token "{army_name}"')
             if token_card:
-                tid = token_card.get("id", "")
-                tokens_by_id[tid] = token_card
-                producers_by_id[tid] = set(producers)
+                key = token_identity_key(token_card)
+                tokens_by_key[key] = token_card
+                producers_by_key[key] = set(producers)
             else:
                 print(f"    Could not find {army_name} token on Scryfall")
 
     # Handle "the Ring tempts you" emblem
     if ring_producers:
         ring_id = "7215460e-8c06-47d0-94e5-d1832d0218af"
-        if ring_id not in tokens_by_id:
-            print("  Fetching The Ring emblem...")
-            ring_card = fetch_token(f"https://api.scryfall.com/cards/{ring_id}")
-            if ring_card:
-                tokens_by_id[ring_id] = ring_card
-                producers_by_id[ring_id] = set(ring_producers)
-        else:
-            producers_by_id[ring_id].update(ring_producers)
+        print("  Fetching The Ring emblem...")
+        ring_card = fetch_token(f"https://api.scryfall.com/cards/{ring_id}")
+        if ring_card:
+            key = token_identity_key(ring_card)
+            if key in tokens_by_key:
+                producers_by_key[key].update(ring_producers)
+            else:
+                tokens_by_key[key] = ring_card
+                producers_by_key[key] = set(ring_producers)
 
     # Build final token list
     tokens = []
-    for tid, token_card in tokens_by_id.items():
-        producers = producers_by_id.get(tid, set())
+    for key, token_card in tokens_by_key.items():
+        producers = producers_by_key.get(key, set())
         # Filter producers to only cards actually in this deck
         deck_card_names = set(c["name"] for c in deck.get("decklist", []))
         if deck.get("commander"):
