@@ -172,6 +172,248 @@
       }
     }
 
+    .collection-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: 12px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+
+    .collection-hint:hover {
+      opacity: 1;
+    }
+
+    .collection-hint svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* === COLLECTION CHECKER MODAL === */
+    .collection-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .collection-modal.open {
+      display: flex;
+    }
+
+    .collection-panel {
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .collection-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .collection-header h3 {
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    .collection-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
+    .collection-close:hover {
+      color: var(--text-primary);
+    }
+
+    .collection-close:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
+    }
+
+    #collection-deck-info {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .collection-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .collection-input-row label:first-child {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    .collection-file-btn {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .collection-file-btn:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+
+    #collection-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      padding: 12px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    #collection-textarea:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+    }
+
+    .collection-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .collection-actions button {
+      padding: 8px 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .collection-actions button:hover {
+      border-color: var(--accent-purple);
+      background: var(--accent-purple-dim);
+    }
+
+    .collection-actions button:focus-visible {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
+    }
+
+    #collection-check-btn {
+      background: var(--accent-purple-dim);
+      border-color: var(--accent-purple);
+    }
+
+    #collection-check-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .collection-progress {
+      height: 8px;
+      background: var(--bg-deep);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .collection-progress-fill {
+      height: 100%;
+      background: var(--accent-green);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .collection-summary {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .collection-section-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 12px 0 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .collection-section-title:hover {
+      color: var(--accent-purple);
+    }
+
+    .collection-card-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 8px;
+    }
+
+    .collection-card-list li {
+      font-size: 0.8rem;
+      padding: 3px 0;
+      color: var(--text-secondary);
+    }
+
+    .collection-card-list a {
+      color: var(--text-primary);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--border-subtle);
+    }
+
+    .collection-card-list a:hover {
+      color: var(--accent-purple);
+      border-bottom-color: var(--accent-purple);
+    }
+
+    .collection-owned-list {
+      display: none;
+    }
+
+    .collection-owned-list.open {
+      display: block;
+    }
+
     body {
       touch-action: auto;
       font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -4269,6 +4511,29 @@
     </div>
   </div>
 
+  <!-- Collection Checker Modal -->
+  <div class="collection-modal" id="collection-modal" role="dialog" aria-label="Collection checker" aria-modal="true">
+    <div class="collection-panel">
+      <div class="collection-header">
+        <h3>Collection Checker</h3>
+        <button class="collection-close" aria-label="Close collection checker">&times;</button>
+      </div>
+      <div id="collection-deck-info"></div>
+      <div class="collection-input-row">
+        <label for="collection-textarea">Paste your collection or upload a file</label>
+        <label class="collection-file-btn" for="collection-file-input">Upload File</label>
+        <input type="file" id="collection-file-input" accept=".txt,.csv,.dec,.dek" hidden>
+      </div>
+      <textarea id="collection-textarea" placeholder="1x Sol Ring&#10;Arcane Signet&#10;Command Tower&#10;..."></textarea>
+      <div class="collection-actions">
+        <button id="collection-check-btn">Check Collection</button>
+        <button id="collection-copy-btn" style="display:none">Copy Shopping List</button>
+        <button id="collection-clear-btn" style="display:none">Clear</button>
+      </div>
+      <div id="collection-results" style="display:none"></div>
+    </div>
+  </div>
+
   <!-- Mobile Full-Screen Card Preview Modal -->
   <div class="mobile-preview-modal" id="mobile-preview-modal" role="dialog" aria-label="Card preview" aria-modal="true">
     <div class="mobile-preview-content">
@@ -4320,6 +4585,7 @@
       <div class="deck-gallery" id="deck-gallery"></div>
       <div class="selector-row" style="justify-content:flex-end;">
         <span class="search-hint" id="search-hint" role="button" tabindex="0" aria-label="Open card search"><kbd>⌘</kbd><kbd>K</kbd> Search</span>
+        <span class="collection-hint" id="collection-hint" role="button" tabindex="0" aria-label="Open collection checker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg> Collection</span>
       </div>
       <div class="commander-info" id="commander-info" style="display: none;">
         <div class="commander-layout">
@@ -5075,6 +5341,7 @@
     const searchFocusTrap = new FocusTrap(document.getElementById('search-modal'));
     const mobileFocusTrap = new FocusTrap(document.getElementById('mobile-preview-modal'));
     const bracketFocusTrap = new FocusTrap(document.getElementById('bracket-info-modal'));
+    const collectionFocusTrap = new FocusTrap(document.getElementById('collection-modal'));
 
     // === HELPER FUNCTIONS ===
     function capitalize(str) {
@@ -7638,7 +7905,8 @@
     function savePreferences() {
       const prefs = {
         lastDeck: currentDeckId,
-        filters: filterState
+        filters: filterState,
+        collectionText: document.getElementById('collection-textarea')?.value || ''
       };
       try { localStorage.setItem('grimoire-prefs', JSON.stringify(prefs)); } catch (e) { /* quota exceeded or private mode */ }
     }
@@ -7652,6 +7920,139 @@
       } catch {
         return null;
       }
+    }
+
+    // === COLLECTION CHECKER ===
+    const BASIC_LANDS = new Set([
+      'plains', 'island', 'swamp', 'mountain', 'forest', 'wastes',
+      'snow-covered plains', 'snow-covered island', 'snow-covered swamp',
+      'snow-covered mountain', 'snow-covered forest'
+    ]);
+
+    function parseCollectionInput(text) {
+      const collection = new Map();
+      for (const line of text.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('#')) continue;
+        const match = trimmed.match(/^(\d+)[xX]?\s+(.+)$/);
+        const qty = match ? parseInt(match[1], 10) : 1;
+        const name = (match ? match[2] : trimmed).trim().toLowerCase();
+        if (name) collection.set(name, (collection.get(name) || 0) + qty);
+      }
+      return collection;
+    }
+
+    function checkCollection(deck, collection) {
+      const needs = new Map();
+
+      // Add decklist cards
+      if (deck.decklist) {
+        for (const card of deck.decklist) {
+          const key = card.name.toLowerCase();
+          if (BASIC_LANDS.has(key)) continue;
+          needs.set(key, { name: card.name, qty: (needs.get(key)?.qty || 0) + (card.quantity || 1) });
+        }
+      }
+
+      // Add commander + partner
+      const cmdr = getEffectiveCommander();
+      if (cmdr) needs.set(cmdr.toLowerCase(), { name: cmdr, qty: 1 });
+      if (deck.partner) needs.set(deck.partner.toLowerCase(), { name: deck.partner, qty: 1 });
+
+      const owned = [];
+      const needed = [];
+      let ownedCount = 0;
+      const totalCards = needs.size;
+
+      for (const [key, entry] of needs) {
+        const have = collection.get(key) || 0;
+        if (have >= entry.qty) {
+          owned.push({ name: entry.name, qty: entry.qty });
+          ownedCount++;
+        } else {
+          needed.push({ name: entry.name, qty: entry.qty, deficit: entry.qty - have });
+        }
+      }
+
+      needed.sort((a, b) => a.name.localeCompare(b.name));
+      owned.sort((a, b) => a.name.localeCompare(b.name));
+
+      return { owned, needed, totalCards, ownedCount };
+    }
+
+    function renderCollectionResults(results) {
+      const container = document.getElementById('collection-results');
+      const pct = results.totalCards > 0 ? Math.round((results.ownedCount / results.totalCards) * 100) : 0;
+
+      let html = `
+        <div class="collection-progress"><div class="collection-progress-fill" style="width:${pct}%"></div></div>
+        <div class="collection-summary">You own ${results.ownedCount} of ${results.totalCards} cards (${pct}%)</div>
+      `;
+
+      if (results.needed.length > 0) {
+        html += `<div class="collection-section-title">Cards to Buy (${results.needed.length})</div>`;
+        html += '<ul class="collection-card-list">';
+        for (const card of results.needed) {
+          const url = getCardmarketUrl(card.name);
+          html += `<li>${card.deficit}x <a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(card.name)}</a></li>`;
+        }
+        html += '</ul>';
+      }
+
+      if (results.owned.length > 0) {
+        html += `<div class="collection-section-title" id="collection-owned-toggle">Already Owned (${results.owned.length}) ▸</div>`;
+        html += '<ul class="collection-card-list collection-owned-list" id="collection-owned-list">';
+        for (const card of results.owned) {
+          html += `<li>${escapeHtml(card.name)}</li>`;
+        }
+        html += '</ul>';
+      }
+
+      container.innerHTML = html;
+      container.style.display = 'block';
+
+      document.getElementById('collection-owned-toggle')?.addEventListener('click', () => {
+        const list = document.getElementById('collection-owned-list');
+        const toggle = document.getElementById('collection-owned-toggle');
+        list.classList.toggle('open');
+        toggle.textContent = toggle.textContent.replace(/[▸▾]/, list.classList.contains('open') ? '▾' : '▸');
+      });
+    }
+
+    function generateShoppingListExport(results) {
+      return results.needed.map(c => `${c.deficit}x ${c.name}`).join('\n');
+    }
+
+    function openCollectionChecker() {
+      const modal = document.getElementById('collection-modal');
+      const deckInfo = document.getElementById('collection-deck-info');
+      const checkBtn = document.getElementById('collection-check-btn');
+      const textarea = document.getElementById('collection-textarea');
+
+      if (!currentDeck) {
+        deckInfo.textContent = 'Select a deck first to check your collection.';
+        checkBtn.disabled = true;
+      } else {
+        deckInfo.textContent = `Checking against: ${currentDeck.name} (${currentDeck.commander})`;
+        checkBtn.disabled = false;
+      }
+
+      // Prefill from saved preferences
+      const prefs = loadPreferences();
+      if (prefs?.collectionText && !textarea.value) {
+        textarea.value = prefs.collectionText;
+      }
+
+      modal.classList.add('open');
+      collectionFocusTrap.activate();
+      textarea.focus();
+    }
+
+    function closeCollectionChecker() {
+      // Save text before closing
+      savePreferences();
+      document.getElementById('collection-modal').classList.remove('open');
+      collectionFocusTrap.deactivate();
     }
 
     // === MOBILE PREVIEW MODAL ===
@@ -7863,6 +8264,7 @@
         closeSearch();
         closeMobilePreview();
         closeBracketInfoModal();
+        closeCollectionChecker();
       }
     });
 
@@ -7874,6 +8276,55 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSearch(); }
       });
     }
+
+    // Collection checker hint click/keyboard
+    const collectionHint = document.getElementById('collection-hint');
+    if (collectionHint) {
+      collectionHint.addEventListener('click', openCollectionChecker);
+      collectionHint.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCollectionChecker(); }
+      });
+    }
+
+    // Collection checker modal events
+    document.querySelector('.collection-close')?.addEventListener('click', closeCollectionChecker);
+    document.getElementById('collection-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'collection-modal') closeCollectionChecker();
+    });
+
+    document.getElementById('collection-check-btn')?.addEventListener('click', () => {
+      if (!currentDeck) return;
+      const text = document.getElementById('collection-textarea').value;
+      const collection = parseCollectionInput(text);
+      const results = checkCollection(currentDeck, collection);
+      renderCollectionResults(results);
+
+      const copyBtn = document.getElementById('collection-copy-btn');
+      const clearBtn = document.getElementById('collection-clear-btn');
+      copyBtn.style.display = results.needed.length > 0 ? '' : 'none';
+      clearBtn.style.display = '';
+      copyBtn.onclick = () => copyToClipboard(generateShoppingListExport(results), copyBtn);
+    });
+
+    document.getElementById('collection-clear-btn')?.addEventListener('click', () => {
+      document.getElementById('collection-textarea').value = '';
+      document.getElementById('collection-results').style.display = 'none';
+      document.getElementById('collection-results').innerHTML = '';
+      document.getElementById('collection-copy-btn').style.display = 'none';
+      document.getElementById('collection-clear-btn').style.display = 'none';
+      savePreferences();
+    });
+
+    document.getElementById('collection-file-input')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById('collection-textarea').value = reader.result;
+      };
+      reader.readAsText(file);
+      e.target.value = ''; // Reset so the same file can be re-uploaded
+    });
 
     // Search modal
     document.getElementById('search-modal')?.addEventListener('click', (e) => {
