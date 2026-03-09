@@ -67,6 +67,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - **Display names should be strategic** (e.g., "Dark Dominion", not "Sauron Deck")
 - Every card recommendation must be attributed via `sources`
 - **Card pool**: Cards printed through March 2026
+- **Card text validation**: ALWAYS verify card names and oracle text via [Scryfall API](https://api.scryfall.com/cards/named?fuzzy=CARD_NAME) before recommending cards. Never assume card text or abilities from memory — validate every card considered.
 
 ## Source Attribution Schema
 

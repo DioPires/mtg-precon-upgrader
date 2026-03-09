@@ -69,29 +69,31 @@ RAMP_DEFS = {
 
 # --- Land subtype definitions ---
 
-PLAINS_TYPED_LANDS = {"Plains", "Temple Garden", "Canopy Vista", "Prairie Stream"}
-ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Prairie Stream"}
-SWAMP_TYPED_LANDS = {"Swamp"}
+PLAINS_TYPED_LANDS = {"Plains", "Temple Garden", "Canopy Vista", "Prairie Stream",
+                      "Hallowed Fountain", "Spara's Headquarters"}
+ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Prairie Stream",
+                      "Hallowed Fountain", "Spara's Headquarters"}
+SWAMP_TYPED_LANDS = set()
 FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Temple Garden", "Canopy Vista",
-                      "Cinder Glade"}
-MOUNTAIN_TYPED_LANDS = {"Mountain", "Cinder Glade"}
+                      "Spara's Headquarters"}
+MOUNTAIN_TYPED_LANDS = set()
 
-BASIC_LANDS = {"Plains", "Island", "Swamp", "Forest", "Mountain"}
+BASIC_LANDS = {"Plains", "Island", "Forest"}
 
 ALWAYS_TAPPED = {
-    "Path of Ancestry", "Bojuka Bog",
+    "Path of Ancestry",
     "Vivid Grove", "Vivid Meadow", "Vivid Creek",
-    "Thriving Grove", "Thriving Heath", "Thriving Isle", "Thriving Bluff",
+    "Thriving Grove", "Thriving Heath", "Thriving Isle",
+    "Seaside Citadel", "Spara's Headquarters",
 }
 
-FETCH_LANDS = {"Evolving Wilds", "Terramorphic Expanse"}
+FETCH_LANDS = {"Evolving Wilds", "Fabled Passage"}
 
 # Thriving lands: base color -> land name
 THRIVING_LANDS = {
     "Thriving Grove": "G",
     "Thriving Heath": "W",
     "Thriving Isle": "U",
-    "Thriving Bluff": "R",
 }
 
 VIVID_LANDS = {"Vivid Grove", "Vivid Meadow", "Vivid Creek"}
@@ -105,7 +107,7 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         return True
 
     # BFZ duals: tapped unless 2+ basics on board
-    if name in ("Canopy Vista", "Prairie Stream", "Cinder Glade"):
+    if name in ("Canopy Vista", "Prairie Stream"):
         basic_count = sum(1 for l in battlefield_lands if l in BASIC_LANDS)
         return basic_count < 2
 
@@ -116,8 +118,8 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     if name == "Hinterland Harbor":
         return not any(l in FOREST_TYPED_LANDS or l in ISLAND_TYPED_LANDS
                        for l in battlefield_lands)
-    if name == "Rootbound Crag":
-        return not any(l in MOUNTAIN_TYPED_LANDS or l in FOREST_TYPED_LANDS
+    if name == "Glacial Fortress":
+        return not any(l in PLAINS_TYPED_LANDS or l in ISLAND_TYPED_LANDS
                        for l in battlefield_lands)
 
     # Reveal land: tapped unless reveal Forest or Plains from hand
@@ -136,10 +138,6 @@ def compute_land_sources(name: str) -> list[frozenset]:
         return [frozenset({"W"})]
     if name == "Island":
         return [frozenset({"U"})]
-    if name == "Swamp":
-        return [frozenset({"B"})]
-    if name == "Mountain":
-        return [frozenset({"R"})]
     if name == "Forest":
         return [frozenset({"G"})]
 
@@ -152,30 +150,32 @@ def compute_land_sources(name: str) -> list[frozenset]:
         return [frozenset({"W", "G"})]
     if name == "Breeding Pool":
         return [frozenset({"U", "G"})]
+    if name == "Hallowed Fountain":
+        return [frozenset({"W", "U"})]
 
     # BFZ duals
     if name == "Canopy Vista":
         return [frozenset({"W", "G"})]
     if name == "Prairie Stream":
         return [frozenset({"W", "U"})]
-    if name == "Cinder Glade":
-        return [frozenset({"R", "G"})]
 
     # Check lands
     if name == "Sunpetal Grove":
         return [frozenset({"W", "G"})]
     if name == "Hinterland Harbor":
         return [frozenset({"U", "G"})]
-    if name == "Rootbound Crag":
-        return [frozenset({"R", "G"})]
+    if name == "Glacial Fortress":
+        return [frozenset({"W", "U"})]
 
     # Reveal land
     if name == "Fortified Village":
         return [frozenset({"W", "G"})]
 
-    # Pain land
+    # Pain lands
     if name == "Adarkar Wastes":
         return [frozenset({"W", "U"})]
+    if name == "Yavimaya Coast":
+        return [frozenset({"U", "G"})]
 
     # Vivid lands (simplified: treat as any-color source)
     if name in VIVID_LANDS:
@@ -189,12 +189,14 @@ def compute_land_sources(name: str) -> list[frozenset]:
     if name == "Otawara, Soaring City":
         return [frozenset({"U"})]
 
-    # ETB trigger land
-    if name == "Bojuka Bog":
-        return [frozenset({"B"})]
+    # Trilands
+    if name == "Seaside Citadel":
+        return [frozenset({"W", "U", "G"})]
+    if name == "Spara's Headquarters":
+        return [frozenset({"W", "U", "G"})]
 
     # Utility lands (colorless)
-    if name in {"Rogue's Passage", "Reliquary Tower"}:
+    if name in {"Rogue's Passage", "Reliquary Tower", "Scavenger Grounds"}:
         return [frozenset({"C"})]
 
     # Thriving lands without stored choice — return base color only
@@ -508,13 +510,17 @@ class GameState:
             _, land_name = hand_lands[0]
             self.hand.remove(land_name)
 
-            # Fetch lands: crack immediately, fetch best basic tapped
+            # Fetch lands: crack immediately, fetch best basic
+            # Fabled Passage: untapped if 4+ lands (3 others + the fetched one)
             if land_name in FETCH_LANDS:
                 target = self._find_best_fetchable_basic()
                 if target:
                     self.library.remove(target)
                     self.battlefield_lands.append(target)
-                    self.tapped_lands.add(len(self.battlefield_lands) - 1)
+                    if land_name == "Fabled Passage" and len(self.battlefield_lands) >= 4:
+                        pass  # enters untapped
+                    else:
+                        self.tapped_lands.add(len(self.battlefield_lands) - 1)
 
             # Simic Growth Chamber: ETB tapped, bounce worst land
             elif land_name == "Simic Growth Chamber":
