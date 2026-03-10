@@ -5653,6 +5653,9 @@
           oracle.includes('deals damage to any target') ||
           oracle.includes('deals damage to target creature') ||
           (oracle.includes('destroy') && oracle.includes('creature')) ||
+          oracle.includes('shuffles it into') ||
+          (oracle.includes('opponent') && oracle.includes('sacrifices a')) ||
+          (oracle.includes('gets -') && oracle.includes('target')) ||
           name.includes('path to exile') ||
           name.includes('swords to plowshares')) {
         categories.push('removal');
@@ -5727,10 +5730,15 @@
         categories.push('reanimation');
       }
 
-      // Finishers detection (CMC 6+ with Eldrazi or annihilator, or big threats)
+      // Finishers detection
       if ((cmc >= 6 && typeLine.includes('eldrazi')) ||
           oracle.includes('annihilator') ||
           (cmc >= 7 && typeLine.includes('creature') && oracle.includes('when')) ||
+          oracle.includes('each opponent loses') ||
+          (oracle.includes('opponent lose') && !oracle.includes('you lose')) ||
+          (oracle.includes('opponent loses life') && oracle.includes('equal to')) ||
+          (oracle.includes('damage to') && oracle.includes('target opponent')) ||
+          oracle.includes('you win the game') ||
           name.includes('kozilek') ||
           name.includes('ulamog') ||
           name.includes('emrakul') ||
@@ -5738,6 +5746,13 @@
           name.includes('void winnower') ||
           name.includes('blightsteel colossus')) {
         categories.push('finishers');
+      }
+
+      // Value engines — token generators and sacrifice/death payoffs
+      if (!isLand && (
+          (oracle.includes('create') && oracle.includes('token')) ||
+          (oracle.includes('whenever') && (oracle.includes('sacrifice') || oracle.includes('dies'))))) {
+        categories.push('value');
       }
 
       // Protection detection
