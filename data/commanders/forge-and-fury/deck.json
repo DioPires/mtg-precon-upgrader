@@ -1,0 +1,786 @@
+{
+  "id": "forge-and-fury",
+  "type": "commander",
+  "name": "Forge & Fury",
+  "subtitle": "Drain & Devour",
+  "commander": "Korvold, Fae-Cursed King",
+  "cost": "$200-350",
+  "bracket": "4",
+  "gameChangers": 2,
+  "sources": [
+    {
+      "type": "youtube",
+      "name": "The Commander's Quarters \u2014 Korvold Budget",
+      "url": "https://www.youtube.com/watch?v=_HFaeSn3Ny8",
+      "detail": "132K views, $50 budget build"
+    },
+    {
+      "type": "youtube",
+      "name": "Muscles & Magic \u2014 Korvold Treasure",
+      "url": "https://www.youtube.com/watch?v=yAMA28wUkS8",
+      "detail": "5K views, $1900 build"
+    },
+    {
+      "type": "youtube",
+      "name": "VEX MTG \u2014 Best Jund Commander Ever",
+      "url": "https://www.youtube.com/watch?v=QXB1jeMsRic",
+      "detail": "39K views, Treasure Sacrifice deck tech"
+    },
+    {
+      "type": "edhrec",
+      "name": "EDHREC \u2014 Korvold, Fae-Cursed King",
+      "url": "https://edhrec.com/commanders/korvold-fae-cursed-king",
+      "detail": "18,750 decks. Treasure theme (3K), Sacrifice theme (2.6K)"
+    },
+    {
+      "type": "scryfall",
+      "name": "Scryfall \u2014 Card verification",
+      "url": "https://scryfall.com"
+    },
+    {
+      "type": "commanderspellbook",
+      "name": "Commander Spellbook \u2014 Korvold combos",
+      "url": "https://commanderspellbook.com",
+      "detail": "4 existing combos documented, 9 total combo lines identified"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Claude analysis",
+      "detail": "Artifact token drain archetype design, synergy identification, win line analysis, v2 card swap optimization"
+    }
+  ],
+  "guideContent": {
+    "strategyOverview": "Jund artifact token engine that creates Treasures, Food, Blood, Clues, Mutagens, and Munitions, then sacrifices them to drain opponents' life totals. Korvold draws a card and grows whenever you sacrifice a permanent \u2014 including the tokens he forces you to sacrifice on attack. Mirkwood Bats is the #1 payoff, dealing 1 life to each opponent on BOTH token creation AND sacrifice (double drain per lifecycle). Academy Manufactor triples Clue/Food/Treasure creation, and Chatterfang doubles all tokens with bonus Squirrels. The deck wins through accumulated drain damage from multiple payoffs, Marionette Master one-shots (fabricate 3 \u2192 sac 5 Treasures = 20 damage), or one of 9 infinite combo lines \u2014 including a 2-card engine (Chatterfang + Pitiless Plunderer), 4 self-killing infinites, and the improved Skeleton loop (life-neutral with Phyrexian Altar)."
+  },
+  "categories": [
+    {
+      "name": "Drain Payoffs",
+      "cards": [
+        "Mirkwood Bats",
+        "Marionette Master",
+        "Disciple of the Vault",
+        "Mayhem Devil",
+        "Biotech Specialist",
+        "Popular Egotist",
+        "Oni-Cult Anvil",
+        "Crime Novelist",
+        "Goblin Bombardment",
+        "Cauldron Familiar"
+      ]
+    },
+    {
+      "name": "ETB Pingers",
+      "cards": [
+        "Reckless Fireweaver",
+        "Ingenious Artillerist",
+        "Weapons Manufacturing"
+      ]
+    },
+    {
+      "name": "Token Generators",
+      "cards": [
+        "Pitiless Plunderer",
+        "Black Market Connections",
+        "Revel in Riches",
+        "Professional Face-Breaker",
+        "Tireless Provisioner",
+        "Mahadi, Emporium Master",
+        "Atsushi, the Blazing Sky",
+        "Gilded Goose",
+        "Mutagen Man, Living Ooze",
+        "Reassembling Skeleton",
+        "Animation Module",
+        "Forsaken Miner"
+      ]
+    },
+    {
+      "name": "Token Multipliers",
+      "cards": [
+        "Academy Manufactor",
+        "Chatterfang, Squirrel General",
+        "Parallel Lives"
+      ]
+    },
+    {
+      "name": "Sacrifice Outlets",
+      "cards": [
+        "Umbral Collar Zealot",
+        "Viscera Seer",
+        "Phyrexian Altar",
+        "Ravenous Squirrel",
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "name": "Card Advantage",
+      "cards": [
+        "Skullclamp",
+        "Deadly Dispute",
+        "Prosper, Tome-Bound",
+        "Necropotence",
+        "Obsessive Pursuit"
+      ]
+    },
+    {
+      "name": "Tutors",
+      "cards": [
+        "Diabolic Intent",
+        "Demonic Tutor",
+        "Beseech the Mirror"
+      ]
+    },
+    {
+      "name": "Protection & Recursion",
+      "cards": [
+        "Lightning Greaves",
+        "Eternal Witness",
+        "Bala Ged Recovery // Bala Ged Sanctuary",
+        "Reanimate"
+      ]
+    },
+    {
+      "name": "Ramp",
+      "cards": [
+        "Sol Ring",
+        "Arcane Signet",
+        "Commander's Sphere",
+        "Cultivate",
+        "Kodama's Reach",
+        "Nature's Lore",
+        "Three Visits",
+        "Sakura-Tribe Elder",
+        "Farseek",
+        "Birds of Paradise"
+      ]
+    },
+    {
+      "name": "Removal",
+      "cards": [
+        "Grim Bauble",
+        "Tithing Blade // Consuming Sepulcher",
+        "Beast Within",
+        "Chaos Warp",
+        "Assassin's Trophy",
+        "Blood Money",
+        "Blasphemous Act"
+      ]
+    }
+  ],
+  "winConditions": [
+    {
+      "title": "Drain Stack",
+      "cards": [
+        "Mirkwood Bats",
+        "Disciple of the Vault",
+        "Mayhem Devil",
+        "Reckless Fireweaver"
+      ],
+      "description": "Assemble multiple drain payoffs on the board. Each artifact token creation triggers ETB pingers (Fireweaver, Artillerist) and Mirkwood Bats. Each sacrifice triggers Bats again, plus Disciple of the Vault, Mayhem Devil, and any other payoffs. With 3-4 payoffs in play, each artifact lifecycle deals 4-8 damage per opponent.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Primary win condition via accumulated drain"
+        }
+      ]
+    },
+    {
+      "title": "Marionette Master Bomb",
+      "cards": [
+        "Marionette Master",
+        "Pitiless Plunderer"
+      ],
+      "description": "Cast Marionette Master choosing Fabricate 3 for a 4/6 body. Then sacrifice 5 Treasures \u2014 each one deals 4 damage to an opponent (power = 4). That's 20 damage to one player, lethal from starting life. Tokens go to graveyard before ceasing to exist (CR 111.7), triggering Master's ability.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Korvold Treasure Theme",
+          "url": "https://edhrec.com/commanders/korvold-fae-cursed-king/treasure"
+        }
+      ]
+    },
+    {
+      "title": "Infinite Drain Combo",
+      "cards": [
+        "Pitiless Plunderer",
+        "Warren Soultrader",
+        "Reassembling Skeleton",
+        "Mirkwood Bats"
+      ],
+      "description": "Sacrifice Reassembling Skeleton to Warren Soultrader (creates Treasure). Pitiless Plunderer triggers (creates another Treasure). Pay {1}{B} from the 2 Treasures to return Skeleton from graveyard. Repeat infinitely. Each loop creates and sacrifices 2 Treasures \u2014 with any drain payoff (Mirkwood Bats, Disciple, etc.), this deals infinite damage. All three combo pieces are independently strong in the deck.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Combo identification from card pool"
+        }
+      ]
+    },
+    {
+      "title": "Revel in Riches",
+      "cards": [
+        "Revel in Riches",
+        "Blood Money"
+      ],
+      "description": "Revel in Riches wins the game at your upkeep if you control 10+ Treasures. Blood Money destroys all creatures and creates a Treasure per nontoken killed \u2014 in a 4-player game, this can produce 10+ Treasures in one shot. Revel also generates Treasures passively whenever opponents' creatures die.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Korvold Treasure Theme",
+          "url": "https://edhrec.com/commanders/korvold-fae-cursed-king/treasure"
+        }
+      ]
+    },
+    {
+      "title": "Korvold Commander Damage",
+      "cards": [
+        "Korvold, Fae-Cursed King",
+        "Lightning Greaves"
+      ],
+      "description": "Korvold grows +1/+1 per sacrifice and has flying. In a deck that sacrifices 3-5 permanents per turn cycle, Korvold quickly reaches 10+ power. With Lightning Greaves for haste and protection, a 15/15 flying Korvold can eliminate a player in 2-3 combat steps.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Commander's Quarters \u2014 Korvold Budget",
+          "detail": "Korvold voltron as backup win condition"
+        }
+      ]
+    },
+    {
+      "title": "Chatterfang + Plunderer Engine",
+      "cards": [
+        "Chatterfang, Squirrel General",
+        "Pitiless Plunderer"
+      ],
+      "description": "2-card infinite engine. Start with 1 Squirrel + {B}. Activate Chatterfang ({B}: target creature gets +1/-1) to kill the Squirrel. Pitiless Plunderer creates a Treasure. Chatterfang's replacement effect creates a bonus Squirrel alongside the Treasure. Sacrifice the Treasure for {B}. Repeat infinitely \u2014 produces infinite creature deaths, infinite Treasure creation/sacrifice, and kills all opponent creatures via +1/-1. Needs a drain payoff (13 in deck) or Korvold to convert into a win.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 3000-4871",
+          "url": "https://commanderspellbook.com/combo/3000-4871/"
+        }
+      ]
+    },
+    {
+      "title": "Soultrader + Egotist + Chatterfang Drain",
+      "cards": [
+        "Warren Soultrader",
+        "Popular Egotist",
+        "Chatterfang, Squirrel General"
+      ],
+      "description": "Self-killing 3-card infinite. Sacrifice a creature to Soultrader (-1 life, creates Treasure). Popular Egotist triggers on the permanent sacrifice (opponent loses 1, you gain 1 \u2014 net life: 0). Chatterfang creates a Squirrel alongside the Treasure. Sacrifice the Treasure for {B} and repeat with the new Squirrel. Egotist's drain IS the win condition \u2014 no extra payoff needed.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 3000-5670-5933",
+          "url": "https://commanderspellbook.com/combo/3000-5670-5933/"
+        }
+      ]
+    },
+    {
+      "title": "Soultrader + Manufactor + Chatterfang",
+      "cards": [
+        "Warren Soultrader",
+        "Academy Manufactor",
+        "Chatterfang, Squirrel General"
+      ],
+      "description": "3-card infinite with life management. Sacrifice a Squirrel to Soultrader (-1 life, Treasure). Manufactor replaces Treasure with Treasure + Food + Clue. Chatterfang creates 3 bonus Squirrels. Net: +2 Squirrels, +1 of each token type per loop. Batch every 2 loops: crack 1 Food (gain 3 life, spend {2} from Treasures) to offset the 2 life lost. Net: +1 life per 2 loops. Truly infinite when batched.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 3000-4231-5670",
+          "url": "https://commanderspellbook.com/combo/3000-4231-5670/"
+        }
+      ]
+    },
+    {
+      "title": "Mahadi + Revel in Riches + Viscera Seer",
+      "cards": [
+        "Mahadi, Emporium Master",
+        "Revel in Riches",
+        "Viscera Seer"
+      ],
+      "description": "Conditional game win. At end step, Mahadi triggers to create Treasures equal to creatures that died this turn. Hold priority and sacrifice creatures to Viscera Seer. Mahadi counts deaths at resolution (not trigger time). With 10+ creatures dying, Mahadi creates 10+ Treasures \u2014 Revel in Riches wins at your next upkeep.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 865-2292-2429",
+          "url": "https://commanderspellbook.com/combo/865-2292-2429/"
+        }
+      ]
+    },
+    {
+      "title": "Crime Novelist + Animation Module + Bombardment",
+      "cards": [
+        "Crime Novelist",
+        "Animation Module",
+        "Goblin Bombardment"
+      ],
+      "description": "Self-killing 3-card infinite. Sacrifice a Servo token to Goblin Bombardment (1 damage to opponent). Crime Novelist triggers on artifact sacrifice (+1/+1 counter + {R}). Animation Module triggers on the +1/+1 counter (pay {1} to create a Servo). Spend the {R} as {1} for Module. Repeat infinitely for infinite damage.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Combo identification from card pool; trigger chain verified against Scryfall oracle text"
+        }
+      ]
+    },
+    {
+      "title": "Cauldron Familiar + Soultrader + Manufactor",
+      "cards": [
+        "Cauldron Familiar",
+        "Warren Soultrader",
+        "Academy Manufactor"
+      ],
+      "description": "Self-killing 3-card infinite. Sacrifice Cauldron Familiar to Soultrader (-1 life, Treasure). Manufactor triples the Treasure into Treasure + Food + Clue. Cat's graveyard ability: sacrifice the Food (free \u2014 Cat's own ability, not Food's {2} activated ability) to return Cat to the battlefield. Cat ETB drains each opponent 1 life and you gain 1 (net life: 0). Repeat infinitely for infinite drain.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Combo identification; Cat's Food sac verified as free (distinct from Food's {2},{T} ability)"
+        }
+      ]
+    },
+    {
+      "title": "Forsaken Miner + Plunderer + Bombardment",
+      "cards": [
+        "Forsaken Miner",
+        "Pitiless Plunderer",
+        "Goblin Bombardment"
+      ],
+      "description": "Self-killing 3-card infinite. Sacrifice Forsaken Miner to Goblin Bombardment targeting an opponent (1 damage). Targeting an opponent is a crime \u2014 Miner's ability triggers. Plunderer creates a Treasure (Miner died). Pay {B} from the Treasure to return Miner to the battlefield. Repeat infinitely for infinite damage. Stack ordering: target (crime) is declared before cost (sacrifice), so Miner is in graveyard when its crime trigger resolves.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Combo identification; CR 602.2 stack ordering verified"
+        }
+      ]
+    },
+    {
+      "title": "Plunderer + Phyrexian Altar + Skeleton",
+      "cards": [
+        "Pitiless Plunderer",
+        "Phyrexian Altar",
+        "Reassembling Skeleton"
+      ],
+      "description": "Life-neutral variant of the Skeleton combo. Sacrifice Skeleton to Phyrexian Altar (add {B}, 0 life cost). Plunderer creates a Treasure. Pay {1} from Treasure + {B} from Altar to return Skeleton. Repeat infinitely. Unlike the Soultrader version, this costs 0 life per loop. Add any drain payoff to win.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Improved variant of existing Skeleton combo; Phyrexian Altar provides free colored mana"
+        }
+      ]
+    }
+  ],
+  "synergies": [
+    {
+      "title": "Triple Token Engine",
+      "cards": [
+        "Academy Manufactor",
+        "Mirkwood Bats"
+      ],
+      "description": "Academy Manufactor converts any Clue, Food, or Treasure creation into all three types. Each original token becomes 3 tokens, triggering Mirkwood Bats 3 times on creation. When all 3 are sacrificed, Bats triggers 3 more times. Net: 6 life loss per opponent per original token instead of 2.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Core engine synergy"
+        }
+      ]
+    },
+    {
+      "title": "Squirrel Token Doubler",
+      "cards": [
+        "Chatterfang, Squirrel General",
+        "Mirkwood Bats"
+      ],
+      "description": "Chatterfang creates a bonus Squirrel token alongside every other token you create. Each Treasure creation becomes Treasure + Squirrel \u2014 doubling Mirkwood Bats triggers. Chatterfang's built-in sac outlet ({B}, sac X Squirrels) provides removal while triggering more drain.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Korvold Sacrifice Theme",
+          "url": "https://edhrec.com/commanders/korvold-fae-cursed-king/sacrifice"
+        }
+      ]
+    },
+    {
+      "title": "Korvold Fetch Value",
+      "cards": [
+        "Korvold, Fae-Cursed King",
+        "Bloodstained Mire"
+      ],
+      "description": "Each fetchland sacrifice triggers Korvold \u2014 draw a card + put a +1/+1 counter on him. With 3 fetches in the deck, each one becomes a land drop + cantrip + Korvold pump. Sakura-Tribe Elder does the same while also fixing mana.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Commander's Quarters \u2014 Korvold Budget",
+          "detail": "Fetchland synergy with Korvold"
+        }
+      ]
+    },
+    {
+      "title": "Manufactor + Chatterfang Explosion",
+      "cards": [
+        "Academy Manufactor",
+        "Chatterfang, Squirrel General"
+      ],
+      "description": "With both in play, creating a single Treasure becomes: Clue + Food + Treasure (Manufactor) + 3 Squirrels (Chatterfang sees 3 tokens created). That's 6 tokens from 1 trigger. Add Parallel Lives and it becomes 12.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Multiplicative token interaction"
+        }
+      ]
+    },
+    {
+      "title": "Artifact Removal Synergy",
+      "cards": [
+        "Grim Bauble",
+        "Weapons Manufacturing"
+      ],
+      "description": "Grim Bauble is a 1-mana artifact that gives -2/-2 on ETB and sacs itself for surveil 2. As a nontoken artifact, it triggers Weapons Manufacturing (creates a Munitions token worth 2 damage). The Bauble's death triggers Disciple of the Vault and other artifact death payoffs. Tithing Blade works similarly.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Artifact removal double duty"
+        }
+      ]
+    },
+    {
+      "title": "Crime Novelist Mana Engine",
+      "cards": [
+        "Crime Novelist",
+        "Pitiless Plunderer"
+      ],
+      "description": "Crime Novelist gets a +1/+1 counter and adds {R} whenever you sacrifice an artifact. With Treasures flowing from Pitiless Plunderer and other generators, each Treasure sac grows the Novelist and produces red mana to cast more spells. Novelist quickly becomes a massive threat while fueling the turn.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Mana acceleration synergy"
+        }
+      ]
+    },
+    {
+      "title": "Mutagen Cost Reduction",
+      "cards": [
+        "Mutagen Man, Living Ooze",
+        "Biotech Specialist"
+      ],
+      "description": "Mutagen Man reduces artifact token activation costs by {1}. Blood tokens normally cost {1} to crack \u2014 with Mutagen Man, they're free. Clues and Food drop from {2} to {1}. This turns every artifact token into a cheaper sacrifice trigger for Biotech Specialist's 2-damage ability and all drain payoffs.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Inspiration card synergy"
+        }
+      ]
+    },
+    {
+      "title": "Obsessive Token Factory",
+      "cards": [
+        "Obsessive Pursuit",
+        "Korvold, Fae-Cursed King"
+      ],
+      "description": "Obsessive Pursuit creates a Clue token each upkeep (free artifact for sacrifice). When Korvold attacks and forces a sacrifice, sac the Clue \u2014 triggers Korvold's draw + counter, plus all drain payoffs. The enchantment's second ability puts +1/+1 counters on attacking creatures and grants lifelink when you sacrifice nontoken permanents.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Inspiration card value engine"
+        }
+      ]
+    },
+    {
+      "title": "Infinite Treasure Loop",
+      "cards": [
+        "Pitiless Plunderer",
+        "Warren Soultrader",
+        "Reassembling Skeleton"
+      ],
+      "description": "Sac Skeleton to Soultrader (creates Treasure, pay 1 life). Plunderer triggers (creates Treasure). Sac both Treasures for {1}{B} to return Skeleton. Repeat infinitely. Net each loop: infinite Treasure creation + sacrifice, infinite life loss (1 per loop), infinite Korvold triggers if he's in play. Add any drain payoff to win.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Infinite combo identification"
+        }
+      ]
+    },
+    {
+      "title": "Animation Module + Crime Novelist",
+      "cards": [
+        "Animation Module",
+        "Crime Novelist"
+      ],
+      "description": "Crime Novelist gets a +1/+1 counter whenever you sacrifice an artifact. Animation Module triggers on the counter, letting you pay {1} to create a Servo token. The Novelist also adds {R} on artifact sacrifice, which pays for Module. With any free sac outlet (Goblin Bombardment, Viscera Seer), this generates infinite tokens or goes infinite.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Synergy identification; Animation Module enables Servo generation from Novelist triggers"
+        }
+      ]
+    },
+    {
+      "title": "Cauldron Familiar + Food Chain",
+      "cards": [
+        "Cauldron Familiar",
+        "Gilded Goose"
+      ],
+      "description": "Cauldron Familiar returns from the graveyard by sacrificing a Food token (free). Gilded Goose, Academy Manufactor, and Tireless Provisioner all generate Food. Each Cat ETB drains each opponent 1 life. With any sac outlet, the Cat becomes a repeatable drain engine fueled by Food generation.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Food-based recursion synergy"
+        }
+      ]
+    },
+    {
+      "title": "Forsaken Miner + Crime Triggers",
+      "cards": [
+        "Forsaken Miner",
+        "Goblin Bombardment"
+      ],
+      "description": "Forsaken Miner returns from the graveyard for {B} whenever you commit a crime (target opponents or their stuff). Goblin Bombardment, Mayhem Devil, Chaos Warp, Beast Within, Assassin's Trophy, and Reanimate (targeting opponent's graveyard) all commit crimes. The Miner becomes a recursive sacrifice fodder engine for Korvold and drain payoffs.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Crime mechanic synergy with existing sac outlets and removal"
+        }
+      ]
+    },
+    {
+      "title": "Phyrexian Altar + Skeleton (Life-Neutral)",
+      "cards": [
+        "Phyrexian Altar",
+        "Reassembling Skeleton"
+      ],
+      "description": "Phyrexian Altar sacrifices a creature for one mana of any color \u2014 no life cost unlike Warren Soultrader. With Pitiless Plunderer, this makes the Skeleton loop life-neutral (0 per loop instead of -1). Also enables sacrifice of any creature for colored mana, fueling Korvold triggers and drain payoffs without life pressure.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Upgrade to Skeleton combo line; premium free sac outlet"
+        }
+      ]
+    },
+    {
+      "title": "Reanimate as Crime + Recursion",
+      "cards": [
+        "Reanimate",
+        "Forsaken Miner"
+      ],
+      "description": "Reanimate targeting an opponent's graveyard is a crime, triggering Forsaken Miner's return. At {B}, it's the most efficient recursion in the deck \u2014 returns Mirkwood Bats (4 life), Pitiless Plunderer (4 life), or Chatterfang (3 life) after removal. Can also steal an opponent's best creature.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Dual-purpose recursion + crime enabler"
+        }
+      ]
+    }
+  ],
+  "highlights": [
+    {
+      "name": "Mirkwood Bats",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "The deck's #1 payoff. Triggers on BOTH token creation AND sacrifice \u2014 each artifact token lifecycle drains 2 life per opponent. With Academy Manufactor tripling tokens, a single Treasure creation deals 6 life.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Korvold Sacrifice Theme",
+          "url": "https://edhrec.com/commanders/korvold-fae-cursed-king/sacrifice"
+        }
+      ]
+    },
+    {
+      "name": "Academy Manufactor",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Triples every Clue, Food, or Treasure creation into one of each type. Exponentially multiplies all drain triggers and creates massive board presence from single token generators.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Korvold Treasure Theme",
+          "url": "https://edhrec.com/commanders/korvold-fae-cursed-king/treasure"
+        }
+      ]
+    },
+    {
+      "name": "Pitiless Plunderer",
+      "price": "$8-12",
+      "isGameChanger": false,
+      "reason": "Creates a Treasure whenever another creature dies. Essential combo piece with Warren Soultrader + Reassembling Skeleton for infinite drain. Also provides enormous value during board wipes.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Commander's Quarters \u2014 Korvold Budget",
+          "detail": "Called the 'golden pick' for Korvold"
+        }
+      ]
+    },
+    {
+      "name": "Chatterfang, Squirrel General",
+      "price": "$5-8",
+      "isGameChanger": false,
+      "reason": "Doubles token output by creating a bonus Squirrel alongside every token. Built-in sacrifice outlet removes threats while triggering drain payoffs. Combined with Manufactor, a single token becomes 6.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Korvold Sacrifice Theme",
+          "url": "https://edhrec.com/commanders/korvold-fae-cursed-king/sacrifice"
+        }
+      ]
+    },
+    {
+      "name": "Marionette Master",
+      "price": "$2-4",
+      "isGameChanger": false,
+      "reason": "One-shot finisher. Choose Fabricate 3 for a 4/6 body, then sacrifice 5 Treasures to deal 20 damage to one opponent. The premier burst damage card in any artifact sacrifice strategy.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Korvold Treasure Theme",
+          "url": "https://edhrec.com/commanders/korvold-fae-cursed-king/treasure"
+        }
+      ]
+    },
+    {
+      "name": "Demonic Tutor",
+      "price": "$30-40",
+      "isGameChanger": true,
+      "reason": "Finds any card in the deck for {1}{B}. Grab Mirkwood Bats to start the drain engine, Academy Manufactor to triple tokens, or a combo piece to close the game. The most efficient tutor in Magic.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Staples",
+          "url": "https://edhrec.com/top"
+        }
+      ]
+    },
+    {
+      "name": "Parallel Lives",
+      "price": "$15-25",
+      "isGameChanger": false,
+      "reason": "Doubles all token creation. Every Treasure becomes 2, every Chatterfang Squirrel doubles again. Multiplicative with Academy Manufactor and other token generators for explosive board states.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Korvold Treasure Theme",
+          "url": "https://edhrec.com/commanders/korvold-fae-cursed-king/treasure"
+        }
+      ]
+    },
+    {
+      "name": "Skullclamp",
+      "price": "$5-8",
+      "isGameChanger": false,
+      "reason": "Equip to any 1/1 token (Squirrel, Servo, Construct) \u2014 it dies immediately, drawing 2 cards. Repeatable card advantage engine that also triggers sacrifice payoffs.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC \u2014 Staples",
+          "url": "https://edhrec.com/top"
+        }
+      ]
+    }
+  ],
+  "decklist": [
+    { "name": "Mirkwood Bats", "type": "Creature" },
+    { "name": "Marionette Master", "type": "Creature" },
+    { "name": "Disciple of the Vault", "type": "Creature" },
+    { "name": "Mayhem Devil", "type": "Creature" },
+    { "name": "Biotech Specialist", "type": "Creature" },
+    { "name": "Popular Egotist", "type": "Creature" },
+    { "name": "Oni-Cult Anvil", "type": "Artifact" },
+    { "name": "Crime Novelist", "type": "Creature" },
+    { "name": "Goblin Bombardment", "type": "Enchantment" },
+    { "name": "Reckless Fireweaver", "type": "Creature" },
+    { "name": "Ingenious Artillerist", "type": "Creature" },
+    { "name": "Weapons Manufacturing", "type": "Enchantment" },
+    { "name": "Animation Module", "type": "Artifact" },
+    { "name": "Pitiless Plunderer", "type": "Creature" },
+    { "name": "Black Market Connections", "type": "Enchantment" },
+    { "name": "Revel in Riches", "type": "Enchantment" },
+    { "name": "Professional Face-Breaker", "type": "Creature" },
+    { "name": "Forsaken Miner", "type": "Creature" },
+    { "name": "Tireless Provisioner", "type": "Creature" },
+    { "name": "Mahadi, Emporium Master", "type": "Creature" },
+    { "name": "Atsushi, the Blazing Sky", "type": "Creature" },
+    { "name": "Gilded Goose", "type": "Creature" },
+    { "name": "Mutagen Man, Living Ooze", "type": "Creature" },
+    { "name": "Reassembling Skeleton", "type": "Creature" },
+    { "name": "Academy Manufactor", "type": "Artifact Creature" },
+    { "name": "Chatterfang, Squirrel General", "type": "Creature" },
+    { "name": "Parallel Lives", "type": "Enchantment" },
+    { "name": "Umbral Collar Zealot", "type": "Creature" },
+    { "name": "Viscera Seer", "type": "Creature" },
+    { "name": "Cauldron Familiar", "type": "Creature" },
+    { "name": "Ravenous Squirrel", "type": "Creature" },
+    { "name": "Warren Soultrader", "type": "Creature" },
+    { "name": "Skullclamp", "type": "Artifact" },
+    { "name": "Deadly Dispute", "type": "Instant" },
+    { "name": "Prosper, Tome-Bound", "type": "Creature" },
+    { "name": "Necropotence", "type": "Enchantment" },
+    { "name": "Obsessive Pursuit", "type": "Enchantment" },
+    { "name": "Phyrexian Altar", "type": "Artifact" },
+    { "name": "Reanimate", "type": "Sorcery" },
+    { "name": "Diabolic Intent", "type": "Sorcery" },
+    { "name": "Demonic Tutor", "type": "Sorcery" },
+    { "name": "Beseech the Mirror", "type": "Sorcery" },
+    { "name": "Lightning Greaves", "type": "Artifact" },
+    { "name": "Eternal Witness", "type": "Creature" },
+    { "name": "Bala Ged Recovery // Bala Ged Sanctuary", "type": "Sorcery" },
+    { "name": "Sol Ring", "type": "Artifact" },
+    { "name": "Arcane Signet", "type": "Artifact" },
+    { "name": "Commander's Sphere", "type": "Artifact" },
+    { "name": "Cultivate", "type": "Sorcery" },
+    { "name": "Kodama's Reach", "type": "Sorcery" },
+    { "name": "Nature's Lore", "type": "Sorcery" },
+    { "name": "Three Visits", "type": "Sorcery" },
+    { "name": "Sakura-Tribe Elder", "type": "Creature" },
+    { "name": "Farseek", "type": "Sorcery" },
+    { "name": "Birds of Paradise", "type": "Creature" },
+    { "name": "Grim Bauble", "type": "Artifact" },
+    { "name": "Tithing Blade // Consuming Sepulcher", "type": "Artifact" },
+    { "name": "Beast Within", "type": "Instant" },
+    { "name": "Chaos Warp", "type": "Instant" },
+    { "name": "Assassin's Trophy", "type": "Instant" },
+    { "name": "Blood Money", "type": "Sorcery" },
+    { "name": "Blasphemous Act", "type": "Sorcery" },
+    { "name": "Command Tower", "type": "Land" },
+    { "name": "Exotic Orchard", "type": "Land" },
+    { "name": "Bloodstained Mire", "type": "Land" },
+    { "name": "Verdant Catacombs", "type": "Land" },
+    { "name": "Wooded Foothills", "type": "Land" },
+    { "name": "Blood Crypt", "type": "Land" },
+    { "name": "Stomping Ground", "type": "Land" },
+    { "name": "Overgrown Tomb", "type": "Land" },
+    { "name": "Luxury Suite", "type": "Land" },
+    { "name": "Spire Garden", "type": "Land" },
+    { "name": "Undergrowth Stadium", "type": "Land" },
+    { "name": "Blackcleave Cliffs", "type": "Land" },
+    { "name": "Copperline Gorge", "type": "Land" },
+    { "name": "Blooming Marsh", "type": "Land" },
+    { "name": "Dragonskull Summit", "type": "Land" },
+    { "name": "Rootbound Crag", "type": "Land" },
+    { "name": "Woodland Cemetery", "type": "Land" },
+    { "name": "Sulfurous Springs", "type": "Land" },
+    { "name": "Karplusan Forest", "type": "Land" },
+    { "name": "Llanowar Wastes", "type": "Land" },
+    { "name": "Phyrexian Tower", "type": "Land" },
+    { "name": "Treasure Vault", "type": "Land" },
+    { "name": "Fountainport", "type": "Land" },
+    { "name": "Swamp", "type": "Land", "quantity": 5 },
+    { "name": "Mountain", "type": "Land", "quantity": 4 },
+    { "name": "Forest", "type": "Land", "quantity": 5 }
+  ]
+}
