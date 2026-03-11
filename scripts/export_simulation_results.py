@@ -415,7 +415,7 @@ def export_grixis(metadata: dict) -> dict:
     """Export Dark Dominion (Grixis) simulation."""
     return _export_colored(
         sim_module=sim_grixis,
-        deck_id="sauron-the-dark-lord",
+        deck_id="dark-dominion",
         deck_name="Dark Dominion",
         commander_name="Sauron, the Dark Lord",
         commander_cmc=6,
@@ -463,11 +463,11 @@ def export_atraxa_b4(metadata: dict) -> dict:
 
 
 def export_wubrg(metadata: dict) -> dict:
-    """Export Turtle Token Engine (WUBRG) simulation."""
+    """Export Mutant Multiplication (WUBRG) simulation."""
     return _export_colored(
         sim_module=sim_wubrg,
-        deck_id="turtle-token-engine",
-        deck_name="Turtle Token Engine",
+        deck_id="mutant-multiplication",
+        deck_name="Mutant Multiplication",
         commander_name="Donatello, the Brains",
         commander_cmc=3,
         colors=["W", "U", "B", "R", "G"],
@@ -481,11 +481,11 @@ def export_wubrg(metadata: dict) -> dict:
 DECKS = [
     ("titan-convergence", "Titan Convergence", export_titan),
     ("eternal-agony", "Eternal Agony", export_rakdos),
-    ("sauron-the-dark-lord", "Dark Dominion", export_grixis),
+    ("dark-dominion", "Dark Dominion", export_grixis),
     ("eternal-harvest", "Eternal Harvest", export_golgari),
     ("phyrexian-perfection", "Phyrexian Perfection", export_atraxa_b3),
     ("compleated-dominion", "Compleated Dominion", export_atraxa_b4),
-    ("turtle-token-engine", "Turtle Token Engine", export_wubrg),
+    ("mutant-multiplication", "Mutant Multiplication", export_wubrg),
 ]
 
 

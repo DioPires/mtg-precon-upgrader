@@ -34,7 +34,9 @@ mtg-precon-upgrader/
 │   └── commanders/         # Deck data per commander
 │       ├── titan-convergence/
 │       ├── eternal-agony/
-│       └── sauron-the-dark-lord/
+│       ├── dark-dominion/
+│       ├── mutant-multiplication/
+│       └── ...
 └── scripts/                # Mana simulation scripts
 ```
 

@@ -18,7 +18,7 @@ from collections import Counter
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "sauron-the-dark-lord" / "deck.json"
+DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "dark-dominion" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
 NUM_GAMES = 100_000

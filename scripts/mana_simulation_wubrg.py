@@ -957,8 +957,8 @@ def main():
     with open(METADATA_FILE) as f:
         metadata = json.load(f)
 
-    deck_id = "turtle-token-engine"
-    deck_name = "Turtle Token Engine"
+    deck_id = "mutant-multiplication"
+    deck_name = "Mutant Multiplication"
     deck_file = PROJECT_ROOT / "data" / "commanders" / deck_id / "deck.json"
 
     with open(deck_file) as f:
