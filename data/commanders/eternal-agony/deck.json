@@ -31,7 +31,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Rakdos group slug that deals damage to all opponents whenever anyone does anything. The Lord of Pain prevents opponent lifegain and deals damage equal to the first spell cast each turn to a chosen player. Damage multipliers like Fiery Emancipation, Solphim, and Twinflame Tyrant stack to turn small pings into lethal threats, while punisher enchantments tax every game action. Valgavoth draws cards whenever opponents lose life on their turns, providing a card advantage engine alongside the pain."
+    "strategyOverview": "Rakdos group slug that deals damage to all opponents whenever anyone does anything. The Lord of Pain prevents opponent lifegain and deals damage equal to the first spell cast each turn to a chosen player. A dense web of cheap punishers (Eidolon of the Great Revel, Pyrostatic Pillar, Harsh Mentor, Kederekt Parasite) ensures damage starts flowing from turns 1-2, while damage multipliers like Fiery Emancipation, Solphim, and Twinflame Tyrant stack to turn those pings into lethal threats. Artist's Talent at Level 3 adds +2 noncombat damage per source, stacking with Torture Pit for devastating amplification. Valgavoth draws cards whenever opponents lose life on their turns, providing a card advantage engine alongside the pain."
   },
   "categories": [
     {
@@ -56,6 +56,20 @@
         "Ankh of Mishra",
         "Descent into Avernus",
         "Razorkin Needlehead"
+      ]
+    },
+    {
+      "name": "Low-Cost Punishers",
+      "cards": [
+        "Eidolon of the Great Revel",
+        "Pyrostatic Pillar",
+        "Harsh Mentor",
+        "Kederekt Parasite",
+        "Creeping Bloodsucker",
+        "Gleeful Arsonist",
+        "Maddening Hex",
+        "Perforating Artist",
+        "Artist's Talent"
       ]
     },
     {
@@ -315,9 +329,10 @@
         "Sheoldred, the Apocalypse",
         "Underworld Dreams",
         "Fate Unraveler",
-        "Razorkin Needlehead"
+        "Razorkin Needlehead",
+        "Kederekt Parasite"
       ],
-      "description": "Each normal opponent draw = 5 life reduction: Sheoldred 2 life loss + Dreams 1 + Unraveler 1 + Razorkin 1. With Solphim: 8 per draw (Sheoldred's life loss NOT doubled — only damage doubled). Three opponents drawing 1 card = 24 per turn cycle. Orcish Bowmasters adds +1 per EXTRA draw beyond first. Wound Reflection doubles ALL life loss at end step.",
+      "description": "Each normal opponent draw = 6 life reduction: Sheoldred 2 life loss + Dreams 1 + Unraveler 1 + Razorkin 1 + Kederekt 1 (with red permanent). With Solphim: 10 per draw (Sheoldred's life loss NOT doubled — only damage doubled). Three opponents drawing 1 card = 30 per turn cycle. Orcish Bowmasters adds +1 per EXTRA draw beyond first. Wound Reflection doubles ALL life loss at end step.",
       "sources": [
         {
           "type": "edhrec",
@@ -488,6 +503,64 @@
           "name": "Commander Spellbook",
           "url": "https://commanderspellbook.com/combo/1561-5919/",
           "detail": "Lethal with draw damage + life halving"
+        }
+      ]
+    },
+    {
+      "title": "Spell Punisher Stack (Eidolon + Pillar)",
+      "cards": [
+        "Eidolon of the Great Revel",
+        "Pyrostatic Pillar"
+      ],
+      "description": "Both deal 2 damage per spell with CMC ≤ 3. Together, every cheap spell costs the caster 4 life. Most Commander spells are CMC 3 or less. With Solphim doubling: 8 per cheap spell. With Fiery Emancipation tripling: 12 per spell. The Lord of Pain prevents lifegain recovery.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Symmetric punishers amplified by damage multipliers"
+        }
+      ]
+    },
+    {
+      "title": "Artist's Talent L3 + Torture Pit",
+      "cards": [
+        "Artist's Talent",
+        "Spiked Corridor // Torture Pit"
+      ],
+      "description": "Both add +2 noncombat damage per source to opponents. Together, every ping source deals +4 extra damage. Eidolon's 2 becomes 6, Underworld Dreams' 1 becomes 5 per draw. Stacks multiplicatively with Solphim/Fiery Emancipation on top.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Additive damage bonuses that stack with multiplicative doublers"
+        }
+      ]
+    },
+    {
+      "title": "Harsh Mentor vs Activated Abilities",
+      "cards": [
+        "Harsh Mentor"
+      ],
+      "description": "2 damage whenever an opponent activates a non-mana ability of an artifact, creature, or land. Punishes: equipment (equip), vehicles (crew), fetchlands, cycling, sacrifice outlets, Treasure tokens. 2 CMC deployment means it's online before most activated abilities matter. With Solphim: 4 per activation.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Covers activation-based game actions that other punishers miss"
+        }
+      ]
+    },
+    {
+      "title": "Maddening Hex (Self-Bouncing Curse)",
+      "cards": [
+        "Maddening Hex"
+      ],
+      "description": "Enchants an opponent; each noncreature spell they cast rolls d6 damage (avg 3.5) then bounces to a random other opponent. Effectively punishes ALL opponents' noncreature spells without needing multiple copies. Cannot be easily removed since it moves to a new player each trigger.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Self-bouncing curse covers all opponents"
         }
       ]
     }
@@ -1211,30 +1284,6 @@
       ]
     },
     {
-      "name": "Braids, Arisen Nightmare",
-      "price": "$2.00",
-      "isGameChanger": false,
-      "reason": "End step: sac a permanent, each opponent sacs same type or loses 2 life and you draw. Persistent value engine",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
-      "name": "Star Athlete",
-      "price": "$0.84",
-      "isGameChanger": false,
-      "reason": "3/3 menace for {1}{R}{R}; on attack, target nonland permanent's controller sacs it or takes 5 damage. Punisher on a body",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
       "name": "Fate Unraveler",
       "price": "$3.05",
       "isGameChanger": false,
@@ -1259,58 +1308,10 @@
       ]
     },
     {
-      "name": "Mogis, God of Slaughter",
-      "price": "$4.19",
-      "isGameChanger": false,
-      "reason": "Indestructible; each opponent sacrifices a creature or takes 2 damage each upkeep. Persistent punisher that's hard to remove",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
-      "name": "Brash Taunter",
-      "price": "$1.76",
-      "isGameChanger": false,
-      "reason": "1/1 indestructible; when dealt damage, deals that much to target opponent. Combos with Blasphemous Act for 13 damage",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
       "name": "Chaos Warp",
       "price": "$0.44",
       "isGameChanger": false,
       "reason": "Instant-speed removal for any permanent; red's only answer to enchantments",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
-      "name": "Florian, Voldaren Scion",
-      "price": "$0.39",
-      "isGameChanger": false,
-      "reason": "First strike; postcombat look at top X cards (X = life opponents lost this turn), play one. Consistent impulse draw in group slug",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
-      "name": "Theater of Horrors",
-      "price": "$0.26",
-      "isGameChanger": false,
-      "reason": "Exile top card each upkeep; play exiled cards while an opponent lost life this turn. Sustained card advantage",
       "sources": [
         {
           "type": "ai-inferred",
@@ -1335,30 +1336,6 @@
       "price": "$0.28",
       "isGameChanger": false,
       "reason": "3/4; when attacked or targeted by a spell: exile 2 play 1, or deal 3 to each opponent. Consistent value",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
-      "name": "Gray Merchant of Asphodel",
-      "price": "$2.13",
-      "isGameChanger": false,
-      "reason": "ETB drain each opponent for your black devotion. Heavy black deck means massive life swings",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
-      "name": "Syr Konrad, the Grim",
-      "price": "$0.57",
-      "isGameChanger": false,
-      "reason": "1 damage to each opponent whenever a creature dies, leaves graveyard, or is milled. Triggers on board wipes and sacrifice",
       "sources": [
         {
           "type": "ai-inferred",
@@ -1400,7 +1377,124 @@
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Premium 0-cost ramp. Replaces Kederekt Parasite (weakest punisher)"
+          "detail": "Premium 0-cost ramp"
+        }
+      ]
+    },
+    {
+      "name": "Eidolon of the Great Revel",
+      "price": "$5-8",
+      "isGameChanger": false,
+      "reason": "2 damage per CMC ≤ 3 spell from any player. Red permanent enables Kederekt Parasite. With damage multipliers, every cheap spell costs opponents 4-12 life",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Low-cost symmetric punisher amplified by damage multipliers"
+        }
+      ]
+    },
+    {
+      "name": "Pyrostatic Pillar",
+      "price": "$2-4",
+      "isGameChanger": false,
+      "reason": "Enchantment version of Eidolon — harder to remove via creature removal. Stacks with Eidolon for 4 damage per cheap spell",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Redundant Eidolon effect on harder-to-remove permanent type"
+        }
+      ]
+    },
+    {
+      "name": "Maddening Hex",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Curse that bounces between opponents on noncreature spell cast, dealing d6 damage (avg 3.5). Covers all opponents without needing multiple pieces",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Self-bouncing curse effectively punishes all opponents"
+        }
+      ]
+    },
+    {
+      "name": "Gleeful Arsonist",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Opponents' noncreature spells deal damage equal to its power (1, or 2 after undying). Resilient via undying — comes back stronger",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Asymmetric spell punisher with built-in resilience"
+        }
+      ]
+    },
+    {
+      "name": "Harsh Mentor",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "2 damage per opponent non-mana activated ability. Punishes equipment, fetchlands, crew, cycling, sacrifice outlets. Covers blind spots other punishers miss",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Activated ability punisher covering equip, crew, fetch, cycling"
+        }
+      ]
+    },
+    {
+      "name": "Perforating Artist",
+      "price": "$0.50",
+      "isGameChanger": false,
+      "reason": "3/2 deathtouch. Raid: each opponent loses 3 life or sacrifices/discards. Replaces Star Athlete — hits all opponents instead of one",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Direct upgrade to Star Athlete: all opponents instead of one target"
+        }
+      ]
+    },
+    {
+      "name": "Kederekt Parasite",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "1 CMC; 1 damage per opponent card draw with a red permanent. 6+ cheap red permanents in deck enable it. Joins the draw punishment package at the lowest possible cost",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "1-mana draw punisher enabled by deck's red permanent density"
+        }
+      ]
+    },
+    {
+      "name": "Creeping Bloodsucker",
+      "price": "$0.25",
+      "isGameChanger": false,
+      "reason": "Upkeep: 1 damage each opponent, gain that life. Zero-condition passive drain at 2 CMC. With multipliers, upkeep drain escalates fast",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Unconditional passive drain at minimal mana investment"
+        }
+      ]
+    },
+    {
+      "name": "Artist's Talent",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Class enchantment. L1: loot on noncreature spell. L2: noncreature spells cost {1} less. L3: all noncombat damage sources deal +2. Stacks with Torture Pit for +4 per source",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Multi-mode enchantment with L3 damage amplification stacking with Torture Pit"
         }
       ]
     }
@@ -1412,54 +1506,14 @@
       "role": "card-draw"
     },
     {
-      "name": "Braids, Arisen Nightmare",
-      "type": "Creature",
-      "role": "value"
-    },
-    {
-      "name": "Brash Taunter",
-      "type": "Creature",
-      "role": "value"
-    },
-    {
       "name": "Fate Unraveler",
       "type": "Creature",
       "role": "value"
     },
     {
-      "name": "Florian, Voldaren Scion",
-      "type": "Creature",
-      "role": "value"
-    },
-    {
-      "name": "Gray Merchant of Asphodel",
-      "type": "Creature",
-      "role": "value"
-    },
-    {
-      "name": "Kaervek the Merciless",
-      "type": "Creature",
-      "role": "finishers"
-    },
-    {
       "name": "Chrome Mox",
       "type": "Artifact",
       "role": "ramp"
-    },
-    {
-      "name": "Mogis, God of Slaughter",
-      "type": "Creature",
-      "role": "value"
-    },
-    {
-      "name": "Star Athlete",
-      "type": "Creature",
-      "role": "value"
-    },
-    {
-      "name": "Syr Konrad, the Grim",
-      "type": "Creature",
-      "role": "value"
     },
     {
       "name": "Tectonic Giant",
@@ -1473,11 +1527,6 @@
     },
     {
       "name": "Spiked Corridor // Torture Pit",
-      "type": "Enchantment",
-      "role": "value"
-    },
-    {
-      "name": "Theater of Horrors",
       "type": "Enchantment",
       "role": "value"
     },
@@ -1827,6 +1876,51 @@
       "name": "Castle Locthwain",
       "type": "Land",
       "role": "lands"
+    },
+    {
+      "name": "Eidolon of the Great Revel",
+      "type": "Enchantment Creature",
+      "role": "value"
+    },
+    {
+      "name": "Pyrostatic Pillar",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Maddening Hex",
+      "type": "Enchantment",
+      "role": "value"
+    },
+    {
+      "name": "Gleeful Arsonist",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Harsh Mentor",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Perforating Artist",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Kederekt Parasite",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Creeping Bloodsucker",
+      "type": "Creature",
+      "role": "value"
+    },
+    {
+      "name": "Artist's Talent",
+      "type": "Enchantment",
+      "role": "value"
     }
   ],
   "tokens": [
