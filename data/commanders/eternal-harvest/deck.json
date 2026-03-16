@@ -60,7 +60,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks and self-mill creatures to fill the graveyard while building XP. Mid-game establishes sacrifice loops with Spore Frog for protection and Sakura-Tribe Elder for ramp. Late-game recurs Gray Merchant of Asphodel and Kokusho for massive life drain, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while Blood Artist drains incrementally with every death."
+    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks and Badgermole Cub for mana acceleration, plus self-mill creatures to fill the graveyard while building XP. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Late-game recurs Gray Merchant of Asphodel and Kokusho for massive drain, cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
   },
   "categories": [
     {
@@ -103,7 +103,11 @@
         "Kokusho, the Evening Star",
         "Blood Artist",
         "Grave Titan",
-        "Grave Pact"
+        "Grave Pact",
+        "Sephiroth, Fabled SOLDIER",
+        "Zulaport Cutthroat",
+        "Bastion of Remembrance",
+        "Archon of Cruelty"
       ]
     },
     {
@@ -113,10 +117,8 @@
         "Birds of Paradise",
         "Elves of Deep Shadow",
         "Llanowar Elves",
-        "Wood Elves",
         "Wight of the Reliquary",
-        "Solemn Simulacrum",
-        "Solemn Simulacrum"
+        "Badgermole Cub"
       ]
     },
     {
@@ -125,7 +127,6 @@
         "Skullclamp",
         "Grim Haruspex",
         "Greater Good",
-        "Guardian Project",
         "Village Rites",
         "Twilight Diviner",
         "Fauna Shaman",
@@ -138,9 +139,7 @@
         "Plaguecrafter",
         "Accursed Marauder",
         "Shriekmaw",
-        "Ravenous Chupacabra",
         "Assassin's Trophy",
-        "Beast Within",
         "Caustic Caterpillar",
         "Reclamation Sage",
         "Haywire Mite"
@@ -156,7 +155,9 @@
         "Reassembling Skeleton",
         "Ophiomancer",
         "Sidisi, Regent of the Mire",
-        "Diabolic Intent"
+        "Diabolic Intent",
+        "Bitterblossom",
+        "Insidious Roots"
       ]
     }
   ],
@@ -232,12 +233,29 @@
         "Buried Alive",
         "Victimize"
       ],
-      "description": "Buried Alive tutors three creatures to the graveyard. Victimize sacrifices one creature to reanimate two. Living Death swaps all graveyards and battlefields, putting 8-15 creatures into play at once. A single resolved Living Death after dedicated graveyard filling typically ends the game through combined ETB triggers and combat.",
+      "description": "Buried Alive tutors three creatures to the graveyard. Victimize sacrifices one creature to reanimate two. Living Death swaps all graveyards and battlefields, putting 8-15 creatures into play at once. A single resolved Living Death after dedicated graveyard filling typically ends the game through combined ETB triggers (including Archon of Cruelty's devastating sac-discard-drain) and combat.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Strategic win path identification"
+        }
+      ]
+    },
+    {
+      "title": "Sephiroth Emblem Drain",
+      "cards": [
+        "Sephiroth, Fabled SOLDIER",
+        "Blood Artist",
+        "Zulaport Cutthroat",
+        "Bastion of Remembrance"
+      ],
+      "description": "Transform Sephiroth by having 4 creatures die in one turn (sac 4 to any altar). The permanent emblem drains an opponent 1 life per creature death forever. With Blood Artist + Zulaport + Bastion also in play, each death drains 4 per opponent. Any sacrifice loop or Living Death becomes lethal.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Drain battery win condition"
         }
       ]
     }
@@ -492,6 +510,83 @@
           "detail": "Self-recurring creature + equipment synergy"
         }
       ]
+    },
+    {
+      "title": "Sephiroth Emblem Engine",
+      "cards": [
+        "Sephiroth, Fabled SOLDIER",
+        "Meren of Clan Nel Toth"
+      ],
+      "description": "Meren reanimates Sephiroth each end step at 3+ XP. ETB optionally sacs a creature for draw. Each creature death drains an opponent. After 4 deaths in one turn, Sephiroth transforms and grants a permanent emblem that drains on every future death — stacking with Blood Artist and Zulaport Cutthroat.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Multi-role engine synergy"
+        }
+      ]
+    },
+    {
+      "title": "Token Sacrifice Factory",
+      "cards": [
+        "Bitterblossom",
+        "Skullclamp",
+        "Grave Pact"
+      ],
+      "description": "Bitterblossom creates a 1/1 flying token each upkeep. Equip Skullclamp to kill the token and draw 2. Grave Pact forces each opponent to sacrifice a creature. Net: draw 2, opponents each lose a creature, every turn for 1 life.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Token-fueled sacrifice engine"
+        }
+      ]
+    },
+    {
+      "title": "Drain Battery",
+      "cards": [
+        "Blood Artist",
+        "Zulaport Cutthroat",
+        "Bastion of Remembrance"
+      ],
+      "description": "Three simultaneous death-drain effects. Each creature death drains 3 life from each opponent (Blood Artist + Zulaport) or from each opponent per your creatures (Bastion). With Sephiroth's emblem, each death drains 4. Living Death resolving with these in play is typically lethal.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Drain redundancy package"
+        }
+      ]
+    },
+    {
+      "title": "Mana Doubling Engine",
+      "cards": [
+        "Badgermole Cub",
+        "Birds of Paradise"
+      ],
+      "description": "Badgermole Cub adds {G} whenever a creature is tapped for mana. Birds of Paradise now produces two mana per tap. The earthbent land-creature also triggers this — tapping it for mana adds an extra {G}. Earthbent land can be sacrificed for Meren XP and returns to battlefield tapped.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Mana acceleration + sac target"
+        }
+      ]
+    },
+    {
+      "title": "Archon Value Loop",
+      "cards": [
+        "Archon of Cruelty",
+        "Twilight Diviner"
+      ],
+      "description": "Reanimate Archon from graveyard. Twilight Diviner creates a token copy. Both Archons trigger ETB: each forces an opponent to sacrifice, discard, and lose 3; you draw 2 cards and gain 6 life total. Sacrifice the token for Meren XP, reanimate again next turn.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Premium reanimation value"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -676,6 +771,97 @@
           "name": "Claude analysis"
         }
       ]
+    },
+    {
+      "name": "Sephiroth, Fabled SOLDIER",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "Sacrifice outlet, death drain, card draw, and permanent emblem win condition in one 3-CMC creature. ETB/attack sacs for draw; each creature death drains an opponent. Transform at 4 deaths creates irremovable emblem.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Multi-role engine piece for sacrifice/drain strategy"
+        }
+      ]
+    },
+    {
+      "name": "Bitterblossom",
+      "price": "$8-15",
+      "isGameChanger": false,
+      "reason": "Creates a 1/1 flying token every upkeep for 1 life. Consistent sac fodder for Skullclamp, Grave Pact, and all sacrifice outlets. Enchantment-based so survives creature board wipes.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Token generation for sacrifice engine"
+        }
+      ]
+    },
+    {
+      "name": "Zulaport Cutthroat",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Blood Artist redundancy — each creature death drains each opponent for 1. Critical for consistent drain win condition. At 1/1, also a Skullclamp target.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC - Meren",
+          "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth"
+        }
+      ]
+    },
+    {
+      "name": "Bastion of Remembrance",
+      "price": "$2-4",
+      "isGameChanger": false,
+      "reason": "Third Blood Artist effect on an enchantment — harder to remove than creatures. Creates a 1/1 Human Soldier token on ETB. Survives Toxic Deluge and Living Death.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC - Meren Sacrifice",
+          "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth/sacrifice"
+        }
+      ]
+    },
+    {
+      "name": "Insidious Roots",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Creates a Plant token whenever creatures leave graveyard — triggers on every Meren reanimate, every reanimate spell. Tokens tap for any color mana and grow with +1/+1 counters.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Token generation + mana from reanimation triggers"
+        }
+      ]
+    },
+    {
+      "name": "Badgermole Cub",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Doubles all creature mana taps with additional {G}. ETB earthbend turns a land into a recurring sacrifice target — the land-creature returns to battlefield when it dies. Upgrade over Solemn Simulacrum at half the CMC.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Mana doubling + earthbend sac loop"
+        }
+      ]
+    },
+    {
+      "name": "Archon of Cruelty",
+      "price": "$10-15",
+      "isGameChanger": false,
+      "reason": "Premium reanimation target. ETB and attack: opponent sacrifices creature/planeswalker, discards a card, loses 3 life; you draw a card, gain 3 life. Buried Alive into Reanimate for devastating value. Twilight Diviner token copy doubles the triggers.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC - Meren Reanimator",
+          "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth/reanimator"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -784,7 +970,7 @@
       "name": "Swamp",
       "type": "Land",
       "role": "lands",
-      "quantity": 10
+      "quantity": 9
     },
     {
       "name": "Sol Ring",
@@ -817,18 +1003,8 @@
       "role": "ramp"
     },
     {
-      "name": "Wood Elves",
-      "type": "Creature",
-      "role": "ramp"
-    },
-    {
       "name": "Wight of the Reliquary",
       "type": "Creature",
-      "role": "ramp"
-    },
-    {
-      "name": "Solemn Simulacrum",
-      "type": "Artifact Creature",
       "role": "ramp"
     },
     {
@@ -848,11 +1024,6 @@
     },
     {
       "name": "Greater Good",
-      "type": "Enchantment",
-      "role": "card-draw"
-    },
-    {
-      "name": "Guardian Project",
       "type": "Enchantment",
       "role": "card-draw"
     },
@@ -892,17 +1063,7 @@
       "role": "removal"
     },
     {
-      "name": "Ravenous Chupacabra",
-      "type": "Creature",
-      "role": "removal"
-    },
-    {
       "name": "Assassin's Trophy",
-      "type": "Instant",
-      "role": "removal"
-    },
-    {
-      "name": "Beast Within",
       "type": "Instant",
       "role": "removal"
     },
@@ -939,11 +1100,6 @@
     {
       "name": "Grave Pact",
       "type": "Enchantment",
-      "role": "board-wipe"
-    },
-    {
-      "name": "Culling Ritual",
-      "type": "Sorcery",
       "role": "board-wipe"
     },
     {
@@ -1095,24 +1251,44 @@
       "name": "Lightning Greaves",
       "type": "Artifact",
       "role": "enhancer"
+    },
+    {
+      "name": "Sephiroth, Fabled SOLDIER",
+      "type": "Creature",
+      "role": "death-payoff"
+    },
+    {
+      "name": "Bitterblossom",
+      "type": "Enchantment",
+      "role": "engine"
+    },
+    {
+      "name": "Zulaport Cutthroat",
+      "type": "Creature",
+      "role": "death-payoff"
+    },
+    {
+      "name": "Bastion of Remembrance",
+      "type": "Enchantment",
+      "role": "death-payoff"
+    },
+    {
+      "name": "Insidious Roots",
+      "type": "Enchantment",
+      "role": "engine"
+    },
+    {
+      "name": "Badgermole Cub",
+      "type": "Creature",
+      "role": "ramp"
+    },
+    {
+      "name": "Archon of Cruelty",
+      "type": "Creature",
+      "role": "death-payoff"
     }
   ],
   "tokens": [
-    {
-      "name": "Beast",
-      "type_line": "Token Creature — Beast",
-      "oracle_text": "",
-      "power": "3",
-      "toughness": "3",
-      "colors": [
-        "G"
-      ],
-      "scryfall_id": "3b584d93-5681-4ecd-953c-5ef58307caab",
-      "image_uri": "https://cards.scryfall.io/normal/front/3/b/3b584d93-5681-4ecd-953c-5ef58307caab.jpg?1752946408",
-      "produced_by": [
-        "Beast Within"
-      ]
-    },
     {
       "name": "Snake",
       "type_line": "Token Creature — Snake",
@@ -1141,6 +1317,51 @@
       "image_uri": "https://cards.scryfall.io/normal/front/1/7/17f001ab-514b-49e7-a657-b2872ad7a1de.jpg?1767954964",
       "produced_by": [
         "Grave Titan"
+      ]
+    },
+    {
+      "name": "Faerie Rogue",
+      "type_line": "Token Creature — Faerie Rogue",
+      "oracle_text": "Flying",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "B"
+      ],
+      "scryfall_id": "d680c3f1-a3c0-4f38-8958-2402612c8dd1",
+      "image_uri": "https://cards.scryfall.io/normal/front/d/6/d680c3f1-a3c0-4f38-8958-2402612c8dd1.jpg?1692830285",
+      "produced_by": [
+        "Bitterblossom"
+      ]
+    },
+    {
+      "name": "Human Soldier",
+      "type_line": "Token Creature — Human Soldier",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "631c2c16-132d-4607-ab7e-207a6af188e5",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/3/631c2c16-132d-4607-ab7e-207a6af188e5.jpg?1757686920",
+      "produced_by": [
+        "Bastion of Remembrance"
+      ]
+    },
+    {
+      "name": "Plant",
+      "type_line": "Token Creature — Plant",
+      "oracle_text": "",
+      "power": "0",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "3db07715-d315-4361-8af5-ce68d20e6c08",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/d/3db07715-d315-4361-8af5-ce68d20e6c08.jpg?1767955008",
+      "produced_by": [
+        "Insidious Roots"
       ]
     }
   ]

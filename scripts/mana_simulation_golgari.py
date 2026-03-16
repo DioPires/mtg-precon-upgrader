@@ -68,6 +68,7 @@ DORK_DEFS = {
     "Birds of Paradise":    {"cmc": 1, "B": 1, "G": 1, "C": 0, "flexible": True},
     "Elves of Deep Shadow": {"cmc": 1, "B": 1, "G": 0, "C": 0, "flexible": False},
     "Llanowar Elves":       {"cmc": 1, "B": 0, "G": 1, "C": 0, "flexible": False},
+    "Badgermole Cub":       {"cmc": 2, "B": 0, "G": 1, "C": 0, "flexible": False},
 }
 
 # --- Creature ramp definitions ---
