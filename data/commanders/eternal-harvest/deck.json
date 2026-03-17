@@ -6,7 +6,7 @@
   "commander": "Meren of Clan Nel Toth",
   "cost": "$200-350",
   "bracket": "4",
-  "gameChangers": 2,
+  "gameChangers": 3,
   "sources": [
     {
       "type": "edhrec",
@@ -60,7 +60,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks for acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Burnished Hart sacrifices for 2 basic lands and loops with Meren at 3 XP for repeatable ramp. Aftermath Analyst adds mill on ETB and loops with Meren at 2 XP for repeatable land recovery. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Colossal Grave-Reaver turns every mill and dredge into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Mikaeus, the Unhallowed gives all non-Human creatures undying, doubling the value of every sacrifice. With Yawgmoth's -1/-1 counters canceling undying's +1/+1 counters, the deck achieves infinite loops — draw the deck, drain all opponents with Blood Artist or Bastion of Remembrance, or repeatedly reanimate Gray Merchant and Kokusho for lethal drain. Late-game cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
+    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks for acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Burnished Hart sacrifices for 2 basic lands and loops with Meren at 3 XP for repeatable ramp. Aftermath Analyst adds mill on ETB and loops with Meren at 2 XP for repeatable land recovery. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Colossal Grave-Reaver turns every mill into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Mikaeus, the Unhallowed gives all non-Human creatures undying, doubling the value of every sacrifice. With Yawgmoth's -1/-1 counters canceling undying's +1/+1 counters, the deck achieves infinite loops — draw the deck, drain all opponents with Blood Artist or Bastion of Remembrance, or repeatedly reanimate Gray Merchant and Kokusho for lethal drain. Walking Ballista at X=0 with Mikaeus creates the most compact infinite death trigger loop — Entomb + Reanimate assembles it. Gravecrawler provides a parallel infinite combo line with Phyrexian Altar and Carrion Feeder. Orcish Bowmasters punishes opponents' card draws while creating sac-able Orc Army tokens. Late-game cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
   },
   "categories": [
     {
@@ -92,7 +92,6 @@
         "Entomb",
         "Stitcher's Supplier",
         "Birthing Pod",
-        "Stinkweed Imp",
         "Overlord of the Balemurk"
       ]
     },
@@ -107,7 +106,8 @@
         "Sephiroth, Fabled SOLDIER",
         "Zulaport Cutthroat",
         "Bastion of Remembrance",
-        "Archon of Cruelty"
+        "Archon of Cruelty",
+        "Walking Ballista"
       ]
     },
     {
@@ -127,7 +127,6 @@
         "Skullclamp",
         "Grim Haruspex",
         "Greater Good",
-        "Village Rites",
         "Twilight Diviner",
         "Fauna Shaman",
         "Braids, Arisen Nightmare"
@@ -137,7 +136,6 @@
       "name": "Removal Package",
       "cards": [
         "Plaguecrafter",
-        "Accursed Marauder",
         "Shriekmaw",
         "Assassin's Trophy",
         "Caustic Caterpillar",
@@ -158,7 +156,9 @@
         "Diabolic Intent",
         "Bitterblossom",
         "Insidious Roots",
-        "Mikaeus, the Unhallowed"
+        "Mikaeus, the Unhallowed",
+        "Gravecrawler",
+        "Orcish Bowmasters"
       ]
     }
   ],
@@ -188,6 +188,12 @@
       ],
       "description": "Cast Living Death to reanimate all creatures from graveyard. Eternal Witness returns Living Death to hand. Sacrifice all creatures to Phyrexian Altar for mana. Recast Living Death. Each cycle triggers Blood Artist for 1 drain per death. With 5+ creatures dying per cycle, infinite loops drain all opponents to 0.",
       "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/864-2596-4050/",
+          "detail": "Infinite ETB/death triggers"
+        },
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
@@ -308,6 +314,22 @@
           "name": "Commander Spellbook",
           "url": "https://commanderspellbook.com/combo/628-2123-4279/",
           "detail": "Infinite death drain with Kokusho"
+        }
+      ]
+    },
+    {
+      "title": "Walking Ballista Undying Loop",
+      "cards": [
+        "Walking Ballista",
+        "Mikaeus, the Unhallowed"
+      ],
+      "description": "2-card infinite death/ETB trigger engine. Cast Ballista at X=0 with Mikaeus out — enters as 1/1 (Mikaeus buff), no counters. Sacrifice to any outlet for the first death. Undying returns Ballista with 1 +1/+1 counter (now 2/2). Remove counter to ping itself — 1/1 with 1 damage, dies. Undying loops infinitely. Converts to a win via Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, Grave Pact, Grim Haruspex, or Altar of Dementia. Most compact Mikaeus combo — tutorable via Entomb/Buried Alive + any reanimate spell.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/628-3693/",
+          "detail": "Mikaeus + Walking Ballista infinite death triggers"
         }
       ]
     }
@@ -529,25 +551,6 @@
       ]
     },
     {
-      "title": "Dredge Engine",
-      "cards": [
-        "Stinkweed Imp",
-        "Greater Good"
-      ],
-      "description": "Replace any card draw with Stinkweed Imp's dredge 5 to mill 5 cards into the graveyard. Greater Good sacrifices a creature to draw 3 (dredge 5 three times = mill 15). Fills graveyard massively for Living Death.",
-      "sources": [
-        {
-          "type": "youtube",
-          "name": "EDHRECast 336 - Guide to Graveyards",
-          "url": "https://www.youtube.com/watch?v=ntldyYkLRH0"
-        },
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
-        }
-      ]
-    },
-    {
       "title": "Infinite Fodder",
       "cards": [
         "Bloodghast",
@@ -735,6 +738,39 @@
           "name": "Commander Spellbook",
           "url": "https://commanderspellbook.com/combo/628-2034--5/",
           "detail": "Mikaeus + sac outlet combos"
+        }
+      ]
+    },
+    {
+      "title": "Ballista Undying Loop",
+      "cards": [
+        "Walking Ballista",
+        "Mikaeus, the Unhallowed"
+      ],
+      "description": "Walking Ballista at X=0 with Mikaeus in play. Sacrifice to any outlet — undying returns Ballista with 1 +1/+1 counter (Mikaeus buff makes it 2/2). Remove counter to ping itself — dies at 1/1 with 1 damage. Undying loops. Infinite death triggers feed Blood Artist, Grave Pact, Grim Haruspex, or Altar of Dementia for the win. Most compact Mikaeus combo — Entomb + Reanimate assembles it.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/628-3693/",
+          "detail": "Mikaeus + Walking Ballista infinite death triggers"
+        }
+      ]
+    },
+    {
+      "title": "Gravecrawler Loop",
+      "cards": [
+        "Gravecrawler",
+        "Phyrexian Altar",
+        "Carrion Feeder"
+      ],
+      "description": "Cast Gravecrawler for {B}. Sacrifice to Phyrexian Altar for {B}. Recast from graveyard — Carrion Feeder is a Zombie, enabling recursion. Infinite death triggers + infinite mana + infinite storm count. Blood Artist, Zulaport Cutthroat, or Bastion of Remembrance converts to lethal drain. Without the combo, Gravecrawler is recurring sac fodder for Skullclamp, Grave Pact, and Meren XP.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2577-4050/",
+          "detail": "Gravecrawler + Phyrexian Altar infinite death triggers"
         }
       ]
     }
@@ -1070,6 +1106,47 @@
           "detail": "Combo engine + global value multiplier"
         }
       ]
+    },
+    {
+      "name": "Walking Ballista",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "2-card infinite death/ETB trigger engine with Mikaeus. Cast at X=0 for {0} — enters as 1/1 (Mikaeus buff), sac to any outlet, undying returns with 1 counter, remove counter to ping itself, dies, loops infinitely. Converts to a win via any death payoff (Blood Artist, Zulaport, Bastion, Grave Pact, Grim Haruspex, Altar of Dementia). Also a flexible mana sink at any X cost and free Meren XP trigger at X=0.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/628-3693/",
+          "detail": "Mikaeus + Walking Ballista infinite death triggers"
+        }
+      ]
+    },
+    {
+      "name": "Gravecrawler",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Self-recurring Zombie for {B} as long as you control a Zombie (Carrion Feeder). Infinite combo with Phyrexian Altar + Carrion Feeder — sac for {B}, recast for {B}, infinite death triggers + infinite mana. Without the combo, provides repeatable sac fodder for Skullclamp, Grave Pact, and Meren XP counters.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2577-4050/",
+          "detail": "Gravecrawler + Phyrexian Altar infinite death triggers"
+        }
+      ]
+    },
+    {
+      "name": "Orcish Bowmasters",
+      "price": "$30-40",
+      "isGameChanger": true,
+      "reason": "Flash creature that punishes opponents' card draws — deals 1 damage and amasses Orcs 1 on ETB and each excess draw. In a 4-player game, triggers 3+ times per turn cycle. Creates a growing Orc Army token for sac fodder. Recurrable by Meren, triggers XP on death. At 2 CMC, efficiently slots into any point in the curve.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Owned Game Changer; creature synergy with Meren recursion"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -1236,11 +1313,6 @@
       "role": "card-draw"
     },
     {
-      "name": "Village Rites",
-      "type": "Instant",
-      "role": "card-draw"
-    },
-    {
       "name": "Twilight Diviner",
       "type": "Creature",
       "role": "card-draw"
@@ -1257,11 +1329,6 @@
     },
     {
       "name": "Plaguecrafter",
-      "type": "Creature",
-      "role": "removal"
-    },
-    {
-      "name": "Accursed Marauder",
       "type": "Creature",
       "role": "removal"
     },
@@ -1358,11 +1425,6 @@
     {
       "name": "Birthing Pod",
       "type": "Artifact",
-      "role": "graveyard-setup"
-    },
-    {
-      "name": "Stinkweed Imp",
-      "type": "Creature",
       "role": "graveyard-setup"
     },
     {
@@ -1494,6 +1556,21 @@
       "name": "Archon of Cruelty",
       "type": "Creature",
       "role": "death-payoff"
+    },
+    {
+      "name": "Walking Ballista",
+      "type": "Artifact Creature",
+      "role": "death-payoff"
+    },
+    {
+      "name": "Gravecrawler",
+      "type": "Creature",
+      "role": "engine"
+    },
+    {
+      "name": "Orcish Bowmasters",
+      "type": "Creature",
+      "role": "engine"
     }
   ],
   "tokens": [
@@ -1555,6 +1632,21 @@
       "image_uri": "https://cards.scryfall.io/normal/front/3/d/3db07715-d315-4361-8af5-ce68d20e6c08.jpg?1767955008",
       "produced_by": [
         "Insidious Roots"
+      ]
+    },
+    {
+      "name": "Orc Army",
+      "type_line": "Token Creature — Orc Army",
+      "oracle_text": "",
+      "power": "0",
+      "toughness": "0",
+      "colors": [
+        "B"
+      ],
+      "scryfall_id": "2f8b43e8-dd89-452e-b572-8559e19fdea2",
+      "image_uri": "https://cards.scryfall.io/normal/front/2/f/2f8b43e8-dd89-452e-b572-8559e19fdea2.jpg?1685551411",
+      "produced_by": [
+        "Orcish Bowmasters"
       ]
     }
   ]
