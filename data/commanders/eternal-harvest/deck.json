@@ -60,7 +60,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks and Badgermole Cub for mana acceleration, plus self-mill creatures to fill the graveyard while building XP. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Late-game recurs Gray Merchant of Asphodel and Kokusho for massive drain, cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
+    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks and Badgermole Cub for mana acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Aftermath Analyst adds mill on ETB and loops with Meren at 2 XP for repeatable land recovery. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Colossal Grave-Reaver turns every mill and dredge into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Late-game recurs Gray Merchant of Asphodel and Kokusho for massive drain, cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
   },
   "categories": [
     {
@@ -93,7 +93,7 @@
         "Stitcher's Supplier",
         "Birthing Pod",
         "Stinkweed Imp",
-        "Grisly Salvage"
+        "Overlord of the Balemurk"
       ]
     },
     {
@@ -102,7 +102,7 @@
         "Gray Merchant of Asphodel",
         "Kokusho, the Evening Star",
         "Blood Artist",
-        "Grave Titan",
+        "Colossal Grave-Reaver",
         "Grave Pact",
         "Sephiroth, Fabled SOLDIER",
         "Zulaport Cutthroat",
@@ -152,7 +152,7 @@
         "Eternal Witness",
         "Lightning Greaves",
         "Bloodghast",
-        "Reassembling Skeleton",
+        "Aftermath Analyst",
         "Ophiomancer",
         "Sidisi, Regent of the Mire",
         "Diabolic Intent",
@@ -587,6 +587,66 @@
           "detail": "Premium reanimation value"
         }
       ]
+    },
+    {
+      "title": "Overlord Mill Recursion",
+      "cards": [
+        "Overlord of the Balemurk",
+        "Meren of Clan Nel Toth"
+      ],
+      "description": "Overlord impends turn 2 for {1}{B}, milling 4 immediately. Once it becomes a creature, each attack mills 4 more and returns a creature to hand. Meren provides backup recursion at 5+ XP if Overlord dies. Independent hand-recursion when Meren is removed from the battlefield.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Parallel graveyard fill + recursion engines"
+        }
+      ]
+    },
+    {
+      "title": "Mill-to-Battlefield Engine",
+      "cards": [
+        "Colossal Grave-Reaver",
+        "Overlord of the Balemurk"
+      ],
+      "description": "Overlord mills 4 on enter or attack. Any creature cards milled trigger Colossal Grave-Reaver to put one directly onto the battlefield for free. With both in play, each Overlord attack mills 4 + reanimates a creature + returns another to hand. Grave-Reaver's own mill 3 on attack adds further triggers.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Self-reinforcing mill-reanimate engine"
+        }
+      ]
+    },
+    {
+      "title": "Buried Alive Reanimate",
+      "cards": [
+        "Buried Alive",
+        "Colossal Grave-Reaver"
+      ],
+      "description": "Buried Alive tutors 3 creature cards from library to graveyard. Grave-Reaver triggers — put one of those 3 directly onto the battlefield for free. Effective 3-mana tutor + free reanimate. Choose premium targets like Archon of Cruelty to reanimate immediately while setting up two more creatures for later.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Tutor-to-graveyard triggers Grave-Reaver's library-to-graveyard clause"
+        }
+      ]
+    },
+    {
+      "title": "Analyst Land Loop",
+      "cards": [
+        "Aftermath Analyst",
+        "Meren of Clan Nel Toth"
+      ],
+      "description": "Cast Aftermath Analyst for {1}{G} — mills 3 on ETB. Later sacrifice for {3}{G} to return all lands from graveyard to battlefield tapped. The sacrifice gives Meren an experience counter. At 2+ XP, Meren returns Aftermath Analyst at end step. Repeat every turn: mill 3, recover all milled lands, ramp massively while filling the graveyard.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Repeatable mill + mass land recovery at low XP"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -862,6 +922,45 @@
           "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth/reanimator"
         }
       ]
+    },
+    {
+      "name": "Overlord of the Balemurk",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Impending {1}{B} on turn 2 starts milling immediately. Mill 4 on enter/attack fills the graveyard; returns a creature to hand for backup recursion independent of Meren and XP. Survives creature board wipes and Living Death in enchantment form. 5/5 body is a solid Greater Good or Altar of Dementia target once time counters are removed.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Early graveyard fill + backup recursion engine"
+        }
+      ]
+    },
+    {
+      "name": "Colossal Grave-Reaver",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "Turns every mill, dredge, and tutor-to-graveyard effect into free reanimation. Mill 3 on enter/attack feeds itself. Buried Alive + Grave-Reaver = tutor 3 creatures, immediately reanimate one for free. 7/6 flying premium reanimation target alongside Archon of Cruelty.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Mill-to-battlefield reanimation engine"
+        }
+      ]
+    },
+    {
+      "name": "Aftermath Analyst",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Mill 3 on ETB fills the graveyard and triggers Colossal Grave-Reaver. Sacrifice for {3}{G} to return all lands from graveyard to battlefield — massive ramp after heavy self-mill. Meren loop at 2+ XP: mill 3, sac for lands, Meren returns it, repeat every turn.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Repeatable mill + land recovery Meren loop"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -1008,8 +1107,8 @@
       "role": "ramp"
     },
     {
-      "name": "Grisly Salvage",
-      "type": "Instant",
+      "name": "Overlord of the Balemurk",
+      "type": "Enchantment Creature",
       "role": "graveyard-setup"
     },
     {
@@ -1203,7 +1302,7 @@
       "role": "death-payoff"
     },
     {
-      "name": "Grave Titan",
+      "name": "Colossal Grave-Reaver",
       "type": "Creature",
       "role": "death-payoff"
     },
@@ -1213,7 +1312,7 @@
       "role": "engine"
     },
     {
-      "name": "Reassembling Skeleton",
+      "name": "Aftermath Analyst",
       "type": "Creature",
       "role": "engine"
     },
@@ -1302,21 +1401,6 @@
       "image_uri": "https://cards.scryfall.io/normal/front/3/f/3f1092e1-c7c0-4ea6-8128-eb7069783747.jpg?1742506492",
       "produced_by": [
         "Ophiomancer"
-      ]
-    },
-    {
-      "name": "Zombie",
-      "type_line": "Token Creature — Zombie",
-      "oracle_text": "",
-      "power": "2",
-      "toughness": "2",
-      "colors": [
-        "B"
-      ],
-      "scryfall_id": "17f001ab-514b-49e7-a657-b2872ad7a1de",
-      "image_uri": "https://cards.scryfall.io/normal/front/1/7/17f001ab-514b-49e7-a657-b2872ad7a1de.jpg?1767954964",
-      "produced_by": [
-        "Grave Titan"
       ]
     },
     {
