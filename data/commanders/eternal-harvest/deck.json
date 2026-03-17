@@ -5,7 +5,7 @@
   "subtitle": "Death Feeds the Living",
   "commander": "Meren of Clan Nel Toth",
   "cost": "$200-350",
-  "bracket": "3",
+  "bracket": "4",
   "gameChangers": 2,
   "sources": [
     {
@@ -60,7 +60,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks and Badgermole Cub for mana acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Aftermath Analyst adds mill on ETB and loops with Meren at 2 XP for repeatable land recovery. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Colossal Grave-Reaver turns every mill and dredge into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Late-game recurs Gray Merchant of Asphodel and Kokusho for massive drain, cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
+    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks and Badgermole Cub for mana acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Aftermath Analyst adds mill on ETB and loops with Meren at 2 XP for repeatable land recovery. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Colossal Grave-Reaver turns every mill and dredge into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Mikaeus, the Unhallowed gives all non-Human creatures undying, doubling the value of every sacrifice. With Yawgmoth's -1/-1 counters canceling undying's +1/+1 counters, the deck achieves infinite loops — draw the deck, drain all opponents with Blood Artist or Bastion of Remembrance, or repeatedly reanimate Gray Merchant and Kokusho for lethal drain. Late-game cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
   },
   "categories": [
     {
@@ -157,7 +157,8 @@
         "Sidisi, Regent of the Mire",
         "Diabolic Intent",
         "Bitterblossom",
-        "Insidious Roots"
+        "Insidious Roots",
+        "Mikaeus, the Unhallowed"
       ]
     }
   ],
@@ -256,6 +257,57 @@
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Drain battery win condition"
+        }
+      ]
+    },
+    {
+      "title": "Mikaeus + Yawgmoth Infinite Drain",
+      "cards": [
+        "Mikaeus, the Unhallowed",
+        "Yawgmoth, Thran Physician",
+        "Blood Artist"
+      ],
+      "description": "Sacrifice any 2 non-Human creatures to Yawgmoth alternately. Each sac draws a card and puts -1/-1 on the other creature, canceling the +1/+1 counter from undying. Both creatures loop infinitely. Blood Artist or Bastion of Remembrance drains each opponent for every death. With 25+ non-Human creatures in the deck, assembling this is trivial once Mikaeus and Yawgmoth are in play.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/628-2123-4279/",
+          "detail": "Mikaeus + Yawgmoth infinite death triggers"
+        }
+      ]
+    },
+    {
+      "title": "Mikaeus + Yawgmoth + Gray Merchant",
+      "cards": [
+        "Mikaeus, the Unhallowed",
+        "Yawgmoth, Thran Physician",
+        "Gray Merchant of Asphodel"
+      ],
+      "description": "Sacrifice Gary to Yawgmoth (draw, -1/-1 on any creature). Gary returns with undying +1/+1 counter, ETB drains all opponents based on black devotion. Yawgmoth sacs Gary again, -1/-1 cancels +1/+1, Gary returns and drains again. Each loop drains 6-10 life from each opponent. Gary's drain sustains Yawgmoth's 1-life payment. Near-infinite loops until library is empty.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/328-628-4279/",
+          "detail": "Infinite ETB drain with Gary"
+        }
+      ]
+    },
+    {
+      "title": "Mikaeus + Yawgmoth + Kokusho",
+      "cards": [
+        "Mikaeus, the Unhallowed",
+        "Yawgmoth, Thran Physician",
+        "Kokusho, the Evening Star"
+      ],
+      "description": "Same Yawgmoth loop as Gary. Each Kokusho death drains 5 from each opponent and you gain 15 (4-player). Yawgmoth's -1/-1 cancels undying +1/+1. Life gained from Kokusho easily sustains Yawgmoth's 1-life cost. Near-infinite drain until library is empty.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/628-2123-4279/",
+          "detail": "Infinite death drain with Kokusho"
         }
       ]
     }
@@ -647,6 +699,44 @@
           "detail": "Repeatable mill + mass land recovery at low XP"
         }
       ]
+    },
+    {
+      "title": "Undying Engine",
+      "cards": [
+        "Mikaeus, the Unhallowed",
+        "Yawgmoth, Thran Physician"
+      ],
+      "description": "The deck's most powerful combo. All non-Human creatures gain undying from Mikaeus. Sacrifice any 2 to Yawgmoth alternately — each sac draws a card and puts -1/-1 on the other creature, canceling undying's +1/+1 counter. Both creatures loop infinitely. Add Blood Artist or Bastion of Remembrance to drain the table. 25+ non-Human creatures in the deck make this trivially easy to assemble. Commander Spellbook confirms 7 combo lines with this pairing.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/328-628-4279/",
+          "detail": "Mikaeus + Yawgmoth infinite combos"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Primary combo engine"
+        }
+      ]
+    },
+    {
+      "title": "Undying Sac Outlets",
+      "cards": [
+        "Mikaeus, the Unhallowed",
+        "Ashnod's Altar",
+        "Phyrexian Altar"
+      ],
+      "description": "Every non-Human creature dies twice with Mikaeus — once normally, once with undying. Each altar sacrifice generates double mana. With Yawgmoth also in play to remove +1/+1 counters, loops go truly infinite: infinite colorless mana (Ashnod's) or infinite colored mana (Phyrexian). Carrion Feeder, Altar of Dementia, and Umbral Collar Zealot also combo the same way.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/628-2034--5/",
+          "detail": "Mikaeus + sac outlet combos"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -961,6 +1051,25 @@
           "detail": "Repeatable mill + land recovery Meren loop"
         }
       ]
+    },
+    {
+      "name": "Mikaeus, the Unhallowed",
+      "price": "$8-15",
+      "isGameChanger": false,
+      "reason": "Global undying for all non-Human creatures doubles the value of every sacrifice. Combined with Yawgmoth's -1/-1 counters to cancel undying's +1/+1, enables infinite loops that draw the deck and drain all opponents. Commander Spellbook confirms 7 combo lines with existing cards: Yawgmoth + Gray Merchant for infinite ETB drain, Yawgmoth + Kokusho for infinite death drain, and 5 sac outlet combos with Ashnod's/Phyrexian Altar, Carrion Feeder, Altar of Dementia, and Umbral Collar Zealot.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/328-628-4279/",
+          "detail": "7 included combos with existing deck cards"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Combo engine + global value multiplier"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -1192,9 +1301,9 @@
       "role": "board-wipe"
     },
     {
-      "name": "Massacre Wurm",
+      "name": "Mikaeus, the Unhallowed",
       "type": "Creature",
-      "role": "board-wipe"
+      "role": "engine"
     },
     {
       "name": "Grave Pact",
