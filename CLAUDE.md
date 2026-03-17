@@ -20,3 +20,22 @@ Ask Claude to research YouTube videos for a precon:
 
 ### Context File
 See `mcp-servers/youtube-research/CLAUDE_CONTEXT.md` for full implementation details and troubleshooting.
+
+## Commander Spellbook MCP Server
+
+**Location**: `mcp-servers/commanderspellbook/`
+
+An MCP server for looking up combos in a decklist via Commander Spellbook's API.
+
+### Available Tools (after restart)
+- `commanderspellbook_find_combos` - Find included combos and near-miss combos for a decklist
+
+### Usage
+Pass the full 99-card decklist to find combos:
+```
+commanderspellbook_find_combos(decklist=["Sol Ring", "Meren of Clan Nel Toth", ...])
+```
+
+Returns:
+- `included` — combos fully enabled by the decklist
+- `almost_included` — combos 1-2 cards away, with `missing_cards` and `missing_templates`

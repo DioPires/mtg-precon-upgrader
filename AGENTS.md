@@ -100,7 +100,11 @@ When building or updating deck guides, use all available sources and cross-refer
 
 1. **YouTube** — Search for commander deck tech videos, fetch transcripts, extract card recommendations
 2. **EDHREC** — Check commander pages for top cards, new additions from recent sets
-3. **Commander Spellbook** — `POST /find-my-combos` at `backend.commanderspellbook.com` with text/plain decklist. Returns `included` (combos in deck) + `almostIncluded` (1 card away). No auth, MIT license. Combo URLs: `https://commanderspellbook.com/combo/{id}/`
+3. **Commander Spellbook** — Use `commanderspellbook_find_combos` MCP tool with the full decklist.
+   - Record `included` combos as synergies with `"type": "commanderspellbook"` source
+   - **Review `almost_included` combos** (1-2 cards away) — evaluate whether adding the missing card(s) makes strategic sense given deck strategy, budget, and bracket target
+   - If a near-miss card enables a strong combo without hurting consistency, recommend it as an add with `commanderspellbook` source and note it was discovered via near-miss analysis
+   - Combo URLs: `https://commanderspellbook.com/combo/{id}/`
 4. **Moxfield** — Search popular decklists for the commander
 5. **Scryfall** — Use `scryfall_card_by_name`, `scryfall_search`, and `scryfall_collection` MCP tools to verify card names, check oracle text, and look up card data
 6. **Web Search** — Articles, Reddit discussions, deck tech write-ups
