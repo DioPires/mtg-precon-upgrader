@@ -6594,7 +6594,13 @@
       const grouped = {};
 
       deckList.forEach(card => {
-        const type = card.type || 'Other';
+        let type = card.type || 'Other';
+        if (!typeOrder.includes(type)) {
+          if (type.includes('Creature')) type = 'Creature';
+          else if (type.includes('Land')) type = 'Land';
+          else if (type.includes('Artifact')) type = 'Artifact';
+          else if (type.includes('Enchantment')) type = 'Enchantment';
+        }
         if (!grouped[type]) grouped[type] = [];
         grouped[type].push(card);
       });
@@ -6738,7 +6744,13 @@
         const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
         const grouped = {};
         allCards.forEach(card => {
-          const type = card.type || 'Other';
+          let type = card.type || 'Other';
+          if (!typeOrder.includes(type)) {
+            if (type.includes('Creature')) type = 'Creature';
+            else if (type.includes('Land')) type = 'Land';
+            else if (type.includes('Artifact')) type = 'Artifact';
+            else if (type.includes('Enchantment')) type = 'Enchantment';
+          }
           if (!grouped[type]) grouped[type] = [];
           grouped[type].push(card);
         });
@@ -6798,7 +6810,7 @@
       const deckColorIds = deckMeta?.colors || ['C'];
       const bracket = parseInt(currentDeck.bracket) || 3;
       const deckSize = (currentDeck.decklist || []).length;
-      const creatureCount = (currentDeck.decklist || []).filter(c => c.type === 'Creature').length;
+      const creatureCount = (currentDeck.decklist || []).filter(c => (c.type || '').includes('Creature')).length;
       const landCount = (currentDeck.decklist || []).filter(c => c.type === 'Land').length;
 
       // Color palette from deck identity
