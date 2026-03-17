@@ -96,6 +96,7 @@ UTILITY_ARTIFACTS = {
     "Jeweled Amulet":       1,
     # CMC 2
     "Isochron Scepter":     2,
+    "Copy Artifact":        2,
     "Lightning Greaves":    2,
     "Rings of Brighthearth": 3,
     "Winter Orb":           2,
