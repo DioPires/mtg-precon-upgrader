@@ -6367,7 +6367,7 @@
       if (!manaCost) return '';
       // Parse {2}{G}{G} into Scryfall SVG images
       return manaCost.replace(/\{([^}]+)\}/g, (match, symbol) => {
-        const svgUrl = `https://svgs.scryfall.io/card-symbols/${encodeURIComponent(symbol)}.svg`;
+        const svgUrl = `https://svgs.scryfall.io/card-symbols/${symbol.replace(/\//g, '')}.svg`;
         return `<img class="mana-symbol-img" src="${svgUrl}" alt="${symbol}" title="${symbol}">`;
       });
     }
