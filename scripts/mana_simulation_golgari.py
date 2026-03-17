@@ -68,7 +68,6 @@ DORK_DEFS = {
     "Birds of Paradise":    {"cmc": 1, "B": 1, "G": 1, "C": 0, "flexible": True},
     "Elves of Deep Shadow": {"cmc": 1, "B": 1, "G": 0, "C": 0, "flexible": False},
     "Llanowar Elves":       {"cmc": 1, "B": 0, "G": 1, "C": 0, "flexible": False},
-    "Badgermole Cub":       {"cmc": 2, "B": 0, "G": 1, "C": 0, "flexible": False},
 }
 
 # --- Creature ramp definitions ---
@@ -78,6 +77,7 @@ CREATURE_RAMP = {
     "Sakura-Tribe Elder":  {"cmc": 2, "pips": {"generic": 1, "B": 0, "G": 1}, "fetch": "basic", "tapped": False},
     "Wood Elves":          {"cmc": 3, "pips": {"generic": 2, "B": 0, "G": 1}, "fetch": "forest", "tapped": False},
     "Solemn Simulacrum":   {"cmc": 4, "pips": {"generic": 4, "B": 0, "G": 0}, "fetch": "basic", "tapped": True},
+    "Burnished Hart":      {"cmc": 6, "pips": {"generic": 6, "B": 0, "G": 0}, "fetch": "basic", "tapped": True, "count": 2},
 }
 
 # Wight of the Reliquary: treat as a dork producing {G} (too complex to model sac)
@@ -616,7 +616,8 @@ class GameState:
                 if pool.can_cast(pips):
                     pool = pool.after_spending(pips)
                     self.hand.remove(name)
-                    self._fetch_basic_land(cramp["fetch"], cramp["tapped"])
+                    for _ in range(cramp.get("count", 1)):
+                        self._fetch_basic_land(cramp["fetch"], cramp["tapped"])
 
 
 def commander_mulligan(decklist: list[str], metadata: dict, land_set: set[str]) -> GameState:
