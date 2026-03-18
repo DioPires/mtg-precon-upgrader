@@ -90,14 +90,14 @@ WIGHT_NAME = "Wight of the Reliquary"
 B_PRODUCING_LANDS = {
     "Swamp", "Overgrown Tomb", "Command Tower", "Blooming Marsh",
     "Woodland Cemetery", "Llanowar Wastes", "Nurturing Peatland",
-    "Darkbore Pathway", "Deathcap Glade", "Temple of Malady",
+    "Darkbore Pathway", "Deathcap Glade", "Underground Mortuary",
     "Castle Locthwain", "Urborg, Tomb of Yawgmoth",
 }
 
 G_PRODUCING_LANDS = {
     "Forest", "Overgrown Tomb", "Command Tower", "Blooming Marsh",
     "Woodland Cemetery", "Llanowar Wastes", "Nurturing Peatland",
-    "Darkbore Pathway", "Deathcap Glade", "Temple of Malady",
+    "Darkbore Pathway", "Deathcap Glade", "Underground Mortuary",
     "Dryad Arbor",
 }
 
@@ -106,9 +106,9 @@ C_ONLY_LANDS = {
 }
 
 # Lands with Swamp subtype (for Urborg, Woodland Cemetery checks)
-SWAMP_TYPED_LANDS = {"Swamp", "Overgrown Tomb"}
+SWAMP_TYPED_LANDS = {"Swamp", "Overgrown Tomb", "Underground Mortuary"}
 # Lands with Forest subtype
-FOREST_TYPED_LANDS = {"Forest", "Overgrown Tomb", "Dryad Arbor"}
+FOREST_TYPED_LANDS = {"Forest", "Overgrown Tomb", "Dryad Arbor", "Underground Mortuary"}
 
 BASIC_SWAMPS = {"Swamp"}
 BASIC_FORESTS = {"Forest"}
@@ -160,7 +160,7 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     if name == "Bojuka Bog":
         return True
 
-    if name == "Temple of Malady":
+    if name == "Underground Mortuary":
         return True
 
     if name == "Deathcap Glade":
@@ -322,7 +322,7 @@ def compute_land_mana(name: str, battlefield_lands: list[str]) -> tuple[int, int
     if name in {
         "Overgrown Tomb", "Command Tower", "Blooming Marsh",
         "Woodland Cemetery", "Llanowar Wastes", "Nurturing Peatland",
-        "Darkbore Pathway", "Deathcap Glade", "Temple of Malady",
+        "Darkbore Pathway", "Deathcap Glade", "Underground Mortuary",
     }:
         f = 1
         return (0, 0, 0, f)
