@@ -242,12 +242,42 @@
 
     .shopping-deck-card .shopping-deck-checkbox {
       position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .shopping-deck-card:focus-within {
+      outline: 2px solid var(--accent-purple);
+      outline-offset: 2px;
+    }
+
+    .shopping-deck-card::after {
+      content: '';
+      position: absolute;
       top: 8px;
       right: 8px;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--accent-purple);
-      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border-subtle);
+      background: var(--bg-deep);
+      transition: all 0.2s ease;
+    }
+
+    .shopping-deck-card.selected::after {
+      border-color: var(--accent-purple);
+      background: var(--accent-purple);
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0%200%2024%2024' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5%2012l5%205L19%207'/%3E%3C/svg%3E");
+      background-size: 16px;
+      background-position: center;
+      background-repeat: no-repeat;
+      box-shadow: 0 0 8px rgba(157, 78, 221, 0.5);
     }
 
     .collection-file-btn {
@@ -334,6 +364,10 @@
     #shopping-check-btn:disabled {
       opacity: 0.4;
       cursor: not-allowed;
+    }
+
+    #shopping-results {
+      margin-top: 20px;
     }
 
     .shopping-progress {
