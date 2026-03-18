@@ -54,62 +54,71 @@ def parse_mana_cost(mana_cost: str) -> dict:
 # --- Rock definitions ---
 
 ROCK_DEFS = {
-    "Sol Ring":          {"cmc": 1, "colors": frozenset({"C"}), "count": 2, "burst": False},
-    "Arcane Signet":     {"cmc": 2, "colors": frozenset({"W", "U", "B", "R", "G"}), "count": 1, "burst": False},
-    "Chromatic Lantern": {"cmc": 3, "colors": frozenset({"W", "U", "B", "R", "G"}), "count": 1, "burst": False},
+    "Sol Ring":      {"cmc": 1, "colors": frozenset({"C"}), "count": 2, "burst": False},
+    "Arcane Signet": {"cmc": 2, "colors": frozenset({"W", "U", "B", "R", "G"}), "count": 1, "burst": False},
+    "Chrome Mox":    {"cmc": 0, "colors": frozenset({"W", "U", "G"}), "count": 1, "burst": False},
 }
 
 # --- Ramp spell definitions ---
 
 RAMP_DEFS = {
     "Nature's Lore":  {"mana_cost": "{1}{G}", "fetch_type": "forest_typed", "tapped": False},
-    "Kodama's Reach": {"mana_cost": "{2}{G}", "fetch_type": "basic_plus_hand", "tapped": True},
-    "Cultivate":      {"mana_cost": "{2}{G}", "fetch_type": "basic_plus_hand", "tapped": True},
+    "Rampant Growth": {"mana_cost": "{1}{G}", "fetch_type": "basic", "tapped": True},
 }
 
 # --- Land subtype definitions ---
 
-PLAINS_TYPED_LANDS = {"Plains", "Temple Garden", "Canopy Vista", "Prairie Stream",
+PLAINS_TYPED_LANDS = {"Plains", "Temple Garden",
                       "Hallowed Fountain", "Spara's Headquarters"}
-ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Prairie Stream",
+ISLAND_TYPED_LANDS = {"Island", "Breeding Pool",
                       "Hallowed Fountain", "Spara's Headquarters"}
 SWAMP_TYPED_LANDS = set()
-FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Temple Garden", "Canopy Vista",
+FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Temple Garden",
                       "Spara's Headquarters"}
 MOUNTAIN_TYPED_LANDS = set()
 
 BASIC_LANDS = {"Plains", "Island", "Forest"}
 
 ALWAYS_TAPPED = {
-    "Path of Ancestry",
-    "Vivid Grove", "Vivid Meadow", "Vivid Creek",
-    "Thriving Grove", "Thriving Heath", "Thriving Isle",
-    "Seaside Citadel", "Spara's Headquarters",
+    "Spara's Headquarters",
 }
 
-FETCH_LANDS = {"Evolving Wilds", "Fabled Passage"}
+# Fetch lands: typed fetches find specific land types, Prismatic Vista finds any basic
+TYPED_FETCH_LANDS = {
+    "Windswept Heath": {"targets": FOREST_TYPED_LANDS | PLAINS_TYPED_LANDS},
+    "Flooded Strand":  {"targets": ISLAND_TYPED_LANDS | PLAINS_TYPED_LANDS},
+}
+PRISMATIC_VISTA = "Prismatic Vista"  # Finds any basic land
+FETCH_LANDS = set(TYPED_FETCH_LANDS.keys()) | {PRISMATIC_VISTA}
 
-# Thriving lands: base color -> land name
-THRIVING_LANDS = {
-    "Thriving Grove": "G",
-    "Thriving Heath": "W",
-    "Thriving Isle": "U",
+# Fast lands: untapped if ≤2 other lands on battlefield
+FAST_LANDS = {
+    "Botanical Sanctum": frozenset({"U", "G"}),
+    "Razorverge Thicket": frozenset({"G", "W"}),
+    "Seachrome Coast": frozenset({"W", "U"}),
 }
 
-VIVID_LANDS = {"Vivid Grove", "Vivid Meadow", "Vivid Creek"}
+# Pain lands (always untapped, produce colored mana)
+PAIN_LANDS = {
+    "Brushland": frozenset({"G", "W"}),
+    "Mana Confluence": frozenset({"W", "U", "B", "R", "G"}),
+    "City of Brass": frozenset({"W", "U", "B", "R", "G"}),
+}
+
+# Filter land
+FILTER_LANDS = {
+    "Wooded Bastion": frozenset({"G", "W"}),
+}
 
 
 def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str]) -> bool:
     """Determine if a land enters tapped given current board and hand."""
     if name in ALWAYS_TAPPED:
         return True
-    if name == "Simic Growth Chamber":
-        return True
 
-    # BFZ duals: tapped unless 2+ basics on board
-    if name in ("Canopy Vista", "Prairie Stream"):
-        basic_count = sum(1 for l in battlefield_lands if l in BASIC_LANDS)
-        return basic_count < 2
+    # Fast lands: untapped if ≤2 other lands on battlefield
+    if name in FAST_LANDS:
+        return len(battlefield_lands) > 2
 
     # Check lands
     if name == "Sunpetal Grove":
@@ -127,12 +136,12 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         return not any(l in FOREST_TYPED_LANDS or l in PLAINS_TYPED_LANDS
                        for l in hand)
 
-    # Shock lands, pain lands, Command Tower, etc. — always untapped
+    # Shock lands, pain lands, filter lands, channel lands, Command Tower, etc. — always untapped
     return False
 
 
 def compute_land_sources(name: str) -> list[frozenset]:
-    """Return mana sources for a single untapped land (no Chromatic Lantern)."""
+    """Return mana sources for a single untapped land."""
     # Basics
     if name == "Plains":
         return [frozenset({"W"})]
@@ -142,7 +151,11 @@ def compute_land_sources(name: str) -> list[frozenset]:
         return [frozenset({"G"})]
 
     # Rainbow lands
-    if name in {"Command Tower", "Exotic Orchard", "Path of Ancestry"}:
+    if name in {"Command Tower", "Exotic Orchard"}:
+        return [frozenset({"W", "U", "B", "R", "G"})]
+
+    # 5-color pain lands
+    if name in ("Mana Confluence", "City of Brass"):
         return [frozenset({"W", "U", "B", "R", "G"})]
 
     # Shock lands
@@ -151,12 +164,6 @@ def compute_land_sources(name: str) -> list[frozenset]:
     if name == "Breeding Pool":
         return [frozenset({"U", "G"})]
     if name == "Hallowed Fountain":
-        return [frozenset({"W", "U"})]
-
-    # BFZ duals
-    if name == "Canopy Vista":
-        return [frozenset({"W", "G"})]
-    if name == "Prairie Stream":
         return [frozenset({"W", "U"})]
 
     # Check lands
@@ -176,38 +183,40 @@ def compute_land_sources(name: str) -> list[frozenset]:
         return [frozenset({"W", "U"})]
     if name == "Yavimaya Coast":
         return [frozenset({"U", "G"})]
+    if name == "Brushland":
+        return [frozenset({"G", "W"})]
 
-    # Vivid lands (simplified: treat as any-color source)
-    if name in VIVID_LANDS:
-        return [frozenset({"W", "U", "B", "R", "G"})]
+    # Fast lands
+    if name in FAST_LANDS:
+        return [FAST_LANDS[name]]
 
-    # Bounce land (produces 2 mana atoms)
-    if name == "Simic Growth Chamber":
-        return [frozenset({"U"}), frozenset({"G"})]
+    # Filter land
+    if name in FILTER_LANDS:
+        return [FILTER_LANDS[name]]
 
-    # Channel land
+    # Channel lands
     if name == "Otawara, Soaring City":
         return [frozenset({"U"})]
+    if name == "Boseiju, Who Endures":
+        return [frozenset({"G"})]
+    if name == "Eiganjo, Seat of the Empire":
+        return [frozenset({"W"})]
 
-    # Trilands
-    if name == "Seaside Citadel":
-        return [frozenset({"W", "U", "G"})]
+    # Triland
     if name == "Spara's Headquarters":
         return [frozenset({"W", "U", "G"})]
+
+    # Colorless fast mana
+    if name == "Ancient Tomb":
+        return [frozenset({"C"}), frozenset({"C"})]
 
     # Utility lands (colorless)
     if name in {"Rogue's Passage", "Reliquary Tower", "Scavenger Grounds"}:
         return [frozenset({"C"})]
 
-    # Thriving lands without stored choice — return base color only
-    if name in THRIVING_LANDS:
-        return [frozenset({THRIVING_LANDS[name]})]
-
     # Fallback: colorless
     return [frozenset({"C"})]
 
-
-WUBRG = frozenset({"W", "U", "B", "R", "G"})
 
 
 # --- ManaPool ---
@@ -350,7 +359,6 @@ class GameState:
         self.land_set = land_set
         self.mana_per_turn: list[ManaPool] = []
         self.mulligan_attempt = 0
-        self.thriving_choices: dict[int, str] = {}  # land_index -> chosen 2nd color
 
     def draw(self, n: int = 1):
         for _ in range(n):
@@ -363,57 +371,19 @@ class GameState:
     def _is_land(self, name: str) -> bool:
         return name in self.land_set
 
-    def _has_chromatic_lantern(self) -> bool:
-        return "Chromatic Lantern" in self.battlefield_rocks
-
-    def _choose_thriving_color(self, base_color: str) -> str:
-        """Choose 2nd color for Thriving land: pick the color with fewest sources."""
-        color_counts = {}
-        for c in "WUBRG":
-            if c == base_color:
-                continue
-            count = 0
-            for i, land in enumerate(self.battlefield_lands):
-                if i in self.tapped_lands:
-                    continue
-                sources = self._land_sources(land, i)
-                for s in sources:
-                    if c in s:
-                        count += 1
-                        break
-            color_counts[c] = count
-        return min(color_counts, key=color_counts.get)
-
     def _land_sources(self, land: str, index: int) -> list[frozenset]:
-        """Get mana sources for a land at given index, respecting Chromatic Lantern."""
-        # Chromatic Lantern overrides everything
-        if self._has_chromatic_lantern():
-            # Simic Growth Chamber still produces 2 atoms, both upgraded to WUBRG
-            if land == "Simic Growth Chamber":
-                return [WUBRG, WUBRG]
-            return [WUBRG]
-
-        # Thriving lands: use stored choice
-        if land in THRIVING_LANDS and index in self.thriving_choices:
-            base = THRIVING_LANDS[land]
-            chosen = self.thriving_choices[index]
-            return [frozenset({base, chosen})]
-
+        """Get mana sources for a land at given index."""
         return compute_land_sources(land)
 
     def _land_play_priority(self, name: str) -> float:
         tapped = land_enters_tapped(name, self.battlefield_lands, self.hand)
         base = 0 if tapped else 10
 
-        # Fetch lands get a small bonus (fix colors)
+        # Fetch lands get a bonus (fix colors)
         if name in FETCH_LANDS:
-            base += 3
+            base += 5
 
-        has_lantern = self._has_chromatic_lantern()
-        if has_lantern:
-            sources = [WUBRG]
-        else:
-            sources = compute_land_sources(name)
+        sources = compute_land_sources(name)
         if sources:
             n_colors = sum(1 for c in "WUBRG" if c in sources[0])
             base += n_colors * 2
@@ -436,7 +406,7 @@ class GameState:
         return ManaPool(pool_sources)
 
     def _find_best_fetchable_basic(self) -> str | None:
-        """Find the best basic land in library (for Evolving Wilds etc.)."""
+        """Find the best basic land in library (for Prismatic Vista, ramp spells, etc.)."""
         have_colors = set()
         for i, land in enumerate(self.battlefield_lands):
             sources = self._land_sources(land, i)
@@ -481,22 +451,6 @@ class GameState:
         candidates.sort(key=score, reverse=True)
         return candidates[0]
 
-    def _reindex_after_removal(self, removed_idx: int):
-        """Fix tapped_lands and thriving_choices after removing a land at index."""
-        new_tapped = set()
-        for t in self.tapped_lands:
-            if t == removed_idx:
-                continue
-            new_tapped.add(t - 1 if t > removed_idx else t)
-        self.tapped_lands = new_tapped
-
-        new_choices = {}
-        for idx, color in self.thriving_choices.items():
-            if idx == removed_idx:
-                continue
-            new_choices[idx - 1 if idx > removed_idx else idx] = color
-        self.thriving_choices = new_choices
-
     def play_turn(self, turn_number: int):
         if turn_number > 1:
             self.draw(1)
@@ -510,35 +464,22 @@ class GameState:
             _, land_name = hand_lands[0]
             self.hand.remove(land_name)
 
-            # Fetch lands: crack immediately, fetch best basic
-            # Fabled Passage: untapped if 4+ lands (3 others + the fetched one)
-            if land_name in FETCH_LANDS:
+            # Typed fetch lands: crack immediately, fetch best typed land (untapped)
+            if land_name in TYPED_FETCH_LANDS:
+                targets = TYPED_FETCH_LANDS[land_name]["targets"]
+                target = self._find_best_fetchable(targets)
+                if target:
+                    self.library.remove(target)
+                    self.battlefield_lands.append(target)
+                    # Fetched lands enter untapped (typed fetches)
+
+            # Prismatic Vista: crack immediately, fetch any basic (untapped)
+            elif land_name == PRISMATIC_VISTA:
                 target = self._find_best_fetchable_basic()
                 if target:
                     self.library.remove(target)
                     self.battlefield_lands.append(target)
-                    if land_name == "Fabled Passage" and len(self.battlefield_lands) >= 4:
-                        pass  # enters untapped
-                    else:
-                        self.tapped_lands.add(len(self.battlefield_lands) - 1)
-
-            # Simic Growth Chamber: ETB tapped, bounce worst land
-            elif land_name == "Simic Growth Chamber":
-                self.battlefield_lands.append(land_name)
-                self.tapped_lands.add(len(self.battlefield_lands) - 1)
-                if len(self.battlefield_lands) > 1:
-                    worst_idx = 0
-                    worst_score = float("inf")
-                    for i, l in enumerate(self.battlefield_lands[:-1]):
-                        sources = self._land_sources(l, i)
-                        n_colors = sum(1 for c in "WUBRG"
-                                       if any(c in s for s in sources))
-                        if n_colors < worst_score:
-                            worst_score = n_colors
-                            worst_idx = i
-                    bounced = self.battlefield_lands.pop(worst_idx)
-                    self.hand.append(bounced)
-                    self._reindex_after_removal(worst_idx)
+                    # Fetched basic enters untapped
 
             # Normal land play
             else:
@@ -546,13 +487,6 @@ class GameState:
                 self.battlefield_lands.append(land_name)
                 if tapped:
                     self.tapped_lands.add(len(self.battlefield_lands) - 1)
-
-                # Assign Thriving land color on ETB
-                if land_name in THRIVING_LANDS:
-                    idx = len(self.battlefield_lands) - 1
-                    base_color = THRIVING_LANDS[land_name]
-                    chosen = self._choose_thriving_color(base_color)
-                    self.thriving_choices[idx] = chosen
 
         pool = self.compute_mana_pool()
         self._try_cast_rocks(pool)
@@ -577,7 +511,7 @@ class GameState:
 
             if fetch_type == "forest_typed":
                 target = self._find_best_fetchable(FOREST_TYPED_LANDS)
-            elif fetch_type == "basic_plus_hand":
+            elif fetch_type == "basic":
                 target = self._find_best_fetchable(BASIC_LANDS)
             else:
                 continue
@@ -592,20 +526,13 @@ class GameState:
             if rdef["tapped"]:
                 self.tapped_lands.add(len(self.battlefield_lands) - 1)
 
-            # basic_plus_hand: also fetch a second basic to hand
-            if fetch_type == "basic_plus_hand":
-                second = self._find_best_fetchable(BASIC_LANDS)
-                if second:
-                    self.library.remove(second)
-                    self.hand.append(second)
-
             return
 
     def _try_cast_rocks(self, pool: ManaPool):
         priority_order = [
+            "Chrome Mox",
             "Sol Ring",
             "Arcane Signet",
-            "Chromatic Lantern",
         ]
 
         for rock_name in priority_order:

@@ -77,7 +77,6 @@ CREATURE_RAMP = {
     "Sakura-Tribe Elder":  {"cmc": 2, "pips": {"generic": 1, "B": 0, "G": 1}, "fetch": "basic", "tapped": False},
     "Wood Elves":          {"cmc": 3, "pips": {"generic": 2, "B": 0, "G": 1}, "fetch": "forest", "tapped": False},
     "Solemn Simulacrum":   {"cmc": 4, "pips": {"generic": 4, "B": 0, "G": 0}, "fetch": "basic", "tapped": True},
-    "Burnished Hart":      {"cmc": 6, "pips": {"generic": 6, "B": 0, "G": 0}, "fetch": "basic", "tapped": True, "count": 2},
 }
 
 # Wight of the Reliquary: treat as a dork producing {G} (too complex to model sac)

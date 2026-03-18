@@ -67,20 +67,20 @@ ROCK_DEFS = {
 
 # --- Land definitions ---
 
-ALWAYS_UNTAPPED_DUALS = {"Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs"}
+ALWAYS_UNTAPPED_DUALS = {"Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs", "Blightstep Pathway"}
 
 BASIC_SWAMPS = {"Swamp"}
 BASIC_MOUNTAINS = {"Mountain"}
 
 # Lands with Swamp subtype (for Urborg/Coffers counting)
-SWAMP_TYPED_LANDS = {"Swamp", "Canyon Slough", "Blood Crypt", "Smoldering Marsh"}
-MOUNTAIN_TYPED_LANDS = {"Mountain", "Canyon Slough", "Blood Crypt", "Smoldering Marsh"}
+SWAMP_TYPED_LANDS = {"Swamp", "Blood Crypt", "Smoldering Marsh"}
+MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Smoldering Marsh"}
 
 # Lands that produce B
 B_PRODUCING_LANDS = {
     "Swamp", "Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs",
     "Blackcleave Cliffs", "Dragonskull Summit", "Foreboding Ruins", "Smoldering Marsh",
-    "Haunted Ridge", "Canyon Slough", "Castle Locthwain",
+    "Haunted Ridge", "Blightstep Pathway", "Castle Locthwain",
     "Urborg, Tomb of Yawgmoth",
 }
 
@@ -88,12 +88,12 @@ B_PRODUCING_LANDS = {
 R_PRODUCING_LANDS = {
     "Mountain", "Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs",
     "Blackcleave Cliffs", "Dragonskull Summit", "Foreboding Ruins", "Smoldering Marsh",
-    "Haunted Ridge", "Canyon Slough",
+    "Haunted Ridge", "Blightstep Pathway",
 }
 
 # Colorless-only lands
 C_ONLY_LANDS = {
-    "Ash Barrens", "Graven Cairns", "Shadowblood Ridge", "Phyrexian Tower",
+    "Ash Barrens", "Graven Cairns", "Phyrexian Tower",
     "Cabal Coffers",
 }
 
@@ -162,9 +162,6 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         l in SWAMP_TYPED_LANDS or l in MOUNTAIN_TYPED_LANDS
         for l in battlefield_lands
     )
-
-    if name == "Canyon Slough":
-        return True
 
     if name == "Blackcleave Cliffs":
         return other_count >= 3
@@ -313,11 +310,6 @@ def compute_land_mana(name: str, battlefield_lands: list[str], has_crypt_ghast: 
         # Model as C-only for simplicity (conservative).
         return (0, 0, 1, 0)
 
-    if name == "Shadowblood Ridge":
-        # {1}, {T}: {B}{R}. Needs 1 mana input. Net +1 colored.
-        # On its own: 0 mana. Model as 0 for land mana (handled in total calc).
-        return (0, 0, 0, 0)
-
     if name == "Phyrexian Tower":
         # {C} only (sac mode excluded)
         return (0, 0, 1, 0)
@@ -353,7 +345,7 @@ def compute_land_mana(name: str, battlefield_lands: list[str], has_crypt_ghast: 
     # Dual lands (produce B or R -> flexible)
     if name in ALWAYS_UNTAPPED_DUALS or name in {
         "Blackcleave Cliffs", "Dragonskull Summit", "Foreboding Ruins",
-        "Smoldering Marsh", "Haunted Ridge", "Canyon Slough",
+        "Smoldering Marsh", "Haunted Ridge",
     }:
         f = 1
         if urborg and has_crypt_ghast:
@@ -512,27 +504,6 @@ class GameState:
             pool.R += r
             pool.C += c
             pool.flexible += f
-
-        # Shadowblood Ridge: if we have spare mana (total > 1 from other sources),
-        # treat as +1 flexible (B/R). It costs {1} to activate.
-        shadow_indices = [i for i, l in enumerate(self.battlefield_lands)
-                        if l == "Shadowblood Ridge" and i not in self.tapped_lands]
-        for idx in shadow_indices:
-            # Needs 1 mana input from another source to produce {B}{R}
-            # Net: spend 1 generic, gain 1B + 1R = net +1 flexible colored
-            if pool.total >= 1:
-                # Spend 1 from pool (prefer C, then flexible, then colored)
-                if pool.C >= 1:
-                    pool.C -= 1
-                elif pool.flexible >= 1:
-                    pool.flexible -= 1
-                elif pool.R >= 1:
-                    pool.R -= 1
-                elif pool.B >= 1:
-                    pool.B -= 1
-                else:
-                    continue
-                pool.flexible += 2  # {B}{R} as 2 flexible
 
         for rock in self.battlefield_rocks:
             rdef = ROCK_DEFS[rock]

@@ -60,7 +60,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks for acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Burnished Hart sacrifices for 2 basic lands and loops with Meren at 3 XP for repeatable ramp. Aftermath Analyst adds mill on ETB and loops with Meren at 2 XP for repeatable land recovery. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Colossal Grave-Reaver turns every mill into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Mikaeus, the Unhallowed gives all non-Human creatures undying, doubling the value of every sacrifice. With Yawgmoth's -1/-1 counters canceling undying's +1/+1 counters, the deck achieves infinite loops — draw the deck, drain all opponents with Blood Artist or Bastion of Remembrance, or repeatedly reanimate Gray Merchant and Kokusho for lethal drain. Walking Ballista at X=0 with Mikaeus creates the most compact infinite death trigger loop — Entomb + Reanimate assembles it. Gravecrawler provides a parallel infinite combo line with Phyrexian Altar and Carrion Feeder. Orcish Bowmasters punishes opponents' card draws while creating sac-able Orc Army tokens. Late-game cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
+    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks for acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Aftermath Analyst adds mill on ETB and loops with Meren at 2 XP for repeatable land recovery. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, and Bitterblossom for consistent token fodder. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Colossal Grave-Reaver turns every mill into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Mikaeus, the Unhallowed gives all non-Human creatures undying, doubling the value of every sacrifice. With Yawgmoth's -1/-1 counters canceling undying's +1/+1 counters, the deck achieves infinite loops — draw the deck, drain all opponents with Blood Artist or Bastion of Remembrance, or repeatedly reanimate Gray Merchant and Kokusho for lethal drain. Walking Ballista at X=0 with Mikaeus creates the most compact infinite death trigger loop — Entomb + Reanimate assembles it. Gravecrawler provides a parallel infinite combo line with Phyrexian Altar and Carrion Feeder. Orcish Bowmasters punishes opponents' card draws while creating sac-able Orc Army tokens. Late-game cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
   },
   "categories": [
     {
@@ -117,15 +117,14 @@
         "Birds of Paradise",
         "Elves of Deep Shadow",
         "Llanowar Elves",
-        "Wight of the Reliquary",
-        "Burnished Hart"
+        "Wight of the Reliquary"
       ]
     },
     {
       "name": "Card Advantage",
       "cards": [
         "Skullclamp",
-        "Grim Haruspex",
+        "Woodland Bellower",
         "Greater Good",
         "Twilight Diviner",
         "Fauna Shaman",
@@ -141,7 +140,8 @@
         "Assassin's Trophy",
         "Caustic Caterpillar",
         "Reclamation Sage",
-        "Haywire Mite"
+        "Haywire Mite",
+        "Deadly Rollick"
       ]
     },
     {
@@ -324,7 +324,7 @@
         "Walking Ballista",
         "Mikaeus, the Unhallowed"
       ],
-      "description": "2-card infinite death/ETB trigger engine. Cast Ballista at X=0 with Mikaeus out — enters as 1/1 (Mikaeus buff), no counters. Sacrifice to any outlet for the first death. Undying returns Ballista with 1 +1/+1 counter (now 2/2). Remove counter to ping itself — 1/1 with 1 damage, dies. Undying loops infinitely. Converts to a win via Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, Grave Pact, Grim Haruspex, or Altar of Dementia. Most compact Mikaeus combo — tutorable via Entomb/Buried Alive + any reanimate spell.",
+      "description": "2-card infinite death/ETB trigger engine. Cast Ballista at X=0 with Mikaeus out — enters as 1/1 (Mikaeus buff), no counters. Sacrifice to any outlet for the first death. Undying returns Ballista with 1 +1/+1 counter (now 2/2). Remove counter to ping itself — 1/1 with 1 damage, dies. Undying loops infinitely. Converts to a win via Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, Grave Pact, or Altar of Dementia. Most compact Mikaeus combo — tutorable via Entomb/Buried Alive + any reanimate spell.",
       "sources": [
         {
           "type": "commanderspellbook",
@@ -615,21 +615,6 @@
       ]
     },
     {
-      "title": "Repeatable Land Ramp",
-      "cards": [
-        "Burnished Hart",
-        "Meren of Clan Nel Toth"
-      ],
-      "description": "Cast Burnished Hart for {3}, then pay {3} and sacrifice it to fetch 2 basic lands tapped. Meren returns it at 3+ XP. Repeat every turn: 2 free lands per cycle while thinning the deck. With Mikaeus in play, undying returns Hart after the first sacrifice — sac again for 4 lands total before Meren even triggers.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Sacrifice-based ramp loop with Meren"
-        }
-      ]
-    },
-    {
       "title": "Archon Value Loop",
       "cards": [
         "Archon of Cruelty",
@@ -748,7 +733,7 @@
         "Walking Ballista",
         "Mikaeus, the Unhallowed"
       ],
-      "description": "Walking Ballista at X=0 with Mikaeus in play. Sacrifice to any outlet — undying returns Ballista with 1 +1/+1 counter (Mikaeus buff makes it 2/2). Remove counter to ping itself — dies at 1/1 with 1 damage. Undying loops. Infinite death triggers feed Blood Artist, Grave Pact, Grim Haruspex, or Altar of Dementia for the win. Most compact Mikaeus combo — Entomb + Reanimate assembles it.",
+      "description": "Walking Ballista at X=0 with Mikaeus in play. Sacrifice to any outlet — undying returns Ballista with 1 +1/+1 counter (Mikaeus buff makes it 2/2). Remove counter to ping itself — dies at 1/1 with 1 damage. Undying loops. Infinite death triggers feed Blood Artist, Grave Pact, or Altar of Dementia for the win. Most compact Mikaeus combo — Entomb + Reanimate assembles it.",
       "sources": [
         {
           "type": "commanderspellbook",
@@ -1040,19 +1025,6 @@
       ]
     },
     {
-      "name": "Burnished Hart",
-      "price": "$1-2",
-      "isGameChanger": false,
-      "reason": "Sacrifice-based ramp that fetches 2 basic lands. Loops with Meren at 3+ XP for 2 free lands every turn cycle. With Mikaeus, undying returns Hart after the first sacrifice — sac again for 4 lands in one turn. Thins the deck while accelerating mana.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Repeatable 2-land ramp with Meren loop"
-        }
-      ]
-    },
-    {
       "name": "Archon of Cruelty",
       "price": "$10-15",
       "isGameChanger": false,
@@ -1127,7 +1099,7 @@
       "name": "Walking Ballista",
       "price": "$5-10",
       "isGameChanger": false,
-      "reason": "2-card infinite death/ETB trigger engine with Mikaeus. Cast at X=0 for {0} — enters as 1/1 (Mikaeus buff), sac to any outlet, undying returns with 1 counter, remove counter to ping itself, dies, loops infinitely. Converts to a win via any death payoff (Blood Artist, Zulaport, Bastion, Grave Pact, Grim Haruspex, Altar of Dementia). Also a flexible mana sink at any X cost and free Meren XP trigger at X=0.",
+      "reason": "2-card infinite death/ETB trigger engine with Mikaeus. Cast at X=0 for {0} — enters as 1/1 (Mikaeus buff), sac to any outlet, undying returns with 1 counter, remove counter to ping itself, dies, loops infinitely. Converts to a win via any death payoff (Blood Artist, Zulaport, Bastion, Grave Pact, Altar of Dementia). Also a flexible mana sink at any X cost and free Meren XP trigger at X=0.",
       "sources": [
         {
           "type": "commanderspellbook",
@@ -1179,6 +1151,34 @@
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "ETB tutor synergy with Meren recursion engine"
+        }
+      ]
+    },
+    {
+      "name": "Deadly Rollick",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "Free instant removal when Meren is on the battlefield. Exiles target creature at no mana cost, protecting combo turns and removing threats without tapping out.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Command Zone - Bracket 4 (Ep 731)",
+          "url": "https://www.youtube.com/watch?v=jzeTz9clIC8",
+          "detail": "Rachel Weekes + Joe Johnson discuss Bracket 4 staples and deckbuilding"
+        }
+      ]
+    },
+    {
+      "name": "Woodland Bellower",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "6-mana 6/5 that tutors a non-legendary green creature with MV 3 or less directly onto the battlefield. Finds Sakura-Tribe Elder, Eternal Witness, Blood Artist, Reclamation Sage, or Caustic Caterpillar — every key utility creature in the deck.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Command Zone - Bracket 4 (Ep 731)",
+          "url": "https://www.youtube.com/watch?v=jzeTz9clIC8",
+          "detail": "Rachel Weekes + Joe Johnson discuss Bracket 4 staples and deckbuilding"
         }
       ]
     }
@@ -1337,9 +1337,9 @@
       "role": "card-draw"
     },
     {
-      "name": "Grim Haruspex",
+      "name": "Woodland Bellower",
       "type": "Creature",
-      "role": "card-draw"
+      "role": "value"
     },
     {
       "name": "Greater Good",
@@ -1582,9 +1582,9 @@
       "role": "engine"
     },
     {
-      "name": "Burnished Hart",
-      "type": "Artifact Creature",
-      "role": "ramp"
+      "name": "Deadly Rollick",
+      "type": "Instant",
+      "role": "removal"
     },
     {
       "name": "Archon of Cruelty",

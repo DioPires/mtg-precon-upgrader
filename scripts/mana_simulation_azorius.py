@@ -73,31 +73,32 @@ ROCK_DEFS = {
 
 ALWAYS_UNTAPPED_DUALS = {
     "Hallowed Fountain", "Command Tower", "Adarkar Wastes", "Mystic Gate",
+    "Mana Confluence", "Exotic Orchard",
 }
 
 BASIC_PLAINS = {"Plains"}
 BASIC_ISLANDS = {"Island"}
 
 # Lands with Plains subtype (for checkland conditions)
-PLAINS_TYPED_LANDS = {"Plains", "Hallowed Fountain", "Irrigated Farmland"}
+PLAINS_TYPED_LANDS = {"Plains", "Hallowed Fountain"}
 # Lands with Island subtype
-ISLAND_TYPED_LANDS = {"Island", "Hallowed Fountain", "Irrigated Farmland"}
+ISLAND_TYPED_LANDS = {"Island", "Hallowed Fountain"}
 
 # Lands that produce W
 W_PRODUCING_LANDS = {
     "Plains", "Hallowed Fountain", "Command Tower", "Adarkar Wastes",
     "Seachrome Coast", "Glacial Fortress", "Mystic Gate",
-    "Eiganjo, Seat of the Empire", "Kjeldoran Outpost",
-    "Irrigated Farmland", "Castle Ardenvale",
-    "Hall of Heliod's Generosity",
+    "Eiganjo, Seat of the Empire", "Castle Ardenvale",
+    "Nimbus Maze", "Mana Confluence", "Exotic Orchard",
 }
 
 # Lands that produce U
 U_PRODUCING_LANDS = {
     "Island", "Hallowed Fountain", "Command Tower", "Adarkar Wastes",
     "Seachrome Coast", "Glacial Fortress", "Mystic Gate",
-    "Otawara, Soaring City", "Irrigated Farmland",
+    "Otawara, Soaring City",
     "Sea Gate Restoration // Sea Gate, Reborn",
+    "Nimbus Maze", "Mana Confluence", "Exotic Orchard",
 }
 
 # Colorless-only lands
@@ -157,9 +158,6 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     """Determine if a land enters tapped given board + hand state."""
     other_count = len(battlefield_lands)  # the new land isn't on board yet
 
-    if name == "Irrigated Farmland":
-        return True  # Always enters tapped
-
     if name == "Sea Gate Restoration // Sea Gate, Reborn":
         # Enters tapped unless you pay 3 life. Model as untapped (aggressive play).
         return False
@@ -174,15 +172,6 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     if name == "Castle Ardenvale":
         # Enters tapped unless you control a Plains
         return not any(l in PLAINS_TYPED_LANDS for l in battlefield_lands)
-
-    if name == "Kjeldoran Outpost":
-        # Requires sacrificing a Plains to enter (otherwise goes to graveyard).
-        # Model: enters untapped if we have a Plains in hand to sacrifice,
-        # but costs a land. For simplicity, treat as enters untapped if Plains in hand.
-        # The sim handles it as a land play, so the Plains sacrifice is a cost.
-        # If no Plains in hand, it's destroyed on entry.
-        has_plains = any(c in BASIC_PLAINS for c in hand if c != name)
-        return not has_plains  # "tapped" = can't produce mana = destroyed
 
     if name == "Seachrome Coast":
         # Enters tapped if you control 3+ other lands
@@ -298,25 +287,34 @@ def compute_land_mana(name: str, battlefield_lands: list[str]) -> tuple[int, int
     if name == "Reliquary Tower":
         return (0, 0, 1, 0)
 
-    if name == "Hall of Heliod's Generosity":
-        # Produces {C} normally. Also has {1}{W}, {T}: return enchantment.
-        # For mana production, only produces {C}.
-        # BUT it can tap for {W} if needed (it's a W-producing land).
-        # Actually: Hall of Heliod's Generosity produces only {C} for mana.
-        # Its activated ability costs mana, doesn't produce mana.
-        return (0, 0, 1, 0)
-
     # Fetchlands should already be cracked; if somehow on board, treat as 0
     if name in FETCHLANDS:
         return (0, 0, 0, 0)
 
-    # Kjeldoran Outpost: if on board, it produces {W}
-    if name == "Kjeldoran Outpost":
-        return (1, 0, 0, 0)
+    # Nimbus Maze: {C} always; {W} if you control Island; {U} if you control Plains
+    if name == "Nimbus Maze":
+        has_island = any(l in ISLAND_TYPED_LANDS for l in battlefield_lands)
+        has_plains = any(l in PLAINS_TYPED_LANDS for l in battlefield_lands)
+        if has_island and has_plains:
+            return (0, 0, 0, 1)  # flexible W/U
+        elif has_island:
+            return (1, 0, 0, 0)  # W only
+        elif has_plains:
+            return (0, 1, 0, 0)  # U only
+        else:
+            return (0, 0, 1, 0)  # {C} only
+
+    # Mana Confluence: any color (pay 1 life)
+    if name == "Mana Confluence":
+        return (0, 0, 0, 1)
+
+    # Exotic Orchard: produces any color opponents could produce; assume W/U in multiplayer
+    if name == "Exotic Orchard":
+        return (0, 0, 0, 1)
 
     # Dual lands (produce W or U -> flexible)
     if name in ALWAYS_UNTAPPED_DUALS or name in {
-        "Seachrome Coast", "Glacial Fortress", "Irrigated Farmland",
+        "Seachrome Coast", "Glacial Fortress",
     }:
         return (0, 0, 0, 1)
 
@@ -567,27 +565,6 @@ class GameState:
             if land_name in FETCHLANDS:
                 # Crack immediately
                 self._resolve_fetch(land_name)
-            elif land_name == "Kjeldoran Outpost":
-                # Kjeldoran Outpost requires sacrificing a Plains
-                has_plains = any(c in BASIC_PLAINS for c in self.hand)
-                if has_plains:
-                    # Sacrifice a Plains from hand (it's actually from battlefield in real rules,
-                    # but Kjeldoran Outpost says "sacrifice a Plains" as an enters cost).
-                    # Model: if we have a Plains on battlefield, sac it.
-                    plains_on_board = [i for i, l in enumerate(self.battlefield_lands) if l == "Plains"]
-                    if plains_on_board:
-                        # Sacrifice the Plains from battlefield
-                        idx = plains_on_board[-1]
-                        self.battlefield_lands.pop(idx)
-                        # Fix tapped_lands indices
-                        self.tapped_lands = {i if i < idx else i - 1 for i in self.tapped_lands if i != idx}
-                        self.battlefield_lands.append(land_name)
-                    else:
-                        # No Plains on battlefield to sacrifice — land is destroyed
-                        pass
-                else:
-                    # No Plains available — land is destroyed
-                    pass
             else:
                 tapped = land_enters_tapped(land_name, self.battlefield_lands, self.hand)
                 self.battlefield_lands.append(land_name)

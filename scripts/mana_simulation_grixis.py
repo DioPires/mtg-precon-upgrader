@@ -78,7 +78,7 @@ MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Steam Vents"}
 FETCH_LANDS = {"Bloodstained Mire", "Polluted Delta"}
 
 ALWAYS_TAPPED = {
-    "Crumbling Necropolis", "Path of Ancestry", "Bojuka Bog", "Restless Reef",
+    "Crumbling Necropolis", "Bojuka Bog",
     "Minas Morgul, Dark Fortress",
     "Barad-dûr", "The Black Gate",  # tapped w/o legendary creature (not tracked)
 }
@@ -136,16 +136,16 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
         return [frozenset({"R"})]
 
     # Tri-color lands
-    if name in {"Command Tower", "Exotic Orchard", "Crumbling Necropolis", "Path of Ancestry"}:
+    if name in {"Command Tower", "Exotic Orchard", "Crumbling Necropolis"}:
         return [frozenset({"U", "B", "R"})]
 
     # UB duals
     if name in {"Watery Grave", "Morphic Pool", "Drowned Catacomb", "Sunken Hollow",
-                "Restless Reef", "Darkslick Shores"}:
+                "Underground River", "Darkslick Shores"}:
         return [frozenset({"U", "B"})]
 
     # BR duals
-    if name in {"Blood Crypt", "Luxury Suite", "Dragonskull Summit"}:
+    if name in {"Blood Crypt", "Luxury Suite", "Dragonskull Summit", "Sulfurous Springs"}:
         return [frozenset({"B", "R"})]
 
     # UR duals
