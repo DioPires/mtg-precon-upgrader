@@ -172,108 +172,65 @@
       }
     }
 
-    .collection-hint {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-left: 12px;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.15s;
+    /* === SHOPPING LIST VIEW === */
+    .shopping-view {
+      padding: 0 1rem;
     }
 
-    .collection-hint:hover {
-      opacity: 1;
+    .shopping-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
     }
 
-    .collection-hint svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    /* === COLLECTION CHECKER MODAL === */
-    .collection-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 1001;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .collection-modal.open {
-      display: flex;
-    }
-
-    .collection-panel {
-      width: 100%;
-      max-width: 580px;
-      max-height: 90vh;
-      overflow-y: auto;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    .collection-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .collection-header h3 {
-      margin: 0;
+    .shopping-deck-panel h3 {
+      margin: 0 0 12px;
       font-family: 'Cinzel', serif;
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: var(--text-primary);
     }
 
-    .collection-close {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 4px 8px;
-      line-height: 1;
-    }
-
-    .collection-close:hover {
-      color: var(--text-primary);
-    }
-
-    .collection-close:focus-visible {
-      outline: 2px solid var(--accent-purple);
-      outline-offset: 2px;
-    }
-
-    #collection-deck-info {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-    }
-
-    .collection-input-row {
+    .shopping-deck-controls {
       display: flex;
-      align-items: center;
       gap: 12px;
       margin-bottom: 8px;
+      font-size: 0.75rem;
     }
 
-    .collection-input-row label:first-child {
+    .shopping-deck-controls span {
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .shopping-deck-controls span:hover {
+      color: var(--accent-purple);
+    }
+
+    .shopping-deck-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .shopping-deck-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--bg-deep);
+    }
+
+    .shopping-deck-item label {
       font-size: 0.8rem;
       color: var(--text-secondary);
+      cursor: pointer;
       flex: 1;
+    }
+
+    .shopping-deck-item input[type="checkbox"] {
+      accent-color: var(--accent-purple);
     }
 
     .collection-file-btn {
@@ -293,7 +250,20 @@
       color: var(--text-primary);
     }
 
-    #collection-textarea {
+    .shopping-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .shopping-input-row label:first-child {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    #shopping-textarea {
       width: 100%;
       min-height: 120px;
       background: var(--bg-deep);
@@ -307,18 +277,18 @@
       box-sizing: border-box;
     }
 
-    #collection-textarea:focus {
+    #shopping-textarea:focus {
       outline: none;
       border-color: var(--accent-purple);
     }
 
-    .collection-actions {
+    .shopping-actions {
       display: flex;
       gap: 8px;
       margin-top: 12px;
     }
 
-    .collection-actions button {
+    .shopping-actions button {
       padding: 8px 16px;
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
@@ -329,27 +299,27 @@
       transition: border-color 0.15s, background 0.15s;
     }
 
-    .collection-actions button:hover {
+    .shopping-actions button:hover {
       border-color: var(--accent-purple);
       background: var(--accent-purple-dim);
     }
 
-    .collection-actions button:focus-visible {
+    .shopping-actions button:focus-visible {
       outline: 2px solid var(--accent-purple);
       outline-offset: 2px;
     }
 
-    #collection-check-btn {
+    #shopping-check-btn {
       background: var(--accent-purple-dim);
       border-color: var(--accent-purple);
     }
 
-    #collection-check-btn:disabled {
+    #shopping-check-btn:disabled {
       opacity: 0.4;
       cursor: not-allowed;
     }
 
-    .collection-progress {
+    .shopping-progress {
       height: 8px;
       background: var(--bg-deep);
       border-radius: 4px;
@@ -357,20 +327,20 @@
       margin-bottom: 8px;
     }
 
-    .collection-progress-fill {
+    .shopping-progress-fill {
       height: 100%;
       background: var(--accent-green);
       border-radius: 4px;
       transition: width 0.4s ease;
     }
 
-    .collection-summary {
+    .shopping-summary {
       font-size: 0.85rem;
       color: var(--text-secondary);
       margin-bottom: 16px;
     }
 
-    .collection-section-title {
+    .shopping-section-title {
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-primary);
@@ -379,39 +349,51 @@
       user-select: none;
     }
 
-    .collection-section-title:hover {
+    .shopping-section-title:hover {
       color: var(--accent-purple);
     }
 
-    .collection-card-list {
+    .shopping-card-list {
       list-style: none;
       padding: 0;
       margin: 0 0 8px;
     }
 
-    .collection-card-list li {
+    .shopping-card-list li {
       font-size: 0.8rem;
       padding: 3px 0;
       color: var(--text-secondary);
     }
 
-    .collection-card-list a {
+    .shopping-card-list a {
       color: var(--text-primary);
       text-decoration: none;
       border-bottom: 1px dotted var(--border-subtle);
     }
 
-    .collection-card-list a:hover {
+    .shopping-card-list a:hover {
       color: var(--accent-purple);
       border-bottom-color: var(--accent-purple);
     }
 
-    .collection-owned-list {
+    .shopping-owned-list {
       display: none;
     }
 
-    .collection-owned-list.open {
+    .shopping-owned-list.open {
       display: block;
+    }
+
+    .shopping-card-decks {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .shopping-layout {
+        grid-template-columns: 1fr;
+      }
     }
 
     body {
@@ -4511,29 +4493,6 @@
     </div>
   </div>
 
-  <!-- Collection Checker Modal -->
-  <div class="collection-modal" id="collection-modal" role="dialog" aria-label="Collection checker" aria-modal="true">
-    <div class="collection-panel">
-      <div class="collection-header">
-        <h3>Collection Checker</h3>
-        <button class="collection-close" aria-label="Close collection checker">&times;</button>
-      </div>
-      <div id="collection-deck-info"></div>
-      <div class="collection-input-row">
-        <label for="collection-textarea">Paste your collection or upload a file</label>
-        <label class="collection-file-btn" for="collection-file-input">Upload File</label>
-        <input type="file" id="collection-file-input" accept=".txt,.csv,.dec,.dek" hidden>
-      </div>
-      <textarea id="collection-textarea" placeholder="1x Sol Ring&#10;Arcane Signet&#10;Command Tower&#10;..."></textarea>
-      <div class="collection-actions">
-        <button id="collection-check-btn">Check Collection</button>
-        <button id="collection-copy-btn" style="display:none">Copy Shopping List</button>
-        <button id="collection-clear-btn" style="display:none">Clear</button>
-      </div>
-      <div id="collection-results" style="display:none"></div>
-    </div>
-  </div>
-
   <!-- Mobile Full-Screen Card Preview Modal -->
   <div class="mobile-preview-modal" id="mobile-preview-modal" role="dialog" aria-label="Card preview" aria-modal="true">
     <div class="mobile-preview-content">
@@ -4576,6 +4535,13 @@
         </svg>
         Scrying Pool
       </button>
+      <button class="view-toggle-btn" data-view="shopping" role="tab" aria-selected="false" id="tab-shopping">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M9 11l3 3L22 4"></path>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        Shopping List
+      </button>
     </div>
 
     <div class="selector-section">
@@ -4585,7 +4551,6 @@
       <div class="deck-gallery" id="deck-gallery"></div>
       <div class="selector-row" style="justify-content:flex-end;">
         <span class="search-hint" id="search-hint" role="button" tabindex="0" aria-label="Open card search"><kbd>⌘</kbd><kbd>K</kbd> Search</span>
-        <span class="collection-hint" id="collection-hint" role="button" tabindex="0" aria-label="Open collection checker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg> Collection</span>
       </div>
       <div class="commander-info" id="commander-info" style="display: none;">
         <div class="commander-layout">
@@ -5103,6 +5068,36 @@
       </div>
     </div>
 
+    <!-- Shopping List View -->
+    <div class="shopping-view" id="shopping-view" style="display: none;">
+      <div class="shopping-layout">
+        <div class="shopping-deck-panel">
+          <h3>Select Decks</h3>
+          <div class="shopping-deck-controls">
+            <span class="shopping-select-all" role="button" tabindex="0">Select All</span>
+            <span class="shopping-deselect-all" role="button" tabindex="0">Deselect All</span>
+          </div>
+          <div class="shopping-deck-list" id="shopping-deck-list"></div>
+        </div>
+        <div class="shopping-collection-panel">
+          <div class="shopping-input-section">
+            <div class="shopping-input-row">
+              <label for="shopping-textarea">Paste your collection or upload a file</label>
+              <label class="collection-file-btn" for="shopping-file-input">Upload File</label>
+              <input type="file" id="shopping-file-input" accept=".txt,.csv,.dec,.dek" hidden>
+            </div>
+            <textarea id="shopping-textarea" placeholder="1x Sol Ring&#10;Arcane Signet&#10;Command Tower&#10;..."></textarea>
+          </div>
+          <div class="shopping-actions">
+            <button id="shopping-check-btn" disabled>Check Collection</button>
+            <button id="shopping-copy-btn" style="display:none">Copy Shopping List</button>
+            <button id="shopping-clear-btn" style="display:none">Clear</button>
+          </div>
+          <div id="shopping-results" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="loading" id="loading">Consulting the Grimoire...</div>
     <div class="error" id="error" style="display: none;"></div>
 
@@ -5341,7 +5336,6 @@
     const searchFocusTrap = new FocusTrap(document.getElementById('search-modal'));
     const mobileFocusTrap = new FocusTrap(document.getElementById('mobile-preview-modal'));
     const bracketFocusTrap = new FocusTrap(document.getElementById('bracket-info-modal'));
-    const collectionFocusTrap = new FocusTrap(document.getElementById('collection-modal'));
 
     // === HELPER FUNCTIONS ===
     function capitalize(str) {
@@ -6542,9 +6536,11 @@
         // Update playtest tab state
         updatePlaytestTabState();
 
-        // Show content (guard for playtest/analytics views)
-        upgradeOverview.style.display = 'block';
-        if (currentView !== 'playtest' && currentView !== 'analytics') {
+        // Show content (guard for playtest/analytics/shopping views)
+        if (currentView !== 'shopping') {
+          upgradeOverview.style.display = 'block';
+        }
+        if (currentView !== 'playtest' && currentView !== 'analytics' && currentView !== 'shopping') {
           mainContent.style.display = 'grid';
         }
 
@@ -6553,6 +6549,8 @@
           initPlaytest();
         } else if (currentView === 'analytics') {
           renderAnalyticsView();
+        } else if (currentView === 'shopping') {
+          // Shopping view manages its own state
         } else {
           renderContent();
         }
@@ -7573,7 +7571,7 @@
         await navigator.clipboard.writeText(text);
         button.classList.add('success');
         const originalText = button.innerHTML;
-        button.innerHTML = button.innerHTML.replace(/Copy Deck|Copy Selected \(\d+\)|Shopping|Export List|Export Cuts/, 'Copied!');
+        button.innerHTML = button.innerHTML.replace(/Copy Deck|Copy Selected \(\d+\)|Copy Shopping List|Export List|Export Cuts/, 'Copied!');
         setTimeout(() => {
           button.classList.remove('success');
           button.innerHTML = originalText;
@@ -7933,7 +7931,8 @@
       const prefs = {
         lastDeck: currentDeckId,
         filters: filterState,
-        collectionText: document.getElementById('collection-textarea')?.value || ''
+        shoppingCollectionText: document.getElementById('shopping-textarea')?.value || '',
+        selectedShoppingDecks: getSelectedShoppingDeckIds()
       };
       try { localStorage.setItem('grimoire-prefs', JSON.stringify(prefs)); } catch (e) { /* quota exceeded or private mode */ }
     }
@@ -7969,66 +7968,137 @@
       return collection;
     }
 
-    function checkCollection(deck, collection) {
-      const needs = new Map();
+    // === SHOPPING LIST ===
 
-      // Add decklist cards
-      if (deck.decklist) {
-        for (const card of deck.decklist) {
-          const key = card.name.toLowerCase();
-          if (BASIC_LANDS.has(key)) continue;
-          needs.set(key, { name: card.name, qty: (needs.get(key)?.qty || 0) + (card.quantity || 1) });
+    function getSelectedShoppingDeckIds() {
+      return Array.from(document.querySelectorAll('.shopping-deck-checkbox:checked')).map(cb => cb.value);
+    }
+
+    function updateShoppingDeckInfo() {
+      const ids = getSelectedShoppingDeckIds();
+      const checkBtn = document.getElementById('shopping-check-btn');
+      checkBtn.disabled = ids.length === 0;
+    }
+
+    function populateShoppingDeckList() {
+      const list = document.getElementById('shopping-deck-list');
+      const allDecks = deckIndex?.commanders || [];
+      const prefs = loadPreferences();
+
+      // Migrate old collectionText if present
+      const textarea = document.getElementById('shopping-textarea');
+      if (prefs?.collectionText && !prefs?.shoppingCollectionText && textarea) {
+        textarea.value = prefs.collectionText;
+      } else if (prefs?.shoppingCollectionText && textarea) {
+        textarea.value = prefs.shoppingCollectionText;
+      }
+
+      const savedSelection = prefs?.selectedShoppingDecks || [];
+
+      list.innerHTML = allDecks.map(cmd => `
+        <div class="shopping-deck-item">
+          <input type="checkbox" id="shop-deck-${escapeHtml(cmd.id)}"
+                 value="${escapeHtml(cmd.id)}" class="shopping-deck-checkbox"
+                 ${savedSelection.includes(cmd.id) ? 'checked' : ''}>
+          <label for="shop-deck-${escapeHtml(cmd.id)}">
+            ${escapeHtml(cmd.name)} <span style="color:var(--text-muted)">(${escapeHtml(cmd.commander)})</span>
+          </label>
+        </div>
+      `).join('');
+
+      updateShoppingDeckInfo();
+    }
+
+    function mergeDecks(decks) {
+      const merged = new Map();
+      const provenance = new Map();
+
+      for (const deck of decks) {
+        const deckNeeds = new Map();
+
+        if (deck.decklist) {
+          for (const card of deck.decklist) {
+            const key = card.name.toLowerCase();
+            if (BASIC_LANDS.has(key)) continue;
+            const qty = card.quantity || 1;
+            const existing = deckNeeds.get(key);
+            deckNeeds.set(key, { name: card.name, qty: Math.max(existing?.qty || 0, qty) });
+          }
+        }
+
+        // Commander + partner (read directly from deck, not global state)
+        if (deck.commander) {
+          deckNeeds.set(deck.commander.toLowerCase(), { name: deck.commander, qty: 1 });
+        }
+        if (deck.partner) {
+          deckNeeds.set(deck.partner.toLowerCase(), { name: deck.partner, qty: 1 });
+        }
+
+        for (const [key, entry] of deckNeeds) {
+          const existing = merged.get(key);
+          if (!existing || entry.qty > existing.qty) {
+            merged.set(key, { name: entry.name, qty: entry.qty });
+          }
+          if (!provenance.has(key)) provenance.set(key, new Set());
+          provenance.get(key).add(deck.name);
         }
       }
 
-      // Add commander + partner
-      const cmdr = getEffectiveCommander();
-      if (cmdr) needs.set(cmdr.toLowerCase(), { name: cmdr, qty: 1 });
-      if (deck.partner) needs.set(deck.partner.toLowerCase(), { name: deck.partner, qty: 1 });
+      return { merged, provenance };
+    }
 
+    function checkCollectionMulti(decks, collection) {
+      const { merged, provenance } = mergeDecks(decks);
       const owned = [];
       const needed = [];
       let ownedCount = 0;
-      const totalCards = needs.size;
 
-      for (const [key, entry] of needs) {
+      for (const [key, entry] of merged) {
         const have = collection.get(key) || 0;
+        const deckNames = Array.from(provenance.get(key) || []);
         if (have >= entry.qty) {
-          owned.push({ name: entry.name, qty: entry.qty });
+          owned.push({ name: entry.name, qty: entry.qty, decks: deckNames });
           ownedCount++;
         } else {
-          needed.push({ name: entry.name, qty: entry.qty, deficit: entry.qty - have });
+          needed.push({ name: entry.name, qty: entry.qty, deficit: entry.qty - have, decks: deckNames });
         }
       }
 
       needed.sort((a, b) => a.name.localeCompare(b.name));
       owned.sort((a, b) => a.name.localeCompare(b.name));
 
-      return { owned, needed, totalCards, ownedCount };
+      return { owned, needed, totalCards: merged.size, ownedCount, deckCount: decks.length };
     }
 
-    function renderCollectionResults(results) {
-      const container = document.getElementById('collection-results');
+    function renderShoppingResults(results) {
+      const container = document.getElementById('shopping-results');
       const pct = results.totalCards > 0 ? Math.round((results.ownedCount / results.totalCards) * 100) : 0;
 
       let html = `
-        <div class="collection-progress"><div class="collection-progress-fill" style="width:${pct}%"></div></div>
-        <div class="collection-summary">You own ${results.ownedCount} of ${results.totalCards} cards (${pct}%)</div>
+        <div class="shopping-progress"><div class="shopping-progress-fill" style="width:${pct}%"></div></div>
+        <div class="shopping-summary">You own ${results.ownedCount} of ${results.totalCards} unique cards (${pct}%)</div>
       `;
 
+      if (results.warning) {
+        html += `<div class="shopping-summary" style="color:var(--accent-orange,#e8a33d)">${escapeHtml(results.warning)}</div>`;
+      }
+
       if (results.needed.length > 0) {
-        html += `<div class="collection-section-title">Cards to Buy (${results.needed.length})</div>`;
-        html += '<ul class="collection-card-list">';
+        html += `<div class="shopping-section-title">Cards to Buy (${results.needed.length})</div>`;
+        html += '<ul class="shopping-card-list">';
         for (const card of results.needed) {
           const url = getCardmarketUrl(card.name);
-          html += `<li>${card.deficit}x <a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(card.name)}</a></li>`;
+          const deckTags = results.deckCount > 1 && card.decks.length > 0
+            ? ` <span class="shopping-card-decks">${card.decks.map(d => escapeHtml(d)).join(', ')}</span>`
+            : '';
+          html += `<li>${card.deficit}x <a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(card.name)}</a>${deckTags}</li>`;
         }
         html += '</ul>';
       }
 
       if (results.owned.length > 0) {
-        html += `<div class="collection-section-title" id="collection-owned-toggle">Already Owned (${results.owned.length}) ▸</div>`;
-        html += '<ul class="collection-card-list collection-owned-list" id="collection-owned-list">';
+        html += `<div class="shopping-section-title" id="shopping-owned-toggle">Already Owned (${results.owned.length}) &#x25B8;</div>`;
+        html += '<ul class="shopping-card-list shopping-owned-list" id="shopping-owned-list">';
         for (const card of results.owned) {
           html += `<li>${escapeHtml(card.name)}</li>`;
         }
@@ -8038,9 +8108,9 @@
       container.innerHTML = html;
       container.style.display = 'block';
 
-      document.getElementById('collection-owned-toggle')?.addEventListener('click', () => {
-        const list = document.getElementById('collection-owned-list');
-        const toggle = document.getElementById('collection-owned-toggle');
+      document.getElementById('shopping-owned-toggle')?.addEventListener('click', () => {
+        const list = document.getElementById('shopping-owned-list');
+        const toggle = document.getElementById('shopping-owned-toggle');
         list.classList.toggle('open');
         toggle.textContent = toggle.textContent.replace(/[▸▾]/, list.classList.contains('open') ? '▾' : '▸');
       });
@@ -8048,38 +8118,6 @@
 
     function generateShoppingListExport(results) {
       return results.needed.map(c => `${c.deficit}x ${c.name}`).join('\n');
-    }
-
-    function openCollectionChecker() {
-      const modal = document.getElementById('collection-modal');
-      const deckInfo = document.getElementById('collection-deck-info');
-      const checkBtn = document.getElementById('collection-check-btn');
-      const textarea = document.getElementById('collection-textarea');
-
-      if (!currentDeck) {
-        deckInfo.textContent = 'Select a deck first to check your collection.';
-        checkBtn.disabled = true;
-      } else {
-        deckInfo.textContent = `Checking against: ${currentDeck.name} (${currentDeck.commander})`;
-        checkBtn.disabled = false;
-      }
-
-      // Prefill from saved preferences
-      const prefs = loadPreferences();
-      if (prefs?.collectionText && !textarea.value) {
-        textarea.value = prefs.collectionText;
-      }
-
-      modal.classList.add('open');
-      collectionFocusTrap.activate();
-      textarea.focus();
-    }
-
-    function closeCollectionChecker() {
-      // Save text before closing
-      savePreferences();
-      document.getElementById('collection-modal').classList.remove('open');
-      collectionFocusTrap.deactivate();
     }
 
     // === MOBILE PREVIEW MODAL ===
@@ -8291,7 +8329,6 @@
         closeSearch();
         closeMobilePreview();
         closeBracketInfoModal();
-        closeCollectionChecker();
       }
     });
 
@@ -8304,53 +8341,80 @@
       });
     }
 
-    // Collection checker hint click/keyboard
-    const collectionHint = document.getElementById('collection-hint');
-    if (collectionHint) {
-      collectionHint.addEventListener('click', openCollectionChecker);
-      collectionHint.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCollectionChecker(); }
-      });
-    }
+    // Shopping list deck checkbox changes
+    document.getElementById('shopping-deck-list')?.addEventListener('change', updateShoppingDeckInfo);
 
-    // Collection checker modal events
-    document.querySelector('.collection-close')?.addEventListener('click', closeCollectionChecker);
-    document.getElementById('collection-modal')?.addEventListener('click', (e) => {
-      if (e.target.id === 'collection-modal') closeCollectionChecker();
+    // Shopping list Select All / Deselect All
+    document.querySelector('.shopping-select-all')?.addEventListener('click', () => {
+      document.querySelectorAll('.shopping-deck-checkbox').forEach(cb => { cb.checked = true; });
+      updateShoppingDeckInfo();
+    });
+    document.querySelector('.shopping-deselect-all')?.addEventListener('click', () => {
+      document.querySelectorAll('.shopping-deck-checkbox').forEach(cb => { cb.checked = false; });
+      updateShoppingDeckInfo();
     });
 
-    document.getElementById('collection-check-btn')?.addEventListener('click', () => {
-      if (!currentDeck) return;
-      const text = document.getElementById('collection-textarea').value;
-      const collection = parseCollectionInput(text);
-      const results = checkCollection(currentDeck, collection);
-      renderCollectionResults(results);
+    // Shopping list check button
+    document.getElementById('shopping-check-btn')?.addEventListener('click', async () => {
+      const selectedIds = getSelectedShoppingDeckIds();
+      if (selectedIds.length === 0) return;
 
-      const copyBtn = document.getElementById('collection-copy-btn');
-      const clearBtn = document.getElementById('collection-clear-btn');
-      copyBtn.style.display = results.needed.length > 0 ? '' : 'none';
-      clearBtn.style.display = '';
-      copyBtn.onclick = () => copyToClipboard(generateShoppingListExport(results), copyBtn);
+      const checkBtn = document.getElementById('shopping-check-btn');
+      checkBtn.disabled = true;
+      checkBtn.textContent = 'Loading...';
+
+      try {
+        const settled = await Promise.allSettled(selectedIds.map(id => loadDeckData(id)));
+        const decks = settled.filter(r => r.status === 'fulfilled').map(r => r.value);
+        const failed = settled.filter(r => r.status === 'rejected');
+
+        if (decks.length === 0) {
+          document.getElementById('shopping-results').innerHTML = '<div class="shopping-summary">Failed to load deck data.</div>';
+          document.getElementById('shopping-results').style.display = 'block';
+          return;
+        }
+
+        const text = document.getElementById('shopping-textarea').value;
+        const collection = parseCollectionInput(text);
+        const results = checkCollectionMulti(decks, collection);
+
+        if (failed.length > 0) {
+          results.warning = `${failed.length} deck(s) failed to load and were skipped.`;
+        }
+
+        renderShoppingResults(results);
+
+        const copyBtn = document.getElementById('shopping-copy-btn');
+        const clearBtn = document.getElementById('shopping-clear-btn');
+        copyBtn.style.display = results.needed.length > 0 ? '' : 'none';
+        clearBtn.style.display = '';
+        copyBtn.onclick = () => copyToClipboard(generateShoppingListExport(results), copyBtn);
+      } finally {
+        checkBtn.disabled = false;
+        checkBtn.textContent = 'Check Collection';
+      }
     });
 
-    document.getElementById('collection-clear-btn')?.addEventListener('click', () => {
-      document.getElementById('collection-textarea').value = '';
-      document.getElementById('collection-results').style.display = 'none';
-      document.getElementById('collection-results').innerHTML = '';
-      document.getElementById('collection-copy-btn').style.display = 'none';
-      document.getElementById('collection-clear-btn').style.display = 'none';
+    // Shopping list clear button
+    document.getElementById('shopping-clear-btn')?.addEventListener('click', () => {
+      document.getElementById('shopping-textarea').value = '';
+      document.getElementById('shopping-results').style.display = 'none';
+      document.getElementById('shopping-results').innerHTML = '';
+      document.getElementById('shopping-copy-btn').style.display = 'none';
+      document.getElementById('shopping-clear-btn').style.display = 'none';
       savePreferences();
     });
 
-    document.getElementById('collection-file-input')?.addEventListener('change', (e) => {
+    // Shopping list file upload
+    document.getElementById('shopping-file-input')?.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        document.getElementById('collection-textarea').value = reader.result;
+        document.getElementById('shopping-textarea').value = reader.result;
       };
       reader.readAsText(file);
-      e.target.value = ''; // Reset so the same file can be re-uploaded
+      e.target.value = '';
     });
 
     // Search modal
@@ -8407,6 +8471,7 @@
         const mainContent = document.getElementById('main-content');
         const playtestView = document.getElementById('playtest-view');
         const analyticsView = document.getElementById('analytics-view');
+        const shoppingView = document.getElementById('shopping-view');
 
         // Update toggle buttons
         document.querySelectorAll('.view-toggle-btn').forEach(btn => {
@@ -8421,6 +8486,7 @@
         mainContent.style.display = 'none';
         playtestView.style.display = 'none';
         analyticsView.style.display = 'none';
+        shoppingView.style.display = 'none';
 
         if (view === 'playtest') {
           playtestView.style.display = 'block';
@@ -8442,6 +8508,14 @@
             renderAnalyticsView();
           }
           updateUrlHash();
+        } else if (view === 'shopping') {
+          shoppingView.style.display = 'block';
+          savePreferences();
+          if (currentDeckId) {
+            history.replaceState(null, '', `#view=shopping&deck=${encodeURIComponent(currentDeckId)}`);
+          } else {
+            history.replaceState(null, '', '#view=shopping');
+          }
         } else {
           // Guide view
           selectorSection.style.display = '';
@@ -9673,12 +9747,26 @@
 
       // Load deck index
       await loadDeckIndex();
+      populateShoppingDeckList();
 
       // Determine which deck to load
       const deckToLoad = urlParams.deck || prefs?.lastDeck;
       const requestedView = urlParams.view;
 
       // Check if a non-guide view requested
+      if (requestedView === 'shopping') {
+        // Shopping view doesn't require a specific deck
+        switchView('shopping');
+        // Still load a deck if one was specified, for other tabs
+        if (deckToLoad) {
+          const allDecks = [...(deckIndex.commanders || [])];
+          if (allDecks.some(d => d.id === deckToLoad)) {
+            deckSelect.value = deckToLoad;
+            await selectDeck(deckToLoad);
+          }
+        }
+        return;
+      }
       if (requestedView === 'playtest' || requestedView === 'analytics') {
         const viewDeck = urlParams.deck || deckToLoad;
         const allDecks = [...(deckIndex.commanders || [])];
