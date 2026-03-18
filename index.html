@@ -178,8 +178,8 @@
     }
 
     .shopping-layout {
-      display: grid;
-      grid-template-columns: 280px 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 24px;
       max-width: 900px;
       margin: 0 auto;
@@ -210,27 +210,44 @@
     }
 
     .shopping-deck-list {
-      max-height: 400px;
-      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
     }
 
-    .shopping-deck-item {
+    .shopping-deck-card {
+      position: relative;
       display: flex;
+      gap: 14px;
       align-items: center;
-      gap: 8px;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--bg-deep);
-    }
-
-    .shopping-deck-item label {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
+      background: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px;
       cursor: pointer;
-      flex: 1;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      overflow: hidden;
     }
 
-    .shopping-deck-item input[type="checkbox"] {
+    .shopping-deck-card:hover {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 20px rgba(157, 78, 221, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .shopping-deck-card.selected {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 24px rgba(157, 78, 221, 0.3), inset 0 0 12px rgba(157, 78, 221, 0.08);
+    }
+
+    .shopping-deck-card .shopping-deck-checkbox {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 18px;
+      height: 18px;
       accent-color: var(--accent-purple);
+      cursor: pointer;
     }
 
     .collection-file-btn {
@@ -388,12 +405,6 @@
       font-size: 0.7rem;
       color: var(--text-muted);
       margin-left: 4px;
-    }
-
-    @media (max-width: 768px) {
-      .shopping-layout {
-        grid-template-columns: 1fr;
-      }
     }
 
     body {
@@ -7995,16 +8006,26 @@
 
       const savedSelection = prefs?.selectedShoppingDecks || [];
 
-      list.innerHTML = allDecks.map(cmd => `
-        <div class="shopping-deck-item">
-          <input type="checkbox" id="shop-deck-${escapeHtml(cmd.id)}"
-                 value="${escapeHtml(cmd.id)}" class="shopping-deck-checkbox"
-                 ${savedSelection.includes(cmd.id) ? 'checked' : ''}>
-          <label for="shop-deck-${escapeHtml(cmd.id)}">
-            ${escapeHtml(cmd.name)} <span style="color:var(--text-muted)">(${escapeHtml(cmd.commander)})</span>
-          </label>
-        </div>
-      `).join('');
+      list.innerHTML = allDecks.map(cmd => {
+        const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cmd.commander)}&version=art_crop`;
+        const colors = (cmd.colors || []).map(c => `<div class="deck-gallery-pip pip-${c}"></div>`).join('');
+        const bracket = cmd.bracket ? `<span class="deck-gallery-bracket" data-bracket="${escapeHtml(cmd.bracket)}">B${escapeHtml(cmd.bracket)}</span>` : '';
+        const checked = savedSelection.includes(cmd.id) ? 'checked' : '';
+        return `
+          <label class="shopping-deck-card ${checked ? 'selected' : ''}" for="shop-deck-${escapeHtml(cmd.id)}">
+            <input type="checkbox" id="shop-deck-${escapeHtml(cmd.id)}"
+                   value="${escapeHtml(cmd.id)}" class="shopping-deck-checkbox" ${checked}>
+            <img class="deck-gallery-art" src="${artUrl}" alt="${escapeHtml(cmd.commander)}" loading="lazy">
+            <div class="deck-gallery-info">
+              <div class="deck-gallery-name">${escapeHtml(cmd.name)}</div>
+              <div class="deck-gallery-subtitle">${escapeHtml(cmd.theme || '')}</div>
+              <div class="deck-gallery-meta">
+                <div class="deck-gallery-colors">${colors}</div>
+                ${bracket}
+              </div>
+            </div>
+          </label>`;
+      }).join('');
 
       updateShoppingDeckInfo();
     }
@@ -8342,16 +8363,30 @@
     }
 
     // Shopping list deck checkbox changes
-    document.getElementById('shopping-deck-list')?.addEventListener('change', updateShoppingDeckInfo);
+    document.getElementById('shopping-deck-list')?.addEventListener('change', (e) => {
+      if (e.target.classList.contains('shopping-deck-checkbox')) {
+        e.target.closest('.shopping-deck-card')?.classList.toggle('selected', e.target.checked);
+      }
+      updateShoppingDeckInfo();
+      savePreferences();
+    });
 
     // Shopping list Select All / Deselect All
     document.querySelector('.shopping-select-all')?.addEventListener('click', () => {
-      document.querySelectorAll('.shopping-deck-checkbox').forEach(cb => { cb.checked = true; });
+      document.querySelectorAll('.shopping-deck-checkbox').forEach(cb => {
+        cb.checked = true;
+        cb.closest('.shopping-deck-card')?.classList.add('selected');
+      });
       updateShoppingDeckInfo();
+      savePreferences();
     });
     document.querySelector('.shopping-deselect-all')?.addEventListener('click', () => {
-      document.querySelectorAll('.shopping-deck-checkbox').forEach(cb => { cb.checked = false; });
+      document.querySelectorAll('.shopping-deck-checkbox').forEach(cb => {
+        cb.checked = false;
+        cb.closest('.shopping-deck-card')?.classList.remove('selected');
+      });
       updateShoppingDeckInfo();
+      savePreferences();
     });
 
     // Shopping list check button
