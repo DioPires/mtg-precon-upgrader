@@ -68,6 +68,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - Every card recommendation must be attributed via `sources`
 - **Card pool**: Cards printed through March 2026
 - **Card text validation**: ALWAYS verify card names and oracle text via the `scryfall_card_by_name` MCP tool before recommending cards. Never assume card text or abilities from memory — validate every card considered. For bulk validation, use `scryfall_collection`.
+- **Bracket 4/5 deckbuilding principles**: See [`data/bracket-philosophy.md`](data/bracket-philosophy.md) for mana base, fast mana, free spells, interaction, and card quality standards. Apply when building or updating B4+ decks.
 
 ## Source Attribution Schema
 
