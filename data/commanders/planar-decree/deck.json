@@ -1,0 +1,635 @@
+{
+  "id": "planar-decree",
+  "type": "commander",
+  "name": "Planar Decree",
+  "subtitle": "The Silent Court",
+  "commander": "Commodore Guff",
+  "cost": "$500-800",
+  "bracket": "4",
+  "gameChangers": 11,
+  "sources": [
+    {
+      "type": "youtube",
+      "name": "The Command Zone Ep 548 \u2014 Planeswalker Party Precon Upgrade Guide",
+      "url": "https://www.youtube.com/watch?v=TC0DXuCK2AI",
+      "detail": "Planeswalker Party precon upgrade guide"
+    },
+    {
+      "type": "youtube",
+      "name": "Grazzet \u2014 Planeswalker Party Precon Upgrade Guide",
+      "url": "https://www.youtube.com/watch?v=36bQNPqDYfw",
+      "detail": "Cut-rate Commander Guff upgrade"
+    },
+    {
+      "type": "youtube",
+      "name": "The Commander Tavern \u2014 Commodore Guff Superfriends",
+      "url": "https://www.youtube.com/watch?v=d_QeR3x7F4o",
+      "detail": "Commodore Guff superfriends deck tech"
+    },
+    {
+      "type": "youtube",
+      "name": "The Trinket Mage \u2014 What Planeswalker Decks in EDH Really Look Like",
+      "url": "https://www.youtube.com/watch?v=BvM4J6dJWJU",
+      "detail": "Planeswalker deck construction philosophy"
+    },
+    {
+      "type": "commanderspellbook",
+      "name": "Commander Spellbook \u2014 Combo verification",
+      "url": "https://commanderspellbook.com",
+      "detail": "8 included combo lines verified, 51 near-miss combos analyzed"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Claude analysis",
+      "detail": "Humility interaction analysis, two-mode design, stax shell construction, card selection"
+    }
+  ],
+  "guideContent": {
+    "strategyOverview": "Jeskai superfriends built around a unique angle: Humility. All creatures become 1/1 vanilla bodies with no abilities, but planeswalkers are unaffected \u2014 making them virtually immune to combat damage. This is \"The Silent Court\": a board state where 1/1 creatures can barely scratch your planeswalkers' loyalty, while your walkers accumulate value unopposed.\n\nThe deck operates in two modes. Mode A (Humility online): creatures are blanked, planeswalkers are safe. Win via Chandra burn (Legacy of Fire end-step damage + Guff's -3 scaling with planeswalker count), irremovable emblems from Awakened Inferno, or token armies from Elspeth. The stax shell \u2014 Humility, High Noon, Stasis, Teferi Time Raveler, Narset \u2014 locks opponents out of instant-speed interaction while Sphere of Safety and Norn's Annex make attacking prohibitively expensive. Mode B (no Humility): creatures protect your planeswalkers. Deepglow Skate doubles loyalty. Sarkhan's +1 turns all walkers into 4/4 flying Dragons for an alpha strike.\n\nWARNING: Never activate Sarkhan's +1 with Humility in play. Planeswalkers that become creatures lose all abilities under Humility and become 1/1 blanks.\n\nCombo potential is high: The Chain Veil + Teferi Temporal Archmage generates infinite mana, draw, and planeswalker activations. Teferi Master of Time + Ichormoon Gauntlet enables infinite extra turns. Stasis + Smothering Tithe creates a hard lock where nobody untaps but you sustain via Treasure tokens. Teferi's Puzzle Box + Narset strips opponents' hands every turn.\n\nCommodore Guff ties it together: +1 creates Wizard tokens that tap for red mana (specifically for planeswalker spells), 0 draws cards for all players (fueling Smothering Tithe and Rhystic Study), and -3 deals X damage and draws X cards where X is your planeswalker count.",
+    "deckCategories": [
+      {
+        "name": "Burn Win-Cons",
+        "description": "Chandra planeswalkers that scale damage with planeswalker count. Legacy of Fire's end-step trigger and Guff's -3 together deal 2X damage per opponent per cycle.",
+        "cards": ["Chandra, Legacy of Fire", "Chandra, Torch of Defiance", "Chandra, Awakened Inferno", "Chandra, Hope's Beacon"]
+      },
+      {
+        "name": "Token Generators",
+        "description": "Planeswalkers that create creature tokens for board presence and alternative win conditions. Storm Slayer doubles ALL tokens including Treasures.",
+        "cards": ["Elspeth, Sun's Champion", "Elspeth, Storm Slayer", "Elspeth Tirel", "Ajani, Outland Chaperone", "The Eternal Wanderer", "Ral, Crackling Wit"]
+      },
+      {
+        "name": "Stax & Lockdown",
+        "description": "Enchantments and planeswalkers that restrict opponents while leaving your planeswalkers unaffected. Humility blanks creatures, High Noon stops instant-speed plays, Stasis prevents untapping.",
+        "cards": ["Humility", "High Noon", "Stasis", "Teferi, Time Raveler", "Narset, Parter of Veils", "Sphere of Safety", "Norn's Annex", "Grand Abolisher", "Voice of Victory", "Teferi's Puzzle Box"]
+      },
+      {
+        "name": "Planeswalker Support",
+        "description": "Cards that multiply planeswalker activations, add loyalty counters, or copy planeswalkers. The Chain Veil is the combo engine.",
+        "cards": ["The Chain Veil", "Oath of Teferi", "Ichormoon Gauntlet", "Deepglow Skate", "Spark Double", "Rowan's Talent", "Ajani Steadfast"]
+      },
+      {
+        "name": "Value Engines",
+        "description": "Planeswalkers and enchantments that generate card advantage, mana, or selection. Teferi Temporal Archmage untaps permanents including The Chain Veil.",
+        "cards": ["Jace, the Mind Sculptor", "Teferi, Hero of Dominaria", "Teferi, Temporal Archmage", "Teferi, Master of Time", "Tezzeret the Seeker", "Teferi, Who Slows the Sunset", "Rhystic Study", "Smothering Tithe"]
+      },
+      {
+        "name": "Planeswalker Defense",
+        "description": "Cards that protect planeswalkers from removal, combat, or board wipes. The Wanderer prevents noncombat damage to you.",
+        "cards": ["The Wanderer", "The Eternal Wanderer", "Sarkhan the Masterless", "Venser, the Sojourner", "Semester's End", "Teferi's Protection"]
+      },
+      {
+        "name": "Board Control",
+        "description": "Sweepers and mass removal. Under Humility, power-based wipes like Dusk // Dawn and Elspeth's -3 clear the board while leaving planeswalkers untouched.",
+        "cards": ["Dusk // Dawn", "The Battle of Bywater", "Supreme Verdict", "Blasphemous Act", "Cyclonic Rift", "Elspeth, Sun's Champion"]
+      },
+      {
+        "name": "Interaction",
+        "description": "Targeted removal, counterspells, and tutors. Enlightened Tutor finds Humility, Chain Veil, Stasis, or Smothering Tithe at instant speed.",
+        "cards": ["Swords to Plowshares", "Path to Exile", "Counterspell", "Mana Drain", "Dovin's Veto", "Swan Song", "Fierce Guardianship", "Deflecting Swat", "Enlightened Tutor", "Mystical Tutor"]
+      },
+      {
+        "name": "Ramp",
+        "description": "Mana acceleration to deploy planeswalkers ahead of curve. Chrome Mox and Mox Amber provide explosive starts. Smothering Tithe generates Treasures passively.",
+        "cards": ["Sol Ring", "Arcane Signet", "Talisman of Conviction", "Talisman of Progress", "Talisman of Creativity", "Fellwar Stone", "Chrome Mox", "Mox Amber", "Ancient Tomb", "Smothering Tithe"]
+      }
+    ]
+  },
+  "categories": [
+    {
+      "name": "Burn Win-Cons",
+      "cards": ["Chandra, Legacy of Fire", "Chandra, Torch of Defiance", "Chandra, Awakened Inferno", "Chandra, Hope's Beacon"]
+    },
+    {
+      "name": "Token Generators",
+      "cards": ["Elspeth, Sun's Champion", "Elspeth, Storm Slayer", "Elspeth Tirel", "Ajani, Outland Chaperone", "The Eternal Wanderer", "Ral, Crackling Wit"]
+    },
+    {
+      "name": "Stax & Lockdown",
+      "cards": ["Humility", "High Noon", "Stasis", "Teferi, Time Raveler", "Narset, Parter of Veils", "Sphere of Safety", "Norn's Annex", "Grand Abolisher", "Voice of Victory", "Teferi's Puzzle Box"]
+    },
+    {
+      "name": "Planeswalker Support",
+      "cards": ["The Chain Veil", "Oath of Teferi", "Ichormoon Gauntlet", "Deepglow Skate", "Spark Double", "Rowan's Talent", "Ajani Steadfast"]
+    },
+    {
+      "name": "Value Engines",
+      "cards": ["Jace, the Mind Sculptor", "Teferi, Hero of Dominaria", "Teferi, Temporal Archmage", "Teferi, Master of Time", "Tezzeret the Seeker", "Teferi, Who Slows the Sunset", "Rhystic Study", "Smothering Tithe"]
+    },
+    {
+      "name": "Planeswalker Defense",
+      "cards": ["The Wanderer", "The Eternal Wanderer", "Sarkhan the Masterless", "Venser, the Sojourner", "Semester's End", "Teferi's Protection"]
+    },
+    {
+      "name": "Board Control",
+      "cards": ["Dusk // Dawn", "The Battle of Bywater", "Supreme Verdict", "Blasphemous Act", "Cyclonic Rift", "Elspeth, Sun's Champion"]
+    },
+    {
+      "name": "Interaction",
+      "cards": ["Swords to Plowshares", "Path to Exile", "Counterspell", "Mana Drain", "Dovin's Veto", "Swan Song", "Fierce Guardianship", "Deflecting Swat", "Enlightened Tutor", "Mystical Tutor"]
+    },
+    {
+      "name": "Ramp",
+      "cards": ["Sol Ring", "Arcane Signet", "Talisman of Conviction", "Talisman of Progress", "Talisman of Creativity", "Fellwar Stone", "Chrome Mox", "Mox Amber", "Ancient Tomb", "Smothering Tithe"]
+    }
+  ],
+  "winConditions": [
+    {
+      "title": "Chandra Burn Engine",
+      "cards": ["Chandra, Legacy of Fire", "Commodore Guff"],
+      "description": "Chandra Legacy of Fire's end-step trigger deals X damage to each opponent where X is the number of planeswalkers you control. Guff's -3 draws X cards and deals X damage. With 4-5 planeswalkers in play, this deals 8-10 damage per opponent per turn cycle. Both abilities scale together as you deploy more walkers.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Primary burn win condition via planeswalker count scaling"
+        }
+      ]
+    },
+    {
+      "title": "Emblem Inevitability",
+      "cards": ["Chandra, Awakened Inferno"],
+      "description": "Chandra Awakened Inferno's +2 gives each opponent a permanent emblem that deals 1 damage at the beginning of their upkeep. Emblems cannot be removed by any game mechanic. After 3-4 activations, each opponent takes 3-4 damage per upkeep \u2014 a game-ending clock that no amount of interaction can stop.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Irremovable damage clock win condition"
+        }
+      ]
+    },
+    {
+      "title": "Token Overrun",
+      "cards": ["Elspeth, Storm Slayer", "Elspeth, Sun's Champion", "Ajani, Outland Chaperone", "The Eternal Wanderer"],
+      "description": "Elspeth Storm Slayer's static ability doubles all token creation. Elspeth Sun's Champion makes 3 Soldiers per turn (doubled to 6). Ajani creates Kithkin tokens. The Eternal Wanderer creates 2/2 Samurai with double strike. Under Humility these tokens are 1/1, but without it they overwhelm the board.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Token army alternative win condition"
+        }
+      ]
+    },
+    {
+      "title": "Sarkhan Alpha Strike",
+      "cards": ["Sarkhan the Masterless"],
+      "description": "Sarkhan's +1 turns all planeswalkers you control into 4/4 Dragon creatures with flying until end of turn. With 5+ planeswalkers, this is 20+ flying damage in a single combat step. Mode B only \u2014 do NOT activate with Humility in play, as planeswalkers that become creatures lose all abilities and become 1/1 blanks.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Commander Tavern \u2014 Commodore Guff Superfriends",
+          "detail": "Sarkhan alpha strike win condition"
+        }
+      ]
+    },
+    {
+      "title": "Chain Veil Infinite",
+      "cards": ["Teferi, Temporal Archmage", "The Chain Veil", "Tezzeret the Seeker"],
+      "description": "Teferi Temporal Archmage's -1 untaps 4 permanents (Chain Veil + 3 mana sources). Activate Chain Veil again for another PW activation. With enough mana rocks, this generates infinite mana, infinite card draw, and infinite planeswalker activations. Draw entire deck and burn opponents to death with any Chandra.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 787-1124",
+          "url": "https://commanderspellbook.com/combo/787-1124/"
+        }
+      ]
+    },
+    {
+      "title": "Infinite Turns",
+      "cards": ["Teferi, Master of Time", "Ichormoon Gauntlet"],
+      "description": "Teferi Master of Time activates on every player's turn (not just yours). Ichormoon Gauntlet gives every planeswalker [0]: Proliferate and [-12]: Take an extra turn. Proliferate via the Gauntlet-granted ability to accumulate loyalty on all planeswalkers. With enough walkers proliferating, reach -12 on Gauntlet for infinite extra turns.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 1124-1543-2247",
+          "url": "https://commanderspellbook.com/combo/1124-1543-2247/"
+        }
+      ]
+    }
+  ],
+  "synergies": [
+    {
+      "title": "The Silent Court",
+      "cards": ["Humility", "Commodore Guff"],
+      "description": "All creatures become 1/1 with no abilities. Planeswalkers are unaffected. 1/1 creatures deal minimal damage to planeswalker loyalty, making your walkers virtually immune to combat damage. The defining interaction of the deck.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Core deck identity \u2014 Humility + planeswalkers interaction"
+        }
+      ]
+    },
+    {
+      "title": "Storm Slayer + Smothering Tithe",
+      "cards": ["Elspeth, Storm Slayer", "Smothering Tithe"],
+      "description": "Elspeth Storm Slayer's static ability doubles ALL token creation, including Treasure tokens from Smothering Tithe. Each opponent's draw step creates 2 Treasures instead of 1 (if they don't pay). Massive mana acceleration that funds planeswalker deployment.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Token doubling applies to artifact tokens"
+        }
+      ]
+    },
+    {
+      "title": "Stasis + Smothering Tithe",
+      "cards": ["Stasis", "Smothering Tithe"],
+      "description": "Stasis prevents all players from untapping. You sustain the lock via Treasure tokens from Smothering Tithe \u2014 opponents can't pay the {2} tax with tapped lands. Planeswalker abilities don't require untapping, so your walkers continue operating normally under the lock.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 1025-4682",
+          "url": "https://commanderspellbook.com/combo/1025-4682/"
+        }
+      ]
+    },
+    {
+      "title": "Puzzle Box + Narset",
+      "cards": ["Teferi's Puzzle Box", "Narset, Parter of Veils"],
+      "description": "Each opponent puts their hand on the bottom of their library, then draws that many cards. Narset restricts opponents to 1 draw per turn. Net result: opponents lose their entire hand and draw 1 card each turn. Soft lock that forces opponents to play off the top.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 1177-2286",
+          "url": "https://commanderspellbook.com/combo/1177-2286/"
+        }
+      ]
+    },
+    {
+      "title": "Teferi MoT + Stasis",
+      "cards": ["Teferi, Master of Time", "Stasis"],
+      "description": "Teferi's -3 phases out a creature. Under Stasis, untap steps are skipped, so phased-out creatures never phase back in \u2014 permanent removal as long as Stasis remains active.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Phase-out + untap skip interaction"
+        }
+      ]
+    },
+    {
+      "title": "Sphere of Safety + Enchantment Density",
+      "cards": ["Sphere of Safety", "Humility", "Norn's Annex"],
+      "description": "With 8 enchantments in the deck, Sphere of Safety requires opponents to pay 8 mana per creature to attack you or your planeswalkers. Combined with Humility (1/1 creatures) and Norn's Annex (pay 2 life or {W} per attacker), attacking becomes prohibitively expensive.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Layered pillow fort protection"
+        }
+      ]
+    },
+    {
+      "title": "Chandra Legacy + Guff Double Burn",
+      "cards": ["Chandra, Legacy of Fire", "Commodore Guff"],
+      "description": "Both abilities scale with planeswalker count. Chandra Legacy deals X damage at end step. Guff's -3 deals X damage and draws X cards. Combined, they deal 2X damage per opponent per turn cycle where X is your planeswalker count.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Dual scaling burn synergy"
+        }
+      ]
+    },
+    {
+      "title": "Ajani Steadfast Loyalty Distribution",
+      "cards": ["Ajani Steadfast", "Commodore Guff"],
+      "description": "Ajani's -2 puts a loyalty counter on each other planeswalker you control. Functions as a planeswalker-specific proliferate, accelerating all walkers toward their ultimates simultaneously. With 5+ planeswalkers, this is more efficient than standard proliferate.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "Grazzet \u2014 Planeswalker Party Precon Upgrade Guide",
+          "detail": "Ajani loyalty distribution synergy"
+        }
+      ]
+    }
+  ],
+  "highlights": [
+    {
+      "name": "Humility",
+      "price": "$15-25",
+      "isGameChanger": true,
+      "reason": "The deck's defining card. All creatures become 1/1 with no abilities, making planeswalkers virtually immune to combat damage. This unique angle separates this build from all other superfriends decks. Enables the entire stax shell.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Core deck identity card"
+        }
+      ]
+    },
+    {
+      "name": "Chandra, Legacy of Fire",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "The primary burn win condition. End-step trigger deals X damage to each opponent where X is planeswalkers you control. +1 generates red mana equal to planeswalker count. Scales exponentially as you deploy more walkers.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Command Zone Ep 548",
+          "detail": "Highlighted as key Guff payoff"
+        }
+      ]
+    },
+    {
+      "name": "The Chain Veil",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "The combo engine. Extra planeswalker activation each turn. Combos with Teferi Temporal Archmage for infinite mana, draw, and activations. Also strong as fair value \u2014 double-activating any planeswalker is powerful.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 787-1124",
+          "url": "https://commanderspellbook.com/combo/787-1124/"
+        }
+      ]
+    },
+    {
+      "name": "Ichormoon Gauntlet",
+      "price": "$5-15",
+      "isGameChanger": false,
+      "reason": "Gives every planeswalker [0]: Proliferate and [-12]: Take an extra turn. Also adds loyalty counters on noncreature spell casts. Enables infinite turn combos with Teferi Master of Time.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "Grazzet \u2014 Planeswalker Party Precon Upgrade Guide",
+          "detail": "Key planeswalker support artifact"
+        }
+      ]
+    },
+    {
+      "name": "Stasis",
+      "price": "$10-20",
+      "isGameChanger": false,
+      "reason": "Hard lock piece with Smothering Tithe. All players skip untap steps while you sustain via Treasure tokens. Planeswalker abilities don't require untapping. Teferi Who Slows the Sunset provides backup upkeep payment.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo 1025-4682",
+          "url": "https://commanderspellbook.com/combo/1025-4682/"
+        }
+      ]
+    },
+    {
+      "name": "Elspeth, Storm Slayer",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "Token doubler on a planeswalker. Doubles ALL tokens including Treasures from Smothering Tithe. Also provides tokens and mana-value-based removal that functions under Humility (checks MV, not power/toughness).",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Token doubling on a planeswalker body"
+        }
+      ]
+    },
+    {
+      "name": "Teferi, Master of Time",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "Activates on any player's turn, not just yours. Enables 5 different infinite-turn combo lines with existing deck cards. Provides card selection and phasing-based removal that synergizes with Stasis.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook \u2014 Combo verification",
+          "detail": "5 infinite-turn lines identified"
+        }
+      ]
+    },
+    {
+      "name": "Sphere of Safety",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Unlike Ghostly Prison (which only protects you), Sphere of Safety explicitly protects you AND your planeswalkers. With 8 enchantments, opponents must pay 8 mana per attacking creature. Combined with Humility and Norn's Annex, attacking is prohibitive.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Protects planeswalkers specifically, not just player"
+        }
+      ]
+    },
+    {
+      "name": "Enlightened Tutor",
+      "price": "$20-30",
+      "isGameChanger": true,
+      "reason": "Finds Humility, The Chain Veil, Stasis, Smothering Tithe, or Sphere of Safety at instant speed. The stax toolbox enabler that fetches whichever lock piece the situation demands.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Commander Tavern \u2014 Commodore Guff Superfriends",
+          "detail": "Essential tutor for enchantment/artifact toolbox"
+        }
+      ]
+    },
+    {
+      "name": "Smothering Tithe",
+      "price": "$20-30",
+      "isGameChanger": true,
+      "reason": "Ramp engine that becomes a combo piece with Stasis. Tokens doubled by Elspeth Storm Slayer. Fueled by Guff's 0 ability (each opponent draws, triggering Tithe). The mana backbone of the deck.",
+      "sources": [
+        {
+          "type": "youtube",
+          "name": "The Command Zone Ep 548",
+          "detail": "Core ramp engine for superfriends"
+        }
+      ]
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Wizard",
+      "type_line": "Token Creature \u2014 Wizard",
+      "oracle_text": "{T}: Add {R}. Spend this mana only to cast a planeswalker spell.",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["R"],
+      "scryfall_id": "4de5b65c-00c7-415a-92f3-cd1177372956",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/d/4de5b65c-00c7-415a-92f3-cd1177372956.jpg?1705082113",
+      "produced_by": ["Commodore Guff"]
+    },
+    {
+      "name": "Soldier",
+      "type_line": "Token Creature \u2014 Soldier",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["W"],
+      "scryfall_id": "10322962-5b45-438f-9d28-225414721c34",
+      "image_uri": "https://cards.scryfall.io/normal/front/1/0/10322962-5b45-438f-9d28-225414721c34.jpg?1689710563",
+      "produced_by": ["Elspeth, Sun's Champion", "Elspeth Tirel"]
+    },
+    {
+      "name": "Kithkin",
+      "type_line": "Token Creature \u2014 Kithkin",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["G", "W"],
+      "scryfall_id": "2ed11e1b-2289-48d2-8d96-ee7e590ecfd4",
+      "image_uri": "https://cards.scryfall.io/normal/front/2/e/2ed11e1b-2289-48d2-8d96-ee7e590ecfd4.jpg?1767955680",
+      "produced_by": ["Ajani, Outland Chaperone"]
+    },
+    {
+      "name": "Samurai",
+      "type_line": "Token Creature \u2014 Samurai",
+      "oracle_text": "Double strike",
+      "power": "2",
+      "toughness": "2",
+      "colors": ["W"],
+      "scryfall_id": "70750c90-3856-4d6d-923b-2ab91b1d7049",
+      "image_uri": "https://cards.scryfall.io/normal/front/7/0/70750c90-3856-4d6d-923b-2ab91b1d7049.jpg?1675957554",
+      "produced_by": ["The Eternal Wanderer"]
+    },
+    {
+      "name": "Dragon",
+      "type_line": "Token Creature \u2014 Dragon",
+      "oracle_text": "Flying",
+      "power": "4",
+      "toughness": "4",
+      "colors": ["R"],
+      "scryfall_id": "55c6be20-b65a-4b1e-8133-4c2d88c1f6f9",
+      "image_uri": "https://cards.scryfall.io/normal/front/5/5/55c6be20-b65a-4b1e-8133-4c2d88c1f6f9.jpg?1730485631",
+      "produced_by": ["Sarkhan the Masterless"]
+    },
+    {
+      "name": "Otter",
+      "type_line": "Token Creature \u2014 Otter",
+      "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["R", "U"],
+      "scryfall_id": "e6b2c465-c446-4dee-9101-763105dcf813",
+      "image_uri": "https://cards.scryfall.io/normal/front/e/6/e6b2c465-c446-4dee-9101-763105dcf813.jpg?1724438155",
+      "produced_by": ["Ral, Crackling Wit"]
+    },
+    {
+      "name": "Treasure",
+      "type_line": "Token Artifact \u2014 Treasure",
+      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "4837a3f1-ca7f-41e5-a5d1-729c8495b0e8",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/8/4837a3f1-ca7f-41e5-a5d1-729c8495b0e8.jpg?1771590279",
+      "produced_by": ["Smothering Tithe"]
+    },
+    {
+      "name": "Food",
+      "type_line": "Token Artifact \u2014 Food",
+      "oracle_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "e2b62092-57df-4d95-b2b9-961794e7c20b",
+      "image_uri": "https://cards.scryfall.io/normal/front/e/2/e2b62092-57df-4d95-b2b9-961794e7c20b.jpg?1771590558",
+      "produced_by": ["The Battle of Bywater"]
+    },
+    {
+      "name": "Bird Illusion",
+      "type_line": "Token Creature \u2014 Bird Illusion",
+      "oracle_text": "Flying",
+      "power": "1",
+      "toughness": "1",
+      "colors": ["U"],
+      "scryfall_id": "95970f74-0f28-4d81-9fbd-cb49f5d5eebc",
+      "image_uri": "https://cards.scryfall.io/normal/front/9/5/95970f74-0f28-4d81-9fbd-cb49f5d5eebc.jpg?1712319532",
+      "produced_by": ["Swan Song"]
+    }
+  ],
+  "decklist": [
+    { "name": "Chandra, Legacy of Fire", "type": "Planeswalker" },
+    { "name": "Chandra, Torch of Defiance", "type": "Planeswalker" },
+    { "name": "Chandra, Awakened Inferno", "type": "Planeswalker" },
+    { "name": "Chandra, Hope's Beacon", "type": "Planeswalker" },
+    { "name": "Elspeth, Sun's Champion", "type": "Planeswalker" },
+    { "name": "Elspeth, Storm Slayer", "type": "Planeswalker" },
+    { "name": "Elspeth Tirel", "type": "Planeswalker" },
+    { "name": "Ajani, Outland Chaperone", "type": "Planeswalker" },
+    { "name": "The Eternal Wanderer", "type": "Planeswalker" },
+    { "name": "Ral, Crackling Wit", "type": "Planeswalker" },
+    { "name": "Teferi, Time Raveler", "type": "Planeswalker" },
+    { "name": "Narset, Parter of Veils", "type": "Planeswalker" },
+    { "name": "The Wanderer", "type": "Planeswalker" },
+    { "name": "Jace, the Mind Sculptor", "type": "Planeswalker" },
+    { "name": "Teferi, Hero of Dominaria", "type": "Planeswalker" },
+    { "name": "Teferi, Temporal Archmage", "type": "Planeswalker" },
+    { "name": "Teferi, Master of Time", "type": "Planeswalker" },
+    { "name": "Tezzeret the Seeker", "type": "Planeswalker" },
+    { "name": "Teferi, Who Slows the Sunset", "type": "Planeswalker" },
+    { "name": "Sarkhan the Masterless", "type": "Planeswalker" },
+    { "name": "Ajani Steadfast", "type": "Planeswalker" },
+    { "name": "Venser, the Sojourner", "type": "Planeswalker" },
+    { "name": "Grand Abolisher", "type": "Creature" },
+    { "name": "Voice of Victory", "type": "Creature" },
+    { "name": "Deepglow Skate", "type": "Creature" },
+    { "name": "Spark Double", "type": "Creature" },
+    { "name": "Humility", "type": "Enchantment" },
+    { "name": "High Noon", "type": "Enchantment" },
+    { "name": "Sphere of Safety", "type": "Enchantment" },
+    { "name": "Smothering Tithe", "type": "Enchantment" },
+    { "name": "Oath of Teferi", "type": "Enchantment" },
+    { "name": "Rowan's Talent", "type": "Enchantment" },
+    { "name": "Rhystic Study", "type": "Enchantment" },
+    { "name": "Stasis", "type": "Enchantment" },
+    { "name": "Sol Ring", "type": "Artifact" },
+    { "name": "Arcane Signet", "type": "Artifact" },
+    { "name": "Talisman of Conviction", "type": "Artifact" },
+    { "name": "Talisman of Progress", "type": "Artifact" },
+    { "name": "Talisman of Creativity", "type": "Artifact" },
+    { "name": "Fellwar Stone", "type": "Artifact" },
+    { "name": "Chrome Mox", "type": "Artifact" },
+    { "name": "Mox Amber", "type": "Artifact" },
+    { "name": "The Chain Veil", "type": "Artifact" },
+    { "name": "Ichormoon Gauntlet", "type": "Artifact" },
+    { "name": "Norn's Annex", "type": "Artifact" },
+    { "name": "Teferi's Puzzle Box", "type": "Artifact" },
+    { "name": "Swords to Plowshares", "type": "Instant" },
+    { "name": "Path to Exile", "type": "Instant" },
+    { "name": "Counterspell", "type": "Instant" },
+    { "name": "Mana Drain", "type": "Instant" },
+    { "name": "Dovin's Veto", "type": "Instant" },
+    { "name": "Swan Song", "type": "Instant" },
+    { "name": "Fierce Guardianship", "type": "Instant" },
+    { "name": "Deflecting Swat", "type": "Instant" },
+    { "name": "Teferi's Protection", "type": "Instant" },
+    { "name": "Semester's End", "type": "Instant" },
+    { "name": "Cyclonic Rift", "type": "Instant" },
+    { "name": "Enlightened Tutor", "type": "Instant" },
+    { "name": "Mystical Tutor", "type": "Instant" },
+    { "name": "Dusk // Dawn", "type": "Sorcery" },
+    { "name": "The Battle of Bywater", "type": "Sorcery" },
+    { "name": "Supreme Verdict", "type": "Sorcery" },
+    { "name": "Blasphemous Act", "type": "Sorcery" },
+    { "name": "Hallowed Fountain", "type": "Land" },
+    { "name": "Steam Vents", "type": "Land" },
+    { "name": "Sacred Foundry", "type": "Land" },
+    { "name": "Flooded Strand", "type": "Land" },
+    { "name": "Scalding Tarn", "type": "Land" },
+    { "name": "Arid Mesa", "type": "Land" },
+    { "name": "Seachrome Coast", "type": "Land" },
+    { "name": "Spirebluff Canal", "type": "Land" },
+    { "name": "Inspiring Vantage", "type": "Land" },
+    { "name": "Adarkar Wastes", "type": "Land" },
+    { "name": "Shivan Reef", "type": "Land" },
+    { "name": "Battlefield Forge", "type": "Land" },
+    { "name": "Glacial Fortress", "type": "Land" },
+    { "name": "Sulfur Falls", "type": "Land" },
+    { "name": "Clifftop Retreat", "type": "Land" },
+    { "name": "Mystic Gate", "type": "Land" },
+    { "name": "Cascade Bluffs", "type": "Land" },
+    { "name": "Rugged Prairie", "type": "Land" },
+    { "name": "Command Tower", "type": "Land" },
+    { "name": "Exotic Orchard", "type": "Land" },
+    { "name": "City of Brass", "type": "Land" },
+    { "name": "Mana Confluence", "type": "Land" },
+    { "name": "Ancient Tomb", "type": "Land" },
+    { "name": "Interplanar Beacon", "type": "Land" },
+    { "name": "Karn's Bastion", "type": "Land" },
+    { "name": "Hall of Heliod's Generosity", "type": "Land" },
+    { "name": "Reflecting Pool", "type": "Land" },
+    { "name": "Plains", "type": "Land", "quantity": 4 },
+    { "name": "Island", "type": "Land", "quantity": 3 },
+    { "name": "Mountain", "type": "Land", "quantity": 2 }
+  ]
+}

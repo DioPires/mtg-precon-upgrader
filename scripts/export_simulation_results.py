@@ -27,6 +27,7 @@ import mana_simulation_atraxa as sim_atraxa
 import mana_simulation_wubrg as sim_wubrg
 import mana_simulation_mono_blue as sim_mono_blue
 import mana_simulation_azorius as sim_azorius
+import mana_simulation_jeskai as sim_jeskai
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -535,6 +536,19 @@ def export_azorius(metadata: dict) -> dict:
     return result
 
 
+def export_jeskai(metadata: dict) -> dict:
+    """Export Planar Decree (Jeskai Commodore Guff) simulation."""
+    return _export_colored(
+        sim_module=sim_jeskai,
+        deck_id="planar-decree",
+        deck_name="Planar Decree",
+        commander_name="Commodore Guff",
+        commander_cmc=4,
+        colors=["W", "U", "R"],
+        metadata=metadata,
+    )
+
+
 # --- Main ---
 
 
@@ -548,6 +562,7 @@ DECKS = [
     ("mutant-multiplication", "Mutant Multiplication", export_wubrg),
     ("azure-dominion", "Azure Dominion", export_mono_blue),
     ("genesis-protocol", "Genesis Protocol", export_azorius),
+    ("planar-decree", "Planar Decree", export_jeskai),
 ]
 
 
