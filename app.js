@@ -2973,13 +2973,16 @@ function parseOwnedFile(text) {
 function updateOwnedStatus() {
   const statusEl = document.getElementById('shopping-owned-status');
   const clearBtn = document.getElementById('shopping-owned-clear');
+  const hintEl = document.querySelector('.shopping-upload-hint');
   if (ownedCards.size > 0) {
     const totalCards = [...ownedCards.values()].reduce((s, q) => s + q, 0);
     statusEl.textContent = `${totalCards} owned cards loaded`;
     clearBtn.style.display = '';
+    if (hintEl) hintEl.style.display = 'none';
   } else {
-    statusEl.textContent = 'Upload owned cards';
+    statusEl.textContent = 'Import owned cards';
     clearBtn.style.display = 'none';
+    if (hintEl) hintEl.style.display = '';
   }
 }
 
