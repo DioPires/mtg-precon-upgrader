@@ -3423,33 +3423,99 @@ footer a:hover {
 }
 
 .analytics-header {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
 .analytics-header h2 {
-  font-family: 'Cinzel', serif;
-  font-size: 1.4rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  letter-spacing: 0.03em;
+  line-height: 34px;
 }
 
 .sim-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   padding: 4px 12px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 20px;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  background: var(--accent-green);
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
   font-family: 'Fira Code', monospace;
+  letter-spacing: 0.02em;
 }
 
-.sim-badge .sim-count {
-  color: var(--accent-purple);
-  font-weight: 600;
+.analytics-header .deck-name {
+  margin-left: auto;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* KPI Cards Row */
+.sim-kpi-cards {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.sim-kpi-card {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 24px 20px;
+  gap: 12px;
+}
+
+.sim-kpi-ring {
+  width: 80px;
+  height: 80px;
+}
+
+.sim-kpi-ring-bg {
+  fill: none;
+  stroke: var(--border-subtle);
+  stroke-width: 8;
+}
+
+.sim-kpi-ring-fill {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 1s ease-out;
+}
+
+.sim-kpi-ring-fill.purple { stroke: #7B5EA7; }
+.sim-kpi-ring-fill.green { stroke: var(--accent-green); }
+.sim-kpi-ring-fill.amber { stroke: var(--accent-purple); }
+
+.sim-kpi-value {
+  font-family: 'Fira Code', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 34px;
+}
+
+.sim-kpi-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
 }
 
 .sim-chart-container {
@@ -3467,12 +3533,13 @@ footer a:hover {
 }
 
 .sim-chart-panel .stats-panel-title {
-  font-family: 'Cinzel', serif;
-  font-size: 0.9rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
+  letter-spacing: 0.04em;
   margin-bottom: 16px;
-  text-align: center;
+  text-align: left;
 }
 
 .sim-chart-svg {
@@ -3482,17 +3549,19 @@ footer a:hover {
 }
 
 .sim-chart-band {
-  fill: rgba(212, 133, 58, 0.15);
+  fill: rgba(212, 133, 58, 0.1);
 }
 
 .sim-chart-median {
   fill: none;
-  stroke: var(--accent-purple);
-  stroke-width: 2;
+  stroke: #D4853A;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
 }
 
 .sim-chart-dot {
-  fill: var(--accent-purple);
+  fill: #D4853A;
   cursor: pointer;
 }
 
@@ -3503,13 +3572,14 @@ footer a:hover {
 
 .sim-chart-grid {
   stroke: var(--border-subtle);
-  stroke-width: 0.5;
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
 }
 
 .sim-chart-axis-label {
-  fill: var(--text-secondary);
+  fill: var(--text-muted);
   font-size: 11px;
-  font-family: 'Fira Code', monospace;
+  font-family: 'Inter', sans-serif;
 }
 
 .sim-chart-tooltip {
@@ -3523,12 +3593,12 @@ footer a:hover {
   pointer-events: none;
   z-index: 100;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .sim-chart-tooltip .tt-turn {
   font-weight: 600;
-  color: var(--accent-purple);
+  color: #D4853A;
 }
 
 .sim-chart-legend {
@@ -3549,14 +3619,14 @@ footer a:hover {
 .sim-chart-legend .legend-band {
   width: 16px;
   height: 8px;
-  background: rgba(212, 133, 58, 0.25);
+  background: rgba(212, 133, 58, 0.15);
   border-radius: 2px;
 }
 
 .sim-chart-legend .legend-line {
   width: 16px;
   height: 2px;
-  background: var(--accent-purple);
+  background: #D4853A;
   border-radius: 1px;
 }
 
@@ -3591,14 +3661,14 @@ footer a:hover {
 
 .sim-metric-ring-bg {
   fill: none;
-  stroke: var(--bg-elevated);
-  stroke-width: 6;
+  stroke: var(--border-subtle);
+  stroke-width: 8;
 }
 
 .sim-metric-ring-fill {
   fill: none;
-  stroke: var(--accent-purple);
-  stroke-width: 6;
+  stroke: #7B5EA7;
+  stroke-width: 8;
   stroke-linecap: round;
   transform: rotate(-90deg);
   transform-origin: center;
@@ -3646,11 +3716,12 @@ footer a:hover {
 }
 
 .sim-detail-panel h4 {
-  font-family: 'Cinzel', serif;
-  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 16px;
-  text-align: center;
+  text-align: left;
 }
 
 .sim-bar-row {
@@ -3697,6 +3768,59 @@ footer a:hover {
   flex-shrink: 0;
 }
 
+/* Assessment Cards Row */
+.sim-assessment-cards {
+  display: flex;
+  gap: 16px;
+}
+
+.sim-assessment-card {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.sim-assessment-card .assessment-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.sim-assessment-card .assessment-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sim-assessment-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sim-assessment-badge.green { background: var(--accent-green); }
+.sim-assessment-badge.amber { background: #D4853A; }
+.sim-assessment-badge.red { background: var(--accent-red); }
+
+.sim-assessment-card .assessment-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Legacy badge classes (kept for backwards compat) */
 .sim-assessment-badges {
   display: flex;
   flex-wrap: wrap;
@@ -3749,7 +3873,7 @@ footer a:hover {
 }
 
 .analytics-empty-state h3 {
-  font-family: 'Cinzel', serif;
+  font-family: 'Playfair Display', serif;
   color: var(--text-primary);
   margin-bottom: 8px;
   font-size: 1.1rem;
@@ -3762,6 +3886,25 @@ footer a:hover {
 }
 
 @media (max-width: 768px) {
+  .analytics-header {
+    flex-wrap: wrap;
+  }
+
+  .analytics-header .deck-name {
+    width: 100%;
+    margin-left: 0;
+    order: -1;
+    margin-bottom: 4px;
+  }
+
+  .sim-kpi-cards {
+    flex-direction: column;
+  }
+
+  .sim-assessment-cards {
+    flex-direction: column;
+  }
+
   .sim-metrics-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -3774,6 +3917,10 @@ footer a:hover {
 @media (max-width: 480px) {
   .sim-metrics-grid {
     grid-template-columns: 1fr;
+  }
+
+  .analytics-header h2 {
+    font-size: 22px;
   }
 }
 

@@ -3528,18 +3528,23 @@ async function renderAnalyticsView() {
 
   let html = '';
 
-  // Header
+  // Header — B design: "Scrying Pool" + green sim badge + deck name right
   const numGames = simData.metadata?.numGames || 0;
   const numTurns = simData.metadata?.numTurns || 10;
+  const deckLabel = currentDeck ? `${escapeHtml(currentDeck.name)} — ${escapeHtml(currentDeck.commander)}` : '';
   html += `<div class="analytics-header">
-    <h2>Mana Simulation</h2>
-    <span class="sim-badge"><span class="sim-count">${numGames.toLocaleString()}</span> games simulated</span>
+    <h2>Scrying Pool</h2>
+    <span class="sim-badge">${numGames.toLocaleString()} simulations</span>
+    <span class="deck-name">${deckLabel}</span>
   </div>`;
 
-  // Mana chart placeholder
+  // KPI Cards — 3 donut ring cards
+  html += renderKpiCards(simData);
+
+  // Mana chart
   html += `<div class="sim-chart-container">
     <div class="sim-chart-panel" id="sim-mana-chart-panel">
-      <h3 class="stats-panel-title">Available Mana by Turn</h3>
+      <h3 class="stats-panel-title">Mana Available by Turn</h3>
       <div id="sim-mana-chart"></div>
       <div class="sim-chart-legend">
         <span><span class="legend-band"></span> P25 - P75 range</span>
@@ -3548,16 +3553,12 @@ async function renderAnalyticsView() {
     </div>
   </div>`;
 
-  // Metrics placeholders
+  // Assessment Cards — B design: 3 cards with colored badges
+  html += renderAssessmentCards(simData);
+
+  // Detailed panels (metrics + breakdowns)
   html += `<div class="sim-metrics-grid" id="sim-metrics-grid"></div>`;
-
-  // Details placeholders
   html += `<div class="sim-details"><div class="sim-details-grid" id="sim-details-grid"></div></div>`;
-
-  // Assessment badges
-  if (simData.assessment) {
-    html += `<div class="sim-assessment-badges" id="sim-assessment-badges"></div>`;
-  }
 
   contentEl.innerHTML = html;
   contentEl.style.display = '';
@@ -3567,6 +3568,111 @@ async function renderAnalyticsView() {
   renderSimMetrics(simData);
   renderDetailedBreakdown(simData);
   setupSimAnimations();
+}
+
+function renderKpiCards(simData) {
+  const circ = 2 * Math.PI * 32;
+
+  // KPI 1: Avg Available Mana T3
+  const manaT3 = simData.manaByTurn?.['3']?.median ?? 0;
+  const manaT3Pct = Math.min(1, manaT3 / 6);
+  const manaT3Offset = circ * (1 - manaT3Pct);
+
+  // KPI 2: Ramp by Turn 3 (% of games with 4+ mana by T3)
+  const rampT3 = simData.manaByTurn?.['3'] ? Math.round((simData.manaByTurn['3'].p75 / (simData.manaByTurn['3'].p75 + 1)) * 100) : 0;
+  const rampPct = simData.curveEfficiency?.castableByTurn?.['3'] || rampT3;
+  const rampOffset = circ * (1 - Math.min(1, rampPct / 100));
+
+  // KPI 3: Commander Timing
+  const cmdTurn = simData.commanderTiming?.medianTurn || 0;
+  const cmdPct = cmdTurn > 0 ? Math.min(1, 1 - (cmdTurn - 1) / 9) : 0;
+  const cmdOffset = circ * (1 - cmdPct);
+
+  return `<div class="sim-kpi-cards">
+    <div class="sim-kpi-card">
+      <svg class="sim-kpi-ring" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32" class="sim-kpi-ring-bg"/>
+        <circle cx="40" cy="40" r="32" class="sim-kpi-ring-fill purple" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${manaT3Offset.toFixed(1)}"/>
+      </svg>
+      <span class="sim-kpi-value">${manaT3.toFixed(1)}</span>
+      <span class="sim-kpi-label">Avg Available Mana T3</span>
+    </div>
+    <div class="sim-kpi-card">
+      <svg class="sim-kpi-ring" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32" class="sim-kpi-ring-bg"/>
+        <circle cx="40" cy="40" r="32" class="sim-kpi-ring-fill green" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${rampOffset.toFixed(1)}"/>
+      </svg>
+      <span class="sim-kpi-value">${Math.round(rampPct)}%</span>
+      <span class="sim-kpi-label">Ramp by Turn 3</span>
+    </div>
+    <div class="sim-kpi-card">
+      <svg class="sim-kpi-ring" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32" class="sim-kpi-ring-bg"/>
+        <circle cx="40" cy="40" r="32" class="sim-kpi-ring-fill amber" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${cmdOffset.toFixed(1)}"/>
+      </svg>
+      <span class="sim-kpi-value">T${cmdTurn}</span>
+      <span class="sim-kpi-label">Commander Timing</span>
+    </div>
+  </div>`;
+}
+
+function renderAssessmentCards(simData) {
+  const a = simData.assessment;
+  if (!a) return '';
+
+  function badgeColor(verdict) {
+    const v = (verdict || '').toLowerCase();
+    if (['strong', 'adequate', 'excellent', 'acceptable', 'on curve', 'ahead of curve'].includes(v)) return 'green';
+    if (['light', 'behind curve'].includes(v)) return 'amber';
+    if (['concerning', 'unreliable'].includes(v)) return 'red';
+    return 'amber';
+  }
+
+  function badgeLabel(verdict) {
+    if (!verdict) return '';
+    return verdict.charAt(0).toUpperCase() + verdict.slice(1);
+  }
+
+  let cards = '';
+
+  if (a.manaAdequacy) {
+    const desc = a.manaAdequacyDetail || 'Fast mana + consistent color fixing';
+    cards += `<div class="sim-assessment-card">
+      <span class="assessment-title">Mana Base</span>
+      <div class="assessment-row">
+        <span class="sim-assessment-badge ${badgeColor(a.manaAdequacy)}">${escapeHtml(badgeLabel(a.manaAdequacy))}</span>
+        <span class="assessment-desc">${escapeHtml(desc)}</span>
+      </div>
+    </div>`;
+  }
+
+  if (a.commanderTiming) {
+    const cmdCmc = simData.commanderTiming?.cmc || '';
+    const cmdTurn = simData.commanderTiming?.medianTurn || '';
+    const desc = cmdCmc ? `Castable on T${cmdTurn} (CMC ${cmdCmc})` : '';
+    cards += `<div class="sim-assessment-card">
+      <span class="assessment-title">Commander Timing</span>
+      <div class="assessment-row">
+        <span class="sim-assessment-badge ${badgeColor(a.commanderTiming)}">${escapeHtml(badgeLabel(a.commanderTiming))}</span>
+        <span class="assessment-desc">${escapeHtml(desc)}</span>
+      </div>
+    </div>`;
+  }
+
+  if (a.mulliganVerdict) {
+    const keepRate = simData.mulliganStats?.keptFirst;
+    const desc = keepRate != null ? `${keepRate.toFixed(0)}% keep rate` : '';
+    cards += `<div class="sim-assessment-card">
+      <span class="assessment-title">Ramp Density</span>
+      <div class="assessment-row">
+        <span class="sim-assessment-badge ${badgeColor(a.mulliganVerdict)}">${escapeHtml(badgeLabel(a.mulliganVerdict))}</span>
+        <span class="assessment-desc">${escapeHtml(desc)}</span>
+      </div>
+    </div>`;
+  }
+
+  if (!cards) return '';
+  return `<div class="sim-assessment-cards">${cards}</div>`;
 }
 
 function renderManaRampChart(manaByTurn, numTurns) {
@@ -3604,7 +3710,7 @@ function renderManaRampChart(manaByTurn, numTurns) {
   // Grid lines
   let gridLines = '';
   const gridSteps = Math.ceil(maxMana);
-  for (let g = 0; g <= gridSteps; g += 2) {
+  for (let g = 0; g <= gridSteps; g += 3) {
     const y = yScale(g);
     if (y >= padT && y <= padT + chartH) {
       gridLines += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${padL + chartW}" y2="${y.toFixed(1)}" class="sim-chart-grid"/>`;
@@ -3616,7 +3722,7 @@ function renderManaRampChart(manaByTurn, numTurns) {
   let xLabels = turns.map((t, i) => `<text x="${xScale(i).toFixed(1)}" y="${(padT + chartH + 20).toFixed(1)}" class="sim-chart-axis-label" text-anchor="middle">T${t.turn}</text>`).join('');
 
   // Dots for hover
-  let dots = turns.map((t, i) => `<circle cx="${xScale(i).toFixed(1)}" cy="${yScale(t.median).toFixed(1)}" r="3.5" class="sim-chart-dot" data-turn="${t.turn}" data-median="${t.median}" data-p25="${t.p25}" data-p75="${t.p75}" data-mean="${t.mean}"/>`).join('');
+  let dots = turns.map((t, i) => `<circle cx="${xScale(i).toFixed(1)}" cy="${yScale(t.median).toFixed(1)}" r="4" class="sim-chart-dot" data-turn="${t.turn}" data-median="${t.median}" data-p25="${t.p25}" data-p75="${t.p75}" data-mean="${t.mean}"/>`).join('');
 
   container.innerHTML = `<div style="position:relative;">
     <svg class="sim-chart-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
@@ -3846,25 +3952,6 @@ function renderDetailedBreakdown(simData) {
   }
 
   grid.innerHTML = html;
-
-  // Assessment badges
-  if (simData.assessment) {
-    const badgesEl = document.getElementById('sim-assessment-badges');
-    if (badgesEl) {
-      let badgeHtml = '';
-      const a = simData.assessment;
-      if (a.manaAdequacy) {
-        badgeHtml += `<span class="sim-badge-item ${escapeHtml(a.manaAdequacy)}">Mana: ${escapeHtml(a.manaAdequacy)}</span>`;
-      }
-      if (a.mulliganVerdict) {
-        badgeHtml += `<span class="sim-badge-item ${escapeHtml(a.mulliganVerdict)}">Mulligans: ${escapeHtml(a.mulliganVerdict)}</span>`;
-      }
-      if (a.commanderTiming) {
-        badgeHtml += `<span class="sim-badge-item" data-verdict="${escapeHtml(a.commanderTiming)}">Commander: ${escapeHtml(a.commanderTiming)}</span>`;
-      }
-      badgesEl.innerHTML = badgeHtml;
-    }
-  }
 }
 
 function setupSimAnimations() {
