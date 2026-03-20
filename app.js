@@ -19,6 +19,10 @@ function throttle(fn, limit) {
 }
 
 
+function getEffectiveCommander() {
+  return currentDeck?.commander || '';
+}
+
 // === SECURITY: HTML ESCAPING ===
 function escapeHtml(str) {
   if (typeof str !== 'string') return String(str ?? '');
