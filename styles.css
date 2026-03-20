@@ -4507,3 +4507,79 @@ footer a:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* === MOBILE RESPONSIVENESS FIXES === */
+
+@media (max-width: 768px) {
+  /* View toggle: horizontal scroll instead of overflow */
+  .view-toggle {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: flex-start;
+  }
+  .view-toggle::-webkit-scrollbar {
+    display: none;
+  }
+  .view-toggle-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .view-toggle-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Header: reduce vertical padding */
+  header {
+    padding: 20px 0;
+    margin-bottom: 16px;
+  }
+
+  /* Selector section: tighter padding */
+  .selector-section {
+    padding: 12px;
+  }
+
+  /* Deck gallery cards: tighter on small screens */
+  .deck-gallery-card {
+    padding: 12px;
+    gap: 10px;
+  }
+  .deck-gallery-art {
+    width: 48px;
+    height: 48px;
+  }
+  .deck-gallery-name {
+    font-size: 0.9rem;
+  }
+
+  /* Overview stats: wrap instead of overflow */
+  .overview-stats {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* Constellation map: reduce height for mobile */
+  #synergy-constellation svg {
+    height: 300px;
+  }
+
+  /* Search modal: more padding on edges */
+  .search-modal {
+    padding: 10vh 12px 0;
+  }
+
+  /* Commander card: prevent oversized preview */
+  .commander-card-preview {
+    max-width: 100%;
+  }
+
+  /* Bracket bar: reduce vertical margin */
+  .bracket-bar {
+    margin: 16px 0 24px;
+  }
+}

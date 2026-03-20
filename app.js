@@ -2245,35 +2245,54 @@ function renderConstellationMap() {
 
   svg.innerHTML = svgContent;
 
-  // Hover interactions
+  // Hover + touch interactions
+  let activeConstellationNode = null;
+
+  function highlightNode(cardName) {
+    svg.querySelectorAll('.edge-line').forEach(line => {
+      const isConnected = line.dataset.from === cardName || line.dataset.to === cardName;
+      line.classList.toggle('active', isConnected);
+    });
+    const connected = new Set([cardName]);
+    edges.forEach(([a, b]) => {
+      if (a === cardName) connected.add(b);
+      if (b === cardName) connected.add(a);
+    });
+    svg.querySelectorAll('.node-circle').forEach(n => {
+      n.classList.toggle('dimmed', !connected.has(n.dataset.card));
+    });
+    svg.querySelectorAll('.node-label').forEach(l => {
+      const labelCard = cards.find(c => l.textContent.startsWith(c.slice(0, 18)));
+      l.classList.toggle('dimmed', labelCard && !connected.has(labelCard));
+    });
+    showCardPreview(cardName);
+    activeConstellationNode = cardName;
+  }
+
+  function clearHighlight() {
+    svg.querySelectorAll('.edge-line').forEach(l => l.classList.remove('active'));
+    svg.querySelectorAll('.node-circle, .node-label').forEach(n => n.classList.remove('dimmed'));
+    activeConstellationNode = null;
+  }
+
   svg.querySelectorAll('.node-circle').forEach(circle => {
-    circle.addEventListener('mouseenter', () => {
+    circle.addEventListener('mouseenter', () => highlightNode(circle.dataset.card));
+    circle.addEventListener('mouseleave', clearHighlight);
+    // Touch: tap to highlight, tap again or tap elsewhere to clear
+    circle.addEventListener('click', (e) => {
+      e.stopPropagation();
       const cardName = circle.dataset.card;
-      // Highlight connected edges
-      svg.querySelectorAll('.edge-line').forEach(line => {
-        const isConnected = line.dataset.from === cardName || line.dataset.to === cardName;
-        line.classList.toggle('active', isConnected);
-      });
-      // Dim unconnected nodes
-      const connected = new Set([cardName]);
-      edges.forEach(([a, b]) => {
-        if (a === cardName) connected.add(b);
-        if (b === cardName) connected.add(a);
-      });
-      svg.querySelectorAll('.node-circle').forEach(n => {
-        n.classList.toggle('dimmed', !connected.has(n.dataset.card));
-      });
-      svg.querySelectorAll('.node-label').forEach(l => {
-        const labelCard = cards.find(c => l.textContent.startsWith(c.slice(0, 18)));
-        l.classList.toggle('dimmed', labelCard && !connected.has(labelCard));
-      });
-      // Also trigger card preview
-      showCardPreview(cardName);
+      if (activeConstellationNode === cardName) {
+        clearHighlight();
+      } else {
+        highlightNode(cardName);
+      }
     });
-    circle.addEventListener('mouseleave', () => {
-      svg.querySelectorAll('.edge-line').forEach(l => l.classList.remove('active'));
-      svg.querySelectorAll('.node-circle, .node-label').forEach(n => n.classList.remove('dimmed'));
-    });
+  });
+
+  // Tap outside nodes to clear highlight
+  svg.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('node-circle')) clearHighlight();
   });
 }
 
