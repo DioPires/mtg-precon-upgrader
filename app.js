@@ -1427,9 +1427,7 @@ async function selectDeck(deckId) {
     updateTabStates();
 
     // Show content (guard for analytics/shopping views)
-    if (currentView !== 'shopping') {
-      upgradeOverview.style.display = 'block';
-    }
+    upgradeOverview.style.display = 'block';
     if (currentView !== 'analytics' && currentView !== 'shopping') {
       mainContent.style.display = 'grid';
     }
@@ -1438,7 +1436,7 @@ async function selectDeck(deckId) {
     if (currentView === 'analytics') {
       renderAnalyticsView();
     } else if (currentView === 'shopping') {
-      // Shopping view manages its own state
+      renderShoppingList();
     } else {
       renderContent();
     }
@@ -2478,7 +2476,7 @@ async function copyToClipboard(text, button) {
     await navigator.clipboard.writeText(text);
     button.classList.add('success');
     const originalText = button.innerHTML;
-    button.innerHTML = button.innerHTML.replace(/Copy Deck|Copy Selected \(\d+\)|Copy Shopping List|Export List|Export Cuts/, 'Copied!');
+    button.innerHTML = button.innerHTML.replace(/Copy Deck|Copy Selected \(\d+\)|Copy Shopping List|Moxfield|Archidekt|Copy|Export List|Export Cuts/, 'Copied!');
     setTimeout(() => {
       button.classList.remove('success');
       button.innerHTML = originalText;
@@ -2496,15 +2494,13 @@ function generateAddsListExport() {
   return currentDeck.highlights.map(card => `1 ${card.name}`).join('\n');
 }
 
-function openMoxfieldImport(deckList) {
-  // Moxfield doesn't have a direct import URL, but we can copy and redirect
-  copyToClipboard(deckList, document.getElementById('copy-deck-btn'));
+function openMoxfieldImport(deckList, button) {
+  copyToClipboard(deckList, button || document.getElementById('copy-deck-btn'));
   window.open('https://www.moxfield.com/decks/new', '_blank');
 }
 
-function openArchidektImport(deckList) {
-  // Archidekt has an import feature
-  copyToClipboard(deckList, document.getElementById('copy-deck-btn'));
+function openArchidektImport(deckList, button) {
+  copyToClipboard(deckList, button || document.getElementById('copy-deck-btn'));
   window.open('https://archidekt.com/decks', '_blank');
 }
 
@@ -2837,9 +2833,7 @@ function resetFilters() {
 function savePreferences() {
   const prefs = {
     lastDeck: currentDeckId,
-    filters: filterState,
-    shoppingCollectionText: document.getElementById('shopping-textarea')?.value || '',
-    selectedShoppingDecks: getSelectedShoppingDeckIds()
+    filters: filterState
   };
   try { localStorage.setItem('grimoire-prefs', JSON.stringify(prefs)); } catch (e) { /* quota exceeded or private mode */ }
 }
@@ -2855,188 +2849,129 @@ function loadPreferences() {
   }
 }
 
-// === COLLECTION CHECKER ===
-const BASIC_LANDS = new Set([
-  'plains', 'island', 'swamp', 'mountain', 'forest', 'wastes',
-  'snow-covered plains', 'snow-covered island', 'snow-covered swamp',
-  'snow-covered mountain', 'snow-covered forest'
-]);
-
-function parseCollectionInput(text) {
-  const collection = new Map();
-  for (const line of text.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('#')) continue;
-    const match = trimmed.match(/^(\d+)[xX]?\s+(.+)$/);
-    const qty = match ? parseInt(match[1], 10) : 1;
-    const name = (match ? match[2] : trimmed).trim().toLowerCase();
-    if (name) collection.set(name, (collection.get(name) || 0) + qty);
-  }
-  return collection;
-}
-
 // === SHOPPING LIST ===
 
-function getSelectedShoppingDeckIds() {
-  return Array.from(document.querySelectorAll('.shopping-deck-checkbox:checked')).map(cb => cb.value);
+let shoppingSortMode = 'type'; // 'type' or 'az'
+
+function getShoppingChecked() {
+  if (!currentDeckId) return new Set();
+  try {
+    const raw = localStorage.getItem(`grimoire-shopping-${currentDeckId}`);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch { return new Set(); }
 }
 
-function updateShoppingDeckInfo() {
-  const ids = getSelectedShoppingDeckIds();
-  const checkBtn = document.getElementById('shopping-check-btn');
-  checkBtn.disabled = ids.length === 0;
+function saveShoppingChecked(checkedSet) {
+  if (!currentDeckId) return;
+  try {
+    localStorage.setItem(`grimoire-shopping-${currentDeckId}`, JSON.stringify([...checkedSet]));
+  } catch { /* quota exceeded */ }
 }
 
-function populateShoppingDeckList() {
-  const list = document.getElementById('shopping-deck-list');
-  const allDecks = deckIndex?.commanders || [];
-  const prefs = loadPreferences();
+function renderShoppingList() {
+  const cardsEl = document.getElementById('shopping-cards');
+  const emptyEl = document.getElementById('shopping-empty');
+  const summaryBar = document.getElementById('shopping-summary-bar');
+  const deckNameEl = document.getElementById('shopping-deck-name');
+  const priceEl = document.getElementById('shopping-price');
+  const countEl = document.getElementById('shopping-card-count');
 
-  // Migrate old collectionText if present
-  const textarea = document.getElementById('shopping-textarea');
-  if (prefs?.collectionText && !prefs?.shoppingCollectionText && textarea) {
-    textarea.value = prefs.collectionText;
-  } else if (prefs?.shoppingCollectionText && textarea) {
-    textarea.value = prefs.shoppingCollectionText;
+  if (!currentDeck || !currentDeck.decklist) {
+    cardsEl.innerHTML = '';
+    summaryBar.style.display = 'none';
+    emptyEl.style.display = 'block';
+    deckNameEl.textContent = '';
+    return;
   }
 
-  const savedSelection = prefs?.selectedShoppingDecks || [];
+  emptyEl.style.display = 'none';
+  summaryBar.style.display = 'flex';
+  deckNameEl.textContent = currentDeck.name || '';
+  priceEl.textContent = currentDeck.cost || '--';
 
-  list.innerHTML = allDecks.map(cmd => {
-    const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cmd.commander)}&version=art_crop`;
-    const colors = (cmd.colors || []).map(c => `<div class="deck-gallery-pip pip-${c}"></div>`).join('');
-    const bracket = cmd.bracket ? `<span class="deck-gallery-bracket" data-bracket="${escapeHtml(cmd.bracket)}">B${escapeHtml(cmd.bracket)}</span>` : '';
-    const setLabel = cmd.lastUpdatedSet ? `<div class="deck-gallery-set">Updated for ${escapeHtml(cmd.lastUpdatedSet)}</div>` : '';
-    const checked = savedSelection.includes(cmd.id) ? 'checked' : '';
-    return `
-      <label class="shopping-deck-card ${checked ? 'selected' : ''}" for="shop-deck-${escapeHtml(cmd.id)}">
-        <input type="checkbox" id="shop-deck-${escapeHtml(cmd.id)}"
-               value="${escapeHtml(cmd.id)}" class="shopping-deck-checkbox" ${checked}>
-        <img class="deck-gallery-art" src="${artUrl}" alt="${escapeHtml(cmd.commander)}" loading="lazy">
-        <div class="deck-gallery-info">
-          <div class="deck-gallery-name">${escapeHtml(cmd.name)}</div>
-          <div class="deck-gallery-subtitle">${escapeHtml(cmd.theme || '')}</div>
-          <div class="deck-gallery-meta">
-            <div class="deck-gallery-colors">${colors}</div>
-            ${bracket}
-          </div>
-          ${setLabel}
-        </div>
-      </label>`;
-  }).join('');
+  const effCmd = getEffectiveCommander();
+  const partnerName = currentDeck.partner || '';
+  const commanderNames = new Set([effCmd]);
+  if (partnerName) commanderNames.add(partnerName);
 
-  updateShoppingDeckInfo();
-}
+  const deckList = currentDeck.decklist.map(card => ({ ...card }));
+  let totalCount = deckList.reduce((sum, c) => sum + (c.quantity || 1), 0);
+  totalCount += partnerName ? 2 : 1; // commanders
+  countEl.textContent = totalCount;
 
-function mergeDecks(decks) {
-  const merged = new Map();
-  const provenance = new Map();
+  const checked = getShoppingChecked();
+  let html = '';
 
-  for (const deck of decks) {
-    const deckNeeds = new Map();
+  if (shoppingSortMode === 'type') {
+    const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
+    const grouped = {};
 
-    if (deck.decklist) {
-      for (const card of deck.decklist) {
-        const key = card.name.toLowerCase();
-        if (BASIC_LANDS.has(key)) continue;
-        const qty = card.quantity || 1;
-        const existing = deckNeeds.get(key);
-        deckNeeds.set(key, { name: card.name, qty: Math.max(existing?.qty || 0, qty) });
+    deckList.forEach(card => {
+      let type = card.type || 'Other';
+      if (!typeOrder.includes(type)) {
+        if (type.includes('Creature')) type = 'Creature';
+        else if (type.includes('Land')) type = 'Land';
+        else if (type.includes('Artifact')) type = 'Artifact';
+        else if (type.includes('Enchantment')) type = 'Enchantment';
+        else type = 'Other';
       }
-    }
+      if (!grouped[type]) grouped[type] = [];
+      grouped[type].push(card);
+    });
 
-    // Commander + partner (read directly from deck, not global state)
-    if (deck.commander) {
-      deckNeeds.set(deck.commander.toLowerCase(), { name: deck.commander, qty: 1 });
-    }
-    if (deck.partner) {
-      deckNeeds.set(deck.partner.toLowerCase(), { name: deck.partner, qty: 1 });
-    }
+    // Sort cards within each category by CMC
+    Object.keys(grouped).forEach(type => { grouped[type].sort(compareByCmc); });
 
-    for (const [key, entry] of deckNeeds) {
-      const existing = merged.get(key);
-      if (!existing || entry.qty > existing.qty) {
-        merged.set(key, { name: entry.name, qty: entry.qty });
-      }
-      if (!provenance.has(key)) provenance.set(key, new Set());
-      provenance.get(key).add(deck.name);
+    // Commander group
+    html += `<div class="shopping-group-header"><span class="shopping-group-name">Commander${partnerName ? 's' : ''}</span><span class="shopping-group-count">(${partnerName ? 2 : 1})</span></div>`;
+    html += renderShoppingCardRow(effCmd, checked);
+    if (partnerName) html += renderShoppingCardRow(partnerName, checked);
+
+    typeOrder.forEach(type => {
+      const cards = type === 'Creature'
+        ? (grouped[type] || []).filter(c => !commanderNames.has(c.name))
+        : (grouped[type] || []);
+      if (cards.length === 0) return;
+      const count = cards.reduce((s, c) => s + (c.quantity || 1), 0);
+      html += `<div class="shopping-group-header"><span class="shopping-group-name">${escapeHtml(type)}s</span><span class="shopping-group-count">(${count})</span></div>`;
+      cards.forEach(card => {
+        const qty = card.quantity > 1 ? card.quantity : 0;
+        html += renderShoppingCardRow(card.name, checked, qty, type !== 'Land');
+      });
+    });
+
+    if (grouped['Other']?.length > 0) {
+      html += `<div class="shopping-group-header"><span class="shopping-group-name">Other</span><span class="shopping-group-count">(${grouped['Other'].length})</span></div>`;
+      grouped['Other'].forEach(card => {
+        html += renderShoppingCardRow(card.name, checked, 0, true);
+      });
     }
+  } else {
+    // A-Z sort
+    const allCards = [
+      { name: effCmd, quantity: 1 },
+      ...(partnerName ? [{ name: partnerName, quantity: 1 }] : []),
+      ...deckList.filter(c => !commanderNames.has(c.name))
+    ];
+    allCards.sort((a, b) => a.name.localeCompare(b.name));
+    allCards.forEach(card => {
+      const qty = (card.quantity || 1) > 1 ? card.quantity : 0;
+      html += renderShoppingCardRow(card.name, checked, qty, true);
+    });
   }
 
-  return { merged, provenance };
+  cardsEl.innerHTML = html;
 }
 
-function checkCollectionMulti(decks, collection) {
-  const { merged, provenance } = mergeDecks(decks);
-  const owned = [];
-  const needed = [];
-  let ownedCount = 0;
-
-  for (const [key, entry] of merged) {
-    const have = collection.get(key) || 0;
-    const deckNames = Array.from(provenance.get(key) || []);
-    if (have >= entry.qty) {
-      owned.push({ name: entry.name, qty: entry.qty, decks: deckNames });
-      ownedCount++;
-    } else {
-      needed.push({ name: entry.name, qty: entry.qty, deficit: entry.qty - have, decks: deckNames });
-    }
-  }
-
-  needed.sort((a, b) => a.name.localeCompare(b.name));
-  owned.sort((a, b) => a.name.localeCompare(b.name));
-
-  return { owned, needed, totalCards: merged.size, ownedCount, deckCount: decks.length };
-}
-
-function renderShoppingResults(results) {
-  const container = document.getElementById('shopping-results');
-  const pct = results.totalCards > 0 ? Math.round((results.ownedCount / results.totalCards) * 100) : 0;
-
-  let html = `
-    <div class="shopping-progress"><div class="shopping-progress-fill" style="width:${pct}%"></div></div>
-    <div class="shopping-summary">You own ${results.ownedCount} of ${results.totalCards} unique cards (${pct}%)</div>
-  `;
-
-  if (results.warning) {
-    html += `<div class="shopping-summary" style="color:var(--accent-orange,#e8a33d)">${escapeHtml(results.warning)}</div>`;
-  }
-
-  if (results.needed.length > 0) {
-    html += `<div class="shopping-section-title">Cards to Buy (${results.needed.length})</div>`;
-    html += '<ul class="shopping-card-list">';
-    for (const card of results.needed) {
-      const url = getCardmarketUrl(card.name);
-      const deckTags = results.deckCount > 1 && card.decks.length > 0
-        ? ` <span class="shopping-card-decks">${card.decks.map(d => escapeHtml(d)).join(', ')}</span>`
-        : '';
-      html += `<li>${card.deficit}x <a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(card.name)}</a>${deckTags}</li>`;
-    }
-    html += '</ul>';
-  }
-
-  if (results.owned.length > 0) {
-    html += `<div class="shopping-section-title" id="shopping-owned-toggle">Already Owned (${results.owned.length}) &#x25B8;</div>`;
-    html += '<ul class="shopping-card-list shopping-owned-list" id="shopping-owned-list">';
-    for (const card of results.owned) {
-      html += `<li>${escapeHtml(card.name)}</li>`;
-    }
-    html += '</ul>';
-  }
-
-  container.innerHTML = html;
-  container.style.display = 'block';
-
-  document.getElementById('shopping-owned-toggle')?.addEventListener('click', () => {
-    const list = document.getElementById('shopping-owned-list');
-    const toggle = document.getElementById('shopping-owned-toggle');
-    list.classList.toggle('open');
-    toggle.textContent = toggle.textContent.replace(/[▸▾]/, list.classList.contains('open') ? '▾' : '▸');
-  });
-}
-
-function generateShoppingListExport(results) {
-  return results.needed.map(c => `${c.deficit}x ${c.name}`).join('\n');
+function renderShoppingCardRow(cardName, checkedSet, quantity, showMana) {
+  const isChecked = checkedSet.has(cardName);
+  const mana = showMana !== false ? getMvDisplay(cardName).replace(/<[^>]*>/g, '').replace(/[()]/g, '') : '';
+  const qtyPrefix = quantity > 1 ? `${quantity}x ` : '';
+  return `<div class="shopping-card-row${isChecked ? ' checked' : ''}" data-card-name="${escapeHtml(cardName)}">
+    <input type="checkbox" class="shopping-card-checkbox"${isChecked ? ' checked' : ''}>
+    <span class="shopping-card-name">${escapeHtml(qtyPrefix)}${escapeHtml(cardName)}</span>
+    ${mana ? `<span class="shopping-card-mana">${escapeHtml(mana)}</span>` : ''}
+  </div>`;
 }
 
 // === MOBILE PREVIEW MODAL ===
@@ -3260,94 +3195,58 @@ if (searchHint) {
   });
 }
 
-// Shopping list deck checkbox changes
-document.getElementById('shopping-deck-list')?.addEventListener('change', (e) => {
-  if (e.target.classList.contains('shopping-deck-checkbox')) {
-    e.target.closest('.shopping-deck-card')?.classList.toggle('selected', e.target.checked);
-  }
-  updateShoppingDeckInfo();
-  savePreferences();
-});
-
-// Shopping list Select All / Deselect All
-document.querySelector('.shopping-select-all')?.addEventListener('click', () => {
-  document.querySelectorAll('.shopping-deck-checkbox').forEach(cb => {
-    cb.checked = true;
-    cb.closest('.shopping-deck-card')?.classList.add('selected');
-  });
-  updateShoppingDeckInfo();
-  savePreferences();
-});
-document.querySelector('.shopping-deselect-all')?.addEventListener('click', () => {
-  document.querySelectorAll('.shopping-deck-checkbox').forEach(cb => {
-    cb.checked = false;
-    cb.closest('.shopping-deck-card')?.classList.remove('selected');
-  });
-  updateShoppingDeckInfo();
-  savePreferences();
-});
-
-// Shopping list check button
-document.getElementById('shopping-check-btn')?.addEventListener('click', async () => {
-  const selectedIds = getSelectedShoppingDeckIds();
-  if (selectedIds.length === 0) return;
-
-  const checkBtn = document.getElementById('shopping-check-btn');
-  checkBtn.disabled = true;
-  checkBtn.textContent = 'Loading...';
-
-  try {
-    const settled = await Promise.allSettled(selectedIds.map(id => loadDeckData(id)));
-    const decks = settled.filter(r => r.status === 'fulfilled').map(r => r.value);
-    const failed = settled.filter(r => r.status === 'rejected');
-
-    if (decks.length === 0) {
-      document.getElementById('shopping-results').innerHTML = '<div class="shopping-summary">Failed to load deck data.</div>';
-      document.getElementById('shopping-results').style.display = 'block';
-      return;
+// Shopping list card checkbox toggle
+document.getElementById('shopping-cards')?.addEventListener('change', (e) => {
+  if (e.target.classList.contains('shopping-card-checkbox')) {
+    const row = e.target.closest('.shopping-card-row');
+    if (!row) return;
+    const cardName = row.dataset.cardName;
+    const checked = getShoppingChecked();
+    if (e.target.checked) {
+      checked.add(cardName);
+      row.classList.add('checked');
+    } else {
+      checked.delete(cardName);
+      row.classList.remove('checked');
     }
-
-    const text = document.getElementById('shopping-textarea').value;
-    const collection = parseCollectionInput(text);
-    const results = checkCollectionMulti(decks, collection);
-
-    if (failed.length > 0) {
-      results.warning = `${failed.length} deck(s) failed to load and were skipped.`;
-    }
-
-    renderShoppingResults(results);
-
-    const copyBtn = document.getElementById('shopping-copy-btn');
-    const clearBtn = document.getElementById('shopping-clear-btn');
-    copyBtn.style.display = results.needed.length > 0 ? '' : 'none';
-    clearBtn.style.display = '';
-    copyBtn.onclick = () => copyToClipboard(generateShoppingListExport(results), copyBtn);
-  } finally {
-    checkBtn.disabled = false;
-    checkBtn.textContent = 'Check Collection';
+    saveShoppingChecked(checked);
   }
 });
 
-// Shopping list clear button
-document.getElementById('shopping-clear-btn')?.addEventListener('click', () => {
-  document.getElementById('shopping-textarea').value = '';
-  document.getElementById('shopping-results').style.display = 'none';
-  document.getElementById('shopping-results').innerHTML = '';
-  document.getElementById('shopping-copy-btn').style.display = 'none';
-  document.getElementById('shopping-clear-btn').style.display = 'none';
-  savePreferences();
+// Shopping list row click (toggle checkbox)
+document.getElementById('shopping-cards')?.addEventListener('click', (e) => {
+  if (e.target.classList.contains('shopping-card-checkbox')) return; // handled above
+  const row = e.target.closest('.shopping-card-row');
+  if (!row) return;
+  const cb = row.querySelector('.shopping-card-checkbox');
+  if (cb) {
+    cb.checked = !cb.checked;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+  }
 });
 
-// Shopping list file upload
-document.getElementById('shopping-file-input')?.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    document.getElementById('shopping-textarea').value = reader.result;
-  };
-  reader.readAsText(file);
-  e.target.value = '';
+// Shopping list sort toggle
+document.querySelector('.shopping-sort-toggle')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('.shopping-sort-btn');
+  if (!btn || btn.classList.contains('active')) return;
+  document.querySelectorAll('.shopping-sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  shoppingSortMode = btn.dataset.sort;
+  renderShoppingList();
+});
+
+// Shopping list export buttons
+document.getElementById('shopping-copy-btn')?.addEventListener('click', () => {
+  const text = generateDecklistExport('plain');
+  if (text) copyToClipboard(text, document.getElementById('shopping-copy-btn'));
+});
+document.getElementById('shopping-moxfield-btn')?.addEventListener('click', () => {
+  const text = generateDecklistExport('moxfield');
+  if (text) openMoxfieldImport(text, document.getElementById('shopping-moxfield-btn'));
+});
+document.getElementById('shopping-archidekt-btn')?.addEventListener('click', () => {
+  const text = generateDecklistExport('archidekt');
+  if (text) openArchidektImport(text, document.getElementById('shopping-archidekt-btn'));
 });
 
 // Search modal
@@ -3427,6 +3326,9 @@ function switchView(view) {
       updateUrlHash();
     } else if (view === 'shopping') {
       shoppingView.style.display = 'block';
+      selectorSection.style.display = '';
+      if (currentDeck) upgradeOverview.style.display = 'block';
+      renderShoppingList();
       savePreferences();
       if (currentDeckId) {
         history.replaceState(null, '', `#view=shopping&deck=${encodeURIComponent(currentDeckId)}`);
@@ -4025,7 +3927,6 @@ async function initializeApp() {
 
   // Load deck index
   await loadDeckIndex();
-  populateShoppingDeckList();
 
   // Determine which deck to load
   const deckToLoad = urlParams.deck || prefs?.lastDeck;

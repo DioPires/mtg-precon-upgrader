@@ -521,31 +521,35 @@
 
     <!-- Shopping List View -->
     <div class="shopping-view" id="shopping-view" style="display: none;">
-      <div class="shopping-layout">
-        <div class="shopping-deck-panel">
-          <h3>Select Decks</h3>
-          <div class="shopping-deck-controls">
-            <span class="shopping-select-all" role="button" tabindex="0">Select All</span>
-            <span class="shopping-deselect-all" role="button" tabindex="0">Deselect All</span>
-          </div>
-          <div class="shopping-deck-list" id="shopping-deck-list"></div>
+      <div class="shopping-header">
+        <h2 class="shopping-title">Shopping List</h2>
+        <span class="shopping-deck-name" id="shopping-deck-name"></span>
+      </div>
+      <div class="shopping-separator"></div>
+      <div class="shopping-summary-bar" id="shopping-summary-bar">
+        <div class="shopping-summary-stat">
+          <span class="shopping-summary-label">Estimated Total</span>
+          <span class="shopping-price" id="shopping-price">--</span>
         </div>
-        <div class="shopping-collection-panel">
-          <div class="shopping-input-section">
-            <div class="shopping-input-row">
-              <label for="shopping-textarea">Paste your collection or upload a file</label>
-              <label class="collection-file-btn" for="shopping-file-input">Upload File</label>
-              <input type="file" id="shopping-file-input" accept=".txt,.csv,.dec,.dek" hidden>
-            </div>
-            <textarea id="shopping-textarea" placeholder="1x Sol Ring&#10;Arcane Signet&#10;Command Tower&#10;..."></textarea>
-          </div>
-          <div class="shopping-actions">
-            <button id="shopping-check-btn" disabled>Check Collection</button>
-            <button id="shopping-copy-btn" style="display:none">Copy Shopping List</button>
-            <button id="shopping-clear-btn" style="display:none">Clear</button>
-          </div>
-          <div id="shopping-results" style="display:none"></div>
+        <div class="shopping-summary-divider"></div>
+        <div class="shopping-summary-stat">
+          <span class="shopping-summary-label">Cards</span>
+          <span class="shopping-count" id="shopping-card-count">0</span>
         </div>
+        <div class="shopping-summary-actions">
+          <button class="shopping-btn-primary" id="shopping-copy-btn">Copy</button>
+          <button class="shopping-btn-secondary" id="shopping-moxfield-btn">Moxfield</button>
+          <button class="shopping-btn-secondary" id="shopping-archidekt-btn">Archidekt</button>
+        </div>
+      </div>
+      <div class="shopping-sort-toggle">
+        <span class="shopping-sort-label">Sort by</span>
+        <button class="shopping-sort-btn active" data-sort="type">Type</button>
+        <button class="shopping-sort-btn" data-sort="az">A-Z</button>
+      </div>
+      <div class="shopping-cards" id="shopping-cards"></div>
+      <div class="shopping-empty" id="shopping-empty" style="display: none;">
+        Select a deck from the Grimoire to view its shopping list.
       </div>
     </div>
 
