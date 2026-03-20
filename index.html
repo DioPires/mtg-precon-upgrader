@@ -578,6 +578,15 @@
     .deck-gallery-bracket[data-bracket="3"] { background: color-mix(in srgb, var(--bracket-upgraded) 20%, transparent); color: var(--bracket-upgraded); }
     .deck-gallery-bracket[data-bracket="4"] { background: color-mix(in srgb, var(--bracket-optimized) 20%, transparent); color: var(--bracket-optimized); }
     .deck-gallery-bracket[data-bracket="5"] { background: color-mix(in srgb, var(--bracket-cedh) 20%, transparent); color: var(--bracket-cedh); }
+    .deck-gallery-set {
+      font-size: 0.65rem;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     /* Deck reveal sequence */
     @keyframes commanderEntrance {
@@ -6460,6 +6469,9 @@
         const bracketPill = cmd.bracket
           ? `<span class="deck-gallery-bracket" data-bracket="${escapeHtml(cmd.bracket)}">B${escapeHtml(cmd.bracket)}</span>`
           : '';
+        const setPill = cmd.lastUpdatedSet
+          ? `<div class="deck-gallery-set">Updated for ${escapeHtml(cmd.lastUpdatedSet)}</div>`
+          : '';
         return `
           <div class="deck-gallery-card" data-deck-id="${escapeHtml(cmd.id)}" tabindex="0" role="button" aria-label="Select ${escapeHtml(cmd.name)}">
             <img class="deck-gallery-art" src="${artUrl}" alt="${escapeHtml(cmd.commander)}" loading="lazy" />
@@ -6470,6 +6482,7 @@
                 <div class="deck-gallery-colors">${colorPips}</div>
                 ${bracketPill}
               </div>
+              ${setPill}
             </div>
           </div>
         `;
@@ -8044,6 +8057,7 @@
         const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cmd.commander)}&version=art_crop`;
         const colors = (cmd.colors || []).map(c => `<div class="deck-gallery-pip pip-${c}"></div>`).join('');
         const bracket = cmd.bracket ? `<span class="deck-gallery-bracket" data-bracket="${escapeHtml(cmd.bracket)}">B${escapeHtml(cmd.bracket)}</span>` : '';
+        const setLabel = cmd.lastUpdatedSet ? `<div class="deck-gallery-set">Updated for ${escapeHtml(cmd.lastUpdatedSet)}</div>` : '';
         const checked = savedSelection.includes(cmd.id) ? 'checked' : '';
         return `
           <label class="shopping-deck-card ${checked ? 'selected' : ''}" for="shop-deck-${escapeHtml(cmd.id)}">
@@ -8057,6 +8071,7 @@
                 <div class="deck-gallery-colors">${colors}</div>
                 ${bracket}
               </div>
+              ${setLabel}
             </div>
           </label>`;
       }).join('');
