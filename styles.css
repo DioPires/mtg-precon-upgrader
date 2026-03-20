@@ -216,8 +216,8 @@ html {
 }
 
 .shopping-deck-chip.selected {
-  background: var(--accent-purple);
-  border-color: var(--accent-purple);
+  background: linear-gradient(135deg, var(--chip-color-start, var(--accent-purple)), var(--chip-color-end, var(--accent-purple)));
+  border-color: transparent;
   color: #fff;
 }
 
@@ -286,6 +286,7 @@ html {
   gap: 24px;
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
+  border-top: 2px solid var(--deck-accent, var(--accent-purple));
 }
 
 .shopping-summary-stat {
@@ -465,6 +466,7 @@ html {
   gap: 12px;
   border-bottom: 1px solid rgba(232, 224, 212, 0.6);
   transition: background 0.1s;
+  cursor: default;
 }
 
 .shopping-card-row:hover {
@@ -488,12 +490,108 @@ html {
 }
 
 .shopping-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.shopping-empty-icon {
+  color: var(--text-muted);
+  opacity: 0.4;
+  margin-bottom: 4px;
+}
+
+.shopping-empty-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+.shopping-empty-subtitle {
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   color: var(--text-muted);
-  text-align: center;
-  padding: 60px 20px;
+  max-width: 320px;
+  line-height: 1.5;
 }
+
+/* Floating card preview tooltip */
+.shopping-card-tooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px) scale(0.97);
+  transition: opacity 0.15s, transform 0.15s;
+  width: 200px;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.25));
+}
+
+.shopping-card-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.shopping-card-tooltip img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+
+.shopping-tooltip-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  text-align: center;
+  margin-top: 6px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+
+.shopping-card-row:hover .shopping-card-name {
+  color: var(--deck-accent, var(--accent-purple));
+}
+
+/* Staggered fade-in for shopping card rows */
+@keyframes shoppingRowIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.shopping-row-animate .shopping-card-row,
+.shopping-row-animate .shopping-group-header {
+  animation: shoppingRowIn 0.25s ease both;
+}
+
+/* Mana symbols in shopping list */
+.shopping-card-mana-symbols {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.shopping-card-mana-symbols .mana-symbol-img {
+  width: 14px;
+  height: 14px;
+}
+
+/* Deck-colored left border on card rows */
+.shopping-section-body .shopping-card-row {
+  border-left: 2px solid transparent;
+  transition: background 0.1s, border-color 0.15s;
+}
+
+.shopping-section-body .shopping-card-row:hover {
+  border-left-color: var(--deck-accent, var(--accent-purple));
+}
+
+
 
 @media (max-width: 768px) {
   .shopping-view {
@@ -523,6 +621,10 @@ html {
   .shopping-summary-actions {
     width: 100%;
     margin-left: 0;
+  }
+
+  .shopping-card-tooltip {
+    display: none;
   }
 }
 
@@ -739,12 +841,15 @@ header p {
 @media (prefers-reduced-motion: reduce) {
   .deck-reveal .commander-card-preview,
   .deck-reveal .cascade-in,
-  .bracket-segment.animate-fill {
+  .bracket-segment.animate-fill,
+  .shopping-row-animate .shopping-card-row,
+  .shopping-row-animate .shopping-group-header {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
-  .view-container {
+  .view-container,
+  .shopping-card-tooltip {
     transition: none !important;
   }
 }

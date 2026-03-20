@@ -1119,6 +1119,76 @@ function setupDelegatedListeners() {
     }
   });
 
+  // --- Shopping list card rows ---
+  const shoppingView = document.getElementById('shopping-view');
+  let lastHoveredShoppingCard = null;
+  const shoppingTooltip = document.getElementById('shopping-card-tooltip');
+  const shoppingTooltipImg = document.getElementById('shopping-tooltip-img');
+  const shoppingTooltipName = document.getElementById('shopping-tooltip-name');
+  let shoppingTooltipCard = null;
+
+  function positionShoppingTooltip(e) {
+    if (!shoppingTooltip.classList.contains('visible')) return;
+    const pad = 16;
+    const tooltipW = 200;
+    const tooltipH = 290;
+    let x = e.clientX + pad;
+    let y = e.clientY - tooltipH / 2;
+    if (x + tooltipW > window.innerWidth - pad) x = e.clientX - tooltipW - pad;
+    if (y < pad) y = pad;
+    if (y + tooltipH > window.innerHeight - pad) y = window.innerHeight - tooltipH - pad;
+    shoppingTooltip.style.left = x + 'px';
+    shoppingTooltip.style.top = y + 'px';
+  }
+
+  function showShoppingTooltip(cardName, e) {
+    if (window.innerWidth <= 768) return;
+    shoppingTooltipCard = cardName;
+    shoppingTooltipName.textContent = cardName;
+    const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cardName)}`;
+    if (imageCache.has(cardName)) {
+      shoppingTooltipImg.src = imageCache.get(cardName);
+    } else {
+      shoppingTooltipImg.src = imageUrl;
+      const preload = new Image();
+      preload.onload = () => imageCache.set(cardName, imageUrl);
+      preload.src = imageUrl;
+    }
+    positionShoppingTooltip(e);
+    shoppingTooltip.classList.add('visible');
+  }
+
+  function hideShoppingTooltip() {
+    shoppingTooltip.classList.remove('visible');
+    shoppingTooltipCard = null;
+    lastHoveredShoppingCard = null;
+  }
+
+  shoppingView.addEventListener('mouseover', (e) => {
+    const row = e.target.closest('.shopping-card-row');
+    if (row && row !== lastHoveredShoppingCard) {
+      lastHoveredShoppingCard = row;
+      showShoppingTooltip(row.dataset.cardName, e);
+    }
+  });
+  shoppingView.addEventListener('mousemove', (e) => {
+    if (shoppingTooltipCard) positionShoppingTooltip(e);
+  });
+  shoppingView.addEventListener('mouseout', (e) => {
+    const row = e.target.closest('.shopping-card-row');
+    if (row === lastHoveredShoppingCard && (!e.relatedTarget || !row.contains(e.relatedTarget))) {
+      hideShoppingTooltip();
+    }
+  });
+  shoppingView.addEventListener('click', (e) => {
+    const row = e.target.closest('.shopping-card-row');
+    if (row) {
+      if (window.innerWidth <= 768) {
+        showMobilePreview(row.dataset.cardName);
+      }
+    }
+  });
+
 }
 
 // === SCRYFALL API ===
@@ -2916,12 +2986,18 @@ function updateOwnedStatus() {
 function renderShoppingDeckChips() {
   const chipsEl = document.getElementById('shopping-deck-chips');
   if (!deckIndex?.commanders) return;
+  const chipColorMap = { C: '#6B7280', W: '#c4b998', U: '#1a7cc0', B: '#4a3a5c', R: '#c23028', G: '#2d8a56' };
   chipsEl.innerHTML = deckIndex.commanders.map(cmd => {
     const selected = shoppingSelectedDecks.has(cmd.id);
-    const colorPips = (cmd.colors || []).map(c =>
+    const colors = cmd.colors || ['C'];
+    const colorPips = colors.map(c =>
       `<span class="shopping-chip-pip pip-${escapeHtml(c)}"></span>`
     ).join('');
-    return `<button class="shopping-deck-chip${selected ? ' selected' : ''}" data-deck-id="${escapeHtml(cmd.id)}">
+    const chipColors = colors.map(c => chipColorMap[c] || chipColorMap.C);
+    const gradientStart = chipColors[0];
+    const gradientEnd = chipColors.length > 1 ? chipColors[chipColors.length - 1] : chipColors[0];
+    const chipStyle = selected ? `style="--chip-color-start:${gradientStart};--chip-color-end:${gradientEnd}"` : '';
+    return `<button class="shopping-deck-chip${selected ? ' selected' : ''}" data-deck-id="${escapeHtml(cmd.id)}" ${chipStyle}>
       ${colorPips}<span class="shopping-chip-name">${escapeHtml(cmd.name)}</span>
     </button>`;
   }).join('');
@@ -3021,10 +3097,11 @@ function renderShoppingCardRows(cards, sortMode) {
 
 function renderShoppingCardRow(cardName, quantity, showMana) {
   const qtyPrefix = quantity > 1 ? `${quantity}x ` : '';
-  const mana = showMana !== false ? getMvDisplay(cardName).replace(/<[^>]*>/g, '').replace(/[()]/g, '') : '';
+  const metadata = cardMetadataCache.get(cardName);
+  const manaHtml = (showMana !== false && metadata?.mana_cost) ? `<span class="shopping-card-mana-symbols">${renderManaCost(metadata.mana_cost)}</span>` : '';
   return `<div class="shopping-card-row" data-card-name="${escapeHtml(cardName)}">
     <span class="shopping-card-name">${escapeHtml(qtyPrefix)}${escapeHtml(cardName)}</span>
-    ${mana ? `<span class="shopping-card-mana">${escapeHtml(mana)}</span>` : ''}
+    ${manaHtml}
   </div>`;
 }
 
@@ -3064,7 +3141,7 @@ async function renderShoppingList() {
     sortToggle.style.display = 'none';
     buySection.style.display = 'none';
     ownSection.style.display = 'none';
-    emptyEl.style.display = 'block';
+    emptyEl.style.display = 'flex';
     return;
   }
 
@@ -3086,6 +3163,7 @@ async function renderShoppingList() {
     buySection.style.display = '';
     buySectionCount.textContent = `(${buyTotal})`;
     buyCardsEl.innerHTML = renderShoppingCardRows(buy, shoppingSortMode);
+    animateShoppingRows(buyCardsEl);
   } else {
     buySection.style.display = 'none';
   }
@@ -3095,9 +3173,18 @@ async function renderShoppingList() {
     ownSection.style.display = '';
     ownSectionCount.textContent = `(${ownTotal})`;
     ownCardsEl.innerHTML = renderShoppingCardRows(own, shoppingSortMode);
+    animateShoppingRows(ownCardsEl);
   } else {
     ownSection.style.display = 'none';
   }
+}
+
+function animateShoppingRows(container) {
+  const rows = container.querySelectorAll('.shopping-card-row, .shopping-group-header');
+  rows.forEach((row, i) => {
+    row.style.animationDelay = `${Math.min(i * 0.02, 0.6)}s`;
+  });
+  container.classList.add('shopping-row-animate');
 }
 
 // === MOBILE PREVIEW MODAL ===
