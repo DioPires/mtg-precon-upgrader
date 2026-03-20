@@ -1440,6 +1440,8 @@ async function selectDeck(deckId) {
     if (currentView === 'analytics') {
       renderAnalyticsView();
     } else if (currentView === 'shopping') {
+      // Add this deck to shopping selection and re-render
+      shoppingSelectedDecks.add(deckId);
       renderShoppingList();
     } else {
       renderContent();
@@ -2856,126 +2858,255 @@ function loadPreferences() {
 // === SHOPPING LIST ===
 
 let shoppingSortMode = 'type'; // 'type' or 'az'
+const shoppingSelectedDecks = new Set(); // deck IDs selected for shopping
+let ownedCards = new Map(); // cardName -> quantity owned
 
-function getShoppingChecked() {
-  if (!currentDeckId) return new Set();
+function loadOwnedCards() {
   try {
-    const raw = localStorage.getItem(`grimoire-shopping-${currentDeckId}`);
-    return raw ? new Set(JSON.parse(raw)) : new Set();
-  } catch { return new Set(); }
+    const raw = localStorage.getItem('grimoire-owned-cards');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      ownedCards = new Map(parsed);
+      updateOwnedStatus();
+    }
+  } catch { /* ignore */ }
 }
 
-function saveShoppingChecked(checkedSet) {
-  if (!currentDeckId) return;
+function saveOwnedCards() {
   try {
-    localStorage.setItem(`grimoire-shopping-${currentDeckId}`, JSON.stringify([...checkedSet]));
+    localStorage.setItem('grimoire-owned-cards', JSON.stringify([...ownedCards]));
   } catch { /* quota exceeded */ }
 }
 
-function renderShoppingList() {
-  const cardsEl = document.getElementById('shopping-cards');
-  const emptyEl = document.getElementById('shopping-empty');
-  const summaryBar = document.getElementById('shopping-summary-bar');
-  const deckNameEl = document.getElementById('shopping-deck-name');
-  const priceEl = document.getElementById('shopping-price');
-  const countEl = document.getElementById('shopping-card-count');
-
-  if (!currentDeck || !currentDeck.decklist) {
-    cardsEl.innerHTML = '';
-    summaryBar.style.display = 'none';
-    emptyEl.style.display = 'block';
-    deckNameEl.textContent = '';
-    return;
-  }
-
-  emptyEl.style.display = 'none';
-  summaryBar.style.display = 'flex';
-  deckNameEl.textContent = currentDeck.name || '';
-  priceEl.textContent = currentDeck.cost || '--';
-
-  const effCmd = getEffectiveCommander();
-  const partnerName = currentDeck.partner || '';
-  const commanderNames = new Set([effCmd]);
-  if (partnerName) commanderNames.add(partnerName);
-
-  const deckList = currentDeck.decklist.map(card => ({ ...card }));
-  let totalCount = deckList.reduce((sum, c) => sum + (c.quantity || 1), 0);
-  totalCount += partnerName ? 2 : 1; // commanders
-  countEl.textContent = totalCount;
-
-  const checked = getShoppingChecked();
-  let html = '';
-
-  if (shoppingSortMode === 'type') {
-    const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
-    const grouped = {};
-
-    deckList.forEach(card => {
-      let type = card.type || 'Other';
-      if (!typeOrder.includes(type)) {
-        if (type.includes('Creature')) type = 'Creature';
-        else if (type.includes('Land')) type = 'Land';
-        else if (type.includes('Artifact')) type = 'Artifact';
-        else if (type.includes('Enchantment')) type = 'Enchantment';
-        else type = 'Other';
-      }
-      if (!grouped[type]) grouped[type] = [];
-      grouped[type].push(card);
-    });
-
-    // Sort cards within each category by CMC
-    Object.keys(grouped).forEach(type => { grouped[type].sort(compareByCmc); });
-
-    // Commander group
-    html += `<div class="shopping-group-header"><span class="shopping-group-name">Commander${partnerName ? 's' : ''}</span><span class="shopping-group-count">(${partnerName ? 2 : 1})</span></div>`;
-    html += renderShoppingCardRow(effCmd, checked);
-    if (partnerName) html += renderShoppingCardRow(partnerName, checked);
-
-    typeOrder.forEach(type => {
-      const cards = type === 'Creature'
-        ? (grouped[type] || []).filter(c => !commanderNames.has(c.name))
-        : (grouped[type] || []);
-      if (cards.length === 0) return;
-      const count = cards.reduce((s, c) => s + (c.quantity || 1), 0);
-      html += `<div class="shopping-group-header"><span class="shopping-group-name">${escapeHtml(type)}s</span><span class="shopping-group-count">(${count})</span></div>`;
-      cards.forEach(card => {
-        const qty = card.quantity > 1 ? card.quantity : 0;
-        html += renderShoppingCardRow(card.name, checked, qty, type !== 'Land');
-      });
-    });
-
-    if (grouped['Other']?.length > 0) {
-      html += `<div class="shopping-group-header"><span class="shopping-group-name">Other</span><span class="shopping-group-count">(${grouped['Other'].length})</span></div>`;
-      grouped['Other'].forEach(card => {
-        html += renderShoppingCardRow(card.name, checked, 0, true);
-      });
-    }
-  } else {
-    // A-Z sort
-    const allCards = [
-      { name: effCmd, quantity: 1 },
-      ...(partnerName ? [{ name: partnerName, quantity: 1 }] : []),
-      ...deckList.filter(c => !commanderNames.has(c.name))
-    ];
-    allCards.sort((a, b) => a.name.localeCompare(b.name));
-    allCards.forEach(card => {
-      const qty = (card.quantity || 1) > 1 ? card.quantity : 0;
-      html += renderShoppingCardRow(card.name, checked, qty, true);
-    });
-  }
-
-  cardsEl.innerHTML = html;
+function clearOwnedCards() {
+  ownedCards = new Map();
+  localStorage.removeItem('grimoire-owned-cards');
+  updateOwnedStatus();
+  renderShoppingList();
 }
 
-function renderShoppingCardRow(cardName, checkedSet, quantity, showMana) {
-  const isChecked = checkedSet.has(cardName);
-  const mana = showMana !== false ? getMvDisplay(cardName).replace(/<[^>]*>/g, '').replace(/[()]/g, '') : '';
+function parseOwnedFile(text) {
+  const cards = new Map();
+  text.split('\n').forEach(line => {
+    line = line.trim();
+    if (!line) return;
+    const match = line.match(/^(\d+)x?\s+(.+)$/);
+    if (match) {
+      const qty = parseInt(match[1], 10);
+      const name = match[2].trim();
+      cards.set(name, (cards.get(name) || 0) + qty);
+    }
+  });
+  return cards;
+}
+
+function updateOwnedStatus() {
+  const statusEl = document.getElementById('shopping-owned-status');
+  const clearBtn = document.getElementById('shopping-owned-clear');
+  if (ownedCards.size > 0) {
+    const totalCards = [...ownedCards.values()].reduce((s, q) => s + q, 0);
+    statusEl.textContent = `${totalCards} owned cards loaded`;
+    clearBtn.style.display = '';
+  } else {
+    statusEl.textContent = 'Upload owned cards';
+    clearBtn.style.display = 'none';
+  }
+}
+
+function renderShoppingDeckChips() {
+  const chipsEl = document.getElementById('shopping-deck-chips');
+  if (!deckIndex?.commanders) return;
+  chipsEl.innerHTML = deckIndex.commanders.map(cmd => {
+    const selected = shoppingSelectedDecks.has(cmd.id);
+    const colorPips = (cmd.colors || []).map(c =>
+      `<span class="shopping-chip-pip pip-${escapeHtml(c)}"></span>`
+    ).join('');
+    return `<button class="shopping-deck-chip${selected ? ' selected' : ''}" data-deck-id="${escapeHtml(cmd.id)}">
+      ${colorPips}<span class="shopping-chip-name">${escapeHtml(cmd.name)}</span>
+    </button>`;
+  }).join('');
+}
+
+function normalizeCardType(type) {
+  const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land'];
+  if (typeOrder.includes(type)) return type;
+  if (type?.includes('Creature')) return 'Creature';
+  if (type?.includes('Land')) return 'Land';
+  if (type?.includes('Artifact')) return 'Artifact';
+  if (type?.includes('Enchantment')) return 'Enchantment';
+  return 'Other';
+}
+
+async function aggregateShoppingCards() {
+  const cardMap = new Map(); // name -> { quantity, type, isCommander }
+  for (const deckId of shoppingSelectedDecks) {
+    const deck = await loadDeckData(deckId);
+    if (!deck?.decklist) continue;
+    const cmd = deck.commander || '';
+    const partner = deck.partner || '';
+    // Add commander(s)
+    if (cmd) {
+      const entry = cardMap.get(cmd) || { quantity: 0, type: 'Creature', isCommander: true };
+      entry.quantity += 1;
+      entry.isCommander = true;
+      cardMap.set(cmd, entry);
+    }
+    if (partner) {
+      const entry = cardMap.get(partner) || { quantity: 0, type: 'Creature', isCommander: true };
+      entry.quantity += 1;
+      entry.isCommander = true;
+      cardMap.set(partner, entry);
+    }
+    // Add decklist cards
+    deck.decklist.forEach(card => {
+      const name = card.name;
+      const qty = card.quantity || 1;
+      const existing = cardMap.get(name);
+      if (existing) {
+        existing.quantity += qty;
+      } else {
+        cardMap.set(name, { quantity: qty, type: normalizeCardType(card.type || 'Other'), isCommander: false });
+      }
+    });
+  }
+  return cardMap;
+}
+
+function splitByOwnership(cardMap) {
+  const buy = [];
+  const own = [];
+  for (const [name, info] of cardMap) {
+    const ownedQty = ownedCards.get(name) || 0;
+    const needQty = Math.max(0, info.quantity - ownedQty);
+    const ownQty = Math.min(info.quantity, ownedQty);
+    if (needQty > 0) {
+      buy.push({ name, quantity: needQty, type: info.type, isCommander: info.isCommander });
+    }
+    if (ownQty > 0) {
+      own.push({ name, quantity: ownQty, type: info.type, isCommander: info.isCommander });
+    }
+  }
+  return { buy, own };
+}
+
+function renderShoppingCardRows(cards, sortMode) {
+  if (sortMode === 'az') {
+    cards.sort((a, b) => a.name.localeCompare(b.name));
+    return cards.map(c => renderShoppingCardRow(c.name, c.quantity, c.type !== 'Land')).join('');
+  }
+  // Group by type
+  const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land', 'Other'];
+  const grouped = {};
+  const commanders = cards.filter(c => c.isCommander);
+  const nonCmd = cards.filter(c => !c.isCommander);
+  nonCmd.forEach(card => {
+    const t = card.type;
+    if (!grouped[t]) grouped[t] = [];
+    grouped[t].push(card);
+  });
+  Object.values(grouped).forEach(arr => arr.sort(compareByCmc));
+
+  let html = '';
+  if (commanders.length > 0) {
+    const cmdCount = commanders.reduce((s, c) => s + c.quantity, 0);
+    html += `<div class="shopping-group-header"><span class="shopping-group-name">Commander${commanders.length > 1 ? 's' : ''}</span><span class="shopping-group-count">(${cmdCount})</span></div>`;
+    commanders.forEach(c => { html += renderShoppingCardRow(c.name, c.quantity, true); });
+  }
+  typeOrder.forEach(type => {
+    const list = grouped[type];
+    if (!list?.length) return;
+    const count = list.reduce((s, c) => s + c.quantity, 0);
+    html += `<div class="shopping-group-header"><span class="shopping-group-name">${escapeHtml(type)}${type !== 'Other' ? 's' : ''}</span><span class="shopping-group-count">(${count})</span></div>`;
+    list.forEach(c => { html += renderShoppingCardRow(c.name, c.quantity, type !== 'Land'); });
+  });
+  return html;
+}
+
+function renderShoppingCardRow(cardName, quantity, showMana) {
   const qtyPrefix = quantity > 1 ? `${quantity}x ` : '';
-  return `<div class="shopping-card-row${isChecked ? ' checked' : ''}" data-card-name="${escapeHtml(cardName)}">
-    <input type="checkbox" class="shopping-card-checkbox"${isChecked ? ' checked' : ''}>
+  const mana = showMana !== false ? getMvDisplay(cardName).replace(/<[^>]*>/g, '').replace(/[()]/g, '') : '';
+  return `<div class="shopping-card-row" data-card-name="${escapeHtml(cardName)}">
     <span class="shopping-card-name">${escapeHtml(qtyPrefix)}${escapeHtml(cardName)}</span>
     ${mana ? `<span class="shopping-card-mana">${escapeHtml(mana)}</span>` : ''}
   </div>`;
+}
+
+function generateShoppingExportText(format) {
+  const buyCardsEl = document.getElementById('shopping-buy-cards');
+  if (!buyCardsEl) return '';
+  const rows = buyCardsEl.querySelectorAll('.shopping-card-row');
+  const lines = [];
+  rows.forEach(row => {
+    const name = row.dataset.cardName;
+    const text = row.querySelector('.shopping-card-name')?.textContent?.trim() || '';
+    const match = text.match(/^(\d+)x\s+/);
+    const qty = match ? parseInt(match[1], 10) : 1;
+    if (format === 'moxfield') {
+      lines.push(`${qty} ${name}`);
+    } else if (format === 'archidekt') {
+      lines.push(`${qty} ${name}`);
+    } else {
+      lines.push(`${qty}x ${name}`);
+    }
+  });
+  return lines.join('\n');
+}
+
+async function renderShoppingList() {
+  const emptyEl = document.getElementById('shopping-empty');
+  const summaryBar = document.getElementById('shopping-summary-bar');
+  const sortToggle = document.getElementById('shopping-sort-toggle');
+  const buySection = document.getElementById('shopping-buy-section');
+  const ownSection = document.getElementById('shopping-own-section');
+  const buyCardsEl = document.getElementById('shopping-buy-cards');
+  const ownCardsEl = document.getElementById('shopping-own-cards');
+  const buyCountEl = document.getElementById('shopping-buy-count');
+  const ownCountEl = document.getElementById('shopping-own-count');
+  const totalCountEl = document.getElementById('shopping-card-count');
+  const buySectionCount = document.getElementById('shopping-buy-section-count');
+  const ownSectionCount = document.getElementById('shopping-own-section-count');
+
+  renderShoppingDeckChips();
+
+  if (shoppingSelectedDecks.size === 0) {
+    summaryBar.style.display = 'none';
+    sortToggle.style.display = 'none';
+    buySection.style.display = 'none';
+    ownSection.style.display = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  const cardMap = await aggregateShoppingCards();
+  const { buy, own } = splitByOwnership(cardMap);
+  const buyTotal = buy.reduce((s, c) => s + c.quantity, 0);
+  const ownTotal = own.reduce((s, c) => s + c.quantity, 0);
+
+  emptyEl.style.display = 'none';
+  summaryBar.style.display = 'flex';
+  sortToggle.style.display = 'flex';
+
+  buyCountEl.textContent = buyTotal;
+  ownCountEl.textContent = ownTotal;
+  totalCountEl.textContent = buyTotal + ownTotal;
+
+  // Render buy section
+  if (buy.length > 0) {
+    buySection.style.display = '';
+    buySectionCount.textContent = `(${buyTotal})`;
+    buyCardsEl.innerHTML = renderShoppingCardRows(buy, shoppingSortMode);
+  } else {
+    buySection.style.display = 'none';
+  }
+
+  // Render own section
+  if (own.length > 0) {
+    ownSection.style.display = '';
+    ownSectionCount.textContent = `(${ownTotal})`;
+    ownCardsEl.innerHTML = renderShoppingCardRows(own, shoppingSortMode);
+  } else {
+    ownSection.style.display = 'none';
+  }
 }
 
 // === MOBILE PREVIEW MODAL ===
@@ -3199,38 +3330,47 @@ if (searchHint) {
   });
 }
 
-// Shopping list card checkbox toggle
-document.getElementById('shopping-cards')?.addEventListener('change', (e) => {
-  if (e.target.classList.contains('shopping-card-checkbox')) {
-    const row = e.target.closest('.shopping-card-row');
-    if (!row) return;
-    const cardName = row.dataset.cardName;
-    const checked = getShoppingChecked();
-    if (e.target.checked) {
-      checked.add(cardName);
-      row.classList.add('checked');
-    } else {
-      checked.delete(cardName);
-      row.classList.remove('checked');
-    }
-    saveShoppingChecked(checked);
+// Shopping deck chip toggle
+document.getElementById('shopping-deck-chips')?.addEventListener('click', (e) => {
+  const chip = e.target.closest('.shopping-deck-chip');
+  if (!chip) return;
+  const deckId = chip.dataset.deckId;
+  if (shoppingSelectedDecks.has(deckId)) {
+    shoppingSelectedDecks.delete(deckId);
+  } else {
+    shoppingSelectedDecks.add(deckId);
   }
+  renderShoppingList();
 });
 
-// Shopping list row click (toggle checkbox)
-document.getElementById('shopping-cards')?.addEventListener('click', (e) => {
-  if (e.target.classList.contains('shopping-card-checkbox')) return; // handled above
-  const row = e.target.closest('.shopping-card-row');
-  if (!row) return;
-  const cb = row.querySelector('.shopping-card-checkbox');
-  if (cb) {
-    cb.checked = !cb.checked;
-    cb.dispatchEvent(new Event('change', { bubbles: true }));
-  }
+// Owned cards file upload
+document.getElementById('shopping-owned-upload')?.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    ownedCards = parseOwnedFile(reader.result);
+    saveOwnedCards();
+    updateOwnedStatus();
+    renderShoppingList();
+  };
+  reader.readAsText(file);
+  e.target.value = ''; // allow re-upload of same file
+});
+
+// Clear owned cards
+document.getElementById('shopping-owned-clear')?.addEventListener('click', clearOwnedCards);
+
+// Shopping section collapse toggle
+document.getElementById('shopping-view')?.addEventListener('click', (e) => {
+  const header = e.target.closest('.shopping-section-header');
+  if (!header) return;
+  const section = header.closest('.shopping-section');
+  if (section) section.classList.toggle('collapsed');
 });
 
 // Shopping list sort toggle
-document.querySelector('.shopping-sort-toggle')?.addEventListener('click', (e) => {
+document.getElementById('shopping-sort-toggle')?.addEventListener('click', (e) => {
   const btn = e.target.closest('.shopping-sort-btn');
   if (!btn || btn.classList.contains('active')) return;
   document.querySelectorAll('.shopping-sort-btn').forEach(b => b.classList.remove('active'));
@@ -3239,17 +3379,17 @@ document.querySelector('.shopping-sort-toggle')?.addEventListener('click', (e) =
   renderShoppingList();
 });
 
-// Shopping list export buttons
+// Shopping list export buttons (buy list only)
 document.getElementById('shopping-copy-btn')?.addEventListener('click', () => {
-  const text = generateDecklistExport('plain');
+  const text = generateShoppingExportText('plain');
   if (text) copyToClipboard(text, document.getElementById('shopping-copy-btn'));
 });
 document.getElementById('shopping-moxfield-btn')?.addEventListener('click', () => {
-  const text = generateDecklistExport('moxfield');
+  const text = generateShoppingExportText('moxfield');
   if (text) openMoxfieldImport(text, document.getElementById('shopping-moxfield-btn'));
 });
 document.getElementById('shopping-archidekt-btn')?.addEventListener('click', () => {
-  const text = generateDecklistExport('archidekt');
+  const text = generateShoppingExportText('archidekt');
   if (text) openArchidektImport(text, document.getElementById('shopping-archidekt-btn'));
 });
 
@@ -3330,15 +3470,15 @@ function switchView(view) {
       updateUrlHash();
     } else if (view === 'shopping') {
       shoppingView.style.display = 'block';
-      selectorSection.style.display = '';
-      if (currentDeck) upgradeOverview.style.display = 'block';
+      // Shopping view is self-contained with its own deck chips
+      loadOwnedCards();
+      // Pre-select current deck if one is loaded
+      if (currentDeckId && shoppingSelectedDecks.size === 0) {
+        shoppingSelectedDecks.add(currentDeckId);
+      }
       renderShoppingList();
       savePreferences();
-      if (currentDeckId) {
-        history.replaceState(null, '', `#view=shopping&deck=${encodeURIComponent(currentDeckId)}`);
-      } else {
-        history.replaceState(null, '', '#view=shopping');
-      }
+      history.replaceState(null, '', '#view=shopping');
     } else {
       // Guide view
       selectorSection.style.display = '';

@@ -523,33 +523,83 @@
     <div class="shopping-view" id="shopping-view" style="display: none;">
       <div class="shopping-header">
         <h2 class="shopping-title">Shopping List</h2>
-        <span class="shopping-deck-name" id="shopping-deck-name"></span>
       </div>
+
+      <!-- Deck Selector Chips -->
+      <div class="shopping-deck-selector" id="shopping-deck-selector">
+        <div class="shopping-deck-selector-label">Select decks</div>
+        <div class="shopping-deck-chips" id="shopping-deck-chips"></div>
+      </div>
+
+      <!-- Owned Cards Upload -->
+      <div class="shopping-owned-bar" id="shopping-owned-bar">
+        <label class="shopping-upload-label" for="shopping-owned-upload">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span id="shopping-owned-status">Upload owned cards</span>
+          <input type="file" id="shopping-owned-upload" accept=".csv,.txt" hidden>
+        </label>
+        <button class="shopping-owned-clear" id="shopping-owned-clear" style="display:none;" aria-label="Clear owned cards">Clear</button>
+      </div>
+
       <div class="shopping-separator"></div>
-      <div class="shopping-summary-bar" id="shopping-summary-bar">
+
+      <!-- Summary Bar -->
+      <div class="shopping-summary-bar" id="shopping-summary-bar" style="display:none;">
         <div class="shopping-summary-stat">
-          <span class="shopping-summary-label">Estimated Total</span>
-          <span class="shopping-price" id="shopping-price">--</span>
+          <span class="shopping-summary-label">Need to Buy</span>
+          <span class="shopping-count shopping-count-buy" id="shopping-buy-count">0</span>
         </div>
         <div class="shopping-summary-divider"></div>
         <div class="shopping-summary-stat">
-          <span class="shopping-summary-label">Cards</span>
+          <span class="shopping-summary-label">Already Own</span>
+          <span class="shopping-count shopping-count-own" id="shopping-own-count">0</span>
+        </div>
+        <div class="shopping-summary-divider"></div>
+        <div class="shopping-summary-stat">
+          <span class="shopping-summary-label">Total</span>
           <span class="shopping-count" id="shopping-card-count">0</span>
         </div>
         <div class="shopping-summary-actions">
-          <button class="shopping-btn-primary" id="shopping-copy-btn">Copy</button>
+          <button class="shopping-btn-primary" id="shopping-copy-btn">Copy Buy List</button>
           <button class="shopping-btn-secondary" id="shopping-moxfield-btn">Moxfield</button>
           <button class="shopping-btn-secondary" id="shopping-archidekt-btn">Archidekt</button>
         </div>
       </div>
-      <div class="shopping-sort-toggle">
+
+      <!-- Sort Toggle -->
+      <div class="shopping-sort-toggle" id="shopping-sort-toggle" style="display:none;">
         <span class="shopping-sort-label">Sort by</span>
         <button class="shopping-sort-btn active" data-sort="type">Type</button>
         <button class="shopping-sort-btn" data-sort="az">A-Z</button>
       </div>
-      <div class="shopping-cards" id="shopping-cards"></div>
-      <div class="shopping-empty" id="shopping-empty" style="display: none;">
-        Select a deck from the Grimoire to view its shopping list.
+
+      <!-- Need to Buy Section -->
+      <div class="shopping-section" id="shopping-buy-section" style="display:none;">
+        <div class="shopping-section-header" data-section="buy">
+          <span class="shopping-section-title">Need to Buy</span>
+          <span class="shopping-section-count" id="shopping-buy-section-count"></span>
+          <svg class="shopping-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="shopping-section-body" id="shopping-buy-cards"></div>
+      </div>
+
+      <!-- Already Own Section (collapsed by default) -->
+      <div class="shopping-section collapsed" id="shopping-own-section" style="display:none;">
+        <div class="shopping-section-header" data-section="own">
+          <span class="shopping-section-title">Already Own</span>
+          <span class="shopping-section-count" id="shopping-own-section-count"></span>
+          <svg class="shopping-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="shopping-section-body" id="shopping-own-cards"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="shopping-empty" id="shopping-empty">
+        Select one or more decks above to build your shopping list.
       </div>
     </div>
 
