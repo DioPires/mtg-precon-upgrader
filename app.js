@@ -2937,6 +2937,12 @@ function normalizeCardType(type) {
   return 'Other';
 }
 
+const BASIC_LAND_NAMES = new Set([
+  'Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes',
+  'Snow-Covered Plains', 'Snow-Covered Island', 'Snow-Covered Swamp',
+  'Snow-Covered Mountain', 'Snow-Covered Forest'
+]);
+
 async function aggregateShoppingCards() {
   const cardMap = new Map(); // name -> { quantity, type, isCommander }
   for (const deckId of shoppingSelectedDecks) {
@@ -2957,9 +2963,10 @@ async function aggregateShoppingCards() {
       entry.isCommander = true;
       cardMap.set(partner, entry);
     }
-    // Add decklist cards
+    // Add decklist cards, skipping basic lands
     deck.decklist.forEach(card => {
       const name = card.name;
+      if (BASIC_LAND_NAMES.has(name)) return;
       const qty = card.quantity || 1;
       const existing = cardMap.get(name);
       if (existing) {
@@ -3031,7 +3038,7 @@ function renderShoppingCardRow(cardName, quantity, showMana) {
   </div>`;
 }
 
-function generateShoppingExportText(format) {
+function generateShoppingExportText() {
   const buyCardsEl = document.getElementById('shopping-buy-cards');
   if (!buyCardsEl) return '';
   const rows = buyCardsEl.querySelectorAll('.shopping-card-row');
@@ -3041,13 +3048,7 @@ function generateShoppingExportText(format) {
     const text = row.querySelector('.shopping-card-name')?.textContent?.trim() || '';
     const match = text.match(/^(\d+)x\s+/);
     const qty = match ? parseInt(match[1], 10) : 1;
-    if (format === 'moxfield') {
-      lines.push(`${qty} ${name}`);
-    } else if (format === 'archidekt') {
-      lines.push(`${qty} ${name}`);
-    } else {
-      lines.push(`${qty}x ${name}`);
-    }
+    lines.push(`${qty}x ${name}`);
   });
   return lines.join('\n');
 }
@@ -3381,16 +3382,8 @@ document.getElementById('shopping-sort-toggle')?.addEventListener('click', (e) =
 
 // Shopping list export buttons (buy list only)
 document.getElementById('shopping-copy-btn')?.addEventListener('click', () => {
-  const text = generateShoppingExportText('plain');
+  const text = generateShoppingExportText();
   if (text) copyToClipboard(text, document.getElementById('shopping-copy-btn'));
-});
-document.getElementById('shopping-moxfield-btn')?.addEventListener('click', () => {
-  const text = generateShoppingExportText('moxfield');
-  if (text) openMoxfieldImport(text, document.getElementById('shopping-moxfield-btn'));
-});
-document.getElementById('shopping-archidekt-btn')?.addEventListener('click', () => {
-  const text = generateShoppingExportText('archidekt');
-  if (text) openArchidektImport(text, document.getElementById('shopping-archidekt-btn'));
 });
 
 // Search modal
