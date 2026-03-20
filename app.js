@@ -3229,7 +3229,8 @@ function renderShoppingCardRows(cards, sortMode) {
 function renderShoppingCardRow(cardName, quantity, showMana, decks) {
   const qtyPrefix = quantity > 1 ? `${quantity}x ` : '';
   const metadata = cardMetadataCache.get(cardName);
-  const manaHtml = (showMana !== false && metadata?.mana_cost) ? `<span class="shopping-card-mana-symbols">${renderManaCost(metadata.mana_cost)}</span>` : '';
+  const cmc = metadata?.cmc != null ? Math.floor(metadata.cmc) : null;
+  const manaHtml = (showMana !== false && cmc != null) ? `<span class="shopping-card-mana">${cmc}</span>` : '';
   let deckDotsHtml = '';
   if (decks && decks.size > 0 && deckIndex?.commanders) {
     const dots = [];

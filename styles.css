@@ -182,11 +182,11 @@ html {
 
 .shopping-deck-selector-label {
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 .shopping-deck-chips {
@@ -245,7 +245,7 @@ html {
   gap: 8px;
   padding: 12px 16px;
   border-radius: 8px;
-  border: 1px dashed var(--border-subtle);
+  border: 1px solid var(--text-muted);
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   color: var(--text-secondary);
@@ -287,7 +287,7 @@ html {
   display: flex;
   align-items: center;
   padding: 12px 0;
-  gap: 24px;
+  gap: 32px;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -301,19 +301,19 @@ html {
 .shopping-summary-label {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
 .shopping-count {
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 20px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 24px;
   color: var(--text-primary);
 }
 
 .shopping-count-buy {
-  color: var(--accent-purple);
+  color: var(--accent-red, #c23028);
 }
 
 .shopping-count-own {
@@ -321,9 +321,7 @@ html {
 }
 
 .shopping-summary-divider {
-  width: 1px;
-  height: 24px;
-  background: var(--border-subtle);
+  display: none;
 }
 
 .shopping-summary-actions {
@@ -339,8 +337,8 @@ html {
   color: #fff;
   border: none;
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
 }
@@ -359,7 +357,7 @@ html {
 .shopping-sort-label {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 
@@ -369,9 +367,9 @@ html {
   border: 1px solid var(--border-subtle);
   border-radius: 6px;
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
@@ -403,17 +401,16 @@ html {
 
 .shopping-section-title {
   font-family: 'Playfair Display', serif;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 20px;
   color: var(--text-primary);
-  letter-spacing: 0.02em;
 }
 
 .shopping-section-count {
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-primary);
 }
 
 .shopping-section-chevron {
@@ -439,35 +436,37 @@ html {
 .shopping-group-header {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
-  gap: 8px;
-  background: #EDE7DB;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 8px 0;
+  gap: 6px;
+  background: var(--bg-elevated);
 }
 
 .shopping-group-name {
-  font-family: 'Playfair Display', serif;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
   font-size: 13px;
-  color: var(--text-primary);
-  letter-spacing: 0.04em;
+  color: var(--deck-accent, var(--accent-purple));
 }
 
 .shopping-group-count {
   font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--deck-accent, var(--accent-purple));
 }
 
 .shopping-card-row {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
+  padding: 10px 0;
   gap: 12px;
-  border-bottom: 1px solid rgba(232, 224, 212, 0.6);
+  border-bottom: 1px solid var(--border-subtle);
   transition: background 0.1s;
   cursor: default;
+}
+
+.shopping-card-row:nth-child(even) {
+  background: var(--bg-elevated);
 }
 
 .shopping-card-row:hover {
@@ -476,8 +475,8 @@ html {
 
 .shopping-card-name {
   font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 13px;
+  font-weight: 400;
+  font-size: 14px;
   color: var(--text-primary);
   flex-grow: 1;
 }
@@ -499,9 +498,9 @@ html {
 }
 
 .shopping-card-mana {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Fira Code', monospace;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
   flex-shrink: 0;
 }
@@ -524,8 +523,8 @@ html {
 .shopping-empty-title {
   font-family: 'Playfair Display', serif;
   font-weight: 600;
-  font-size: 18px;
-  color: var(--text-secondary);
+  font-size: 20px;
+  color: var(--text-primary);
 }
 
 .shopping-empty-subtitle {
@@ -598,15 +597,6 @@ html {
   height: 14px;
 }
 
-/* Deck-colored left border on card rows */
-.shopping-section-body .shopping-card-row {
-  border-left: 2px solid transparent;
-  transition: background 0.1s, border-color 0.15s;
-}
-
-.shopping-section-body .shopping-card-row:hover {
-  border-left-color: var(--deck-accent, var(--accent-purple));
-}
 
 
 
