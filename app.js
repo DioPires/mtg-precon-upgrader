@@ -3697,7 +3697,7 @@ function switchView(view) {
       }
       updateUrlHash();
     } else if (view === 'shopping') {
-      shoppingView.style.display = 'block';
+      shoppingView.style.display = 'flex';
       // Shopping view is self-contained with its own deck chips
       loadOwnedCards();
       // Pre-select current deck if one is loaded
