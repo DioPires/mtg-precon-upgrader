@@ -60,14 +60,6 @@
         </svg>
         Grimoire
       </button>
-      <button class="view-toggle-btn disabled" data-view="playtest" role="tab" aria-selected="false" id="tab-playtest">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-          <path d="M14.5 17.5L3 6V1.5h4.5L19 13m-2.5 2.5L19 13m-2.5 2.5L14 18"></path>
-          <path d="M5 14l4 4"></path>
-          <path d="M21.5 21.5l-5-5"></path>
-        </svg>
-        <span class="btn-label">Battlefield</span>
-      </button>
       <button class="view-toggle-btn disabled" data-view="analytics" role="tab" aria-selected="false" id="tab-analytics">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
           <circle cx="12" cy="12" r="10"></circle>
@@ -503,91 +495,6 @@
         </div>
       </div>
     </main>
-
-    <!-- Playtest View (Hidden by default) -->
-    <div class="playtest-view" id="playtest-view" style="display: none;">
-      <div class="playtest-info-bar">
-        <div class="playtest-zone-counts">
-          <span class="playtest-turn-display">Turn: <span id="playtest-turn">0</span></span>
-          <span class="zone-count"><span class="zone-label">Library:</span> <span class="zone-number" id="playtest-lib-count">0</span></span>
-          <span class="zone-count"><span class="zone-label">Hand:</span> <span class="zone-number" id="playtest-hand-count">0</span></span>
-          <span class="zone-count"><span class="zone-label">BF:</span> <span class="zone-number" id="playtest-bf-count">0</span></span>
-          <span class="zone-count"><span class="zone-label">GY:</span> <span class="zone-number" id="playtest-gy-count">0</span></span>
-          <span class="playtest-library-empty" id="playtest-lib-empty" style="display:none;">Library empty</span>
-        </div>
-        <div class="playtest-actions">
-          <button class="playtest-btn primary" id="playtest-next-turn" title="Next Turn (N)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
-            <span class="btn-label">Next Turn</span>
-            <span class="playtest-key-hint">N</span>
-          </button>
-          <button class="playtest-btn" id="playtest-draw" title="Draw Random (D)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            <span class="btn-label">Draw</span>
-            <span class="playtest-key-hint">D</span>
-          </button>
-          <button class="playtest-btn" id="playtest-mulligan" title="Mulligan (M)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
-            <span class="btn-label">Mulligan</span>
-            <span class="playtest-key-hint">M</span>
-          </button>
-          <button class="playtest-btn" id="playtest-stats" title="Opening Hand Stats">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-            <span class="btn-label">Stats</span>
-          </button>
-          <button class="playtest-btn" id="playtest-reset" title="Reset (R)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
-            <span class="btn-label">Reset</span>
-            <span class="playtest-key-hint">R</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="playtest-board" id="playtest-board">
-        <div class="playtest-command-zone" id="playtest-cz">
-          <div class="playtest-zone-header">Command Zone</div>
-          <div id="playtest-cz-cards"></div>
-        </div>
-
-        <div class="playtest-battlefield" id="playtest-bf">
-          <div class="playtest-zone-header">Battlefield</div>
-          <div class="playtest-bf-label">Nonlands</div>
-          <div class="playtest-bf-section" id="playtest-bf-nonlands"></div>
-          <div class="playtest-bf-label">Lands</div>
-          <div class="playtest-bf-section" id="playtest-bf-lands"></div>
-        </div>
-
-        <div class="playtest-hand" id="playtest-hand-zone">
-          <div class="playtest-zone-header">Hand</div>
-          <div class="playtest-hand-cards" id="playtest-hand-cards"></div>
-          <div class="playtest-mulligan-bar" id="playtest-mulligan-bar">
-            <span class="mulligan-msg" id="mulligan-msg"></span>
-            <button class="playtest-btn" id="mulligan-confirm" style="display:none;">Confirm Bottom</button>
-            <button class="playtest-btn" id="mulligan-reset-sel" style="display:none;">Reset Selection</button>
-          </div>
-        </div>
-
-        <div class="playtest-graveyard" id="playtest-gy">
-          <button class="playtest-gy-toggle" id="playtest-gy-toggle" aria-expanded="false">
-            <span class="gy-arrow">&#9654;</span> Graveyard (<span id="playtest-gy-inline-count">0</span>)
-          </button>
-          <div class="playtest-gy-cards" id="playtest-gy-cards"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Playtest Hover Preview -->
-    <div class="playtest-hover-preview" id="playtest-hover-preview">
-      <img src="" alt="" id="playtest-hover-image">
-    </div>
-
-    <!-- Playtest Stats Overlay -->
-    <div class="playtest-stats-overlay" id="playtest-stats-overlay">
-      <div class="playtest-stats-panel">
-        <h3>Opening Hand Statistics <button class="playtest-stats-close" id="playtest-stats-close">&times;</button></h3>
-        <div id="playtest-stats-content"></div>
-      </div>
-    </div>
 
     <!-- Analytics View -->
     <div class="analytics-view" id="analytics-view" style="display: none;">
