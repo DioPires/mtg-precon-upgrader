@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Monte Carlo mana base simulation for Atraxa, Praetors' Voice decks.
+"""Monte Carlo mana base simulation for Phyrexian Perfection (Atraxa, Praetors' Voice).
 
 Simulates 100,000 games measuring mana production, color balance, and curve
-efficiency turns 1-10 for both the Bracket 3 and Bracket 4 WUBG decklists.
+efficiency turns 1-10 for the Bracket 3 WUBG decklist.
 
 Commander: Atraxa, Praetors' Voice ({G}{W}{U}{B}, CMC 4)
 """
@@ -18,6 +18,7 @@ from collections import Counter
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "phyrexian-perfection" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
 NUM_GAMES = 100_000
@@ -50,8 +51,7 @@ def parse_mana_cost(mana_cost: str) -> dict:
 
 
 # --- Rock definitions ---
-# Bracket 3 rocks (Phyrexian Perfection)
-ROCK_DEFS_B3 = {
+ROCK_DEFS = {
     "Sol Ring":          {"cmc": 1, "colors": frozenset({"C"}), "count": 2, "burst": False},
     "Arcane Signet":     {"cmc": 2, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": False},
     "Glistening Sphere": {"cmc": 3, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": False},
@@ -59,41 +59,14 @@ ROCK_DEFS_B3 = {
     "Plague Myr":        {"cmc": 2, "colors": frozenset({"C"}), "count": 1, "burst": False},
 }
 
-# Bracket 4 rocks (Compleated Dominion)
-ROCK_DEFS_B4 = {
-    "Sol Ring":          {"cmc": 1, "colors": frozenset({"C"}), "count": 2, "burst": False},
-    "Arcane Signet":     {"cmc": 2, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": False},
-    "Glistening Sphere": {"cmc": 3, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": False},
-    "Chrome Mox":        {"cmc": 0, "colors": frozenset({"W", "U", "B", "G"}), "count": 1, "burst": True},
-    "Mana Vault":        {"cmc": 1, "colors": frozenset({"C"}), "count": 3, "burst": True},
-}
-
-# Active rock definitions — set by configure_bracket()
-ROCK_DEFS = {}
-
 # --- Ramp spell definitions ---
-RAMP_DEFS_B3 = {
+RAMP_DEFS = {
     "Farseek":        {"mana_cost": "{1}{G}", "fetch_type": "nonforest_typed", "tapped": True},
     "Nature's Lore":  {"mana_cost": "{1}{G}", "fetch_type": "forest_typed", "tapped": False},
     "Three Visits":   {"mana_cost": "{1}{G}", "fetch_type": "forest_typed", "tapped": False},
     "Cultivate":      {"mana_cost": "{2}{G}", "fetch_type": "basic_plus_hand", "tapped": True},
     "Kodama's Reach": {"mana_cost": "{2}{G}", "fetch_type": "basic_plus_hand", "tapped": True},
 }
-
-RAMP_DEFS_B4 = {
-    "Farseek":        {"mana_cost": "{1}{G}", "fetch_type": "nonforest_typed", "tapped": True},
-    "Nature's Lore":  {"mana_cost": "{1}{G}", "fetch_type": "forest_typed", "tapped": False},
-    "Kodama's Reach": {"mana_cost": "{2}{G}", "fetch_type": "basic_plus_hand", "tapped": True},
-}
-
-# Active ramp definitions — set by configure_bracket()
-RAMP_DEFS = {}
-
-def configure_bracket(bracket: int):
-    """Set module-level ROCK_DEFS and RAMP_DEFS for the given bracket."""
-    global ROCK_DEFS, RAMP_DEFS
-    ROCK_DEFS = ROCK_DEFS_B3 if bracket == 3 else ROCK_DEFS_B4
-    RAMP_DEFS = RAMP_DEFS_B3 if bracket == 3 else RAMP_DEFS_B4
 
 
 # --- Land subtype definitions ---
@@ -880,40 +853,31 @@ def main():
     with open(METADATA_FILE) as f:
         metadata = json.load(f)
 
-    for bracket, deck_id, deck_name in [
-        (3, "phyrexian-perfection", "Phyrexian Perfection"),
-        (4, "compleated-dominion", "Compleated Dominion"),
-    ]:
-        deck_file = PROJECT_ROOT / "data" / "commanders" / deck_id / "deck.json"
-        if not deck_file.exists():
-            print(f"Skipping {deck_name}: {deck_file} not found")
-            continue
+    deck_name = "Phyrexian Perfection"
 
-        configure_bracket(bracket)
+    with open(DECK_FILE) as f:
+        deck_data = json.load(f)
 
-        with open(deck_file) as f:
-            deck_data = json.load(f)
+    print(f"\nBuilding {deck_name} decklist...")
+    decklist = build_decklist(deck_data)
+    print(f"Decklist: {len(decklist)} cards")
 
-        print(f"\nBuilding {deck_name} decklist (Bracket {bracket})...")
-        decklist = build_decklist(deck_data)
-        print(f"Decklist: {len(decklist)} cards")
+    classified = classify_cards(decklist, metadata)
+    result = print_static_analysis(decklist, metadata, classified, deck_name)
+    avg_cmc, pip_W, pip_U, pip_B, pip_G = result
 
-        classified = classify_cards(decklist, metadata)
-        result = print_static_analysis(decklist, metadata, classified, deck_name)
-        avg_cmc, pip_W, pip_U, pip_B, pip_G = result
+    n_workers = os.cpu_count() or 4
+    chunk_size = NUM_GAMES // n_workers
+    remainder = NUM_GAMES % n_workers
+    chunks = [chunk_size + (1 if i < remainder else 0) for i in range(n_workers)]
 
-        n_workers = os.cpu_count() or 4
-        chunk_size = NUM_GAMES // n_workers
-        remainder = NUM_GAMES % n_workers
-        chunks = [chunk_size + (1 if i < remainder else 0) for i in range(n_workers)]
+    print(f"\nRunning {NUM_GAMES:,} game simulations ({n_workers} workers)...")
+    with multiprocessing.Pool(n_workers) as pool:
+        results = pool.map(_run_chunk, [(decklist, metadata, n) for n in chunks])
+    stats = merge_stats(results)
 
-        print(f"\nRunning {NUM_GAMES:,} game simulations ({n_workers} workers)...")
-        with multiprocessing.Pool(n_workers) as pool:
-            results = pool.map(_run_chunk, [(decklist, metadata, n) for n in chunks])
-        stats = merge_stats(results)
-
-        print_results(stats, classified, avg_cmc, pip_W, pip_U, pip_B, pip_G, deck_name)
-        print("\n" + "=" * 65)
+    print_results(stats, classified, avg_cmc, pip_W, pip_U, pip_B, pip_G, deck_name)
+    print("\n" + "=" * 65)
 
 
 if __name__ == "__main__":

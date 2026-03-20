@@ -19,15 +19,16 @@ from pathlib import Path
 SCRIPTS_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-import mana_simulation as sim_titan
-import mana_simulation_rakdos as sim_rakdos
-import mana_simulation_grixis as sim_grixis
-import mana_simulation_golgari as sim_golgari
-import mana_simulation_atraxa as sim_atraxa
-import mana_simulation_wubrg as sim_wubrg
-import mana_simulation_mono_blue as sim_mono_blue
-import mana_simulation_azorius as sim_azorius
-import mana_simulation_jeskai as sim_jeskai
+import mana_simulation_titan_convergence as sim_titan
+import mana_simulation_eternal_agony as sim_rakdos
+import mana_simulation_dark_dominion as sim_grixis
+import mana_simulation_eternal_harvest as sim_golgari
+import mana_simulation_phyrexian_perfection as sim_phyrexian
+import mana_simulation_compleated_dominion as sim_compleated
+import mana_simulation_mutant_multiplication as sim_wubrg
+import mana_simulation_azure_dominion as sim_mono_blue
+import mana_simulation_genesis_protocol as sim_azorius
+import mana_simulation_planar_decree as sim_jeskai
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -440,14 +441,12 @@ def export_golgari(metadata: dict) -> dict:
     )
 
 
-def _export_atraxa(bracket: int, deck_id: str, deck_name: str,
-                   metadata: dict) -> dict:
-    """Export an Atraxa (WUBG) simulation for given bracket."""
-    sim_atraxa.configure_bracket(bracket)
+def export_phyrexian_perfection(metadata: dict) -> dict:
+    """Export Phyrexian Perfection (Atraxa B3) simulation."""
     return _export_colored(
-        sim_module=sim_atraxa,
-        deck_id=deck_id,
-        deck_name=deck_name,
+        sim_module=sim_phyrexian,
+        deck_id="phyrexian-perfection",
+        deck_name="Phyrexian Perfection",
         commander_name="Atraxa, Praetors' Voice",
         commander_cmc=4,
         colors=["W", "U", "B", "G"],
@@ -455,14 +454,17 @@ def _export_atraxa(bracket: int, deck_id: str, deck_name: str,
     )
 
 
-def export_atraxa_b3(metadata: dict) -> dict:
-    """Export Phyrexian Perfection (Atraxa B3) simulation."""
-    return _export_atraxa(3, "phyrexian-perfection", "Phyrexian Perfection", metadata)
-
-
-def export_atraxa_b4(metadata: dict) -> dict:
+def export_compleated_dominion(metadata: dict) -> dict:
     """Export Compleated Dominion (Atraxa B4) simulation."""
-    return _export_atraxa(4, "compleated-dominion", "Compleated Dominion", metadata)
+    return _export_colored(
+        sim_module=sim_compleated,
+        deck_id="compleated-dominion",
+        deck_name="Compleated Dominion",
+        commander_name="Atraxa, Praetors' Voice",
+        commander_cmc=4,
+        colors=["W", "U", "B", "G"],
+        metadata=metadata,
+    )
 
 
 def export_wubrg(metadata: dict) -> dict:
@@ -557,8 +559,8 @@ DECKS = [
     ("eternal-agony", "Eternal Agony", export_rakdos),
     ("dark-dominion", "Dark Dominion", export_grixis),
     ("eternal-harvest", "Eternal Harvest", export_golgari),
-    ("phyrexian-perfection", "Phyrexian Perfection", export_atraxa_b3),
-    ("compleated-dominion", "Compleated Dominion", export_atraxa_b4),
+    ("phyrexian-perfection", "Phyrexian Perfection", export_phyrexian_perfection),
+    ("compleated-dominion", "Compleated Dominion", export_compleated_dominion),
     ("mutant-multiplication", "Mutant Multiplication", export_wubrg),
     ("azure-dominion", "Azure Dominion", export_mono_blue),
     ("genesis-protocol", "Genesis Protocol", export_azorius),
