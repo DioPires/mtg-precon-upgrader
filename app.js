@@ -2154,8 +2154,8 @@ function renderCommanderThemeGroups(categories, highlights) {
 
 function createGuideCardHtml(cardName, reason, isGameChanger, manaCost = null) {
   const safeCardName = escapeHtml(cardName);
-  const cached = getCachedImageUrl(cardName, 'small');
-  const imageUrl = cached || scryfallImageUrl(cardName, 'small');
+  const cached = getCachedImageUrl(cardName, 'art_crop');
+  const imageUrl = cached || scryfallImageUrl(cardName, 'art_crop');
   const imgAttr = cached ? `src="${imageUrl}"` : `data-scryfall-src="${imageUrl}"`;
   const targetBracket = escapeHtml(currentDeck?.bracket || '3');
   const tooltipText = `Game Changer: Moves deck to Bracket ${targetBracket}`;
