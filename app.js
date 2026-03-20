@@ -2944,35 +2944,25 @@ const BASIC_LAND_NAMES = new Set([
 ]);
 
 async function aggregateShoppingCards() {
-  const cardMap = new Map(); // name -> { quantity, type, isCommander }
+  const cardMap = new Map(); // name -> { quantity: 1, type, isCommander }
   for (const deckId of shoppingSelectedDecks) {
     const deck = await loadDeckData(deckId);
     if (!deck?.decklist) continue;
     const cmd = deck.commander || '';
     const partner = deck.partner || '';
-    // Add commander(s)
-    if (cmd) {
-      const entry = cardMap.get(cmd) || { quantity: 0, type: 'Creature', isCommander: true };
-      entry.quantity += 1;
-      entry.isCommander = true;
-      cardMap.set(cmd, entry);
+    // Add commander(s) — deduplicated, 1 copy each
+    if (cmd && !cardMap.has(cmd)) {
+      cardMap.set(cmd, { quantity: 1, type: 'Creature', isCommander: true });
     }
-    if (partner) {
-      const entry = cardMap.get(partner) || { quantity: 0, type: 'Creature', isCommander: true };
-      entry.quantity += 1;
-      entry.isCommander = true;
-      cardMap.set(partner, entry);
+    if (partner && !cardMap.has(partner)) {
+      cardMap.set(partner, { quantity: 1, type: 'Creature', isCommander: true });
     }
-    // Add decklist cards, skipping basic lands
+    // Add decklist cards, skipping basic lands — deduplicated across decks
     deck.decklist.forEach(card => {
       const name = card.name;
       if (BASIC_LAND_NAMES.has(name)) return;
-      const qty = card.quantity || 1;
-      const existing = cardMap.get(name);
-      if (existing) {
-        existing.quantity += qty;
-      } else {
-        cardMap.set(name, { quantity: qty, type: normalizeCardType(card.type || 'Other'), isCommander: false });
+      if (!cardMap.has(name)) {
+        cardMap.set(name, { quantity: 1, type: normalizeCardType(card.type || 'Other'), isCommander: false });
       }
     });
   }
