@@ -718,6 +718,12 @@ header p {
   object-fit: cover;
   flex-shrink: 0;
 }
+
+/* Placeholder for throttled Scryfall images waiting to load */
+img[data-scryfall-src]:not([src]) {
+  background: var(--bg-elevated);
+  min-height: 40px;
+}
 .deck-gallery-info {
   flex: 1;
   min-width: 0;

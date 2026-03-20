@@ -872,8 +872,102 @@ function renderCategoryBars(categories, totalCards) {
 const imageCache = new Map();
 const cardMetadataCache = new Map();
 
+// === SCRYFALL IMAGE THROTTLE ===
+// Prevents 429 rate limits by throttling <img> src assignments to max 10/s.
+// Images use data-scryfall-src instead of src; an IntersectionObserver + queue
+// progressively loads them as they enter the viewport.
+const IMAGE_LOAD_INTERVAL = 100; // 100ms = 10 req/s max
+const IMAGE_URL_CACHE_KEY = 'grimoire-image-urls';
+const IMAGE_CACHE_MAX = 2000;
+const scryfallImageQueue = [];
+let isProcessingImageQueue = false;
+
+// Persist imageCache to localStorage for cross-session caching
+function loadImageCacheFromStorage() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(IMAGE_URL_CACHE_KEY) || '{}');
+    for (const [k, v] of Object.entries(stored)) imageCache.set(k, v);
+  } catch { /* ignore corrupt data */ }
+}
+
+function saveImageCacheToStorage() {
+  try {
+    // Trim to max size (keep most recent entries)
+    const entries = [...imageCache.entries()];
+    const trimmed = entries.slice(-IMAGE_CACHE_MAX);
+    localStorage.setItem(IMAGE_URL_CACHE_KEY, JSON.stringify(Object.fromEntries(trimmed)));
+  } catch { /* storage full — ignore */ }
+}
+
+// Debounced save
+let imageCacheSaveTimer = null;
+function scheduleImageCacheSave() {
+  clearTimeout(imageCacheSaveTimer);
+  imageCacheSaveTimer = setTimeout(saveImageCacheToStorage, 2000);
+}
+
+function scryfallImageUrl(cardName, version) {
+  const encoded = encodeURIComponent(cardName);
+  const versionParam = version && version !== 'normal' ? `&version=${version}` : '';
+  return `https://api.scryfall.com/cards/named?format=image&exact=${encoded}${versionParam}`;
+}
+
+function getCachedImageUrl(cardName, version) {
+  const key = version ? `${cardName}|${version}` : cardName;
+  return imageCache.get(key);
+}
+
+function setCachedImageUrl(cardName, version, url) {
+  const key = version ? `${cardName}|${version}` : cardName;
+  imageCache.set(key, url);
+  scheduleImageCacheSave();
+}
+
+function queueImageLoad(imgEl) {
+  scryfallImageQueue.push(imgEl);
+  processImageLoadQueue();
+}
+
+async function processImageLoadQueue() {
+  if (isProcessingImageQueue) return;
+  isProcessingImageQueue = true;
+  while (scryfallImageQueue.length > 0) {
+    const img = scryfallImageQueue.shift();
+    const src = img.dataset.scryfallSrc;
+    if (!src || img.src === src) continue;
+    img.src = src;
+    img.removeAttribute('data-scryfall-src');
+    if (scryfallImageQueue.length > 0) {
+      await new Promise(r => setTimeout(r, IMAGE_LOAD_INTERVAL));
+    }
+  }
+  isProcessingImageQueue = false;
+}
+
+// IntersectionObserver: when a data-scryfall-src image enters viewport, queue it
+let scryfallObserver = null;
+function initScryfallObserver() {
+  if (scryfallObserver) return;
+  scryfallObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        scryfallObserver.unobserve(entry.target);
+        queueImageLoad(entry.target);
+      }
+    });
+  }, { rootMargin: '200px' });
+}
+
+function observeScryfallImages(container) {
+  if (!scryfallObserver) initScryfallObserver();
+  container.querySelectorAll('img[data-scryfall-src]').forEach(img => {
+    scryfallObserver.observe(img);
+  });
+}
+
 // Pre-load local metadata cache (eliminates Scryfall API calls for known cards)
 async function loadLocalMetadata() {
+  loadImageCacheFromStorage();
   try {
     const resp = await fetch('data/card-metadata.json');
     if (resp.ok) {
@@ -1145,13 +1239,12 @@ function setupDelegatedListeners() {
     if (window.innerWidth <= 768) return;
     shoppingTooltipCard = cardName;
     shoppingTooltipName.textContent = cardName;
-    const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cardName)}`;
-    if (imageCache.has(cardName)) {
-      shoppingTooltipImg.src = imageCache.get(cardName);
-    } else {
-      shoppingTooltipImg.src = imageUrl;
+    const cached = getCachedImageUrl(cardName, null);
+    const imageUrl = cached || scryfallImageUrl(cardName);
+    shoppingTooltipImg.src = imageUrl;
+    if (!cached) {
       const preload = new Image();
-      preload.onload = () => imageCache.set(cardName, imageUrl);
+      preload.onload = () => setCachedImageUrl(cardName, null, imageUrl);
       preload.src = imageUrl;
     }
     positionShoppingTooltip(e);
@@ -1373,7 +1466,8 @@ function populateDeckSelector() {
   // Render visual deck gallery
   const gallery = document.getElementById('deck-gallery');
   gallery.innerHTML = allDecks.map(cmd => {
-    const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cmd.commander)}&version=art_crop`;
+    const cachedArt = getCachedImageUrl(cmd.commander, 'art_crop');
+    const artUrl = cachedArt || scryfallImageUrl(cmd.commander, 'art_crop');
     const colorPips = (cmd.colors || []).map(c =>
       `<div class="deck-gallery-pip pip-${escapeHtml(c)}"></div>`
     ).join('');
@@ -1383,9 +1477,10 @@ function populateDeckSelector() {
     const setPill = cmd.lastUpdatedSet
       ? `<div class="deck-gallery-set">Updated for ${escapeHtml(cmd.lastUpdatedSet)}</div>`
       : '';
+    const imgAttr = cachedArt ? `src="${artUrl}"` : `data-scryfall-src="${artUrl}"`;
     return `
       <div class="deck-gallery-card" data-deck-id="${escapeHtml(cmd.id)}" tabindex="0" role="button" aria-label="Select ${escapeHtml(cmd.name)}">
-        <img class="deck-gallery-art" src="${artUrl}" alt="${escapeHtml(cmd.commander)}" loading="lazy" />
+        <img class="deck-gallery-art" ${imgAttr} alt="${escapeHtml(cmd.commander)}" loading="lazy" />
         <div class="deck-gallery-info">
           <div class="deck-gallery-name">${escapeHtml(cmd.name)}</div>
           <div class="deck-gallery-subtitle">${escapeHtml(cmd.theme || '')}</div>
@@ -1398,6 +1493,9 @@ function populateDeckSelector() {
       </div>
     `;
   }).join('');
+
+  // Throttled image loading for gallery
+  observeScryfallImages(gallery);
 
   // Gallery click handlers
   gallery.querySelectorAll('.deck-gallery-card').forEach(card => {
@@ -1451,15 +1549,20 @@ async function selectDeck(deckId) {
 
     // Set commander art as blurred background
     const effectiveCmd = getEffectiveCommander();
-    const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(effectiveCmd)}&version=art_crop`;
+    const bgArtUrl = getCachedImageUrl(effectiveCmd, 'art_crop') || scryfallImageUrl(effectiveCmd, 'art_crop');
     let bgEl = document.getElementById('commander-bg');
     if (!bgEl) {
       bgEl = document.createElement('div');
       bgEl.id = 'commander-bg';
       document.body.prepend(bgEl);
     }
-    bgEl.style.backgroundImage = `url(${artUrl})`;
+    bgEl.style.backgroundImage = `url(${bgArtUrl})`;
     bgEl.classList.add('visible');
+    if (!getCachedImageUrl(effectiveCmd, 'art_crop')) {
+      const probe = new Image();
+      probe.onload = () => setCachedImageUrl(effectiveCmd, 'art_crop', bgArtUrl);
+      probe.src = bgArtUrl;
+    }
 
     // Update gallery active state
     document.querySelectorAll('.deck-gallery-card').forEach(card => {
@@ -1484,11 +1587,17 @@ async function selectDeck(deckId) {
 
     // Render commander card images
     let commanderCardsHtml = '';
-    const commanderImageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(effectiveCmd)}`;
+    const commanderImageUrl = getCachedImageUrl(effectiveCmd, null) || scryfallImageUrl(effectiveCmd);
     commanderCardsHtml += `<img class="commander-card-preview" src="${commanderImageUrl}" alt="${escapeHtml(effectiveCmd)}" loading="lazy" />`;
+    if (!getCachedImageUrl(effectiveCmd, null)) {
+      const p = new Image(); p.onload = () => setCachedImageUrl(effectiveCmd, null, commanderImageUrl); p.src = commanderImageUrl;
+    }
     if (partnerCmd) {
-      const partnerImageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(partnerCmd)}`;
+      const partnerImageUrl = getCachedImageUrl(partnerCmd, null) || scryfallImageUrl(partnerCmd);
       commanderCardsHtml += `<img class="commander-card-preview" src="${partnerImageUrl}" alt="${escapeHtml(partnerCmd)}" loading="lazy" />`;
+      if (!getCachedImageUrl(partnerCmd, null)) {
+        const p = new Image(); p.onload = () => setCachedImageUrl(partnerCmd, null, partnerImageUrl); p.src = partnerImageUrl;
+      }
     }
     commanderCards.innerHTML = commanderCardsHtml;
 
@@ -1650,10 +1759,12 @@ function renderDeckListGallery() {
     .map(card => ({ ...card, isHighlighted: highlightNames.has(card.name) }));
 
   function cardHtml(name, isHighlighted, quantity) {
-    const imgUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(name)}`;
+    const cached = getCachedImageUrl(name, null);
+    const imgUrl = cached || scryfallImageUrl(name);
+    const imgAttr = cached ? `src="${imgUrl}"` : `data-scryfall-src="${imgUrl}"`;
     const cls = isHighlighted ? ' highlighted' : '';
     const badge = quantity > 1 ? `<span class="gallery-quantity-badge">${quantity}x</span>` : '';
-    return `<div class="decklist-gallery-card${cls}" data-card-name="${escapeHtml(name)}" tabindex="0" role="button" aria-label="${escapeHtml(name)}">${badge}<img src="${imgUrl}" alt="${escapeHtml(name)}" loading="lazy" /></div>`;
+    return `<div class="decklist-gallery-card${cls}" data-card-name="${escapeHtml(name)}" tabindex="0" role="button" aria-label="${escapeHtml(name)}">${badge}<img ${imgAttr} alt="${escapeHtml(name)}" loading="lazy" /></div>`;
   }
 
   function renderSection(title, cards) {
@@ -1725,6 +1836,7 @@ function renderDeckListGallery() {
   }
 
   galleryEl.innerHTML = html;
+  observeScryfallImages(galleryEl);
 }
 
 function toggleDecklistView() {
@@ -1868,8 +1980,11 @@ function startAmbientArt() {
   function cycle() {
     if (!cards.length) return;
     const cardName = cards[idx % cards.length];
-    const artUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cardName)}&version=art_crop`;
+    const artUrl = getCachedImageUrl(cardName, 'art_crop') || scryfallImageUrl(cardName, 'art_crop');
     ambientEl.style.backgroundImage = `url(${artUrl})`;
+    if (!getCachedImageUrl(cardName, 'art_crop')) {
+      const p = new Image(); p.onload = () => setCachedImageUrl(cardName, 'art_crop', artUrl); p.src = artUrl;
+    }
     ambientEl.classList.add('visible');
     idx++;
   }
@@ -2031,15 +2146,17 @@ function renderCommanderThemeGroups(categories, highlights) {
   }
 
   addGroups.innerHTML = html;
+  observeScryfallImages(addGroups);
   addGuideCardHoverEvents();
 }
 
 
 
 function createGuideCardHtml(cardName, reason, isGameChanger, manaCost = null) {
-  const encodedName = encodeURIComponent(cardName);
   const safeCardName = escapeHtml(cardName);
-  const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedName}&version=small`;
+  const cached = getCachedImageUrl(cardName, 'small');
+  const imageUrl = cached || scryfallImageUrl(cardName, 'small');
+  const imgAttr = cached ? `src="${imageUrl}"` : `data-scryfall-src="${imageUrl}"`;
   const targetBracket = escapeHtml(currentDeck?.bracket || '3');
   const tooltipText = `Game Changer: Moves deck to Bracket ${targetBracket}`;
   const starHtml = isGameChanger ? `<span class="game-changer-star" data-tooltip="${tooltipText}" title="${tooltipText}">★</span>` : '';
@@ -2049,7 +2166,7 @@ function createGuideCardHtml(cardName, reason, isGameChanger, manaCost = null) {
 
   return `
     <div class="guide-card" data-card-name="${safeCardName}" tabindex="0" role="button" aria-label="View ${safeCardName}"${reasonAttr}>
-      <img class="guide-card-image" src="${imageUrl}" alt="${safeCardName}" loading="lazy" />
+      <img class="guide-card-image" ${imgAttr} alt="${safeCardName}" loading="lazy" />
       <div class="guide-card-info">
         <div class="guide-card-name">${starHtml}${cardNameHtml}${manaCostHtml}</div>
       </div>
@@ -2376,8 +2493,9 @@ function showCardPreview(cardName) {
   previewName.textContent = cardName;
 
   // Check cache first
-  if (imageCache.has(cardName)) {
-    displayImage(imageCache.get(cardName));
+  const cached = getCachedImageUrl(cardName, null);
+  if (cached) {
+    displayImage(cached);
     return;
   }
 
@@ -2385,12 +2503,11 @@ function showCardPreview(cardName) {
   previewContainer.innerHTML = '<span class="preview-placeholder">Loading...</span>';
 
   // Fetch from Scryfall
-  const encodedName = encodeURIComponent(cardName);
-  const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodedName}`;
+  const imageUrl = scryfallImageUrl(cardName);
 
   const img = new Image();
   img.onload = () => {
-    imageCache.set(cardName, imageUrl);
+    setCachedImageUrl(cardName, null, imageUrl);
     if (currentHoveredCard === cardName) {
       displayImage(imageUrl);
     }
@@ -3198,10 +3315,13 @@ function showMobilePreview(cardName) {
   const img = document.getElementById('mobile-preview-image');
   const name = document.getElementById('mobile-preview-name');
 
-  const imageUrl = `https://api.scryfall.com/cards/named?format=image&exact=${encodeURIComponent(cardName)}`;
+  const imageUrl = getCachedImageUrl(cardName, null) || scryfallImageUrl(cardName);
   img.src = imageUrl;
   img.alt = cardName;
   name.textContent = cardName;
+  if (!getCachedImageUrl(cardName, null)) {
+    img.addEventListener('load', () => setCachedImageUrl(cardName, null, imageUrl), { once: true });
+  }
 
   modal.classList.add('open');
   mobileFocusTrap.activate();
