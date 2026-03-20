@@ -3140,25 +3140,35 @@ const BASIC_LAND_NAMES = new Set([
 ]);
 
 async function aggregateShoppingCards() {
-  const cardMap = new Map(); // name -> { quantity: 1, type, isCommander }
+  const cardMap = new Map(); // name -> { quantity: 1, type, isCommander, decks: Set }
   for (const deckId of shoppingSelectedDecks) {
     const deck = await loadDeckData(deckId);
     if (!deck?.decklist) continue;
     const cmd = deck.commander || '';
     const partner = deck.partner || '';
     // Add commander(s) — deduplicated, 1 copy each
-    if (cmd && !cardMap.has(cmd)) {
-      cardMap.set(cmd, { quantity: 1, type: 'Creature', isCommander: true });
+    if (cmd) {
+      if (!cardMap.has(cmd)) {
+        cardMap.set(cmd, { quantity: 1, type: 'Creature', isCommander: true, decks: new Set([deckId]) });
+      } else {
+        cardMap.get(cmd).decks.add(deckId);
+      }
     }
-    if (partner && !cardMap.has(partner)) {
-      cardMap.set(partner, { quantity: 1, type: 'Creature', isCommander: true });
+    if (partner) {
+      if (!cardMap.has(partner)) {
+        cardMap.set(partner, { quantity: 1, type: 'Creature', isCommander: true, decks: new Set([deckId]) });
+      } else {
+        cardMap.get(partner).decks.add(deckId);
+      }
     }
     // Add decklist cards, skipping basic lands — deduplicated across decks
     deck.decklist.forEach(card => {
       const name = card.name;
       if (BASIC_LAND_NAMES.has(name)) return;
       if (!cardMap.has(name)) {
-        cardMap.set(name, { quantity: 1, type: normalizeCardType(card.type || 'Other'), isCommander: false });
+        cardMap.set(name, { quantity: 1, type: normalizeCardType(card.type || 'Other'), isCommander: false, decks: new Set([deckId]) });
+      } else {
+        cardMap.get(name).decks.add(deckId);
       }
     });
   }
@@ -3173,19 +3183,20 @@ function splitByOwnership(cardMap) {
     const needQty = Math.max(0, info.quantity - ownedQty);
     const ownQty = Math.min(info.quantity, ownedQty);
     if (needQty > 0) {
-      buy.push({ name, quantity: needQty, type: info.type, isCommander: info.isCommander });
+      buy.push({ name, quantity: needQty, type: info.type, isCommander: info.isCommander, decks: info.decks });
     }
     if (ownQty > 0) {
-      own.push({ name, quantity: ownQty, type: info.type, isCommander: info.isCommander });
+      own.push({ name, quantity: ownQty, type: info.type, isCommander: info.isCommander, decks: info.decks });
     }
   }
   return { buy, own };
 }
 
 function renderShoppingCardRows(cards, sortMode) {
+  const multiDeck = shoppingSelectedDecks.size > 1;
   if (sortMode === 'az') {
     cards.sort((a, b) => a.name.localeCompare(b.name));
-    return cards.map(c => renderShoppingCardRow(c.name, c.quantity, c.type !== 'Land')).join('');
+    return cards.map(c => renderShoppingCardRow(c.name, c.quantity, c.type !== 'Land', multiDeck ? c.decks : null)).join('');
   }
   // Group by type
   const typeOrder = ['Creature', 'Planeswalker', 'Artifact', 'Enchantment', 'Instant', 'Sorcery', 'Land', 'Other'];
@@ -3203,26 +3214,49 @@ function renderShoppingCardRows(cards, sortMode) {
   if (commanders.length > 0) {
     const cmdCount = commanders.reduce((s, c) => s + c.quantity, 0);
     html += `<div class="shopping-group-header"><span class="shopping-group-name">Commander${commanders.length > 1 ? 's' : ''}</span><span class="shopping-group-count">(${cmdCount})</span></div>`;
-    commanders.forEach(c => { html += renderShoppingCardRow(c.name, c.quantity, true); });
+    commanders.forEach(c => { html += renderShoppingCardRow(c.name, c.quantity, true, multiDeck ? c.decks : null); });
   }
   typeOrder.forEach(type => {
     const list = grouped[type];
     if (!list?.length) return;
     const count = list.reduce((s, c) => s + c.quantity, 0);
     html += `<div class="shopping-group-header"><span class="shopping-group-name">${escapeHtml(type)}${type !== 'Other' ? 's' : ''}</span><span class="shopping-group-count">(${count})</span></div>`;
-    list.forEach(c => { html += renderShoppingCardRow(c.name, c.quantity, type !== 'Land'); });
+    list.forEach(c => { html += renderShoppingCardRow(c.name, c.quantity, type !== 'Land', multiDeck ? c.decks : null); });
   });
   return html;
 }
 
-function renderShoppingCardRow(cardName, quantity, showMana) {
+function renderShoppingCardRow(cardName, quantity, showMana, decks) {
   const qtyPrefix = quantity > 1 ? `${quantity}x ` : '';
   const metadata = cardMetadataCache.get(cardName);
   const manaHtml = (showMana !== false && metadata?.mana_cost) ? `<span class="shopping-card-mana-symbols">${renderManaCost(metadata.mana_cost)}</span>` : '';
+  let deckDotsHtml = '';
+  if (decks && decks.size > 0 && deckIndex?.commanders) {
+    const dots = [];
+    for (const deckId of decks) {
+      const cmd = deckIndex.commanders.find(c => c.id === deckId);
+      if (!cmd) continue;
+      const colors = cmd.colors || ['C'];
+      const dotColor = deckDotColor(colors);
+      dots.push(`<span class="shopping-deck-dot" style="background:${dotColor}" title="${escapeHtml(cmd.name)}"></span>`);
+    }
+    if (dots.length > 0) {
+      deckDotsHtml = `<span class="shopping-deck-dots">${dots.join('')}</span>`;
+    }
+  }
   return `<div class="shopping-card-row" data-card-name="${escapeHtml(cardName)}">
     <span class="shopping-card-name">${escapeHtml(qtyPrefix)}${escapeHtml(cardName)}</span>
+    ${deckDotsHtml}
     ${manaHtml}
   </div>`;
+}
+
+function deckDotColor(colors) {
+  const colorMap = { W: '#c4b998', U: '#1a7cc0', B: '#4a3a5c', R: '#c23028', G: '#2d8a56', C: '#6B7280' };
+  if (colors.length === 1) return colorMap[colors[0]] || colorMap.C;
+  const c1 = colorMap[colors[0]] || colorMap.C;
+  const c2 = colorMap[colors[colors.length - 1]] || colorMap.C;
+  return `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)`;
 }
 
 function generateShoppingExportText() {
