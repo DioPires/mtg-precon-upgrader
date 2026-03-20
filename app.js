@@ -4247,6 +4247,16 @@ async function initializeApp() {
   // Set up delegated event listeners (once, before any content loads)
   setupDelegatedListeners();
 
+  // Sticky nav — collapse header into compact bar when scrolled past
+  const stickyNav = document.getElementById('sticky-nav');
+  const headerEl = document.querySelector('header');
+  if (stickyNav && headerEl) {
+    const headerObserver = new IntersectionObserver(([entry]) => {
+      stickyNav.classList.toggle('stuck', !entry.isIntersecting);
+    }, { threshold: 0 });
+    headerObserver.observe(headerEl);
+  }
+
   // Tier sources toggle
   document.getElementById('tier-sources-toggle')?.addEventListener('click', () => {
     const section = document.getElementById('tier-sources-section');
