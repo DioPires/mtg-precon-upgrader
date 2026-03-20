@@ -39,3 +39,27 @@ commanderspellbook_find_combos(decklist=["Sol Ring", "Meren of Clan Nel Toth", .
 Returns:
 - `included` — combos fully enabled by the decklist
 - `almost_included` — combos 1-2 cards away, with `missing_cards` and `missing_templates`
+
+## Archidekt MCP Server
+
+**Location**: `mcp-servers/archidekt/`
+
+An MCP server for publishing deck data to Archidekt (https://archidekt.com/u/pirex).
+
+### Available Tools (after restart)
+- `archidekt_list_decks` — List decks on the Archidekt profile (no auth needed)
+- `archidekt_publish_deck` — Create or update a deck from deck.json (auth required)
+- `archidekt_sync_all` — Sync all deck.json files to Archidekt (auth required)
+
+### Usage
+```
+archidekt_list_decks()
+archidekt_publish_deck(deck_id="titan-convergence", dry_run=True)
+archidekt_sync_all(dry_run=True)
+```
+
+### Auth
+Set `ARCHIDEKT_AUTH_TOKEN` env var for write operations.
+
+### Context File
+See `mcp-servers/archidekt/CLAUDE_CONTEXT.md` for full implementation details.
