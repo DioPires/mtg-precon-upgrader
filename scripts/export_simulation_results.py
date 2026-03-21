@@ -9,6 +9,7 @@ data/commanders/{id}/simulation.json.
 import json
 import math
 import os
+import random
 import re
 import statistics
 import sys
@@ -38,6 +39,9 @@ METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
 NUM_GAMES = 100_000
 NUM_TURNS = 10
+GOLDFISH_GAMES = 10_000
+GOLDFISH_MEANINGFUL_PRESSURE_FLOOR = 6
+GOLDFISH_LETHAL_DAMAGE_PROXY = 40
 
 DRAW_PATTERNS = (
     r"\bdraws?\b",
@@ -83,6 +87,22 @@ COMMANDER_ENGINE_PATTERNS = (
     r"\bsacrifice\b",
     r"\breturn\b.*\bfrom your graveyard\b",
 )
+
+COLOR_SYMBOLS = "WUBRGC"
+LAND_SUBTYPE_COLORS = {
+    "Plains": "W",
+    "Island": "U",
+    "Swamp": "B",
+    "Mountain": "R",
+    "Forest": "G",
+}
+NUMBER_WORDS = {
+    "a": 1,
+    "an": 1,
+    "one": 1,
+    "two": 2,
+    "three": 3,
+}
 
 KEY_COMBOS = {
     "azure-dominion": [
@@ -291,6 +311,7 @@ def parse_generic_mana_cost(mana_cost: str) -> dict:
         "B": 0,
         "R": 0,
         "G": 0,
+        "C": 0,
         "total": 0,
         "X": False,
     }
@@ -304,9 +325,9 @@ def parse_generic_mana_cost(mana_cost: str) -> dict:
             result["X"] = True
         elif symbol.isdigit():
             result["generic"] += int(symbol)
-        elif symbol in ("W", "U", "B", "R", "G"):
+        elif symbol in COLOR_SYMBOLS:
             result[symbol] += 1
-    result["total"] = result["generic"] + sum(result[color] for color in "WUBRG")
+    result["total"] = result["generic"] + sum(result[color] for color in COLOR_SYMBOLS)
     return result
 
 
@@ -397,6 +418,776 @@ def classify_functional_cards(decklist: list[str], deck_data: dict, metadata: di
         "threats": threats,
         "draw": draw,
         "interaction": interaction,
+    }
+
+
+def is_permanent_card(meta: dict) -> bool:
+    """Return True for cards that remain on battlefield after resolution."""
+    type_line = meta.get("type_line", "")
+    return any(marker in type_line for marker in ("Land", "Artifact", "Creature", "Enchantment", "Planeswalker", "Battle"))
+
+
+def extract_land_subtypes(meta: dict) -> set[str]:
+    """Extract basic land subtypes from a land type line."""
+    type_line = meta.get("type_line", "")
+    if "Land" not in type_line or "—" not in type_line:
+        return set()
+    _, subtype_blob = type_line.split("—", 1)
+    return {subtype.strip() for subtype in subtype_blob.split() if subtype.strip() in LAND_SUBTYPE_COLORS}
+
+
+def parse_add_clause_atoms(clause: str, commander_colors: list[str]) -> list[frozenset]:
+    """Convert a single oracle Add-clause into mana atoms."""
+    lower = clause.lower()
+    if "one mana of any color in your commander's color identity" in lower:
+        return [frozenset(commander_colors)]
+    if "one mana of any color" in lower:
+        colors = commander_colors or list("WUBRG")
+        return [frozenset(colors)]
+
+    symbols = re.findall(r"\{([WUBRGC])\}", clause)
+    if not symbols:
+        return []
+    if " or " in lower:
+        return [frozenset(symbols)]
+    return [frozenset({symbol}) for symbol in symbols]
+
+
+def mana_atoms_for_card(meta: dict, commander_colors: list[str]) -> list[frozenset]:
+    """Infer mana atoms a permanent can generate from oracle text."""
+    oracle = meta.get("oracle_text", "")
+    activation_match = re.search(r"^\{[^}]+\},\s*\{T\}: Add([^.\n]+)", oracle)
+    if activation_match:
+        symbols = re.findall(r"\{([WUBRGC])\}", activation_match.group(1))
+        if symbols:
+            return [frozenset(symbols)]
+
+    atoms = []
+    for clause in re.findall(r"Add([^.\n]+)", oracle):
+        atoms.extend(parse_add_clause_atoms(clause, commander_colors))
+
+    if atoms:
+        return atoms
+
+    # Fetchlands / land tutors function as access to typed colored mana.
+    lower = oracle.lower()
+    if "Land" in meta.get("type_line", "") and "search your library for a" in lower:
+        colors = {
+            color for subtype, color in LAND_SUBTYPE_COLORS.items()
+            if subtype.lower() in lower
+        }
+        if colors:
+            return [frozenset(colors)]
+
+    return []
+
+
+def mana_source_delay(meta: dict) -> int | None:
+    """Turns until a permanent begins producing mana after being cast."""
+    type_line = meta.get("type_line", "")
+    oracle = meta.get("oracle_text", "")
+    if "Land" in type_line:
+        return 0
+    if "{T}" not in oracle or "Add" not in oracle:
+        return None
+    if "Creature" in type_line:
+        return 1
+    if re.search(r"^\{[^}]+\},\s*\{T\}", oracle):
+        return 1
+    return 0
+
+
+def parse_land_ramp_profile(meta: dict) -> dict | None:
+    """Detect spells that put lands directly onto battlefield."""
+    oracle = meta.get("oracle_text", "")
+    lower = oracle.lower()
+    type_line = meta.get("type_line", "")
+    if "search your library" not in lower or "onto the battlefield" not in lower:
+        return None
+    if "land card" not in lower and not any(f"{subtype.lower()} card" in lower for subtype in LAND_SUBTYPE_COLORS):
+        return None
+    if any(marker in type_line for marker in ("Artifact", "Creature", "Enchantment")) and "enters" not in lower:
+        return None
+
+    count = 1
+    count_match = re.search(r"(up to )?(a|an|one|two|three)\s+[^.]*land cards?", lower)
+    if count_match:
+        count = NUMBER_WORDS.get(count_match.group(2), 1)
+
+    allowed_subtypes = {
+        subtype for subtype in LAND_SUBTYPE_COLORS
+        if f"{subtype.lower()} card" in lower or f"{subtype.lower()} cards" in lower
+    }
+
+    return {
+        "count": count,
+        "basicOnly": "basic land card" in lower or "basic land cards" in lower,
+        "allowedSubtypes": allowed_subtypes,
+        "entersTapped": "onto the battlefield tapped" in lower,
+    }
+
+
+def immediate_draw_count(meta: dict) -> int:
+    """Best-effort immediate draw count from cast/ETB text."""
+    sentences = [sentence.strip() for sentence in re.split(r"[\n.]", meta.get("oracle_text", "")) if sentence.strip()]
+    for sentence in sentences:
+        lower = sentence.lower()
+        if "draw" not in lower:
+            continue
+        if "whenever" in lower or "at the beginning" in lower or "attacks" in lower:
+            continue
+        if "dies" in lower or "deals combat damage" in lower:
+            continue
+        if "enters" not in lower and lower.startswith("when "):
+            continue
+
+        match = re.search(r"draw (a|an|one|two|three|four|five|\d+) cards?", lower)
+        if match:
+            token = match.group(1)
+            if token.isdigit():
+                return int(token)
+            return {
+                "a": 1,
+                "an": 1,
+                "one": 1,
+                "two": 2,
+                "three": 3,
+                "four": 4,
+                "five": 5,
+            }.get(token, 1)
+        if "draw a card" in lower:
+            return 1
+    return 0
+
+
+def land_enters_tapped(meta: dict, battlefield_lands: list[dict]) -> bool:
+    """Best-effort ETB tapped heuristic for generic goldfish simulation."""
+    oracle = meta.get("oracle_text", "")
+    lower = oracle.lower()
+    if "enters tapped" not in lower:
+        return False
+    if "you may pay 2 life" in lower:
+        return False
+    if "unless you have two or more opponents" in lower:
+        return False
+
+    other_land_count = len(battlefield_lands)
+    subtype_set = set()
+    basic_count = 0
+    for land in battlefield_lands:
+        subtype_set.update(land.get("subtypes", set()))
+        if land.get("isBasic"):
+            basic_count += 1
+
+    if "unless you control two or fewer other lands" in lower:
+        return other_land_count > 2
+    if "unless you control two or more other lands" in lower:
+        return other_land_count < 2
+    if "unless you control a basic land" in lower:
+        return basic_count == 0
+    if "unless you control" in lower:
+        required_subtypes = {subtype for subtype in LAND_SUBTYPE_COLORS if subtype.lower() in lower}
+        if required_subtypes:
+            return not any(subtype in subtype_set for subtype in required_subtypes)
+
+    return True
+
+
+def choose_best_land_index(library: list[str], metadata: dict, commander_colors: list[str],
+                           battlefield_lands: list[dict], candidate_indices: list[int]) -> int | None:
+    """Choose best land target from library for ramp/fetch effects."""
+    if not candidate_indices:
+        return None
+
+    present_colors = set()
+    for land in battlefield_lands:
+        present_colors.update(land.get("colors", set()))
+
+    best_index = None
+    best_score = None
+    for idx in candidate_indices:
+        meta = metadata.get(library[idx], {})
+        colors = set().union(*mana_atoms_for_card(meta, commander_colors)) if mana_atoms_for_card(meta, commander_colors) else set()
+        untapped_bonus = 10 if not land_enters_tapped(meta, battlefield_lands) else 0
+        new_colors = len((set(colors) & set(commander_colors)) - present_colors)
+        score = (
+            untapped_bonus,
+            new_colors,
+            len(set(colors) & set(commander_colors)),
+            len(colors),
+            library[idx],
+        )
+        if best_score is None or score > best_score:
+            best_score = score
+            best_index = idx
+    return best_index
+
+
+def select_ramp_targets(library: list[str], metadata: dict, commander_colors: list[str],
+                        battlefield_lands: list[dict], ramp_profile: dict) -> list[str]:
+    """Select concrete land cards from library for a ramp effect."""
+    candidate_indices = []
+    for idx, name in enumerate(library):
+        meta = metadata.get(name, {})
+        type_line = meta.get("type_line", "")
+        if "Land" not in type_line:
+            continue
+        if ramp_profile["basicOnly"] and "Basic" not in type_line:
+            continue
+        subtypes = extract_land_subtypes(meta)
+        if ramp_profile["allowedSubtypes"] and not (subtypes & ramp_profile["allowedSubtypes"]):
+            continue
+        candidate_indices.append(idx)
+
+    selected = []
+    for _ in range(ramp_profile["count"]):
+        best_idx = choose_best_land_index(library, metadata, commander_colors, battlefield_lands, candidate_indices)
+        if best_idx is None:
+            break
+        selected.append(library.pop(best_idx))
+        candidate_indices = [idx - 1 if idx > best_idx else idx for idx in candidate_indices if idx != best_idx]
+        selected_meta = metadata.get(selected[-1], {})
+        battlefield_lands.append({
+            "name": selected[-1],
+            "colors": set().union(*mana_atoms_for_card(selected_meta, commander_colors)) if mana_atoms_for_card(selected_meta, commander_colors) else set(),
+            "subtypes": extract_land_subtypes(selected_meta),
+            "isBasic": "Basic" in selected_meta.get("type_line", ""),
+        })
+        battlefield_lands.pop()
+    return selected
+
+
+def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
+                           commander_colors: list[str], commander_name: str) -> dict:
+    """Compile per-card goldfish heuristics from metadata."""
+    mana_cost = parse_generic_mana_cost(meta.get("mana_cost", ""))
+    type_line = meta.get("type_line", "")
+    oracle = meta.get("oracle_text", "")
+    is_land = "Land" in type_line
+    is_threat = is_threat_card(name, meta, category_names) or name == commander_name
+    is_draw = is_draw_card(meta)
+    is_interaction = is_interaction_card(meta, category_names)
+    land_ramp = None if is_land else parse_land_ramp_profile(meta)
+    mana_atoms = mana_atoms_for_card(meta, commander_colors) if is_static_source_card(meta) else []
+    source_delay = mana_source_delay(meta)
+
+    impact = 0
+    if is_threat:
+        impact += max(2, min(8, int(meta.get("cmc", 0) or mana_cost["total"] or 2)))
+        if "Planeswalker" in type_line or "Battle" in type_line:
+            impact += 1
+    if is_draw:
+        impact += 1
+    if "create" in oracle.lower() and "token" in oracle.lower():
+        impact += 1
+    if text_matches(oracle, THREAT_ORACLE_PATTERNS):
+        impact += 1
+
+    combat = 0
+    if "Creature" in type_line:
+        combat = max(1, min(8, int(meta.get("cmc", 0) or mana_cost["total"] or 1)))
+        if any(keyword in oracle for keyword in ("Flying", "Trample", "Menace", "Double strike", "First strike")):
+            combat += 1
+
+    return {
+        "name": name,
+        "cmc": int(meta.get("cmc", 0) or mana_cost["total"] or 0),
+        "manaCost": mana_cost,
+        "typeLine": type_line,
+        "isLand": is_land,
+        "isPermanent": is_permanent_card(meta),
+        "isThreat": is_threat,
+        "isDraw": is_draw,
+        "isInteraction": is_interaction,
+        "manaAtoms": mana_atoms,
+        "manaSourceDelay": source_delay,
+        "landRamp": land_ramp,
+        "immediateDraw": immediate_draw_count(meta),
+        "impact": impact,
+        "combat": combat,
+        "subtypes": extract_land_subtypes(meta),
+        "isBasic": "Basic" in type_line,
+    }
+
+
+class GoldfishManaPool:
+    """Flexible mana pool backed by source atoms."""
+
+    def __init__(self, sources=None):
+        self.sources = list(sources or [])
+
+    @property
+    def total(self) -> int:
+        return len(self.sources)
+
+    def _allocate(self, pips: dict) -> tuple[bool, list[frozenset] | None]:
+        needed = {color: pips.get(color, 0) for color in COLOR_SYMBOLS}
+        generic = pips.get("generic", 0)
+        total_needed = generic + sum(needed.values())
+        if self.total < total_needed:
+            return False, None
+
+        available = list(self.sources)
+        for _ in range(sum(needed.values())):
+            best_color = None
+            best_ratio = float("inf")
+            for color in COLOR_SYMBOLS:
+                if needed[color] <= 0:
+                    continue
+                supply = sum(1 for source in available if color in source)
+                if supply == 0:
+                    return False, None
+                ratio = supply / needed[color]
+                if ratio < best_ratio:
+                    best_ratio = ratio
+                    best_color = color
+
+            best_idx = None
+            best_flex = float("inf")
+            for idx, source in enumerate(available):
+                if best_color in source and len(source) < best_flex:
+                    best_idx = idx
+                    best_flex = len(source)
+            if best_idx is None:
+                return False, None
+            available.pop(best_idx)
+            needed[best_color] -= 1
+
+        available.sort(key=len)
+        if len(available) < generic:
+            return False, None
+        return True, available[generic:]
+
+    def can_cast(self, pips: dict) -> bool:
+        success, _ = self._allocate(pips)
+        return success
+
+    def after_spending(self, pips: dict) -> "GoldfishManaPool":
+        success, remaining = self._allocate(pips)
+        return GoldfishManaPool(remaining if success else [])
+
+
+def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
+                           commander_name: str, commander_colors: list[str]) -> dict:
+    """Precompute per-card profiles for goldfish simulation."""
+    category_lookup = build_card_category_lookup(deck_data)
+    profiles = {}
+    for name in ordered_unique(decklist + [commander_name]):
+        profiles[name] = build_goldfish_profile(
+            name=name,
+            meta=metadata.get(name, {}),
+            category_names=category_lookup.get(name, set()),
+            commander_colors=commander_colors,
+            commander_name=commander_name,
+        )
+    return {
+        "profiles": profiles,
+        "commanderName": commander_name,
+        "commanderColors": commander_colors,
+    }
+
+
+def should_goldfish_mulligan(hand: list[str], profiles: dict) -> bool:
+    """Simple Commander goldfish mulligan heuristic."""
+    lands = sum(1 for name in hand if profiles[name]["isLand"])
+    cheap_ramp = sum(
+        1 for name in hand
+        if not profiles[name]["isLand"]
+        and (profiles[name]["manaSourceDelay"] is not None or profiles[name]["landRamp"])
+        and profiles[name]["cmc"] <= 2
+    )
+    return lands <= 1 or lands >= 6 or (lands == 2 and cheap_ramp == 0)
+
+
+def goldfish_bottom_cards(hand: list[str], count: int, profiles: dict) -> list[str]:
+    """Bottom expensive reactive cards first."""
+    candidates = sorted(
+        hand,
+        key=lambda name: (
+            profiles[name]["isLand"],
+            not profiles[name]["isInteraction"],
+            profiles[name]["cmc"],
+            name,
+        ),
+        reverse=True,
+    )
+    return candidates[:count]
+
+
+def commander_mulligan_goldfish(decklist: list[str], profiles: dict) -> tuple[list[str], list[str]]:
+    """Run Commander mulligan and return library + kept hand."""
+    attempt = 0
+    while True:
+        library = list(decklist)
+        random.shuffle(library)
+        hand = [library.pop() for _ in range(7)]
+        if should_goldfish_mulligan(hand, profiles) and attempt < 2:
+            attempt += 1
+            continue
+        break
+
+    if attempt >= 2:
+        for card in goldfish_bottom_cards(hand, attempt - 1, profiles):
+            hand.remove(card)
+            library.append(card)
+    return library, hand
+
+
+def choose_land_to_play(hand: list[str], profiles: dict, metadata: dict,
+                        battlefield_lands: list[dict], commander_colors: list[str]) -> str | None:
+    """Pick best land from hand for current board."""
+    land_names = [name for name in hand if profiles[name]["isLand"]]
+    if not land_names:
+        return None
+
+    present_colors = set()
+    for land in battlefield_lands:
+        present_colors.update(land.get("colors", set()))
+
+    best_name = None
+    best_score = None
+    for name in land_names:
+        profile = profiles[name]
+        meta = metadata.get(name, {})
+        colors = set().union(*profile["manaAtoms"]) if profile["manaAtoms"] else set()
+        untapped_bonus = 10 if not land_enters_tapped(meta, battlefield_lands) else 0
+        score = (
+            untapped_bonus,
+            len((colors & set(commander_colors)) - present_colors),
+            len(colors & set(commander_colors)),
+            len(colors),
+            name,
+        )
+        if best_score is None or score > best_score:
+            best_name = name
+            best_score = score
+    return best_name
+
+
+def proactive_cast_priority(name: str, profile: dict, commander_name: str,
+                            commander_cast: bool) -> tuple:
+    """Sort order for proactive solitaire decisions."""
+    if profile["isInteraction"]:
+        return (99, 99, 99, name)
+    if profile["landRamp"] or profile["manaSourceDelay"] is not None:
+        ramp_value = len(profile["manaAtoms"]) + (profile["landRamp"]["count"] if profile["landRamp"] else 0)
+        return (0, profile["cmc"], -ramp_value, name)
+    if name == commander_name and not commander_cast:
+        return (1, 0, -profile["impact"], name)
+    if profile["isThreat"]:
+        return (2, -profile["impact"], -profile["cmc"], name)
+    if profile["isDraw"]:
+        return (3, profile["cmc"], -profile["immediateDraw"], name)
+    if profile["isPermanent"]:
+        return (4, -profile["impact"], -profile["cmc"], name)
+    return (5, profile["cmc"], 0, name)
+
+
+def turn_sources(permanents: list[dict], turn: int) -> list[frozenset]:
+    """Collect currently active mana sources."""
+    sources = []
+    for permanent in permanents:
+        if permanent["manaActiveTurn"] <= turn:
+            sources.extend(permanent["manaAtoms"])
+    return sources
+
+
+def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
+                       commander_in_play: bool, cumulative_damage: float,
+                       meaningful_threshold: int) -> dict:
+    """Summarize goldfish board state at end of turn."""
+    lands = sum(1 for permanent in permanents if permanent["kind"] == "land")
+    ramp = sum(1 for permanent in permanents if permanent["kind"] == "ramp")
+    threats = sum(1 for permanent in permanents if permanent["isThreat"])
+    pressure = sum(permanent["impact"] for permanent in permanents if permanent["kind"] != "land")
+    combat = sum(
+        permanent["combat"] for permanent in permanents
+        if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
+    )
+    meaningful = pressure >= meaningful_threshold or threats >= 2 or (commander_in_play and pressure >= meaningful_threshold - 1)
+    return {
+        "lands": lands,
+        "ramp": ramp,
+        "threats": threats,
+        "availableMana": len(turn_sources(permanents, turn)),
+        "pressure": pressure,
+        "combat": combat,
+        "cumulativeDamage": cumulative_damage,
+        "commanderCast": 1 if commander_in_play else 0,
+        "firstThreat": 1 if threats > 0 else 0,
+        "meaningfulBoard": 1 if meaningful else 0,
+        "lethalProxy": 1 if cumulative_damage >= GOLDFISH_LETHAL_DAMAGE_PROXY else 0,
+    }
+
+
+def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
+                           meaningful_threshold: int) -> dict:
+    """Simulate one solitaire game with heuristic sequencing."""
+    profiles = context["profiles"]
+    commander_name = context["commanderName"]
+    commander_colors = context["commanderColors"]
+
+    library, hand = commander_mulligan_goldfish(decklist, profiles)
+    permanents = []
+    battlefield_lands = []
+    commander_in_play = False
+    cumulative_damage = 0.0
+    by_turn = {}
+
+    for turn in range(1, NUM_TURNS + 1):
+        if turn > 1 and library:
+            hand.append(library.pop())
+
+        land_name = choose_land_to_play(hand, profiles, metadata, battlefield_lands, commander_colors)
+        if land_name:
+            hand.remove(land_name)
+            land_profile = profiles[land_name]
+            enters_tapped_now = land_enters_tapped(metadata[land_name], battlefield_lands)
+            colors = set().union(*land_profile["manaAtoms"]) if land_profile["manaAtoms"] else set()
+            land_record = {
+                "name": land_name,
+                "kind": "land",
+                "manaAtoms": land_profile["manaAtoms"],
+                "manaActiveTurn": turn + (1 if enters_tapped_now else 0),
+                "combatReadyTurn": 99,
+                "impact": 0,
+                "combat": 0,
+                "isThreat": False,
+            }
+            permanents.append(land_record)
+            battlefield_lands.append({
+                "name": land_name,
+                "colors": colors,
+                "subtypes": land_profile["subtypes"],
+                "isBasic": land_profile["isBasic"],
+            })
+
+        while True:
+            pool = GoldfishManaPool(turn_sources(permanents, turn))
+            candidates = []
+            for name in ordered_unique(hand):
+                profile = profiles[name]
+                if profile["isLand"] or profile["isInteraction"]:
+                    continue
+                if not pool.can_cast(profile["manaCost"]):
+                    continue
+                candidates.append(name)
+            if not commander_in_play and pool.can_cast(profiles[commander_name]["manaCost"]):
+                candidates.append(commander_name)
+
+            if not candidates:
+                break
+
+            candidates.sort(key=lambda name: proactive_cast_priority(name, profiles[name], commander_name, commander_in_play))
+            chosen = candidates[0]
+            chosen_profile = profiles[chosen]
+            pool = pool.after_spending(chosen_profile["manaCost"])
+            if chosen in hand:
+                hand.remove(chosen)
+
+            if chosen_profile["landRamp"]:
+                fetched = select_ramp_targets(
+                    library=library,
+                    metadata=metadata,
+                    commander_colors=commander_colors,
+                    battlefield_lands=battlefield_lands,
+                    ramp_profile=chosen_profile["landRamp"],
+                )
+                for land_name in fetched:
+                    land_profile = profiles[land_name]
+                    colors = set().union(*land_profile["manaAtoms"]) if land_profile["manaAtoms"] else set()
+                    land_record = {
+                        "name": land_name,
+                        "kind": "land",
+                        "manaAtoms": land_profile["manaAtoms"],
+                        "manaActiveTurn": turn + (1 if chosen_profile["landRamp"]["entersTapped"] else 0),
+                        "combatReadyTurn": 99,
+                        "impact": 0,
+                        "combat": 0,
+                        "isThreat": False,
+                    }
+                    permanents.append(land_record)
+                    battlefield_lands.append({
+                        "name": land_name,
+                        "colors": colors,
+                        "subtypes": land_profile["subtypes"],
+                        "isBasic": land_profile["isBasic"],
+                    })
+                    if not chosen_profile["landRamp"]["entersTapped"]:
+                        pool.sources.extend(land_profile["manaAtoms"])
+
+            if chosen_profile["isPermanent"]:
+                mana_active_turn = turn + (chosen_profile["manaSourceDelay"] or 0)
+                if chosen_profile["manaSourceDelay"] == 0 and chosen_profile["manaAtoms"]:
+                    pool.sources.extend(chosen_profile["manaAtoms"])
+                permanents.append({
+                    "name": chosen,
+                    "kind": "ramp" if (chosen_profile["landRamp"] or chosen_profile["manaSourceDelay"] is not None) else "spell",
+                    "manaAtoms": chosen_profile["manaAtoms"],
+                    "manaActiveTurn": mana_active_turn,
+                    "combatReadyTurn": turn + (1 if chosen_profile["combat"] > 0 else 99),
+                    "impact": chosen_profile["impact"],
+                    "combat": chosen_profile["combat"],
+                    "isThreat": chosen_profile["isThreat"],
+                })
+
+            if chosen == commander_name:
+                commander_in_play = True
+
+            for _ in range(chosen_profile["immediateDraw"]):
+                if library:
+                    hand.append(library.pop())
+
+        cumulative_damage += sum(
+            permanent["combat"] for permanent in permanents
+            if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
+        )
+        by_turn[turn] = metrics_from_board(
+            turn=turn,
+            permanents=permanents,
+            commander_name=commander_name,
+            commander_in_play=commander_in_play,
+            cumulative_damage=cumulative_damage,
+            meaningful_threshold=meaningful_threshold,
+        )
+
+    return by_turn
+
+
+def _run_goldfish_chunk(args):
+    """Worker chunk for multiprocessing goldfish simulation."""
+    decklist, metadata, context, num_games, meaningful_threshold = args
+    aggregate = {
+        "lands": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "ramp": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "threats": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "available_mana": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "pressure": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "combat": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "cumulative_damage": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "commander_cast": Counter(),
+        "first_threat": Counter(),
+        "meaningful_board": Counter(),
+        "lethal_proxy": Counter(),
+    }
+
+    for _ in range(num_games):
+        game = simulate_goldfish_game(decklist, metadata, context, meaningful_threshold)
+        for turn in range(1, NUM_TURNS + 1):
+            metrics = game[turn]
+            aggregate["lands"][turn].append(metrics["lands"])
+            aggregate["ramp"][turn].append(metrics["ramp"])
+            aggregate["threats"][turn].append(metrics["threats"])
+            aggregate["available_mana"][turn].append(metrics["availableMana"])
+            aggregate["pressure"][turn].append(metrics["pressure"])
+            aggregate["combat"][turn].append(metrics["combat"])
+            aggregate["cumulative_damage"][turn].append(metrics["cumulativeDamage"])
+            aggregate["commander_cast"][turn] += metrics["commanderCast"]
+            aggregate["first_threat"][turn] += metrics["firstThreat"]
+            aggregate["meaningful_board"][turn] += metrics["meaningfulBoard"]
+            aggregate["lethal_proxy"][turn] += metrics["lethalProxy"]
+
+    return aggregate
+
+
+def merge_goldfish_stats(chunks: list[dict]) -> dict:
+    """Merge multiprocessing goldfish chunk results."""
+    merged = {
+        "lands": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "ramp": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "threats": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "available_mana": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "pressure": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "combat": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "cumulative_damage": {turn: [] for turn in range(1, NUM_TURNS + 1)},
+        "commander_cast": Counter(),
+        "first_threat": Counter(),
+        "meaningful_board": Counter(),
+        "lethal_proxy": Counter(),
+    }
+
+    for chunk in chunks:
+        for key in ("lands", "ramp", "threats", "available_mana", "pressure", "combat", "cumulative_damage"):
+            for turn in range(1, NUM_TURNS + 1):
+                merged[key][turn].extend(chunk[key][turn])
+        for key in ("commander_cast", "first_threat", "meaningful_board", "lethal_proxy"):
+            merged[key].update(chunk[key])
+    return merged
+
+
+def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dict,
+                             commander_name: str, commander_colors: list[str]) -> dict:
+    """Compute generic solitaire goldfish metrics for a deck."""
+    context = build_goldfish_context(decklist, deck_data, metadata, commander_name, commander_colors)
+    meaningful_threshold = max(
+        GOLDFISH_MEANINGFUL_PRESSURE_FLOOR,
+        int(round(compute_avg_cmc(decklist, metadata) * 2)),
+    )
+    import multiprocessing
+    n_workers = os.cpu_count() or 4
+    chunk_size = GOLDFISH_GAMES // n_workers
+    remainder = GOLDFISH_GAMES % n_workers
+    chunks = [chunk_size + (1 if i < remainder else 0) for i in range(n_workers)]
+    with multiprocessing.Pool(n_workers) as pool:
+        chunk_results = pool.map(
+            _run_goldfish_chunk,
+            [(decklist, metadata, context, games, meaningful_threshold) for games in chunks if games > 0],
+        )
+    stats = merge_goldfish_stats(chunk_results)
+
+    by_turn = {}
+    commander_curve = {}
+    threat_curve = {}
+    meaningful_curve = {}
+    lethal_curve = {}
+
+    for turn in range(1, NUM_TURNS + 1):
+        commander_curve[str(turn)] = pct(stats["commander_cast"][turn], GOLDFISH_GAMES)
+        threat_curve[str(turn)] = pct(stats["first_threat"][turn], GOLDFISH_GAMES)
+        meaningful_curve[str(turn)] = pct(stats["meaningful_board"][turn], GOLDFISH_GAMES)
+        lethal_curve[str(turn)] = pct(stats["lethal_proxy"][turn], GOLDFISH_GAMES)
+        by_turn[str(turn)] = {
+            "lands": mana_stats(stats["lands"][turn]),
+            "rampPermanents": mana_stats(stats["ramp"][turn]),
+            "threats": mana_stats(stats["threats"][turn]),
+            "availableMana": mana_stats(stats["available_mana"][turn]),
+            "pressureScore": mana_stats(stats["pressure"][turn]),
+            "combatPressure": mana_stats(stats["combat"][turn]),
+            "cumulativeDamageProxy": mana_stats(stats["cumulative_damage"][turn]),
+            "commanderCast": commander_curve[str(turn)],
+            "firstThreat": threat_curve[str(turn)],
+            "meaningfulBoard": meaningful_curve[str(turn)],
+            "lethalProxy": lethal_curve[str(turn)],
+        }
+
+    return {
+        "numGames": GOLDFISH_GAMES,
+        "byTurn": by_turn,
+        "speed": {
+            "commanderCast": {
+                "byTurn": commander_curve,
+                "medianTurn": median_turn_from_cumulative(commander_curve),
+            },
+            "firstThreat": {
+                "byTurn": threat_curve,
+                "medianTurn": median_turn_from_cumulative(threat_curve),
+            },
+            "meaningfulBoard": {
+                "byTurn": meaningful_curve,
+                "medianTurn": median_turn_from_cumulative(meaningful_curve),
+            },
+            "lethalProxy": {
+                "byTurn": lethal_curve,
+                "medianTurn": median_turn_from_cumulative(lethal_curve),
+            },
+        },
+        "methodology": (
+            f"{GOLDFISH_GAMES:,}-game solitaire heuristic. Sequencing: land drop, cheapest ramp, "
+            "commander on affordability, biggest affordable threat, then other proactive spells. "
+            f"Meaningful board = pressure score >= {meaningful_threshold} or 2+ threats. "
+            f"Lethal proxy = cumulative combat-pressure proxy >= {GOLDFISH_LETHAL_DAMAGE_PROXY}; "
+            "combat pressure uses mana-value-based creature scoring because card metadata omits power/toughness."
+        ),
     }
 
 
@@ -705,6 +1496,14 @@ def enrich_result(result: dict, deck_id: str, deck_data: dict, decklist: list[st
         draw_reliability=draw_reliability,
         interaction_availability=interaction_availability,
     )
+    commander_colors = colors or ["C"]
+    goldfish = compute_goldfish_section(
+        decklist=decklist,
+        deck_data=deck_data,
+        metadata=metadata,
+        commander_name=commander_name,
+        commander_colors=commander_colors,
+    )
 
     result["reliabilityMetrics"] = {
         "threatDensity": threat_density,
@@ -723,6 +1522,7 @@ def enrich_result(result: dict, deck_id: str, deck_data: dict, decklist: list[st
         color_adequacy=color_adequacy,
         commander_dependency=commander_dependency,
     )
+    result["goldfish"] = goldfish
     return result
 
 
@@ -794,6 +1594,7 @@ def validate_output(result: dict, deck_id: str) -> bool:
         "metadata", "deckComposition", "manaByTurn", "mulliganStats",
         "openingHand", "commanderTiming", "colorBalance", "curveEfficiency",
         "specialMetrics", "assessment", "reliabilityMetrics", "deckHealthScore",
+        "goldfish",
     ]
     for key in required_keys:
         if key not in result:
