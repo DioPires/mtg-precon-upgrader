@@ -1223,8 +1223,8 @@ function setupDelegatedListeners() {
 
   function positionShoppingTooltip(e) {
     const pad = 16;
-    const tooltipW = shoppingTooltip.offsetWidth || 260;
-    const tooltipH = shoppingTooltip.offsetHeight || 377;
+    const tooltipW = shoppingTooltip.offsetWidth || 390;
+    const tooltipH = shoppingTooltip.offsetHeight || 578;
     let x = e.clientX + pad;
     let y = e.clientY - tooltipH / 2;
     if (x + tooltipW > window.innerWidth - pad) x = e.clientX - tooltipW - pad;
