@@ -1222,10 +1222,9 @@ function setupDelegatedListeners() {
   let shoppingTooltipCard = null;
 
   function positionShoppingTooltip(e) {
-    if (!shoppingTooltip.classList.contains('visible')) return;
     const pad = 16;
-    const tooltipW = 200;
-    const tooltipH = 290;
+    const tooltipW = shoppingTooltip.offsetWidth || 260;
+    const tooltipH = shoppingTooltip.offsetHeight || 377;
     let x = e.clientX + pad;
     let y = e.clientY - tooltipH / 2;
     if (x + tooltipW > window.innerWidth - pad) x = e.clientX - tooltipW - pad;
