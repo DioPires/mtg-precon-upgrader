@@ -1648,7 +1648,6 @@ async function selectDeck(deckId) {
       : `Commander: ${effectiveCmd}`;
     altCommander.textContent = '';
     renderBracketVisualization();
-    commanderInfo.style.display = 'block';
 
     // Render commander card images
     let commanderCardsHtml = '';
@@ -1674,9 +1673,11 @@ async function selectDeck(deckId) {
     startAmbientArt();
     updateTabStates();
 
-    // Show content (guard for analytics/shopping views)
-    upgradeOverview.style.display = 'block';
-    if (currentView !== 'analytics' && currentView !== 'shopping') {
+    const showDeckChrome = currentView !== 'analytics' && currentView !== 'shopping';
+    commanderInfo.style.display = showDeckChrome ? 'block' : 'none';
+    upgradeOverview.style.display = showDeckChrome ? 'block' : 'none';
+
+    if (showDeckChrome) {
       mainContent.style.display = 'grid';
     }
 
