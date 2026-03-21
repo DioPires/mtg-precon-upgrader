@@ -4069,6 +4069,437 @@ function renderHandSimulator() {
   observeScryfallImages(container);
 }
 
+// === WHAT-IF SWAP ANALYZER ===
+let gameChangersList = null;
+
+async function loadGameChangers() {
+  if (gameChangersList) return gameChangersList;
+  try {
+    const resp = await fetch('data/game-changers.json');
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    gameChangersList = new Set(data.cards || []);
+    return gameChangersList;
+  } catch { return null; }
+}
+
+let swapState = {
+  cutCard: null,    // { name, type } from decklist
+  addCard: null,    // { name, cmc, colors, mana_cost, type_line, oracle_text } from metadata
+  searchQuery: '',
+  searchResults: [],
+};
+
+function resetSwapState() {
+  swapState.cutCard = null;
+  swapState.addCard = null;
+  swapState.searchQuery = '';
+  swapState.searchResults = [];
+}
+
+function computeSwapDelta() {
+  const { cutCard, addCard } = swapState;
+  if (!cutCard || !addCard) return null;
+
+  const cutMeta = cardMetadataCache.get(cutCard.name) || {};
+  const addMeta = addCard;
+
+  const delta = {};
+
+  // CMC delta
+  const cutCmc = cutMeta.cmc ?? 0;
+  const addCmc = addMeta.cmc ?? 0;
+  delta.cmcChange = addCmc - cutCmc;
+
+  // Color pip delta
+  const cutColors = cutMeta.colors || [];
+  const addColors = addMeta.colors || [];
+  const colorDelta = {};
+  cutColors.forEach(c => { colorDelta[c] = (colorDelta[c] || 0) - 1; });
+  addColors.forEach(c => { colorDelta[c] = (colorDelta[c] || 0) + 1; });
+  // Remove zero entries
+  Object.keys(colorDelta).forEach(k => { if (colorDelta[k] === 0) delete colorDelta[k]; });
+  delta.colorDelta = colorDelta;
+
+  // Type change
+  const cutType = cutMeta.type_line || cutCard.type || '';
+  const addType = addMeta.type_line || '';
+  delta.cutType = cutType;
+  delta.addType = addType;
+  delta.typeChanged = cutType !== addType;
+
+  // Mana cost strings
+  delta.cutManaCost = cutMeta.mana_cost || '';
+  delta.addManaCost = addMeta.mana_cost || '';
+
+  // Deck CMC impact
+  if (currentDeck?.decklist) {
+    const deckCards = currentDeck.decklist;
+    let totalCmc = 0;
+    let nonLandCount = 0;
+    deckCards.forEach(card => {
+      const qty = card.quantity || 1;
+      const meta = cardMetadataCache.get(card.name);
+      const typeLine = (meta?.type_line || card.type || '').toLowerCase();
+      if (!typeLine.includes('land')) {
+        totalCmc += (meta?.cmc ?? 0) * qty;
+        nonLandCount += qty;
+      }
+    });
+    const oldAvg = nonLandCount > 0 ? totalCmc / nonLandCount : 0;
+
+    // Adjust for swap
+    const cutIsLand = cutType.toLowerCase().includes('land');
+    const addIsLand = addType.toLowerCase().includes('land');
+    let newTotal = totalCmc;
+    let newCount = nonLandCount;
+    if (!cutIsLand) { newTotal -= cutCmc; newCount -= 1; }
+    if (!addIsLand) { newTotal += addCmc; newCount += 1; }
+    const newAvg = newCount > 0 ? newTotal / newCount : 0;
+    delta.avgCmcBefore = oldAvg;
+    delta.avgCmcAfter = newAvg;
+    delta.avgCmcChange = newAvg - oldAvg;
+
+    // Land count impact
+    let landCount = 0;
+    deckCards.forEach(card => {
+      const qty = card.quantity || 1;
+      const meta = cardMetadataCache.get(card.name);
+      const typeLine = (meta?.type_line || card.type || '').toLowerCase();
+      if (typeLine.includes('land')) landCount += qty;
+    });
+    delta.landsBefore = landCount;
+    delta.landsAfter = landCount + (addIsLand ? 1 : 0) - (cutIsLand ? 1 : 0);
+  }
+
+  // Game Changer impact
+  if (gameChangersList) {
+    const cutIsGC = gameChangersList.has(cutCard.name);
+    const addIsGC = gameChangersList.has(addCard.name);
+    delta.gcCutting = cutIsGC;
+    delta.gcAdding = addIsGC;
+    delta.gcNetChange = (addIsGC ? 1 : 0) - (cutIsGC ? 1 : 0);
+    delta.gcCountBefore = currentDeck?.gameChangers ?? 0;
+    delta.gcCountAfter = delta.gcCountBefore + delta.gcNetChange;
+  }
+
+  // Combo impact — check if cut card is in any known synergies
+  if (currentDeck?.synergies) {
+    const cutSynergies = currentDeck.synergies.filter(s =>
+      s.cards?.some(c => c.toLowerCase() === cutCard.name.toLowerCase())
+    );
+    const addSynergies = currentDeck.synergies.filter(s =>
+      s.cards?.some(c => c.toLowerCase() === addCard.name.toLowerCase())
+    );
+    delta.synergiesBroken = cutSynergies;
+    delta.synergiesKept = addSynergies;
+  }
+
+  return delta;
+}
+
+function swapSearchCards(query) {
+  if (!query || query.length < 2) {
+    swapState.searchResults = [];
+    return;
+  }
+  const q = query.toLowerCase();
+  const results = [];
+  const inDeck = new Set((currentDeck?.decklist || []).map(c => c.name.toLowerCase()));
+
+  for (const [name, meta] of cardMetadataCache) {
+    if (results.length >= 20) break;
+    if (inDeck.has(name.toLowerCase())) continue;
+    if (name.toLowerCase().includes(q)) {
+      results.push({ name, ...meta });
+    }
+  }
+  swapState.searchResults = results;
+}
+
+function selectSwapCut(cardName) {
+  const card = currentDeck?.decklist?.find(c => c.name === cardName);
+  if (card) {
+    swapState.cutCard = card;
+    renderSwapAnalyzer();
+  }
+}
+
+function selectSwapAdd(cardName) {
+  const meta = cardMetadataCache.get(cardName);
+  if (meta) {
+    swapState.addCard = { name: cardName, ...meta };
+    swapState.searchQuery = '';
+    swapState.searchResults = [];
+    renderSwapAnalyzer();
+  }
+}
+
+function clearSwapCut() {
+  swapState.cutCard = null;
+  renderSwapAnalyzer();
+}
+
+function clearSwapAdd() {
+  swapState.addCard = null;
+  renderSwapAnalyzer();
+}
+
+function formatManaCost(manaCost) {
+  if (!manaCost) return '';
+  return manaCost.replace(/\{([^}]+)\}/g, (_, s) => {
+    const sym = s.replace('/', '').toUpperCase();
+    return `<span class="swap-mana-symbol swap-mana-${sym}">${sym}</span>`;
+  });
+}
+
+const COLOR_NAMES = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
+
+function renderSwapAnalyzer() {
+  const container = document.getElementById('swap-analyzer');
+  if (!container) return;
+
+  if (!currentDeckId || !currentDeck) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = '';
+
+  const { cutCard, addCard, searchQuery, searchResults } = swapState;
+  const delta = computeSwapDelta();
+
+  let html = `<div class="swap-analyzer">
+    <div class="swap-analyzer-header">
+      <h2>What-If Swap</h2>
+    </div>
+    <div class="swap-slots">`;
+
+  // CUT slot
+  html += `<div class="swap-slot swap-slot-cut">
+    <div class="swap-slot-label">Cut</div>`;
+  if (cutCard) {
+    const cutMeta = cardMetadataCache.get(cutCard.name) || {};
+    const imgSrc = scryfallImageUrl(cutCard.name, null);
+    const cached = imageCache.get(cutCard.name);
+    const imgAttr = cached ? `src="${cached}"` : `src="" data-scryfall-src="${imgSrc}"`;
+    html += `<div class="swap-card swap-card-selected">
+      <div class="swap-card-img"><img ${imgAttr} alt="${escapeHtml(cutCard.name)}" loading="eager"></div>
+      <div class="swap-card-details">
+        <span class="swap-card-name">${escapeHtml(cutCard.name)}</span>
+        <span class="swap-card-type">${escapeHtml(cutMeta.type_line || cutCard.type || '')}</span>
+        ${cutMeta.mana_cost ? `<span class="swap-card-mana">${formatManaCost(cutMeta.mana_cost)}</span>` : ''}
+      </div>
+      <button class="swap-card-clear" onclick="clearSwapCut()" aria-label="Clear cut card">&times;</button>
+    </div>`;
+  } else {
+    html += `<div class="swap-card-picker">
+      <select class="swap-cut-select" onchange="selectSwapCut(this.value); this.value='';">
+        <option value="">Select a card to cut...</option>`;
+    // Group decklist by type
+    const byType = {};
+    (currentDeck.decklist || []).forEach(card => {
+      const t = card.type || 'Other';
+      if (!byType[t]) byType[t] = [];
+      byType[t].push(card.name);
+    });
+    Object.keys(byType).sort().forEach(type => {
+      html += `<optgroup label="${escapeHtml(type)}">`;
+      byType[type].sort().forEach(name => {
+        html += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+      });
+      html += `</optgroup>`;
+    });
+    html += `</select></div>`;
+  }
+  html += `</div>`;
+
+  // Swap icon
+  html += `<div class="swap-icon-container">
+    <svg class="swap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+      <path d="M7 16l-4-4 4-4"></path><path d="M17 8l4 4-4 4"></path>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+    </svg>
+  </div>`;
+
+  // ADD slot
+  html += `<div class="swap-slot swap-slot-add">
+    <div class="swap-slot-label">Add</div>`;
+  if (addCard) {
+    const imgSrc = scryfallImageUrl(addCard.name, null);
+    const cached = imageCache.get(addCard.name);
+    const imgAttr = cached ? `src="${cached}"` : `src="" data-scryfall-src="${imgSrc}"`;
+    html += `<div class="swap-card swap-card-selected">
+      <div class="swap-card-img"><img ${imgAttr} alt="${escapeHtml(addCard.name)}" loading="eager"></div>
+      <div class="swap-card-details">
+        <span class="swap-card-name">${escapeHtml(addCard.name)}</span>
+        <span class="swap-card-type">${escapeHtml(addCard.type_line || '')}</span>
+        ${addCard.mana_cost ? `<span class="swap-card-mana">${formatManaCost(addCard.mana_cost)}</span>` : ''}
+      </div>
+      <button class="swap-card-clear" onclick="clearSwapAdd()" aria-label="Clear add card">&times;</button>
+    </div>`;
+  } else {
+    html += `<div class="swap-card-picker">
+      <input type="text" class="swap-add-search" placeholder="Search cards to add..."
+        value="${escapeHtml(searchQuery)}"
+        oninput="swapState.searchQuery=this.value; swapSearchCards(this.value); renderSwapSearchResults();">`;
+    if (searchResults.length > 0) {
+      html += `<div class="swap-search-results" onclick="if(event.target.closest('.swap-search-result')){selectSwapAdd(event.target.closest('.swap-search-result').dataset.cardName)}">`;
+      searchResults.forEach(card => {
+        const cmcStr = card.cmc != null ? ` (${Math.floor(card.cmc)})` : '';
+        html += `<button class="swap-search-result" data-card-name="${escapeHtml(card.name)}">
+          <span class="swap-result-name">${escapeHtml(card.name)}</span>
+          <span class="swap-result-type">${escapeHtml(card.type_line || '')}${cmcStr}</span>
+        </button>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  }
+  html += `</div>`;
+
+  html += `</div>`; // close swap-slots
+
+  // Delta results
+  if (delta) {
+    html += renderSwapDelta(delta);
+  } else {
+    html += `<div class="swap-empty-state">
+      <p>Select a card to cut and a card to add to see the impact on your deck.</p>
+    </div>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+  observeScryfallImages(container);
+
+  // Refocus search input if it was active
+  if (!addCard && searchQuery) {
+    const input = container.querySelector('.swap-add-search');
+    if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+  }
+}
+
+function renderSwapSearchResults() {
+  const container = document.getElementById('swap-analyzer');
+  if (!container) return;
+  const picker = container.querySelector('.swap-slot-add .swap-card-picker');
+  if (!picker) return;
+
+  let existing = picker.querySelector('.swap-search-results');
+  if (existing) existing.remove();
+
+  if (swapState.searchResults.length > 0) {
+    let html = `<div class="swap-search-results" onclick="if(event.target.closest('.swap-search-result')){selectSwapAdd(event.target.closest('.swap-search-result').dataset.cardName)}">`;
+    swapState.searchResults.forEach(card => {
+      const cmcStr = card.cmc != null ? ` (${Math.floor(card.cmc)})` : '';
+      html += `<button class="swap-search-result" data-card-name="${escapeHtml(card.name)}">
+        <span class="swap-result-name">${escapeHtml(card.name)}</span>
+        <span class="swap-result-type">${escapeHtml(card.type_line || '')}${cmcStr}</span>
+      </button>`;
+    });
+    html += `</div>`;
+    picker.insertAdjacentHTML('beforeend', html);
+  }
+}
+
+function renderSwapDelta(delta) {
+  let html = `<div class="swap-delta">`;
+
+  // CMC change
+  const cmcSign = delta.cmcChange > 0 ? '+' : '';
+  const cmcClass = delta.cmcChange === 0 ? 'neutral' : delta.cmcChange > 0 ? 'increase' : 'decrease';
+  html += `<div class="swap-delta-row">
+    <span class="swap-delta-label">Mana Value</span>
+    <div class="swap-delta-values">
+      <span class="swap-delta-change swap-delta-${cmcClass}">${cmcSign}${delta.cmcChange}</span>
+    </div>
+  </div>`;
+
+  // Avg CMC change
+  if (delta.avgCmcChange != null) {
+    const avgSign = delta.avgCmcChange > 0 ? '+' : '';
+    const avgClass = Math.abs(delta.avgCmcChange) < 0.01 ? 'neutral' : delta.avgCmcChange > 0 ? 'increase' : 'decrease';
+    html += `<div class="swap-delta-row">
+      <span class="swap-delta-label">Avg Mana Value</span>
+      <div class="swap-delta-values">
+        <span class="swap-delta-detail">${delta.avgCmcBefore.toFixed(2)} → ${delta.avgCmcAfter.toFixed(2)}</span>
+        <span class="swap-delta-change swap-delta-${avgClass}">${avgSign}${delta.avgCmcChange.toFixed(2)}</span>
+      </div>
+    </div>`;
+  }
+
+  // Land count change
+  if (delta.landsBefore != null && delta.landsBefore !== delta.landsAfter) {
+    const landSign = delta.landsAfter > delta.landsBefore ? '+' : '';
+    const landDiff = delta.landsAfter - delta.landsBefore;
+    const landClass = landDiff === 0 ? 'neutral' : landDiff > 0 ? 'info' : 'warning';
+    html += `<div class="swap-delta-row">
+      <span class="swap-delta-label">Land Count</span>
+      <div class="swap-delta-values">
+        <span class="swap-delta-detail">${delta.landsBefore} → ${delta.landsAfter}</span>
+        <span class="swap-delta-change swap-delta-${landClass}">${landSign}${landDiff}</span>
+      </div>
+    </div>`;
+  }
+
+  // Color balance
+  if (Object.keys(delta.colorDelta).length > 0) {
+    const colorParts = Object.entries(delta.colorDelta).map(([c, n]) => {
+      const sign = n > 0 ? '+' : '';
+      return `<span class="swap-color-pip swap-color-${c}">${sign}${n} ${COLOR_NAMES[c] || c}</span>`;
+    });
+    html += `<div class="swap-delta-row">
+      <span class="swap-delta-label">Color Balance</span>
+      <div class="swap-delta-values swap-delta-colors">${colorParts.join(' ')}</div>
+    </div>`;
+  }
+
+  // Type change
+  if (delta.typeChanged) {
+    html += `<div class="swap-delta-row">
+      <span class="swap-delta-label">Card Type</span>
+      <div class="swap-delta-values">
+        <span class="swap-delta-detail">${escapeHtml(delta.cutType)} → ${escapeHtml(delta.addType)}</span>
+      </div>
+    </div>`;
+  }
+
+  // Game Changer impact
+  if (delta.gcCutting || delta.gcAdding) {
+    let gcHtml = '';
+    if (delta.gcCutting && delta.gcAdding) {
+      gcHtml = `<span class="swap-gc-badge swap-gc-neutral">Swapping Game Changers (${delta.gcCountBefore} → ${delta.gcCountAfter})</span>`;
+    } else if (delta.gcCutting) {
+      gcHtml = `<span class="swap-gc-badge swap-gc-removing">Removing a Game Changer (${delta.gcCountBefore} → ${delta.gcCountAfter})</span>`;
+    } else {
+      gcHtml = `<span class="swap-gc-badge swap-gc-adding">Adding a Game Changer (${delta.gcCountBefore} → ${delta.gcCountAfter})</span>`;
+    }
+    html += `<div class="swap-delta-row swap-delta-gc">
+      <span class="swap-delta-label">Bracket Impact</span>
+      <div class="swap-delta-values">${gcHtml}</div>
+    </div>`;
+  }
+
+  // Synergy impact
+  if (delta.synergiesBroken?.length > 0) {
+    html += `<div class="swap-delta-row swap-delta-synergy">
+      <span class="swap-delta-label">Synergies Affected</span>
+      <div class="swap-delta-values swap-delta-synergy-list">`;
+    delta.synergiesBroken.forEach(s => {
+      html += `<div class="swap-synergy-item swap-synergy-broken">
+        <span class="swap-synergy-icon">&#x26A0;</span>
+        <span class="swap-synergy-title">${escapeHtml(s.title)}</span>
+        <span class="swap-synergy-cards">${s.cards.map(c => escapeHtml(c)).join(', ')}</span>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
 // === ANALYTICS / SIMULATION ===
 async function loadSimulationData(deckId) {
   if (simulationCache[deckId]) return simulationCache[deckId];
@@ -4099,6 +4530,11 @@ async function renderAnalyticsView() {
   handSimState.mulliganCount = 0;
   handSimState.bottomCards = [];
   renderHandSimulator();
+
+  // Reset swap analyzer on deck change
+  resetSwapState();
+  loadGameChangers();
+  renderSwapAnalyzer();
 
   const contentEl = document.getElementById('analytics-content');
   const noDeckEl = document.getElementById('analytics-no-deck');
