@@ -1029,7 +1029,7 @@ function setupDelegatedListeners() {
   });
   addGroups.addEventListener('mouseout', (e) => {
     const card = e.target.closest('.guide-card');
-    if (card === lastHoveredGuideCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+    if (card && card === lastHoveredGuideCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
       lastHoveredGuideCard = null;
     }
   });
@@ -1065,7 +1065,7 @@ function setupDelegatedListeners() {
   });
   decklistContent.addEventListener('mouseout', (e) => {
     const card = e.target.closest('.decklist-card');
-    if (card === lastHoveredDeckCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+    if (card && card === lastHoveredDeckCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
       lastHoveredDeckCard = null;
     }
   });
@@ -1101,7 +1101,7 @@ function setupDelegatedListeners() {
   });
   galleryEl.addEventListener('mouseout', (e) => {
     const card = e.target.closest('.decklist-gallery-card');
-    if (card === lastHoveredDeckCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+    if (card && card === lastHoveredDeckCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
       lastHoveredDeckCard = null;
     }
   });
@@ -1268,7 +1268,7 @@ function setupDelegatedListeners() {
   });
   shoppingView.addEventListener('mouseout', (e) => {
     const row = e.target.closest('.shopping-card-row');
-    if (row === lastHoveredShoppingCard && (!e.relatedTarget || !row.contains(e.relatedTarget))) {
+    if (row && row === lastHoveredShoppingCard && (!e.relatedTarget || !row.contains(e.relatedTarget))) {
       hideShoppingTooltip();
     }
   });
