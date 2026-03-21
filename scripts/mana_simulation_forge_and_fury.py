@@ -1441,6 +1441,16 @@ def export_json(stats: dict, classified: dict, decklist: list[str],
     }
 
 
+def export_enhanced_json(metadata: dict) -> dict:
+    """Reuse bulk exporter path so standalone JSON stays schema-compatible."""
+    import export_simulation_results as exporter
+
+    result = exporter.export_forge(metadata)
+    if not exporter.validate_output(result, "forge-and-fury"):
+        raise ValueError("export_forge produced invalid simulation output")
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Monte Carlo mana base simulation for Forge & Fury (Korvold)")
@@ -1459,18 +1469,16 @@ def main():
 
     classified = classify_cards(decklist, metadata)
 
-    if not args.json:
-        avg_cmc, pip_B, pip_R, pip_G = print_static_analysis(decklist, metadata, classified)
-    else:
-        cmcs = []
-        for name in decklist:
-            meta = metadata.get(name, {})
-            if "Land" not in meta.get("type_line", ""):
-                cmc = meta.get("cmc", 0)
-                if isinstance(cmc, (int, float)):
-                    cmcs.append(int(cmc))
-        avg_cmc = statistics.mean(cmcs) if cmcs else 0
-        pip_B, pip_R, pip_G = 0, 0, 0  # not needed for JSON path
+    if args.json:
+        result = export_enhanced_json(metadata)
+        JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        with open(JSON_OUTPUT, "w") as f:
+            json.dump(result, f, indent=2)
+        print(f"Written: {JSON_OUTPUT}")
+        print(f"Size: {JSON_OUTPUT.stat().st_size / 1024:.1f} KB")
+        return
+
+    avg_cmc, pip_B, pip_R, pip_G = print_static_analysis(decklist, metadata, classified)
 
     n_workers = os.cpu_count() or 4
     chunk_size = NUM_GAMES // n_workers
@@ -1482,16 +1490,8 @@ def main():
         results = pool.map(_run_chunk, [(decklist, metadata, n) for n in chunks])
     stats = merge_stats(results)
 
-    if args.json:
-        result = export_json(stats, classified, decklist, metadata, avg_cmc)
-        JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-        with open(JSON_OUTPUT, "w") as f:
-            json.dump(result, f, indent=2)
-        print(f"Written: {JSON_OUTPUT}")
-        print(f"Size: {JSON_OUTPUT.stat().st_size / 1024:.1f} KB")
-    else:
-        print_results(stats, classified, avg_cmc, pip_B, pip_R, pip_G)
-        print("\n" + "=" * 65)
+    print_results(stats, classified, avg_cmc, pip_B, pip_R, pip_G)
+    print("\n" + "=" * 65)
 
 
 if __name__ == "__main__":
