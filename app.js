@@ -3754,6 +3754,238 @@ function initViewToggle() {
 
 }
 
+// === OPENING HAND SIMULATOR ===
+
+let handSimState = {
+  hand: [],
+  mulliganCount: 0,
+  bottomCards: [],
+  phase: 'empty', // empty, drawn, bottoming, kept
+  deckPool: [],
+};
+
+function shuffleDeck(cards) {
+  const arr = [...cards];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function drawOpeningHand() {
+  if (!currentDeck?.decklist) return;
+  handSimState.deckPool = shuffleDeck(currentDeck.decklist);
+  handSimState.hand = handSimState.deckPool.splice(0, 7);
+  handSimState.mulliganCount = 0;
+  handSimState.bottomCards = [];
+  handSimState.phase = 'drawn';
+  renderHandSimulator();
+}
+
+function mulliganHand() {
+  if (!currentDeck?.decklist) return;
+  handSimState.mulliganCount++;
+  // London mulligan: shuffle all back, draw 7 again
+  handSimState.deckPool = shuffleDeck(currentDeck.decklist);
+  handSimState.hand = handSimState.deckPool.splice(0, 7);
+  handSimState.bottomCards = [];
+  const numToBottom = handSimState.mulliganCount;
+  if (numToBottom > 0 && numToBottom < 7) {
+    handSimState.phase = 'bottoming';
+  } else if (numToBottom >= 7) {
+    // Mulliganed to 0 — auto-keep
+    handSimState.hand = [];
+    handSimState.phase = 'kept';
+  } else {
+    handSimState.phase = 'drawn';
+  }
+  renderHandSimulator();
+}
+
+function bottomCard(index) {
+  if (handSimState.phase !== 'bottoming') return;
+  const card = handSimState.hand.splice(index, 1)[0];
+  handSimState.bottomCards.push(card);
+  const numToBottom = handSimState.mulliganCount;
+  if (handSimState.bottomCards.length >= numToBottom) {
+    handSimState.phase = 'kept';
+  }
+  renderHandSimulator();
+}
+
+function keepHand() {
+  handSimState.phase = 'kept';
+  renderHandSimulator();
+}
+
+function assessHand(hand, simData) {
+  if (!hand.length) return null;
+
+  const assessment = {};
+  let lands = 0;
+  let ramp = 0;
+  const castable = { byTurn: {} };
+  const colors = new Set();
+  const commanderCmc = simData?.commanderTiming?.cmc ?? 0;
+
+  hand.forEach(card => {
+    const meta = cardMetadataCache.get(card.name);
+    if (!meta) return;
+    const typeLower = (meta.type_line || '').toLowerCase();
+    if (typeLower.includes('land')) {
+      lands++;
+    }
+    if (meta.cmc <= 2 && (typeLower.includes('artifact') || typeLower.includes('creature')) &&
+        (meta.oracle_text || '').toLowerCase().includes('add')) {
+      ramp++;
+    }
+    (meta.colors || []).forEach(c => colors.add(c));
+  });
+
+  // Land count assessment
+  if (lands >= 2 && lands <= 4) {
+    assessment.lands = { rating: 'good', label: `${lands} lands` };
+  } else if (lands === 1 || lands === 5) {
+    assessment.lands = { rating: 'fair', label: `${lands} land${lands !== 1 ? 's' : ''}` };
+  } else {
+    assessment.lands = { rating: 'poor', label: `${lands} lands` };
+  }
+
+  // Mana curve castability — how many non-land cards can be cast by turn 3?
+  let castableByT3 = 0;
+  const nonLandCards = hand.filter(c => {
+    const meta = cardMetadataCache.get(c.name);
+    return meta && !(meta.type_line || '').toLowerCase().includes('land');
+  });
+  nonLandCards.forEach(c => {
+    const meta = cardMetadataCache.get(c.name);
+    if (meta && meta.cmc <= 3) castableByT3++;
+  });
+  const totalNonLand = nonLandCards.length;
+  assessment.curve = {
+    label: `${castableByT3}/${totalNonLand} castable by T3`,
+    rating: castableByT3 >= 2 ? 'good' : castableByT3 >= 1 ? 'fair' : 'poor'
+  };
+
+  // Commander timing from simulation baselines
+  if (simData?.commanderTiming?.byTurn && commanderCmc > 0) {
+    // Estimate: does this hand have enough lands + ramp to cast commander on curve?
+    const manaByT = lands + ramp; // rough T1 mana projection for lands+ramp in hand
+    const cmdCastTurn = Math.max(1, commanderCmc - ramp);
+    const simPct = simData.commanderTiming.byTurn[String(cmdCastTurn)] ?? 0;
+    assessment.commander = {
+      label: `~T${cmdCastTurn} commander`,
+      detail: `${simPct.toFixed(0)}% of sims cast by T${cmdCastTurn}`,
+      rating: cmdCastTurn <= commanderCmc ? 'good' : cmdCastTurn <= commanderCmc + 1 ? 'fair' : 'poor'
+    };
+  }
+
+  // Ramp
+  if (ramp > 0) {
+    assessment.ramp = { label: `${ramp} ramp piece${ramp > 1 ? 's' : ''}`, rating: ramp >= 2 ? 'good' : 'fair' };
+  }
+
+  // Land distribution context from simulation
+  if (simData?.openingHand?.landDistribution) {
+    const pct = simData.openingHand.landDistribution[String(lands)];
+    if (pct != null) {
+      assessment.landOdds = { label: `${pct.toFixed(1)}% of hands have ${lands} lands`, rating: 'info' };
+    }
+  }
+
+  return assessment;
+}
+
+function renderHandSimulator() {
+  const container = document.getElementById('hand-simulator');
+  if (!container) return;
+
+  if (!currentDeckId || !currentDeck) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = '';
+  const { hand, mulliganCount, phase, bottomCards } = handSimState;
+  const simData = simulationCache[currentDeckId];
+
+  let html = `<div class="hand-sim">
+    <div class="hand-sim-header">
+      <h2>Opening Hand</h2>
+      <div class="hand-sim-controls">`;
+
+  if (phase === 'empty') {
+    html += `<button class="hand-sim-btn hand-sim-btn-primary" onclick="drawOpeningHand()">Draw 7</button>`;
+  } else if (phase === 'drawn') {
+    html += `<button class="hand-sim-btn hand-sim-btn-primary" onclick="keepHand()">Keep</button>`;
+    html += `<button class="hand-sim-btn hand-sim-btn-secondary" onclick="mulliganHand()">Mulligan</button>`;
+  } else if (phase === 'bottoming') {
+    const remaining = mulliganCount - bottomCards.length;
+    html += `<span class="hand-sim-instruction">Put ${remaining} card${remaining !== 1 ? 's' : ''} on bottom</span>`;
+  } else if (phase === 'kept') {
+    html += `<button class="hand-sim-btn hand-sim-btn-primary" onclick="drawOpeningHand()">New Hand</button>`;
+    if (mulliganCount > 0) {
+      html += `<span class="hand-sim-mulligan-badge">Kept ${7 - mulliganCount} (mull ${mulliganCount})</span>`;
+    }
+  }
+
+  html += `</div></div>`;
+
+  if (phase !== 'empty' && hand.length > 0) {
+    html += `<div class="hand-sim-cards" role="list">`;
+    hand.forEach((card, i) => {
+      const meta = cardMetadataCache.get(card.name);
+      const typeLine = meta?.type_line || card.type || '';
+      const cmc = meta?.cmc != null ? Math.floor(meta.cmc) : '';
+      const isBottomable = phase === 'bottoming';
+      const imgSrc = scryfallImageUrl(card.name, null);
+      const cached = imageCache.get(card.name);
+      const imgAttr = cached ? `src="${cached}"` : `src="" data-scryfall-src="${imgSrc}"`;
+
+      html += `<div class="hand-sim-card ${isBottomable ? 'hand-sim-card-selectable' : ''}"
+                    role="listitem"
+                    ${isBottomable ? `onclick="bottomCard(${i})" tabindex="0" aria-label="Put ${escapeHtml(card.name)} on bottom"` : ''}
+                    data-card-name="${escapeHtml(card.name)}">
+        <div class="hand-sim-card-img">
+          <img ${imgAttr} alt="${escapeHtml(card.name)}" loading="eager">
+        </div>
+        <div class="hand-sim-card-info">
+          <span class="hand-sim-card-name">${escapeHtml(card.name)}</span>
+          <span class="hand-sim-card-type">${escapeHtml(typeLine)}${cmc !== '' ? ` (${cmc})` : ''}</span>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    // Assessment panel (only when kept or on first draw)
+    if (phase === 'kept' || phase === 'drawn') {
+      const assessment = assessHand(hand, simData);
+      if (assessment) {
+        html += `<div class="hand-sim-assessment">`;
+        for (const [key, val] of Object.entries(assessment)) {
+          html += `<div class="hand-sim-badge hand-sim-badge-${val.rating}">
+            <span class="hand-sim-badge-label">${escapeHtml(val.label)}</span>
+            ${val.detail ? `<span class="hand-sim-badge-detail">${escapeHtml(val.detail)}</span>` : ''}
+          </div>`;
+        }
+        html += `</div>`;
+      }
+    }
+  } else if (phase === 'empty') {
+    html += `<div class="hand-sim-empty">
+      <p>Draw an opening hand to simulate London mulligans and assess hand quality.</p>
+    </div>`;
+  } else if (phase === 'kept' && hand.length === 0) {
+    html += `<div class="hand-sim-empty"><p>Mulliganed to 0. Try a new hand!</p></div>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+  observeScryfallImages(container);
+}
+
 // === ANALYTICS / SIMULATION ===
 async function loadSimulationData(deckId) {
   if (simulationCache[deckId]) return simulationCache[deckId];
@@ -3777,6 +4009,13 @@ async function loadSimulationData(deckId) {
 
 async function renderAnalyticsView() {
   const renderVersion = ++analyticsRenderVersion;
+
+  // Reset hand sim on deck change, render it
+  handSimState.phase = 'empty';
+  handSimState.hand = [];
+  handSimState.mulliganCount = 0;
+  handSimState.bottomCards = [];
+  renderHandSimulator();
 
   const contentEl = document.getElementById('analytics-content');
   const noDeckEl = document.getElementById('analytics-no-deck');
