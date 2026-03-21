@@ -5,6 +5,7 @@ Reads all deck.json files, collects unique card names, fetches metadata
 via Scryfall Collection API, and saves to data/card-metadata.json.
 """
 
+import argparse
 import json
 import time
 import urllib.request
@@ -13,16 +14,24 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 OUTPUT_FILE = DATA_DIR / "card-metadata.json"
+COMMANDERS_DIR = DATA_DIR / "commanders"
 SCRYFALL_COLLECTION_URL = "https://api.scryfall.com/cards/collection"
 BATCH_SIZE = 75
 RATE_LIMIT_DELAY = 0.1  # 100ms between requests
 
 
-def collect_card_names() -> set[str]:
-    """Collect all unique card names from every deck.json."""
-    names = set()
+def available_deck_ids() -> list[str]:
+    """Sorted deck ids discovered from commander deck data."""
+    return sorted(path.parent.name for path in COMMANDERS_DIR.glob("*/deck.json"))
 
-    deck_paths = list(DATA_DIR.glob("commanders/*/deck.json"))
+
+def collect_card_names(deck_ids: list[str] | None = None) -> set[str]:
+    """Collect unique card names from selected deck.json files."""
+    names = set()
+    if deck_ids:
+        deck_paths = [COMMANDERS_DIR / deck_id / "deck.json" for deck_id in deck_ids]
+    else:
+        deck_paths = list(COMMANDERS_DIR.glob("*/deck.json"))
 
     for path in deck_paths:
         with open(path) as f:
@@ -129,10 +138,40 @@ def fetch_metadata(names: list[str]) -> dict:
     return metadata
 
 
+def load_existing_metadata(output_file: Path) -> dict:
+    """Load existing metadata cache if present."""
+    if not output_file.exists():
+        return {}
+    with open(output_file) as f:
+        return json.load(f)
+
+
 def main():
+    deck_ids = available_deck_ids()
+
+    parser = argparse.ArgumentParser(
+        description="Fetch Scryfall card metadata for commander decks")
+    parser.add_argument(
+        "--deck",
+        dest="deck_ids",
+        action="append",
+        choices=deck_ids,
+        help="Refresh metadata for only the specified deck id. Repeat to select multiple decks.",
+    )
+    parser.add_argument(
+        "--output-file",
+        type=Path,
+        default=OUTPUT_FILE,
+        help=f"Metadata output path (default: {OUTPUT_FILE})",
+    )
+    args = parser.parse_args()
+
     print("Collecting card names from deck files...")
-    names = collect_card_names()
-    print(f"Found {len(names)} unique card names across all decks.\n")
+    names = collect_card_names(args.deck_ids)
+    if args.deck_ids:
+        print(f"Found {len(names)} unique card names across {len(args.deck_ids)} selected deck(s).\n")
+    else:
+        print(f"Found {len(names)} unique card names across all decks.\n")
 
     print("Fetching metadata from Scryfall...")
     metadata = fetch_metadata(sorted(names))
@@ -142,11 +181,22 @@ def main():
     if missing:
         print(f"Missing {len(missing)}: {sorted(missing)}")
 
-    with open(OUTPUT_FILE, "w") as f:
+    output_file = args.output_file
+    if args.deck_ids:
+        existing = load_existing_metadata(output_file)
+        if existing:
+            existing.update(metadata)
+            metadata = existing
+            print(f"Merged subset refresh into existing cache: {len(metadata)} cards total.")
+        else:
+            print(f"Created subset cache: {len(metadata)} cards total.")
+
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_file, "w") as f:
         json.dump(metadata, f, indent=2, sort_keys=True)
 
-    print(f"\nSaved to {OUTPUT_FILE}")
-    print(f"File size: {OUTPUT_FILE.stat().st_size / 1024:.1f} KB")
+    print(f"\nSaved to {output_file}")
+    print(f"File size: {output_file.stat().st_size / 1024:.1f} KB")
 
 
 if __name__ == "__main__":
