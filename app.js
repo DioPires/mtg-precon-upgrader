@@ -3668,6 +3668,7 @@ function switchView(view) {
   function doSwitch() {
     currentView = view;
     const selectorSection = document.querySelector('.selector-section');
+    const commanderInfo = document.getElementById('commander-info');
     const upgradeOverview = document.getElementById('deck-overview');
     const mainContent = document.getElementById('main-content');
     const analyticsView = document.getElementById('analytics-view');
@@ -3682,6 +3683,7 @@ function switchView(view) {
 
     // Hide all views first
     selectorSection.style.display = 'none';
+    commanderInfo.style.display = 'none';
     upgradeOverview.style.display = 'none';
     mainContent.style.display = 'none';
     analyticsView.style.display = 'none';
@@ -3690,7 +3692,6 @@ function switchView(view) {
     if (view === 'analytics') {
       analyticsView.style.display = 'block';
       selectorSection.style.display = '';
-      if (currentDeck) upgradeOverview.style.display = 'block';
       if (currentDeckId) {
         renderAnalyticsView();
       }
@@ -3710,6 +3711,7 @@ function switchView(view) {
       // Guide view
       selectorSection.style.display = '';
       if (currentDeck) {
+        commanderInfo.style.display = '';
         upgradeOverview.style.display = '';
         mainContent.style.display = '';
       }
@@ -4085,6 +4087,7 @@ async function renderAnalyticsView() {
 
   // Detailed panels (metrics + breakdowns)
   html += `<div class="sim-metrics-grid" id="sim-metrics-grid"></div>`;
+  html += `<div class="sim-details"><div class="sim-details-grid" id="sim-details-grid"></div></div>`;
 
   contentEl.innerHTML = html;
   contentEl.style.display = '';
@@ -4092,6 +4095,8 @@ async function renderAnalyticsView() {
   // Render sub-components
   renderManaRampChart(simData.manaByTurn, numTurns);
   renderSimMetrics(simData);
+  renderDetailedBreakdown(simData);
+  setupSimAnimations();
 }
 
 function renderKpiCards(simData) {
@@ -4365,6 +4370,140 @@ function renderSimMetrics(simData) {
   }
 
   grid.innerHTML = html;
+}
+
+function renderDetailedBreakdown(simData) {
+  const grid = document.getElementById('sim-details-grid');
+  if (!grid) return;
+
+  let html = '';
+
+  // Opening hand land distribution
+  if (simData.openingHand?.landDistribution) {
+    const dist = simData.openingHand.landDistribution;
+    html += `<div class="sim-detail-panel"><h4>Opening Hand Lands</h4>`;
+    for (let i = 0; i <= 7; i++) {
+      const pct = dist[String(i)] || 0;
+      const barColor = (i >= 2 && i <= 4) ? 'green' : (i === 1 || i === 5) ? 'gold' : 'red';
+      html += `<div class="sim-bar-row">
+        <span class="sim-bar-label">${i} lands</span>
+        <div class="sim-bar-track"><div class="sim-bar-fill ${barColor}" style="width:${Math.min(pct, 100)}%"></div></div>
+        <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Commander by-turn %
+  if (simData.commanderTiming?.byTurn) {
+    const bt = simData.commanderTiming.byTurn;
+    html += `<div class="sim-detail-panel"><h4>Commander Castable by Turn</h4>`;
+    const turnKeys = Object.keys(bt).sort((a, b) => Number(a) - Number(b));
+    turnKeys.forEach(t => {
+      const pct = bt[t] || 0;
+      html += `<div class="sim-bar-row">
+        <span class="sim-bar-label">T${t}</span>
+        <div class="sim-bar-track"><div class="sim-bar-fill" style="width:${Math.min(pct, 100)}%"></div></div>
+        <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Castable-by-turn %
+  if (simData.curveEfficiency?.castableByTurn) {
+    const cbt = simData.curveEfficiency.castableByTurn;
+    html += `<div class="sim-detail-panel"><h4>Any Spell Castable by Turn</h4>`;
+    const turnKeys = Object.keys(cbt).sort((a, b) => Number(a) - Number(b));
+    turnKeys.forEach(t => {
+      const pct = cbt[t] || 0;
+      html += `<div class="sim-bar-row">
+        <span class="sim-bar-label">T${t}</span>
+        <div class="sim-bar-track"><div class="sim-bar-fill blue" style="width:${Math.min(pct, 100)}%"></div></div>
+        <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Color screw by turn (if multicolor)
+  if (simData.colorBalance?.colorScrewByTurn) {
+    const csbt = simData.colorBalance.colorScrewByTurn;
+    const colors = simData.colorBalance.colors || [];
+    const colorLabels = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
+    colors.forEach(color => {
+      html += `<div class="sim-detail-panel"><h4>${colorLabels[color] || color} Screw Rate by Turn</h4>`;
+      const turnKeys = Object.keys(csbt).sort((a, b) => Number(a) - Number(b));
+      turnKeys.forEach(t => {
+        const pct = csbt[t]?.[color] || 0;
+        html += `<div class="sim-bar-row">
+          <span class="sim-bar-label">T${t}</span>
+          <div class="sim-bar-track"><div class="sim-bar-fill red" style="width:${Math.min(pct, 100)}%"></div></div>
+          <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+  }
+
+  // Special metrics panels
+  if (simData.specialMetrics) {
+    if (simData.specialMetrics.cascadeReadiness?.byTurn) {
+      const crByTurn = simData.specialMetrics.cascadeReadiness.byTurn;
+      const medTurn = simData.specialMetrics.cascadeReadiness.medianTurn;
+      html += `<div class="sim-detail-panel"><h4>Cascade Readiness${medTurn != null ? ` (median T${medTurn})` : ''}</h4>`;
+      const turnKeys = Object.keys(crByTurn).sort((a, b) => Number(a) - Number(b));
+      turnKeys.forEach(t => {
+        const pct = crByTurn[t] || 0;
+        html += `<div class="sim-bar-row">
+          <span class="sim-bar-label">T${t}</span>
+          <div class="sim-bar-track"><div class="sim-bar-fill gold" style="width:${Math.min(pct, 100)}%"></div></div>
+          <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    if (simData.specialMetrics.etbTapped) {
+      const etb = simData.specialMetrics.etbTapped;
+      html += `<div class="sim-detail-panel"><h4>ETB Tapped Land Rate by Turn</h4>`;
+      const turnKeys = Object.keys(etb).sort((a, b) => Number(a) - Number(b));
+      turnKeys.forEach(t => {
+        const pct = etb[t] || 0;
+        html += `<div class="sim-bar-row">
+          <span class="sim-bar-label">T${t}</span>
+          <div class="sim-bar-track"><div class="sim-bar-fill gold" style="width:${Math.min(pct, 100)}%"></div></div>
+          <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+  }
+
+  grid.innerHTML = html;
+}
+
+function setupSimAnimations() {
+  if (!('IntersectionObserver' in window)) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.sim-bar-fill').forEach(bar => {
+          const width = bar.style.width;
+          bar.style.width = '0%';
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => { bar.style.width = width; });
+          });
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.sim-detail-panel').forEach(panel => {
+    observer.observe(panel);
+  });
 }
 
 function updateTabStates() {
