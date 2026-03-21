@@ -2048,6 +2048,37 @@ def output_path_for(deck_id: str, output_dir: Path | None) -> Path:
     return output_dir / deck_id / "simulation.json"
 
 
+def export_selected_decks(metadata: dict, selected_decks: list[tuple[str, str, object]],
+                          output_dir: Path | None) -> int:
+    """Export selected decks. Return number of failures."""
+    failures = 0
+
+    for deck_id, deck_name, export_fn in selected_decks:
+        try:
+            print(f"[{deck_name}]")
+            result = export_fn(metadata)
+
+            if not validate_output(result, deck_id):
+                print(f"  SKIPPED: validation failed\n")
+                failures += 1
+                continue
+
+            out_path = output_path_for(deck_id, output_dir)
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(out_path, "w") as f:
+                json.dump(result, f, indent=2)
+            print(f"  Written: {out_path}")
+            print(f"  Size: {out_path.stat().st_size / 1024:.1f} KB\n")
+
+        except Exception:
+            failures += 1
+            print(f"  ERROR processing {deck_name}:")
+            traceback.print_exc()
+            print()
+
+    return failures
+
+
 def main():
     global NUM_GAMES, GOLDFISH_GAMES
 
@@ -2099,26 +2130,11 @@ def main():
         print(f"  Output dir: {args.output_dir}")
     print()
 
-    for deck_id, deck_name, export_fn in selected_decks:
-        try:
-            print(f"[{deck_name}]")
-            result = export_fn(metadata)
+    failures = export_selected_decks(metadata, selected_decks, args.output_dir)
 
-            if not validate_output(result, deck_id):
-                print(f"  SKIPPED: validation failed\n")
-                continue
-
-            out_path = output_path_for(deck_id, args.output_dir)
-            out_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(out_path, "w") as f:
-                json.dump(result, f, indent=2)
-            print(f"  Written: {out_path}")
-            print(f"  Size: {out_path.stat().st_size / 1024:.1f} KB\n")
-
-        except Exception:
-            print(f"  ERROR processing {deck_name}:")
-            traceback.print_exc()
-            print()
+    if failures:
+        print(f"Done with {failures} failure(s).")
+        raise SystemExit(1)
 
     print("Done.")
 
