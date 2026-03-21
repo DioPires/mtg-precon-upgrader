@@ -1281,6 +1281,72 @@ function setupDelegatedListeners() {
     }
   });
 
+  // --- Opening hand cards ---
+  const handSimulator = document.getElementById('hand-simulator');
+  let lastHoveredHandSimCard = null;
+  const handSimTooltip = document.getElementById('hand-sim-card-tooltip');
+  const handSimTooltipImg = document.getElementById('hand-sim-tooltip-img');
+  const handSimTooltipName = document.getElementById('hand-sim-tooltip-name');
+  let handSimTooltipCard = null;
+
+  function positionHandSimTooltip(e) {
+    const pad = 16;
+    const tooltipW = handSimTooltip.offsetWidth || 390;
+    const tooltipH = handSimTooltip.offsetHeight || 578;
+    let x = e.clientX + pad;
+    let y = e.clientY - tooltipH / 2;
+    if (x + tooltipW > window.innerWidth - pad) x = e.clientX - tooltipW - pad;
+    if (y < pad) y = pad;
+    if (y + tooltipH > window.innerHeight - pad) y = window.innerHeight - tooltipH - pad;
+    handSimTooltip.style.left = x + 'px';
+    handSimTooltip.style.top = y + 'px';
+  }
+
+  function showHandSimTooltip(cardName, e) {
+    if (window.innerWidth <= 768) return;
+    handSimTooltipCard = cardName;
+    handSimTooltipName.textContent = cardName;
+    const cached = getCachedImageUrl(cardName, null);
+    const imageUrl = cached || scryfallImageUrl(cardName);
+    handSimTooltipImg.src = imageUrl;
+    if (!cached) {
+      const preload = new Image();
+      preload.onload = () => setCachedImageUrl(cardName, null, imageUrl);
+      preload.src = imageUrl;
+    }
+    positionHandSimTooltip(e);
+    handSimTooltip.classList.add('visible');
+  }
+
+  function hideHandSimTooltip() {
+    handSimTooltip.classList.remove('visible');
+    handSimTooltipCard = null;
+    lastHoveredHandSimCard = null;
+  }
+
+  handSimulator.addEventListener('mouseover', (e) => {
+    const card = e.target.closest('.hand-sim-card');
+    if (card && card !== lastHoveredHandSimCard) {
+      lastHoveredHandSimCard = card;
+      showHandSimTooltip(card.dataset.cardName, e);
+    }
+  });
+  handSimulator.addEventListener('mousemove', (e) => {
+    if (handSimTooltipCard) positionHandSimTooltip(e);
+  });
+  handSimulator.addEventListener('mouseout', (e) => {
+    const card = e.target.closest('.hand-sim-card');
+    if (card && card === lastHoveredHandSimCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+      hideHandSimTooltip();
+    }
+  });
+  handSimulator.addEventListener('click', (e) => {
+    const card = e.target.closest('.hand-sim-card');
+    if (card && window.innerWidth <= 768 && handSimState.phase !== 'bottoming') {
+      showMobilePreview(card.dataset.cardName);
+    }
+  });
+
 }
 
 // === SCRYFALL API ===
@@ -3910,6 +3976,8 @@ function assessHand(hand, simData) {
 function renderHandSimulator() {
   const container = document.getElementById('hand-simulator');
   if (!container) return;
+  const existingTooltip = document.getElementById('hand-sim-card-tooltip');
+  if (existingTooltip) existingTooltip.classList.remove('visible');
 
   if (!currentDeckId || !currentDeck) {
     container.innerHTML = '';
