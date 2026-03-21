@@ -3729,7 +3729,10 @@ function switchView(view) {
       container.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
       container.style.opacity = '1';
       container.style.transform = 'translateY(0)';
-      setTimeout(() => { container.style.transition = ''; }, 160);
+      setTimeout(() => {
+        container.style.transition = '';
+        container.style.transform = '';
+      }, 160);
     }
   }
 
