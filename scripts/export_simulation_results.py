@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Export mana simulation results as JSON for all commander decks.
+"""Export mana simulation results as JSON for commander decks.
 
 Imports each simulation module under a namespace (they share function names),
 runs the simulations, and writes structured JSON to
 data/commanders/{id}/simulation.json.
 """
 
+import argparse
 import json
 import math
 import os
@@ -2029,14 +2030,76 @@ DECKS = [
 ]
 
 
+DECK_MAP = {deck_id: (deck_name, export_fn) for deck_id, deck_name, export_fn in DECKS}
+
+
+def resolve_decks(deck_ids: list[str] | None) -> list[tuple[str, str, object]]:
+    """Return selected deck tuples in canonical order."""
+    if not deck_ids:
+        return DECKS
+    requested = set(deck_ids)
+    return [deck for deck in DECKS if deck[0] in requested]
+
+
+def output_path_for(deck_id: str, output_dir: Path | None) -> Path:
+    """Resolve output path for a deck export."""
+    if output_dir is None:
+        return PROJECT_ROOT / "data" / "commanders" / deck_id / "simulation.json"
+    return output_dir / deck_id / "simulation.json"
+
+
 def main():
+    global NUM_GAMES, GOLDFISH_GAMES
+
+    parser = argparse.ArgumentParser(
+        description="Export mana simulation results as JSON")
+    parser.add_argument(
+        "--deck",
+        dest="deck_ids",
+        action="append",
+        choices=sorted(DECK_MAP),
+        help="Export only the specified deck id. Repeat to select multiple decks.",
+    )
+    parser.add_argument(
+        "--games",
+        type=int,
+        default=NUM_GAMES,
+        help=f"Monte Carlo games per deck (default: {NUM_GAMES})",
+    )
+    parser.add_argument(
+        "--goldfish-games",
+        type=int,
+        default=GOLDFISH_GAMES,
+        help=f"Goldfish games per deck (default: {GOLDFISH_GAMES})",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Optional base directory for outputs; writes {output-dir}/{deck-id}/simulation.json",
+    )
+    args = parser.parse_args()
+
+    if args.games <= 0:
+        parser.error("--games must be > 0")
+    if args.goldfish_games <= 0:
+        parser.error("--goldfish-games must be > 0")
+
+    NUM_GAMES = args.games
+    GOLDFISH_GAMES = args.goldfish_games
+    selected_decks = resolve_decks(args.deck_ids)
+
     with open(METADATA_FILE) as f:
         metadata = json.load(f)
 
     print(f"Loaded card metadata ({len(metadata)} cards)")
-    print(f"Exporting simulation results for {len(DECKS)} decks...\n")
+    print(f"Exporting simulation results for {len(selected_decks)} decks...")
+    print(f"  Mana sim games: {NUM_GAMES:,}")
+    print(f"  Goldfish games: {GOLDFISH_GAMES:,}")
+    if args.output_dir:
+        print(f"  Output dir: {args.output_dir}")
+    print()
 
-    for deck_id, deck_name, export_fn in DECKS:
+    for deck_id, deck_name, export_fn in selected_decks:
         try:
             print(f"[{deck_name}]")
             result = export_fn(metadata)
@@ -2045,7 +2108,8 @@ def main():
                 print(f"  SKIPPED: validation failed\n")
                 continue
 
-            out_path = PROJECT_ROOT / "data" / "commanders" / deck_id / "simulation.json"
+            out_path = output_path_for(deck_id, args.output_dir)
+            out_path.parent.mkdir(parents=True, exist_ok=True)
             with open(out_path, "w") as f:
                 json.dump(result, f, indent=2)
             print(f"  Written: {out_path}")
