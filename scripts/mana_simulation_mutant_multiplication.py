@@ -9,6 +9,7 @@ Partner: Leonardo, the Balance
 Color identity: WUBRG
 """
 
+import argparse
 import itertools
 import json
 import multiprocessing
@@ -21,6 +22,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
+JSON_OUTPUT = PROJECT_ROOT / "data" / "commanders" / "mutant-multiplication" / "simulation.json"
 
 NUM_GAMES = 100_000
 NUM_TURNS = 10
@@ -880,7 +882,23 @@ def merge_stats(chunks: list[dict]) -> dict:
     return merged
 
 
+def export_enhanced_json(metadata: dict) -> dict:
+    """Reuse bulk exporter path so standalone JSON stays schema-compatible."""
+    import export_simulation_results as exporter
+
+    result = exporter.export_wubrg(metadata)
+    if not exporter.validate_output(result, "mutant-multiplication"):
+        raise ValueError("export_wubrg produced invalid simulation output")
+    return result
+
+
 def main():
+    parser = argparse.ArgumentParser(
+        description="Monte Carlo mana base simulation for Mutant Multiplication")
+    parser.add_argument("--json", action="store_true",
+                        help="Write simulation.json instead of console output")
+    args = parser.parse_args()
+
     with open(METADATA_FILE) as f:
         metadata = json.load(f)
 
@@ -896,6 +914,15 @@ def main():
     print(f"Decklist: {len(decklist)} cards")
 
     classified = classify_cards(decklist, metadata)
+    if args.json:
+        result = export_enhanced_json(metadata)
+        JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        with open(JSON_OUTPUT, "w") as f:
+            json.dump(result, f, indent=2)
+        print(f"Written: {JSON_OUTPUT}")
+        print(f"Size: {JSON_OUTPUT.stat().st_size / 1024:.1f} KB")
+        return
+
     result = print_static_analysis(decklist, metadata, classified, deck_name)
     avg_cmc, pip_W, pip_U, pip_B, pip_R, pip_G = result
 

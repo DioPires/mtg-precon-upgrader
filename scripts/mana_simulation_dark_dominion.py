@@ -7,6 +7,7 @@ efficiency turns 1-10 for the Bracket 4 Grixis decklist.
 Commander: Sauron, the Dark Lord ({3}{U}{B}{R}, CMC 6)
 """
 
+import argparse
 import itertools
 import json
 import multiprocessing
@@ -20,6 +21,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "dark-dominion" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
+JSON_OUTPUT = PROJECT_ROOT / "data" / "commanders" / "dark-dominion" / "simulation.json"
 
 NUM_GAMES = 100_000
 NUM_TURNS = 10
@@ -970,7 +972,23 @@ def merge_stats(chunks: list[dict]) -> dict:
     return merged
 
 
+def export_enhanced_json(metadata: dict) -> dict:
+    """Reuse bulk exporter path so standalone JSON stays schema-compatible."""
+    import export_simulation_results as exporter
+
+    result = exporter.export_grixis(metadata)
+    if not exporter.validate_output(result, "dark-dominion"):
+        raise ValueError("export_grixis produced invalid simulation output")
+    return result
+
+
 def main():
+    parser = argparse.ArgumentParser(
+        description="Monte Carlo mana base simulation for Dark Dominion (Sauron)")
+    parser.add_argument("--json", action="store_true",
+                        help="Write simulation.json instead of console output")
+    args = parser.parse_args()
+
     with open(DECK_FILE) as f:
         deck_data = json.load(f)
     with open(METADATA_FILE) as f:
@@ -981,6 +999,14 @@ def main():
     print(f"Decklist: {len(decklist)} cards")
 
     classified = classify_cards(decklist, metadata)
+    if args.json:
+        result = export_enhanced_json(metadata)
+        JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        with open(JSON_OUTPUT, "w") as f:
+            json.dump(result, f, indent=2)
+        print(f"Written: {JSON_OUTPUT}")
+        print(f"Size: {JSON_OUTPUT.stat().st_size / 1024:.1f} KB")
+        return
 
     avg_cmc, pip_U, pip_B, pip_R = print_static_analysis(decklist, metadata, classified)
 
