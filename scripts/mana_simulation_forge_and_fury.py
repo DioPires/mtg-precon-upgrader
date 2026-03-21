@@ -1309,7 +1309,7 @@ def export_json(stats: dict, classified: dict, decklist: list[str],
     mulligan_stats = {
         "keptFirst": _pct(mull.get(0, 0), total),
         "freeMulligan": _pct(mull.get(1, 0), total),
-        "paidMulligan": _pct(mull.get(2, 0), total),
+        "paidMulligan": _pct(sum(count for attempt, count in mull.items() if attempt >= 2), total),
     }
 
     # openingHand

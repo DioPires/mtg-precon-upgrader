@@ -3764,6 +3764,14 @@ let handSimState = {
   deckPool: [],
 };
 
+function getBottomCountForMulliganCount(mulliganCount) {
+  return Math.max(0, mulliganCount - 1);
+}
+
+function getKeptHandSize(mulliganCount) {
+  return Math.max(0, 7 - getBottomCountForMulliganCount(mulliganCount));
+}
+
 function shuffleDeck(cards) {
   const arr = [...cards];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -3786,11 +3794,11 @@ function drawOpeningHand() {
 function mulliganHand() {
   if (!currentDeck?.decklist) return;
   handSimState.mulliganCount++;
-  // London mulligan: shuffle all back, draw 7 again
+  // Commander mulligan: first redraw is free, then London bottoming starts.
   handSimState.deckPool = shuffleDeck(currentDeck.decklist);
   handSimState.hand = handSimState.deckPool.splice(0, 7);
   handSimState.bottomCards = [];
-  const numToBottom = handSimState.mulliganCount;
+  const numToBottom = getBottomCountForMulliganCount(handSimState.mulliganCount);
   if (numToBottom > 0 && numToBottom < 7) {
     handSimState.phase = 'bottoming';
   } else if (numToBottom >= 7) {
@@ -3807,7 +3815,7 @@ function bottomCard(index) {
   if (handSimState.phase !== 'bottoming') return;
   const card = handSimState.hand.splice(index, 1)[0];
   handSimState.bottomCards.push(card);
-  const numToBottom = handSimState.mulliganCount;
+  const numToBottom = getBottomCountForMulliganCount(handSimState.mulliganCount);
   if (handSimState.bottomCards.length >= numToBottom) {
     handSimState.phase = 'kept';
   }
@@ -3922,12 +3930,16 @@ function renderHandSimulator() {
     html += `<button class="hand-sim-btn hand-sim-btn-primary" onclick="keepHand()">Keep</button>`;
     html += `<button class="hand-sim-btn hand-sim-btn-secondary" onclick="mulliganHand()">Mulligan</button>`;
   } else if (phase === 'bottoming') {
-    const remaining = mulliganCount - bottomCards.length;
+    const remaining = getBottomCountForMulliganCount(mulliganCount) - bottomCards.length;
     html += `<span class="hand-sim-instruction">Put ${remaining} card${remaining !== 1 ? 's' : ''} on bottom</span>`;
   } else if (phase === 'kept') {
     html += `<button class="hand-sim-btn hand-sim-btn-primary" onclick="drawOpeningHand()">New Hand</button>`;
     if (mulliganCount > 0) {
-      html += `<span class="hand-sim-mulligan-badge">Kept ${7 - mulliganCount} (mull ${mulliganCount})</span>`;
+      const keptHandSize = getKeptHandSize(mulliganCount);
+      const badgeLabel = mulliganCount === 1
+        ? `Kept ${keptHandSize} after free mulligan`
+        : `Kept ${keptHandSize} after ${mulliganCount} mulligans`;
+      html += `<span class="hand-sim-mulligan-badge">${escapeHtml(badgeLabel)}</span>`;
     }
   }
 
@@ -4073,7 +4085,6 @@ async function renderAnalyticsView() {
 
   // Detailed panels (metrics + breakdowns)
   html += `<div class="sim-metrics-grid" id="sim-metrics-grid"></div>`;
-  html += `<div class="sim-details"><div class="sim-details-grid" id="sim-details-grid"></div></div>`;
 
   contentEl.innerHTML = html;
   contentEl.style.display = '';
@@ -4081,8 +4092,6 @@ async function renderAnalyticsView() {
   // Render sub-components
   renderManaRampChart(simData.manaByTurn, numTurns);
   renderSimMetrics(simData);
-  renderDetailedBreakdown(simData);
-  setupSimAnimations();
 }
 
 function renderKpiCards(simData) {
@@ -4356,141 +4365,6 @@ function renderSimMetrics(simData) {
   }
 
   grid.innerHTML = html;
-}
-
-function renderDetailedBreakdown(simData) {
-  const grid = document.getElementById('sim-details-grid');
-  if (!grid) return;
-
-  let html = '';
-
-  // Opening hand land distribution
-  if (simData.openingHand?.landDistribution) {
-    const dist = simData.openingHand.landDistribution;
-    html += `<div class="sim-detail-panel"><h4>Opening Hand Lands</h4>`;
-    for (let i = 0; i <= 7; i++) {
-      const pct = dist[String(i)] || 0;
-      const barColor = (i >= 2 && i <= 4) ? 'green' : (i === 1 || i === 5) ? 'gold' : 'red';
-      html += `<div class="sim-bar-row">
-        <span class="sim-bar-label">${i} lands</span>
-        <div class="sim-bar-track"><div class="sim-bar-fill ${barColor}" style="width:${Math.min(pct, 100)}%"></div></div>
-        <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
-      </div>`;
-    }
-    html += `</div>`;
-  }
-
-  // Commander by-turn %
-  if (simData.commanderTiming?.byTurn) {
-    const bt = simData.commanderTiming.byTurn;
-    html += `<div class="sim-detail-panel"><h4>Commander Castable by Turn</h4>`;
-    const turnKeys = Object.keys(bt).sort((a, b) => Number(a) - Number(b));
-    turnKeys.forEach(t => {
-      const pct = bt[t] || 0;
-      html += `<div class="sim-bar-row">
-        <span class="sim-bar-label">T${t}</span>
-        <div class="sim-bar-track"><div class="sim-bar-fill" style="width:${Math.min(pct, 100)}%"></div></div>
-        <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // Castable-by-turn %
-  if (simData.curveEfficiency?.castableByTurn) {
-    const cbt = simData.curveEfficiency.castableByTurn;
-    html += `<div class="sim-detail-panel"><h4>Any Spell Castable by Turn</h4>`;
-    const turnKeys = Object.keys(cbt).sort((a, b) => Number(a) - Number(b));
-    turnKeys.forEach(t => {
-      const pct = cbt[t] || 0;
-      html += `<div class="sim-bar-row">
-        <span class="sim-bar-label">T${t}</span>
-        <div class="sim-bar-track"><div class="sim-bar-fill blue" style="width:${Math.min(pct, 100)}%"></div></div>
-        <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // Color screw by turn (if multicolor)
-  if (simData.colorBalance?.colorScrewByTurn) {
-    const csbt = simData.colorBalance.colorScrewByTurn;
-    const colors = simData.colorBalance.colors || [];
-    const colorLabels = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
-    colors.forEach(color => {
-      html += `<div class="sim-detail-panel"><h4>${colorLabels[color] || color} Screw Rate by Turn</h4>`;
-      const turnKeys = Object.keys(csbt).sort((a, b) => Number(a) - Number(b));
-      turnKeys.forEach(t => {
-        const pct = csbt[t]?.[color] || 0;
-        html += `<div class="sim-bar-row">
-          <span class="sim-bar-label">T${t}</span>
-          <div class="sim-bar-track"><div class="sim-bar-fill red" style="width:${Math.min(pct, 100)}%"></div></div>
-          <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
-        </div>`;
-      });
-      html += `</div>`;
-    });
-  }
-
-  // Special metrics panels
-  if (simData.specialMetrics) {
-    if (simData.specialMetrics.cascadeReadiness?.byTurn) {
-      const crByTurn = simData.specialMetrics.cascadeReadiness.byTurn;
-      const medTurn = simData.specialMetrics.cascadeReadiness.medianTurn;
-      html += `<div class="sim-detail-panel"><h4>Cascade Readiness${medTurn != null ? ` (median T${medTurn})` : ''}</h4>`;
-      const turnKeys = Object.keys(crByTurn).sort((a, b) => Number(a) - Number(b));
-      turnKeys.forEach(t => {
-        const pct = crByTurn[t] || 0;
-        html += `<div class="sim-bar-row">
-          <span class="sim-bar-label">T${t}</span>
-          <div class="sim-bar-track"><div class="sim-bar-fill gold" style="width:${Math.min(pct, 100)}%"></div></div>
-          <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
-        </div>`;
-      });
-      html += `</div>`;
-    }
-
-    if (simData.specialMetrics.etbTapped) {
-      const etb = simData.specialMetrics.etbTapped;
-      html += `<div class="sim-detail-panel"><h4>ETB Tapped Land Rate by Turn</h4>`;
-      const turnKeys = Object.keys(etb).sort((a, b) => Number(a) - Number(b));
-      turnKeys.forEach(t => {
-        const pct = etb[t] || 0;
-        html += `<div class="sim-bar-row">
-          <span class="sim-bar-label">T${t}</span>
-          <div class="sim-bar-track"><div class="sim-bar-fill gold" style="width:${Math.min(pct, 100)}%"></div></div>
-          <span class="sim-bar-pct">${pct.toFixed(1)}%</span>
-        </div>`;
-      });
-      html += `</div>`;
-    }
-  }
-
-  grid.innerHTML = html;
-}
-
-function setupSimAnimations() {
-  if (!('IntersectionObserver' in window)) return;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        // Animate bar fills
-        entry.target.querySelectorAll('.sim-bar-fill').forEach(bar => {
-          const w = bar.style.width;
-          bar.style.width = '0%';
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => { bar.style.width = w; });
-          });
-        });
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.sim-detail-panel').forEach(panel => {
-    observer.observe(panel);
-  });
 }
 
 function updateTabStates() {

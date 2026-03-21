@@ -253,6 +253,11 @@ def pct_to_score(value: float) -> float:
     return clamp(value)
 
 
+def paid_mulligan_pct(mulligan_attempts: Counter, total: int) -> float:
+    """Percentage of games that took any non-free mulligan."""
+    return pct(sum(count for attempt, count in mulligan_attempts.items() if attempt >= 2), total)
+
+
 def cards_seen_by_turn(turn: int) -> int:
     """Cards seen by end of turn on the play in a Commander game."""
     return min(99, 6 + turn)
@@ -831,7 +836,7 @@ def export_titan(metadata: dict) -> dict:
     mulligan_stats = {
         "keptFirst": pct(mull.get(0, 0), total),
         "freeMulligan": pct(mull.get(1, 0), total),
-        "paidMulligan": pct(mull.get(2, 0), total),
+        "paidMulligan": paid_mulligan_pct(mull, total),
     }
 
     # openingHand
@@ -938,7 +943,7 @@ def _export_colored(sim_module, deck_id: str, deck_name: str,
     mulligan_stats = {
         "keptFirst": pct(mull.get(0, 0), total),
         "freeMulligan": pct(mull.get(1, 0), total),
-        "paidMulligan": pct(mull.get(2, 0), total),
+        "paidMulligan": paid_mulligan_pct(mull, total),
     }
 
     # openingHand

@@ -3998,80 +3998,11 @@ footer a:hover {
   color: var(--text-secondary);
 }
 
-.sim-details {
-  margin-bottom: 24px;
-}
-
-.sim-details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.sim-detail-panel {
-  background: var(--bg-surface);
-  border-radius: 10px;
-  padding: 20px;
-  border: 1px solid var(--border-subtle);
-}
-
-.sim-detail-panel h4 {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-  margin-bottom: 16px;
-  text-align: left;
-}
-
-.sim-bar-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.sim-bar-label {
-  width: 50px;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  text-align: right;
-  font-family: 'Fira Code', monospace;
-  flex-shrink: 0;
-}
-
-.sim-bar-track {
-  flex: 1;
-  height: 14px;
-  background: var(--bg-elevated);
-  border-radius: 7px;
-  overflow: hidden;
-}
-
-.sim-bar-fill {
-  height: 100%;
-  border-radius: 7px;
-  background: linear-gradient(90deg, var(--accent-purple), #C27530);
-  transition: width 0.6s ease-out;
-}
-
-.sim-bar-fill.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
-.sim-bar-fill.blue { background: linear-gradient(90deg, #2563eb, #60a5fa); }
-.sim-bar-fill.gold { background: linear-gradient(90deg, #d97706, #fbbf24); }
-.sim-bar-fill.red { background: linear-gradient(90deg, #dc2626, #f87171); }
-
-.sim-bar-pct {
-  width: 45px;
-  font-size: 0.75rem;
-  color: var(--text-primary);
-  font-family: 'Fira Code', monospace;
-  flex-shrink: 0;
-}
-
 /* Assessment Cards Row */
 .sim-assessment-cards {
   display: flex;
   gap: 16px;
+  margin-bottom: 24px;
 }
 
 .sim-assessment-card {
@@ -4209,9 +4140,6 @@ footer a:hover {
     grid-template-columns: 1fr 1fr;
   }
 
-  .sim-details-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 480px) {
@@ -4441,6 +4369,10 @@ footer a:hover {
   font-size: 0.9rem;
   max-width: 400px;
   margin: 0 auto;
+}
+
+.sim-assessment-cards + .sim-metrics-grid {
+  margin-top: 0;
 }
 
 @media (max-width: 768px) {
