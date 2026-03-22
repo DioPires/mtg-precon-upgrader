@@ -1347,6 +1347,72 @@ function setupDelegatedListeners() {
     }
   });
 
+  // --- Upgrade path recommendation cards ---
+  const upgradePathsContent = document.getElementById('upgrade-paths-content');
+  let lastHoveredUpgradeCard = null;
+  const upgradeTooltip = document.getElementById('upgrade-card-tooltip');
+  const upgradeTooltipImg = document.getElementById('upgrade-tooltip-img');
+  const upgradeTooltipName = document.getElementById('upgrade-tooltip-name');
+  let upgradeTooltipCard = null;
+
+  function positionUpgradeTooltip(e) {
+    const pad = 16;
+    const tooltipW = upgradeTooltip.offsetWidth || 390;
+    const tooltipH = upgradeTooltip.offsetHeight || 578;
+    let x = e.clientX + pad;
+    let y = e.clientY - tooltipH / 2;
+    if (x + tooltipW > window.innerWidth - pad) x = e.clientX - tooltipW - pad;
+    if (y < pad) y = pad;
+    if (y + tooltipH > window.innerHeight - pad) y = window.innerHeight - tooltipH - pad;
+    upgradeTooltip.style.left = x + 'px';
+    upgradeTooltip.style.top = y + 'px';
+  }
+
+  function showUpgradeTooltip(cardName, e) {
+    if (window.innerWidth <= 768) return;
+    upgradeTooltipCard = cardName;
+    upgradeTooltipName.textContent = cardName;
+    const cached = getCachedImageUrl(cardName, null);
+    const imageUrl = cached || scryfallImageUrl(cardName);
+    upgradeTooltipImg.src = imageUrl;
+    if (!cached) {
+      const preload = new Image();
+      preload.onload = () => setCachedImageUrl(cardName, null, imageUrl);
+      preload.src = imageUrl;
+    }
+    positionUpgradeTooltip(e);
+    upgradeTooltip.classList.add('visible');
+  }
+
+  function hideUpgradeTooltip() {
+    upgradeTooltip.classList.remove('visible');
+    upgradeTooltipCard = null;
+    lastHoveredUpgradeCard = null;
+  }
+
+  upgradePathsContent.addEventListener('mouseover', (e) => {
+    const card = e.target.closest('.upgrade-card');
+    if (card && card !== lastHoveredUpgradeCard) {
+      lastHoveredUpgradeCard = card;
+      showUpgradeTooltip(card.dataset.cardName, e);
+    }
+  });
+  upgradePathsContent.addEventListener('mousemove', (e) => {
+    if (upgradeTooltipCard) positionUpgradeTooltip(e);
+  });
+  upgradePathsContent.addEventListener('mouseout', (e) => {
+    const card = e.target.closest('.upgrade-card');
+    if (card && card === lastHoveredUpgradeCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+      hideUpgradeTooltip();
+    }
+  });
+  upgradePathsContent.addEventListener('click', (e) => {
+    const card = e.target.closest('.upgrade-card');
+    if (card && window.innerWidth <= 768) {
+      showMobilePreview(card.dataset.cardName);
+    }
+  });
+
 }
 
 // === SCRYFALL API ===
