@@ -34,6 +34,16 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+function linkifyRationaleCards(rationale, cardsInDeck) {
+  let text = escapeHtml(rationale);
+  if (!cardsInDeck || cardsInDeck.length === 0) return text;
+  for (const cardName of cardsInDeck) {
+    const escaped = escapeHtml(cardName);
+    text = text.replace(escaped, `<span class="upgrade-rationale-card" data-card-name="${escaped}">${escaped}</span>`);
+  }
+  return text;
+}
+
 // === SECURITY: URL SANITIZATION ===
 function sanitizeUrl(url) {
   if (typeof url !== 'string') return '#';
@@ -1085,6 +1095,7 @@ const decklistCount = document.getElementById('decklist-count');
 // === EVENT DELEGATION ===
 let lastHoveredGuideCard = null;
 let lastHoveredDeckCard = null;
+let lastHoveredUpgradeCard = null;
 
 function setupDelegatedListeners() {
   const mainContent = document.getElementById('main-content');
@@ -1406,14 +1417,45 @@ function setupDelegatedListeners() {
   // --- Upgrade path recommendation cards ---
   const upgradePathsContent = document.getElementById('upgrade-paths-content');
   upgradePathsContent.addEventListener('mouseover', (e) => {
+    if (window.innerWidth <= 768) return;
+    const rationaleCard = e.target.closest('.upgrade-rationale-card');
+    if (rationaleCard) {
+      lastHoveredUpgradeCard = null;
+      showCardPreview(rationaleCard.dataset.cardName);
+      return;
+    }
+    const swapCut = e.target.closest('.upgrade-swap-cut');
+    if (swapCut) {
+      lastHoveredUpgradeCard = null;
+      showCardPreview(swapCut.dataset.cardName);
+      return;
+    }
     const card = e.target.closest('.upgrade-card');
-    if (card && window.innerWidth > 768) {
+    if (card && card !== lastHoveredUpgradeCard) {
+      lastHoveredUpgradeCard = card;
       showCardPreview(card.dataset.cardName);
     }
   });
-  upgradePathsContent.addEventListener('click', (e) => {
+  upgradePathsContent.addEventListener('mouseout', (e) => {
     const card = e.target.closest('.upgrade-card');
-    if (card && window.innerWidth <= 768) {
+    if (card && card === lastHoveredUpgradeCard && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+      lastHoveredUpgradeCard = null;
+    }
+  });
+  upgradePathsContent.addEventListener('click', (e) => {
+    if (window.innerWidth > 768) return;
+    const rationaleCard = e.target.closest('.upgrade-rationale-card');
+    if (rationaleCard) {
+      showMobilePreview(rationaleCard.dataset.cardName);
+      return;
+    }
+    const swapCut = e.target.closest('.upgrade-swap-cut');
+    if (swapCut) {
+      showMobilePreview(swapCut.dataset.cardName);
+      return;
+    }
+    const card = e.target.closest('.upgrade-card');
+    if (card) {
       showMobilePreview(card.dataset.cardName);
     }
   });
@@ -4126,7 +4168,7 @@ async function renderUpgradePaths() {
     // Swap suggestion
     let swapHtml = '';
     if (rec.swapSuggestion) {
-      swapHtml = `<div class="upgrade-swap">Swap for <span class="upgrade-swap-cut">${escapeHtml(rec.swapSuggestion.cut)}</span></div>`;
+      swapHtml = `<div class="upgrade-swap">Swap for <span class="upgrade-swap-cut" data-card-name="${escapeHtml(rec.swapSuggestion.cut)}">${escapeHtml(rec.swapSuggestion.cut)}</span></div>`;
     }
 
     // Source links
@@ -4146,7 +4188,7 @@ async function renderUpgradePaths() {
       <div class="upgrade-card-body">
         <div class="upgrade-card-name">${escapeHtml(rec.card)}</div>
         <div class="upgrade-card-type">${escapeHtml(rec.impact?.typeLine || '')}</div>
-        <div class="upgrade-card-rationale">${escapeHtml(rec.rationale || '')}</div>
+        <div class="upgrade-card-rationale">${linkifyRationaleCards(rec.rationale || '', rec.comboDetails?.cardsInDeck)}</div>
         <div class="upgrade-card-tags">${tags}</div>
         ${swapHtml}
         ${sourceHtml ? `<div style="margin-top:4px">${sourceHtml}</div>` : ''}
