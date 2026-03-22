@@ -2064,6 +2064,220 @@ footer a:hover {
   color: var(--accent-blue);
 }
 
+/* === UPGRADE PATHS === */
+.guide-section.upgrade-paths .guide-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.upgrade-paths-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.upgrade-owned-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+.upgrade-owned-toggle input[type="checkbox"] {
+  accent-color: var(--accent-green);
+}
+.upgrade-paths-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.upgrade-card {
+  background: var(--bg-surface);
+  border-radius: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-subtle);
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  transition: border-color 0.15s;
+}
+.upgrade-card:hover {
+  border-color: var(--deck-accent);
+}
+.upgrade-card.is-owned {
+  border-left: 3px solid var(--accent-green);
+}
+.upgrade-card-img {
+  width: 56px;
+  height: 78px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.upgrade-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.upgrade-card-body {
+  min-width: 0;
+}
+.upgrade-card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.upgrade-card-type {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.upgrade-card-rationale {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.upgrade-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.upgrade-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.upgrade-tag-combo {
+  background: var(--accent-red-dim);
+  color: var(--accent-red);
+}
+.upgrade-tag-health {
+  background: var(--accent-green-dim);
+  color: var(--accent-green);
+}
+.upgrade-tag-owned {
+  background: var(--accent-gold-dim);
+  color: var(--accent-gold);
+}
+.upgrade-tag-gc {
+  background: rgba(194, 48, 40, 0.08);
+  color: var(--accent-red);
+  border: 1px solid var(--accent-red-dim);
+}
+.upgrade-card-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  min-width: 44px;
+}
+.upgrade-score-ring {
+  width: 40px;
+  height: 40px;
+  position: relative;
+}
+.upgrade-score-ring svg {
+  transform: rotate(-90deg);
+}
+.upgrade-score-ring circle {
+  fill: none;
+  stroke-width: 3;
+}
+.upgrade-score-ring .ring-bg {
+  stroke: var(--border-subtle);
+}
+.upgrade-score-ring .ring-fill {
+  stroke: var(--deck-accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.4s ease;
+}
+.upgrade-score-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+.upgrade-swap {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-style: italic;
+}
+.upgrade-swap-cut {
+  color: var(--accent-red);
+}
+.upgrade-source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.upgrade-source-link:hover {
+  opacity: 1;
+  color: var(--accent-blue);
+}
+.upgrade-health-baseline {
+  background: var(--bg-surface);
+  border-radius: 10px;
+  padding: 12px 16px;
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.82rem;
+}
+.upgrade-health-grade {
+  font-family: 'Fira Code', monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  min-width: 36px;
+  text-align: center;
+}
+.upgrade-health-grade.grade-A { color: var(--accent-green); }
+.upgrade-health-grade.grade-B { color: var(--accent-blue); }
+.upgrade-health-grade.grade-C { color: var(--accent-gold); }
+.upgrade-health-grade.grade-D { color: var(--accent-red); }
+.upgrade-health-grade.grade-F { color: var(--accent-red); }
+.upgrade-health-detail {
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.upgrade-health-weak {
+  color: var(--accent-red);
+  font-weight: 500;
+}
+.upgrade-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .upgrade-card {
+    grid-template-columns: 1fr auto;
+  }
+  .upgrade-card-img {
+    display: none;
+  }
+}
+
 /* === TOKENS NEEDED === */
 .guide-section.tokens .guide-section-title {
   display: flex;

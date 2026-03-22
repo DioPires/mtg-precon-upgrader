@@ -2136,6 +2136,9 @@ async function renderGuide() {
   renderCombos(currentDeck.synergies);
   renderTokens(currentDeck.tokens || []);
 
+  // Render upgrade paths (non-blocking)
+  renderUpgradePaths();
+
   // Render full deck list
   renderDeckList();
 
@@ -3822,6 +3825,223 @@ function initViewToggle() {
   });
 
 }
+
+// === UPGRADE PATHS (RECOMMENDATIONS ENGINE) ===
+
+let recommendationsCache = {};
+let ownedCardsSet = null;
+
+async function loadRecommendations(deckId) {
+  if (recommendationsCache[deckId]) return recommendationsCache[deckId];
+  if (recommendationsCache[deckId] === null) return null;
+
+  try {
+    const response = await fetch(`data/commanders/${deckId}/recommendations.json`);
+    if (!response.ok) {
+      recommendationsCache[deckId] = null;
+      return null;
+    }
+    const data = await response.json();
+    recommendationsCache[deckId] = data;
+    return data;
+  } catch {
+    recommendationsCache[deckId] = null;
+    return null;
+  }
+}
+
+async function loadOwnedCards() {
+  if (ownedCardsSet !== null) return ownedCardsSet;
+  try {
+    const response = await fetch('priv_data/owned_formatted.csv');
+    if (!response.ok) {
+      ownedCardsSet = new Set();
+      return ownedCardsSet;
+    }
+    const text = await response.text();
+    ownedCardsSet = new Set();
+    for (const line of text.split('\n')) {
+      const match = line.trim().match(/^\d+x\s+(.+)$/);
+      if (match) ownedCardsSet.add(match[1].trim());
+    }
+    return ownedCardsSet;
+  } catch {
+    ownedCardsSet = new Set();
+    return ownedCardsSet;
+  }
+}
+
+function renderScoreRing(score, maxScore = 100) {
+  const radius = 16;
+  const circumference = 2 * Math.PI * radius;
+  const pct = Math.min(score / maxScore, 1);
+  const offset = circumference * (1 - pct);
+  return `<div class="upgrade-score-ring">
+    <svg width="40" height="40" viewBox="0 0 40 40">
+      <circle class="ring-bg" cx="20" cy="20" r="${radius}" />
+      <circle class="ring-fill" cx="20" cy="20" r="${radius}"
+        stroke-dasharray="${circumference}"
+        stroke-dashoffset="${offset}" />
+    </svg>
+  </div>
+  <span class="upgrade-score-label">${score}</span>`;
+}
+
+function getHealthGradeClass(grade) {
+  if (!grade) return '';
+  const letter = grade.charAt(0).toUpperCase();
+  return `grade-${letter}`;
+}
+
+const HEALTH_COMPONENT_LABELS = {
+  manaReliability: 'Mana Reliability',
+  threatDeployment: 'Threat Deployment',
+  interactionDensity: 'Interaction Density',
+  comboConsistency: 'Combo Consistency',
+  commanderIndependence: 'Commander Independence',
+};
+
+async function renderUpgradePaths() {
+  const section = document.getElementById('upgrade-paths-section');
+  const content = document.getElementById('upgrade-paths-content');
+  const countEl = document.getElementById('upgrade-paths-count');
+  const ownedToggle = document.getElementById('upgrade-owned-toggle');
+
+  if (!section || !content) return;
+
+  if (!currentDeckId || !currentDeck) {
+    section.style.display = 'none';
+    return;
+  }
+
+  const [recData, owned] = await Promise.all([
+    loadRecommendations(currentDeckId),
+    loadOwnedCards(),
+  ]);
+
+  if (!recData || !recData.recommendations || recData.recommendations.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = '';
+
+  // Show owned filter toggle if user has owned cards
+  if (owned.size > 0) {
+    ownedToggle.style.display = '';
+  } else {
+    ownedToggle.style.display = 'none';
+  }
+
+  const showOwnedOnly = document.getElementById('upgrade-owned-filter')?.checked || false;
+
+  let recs = recData.recommendations;
+
+  // Tag owned status from live owned data
+  recs.forEach(rec => {
+    rec._owned = owned.has(rec.card);
+  });
+
+  if (showOwnedOnly) {
+    recs = recs.filter(r => r._owned);
+  }
+
+  countEl.textContent = recs.length;
+
+  let html = '';
+
+  // Health baseline summary
+  const health = recData.healthBaseline;
+  if (health && health.grade) {
+    const weakLabel = HEALTH_COMPONENT_LABELS[health.weakestComponent] || health.weakestComponent;
+    const weakScore = health.components?.[health.weakestComponent];
+    html += `<div class="upgrade-health-baseline">
+      <span class="upgrade-health-grade ${getHealthGradeClass(health.grade)}">${escapeHtml(health.grade)}</span>
+      <span class="upgrade-health-detail">
+        Deck Health: ${health.score}/100
+        ${health.weakestComponent ? ` · Weakest: <span class="upgrade-health-weak">${escapeHtml(weakLabel)}${weakScore != null ? ` (${weakScore})` : ''}</span>` : ''}
+      </span>
+    </div>`;
+  }
+
+  if (recs.length === 0) {
+    html += '<div class="upgrade-empty">No upgrade recommendations available' +
+      (showOwnedOnly ? ' in your collection' : '') + '.</div>';
+    content.innerHTML = html;
+    return;
+  }
+
+  for (const rec of recs) {
+    const imgUrl = getCachedImageUrl(rec.card, null) || scryfallImageUrl(rec.card);
+    const cached = imageCache.get(rec.card);
+    const imgAttr = cached ? `src="${cached}"` : `src="" data-scryfall-src="${imgUrl}"`;
+    const ownedClass = rec._owned ? ' is-owned' : '';
+
+    // Tags
+    let tags = '';
+    if (rec.category === 'combo-enabler') {
+      tags += '<span class="upgrade-tag upgrade-tag-combo">Combo</span>';
+    }
+    if (rec.scoring?.healthGapFill > 0) {
+      tags += '<span class="upgrade-tag upgrade-tag-health">Health Fix</span>';
+    }
+    if (rec._owned) {
+      tags += '<span class="upgrade-tag upgrade-tag-owned">Owned</span>';
+    }
+    if (rec.impact?.gameChangerAdded) {
+      tags += '<span class="upgrade-tag upgrade-tag-gc">Game Changer</span>';
+    }
+
+    // Swap suggestion
+    let swapHtml = '';
+    if (rec.swapSuggestion) {
+      swapHtml = `<div class="upgrade-swap">Swap for <span class="upgrade-swap-cut">${escapeHtml(rec.swapSuggestion.cut)}</span></div>`;
+    }
+
+    // Source links
+    let sourceHtml = '';
+    if (rec.sources) {
+      for (const src of rec.sources) {
+        if (src.url) {
+          sourceHtml += `<a class="upgrade-source-link" href="${sanitizeUrl(src.url)}" target="_blank" rel="noopener">${escapeHtml(src.name || src.type)}</a> `;
+        }
+      }
+    }
+
+    html += `<div class="upgrade-card${ownedClass}" data-card-name="${escapeHtml(rec.card)}">
+      <div class="upgrade-card-img">
+        <img ${imgAttr} alt="${escapeHtml(rec.card)}" loading="lazy">
+      </div>
+      <div class="upgrade-card-body">
+        <div class="upgrade-card-name">${escapeHtml(rec.card)}</div>
+        <div class="upgrade-card-type">${escapeHtml(rec.impact?.typeLine || '')}</div>
+        <div class="upgrade-card-rationale">${escapeHtml(rec.rationale || '')}</div>
+        <div class="upgrade-card-tags">${tags}</div>
+        ${swapHtml}
+        ${sourceHtml ? `<div style="margin-top:4px">${sourceHtml}</div>` : ''}
+      </div>
+      <div class="upgrade-card-score">
+        ${renderScoreRing(rec.score)}
+      </div>
+    </div>`;
+  }
+
+  content.innerHTML = html;
+
+  // Lazy-load card images
+  content.querySelectorAll('img[data-scryfall-src]').forEach(img => {
+    const src = img.dataset.scryfallSrc;
+    if (src) {
+      img.src = src;
+      img.removeAttribute('data-scryfall-src');
+    }
+  });
+}
+
+// Wire up owned-only filter
+document.getElementById('upgrade-owned-filter')?.addEventListener('change', () => {
+  renderUpgradePaths();
+});
 
 // === OPENING HAND SIMULATOR ===
 
