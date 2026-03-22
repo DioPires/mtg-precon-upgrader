@@ -8,6 +8,7 @@ via Scryfall Collection API, downloads normal and art_crop variants.
 import json
 import re
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -19,7 +20,34 @@ SCRYFALL_COLLECTION_URL = "https://api.scryfall.com/cards/collection"
 BATCH_SIZE = 75
 RATE_LIMIT_DELAY = 0.1  # 100ms between collection API requests
 DOWNLOAD_DELAY = 0.075  # 75ms between image downloads
+MAX_RETRIES = 5
+INITIAL_BACKOFF = 1.0  # seconds
 VARIANTS = ["normal", "art_crop"]
+
+
+def request_with_retry(req: urllib.request.Request, label: str = "") -> bytes:
+    """Execute a request with exponential backoff on 429/5xx errors."""
+    backoff = INITIAL_BACKOFF
+    for attempt in range(MAX_RETRIES):
+        try:
+            with urllib.request.urlopen(req) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as e:
+            if e.code == 429 or e.code >= 500:
+                if attempt < MAX_RETRIES - 1:
+                    wait = backoff * (2 ** attempt)
+                    print(f"    {label}HTTP {e.code}, retrying in {wait:.1f}s (attempt {attempt + 1}/{MAX_RETRIES})")
+                    time.sleep(wait)
+                    continue
+            raise
+        except urllib.error.URLError:
+            if attempt < MAX_RETRIES - 1:
+                wait = backoff * (2 ** attempt)
+                print(f"    {label}Network error, retrying in {wait:.1f}s (attempt {attempt + 1}/{MAX_RETRIES})")
+                time.sleep(wait)
+                continue
+            raise
+    raise RuntimeError(f"Max retries exceeded for {label}")
 
 
 def sanitize_card_name(name: str) -> str:
@@ -70,8 +98,8 @@ def fetch_image_uris(names: list[str]) -> dict[str, dict]:
             },
         )
         try:
-            with urllib.request.urlopen(req) as resp:
-                data = json.loads(resp.read())
+            raw = request_with_retry(req, f"batch {i + 1}: ")
+            data = json.loads(raw)
 
             for card in data.get("data", []):
                 card_name = card["name"]
@@ -82,7 +110,6 @@ def fetch_image_uris(names: list[str]) -> dict[str, dict]:
                     entry = {"front": card["image_uris"], "back": None}
                 elif faces:
                     entry = {"front": faces[0].get("image_uris", {}), "back": None}
-                    # DFCs with separate face images: store back face
                     if layout in ("modal_dfc", "transform") and len(faces) > 1:
                         entry["back"] = faces[1].get("image_uris", {})
                 else:
@@ -108,11 +135,11 @@ def fetch_image_uris(names: list[str]) -> dict[str, dict]:
 
 
 def download_image(url: str, dest: Path) -> bool:
-    """Download an image from URL to dest path."""
+    """Download an image from URL to dest path with retry."""
     req = urllib.request.Request(url, headers={"User-Agent": "MTGPreconUpgrader/1.0"})
     try:
-        with urllib.request.urlopen(req) as resp:
-            dest.write_bytes(resp.read())
+        data = request_with_retry(req, f"{dest.name}: ")
+        dest.write_bytes(data)
         return True
     except Exception as e:
         print(f"    Failed: {dest.name} — {e}")
