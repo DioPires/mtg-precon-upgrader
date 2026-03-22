@@ -2262,6 +2262,90 @@ footer a:hover {
   color: var(--accent-red);
   font-weight: 500;
 }
+details.upgrade-health-baseline {
+  display: block;
+  cursor: pointer;
+}
+details.upgrade-health-baseline > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+}
+details.upgrade-health-baseline > summary::-webkit-details-marker { display: none; }
+details.upgrade-health-baseline > summary::marker { content: ''; }
+.health-expand-hint {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s;
+}
+details[open].upgrade-health-baseline .health-expand-hint { opacity: 0.4; }
+.health-breakdown {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.health-breakdown-intro {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+.health-component-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.health-component-row.is-weakest {
+  background: var(--accent-red-dim);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 0 -10px;
+}
+.health-component-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.health-component-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.health-weakest-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--accent-red);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-left: 6px;
+}
+.health-component-score {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.health-component-bar-track {
+  height: 4px;
+  background: var(--border-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.health-component-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.health-component-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
 .upgrade-empty {
   text-align: center;
   padding: 24px;

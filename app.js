@@ -3901,6 +3901,14 @@ const HEALTH_COMPONENT_LABELS = {
   commanderIndependence: 'Commander Independence',
 };
 
+const HEALTH_COMPONENT_DESCRIPTIONS = {
+  manaReliability: 'How consistently the deck hits land drops and produces the right colors on curve.',
+  threatDeployment: 'How quickly and reliably the deck deploys its key threats and win conditions.',
+  interactionDensity: 'The density of removal, counterspells, and other answers to opponent threats.',
+  comboConsistency: 'How reliably the deck assembles its synergy engines or combo finishers.',
+  commanderIndependence: 'How well the deck functions when the commander is unavailable or removed.',
+};
+
 async function renderUpgradePaths() {
   const section = document.getElementById('upgrade-paths-section');
   const content = document.getElementById('upgrade-paths-content');
@@ -3955,13 +3963,41 @@ async function renderUpgradePaths() {
   if (health && health.grade) {
     const weakLabel = HEALTH_COMPONENT_LABELS[health.weakestComponent] || health.weakestComponent;
     const weakScore = health.components?.[health.weakestComponent];
-    html += `<div class="upgrade-health-baseline">
-      <span class="upgrade-health-grade ${getHealthGradeClass(health.grade)}">${escapeHtml(health.grade)}</span>
-      <span class="upgrade-health-detail">
-        Deck Health: ${health.score}/100
-        ${health.weakestComponent ? ` · Weakest: <span class="upgrade-health-weak">${escapeHtml(weakLabel)}${weakScore != null ? ` (${weakScore})` : ''}</span>` : ''}
-      </span>
-    </div>`;
+
+    // Build component breakdown rows
+    let componentRows = '';
+    if (health.components) {
+      const entries = Object.entries(health.components);
+      for (const [key, score] of entries) {
+        const label = HEALTH_COMPONENT_LABELS[key] || key;
+        const desc = HEALTH_COMPONENT_DESCRIPTIONS[key] || '';
+        const isWeakest = key === health.weakestComponent;
+        const barColor = score >= 75 ? 'var(--accent-green)' : score >= 50 ? 'var(--accent-gold)' : 'var(--accent-red)';
+        componentRows += `<div class="health-component-row${isWeakest ? ' is-weakest' : ''}">
+          <div class="health-component-header">
+            <span class="health-component-label">${escapeHtml(label)}${isWeakest ? ' <span class="health-weakest-badge">Weakest</span>' : ''}</span>
+            <span class="health-component-score" style="color: ${barColor}">${score}</span>
+          </div>
+          <div class="health-component-bar-track"><div class="health-component-bar-fill" style="width: ${Math.min(score, 100)}%; background: ${barColor}"></div></div>
+          <div class="health-component-desc">${escapeHtml(desc)}</div>
+        </div>`;
+      }
+    }
+
+    html += `<details class="upgrade-health-baseline">
+      <summary class="upgrade-health-summary">
+        <span class="upgrade-health-grade ${getHealthGradeClass(health.grade)}">${escapeHtml(health.grade)}</span>
+        <span class="upgrade-health-detail">
+          Deck Health: ${health.score}/100
+          ${health.weakestComponent ? ` · Weakest: <span class="upgrade-health-weak">${escapeHtml(weakLabel)}${weakScore != null ? ` (${weakScore})` : ''}</span>` : ''}
+        </span>
+        <span class="health-expand-hint">Details</span>
+      </summary>
+      <div class="health-breakdown">
+        <div class="health-breakdown-intro">Deck Health measures how well the deck performs across 5 key reliability dimensions.</div>
+        ${componentRows}
+      </div>
+    </details>`;
   }
 
   if (recs.length === 0) {
@@ -4562,7 +4598,8 @@ function renderSwapAnalyzer() {
     html += `<div class="swap-card-picker">
       <input type="text" class="swap-add-search" placeholder="Search cards to add..."
         value="${escapeHtml(searchQuery)}"
-        oninput="swapState.searchQuery=this.value; swapSearchCards(this.value); renderSwapSearchResults();">`;
+        oninput="swapState.searchQuery=this.value; swapSearchCards(this.value); renderSwapSearchResults();">
+      <span class="swap-search-hint">Searches cards from loaded deck recommendations</span>`;
     if (searchResults.length > 0) {
       html += `<div class="swap-search-results" onclick="if(event.target.closest('.swap-search-result')){selectSwapAdd(event.target.closest('.swap-search-result').dataset.cardName)}">`;
       searchResults.forEach(card => {
@@ -4573,6 +4610,8 @@ function renderSwapAnalyzer() {
         </button>`;
       });
       html += `</div>`;
+    } else if (searchQuery && searchQuery.length >= 2) {
+      html += `<div class="swap-search-no-results">No matching cards found in the recommendation pool</div>`;
     }
     html += `</div>`;
   }
@@ -4608,6 +4647,8 @@ function renderSwapSearchResults() {
 
   let existing = picker.querySelector('.swap-search-results');
   if (existing) existing.remove();
+  let existingEmpty = picker.querySelector('.swap-search-no-results');
+  if (existingEmpty) existingEmpty.remove();
 
   if (swapState.searchResults.length > 0) {
     let html = `<div class="swap-search-results" onclick="if(event.target.closest('.swap-search-result')){selectSwapAdd(event.target.closest('.swap-search-result').dataset.cardName)}">`;
@@ -4620,6 +4661,8 @@ function renderSwapSearchResults() {
     });
     html += `</div>`;
     picker.insertAdjacentHTML('beforeend', html);
+  } else if (swapState.searchQuery && swapState.searchQuery.length >= 2) {
+    picker.insertAdjacentHTML('beforeend', `<div class="swap-search-no-results">No matching cards found in the recommendation pool</div>`);
   }
 }
 
