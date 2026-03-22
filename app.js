@@ -3824,6 +3824,7 @@ function switchView(view) {
     const mainContent = document.getElementById('main-content');
     const analyticsView = document.getElementById('analytics-view');
     const shoppingView = document.getElementById('shopping-view');
+    const compareView = document.getElementById('compare-view');
 
     // Update toggle buttons
     document.querySelectorAll('.view-toggle-btn').forEach(btn => {
@@ -3839,6 +3840,7 @@ function switchView(view) {
     mainContent.style.display = 'none';
     analyticsView.style.display = 'none';
     shoppingView.style.display = 'none';
+    if (compareView) compareView.style.display = 'none';
 
     if (view === 'analytics') {
       analyticsView.style.display = 'block';
@@ -3858,6 +3860,10 @@ function switchView(view) {
       renderShoppingList();
       savePreferences();
       history.replaceState(null, '', '#view=shopping');
+    } else if (view === 'compare') {
+      if (compareView) compareView.style.display = 'block';
+      renderCompareView();
+      history.replaceState(null, '', '#view=compare');
     } else {
       // Guide view
       selectorSection.style.display = '';
@@ -5432,6 +5438,140 @@ function initCollapsibleSections() {
   });
 }
 
+// === DECK HEALTH COMPARISON ===
+
+let compareSortKey = 'score';
+let compareSortAsc = false;
+
+async function renderCompareView() {
+  const wrap = document.getElementById('compare-table-wrap');
+  if (!wrap) return;
+
+  const allDecks = deckIndex?.commanders || [];
+  if (allDecks.length === 0) {
+    wrap.innerHTML = '<div class="compare-empty">No decks available.</div>';
+    return;
+  }
+
+  wrap.innerHTML = '<div class="compare-loading">Loading health data...</div>';
+
+  // Load all recommendations in parallel
+  const results = await Promise.all(
+    allDecks.map(async (cmd) => {
+      const rec = await loadRecommendations(cmd.id);
+      return { cmd, health: rec?.healthBaseline || null };
+    })
+  );
+
+  // Filter to decks with health data
+  const rows = results.filter(r => r.health);
+  if (rows.length === 0) {
+    wrap.innerHTML = '<div class="compare-empty">No decks have health data yet.</div>';
+    return;
+  }
+
+  renderCompareTable(wrap, rows);
+}
+
+function renderCompareTable(wrap, rows) {
+  // Sort rows
+  const sorted = [...rows].sort((a, b) => {
+    let va, vb;
+    if (compareSortKey === 'name') {
+      va = a.cmd.name.toLowerCase();
+      vb = b.cmd.name.toLowerCase();
+      return compareSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    } else if (compareSortKey === 'commander') {
+      va = a.cmd.commander.toLowerCase();
+      vb = b.cmd.commander.toLowerCase();
+      return compareSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    } else if (compareSortKey === 'grade') {
+      const gradeOrder = { 'A+': 0, 'A': 1, 'A-': 2, 'B+': 3, 'B': 4, 'B-': 5, 'C+': 6, 'C': 7, 'C-': 8, 'D+': 9, 'D': 10, 'D-': 11, 'F': 12 };
+      va = gradeOrder[a.health.grade] ?? 13;
+      vb = gradeOrder[b.health.grade] ?? 13;
+      return compareSortAsc ? va - vb : vb - va;
+    } else if (compareSortKey === 'score') {
+      va = a.health.score ?? 0;
+      vb = b.health.score ?? 0;
+      return compareSortAsc ? va - vb : vb - va;
+    } else {
+      // Component key
+      va = a.health.components?.[compareSortKey] ?? 0;
+      vb = b.health.components?.[compareSortKey] ?? 0;
+      return compareSortAsc ? va - vb : vb - va;
+    }
+  });
+
+  const columns = [
+    { key: 'name', label: 'Deck' },
+    { key: 'commander', label: 'Commander' },
+    { key: 'grade', label: 'Grade' },
+    { key: 'score', label: 'Score' },
+    ...Object.entries(HEALTH_COMPONENT_LABELS).map(([key, label]) => ({ key, label })),
+  ];
+
+  const arrow = (key) => {
+    if (compareSortKey !== key) return '';
+    return compareSortAsc ? ' \u25B2' : ' \u25BC';
+  };
+
+  const scoreCell = (val) => {
+    if (val == null) return '<td class="compare-cell compare-cell-na">\u2014</td>';
+    const cls = val >= 75 ? 'compare-cell-green' : val >= 50 ? 'compare-cell-gold' : 'compare-cell-red';
+    return `<td class="compare-cell ${cls}">${val}</td>`;
+  };
+
+  let html = '<table class="compare-table"><thead><tr>';
+  // Color column (no header)
+  html += '<th class="compare-th compare-th-colors"></th>';
+  for (const col of columns) {
+    html += `<th class="compare-th" data-sort-key="${escapeHtml(col.key)}" role="button" tabindex="0">${escapeHtml(col.label)}${arrow(col.key)}</th>`;
+  }
+  html += '</tr></thead><tbody>';
+
+  for (const { cmd, health } of sorted) {
+    const colorPips = (cmd.colors || []).map(c =>
+      `<span class="compare-pip pip-${escapeHtml(c)}"></span>`
+    ).join('');
+    const gradeClass = getHealthGradeClass(health.grade);
+
+    html += '<tr>';
+    html += `<td class="compare-cell compare-cell-colors">${colorPips}</td>`;
+    html += `<td class="compare-cell compare-cell-name">${escapeHtml(cmd.name)}</td>`;
+    html += `<td class="compare-cell compare-cell-commander">${escapeHtml(cmd.commander)}</td>`;
+    html += `<td class="compare-cell compare-cell-grade"><span class="compare-grade ${gradeClass}">${escapeHtml(health.grade || '\u2014')}</span></td>`;
+    html += scoreCell(health.score);
+    for (const key of Object.keys(HEALTH_COMPONENT_LABELS)) {
+      html += scoreCell(health.components?.[key]);
+    }
+    html += '</tr>';
+  }
+
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+
+  // Attach sort handlers
+  wrap.querySelectorAll('.compare-th[data-sort-key]').forEach(th => {
+    const handler = () => {
+      const key = th.dataset.sortKey;
+      if (compareSortKey === key) {
+        compareSortAsc = !compareSortAsc;
+      } else {
+        compareSortKey = key;
+        compareSortAsc = key === 'name' || key === 'commander';
+      }
+      renderCompareTable(wrap, rows);
+    };
+    th.addEventListener('click', handler);
+    th.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handler();
+      }
+    });
+  });
+}
+
 // === INITIALIZE ===
 async function initializeApp() {
   // Update search hint for non-Mac platforms
@@ -5491,10 +5631,8 @@ async function initializeApp() {
   const requestedView = urlParams.view;
 
   // Check if a non-guide view requested
-  if (requestedView === 'shopping') {
-    // Shopping view doesn't require a specific deck
-    switchView('shopping');
-    // Still load a deck if one was specified, for other tabs
+  if (requestedView === 'shopping' || requestedView === 'compare') {
+    switchView(requestedView);
     if (deckToLoad) {
       const allDecks = [...(deckIndex.commanders || [])];
       if (allDecks.some(d => d.id === deckToLoad)) {
