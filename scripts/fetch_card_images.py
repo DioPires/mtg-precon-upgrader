@@ -50,7 +50,10 @@ def collect_card_names() -> set[str]:
 
 
 def fetch_image_uris(names: list[str]) -> dict[str, dict]:
-    """Fetch image URIs from Scryfall Collection API in batches of 75."""
+    """Fetch image URIs from Scryfall Collection API in batches of 75.
+
+    Returns dict mapping card_name -> {"front": {image_uris}, "back": {image_uris}|None}.
+    """
     uris = {}
     batches = [names[i : i + BATCH_SIZE] for i in range(0, len(names), BATCH_SIZE)]
 
@@ -72,14 +75,23 @@ def fetch_image_uris(names: list[str]) -> dict[str, dict]:
 
             for card in data.get("data", []):
                 card_name = card["name"]
+                layout = card.get("layout", "normal")
+                faces = card.get("card_faces", [])
+
                 if "image_uris" in card:
-                    uris[card_name] = card["image_uris"]
-                elif "card_faces" in card and card["card_faces"]:
-                    uris[card_name] = card["card_faces"][0].get("image_uris", {})
-                # Also map front face name for DFCs
+                    entry = {"front": card["image_uris"], "back": None}
+                elif faces:
+                    entry = {"front": faces[0].get("image_uris", {}), "back": None}
+                    # DFCs with separate face images: store back face
+                    if layout in ("modal_dfc", "transform") and len(faces) > 1:
+                        entry["back"] = faces[1].get("image_uris", {})
+                else:
+                    entry = {"front": {}, "back": None}
+
+                uris[card_name] = entry
                 if " // " in card_name:
                     front = card_name.split(" // ")[0]
-                    uris[front] = uris.get(card_name, {})
+                    uris[front] = entry
 
             not_found = data.get("not_found", [])
             if not_found:
@@ -129,38 +141,47 @@ def main():
     downloaded = 0
     skipped = 0
     failed = 0
-    total = len(names) * len(VARIANTS)
 
-    print(f"Downloading images ({total} files)...")
+    # Build download jobs: (card_name, variant, face, uri_dict)
+    jobs = []
     for name in sorted(names):
-        card_uris = uris.get(name)
-        if not card_uris and " // " in name:
-            card_uris = uris.get(name.split(" // ")[0])
-        if not card_uris:
+        entry = uris.get(name)
+        if not entry and " // " in name:
+            entry = uris.get(name.split(" // ")[0])
+        if not entry:
             print(f"  No URIs for: {name}")
             failed += len(VARIANTS)
             continue
 
         sanitized = sanitize_card_name(name)
+        # Front face
         for variant in VARIANTS:
-            dest = IMAGES_DIR / f"{sanitized}-{variant}.jpg"
+            jobs.append((sanitized, variant, "front", entry.get("front", {})))
+        # Back face (DFCs only)
+        if entry.get("back"):
+            for variant in VARIANTS:
+                jobs.append((sanitized, variant, "back", entry["back"]))
 
-            if dest.exists() and dest.stat().st_size > 0:
-                skipped += 1
-                continue
+    print(f"Downloading images ({len(jobs)} files)...")
+    for sanitized, variant, face, face_uris in jobs:
+        suffix = f"back-{variant}" if face == "back" else variant
+        dest = IMAGES_DIR / f"{sanitized}-{suffix}.jpg"
 
-            url = card_uris.get(variant)
-            if not url:
-                print(f"  No {variant} URI for: {name}")
-                failed += 1
-                continue
+        if dest.exists() and dest.stat().st_size > 0:
+            skipped += 1
+            continue
 
-            if download_image(url, dest):
-                downloaded += 1
-            else:
-                failed += 1
+        url = face_uris.get(variant)
+        if not url:
+            failed += 1
+            continue
 
-            time.sleep(DOWNLOAD_DELAY)
+        if download_image(url, dest):
+            downloaded += 1
+        else:
+            failed += 1
+
+        time.sleep(DOWNLOAD_DELAY)
 
     print(f"\nDone! Downloaded: {downloaded}, Skipped: {skipped}, Failed: {failed}")
     print(f"Images dir: {IMAGES_DIR}")

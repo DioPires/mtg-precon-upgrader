@@ -65,13 +65,17 @@ def _fetch_single(name: str) -> dict | None:
     try:
         with urllib.request.urlopen(req) as resp:
             card = json.loads(resp.read())
-        return {
+        layout = card.get("layout", "normal")
+        entry = {
             "type_line": card.get("type_line", "Unknown"),
             "cmc": card.get("cmc", 0),
             "mana_cost": card.get("mana_cost", ""),
             "colors": card.get("colors", []),
             "oracle_text": card.get("oracle_text", ""),
         }
+        if layout in ("modal_dfc", "transform"):
+            entry["layout"] = layout
+        return entry
     except Exception:
         return None
 
@@ -103,6 +107,7 @@ def fetch_metadata(names: list[str]) -> dict:
                 data = json.loads(resp.read())
 
             for card in data.get("data", []):
+                layout = card.get("layout", "normal")
                 entry = {
                     "type_line": card.get("type_line", "Unknown"),
                     "cmc": card.get("cmc", 0),
@@ -110,6 +115,8 @@ def fetch_metadata(names: list[str]) -> dict:
                     "colors": card.get("colors", []),
                     "oracle_text": card.get("oracle_text", ""),
                 }
+                if layout in ("modal_dfc", "transform"):
+                    entry["layout"] = layout
                 metadata[card["name"]] = entry
                 # DFC cards: also cache by front face name
                 if " // " in card["name"]:

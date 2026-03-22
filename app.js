@@ -934,6 +934,17 @@ function localImagePath(cardName, version) {
   return `data/images/cards/${sanitized}-${suffix}.jpg`;
 }
 
+function localImagePathBack(cardName, version) {
+  const sanitized = sanitizeCardName(cardName);
+  const suffix = version && version !== 'normal' ? `back-${version}` : 'back-normal';
+  return `data/images/cards/${sanitized}-${suffix}.jpg`;
+}
+
+function isDoubleFaced(cardName) {
+  const meta = cardMetadataCache.get(cardName);
+  return meta?.layout === 'modal_dfc' || meta?.layout === 'transform';
+}
+
 // Returns HTML attribute string for <img>: local src with Scryfall fallback
 function cardImgAttr(cardName, version) {
   const cached = getCachedImageUrl(cardName, version);
@@ -2593,14 +2604,17 @@ function toggleConstellationMap() {
 }
 
 // === CARD PREVIEW ===
+let previewShowingBack = false;
+
 function showCardPreview(cardName) {
   currentHoveredCard = cardName;
+  previewShowingBack = false;
   previewName.textContent = cardName;
 
   // Check cache first
   const cached = getCachedImageUrl(cardName, null);
   if (cached) {
-    displayImage(cached);
+    displayImage(cached, cardName);
     return;
   }
 
@@ -2611,14 +2625,14 @@ function showCardPreview(cardName) {
   const localUrl = localImagePath(cardName, null);
   const img = new Image();
   img.onload = () => {
-    if (currentHoveredCard === cardName) displayImage(localUrl);
+    if (currentHoveredCard === cardName) displayImage(localUrl, cardName);
   };
   img.onerror = () => {
     const scryfallUrl = scryfallImageUrl(cardName);
     const fallback = new Image();
     fallback.onload = () => {
       setCachedImageUrl(cardName, null, scryfallUrl);
-      if (currentHoveredCard === cardName) displayImage(scryfallUrl);
+      if (currentHoveredCard === cardName) displayImage(scryfallUrl, cardName);
     };
     fallback.onerror = () => {
       if (currentHoveredCard === cardName) {
@@ -2630,17 +2644,57 @@ function showCardPreview(cardName) {
   img.src = localUrl;
 }
 
-function displayImage(url) {
+function displayImage(url, cardName) {
   previewContainer.innerHTML = '';
   const img = document.createElement('img');
   img.src = url;
-  img.alt = currentHoveredCard;
+  img.alt = cardName || currentHoveredCard;
   img.onload = () => {
     img.classList.add('loaded');
-    // Initialize tilt for preview image
     initializeTiltEffect(img, { maxTilt: 15, scale: 1.02, glare: true });
   };
   previewContainer.appendChild(img);
+
+  // Add flip button for double-faced cards
+  const name = cardName || currentHoveredCard;
+  if (isDoubleFaced(name)) {
+    const flipBtn = document.createElement('button');
+    flipBtn.className = 'preview-flip-btn';
+    flipBtn.setAttribute('aria-label', 'Flip card');
+    flipBtn.innerHTML = '&#x21BB;';
+    flipBtn.addEventListener('click', () => flipPreviewCard(name));
+    previewContainer.appendChild(flipBtn);
+  }
+}
+
+function flipPreviewCard(cardName) {
+  previewShowingBack = !previewShowingBack;
+  const version = null; // normal
+  if (previewShowingBack) {
+    // Show back face
+    const localBack = localImagePathBack(cardName, version);
+    const img = new Image();
+    img.onload = () => {
+      if (currentHoveredCard === cardName) displayImage(localBack, cardName);
+    };
+    img.onerror = () => {
+      // Fall back to Scryfall with &face=back
+      const encoded = encodeURIComponent(cardName);
+      const scryfallBack = `https://api.scryfall.com/cards/named?format=image&exact=${encoded}&face=back`;
+      const fallback = new Image();
+      fallback.onload = () => {
+        if (currentHoveredCard === cardName) displayImage(scryfallBack, cardName);
+      };
+      fallback.onerror = () => {
+        previewShowingBack = false;
+      };
+      fallback.src = scryfallBack;
+    };
+    img.src = localBack;
+  } else {
+    // Show front face
+    showCardPreview(cardName);
+  }
 }
 
 // === EVENT LISTENERS ===
