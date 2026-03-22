@@ -5354,6 +5354,84 @@ function updateTabStates() {
   }
 }
 
+// === COLLAPSIBLE SECTIONS ===
+function initCollapsibleSections() {
+  const STORAGE_KEY = 'grimoire-sections';
+  const DEFAULT_COLLAPSED = ['deck-engine', 'wincons', 'synergies', 'combos', 'deck-stats', 'tokens', 'upgrade-paths', 'decklist'];
+
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+  document.querySelectorAll('.guide-section[data-collapsible]').forEach(section => {
+    const key = section.dataset.collapsible;
+
+    // Find the header: wrapper div or bare h2
+    const headerWrapper = section.querySelector('.engine-section-header, .synergies-header, .decklist-header, .upgrade-paths-header');
+    const header = headerWrapper || section.querySelector('.guide-section-title');
+    if (!header) return;
+
+    const titleEl = headerWrapper
+      ? headerWrapper.querySelector('.guide-section-title')
+      : header;
+
+    // Add chevron to title
+    const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    chevron.setAttribute('viewBox', '0 0 24 24');
+    chevron.setAttribute('fill', 'none');
+    chevron.setAttribute('stroke', 'currentColor');
+    chevron.setAttribute('stroke-width', '2');
+    chevron.classList.add('collapsible-chevron');
+    chevron.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+    titleEl.appendChild(chevron);
+
+    // Wrap non-header children in collapsible body
+    const body = document.createElement('div');
+    body.className = 'collapsible-body';
+    const inner = document.createElement('div');
+    inner.className = 'collapsible-inner';
+
+    const children = Array.from(section.children);
+    const headerIdx = children.indexOf(header);
+    for (let i = children.length - 1; i > headerIdx; i--) {
+      inner.insertBefore(children[i], inner.firstChild);
+    }
+    body.appendChild(inner);
+    section.appendChild(body);
+
+    // Determine initial state
+    const isCollapsed = key in saved ? saved[key] : DEFAULT_COLLAPSED.includes(key);
+    if (isCollapsed) {
+      section.classList.add('collapsed', 'collapsible-no-transition');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          section.classList.remove('collapsible-no-transition');
+        });
+      });
+    }
+
+    titleEl.setAttribute('role', 'button');
+    titleEl.setAttribute('tabindex', '0');
+    titleEl.setAttribute('aria-expanded', String(!isCollapsed));
+
+    // Toggle on click
+    const toggle = (e) => {
+      if (e.target.closest('button, a, input, label')) return;
+      section.classList.toggle('collapsed');
+      const collapsed = section.classList.contains('collapsed');
+      titleEl.setAttribute('aria-expanded', String(!collapsed));
+      const states = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      states[key] = collapsed;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
+    };
+    titleEl.addEventListener('click', toggle);
+    titleEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle(e);
+      }
+    });
+  });
+}
+
 // === INITIALIZE ===
 async function initializeApp() {
   // Update search hint for non-Mac platforms
@@ -5376,6 +5454,9 @@ async function initializeApp() {
 
   // Set up delegated event listeners (once, before any content loads)
   setupDelegatedListeners();
+
+  // Set up collapsible guide sections
+  initCollapsibleSections();
 
   // Sticky nav — collapse header into compact bar when scrolled past
   const stickyNav = document.getElementById('sticky-nav');

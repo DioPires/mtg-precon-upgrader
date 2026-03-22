@@ -3740,6 +3740,10 @@ details[open].upgrade-health-baseline .health-expand-hint { opacity: 0.4; }
     padding: 0 !important;
   }
 
+  .collapsible-body {
+    grid-template-rows: 1fr !important;
+  }
+
   .guide-section-title {
     color: black !important;
     font-size: 18pt !important;
@@ -5300,4 +5304,58 @@ details[open].upgrade-health-baseline .health-expand-hint { opacity: 0.4; }
   .bracket-bar {
     margin: 16px 0 24px;
   }
+}
+
+/* === COLLAPSIBLE SECTIONS === */
+.guide-section[data-collapsible] .guide-section-title {
+  cursor: pointer;
+  user-select: none;
+}
+
+.guide-section[data-collapsible] .guide-section-title:hover .collapsible-chevron {
+  color: var(--text-primary);
+}
+
+.collapsible-chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: transform 0.3s ease, color 0.2s;
+  order: 99;
+}
+
+.guide-section.collapsed .collapsible-chevron {
+  transform: rotate(-90deg);
+}
+
+.collapsible-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.35s ease-out;
+}
+
+.guide-section.collapsed .collapsible-body {
+  grid-template-rows: 0fr;
+}
+
+.collapsible-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.guide-section.collapsed {
+  padding-bottom: 12px;
+}
+
+.guide-section.collapsed .guide-section-title,
+.guide-section.collapsed .engine-section-header,
+.guide-section.collapsed .synergies-header,
+.guide-section.collapsed .decklist-header,
+.guide-section.collapsed .upgrade-paths-header {
+  margin-bottom: 0;
+}
+
+.collapsible-no-transition .collapsible-body {
+  transition: none;
 }
