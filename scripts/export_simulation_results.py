@@ -34,6 +34,7 @@ import mana_simulation_azure_dominion as sim_mono_blue
 import mana_simulation_genesis_protocol as sim_azorius
 import mana_simulation_planar_decree as sim_jeskai
 import mana_simulation_forge_and_fury as sim_jund
+import mana_simulation_gandalf_the_white as sim_mono_white
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -152,6 +153,14 @@ KEY_COMBOS = {
             "pieces": ["Pitiless Plunderer", "Warren Soultrader", "Reassembling Skeleton"],
             "requiresCommander": False,
             "description": "3-card treasure and death-trigger loop.",
+        }
+    ],
+    "gandalf-the-white": [
+        {
+            "name": "Heliod Ballista",
+            "pieces": ["Heliod, Sun-Crowned", "Walking Ballista"],
+            "requiresCommander": False,
+            "description": "Infinite damage via lifelink counter loop.",
         }
     ],
     "genesis-protocol": [
@@ -2012,6 +2021,19 @@ def export_jeskai(metadata: dict) -> dict:
     )
 
 
+def export_mono_white(metadata: dict) -> dict:
+    """Export The White Forge (mono-white Gandalf) simulation."""
+    return _export_colored(
+        sim_module=sim_mono_white,
+        deck_id="gandalf-the-white",
+        deck_name="The White Forge",
+        commander_name="Gandalf the White",
+        commander_cmc=5,
+        colors=["W"],
+        metadata=metadata,
+    )
+
+
 # --- Main ---
 
 
@@ -2027,6 +2049,7 @@ DECKS = [
     ("azure-dominion", "Azure Dominion", export_mono_blue),
     ("genesis-protocol", "Genesis Protocol", export_azorius),
     ("planar-decree", "Planar Decree", export_jeskai),
+    ("gandalf-the-white", "The White Forge", export_mono_white),
 ]
 
 
