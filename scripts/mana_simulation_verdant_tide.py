@@ -61,7 +61,6 @@ def parse_mana_cost(mana_cost: str) -> dict:
 
 ROCK_DEFS = {
     "Sol Ring":       {"cmc": 1, "C": 2, "burst": False},
-    "Arcane Signet":  {"cmc": 2, "G": 1, "burst": False},
 }
 
 # --- Mana dork definitions ---
@@ -72,6 +71,7 @@ ROCK_DEFS = {
 DORK_DEFS = {
     "Llanowar Elves":    {"cmc": 1, "pips": {"generic": 0, "G": 1}, "produces": 1},
     "Elvish Mystic":     {"cmc": 1, "pips": {"generic": 0, "G": 1}, "produces": 1},
+    "Delighted Halfling": {"cmc": 1, "pips": {"generic": 0, "G": 1}, "produces": 1},
     "Priest of Titania":  {"cmc": 2, "pips": {"generic": 1, "G": 1}, "produces": 2},
     "Elvish Archdruid":  {"cmc": 3, "pips": {"generic": 1, "G": 2}, "produces": 2},
 }
@@ -81,23 +81,19 @@ DORK_DEFS = {
 
 CREATURE_RAMP = {
     "Sakura-Tribe Elder":  {"cmc": 2, "pips": {"generic": 1, "G": 1}, "fetch": "forest", "tapped": False},
-    "Springbloom Druid":   {"cmc": 3, "pips": {"generic": 2, "G": 1}, "fetch": "forest", "tapped": True},
     "Solemn Simulacrum":   {"cmc": 4, "pips": {"generic": 4, "G": 0}, "fetch": "forest", "tapped": True},
 }
-# Note: Springbloom Druid actually sacs a land and fetches 2 tapped (net +1).
-# Modeled as fetch 1 forest tapped for simplicity — same net result.
 
 # --- Sorcery ramp definitions ---
 
 SORCERY_RAMP = {
     "Nature's Lore":  {"cmc": 2, "pips": {"generic": 1, "G": 1}, "fetch": "forest", "tapped": False},
     "Three Visits":   {"cmc": 2, "pips": {"generic": 1, "G": 1}, "fetch": "forest", "tapped": False},
-    "Cultivate":      {"cmc": 3, "pips": {"generic": 2, "G": 1}, "fetch": "cultivate"},
 }
 
 # --- Land definitions ---
 
-ALWAYS_TAPPED = {"Oran-Rief, the Vastwood", "Myriad Landscape"}
+ALWAYS_TAPPED = {"Three Tree City"}  # ETB tapped unless you control a 6+ power commander
 
 
 def land_enters_tapped(name: str, battlefield_lands: list[str]) -> bool:
@@ -162,13 +158,13 @@ def compute_land_mana(name: str) -> tuple[int, int]:
     if name == "Command Tower":
         return (1, 0)  # Mono-green: produces G
 
-    if name == "Oran-Rief, the Vastwood":
-        return (1, 0)  # Taps for G
+    if name == "The Shire":
+        return (1, 0)  # Legendary land, taps for G
 
-    if name == "Myriad Landscape":
-        return (0, 1)  # Taps for C (sac-for-forests not modeled)
+    if name == "Three Tree City":
+        return (1, 0)  # Legendary land, taps for G
 
-    if name in {"Rogue's Passage", "Reliquary Tower"}:
+    if name in {"Rogue's Passage", "Bonders' Enclave"}:
         return (0, 1)
 
     # Fallback: colorless
@@ -267,11 +263,11 @@ class GameState:
             base += 5
         elif name == "Command Tower":
             base += 5
-        elif name == "Oran-Rief, the Vastwood":
-            base += 3
-        elif name == "Myriad Landscape":
-            base += 2
-        elif name in {"Rogue's Passage", "Reliquary Tower"}:
+        elif name == "The Shire":
+            base += 4
+        elif name == "Three Tree City":
+            base += 4
+        elif name in {"Rogue's Passage", "Bonders' Enclave"}:
             base += 1
 
         return base
@@ -353,21 +349,19 @@ class GameState:
     def _try_cast_ramp(self, pool: ManaPool):
         """Try to cast ramp from hand in priority order.
 
-        Priority: Sol Ring > Arcane Signet > 1-CMC dorks > 2-CMC sorcery ramp >
-        Priest of Titania > Sakura-Tribe Elder > 3-CMC ramp > Solemn Simulacrum
+        Priority: Sol Ring > 1-CMC dorks > 2-CMC sorcery ramp >
+        Priest of Titania > Sakura-Tribe Elder > Elvish Archdruid > Solemn Simulacrum
         """
         priority_order = [
             ("rock", "Sol Ring"),
-            ("rock", "Arcane Signet"),
             ("dork", "Llanowar Elves"),
             ("dork", "Elvish Mystic"),
+            ("dork", "Delighted Halfling"),
             ("sorcery_ramp", "Nature's Lore"),
             ("sorcery_ramp", "Three Visits"),
             ("dork", "Priest of Titania"),
             ("creature_ramp", "Sakura-Tribe Elder"),
-            ("sorcery_ramp", "Cultivate"),
             ("dork", "Elvish Archdruid"),
-            ("creature_ramp", "Springbloom Druid"),
             ("creature_ramp", "Solemn Simulacrum"),
         ]
 
@@ -409,16 +403,7 @@ class GameState:
                 if pool.can_cast(pips):
                     pool = pool.after_spending(pips)
                     self.hand.remove(name)
-                    if sramp["fetch"] == "cultivate":
-                        # 1 Forest to battlefield tapped, 1 Forest to hand
-                        self._fetch_forest(True)
-                        forest_indices = [i for i, c in enumerate(self.library)
-                                          if c == "Forest"]
-                        if forest_indices:
-                            idx = forest_indices[0]
-                            self.hand.append(self.library.pop(idx))
-                    else:
-                        self._fetch_forest(sramp["tapped"])
+                    self._fetch_forest(sramp["tapped"])
 
 
 def commander_mulligan(decklist: list[str], metadata: dict,
@@ -614,6 +599,18 @@ def main():
     print(f"Decklist: {len(decklist)} cards")
 
     classify_cards(decklist, metadata)
+
+    if args.json:
+        import export_simulation_results as exporter
+        result = exporter.export_verdant_tide(metadata)
+        if not exporter.validate_output(result, "verdant-tide"):
+            raise ValueError("export_verdant_tide produced invalid simulation output")
+        JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        with open(JSON_OUTPUT, "w") as f:
+            json.dump(result, f, indent=2)
+        print(f"Written: {JSON_OUTPUT}")
+        print(f"Size: {JSON_OUTPUT.stat().st_size / 1024:.1f} KB")
+        return
 
     n_workers = os.cpu_count() or 4
     chunk_size = NUM_GAMES // n_workers

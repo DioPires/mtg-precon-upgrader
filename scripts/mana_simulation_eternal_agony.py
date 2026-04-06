@@ -90,7 +90,7 @@ B_PRODUCING_LANDS = {
 R_PRODUCING_LANDS = {
     "Mountain", "Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs",
     "Blackcleave Cliffs", "Dragonskull Summit", "Foreboding Ruins", "Smoldering Marsh",
-    "Haunted Ridge", "Blightstep Pathway",
+    "Haunted Ridge", "Blightstep Pathway", "Mount Doom",
 }
 
 # Colorless-only lands

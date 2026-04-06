@@ -68,6 +68,7 @@ ROCK_DEFS = {
     "Mind Stone":         {"cmc": 2, "C": 1, "burst": False},
     "Thought Vessel":     {"cmc": 2, "C": 1, "burst": False},
     "Pearl Medallion":    {"cmc": 2, "C": 0, "burst": False},  # cost reducer, not mana
+    "Basalt Monolith":    {"cmc": 3, "C": 3, "burst": False},  # doesn't untap normally, but sim treats all rocks as available each turn
 }
 
 # Chrome Mox has special deploy logic
@@ -416,6 +417,7 @@ class GameState:
             "Mind Stone",       # CMC 2, +1C
             "Thought Vessel",   # CMC 2, +1C
             "Pearl Medallion",  # CMC 2, cost reducer
+            "Basalt Monolith",  # CMC 3, +3C
         ]
 
         for rock_name in rock_priority:
@@ -642,6 +644,18 @@ def main():
     print(f"Decklist: {len(decklist)} cards")
 
     classified = classify_cards(decklist, metadata)
+
+    if args.json:
+        import export_simulation_results as exporter
+        result = exporter.export_forge(metadata)
+        if not exporter.validate_output(result, "gandalf-the-white"):
+            raise ValueError("export_forge produced invalid simulation output")
+        JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        with open(JSON_OUTPUT, "w") as f:
+            json.dump(result, f, indent=2)
+        print(f"Written: {JSON_OUTPUT}")
+        print(f"Size: {JSON_OUTPUT.stat().st_size / 1024:.1f} KB")
+        return
 
     n_workers = os.cpu_count() or 4
     chunk_size = NUM_GAMES // n_workers
