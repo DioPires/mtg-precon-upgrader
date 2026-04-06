@@ -35,6 +35,7 @@ import mana_simulation_genesis_protocol as sim_azorius
 import mana_simulation_planar_decree as sim_jeskai
 import mana_simulation_forge_and_fury as sim_jund
 import mana_simulation_gandalf_the_white as sim_mono_white
+import mana_simulation_verdant_tide as sim_mono_green
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -2034,6 +2035,41 @@ def export_mono_white(metadata: dict) -> dict:
     )
 
 
+def export_verdant_tide(metadata: dict) -> dict:
+    """Export Verdant Tide (mono-green Eladamri) simulation."""
+    result = _export_colored(
+        sim_module=sim_mono_green,
+        deck_id="verdant-tide",
+        deck_name="Verdant Tide",
+        commander_name="Eladamri, Korvecdal",
+        commander_cmc=3,
+        colors=["G"],
+        metadata=metadata,
+    )
+
+    # Add Eladamri-specific: creature topcast probability
+    deck_file = PROJECT_ROOT / "data" / "commanders" / "verdant-tide" / "deck.json"
+    with open(deck_file) as f:
+        deck_data = json.load(f)
+    decklist = sim_mono_green.build_decklist(deck_data)
+
+    print(f"  Running {NUM_GAMES:,} games for Eladamri-specific metrics...")
+    stats = run_parallel(sim_mono_green._run_chunk, sim_mono_green.merge_stats,
+                         decklist, metadata, NUM_GAMES)
+    total = NUM_GAMES
+
+    creature_on_top = {}
+    for t in range(1, NUM_TURNS + 1):
+        creature_on_top[str(t)] = pct(stats["creature_on_top_by_turn"][t], total)
+
+    result["specialMetrics"]["creatureTopcast"] = {
+        "description": "Probability of creature on top of library (Eladamri free cast)",
+        "byTurn": creature_on_top,
+    }
+
+    return result
+
+
 # --- Main ---
 
 
@@ -2050,6 +2086,7 @@ DECKS = [
     ("genesis-protocol", "Genesis Protocol", export_azorius),
     ("planar-decree", "Planar Decree", export_jeskai),
     ("gandalf-the-white", "The White Forge", export_mono_white),
+    ("verdant-tide", "Verdant Tide", export_verdant_tide),
 ]
 
 
