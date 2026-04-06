@@ -81,7 +81,6 @@ DORK_DEFS = {
 
 CREATURE_RAMP = {
     "Sakura-Tribe Elder":  {"cmc": 2, "pips": {"generic": 1, "G": 1}, "fetch": "forest", "tapped": False},
-    "Solemn Simulacrum":   {"cmc": 4, "pips": {"generic": 4, "G": 0}, "fetch": "forest", "tapped": True},
 }
 
 # --- Sorcery ramp definitions ---
@@ -163,6 +162,9 @@ def compute_land_mana(name: str) -> tuple[int, int]:
 
     if name == "Three Tree City":
         return (1, 0)  # Legendary land, taps for G
+
+    if name == "Nykthos, Shrine to Nyx":
+        return (1, 0)  # Conservative: devotion activation yields G in mono-green
 
     if name in {"Rogue's Passage", "Bonders' Enclave"}:
         return (0, 1)
@@ -267,6 +269,8 @@ class GameState:
             base += 4
         elif name == "Three Tree City":
             base += 4
+        elif name == "Nykthos, Shrine to Nyx":
+            base += 3  # High-value mana land in devotion-heavy deck
         elif name in {"Rogue's Passage", "Bonders' Enclave"}:
             base += 1
 
@@ -350,7 +354,7 @@ class GameState:
         """Try to cast ramp from hand in priority order.
 
         Priority: Sol Ring > 1-CMC dorks > 2-CMC sorcery ramp >
-        Priest of Titania > Sakura-Tribe Elder > Elvish Archdruid > Solemn Simulacrum
+        Priest of Titania > Sakura-Tribe Elder > Elvish Archdruid
         """
         priority_order = [
             ("rock", "Sol Ring"),
@@ -362,7 +366,6 @@ class GameState:
             ("dork", "Priest of Titania"),
             ("creature_ramp", "Sakura-Tribe Elder"),
             ("dork", "Elvish Archdruid"),
-            ("creature_ramp", "Solemn Simulacrum"),
         ]
 
         for ramp_type, name in priority_order:
