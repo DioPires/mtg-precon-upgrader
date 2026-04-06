@@ -25,9 +25,9 @@ from datetime import date
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "gandalf-the-white" / "deck.json"
+DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "the-white-forge" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
-JSON_OUTPUT = PROJECT_ROOT / "data" / "commanders" / "gandalf-the-white" / "simulation.json"
+JSON_OUTPUT = PROJECT_ROOT / "data" / "commanders" / "the-white-forge" / "simulation.json"
 
 NUM_GAMES = 100_000
 NUM_TURNS = 10
@@ -648,7 +648,7 @@ def main():
     if args.json:
         import export_simulation_results as exporter
         result = exporter.export_forge(metadata)
-        if not exporter.validate_output(result, "gandalf-the-white"):
+        if not exporter.validate_output(result, "the-white-forge"):
             raise ValueError("export_forge produced invalid simulation output")
         JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         with open(JSON_OUTPUT, "w") as f:

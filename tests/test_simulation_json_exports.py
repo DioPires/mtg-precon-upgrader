@@ -13,7 +13,6 @@ EXPORT_CASES = [
     ("scripts.mana_simulation_forge_and_fury", "export_forge", "forge-and-fury"),
     ("scripts.mana_simulation_genesis_protocol", "export_azorius", "genesis-protocol"),
     ("scripts.mana_simulation_mutant_multiplication", "export_wubrg", "mutant-multiplication"),
-    ("scripts.mana_simulation_phyrexian_perfection", "export_phyrexian_perfection", "phyrexian-perfection"),
     ("scripts.mana_simulation_planar_decree", "export_jeskai", "planar-decree"),
     ("scripts.mana_simulation_titan_convergence", "export_titan", "titan-convergence"),
 ]

@@ -54,7 +54,6 @@ Hardcoded in `tools/decks.py:KNOWN_ARCHIDEKT_IDS`:
 - azure-dominion → 20946158
 - genesis-protocol → 20946250
 - eternal-harvest → 20946261
-- phyrexian-perfection → (new)
 - compleated-dominion → (new)
 - forge-and-fury → (new)
 

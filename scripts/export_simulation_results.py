@@ -27,14 +27,13 @@ import mana_simulation_titan_convergence as sim_titan
 import mana_simulation_eternal_agony as sim_rakdos
 import mana_simulation_dark_dominion as sim_grixis
 import mana_simulation_eternal_harvest as sim_golgari
-import mana_simulation_phyrexian_perfection as sim_phyrexian
 import mana_simulation_compleated_dominion as sim_compleated
 import mana_simulation_mutant_multiplication as sim_wubrg
 import mana_simulation_azure_dominion as sim_mono_blue
 import mana_simulation_genesis_protocol as sim_azorius
 import mana_simulation_planar_decree as sim_jeskai
 import mana_simulation_forge_and_fury as sim_jund
-import mana_simulation_gandalf_the_white as sim_mono_white
+import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
@@ -156,7 +155,7 @@ KEY_COMBOS = {
             "description": "3-card treasure and death-trigger loop.",
         }
     ],
-    "gandalf-the-white": [
+    "the-white-forge": [
         {
             "name": "Heliod Ballista",
             "pieces": ["Heliod, Sun-Crowned", "Walking Ballista"],
@@ -178,14 +177,6 @@ KEY_COMBOS = {
             "pieces": ["Basking Broodscale", "Rosie Cotton of South Lane"],
             "requiresCommander": False,
             "description": "Counter-driven infinite token engine.",
-        }
-    ],
-    "phyrexian-perfection": [
-        {
-            "name": "Atraxa Tide Engine",
-            "pieces": ["Tekuthal, Inquiry Dominus", "Inexorable Tide"],
-            "requiresCommander": True,
-            "description": "Atraxa plus doubled proliferate snowballs poison/counters.",
         }
     ],
     "planar-decree": [
@@ -1899,17 +1890,6 @@ def export_golgari(metadata: dict) -> dict:
     )
 
 
-def export_phyrexian_perfection(metadata: dict) -> dict:
-    """Export Phyrexian Perfection (Atraxa B3) simulation."""
-    return _export_colored(
-        sim_module=sim_phyrexian,
-        deck_id="phyrexian-perfection",
-        deck_name="Phyrexian Perfection",
-        commander_name="Atraxa, Praetors' Voice",
-        commander_cmc=4,
-        colors=["W", "U", "B", "G"],
-        metadata=metadata,
-    )
 
 
 def export_compleated_dominion(metadata: dict) -> dict:
@@ -2026,7 +2006,7 @@ def export_mono_white(metadata: dict) -> dict:
     """Export The White Forge (mono-white Gandalf) simulation."""
     return _export_colored(
         sim_module=sim_mono_white,
-        deck_id="gandalf-the-white",
+        deck_id="the-white-forge",
         deck_name="The White Forge",
         commander_name="Gandalf the White",
         commander_cmc=5,
@@ -2079,13 +2059,12 @@ DECKS = [
     ("dark-dominion", "Dark Dominion", export_grixis),
     ("eternal-harvest", "Eternal Harvest", export_golgari),
     ("forge-and-fury", "Forge & Fury", export_forge),
-    ("phyrexian-perfection", "Phyrexian Perfection", export_phyrexian_perfection),
     ("compleated-dominion", "Compleated Dominion", export_compleated_dominion),
     ("mutant-multiplication", "Mutant Multiplication", export_wubrg),
     ("azure-dominion", "Azure Dominion", export_mono_blue),
     ("genesis-protocol", "Genesis Protocol", export_azorius),
     ("planar-decree", "Planar Decree", export_jeskai),
-    ("gandalf-the-white", "The White Forge", export_mono_white),
+    ("the-white-forge", "The White Forge", export_mono_white),
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
 ]
 
