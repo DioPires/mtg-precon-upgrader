@@ -7,7 +7,7 @@
   "cost": "$150-250",
   "bracket": "4",
   "gameChangers": 0,
-  "lastUpdatedSet": "Lorwyn Eclipsed",
+  "lastUpdatedSet": "Tarkir: Dragonstorm",
   "sources": [
     {
       "type": "edhrec",
@@ -63,7 +63,9 @@
         "Champions of the Perfect",
         "Elven Chorus",
         "Cloudstone Curio",
-        "Rings of Brighthearth"
+        "Rings of Brighthearth",
+        "Finale of Devastation",
+        "Nature's Rhythm"
       ]
     },
     {
@@ -106,7 +108,7 @@
         "Spinner of Souls",
         "Tireless Tracker",
         "Hunter's Talent",
-        "Endless Atlas",
+        "The Great Henge",
         "Bonders' Enclave"
       ]
     },
@@ -130,8 +132,7 @@
         "Duplicant",
         "Acidic Slime",
         "Haywire Mite",
-        "Conqueror's Flail",
-        "Basilisk Collar"
+        "Conqueror's Flail"
       ]
     },
     {
@@ -140,7 +141,9 @@
         "Caged Sun",
         "Extraplanar Lens",
         "Elven Chorus",
-        "Three Tree City"
+        "Three Tree City",
+        "Nykthos, Shrine to Nyx",
+        "Growing Rites of Itlimoc"
       ]
     }
   ],
@@ -363,17 +366,39 @@
       ]
     },
     {
-      "title": "Tireless Value Engine",
+      "title": "Tutor Redundancy",
       "cards": [
-        "Tireless Tracker",
-        "Academy Manufactor"
+        "Finale of Devastation",
+        "Nature's Rhythm",
+        "Fierce Empath"
       ],
-      "description": "Tireless Tracker creates a Clue token on each landfall. Academy Manufactor upgrades every Clue creation into Clue + Food + Treasure. Each land drop nets: 1 card draw (Clue), 3 life (Food), and 1 mana (Treasure). With 33 lands and ramp spells finding more, this generates massive incidental value.",
+      "description": "Three creature tutors with distinct modes. Fierce Empath finds CMC 6+ to hand. Finale of Devastation searches library or graveyard and at X\u226510 gives all creatures +X/+X and haste \u2014 a second Craterhoof effect. Nature's Rhythm tutors at sorcery speed for XGG, then recasts from graveyard via Harmonize (tap a creature to reduce cost by its power). With this deck's mana, Finale at X=10 is trivial, and Nature's Rhythm gives two uses for one card slot.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Nature's Rhythm",
+          "url": "https://scryfall.com/card/tdm/150/natures-rhythm"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Triple tutor package filling the deck's biggest strategic gap"
+        }
+      ]
+    },
+    {
+      "title": "Great Henge Counter Engine",
+      "cards": [
+        "The Great Henge",
+        "Hardened Scales",
+        "Scurry Oak"
+      ],
+      "description": "The Great Henge puts a +1/+1 counter on every nontoken creature entering and draws a card. Hardened Scales adds an extra counter. Each creature entering triggers Scurry Oak (creates a squirrel per counter), Herd Baloth (creates a beast per counter), and Iridescent Hornbeetle (creates an insect per counter). Net: every creature cast draws a card and creates 2+ tokens.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Token tripling engine"
+          "detail": "Counter-to-token engine amplified by Great Henge"
         }
       ]
     },
@@ -581,6 +606,96 @@
       ]
     },
     {
+      "name": "Finale of Devastation",
+      "price": "$15-25",
+      "isGameChanger": false,
+      "reason": "Tutor any creature from library or graveyard to battlefield. At X\u226510, all creatures get +X/+X and haste \u2014 a second Craterhoof effect on a tutor. With Priest of Titania or Elvish Archdruid generating 8+ mana, X=10 is routine. Fills the deck's biggest gap: reliable creature tutoring beyond Fierce Empath.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC - Eladamri",
+          "url": "https://edhrec.com/commanders/eladamri-korvecdal"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Tutor + finisher in one card, filling the deck's primary strategic gap"
+        }
+      ]
+    },
+    {
+      "name": "Nature's Rhythm",
+      "price": "$3-8",
+      "isGameChanger": false,
+      "reason": "Creature tutor for {X}{G}{G} that puts directly onto battlefield. Harmonize lets you cast it again from graveyard, tapping a creature to reduce cost by its power \u2014 with a 5-power Elvish Archdruid, the second cast is nearly free. Two creature tutors for one card slot. From Tarkir: Dragonstorm.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Nature's Rhythm",
+          "url": "https://scryfall.com/card/tdm/150/natures-rhythm"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Double-use tutor with efficient Harmonize recursion"
+        }
+      ]
+    },
+    {
+      "name": "Growing Rites of Itlimoc",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "ETB looks at top 4 cards for a creature (45-creature deck = ~87% hit rate). Flips at end step with 4+ creatures into Itlimoc, Cradle of the Sun \u2014 taps for {G} per creature you control. Effectively Gaea's Cradle that enters as an enchantment. Powers massive Finale of Devastation X values.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC - Eladamri",
+          "url": "https://edhrec.com/commanders/eladamri-korvecdal"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Budget Gaea's Cradle that flips trivially in this deck"
+        }
+      ]
+    },
+    {
+      "name": "Nykthos, Shrine to Nyx",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "Legendary land. Pay {2}, tap: add {G} per green devotion. In mono-green with 30+ green pips across permanents (Elvish Archdruid alone is 3), Nykthos routinely adds 5-10 mana. Minimal deckbuilding cost \u2014 replaces one Forest. Enables turn 4-5 Finale for X=10+.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC - Eladamri",
+          "url": "https://edhrec.com/commanders/eladamri-korvecdal"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Devotion-based mana land, near-free inclusion in mono-green"
+        }
+      ]
+    },
+    {
+      "name": "The Great Henge",
+      "price": "$30-50",
+      "isGameChanger": false,
+      "reason": "CMC 9 but reduced by greatest power among creatures (usually costs 2-4 mana). Taps for {G}{G} + 2 life. Every nontoken creature entering gets a +1/+1 counter and draws a card. The counters trigger Hardened Scales, Scurry Oak, Herd Baloth, and Iridescent Hornbeetle for extra tokens. Combines mana, draw, and counter synergy in one card.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC - Eladamri",
+          "url": "https://edhrec.com/commanders/eladamri-korvecdal"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "All-in-one engine: mana + draw + counter synergy"
+        }
+      ]
+    },
+    {
       "name": "Last March of the Ents",
       "price": "$5-10",
       "isGameChanger": false,
@@ -612,7 +727,7 @@
       "name": "Forest",
       "type": "Land",
       "role": "lands",
-      "quantity": 28
+      "quantity": 27
     },
     {
       "name": "Command Tower",
@@ -638,6 +753,11 @@
       "name": "Bonders' Enclave",
       "type": "Land",
       "role": "draw"
+    },
+    {
+      "name": "Nykthos, Shrine to Nyx",
+      "type": "Legendary Land",
+      "role": "lands"
     },
     {
       "name": "Sol Ring",
@@ -740,9 +860,9 @@
       "role": "removal"
     },
     {
-      "name": "Endless Atlas",
-      "type": "Artifact",
-      "role": "draw"
+      "name": "The Great Henge",
+      "type": "Legendary Artifact",
+      "role": "engine"
     },
     {
       "name": "Llanowar Elves",
@@ -815,9 +935,9 @@
       "role": "removal"
     },
     {
-      "name": "Basilisk Collar",
-      "type": "Artifact",
-      "role": "utility"
+      "name": "Growing Rites of Itlimoc",
+      "type": "Legendary Enchantment",
+      "role": "engine"
     },
     {
       "name": "Conqueror's Flail",
@@ -930,9 +1050,9 @@
       "role": "removal"
     },
     {
-      "name": "Solemn Simulacrum",
-      "type": "Artifact Creature",
-      "role": "ramp"
+      "name": "Nature's Rhythm",
+      "type": "Sorcery",
+      "role": "tutor"
     },
     {
       "name": "Spinner of Souls",
@@ -960,9 +1080,9 @@
       "role": "token"
     },
     {
-      "name": "Academy Manufactor",
-      "type": "Artifact Creature",
-      "role": "engine"
+      "name": "Finale of Devastation",
+      "type": "Sorcery",
+      "role": "tutor"
     },
     {
       "name": "Cloudstone Curio",
@@ -1088,34 +1208,7 @@
       "scryfall_id": "1e9a5e7a-2b51-4279-bd25-2ebf6ace3260",
       "image_uri": "https://cards.scryfall.io/normal/front/1/e/1e9a5e7a-2b51-4279-bd25-2ebf6ace3260.jpg?1576385953",
       "produced_by": [
-        "Tireless Tracker",
-        "Academy Manufactor"
-      ]
-    },
-    {
-      "name": "Food",
-      "type_line": "Token Artifact \u2014 Food",
-      "oracle_text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
-      "power": null,
-      "toughness": null,
-      "colors": [],
-      "scryfall_id": "bf36408d-ed85-497f-8e68-d3a922c388a0",
-      "image_uri": "https://cards.scryfall.io/normal/front/b/f/bf36408d-ed85-497f-8e68-d3a922c388a0.jpg?1572489768",
-      "produced_by": [
-        "Academy Manufactor"
-      ]
-    },
-    {
-      "name": "Treasure",
-      "type_line": "Token Artifact \u2014 Treasure",
-      "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.",
-      "power": null,
-      "toughness": null,
-      "colors": [],
-      "scryfall_id": "4e82e79d-2f77-4859-8234-5fb6de1c03b5",
-      "image_uri": "https://cards.scryfall.io/normal/front/4/e/4e82e79d-2f77-4859-8234-5fb6de1c03b5.jpg?1616952568",
-      "produced_by": [
-        "Academy Manufactor"
+        "Tireless Tracker"
       ]
     },
     {
