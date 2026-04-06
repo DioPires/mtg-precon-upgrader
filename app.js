@@ -3254,7 +3254,7 @@ let shoppingSortMode = 'type'; // 'type' or 'az'
 const shoppingSelectedDecks = new Set(); // deck IDs selected for shopping
 let ownedCards = new Map(); // cardName -> quantity owned
 
-function loadOwnedCards() {
+function loadShoppingOwnedCardsFromStorage() {
   try {
     const raw = localStorage.getItem('grimoire-owned-cards');
     if (raw) {
@@ -3265,22 +3265,95 @@ function loadOwnedCards() {
   } catch { /* ignore */ }
 }
 
-function saveOwnedCards() {
+function saveShoppingOwnedCards() {
   try {
     localStorage.setItem('grimoire-owned-cards', JSON.stringify([...ownedCards]));
   } catch { /* quota exceeded */ }
 }
 
-function clearOwnedCards() {
+function clearShoppingOwnedCards() {
   ownedCards = new Map();
   localStorage.removeItem('grimoire-owned-cards');
   updateOwnedStatus();
   renderShoppingList();
 }
 
-function parseOwnedFile(text) {
+function parseCsvRows(text) {
+  const rows = [];
+  let row = [];
+  let value = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (inQuotes) {
+      if (char === '"') {
+        if (text[i + 1] === '"') {
+          value += '"';
+          i += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        value += char;
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      inQuotes = true;
+    } else if (char === ',') {
+      row.push(value);
+      value = '';
+    } else if (char === '\n') {
+      row.push(value);
+      if (row.some(cell => cell !== '')) rows.push(row);
+      row = [];
+      value = '';
+    } else if (char === '\r') {
+      if (text[i + 1] !== '\n') {
+        row.push(value);
+        if (row.some(cell => cell !== '')) rows.push(row);
+        row = [];
+        value = '';
+      }
+    } else {
+      value += char;
+    }
+  }
+
+  if (value !== '' || row.length > 0) {
+    row.push(value);
+    if (row.some(cell => cell !== '')) rows.push(row);
+  }
+
+  return rows;
+}
+
+function parseOwnedCsv(text) {
+  const rows = parseCsvRows((text || '').replace(/^\ufeff/, ''));
+  if (rows.length === 0) return new Map();
+
+  const headers = rows[0].map(cell => cell.trim().toLowerCase());
+  const nameIndex = headers.indexOf('name');
+  const quantityIndex = headers.indexOf('quantity');
+  if (nameIndex === -1 || quantityIndex === -1) return null;
+
   const cards = new Map();
-  text.split('\n').forEach(line => {
+  rows.slice(1).forEach(row => {
+    const name = (row[nameIndex] || '').trim();
+    if (!name) return;
+    const qty = Number.parseInt((row[quantityIndex] || '1').trim(), 10);
+    const quantity = Number.isFinite(qty) && qty > 0 ? qty : 1;
+    cards.set(name, (cards.get(name) || 0) + quantity);
+  });
+  return cards;
+}
+
+function parseOwnedTextList(text) {
+  const cards = new Map();
+  (text || '').split('\n').forEach(line => {
     line = line.trim();
     if (!line) return;
     const match = line.match(/^(\d+)x?\s+(.+)$/);
@@ -3291,6 +3364,12 @@ function parseOwnedFile(text) {
     }
   });
   return cards;
+}
+
+function parseOwnedFile(text) {
+  const parsedCsv = parseOwnedCsv(text);
+  if (parsedCsv !== null) return parsedCsv;
+  return parseOwnedTextList(text);
 }
 
 function updateOwnedStatus() {
@@ -3787,8 +3866,8 @@ document.getElementById('shopping-owned-upload')?.addEventListener('change', (e)
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    ownedCards = parseOwnedFile(reader.result);
-    saveOwnedCards();
+    ownedCards = parseOwnedFile(String(reader.result || ''));
+    saveShoppingOwnedCards();
     updateOwnedStatus();
     renderShoppingList();
   };
@@ -3797,7 +3876,7 @@ document.getElementById('shopping-owned-upload')?.addEventListener('change', (e)
 });
 
 // Clear owned cards
-document.getElementById('shopping-owned-clear')?.addEventListener('click', clearOwnedCards);
+document.getElementById('shopping-owned-clear')?.addEventListener('click', clearShoppingOwnedCards);
 
 // Shopping section collapse toggle
 document.getElementById('shopping-view')?.addEventListener('click', (e) => {
@@ -3904,7 +3983,7 @@ function switchView(view) {
     } else if (view === 'shopping') {
       shoppingView.style.display = 'flex';
       // Shopping view is self-contained with its own deck chips
-      loadOwnedCards();
+      loadShoppingOwnedCardsFromStorage();
       // Pre-select current deck if one is loaded
       if (currentDeckId && shoppingSelectedDecks.size === 0) {
         shoppingSelectedDecks.add(currentDeckId);
@@ -3968,7 +4047,7 @@ function initViewToggle() {
 // === UPGRADE PATHS (RECOMMENDATIONS ENGINE) ===
 
 let recommendationsCache = {};
-let ownedCardsSet = null;
+let recommendationOwnedCards = null;
 
 async function loadRecommendations(deckId) {
   if (recommendationsCache[deckId]) return recommendationsCache[deckId];
@@ -3989,24 +4068,20 @@ async function loadRecommendations(deckId) {
   }
 }
 
-async function loadOwnedCards() {
-  if (ownedCardsSet !== null) return ownedCardsSet;
+async function loadRecommendationOwnedCards() {
+  if (recommendationOwnedCards !== null) return recommendationOwnedCards;
   try {
     const response = await fetch('priv_data/owned_formatted.csv');
     if (!response.ok) {
-      ownedCardsSet = new Set();
-      return ownedCardsSet;
+      recommendationOwnedCards = new Set();
+      return recommendationOwnedCards;
     }
     const text = await response.text();
-    ownedCardsSet = new Set();
-    for (const line of text.split('\n')) {
-      const match = line.trim().match(/^\d+x\s+(.+)$/);
-      if (match) ownedCardsSet.add(match[1].trim());
-    }
-    return ownedCardsSet;
+    recommendationOwnedCards = new Set(parseOwnedFile(text).keys());
+    return recommendationOwnedCards;
   } catch {
-    ownedCardsSet = new Set();
-    return ownedCardsSet;
+    recommendationOwnedCards = new Set();
+    return recommendationOwnedCards;
   }
 }
 
@@ -4063,7 +4138,7 @@ async function renderUpgradePaths() {
 
   const [recData, owned] = await Promise.all([
     loadRecommendations(currentDeckId),
-    loadOwnedCards(),
+    loadRecommendationOwnedCards(),
   ]);
 
   if (!recData || !recData.recommendations || recData.recommendations.length === 0) {

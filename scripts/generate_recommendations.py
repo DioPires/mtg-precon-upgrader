@@ -9,6 +9,7 @@ Usage:
 """
 
 import argparse
+import csv
 import json
 import re
 import sys
@@ -65,7 +66,17 @@ def load_owned_cards() -> set[str]:
     if not OWNED_FILE.exists():
         return set()
     owned = set()
-    with open(OWNED_FILE) as f:
+    with open(OWNED_FILE, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        fieldnames = {(field or "").strip().lower(): field for field in reader.fieldnames or [] if field}
+        if "name" in fieldnames:
+            for row in reader:
+                name = (row.get(fieldnames["name"]) or "").strip()
+                if name:
+                    owned.add(name)
+            return owned
+
+    with open(OWNED_FILE, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             match = re.match(r"^\d+x\s+(.+)$", line)
