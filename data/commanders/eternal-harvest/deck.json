@@ -91,7 +91,6 @@
       "cards": [
         "Buried Alive",
         "Entomb",
-        "Stitcher's Supplier",
         "Birthing Pod",
         "Overlord of the Balemurk"
       ]
@@ -157,6 +156,7 @@
         "Sidisi, Regent of the Mire",
         "Diabolic Intent",
         "Bitterblossom",
+        "Teval's Judgment",
         "Insidious Roots",
         "Mikaeus, the Unhallowed",
         "Gravecrawler",
@@ -831,12 +831,28 @@
         "Blood Artist",
         "Spore Frog"
       ],
-      "description": "Tyvar's -2 mills 3 and reanimates a creature with MV 2 or less from graveyard to battlefield. Hits 12+ targets including Blood Artist, Spore Frog, Sakura-Tribe Elder, Zulaport Cutthroat, Gravecrawler, and Stitcher's Supplier. No XP counters needed — free reanimation on turn 3.",
+      "description": "Tyvar's -2 mills 3 and reanimates a creature with MV 2 or less from graveyard to battlefield. Hits 12+ targets including Blood Artist, Spore Frog, Sakura-Tribe Elder, Zulaport Cutthroat, and Gravecrawler. No XP counters needed — free reanimation on turn 3.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Mini-Meren reanimation without XP"
+        }
+      ]
+    },
+    {
+      "title": "Teval's Value Engine",
+      "cards": [
+        "Teval's Judgment",
+        "Meren of Clan Nel Toth",
+        "Bloodghast"
+      ],
+      "description": "Every Meren end-step reanimate triggers Teval's Judgment. Bloodghast returning from graveyard via landfall triggers it again. Each trigger chooses draw, Treasure, or 2/2 Zombie Druid — with 3+ graveyard exits per turn cycle, all three modes fire. The Zombie Druid is Skullclamp/sac fodder and a Zombie type for Gravecrawler. The Treasure ramps or feeds Altar of Dementia's sacrifice needs.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Multi-trigger value engine with existing recursion loops"
         }
       ]
     },
@@ -1243,6 +1259,19 @@
       ]
     },
     {
+      "name": "Teval's Judgment",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "3-CMC enchantment that rewards every graveyard exit with a choice of draw, Treasure, or 2/2 Zombie Druid. Meren's end-step reanimate, reanimate spells, Bloodghast/Gravecrawler self-recursion, and Living Death all trigger it. In a typical turn cycle with 3+ separate exits, you get all three modes. Survives Living Death and Toxic Deluge.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Board-approved swap for Stitcher's Supplier"
+        }
+      ]
+    },
+    {
       "name": "Formidable Speaker",
       "price": "$1-3",
       "isGameChanger": false,
@@ -1558,9 +1587,9 @@
       "role": "graveyard-setup"
     },
     {
-      "name": "Stitcher's Supplier",
-      "type": "Creature",
-      "role": "graveyard-setup"
+      "name": "Teval's Judgment",
+      "type": "Enchantment",
+      "role": "engine"
     },
     {
       "name": "Birthing Pod",
@@ -1807,6 +1836,34 @@
       "image_uri": "https://cards.scryfall.io/normal/front/1/7/17f001ab-514b-49e7-a657-b2872ad7a1de.jpg?1767954964",
       "produced_by": [
         "Liliana, Dreadhorde General"
+      ]
+    },
+    {
+      "name": "Treasure",
+      "type_line": "Token Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "4837a3f1-ca7f-41e5-a5d1-729c8495b0e8",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/8/4837a3f1-ca7f-41e5-a5d1-729c8495b0e8.jpg?1771590279",
+      "produced_by": [
+        "Teval's Judgment"
+      ]
+    },
+    {
+      "name": "Zombie Druid",
+      "type_line": "Token Creature — Zombie Druid",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "B"
+      ],
+      "scryfall_id": "f10d5813-7818-43e8-b08d-4ed8c54d0366",
+      "image_uri": "https://cards.scryfall.io/normal/front/f/1/f10d5813-7818-43e8-b08d-4ed8c54d0366.jpg?1748452772",
+      "produced_by": [
+        "Teval's Judgment"
       ]
     },
     {
