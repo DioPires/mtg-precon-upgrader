@@ -93,6 +93,7 @@ B_PRODUCING_LANDS = {
     "Woodland Cemetery", "Llanowar Wastes", "Nurturing Peatland",
     "Darkbore Pathway", "Deathcap Glade", "Underground Mortuary",
     "Castle Locthwain", "Urborg, Tomb of Yawgmoth",
+    "Twilight Mire", "Vernal Fen", "Turbulent Fen",
 }
 
 G_PRODUCING_LANDS = {
@@ -100,16 +101,17 @@ G_PRODUCING_LANDS = {
     "Woodland Cemetery", "Llanowar Wastes", "Nurturing Peatland",
     "Darkbore Pathway", "Deathcap Glade", "Underground Mortuary",
     "Dryad Arbor",
+    "Twilight Mire", "Vernal Fen", "Turbulent Fen",
 }
 
 C_ONLY_LANDS = {
     "Ancient Tomb", "Phyrexian Tower", "High Market",
 }
 
-# Lands with Swamp subtype (for Urborg, Woodland Cemetery checks)
-SWAMP_TYPED_LANDS = {"Swamp", "Overgrown Tomb", "Underground Mortuary"}
+# Lands with Swamp subtype (for Urborg, Woodland Cemetery checks, fetch targets)
+SWAMP_TYPED_LANDS = {"Swamp", "Overgrown Tomb", "Underground Mortuary", "Vernal Fen", "Turbulent Fen"}
 # Lands with Forest subtype
-FOREST_TYPED_LANDS = {"Forest", "Overgrown Tomb", "Dryad Arbor", "Underground Mortuary"}
+FOREST_TYPED_LANDS = {"Forest", "Overgrown Tomb", "Dryad Arbor", "Underground Mortuary", "Vernal Fen", "Turbulent Fen"}
 
 BASIC_SWAMPS = {"Swamp"}
 BASIC_FORESTS = {"Forest"}
@@ -178,6 +180,15 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
 
     if name == "Blooming Marsh":
         return other_count >= 3
+
+    if name == "Vernal Fen":
+        return count_basics(battlefield_lands) < 2
+
+    if name == "Turbulent Fen":
+        # In 4-player, opponents collectively reach 8 lands by ~turn 3.
+        # Model: tapped on T1, untapped from T2+ (conservative: opponents have ~6-8 lands by T2-3).
+        # Use other_count as proxy — if you have 2+ lands, opponents likely have 8+ collectively.
+        return other_count < 2
 
     if name == "Castle Locthwain":
         if urborg:
@@ -324,6 +335,7 @@ def compute_land_mana(name: str, battlefield_lands: list[str]) -> tuple[int, int
         "Overgrown Tomb", "Command Tower", "Blooming Marsh",
         "Woodland Cemetery", "Llanowar Wastes", "Nurturing Peatland",
         "Darkbore Pathway", "Deathcap Glade", "Underground Mortuary",
+        "Twilight Mire", "Vernal Fen", "Turbulent Fen",
     }:
         f = 1
         return (0, 0, 0, f)
