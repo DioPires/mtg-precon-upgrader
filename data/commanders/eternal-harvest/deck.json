@@ -85,7 +85,8 @@
         "Necromancy",
         "Chthonian Nightmare",
         "Agadeem's Awakening",
-        "Grave Researcher"
+        "Grave Researcher",
+        "Cauldron of Essence"
       ]
     },
     {
@@ -131,7 +132,6 @@
         "Twilight Diviner",
         "Fauna Shaman",
         "Liliana, Dreadhorde General",
-        "Formidable Speaker",
         "Emeritus of Woe"
       ]
     },
@@ -856,17 +856,23 @@
       ]
     },
     {
-      "title": "Repeatable Creature Tutor",
+      "title": "Cauldron Drain Engine",
       "cards": [
-        "Formidable Speaker",
-        "Meren of Clan Nel Toth"
+        "Cauldron of Essence",
+        "Meren of Clan Nel Toth",
+        "Blood Artist"
       ],
-      "description": "Formidable Speaker's ETB discards a card to tutor any creature to hand. Meren reanimates Speaker at 3+ XP each end step. Each loop: discard a card (fills graveyard with reanimation targets) + tutor any creature (find combo pieces). The untap ability also untaps Birthing Pod, Phyrexian Tower, or Yawgmoth for extra activations.",
+      "description": "Cauldron's passive drains opponents 1 life per creature death — stacking with Blood Artist, Zulaport Cutthroat, and Bastion of Remembrance for 4 drain per death. Its activated ability sacrifices a creature (triggering all drain effects + Grave Pact + Meren XP) to reanimate another creature from graveyard. Two parallel reanimation engines running simultaneously — Meren's end-step trigger + Cauldron's sorcery-speed activation — doubling recursion output each turn cycle.",
       "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Cauldron of Essence",
+          "url": "https://scryfall.com/card/sos/179/cauldron-of-essence"
+        },
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "ETB tutor loop with Meren recursion"
+          "detail": "Multi-axis engine synergy with existing sacrifice infrastructure"
         }
       ]
     },
@@ -1347,20 +1353,20 @@
       ]
     },
     {
-      "name": "Formidable Speaker",
-      "price": "$1-3",
+      "name": "Cauldron of Essence",
+      "price": "$2-5",
       "isGameChanger": false,
-      "reason": "ETB creature tutor that loops with Meren at 3 XP. Discard a card (fills graveyard) to search for any creature — dump reanimation targets while tutoring combo pieces. Untap ability provides extra value with Birthing Pod, Phyrexian Tower, or Yawgmoth. Each Meren end-step reanimate becomes a free creature tutor.",
+      "reason": "Triple-role artifact: built-in Blood Artist drain (each creature death drains opponents 1), sacrifice outlet, and reanimation engine. {1}{B}{G}, {T}, sacrifice a creature to reanimate any creature from graveyard. Survives creature board wipes and Living Death as an artifact. Every sacrifice triggers its own drain plus Grave Pact, Meren XP, and the drain battery. Parallel reanimation to Meren — doesn't require XP counters.",
       "sources": [
         {
           "type": "scryfall",
-          "name": "Scryfall - Formidable Speaker",
-          "url": "https://scryfall.com/card/ecl/176/formidable-speaker"
+          "name": "Scryfall - Cauldron of Essence",
+          "url": "https://scryfall.com/card/sos/179/cauldron-of-essence"
         },
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "ETB tutor synergy with Meren recursion engine"
+          "detail": "Board-approved swap for Formidable Speaker (DEC-75)"
         }
       ]
     },
@@ -1831,9 +1837,9 @@
       "role": "removal"
     },
     {
-      "name": "Formidable Speaker",
-      "type": "Creature",
-      "role": "card-draw"
+      "name": "Cauldron of Essence",
+      "type": "Artifact",
+      "role": "reanimation"
     }
   ],
   "tokens": [
