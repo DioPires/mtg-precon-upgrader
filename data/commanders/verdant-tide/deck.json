@@ -7,7 +7,7 @@
   "cost": "$150-250",
   "bracket": "4",
   "gameChangers": 0,
-  "lastUpdatedSet": "Tarkir: Dragonstorm",
+  "lastUpdatedSet": "Ecliptic",
   "sources": [
     {
       "type": "edhrec",
@@ -86,7 +86,8 @@
         "Scute Swarm",
         "Springheart Nantuko",
         "Herd Baloth",
-        "Mossborn Hydra"
+        "Mossborn Hydra",
+        "Sapling Nursery"
       ]
     },
     {
@@ -105,7 +106,6 @@
         "Skullclamp",
         "Ohran Frostfang",
         "Garruk's Uprising",
-        "Harmonize",
         "Spinner of Souls",
         "Hunter's Talent",
         "The Great Henge",
@@ -144,7 +144,8 @@
         "Elven Chorus",
         "Three Tree City",
         "Nykthos, Shrine to Nyx",
-        "Growing Rites of Itlimoc"
+        "Growing Rites of Itlimoc",
+        "Badgermole Cub"
       ]
     }
   ],
@@ -450,6 +451,38 @@
           "detail": "Token/counter doubling with premium generators"
         }
       ]
+    },
+    {
+      "title": "Nursery Landfall Swarm",
+      "cards": [
+        "Sapling Nursery",
+        "Elfsworn Giant",
+        "Scute Swarm"
+      ],
+      "description": "Each land drop triggers all three: Sapling Nursery creates a 3/4 Treefolk with reach, Elfsworn Giant creates a 1/1 Elf, Scute Swarm creates an insect or copy. A single land produces 3+ tokens with 7+ total stats. Doubling Season doubles all three. Shigeki, Jukai Visionary's repeatable land-fetch ability triggers the entire package at will.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Landfall token army synergy (DEC-73)"
+        }
+      ]
+    },
+    {
+      "title": "Mana Amplification Engine",
+      "cards": [
+        "Badgermole Cub",
+        "Priest of Titania",
+        "Elven Chorus"
+      ],
+      "description": "Badgermole Cub adds {G} per creature tapped for mana. Priest of Titania tapping for 8 now produces 9. With Elven Chorus making all creatures mana dorks, a board of 10 creatures produces 20{G} instead of 10{G}. Powers Finale of Devastation at X=10+ and multiple Ezuri overrun activations in a single turn.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Mana amplification synergy (DEC-73)"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -737,6 +770,42 @@
           "url": "https://edhrec.com/commanders/eladamri-korvecdal"
         }
       ]
+    },
+    {
+      "name": "Sapling Nursery",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Enchantment with Affinity for Forests — costs {G}{G} with 6+ Forests in a 27-Forest deck. Landfall creates a 3/4 green Treefolk token with reach every land drop. Stacks with Elfsworn Giant, Scute Swarm, and Springheart Nantuko for 4+ tokens per land. Doubled by Doubling Season and Parallel Lives. Exile mode grants Treefolk and Forests indestructible as a board-wipe safety valve.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Sapling Nursery",
+          "url": "https://scryfall.com/card/ecl/192/sapling-nursery"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Board-approved swap for Harmonize (DEC-73)"
+        }
+      ]
+    },
+    {
+      "name": "Badgermole Cub",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "2-mana creature that adds {G} whenever you tap a creature for mana. Amplifies Priest of Titania, Elvish Archdruid, and all mana elves. With Elven Chorus making all creatures tap for mana, each creature on board produces an extra {G}. ETB earthbend creates a 1/1 land-creature with haste — extra body for Eladamri's tap ability, and Hardened Scales adds an extra counter.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Badgermole Cub",
+          "url": "https://scryfall.com/card/tla/167/badgermole-cub"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Board-approved swap for Basking Broodscale (DEC-73)"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -837,9 +906,9 @@
       "role": "ramp"
     },
     {
-      "name": "Harmonize",
-      "type": "Sorcery",
-      "role": "draw"
+      "name": "Sapling Nursery",
+      "type": "Enchantment",
+      "role": "token"
     },
     {
       "name": "Last March of the Ents",
@@ -1087,9 +1156,9 @@
       "role": "utility"
     },
     {
-      "name": "Basking Broodscale",
+      "name": "Badgermole Cub",
       "type": "Creature",
-      "role": "token"
+      "role": "ramp"
     },
     {
       "name": "Iridescent Hornbeetle",
@@ -1203,16 +1272,18 @@
       ]
     },
     {
-      "name": "Eldrazi Spawn",
-      "type_line": "Token Creature \u2014 Eldrazi Spawn",
-      "oracle_text": "Sacrifice this token: Add {C}.",
-      "power": "0",
-      "toughness": "1",
-      "colors": [],
-      "scryfall_id": "a69cee39-f722-47ec-8dbd-e7d0e3cf1a5e",
-      "image_uri": "https://cards.scryfall.io/normal/front/a/6/a69cee39-f722-47ec-8dbd-e7d0e3cf1a5e.jpg?1717013064",
+      "name": "Treefolk",
+      "type_line": "Token Creature \u2014 Treefolk",
+      "oracle_text": "Reach",
+      "power": "3",
+      "toughness": "4",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "82e01706-ab45-4e52-9ee1-7070567234fd",
+      "image_uri": "https://cards.scryfall.io/normal/front/8/2/82e01706-ab45-4e52-9ee1-7070567234fd.jpg?1767955530",
       "produced_by": [
-        "Basking Broodscale"
+        "Sapling Nursery"
       ]
     },
     {
