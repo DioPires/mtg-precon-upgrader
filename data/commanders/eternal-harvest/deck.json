@@ -6,8 +6,8 @@
   "commander": "Meren of Clan Nel Toth",
   "cost": "$200-350",
   "bracket": "4",
-  "gameChangers": 2,
-  "lastUpdatedSet": "Lorwyn Eclipsed",
+  "gameChangers": 1,
+  "lastUpdatedSet": "Soaring Skies",
   "sources": [
     {
       "type": "edhrec",
@@ -84,7 +84,8 @@
         "Victimize",
         "Necromancy",
         "Chthonian Nightmare",
-        "Agadeem's Awakening"
+        "Agadeem's Awakening",
+        "Grave Researcher"
       ]
     },
     {
@@ -130,7 +131,8 @@
         "Twilight Diviner",
         "Fauna Shaman",
         "Liliana, Dreadhorde General",
-        "Formidable Speaker"
+        "Formidable Speaker",
+        "Emeritus of Woe"
       ]
     },
     {
@@ -158,7 +160,7 @@
         "Diabolic Intent",
         "Bitterblossom",
         "Teval's Judgment",
-        "Insidious Roots",
+        "Grave Researcher",
         "Mikaeus, the Unhallowed",
         "Gravecrawler"
       ]
@@ -867,6 +869,46 @@
           "detail": "ETB tutor loop with Meren recursion"
         }
       ]
+    },
+    {
+      "title": "Repeatable Demonic Tutor",
+      "cards": [
+        "Emeritus of Woe",
+        "Meren of Clan Nel Toth"
+      ],
+      "description": "Emeritus enters prepared — immediately cast Demonic Tutor copy for {1}{B} to find any card. In Meren, 2+ creature deaths per turn cycle is nearly guaranteed, so Emeritus re-prepares at end step. Meren reanimates Emeritus at 4+ XP if it dies. Each turn cycle: sacrifice creatures, Emeritus repreps, cast Demonic Tutor, find combo pieces or answers. Non-Human for Mikaeus undying — if both are in play, Emeritus loops infinitely with Yawgmoth.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Emeritus of Woe",
+          "url": "https://scryfall.com/card/sos/80/emeritus-of-woe-demonic-tutor"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Repeatable tutor synergy with Meren recursion"
+        }
+      ]
+    },
+    {
+      "title": "Repeatable Reanimate Engine",
+      "cards": [
+        "Grave Researcher",
+        "Meren of Clan Nel Toth"
+      ],
+      "description": "Grave Researcher's upkeep surveil 1 fills the graveyard with reanimation targets. With 3+ creature cards in graveyard (trivial by turn 3-4), it becomes prepared and casts a Reanimate copy for {B}. Meren reanimates Researcher at 3+ XP if it dies. Two parallel reanimation engines — Meren's end-step trigger + Grave Researcher's prepared Reanimate — doubling the deck's recursion output each turn cycle.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Grave Researcher",
+          "url": "https://scryfall.com/card/sos/85/grave-researcher-reanimate"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Dual reanimation engine synergy"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -884,15 +926,20 @@
       ]
     },
     {
-      "name": "Demonic Tutor",
-      "price": "$30-40",
-      "isGameChanger": true,
-      "reason": "Universal tutor for any card; finds combo pieces, answers, or win conditions",
+      "name": "Emeritus of Woe",
+      "price": "$3-8",
+      "isGameChanger": false,
+      "reason": "Repeatable Demonic Tutor on a 5/4 creature body. Enters prepared — immediately cast Demonic Tutor for {1}{B}. Re-prepares at end step when 2+ creatures died (trivial in Meren). Meren reanimates it at 4 XP for repeatable tutoring. Non-Human for Mikaeus undying. Greater Good target (draw 5).",
       "sources": [
         {
-          "type": "edhrec",
-          "name": "EDHREC - Meren",
-          "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth"
+          "type": "scryfall",
+          "name": "Scryfall - Emeritus of Woe",
+          "url": "https://scryfall.com/card/sos/80/emeritus-of-woe-demonic-tutor"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Board-approved swap for Demonic Tutor (DEC-72)"
         }
       ]
     },
@@ -1105,15 +1152,20 @@
       ]
     },
     {
-      "name": "Insidious Roots",
-      "price": "$1-3",
+      "name": "Grave Researcher",
+      "price": "$2-5",
       "isGameChanger": false,
-      "reason": "Creates a Plant token whenever creatures leave graveyard — triggers on every Meren reanimate, every reanimate spell. Tokens tap for any color mana and grow with +1/+1 counters.",
+      "reason": "Repeatable Reanimate on a 3/3 creature body. Upkeep surveil 1 passively fills the graveyard. Becomes prepared when 3+ creature cards in graveyard (trivially easy). Prepared spell is Reanimate ({B}) — the strongest reanimation spell in the game, repeatable every turn cycle. CMC 3 for easy Meren recursion at 3 XP. Non-Human for Mikaeus undying.",
       "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Grave Researcher",
+          "url": "https://scryfall.com/card/sos/85/grave-researcher-reanimate"
+        },
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Token generation + mana from reanimation triggers"
+          "detail": "Board-approved swap for Insidious Roots (DEC-72)"
         }
       ]
     },
@@ -1709,8 +1761,8 @@
       "role": "enhancer"
     },
     {
-      "name": "Demonic Tutor",
-      "type": "Sorcery",
+      "name": "Emeritus of Woe",
+      "type": "Creature",
       "role": "enhancer"
     },
     {
@@ -1749,8 +1801,8 @@
       "role": "death-payoff"
     },
     {
-      "name": "Insidious Roots",
-      "type": "Enchantment",
+      "name": "Grave Researcher",
+      "type": "Creature",
       "role": "engine"
     },
     {
@@ -1813,21 +1865,6 @@
       "image_uri": "https://cards.scryfall.io/normal/front/6/3/631c2c16-132d-4607-ab7e-207a6af188e5.jpg?1757686920",
       "produced_by": [
         "Bastion of Remembrance"
-      ]
-    },
-    {
-      "name": "Plant",
-      "type_line": "Token Creature — Plant",
-      "oracle_text": "",
-      "power": "0",
-      "toughness": "1",
-      "colors": [
-        "G"
-      ],
-      "scryfall_id": "3db07715-d315-4361-8af5-ce68d20e6c08",
-      "image_uri": "https://cards.scryfall.io/normal/front/3/d/3db07715-d315-4361-8af5-ce68d20e6c08.jpg?1767955008",
-      "produced_by": [
-        "Insidious Roots"
       ]
     },
     {
