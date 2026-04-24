@@ -1509,14 +1509,16 @@ async function processQueue() {
         resolve(fallback);
       } else {
         const data = await response.json();
+        const front = data.card_faces?.[0];
         const metadata = {
-          type_line: data.type_line || 'Unknown',
+          type_line: front?.type_line || data.type_line || 'Unknown',
           cmc: data.cmc ?? '?',
-          colors: data.colors || [],
-          mana_cost: data.mana_cost || '',
-          oracle_text: data.oracle_text || ''
+          colors: front?.colors || data.colors || [],
+          mana_cost: front?.mana_cost || data.mana_cost || '',
+          oracle_text: front?.oracle_text || data.oracle_text || ''
         };
         cardMetadataCache.set(cardName, metadata);
+        if (data.name !== cardName) cardMetadataCache.set(data.name, metadata);
         resolve(metadata);
       }
     } catch (err) {
@@ -1563,14 +1565,18 @@ async function fetchCardMetadataBatch(cardNames) {
       if (response.ok) {
         const data = await response.json();
         data.data.forEach(card => {
+          const front = card.card_faces?.[0];
           const metadata = {
-            type_line: card.type_line || 'Unknown',
+            type_line: front?.type_line || card.type_line || 'Unknown',
             cmc: card.cmc ?? '?',
-            colors: card.colors || [],
-            mana_cost: card.mana_cost || '',
-            oracle_text: card.oracle_text || ''
+            colors: front?.colors || card.colors || [],
+            mana_cost: front?.mana_cost || card.mana_cost || '',
+            oracle_text: front?.oracle_text || card.oracle_text || ''
           };
           cardMetadataCache.set(card.name, metadata);
+          if (front && card.name.includes(' // ')) {
+            cardMetadataCache.set(front.name, metadata);
+          }
         });
       }
     } catch (err) {
