@@ -32,6 +32,7 @@ import mana_simulation_genesis_protocol as sim_azorius
 import mana_simulation_planar_decree as sim_jeskai
 import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
+import mana_simulation_creeping_corruption as sim_wubg_poison
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -166,6 +167,14 @@ KEY_COMBOS = {
             "pieces": ["Rings of Brighthearth", "Basalt Monolith"],
             "requiresCommander": False,
             "description": "2-card infinite colorless mana engine.",
+        }
+    ],
+    "creeping-corruption": [
+        {
+            "name": "Vorinclex Vraska Kill",
+            "pieces": ["Vorinclex, Monstrous Raider", "Vraska, Betrayal's Sting"],
+            "requiresCommander": False,
+            "description": "Vraska enters with doubled loyalty, -9 deals doubled poison for instant kill.",
         }
     ],
 }
@@ -1949,6 +1958,19 @@ def export_mono_white(metadata: dict) -> dict:
     )
 
 
+def export_wubg_poison(metadata: dict) -> dict:
+    """Export Creeping Corruption (WUBG Atraxa poison/proliferate) simulation."""
+    return _export_colored(
+        sim_module=sim_wubg_poison,
+        deck_id="creeping-corruption",
+        deck_name="Creeping Corruption",
+        commander_name="Atraxa, Praetors' Voice",
+        commander_cmc=4,
+        colors=["W", "U", "B", "G"],
+        metadata=metadata,
+    )
+
+
 def export_verdant_tide(metadata: dict) -> dict:
     """Export Verdant Tide (mono-green Eladamri) simulation."""
     result = _export_colored(
@@ -1997,6 +2019,7 @@ DECKS = [
     ("planar-decree", "Planar Decree", export_jeskai),
     ("the-white-forge", "The White Forge", export_mono_white),
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
+    ("creeping-corruption", "Creeping Corruption", export_wubg_poison),
 ]
 
 
