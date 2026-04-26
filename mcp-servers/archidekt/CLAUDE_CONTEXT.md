@@ -51,11 +51,8 @@ Hardcoded in `tools/decks.py:KNOWN_ARCHIDEKT_IDS`:
 - dark-dominion → 20760109
 - mutant-multiplication → 20786495
 - planar-decree → 20949443
-- azure-dominion → 20946158
 - genesis-protocol → 20946250
 - eternal-harvest → 20946261
-- compleated-dominion → (new)
-- forge-and-fury → (new)
 
 ## Environment Variables
 

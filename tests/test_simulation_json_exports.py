@@ -5,12 +5,9 @@ from unittest.mock import Mock, patch
 
 
 EXPORT_CASES = [
-    ("scripts.mana_simulation_azure_dominion", "export_mono_blue", "azure-dominion"),
-    ("scripts.mana_simulation_compleated_dominion", "export_compleated_dominion", "compleated-dominion"),
     ("scripts.mana_simulation_dark_dominion", "export_grixis", "dark-dominion"),
     ("scripts.mana_simulation_eternal_agony", "export_rakdos", "eternal-agony"),
     ("scripts.mana_simulation_eternal_harvest", "export_golgari", "eternal-harvest"),
-    ("scripts.mana_simulation_forge_and_fury", "export_forge", "forge-and-fury"),
     ("scripts.mana_simulation_genesis_protocol", "export_azorius", "genesis-protocol"),
     ("scripts.mana_simulation_mutant_multiplication", "export_wubrg", "mutant-multiplication"),
     ("scripts.mana_simulation_planar_decree", "export_jeskai", "planar-decree"),

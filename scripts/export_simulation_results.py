@@ -27,12 +27,9 @@ import mana_simulation_titan_convergence as sim_titan
 import mana_simulation_eternal_agony as sim_rakdos
 import mana_simulation_dark_dominion as sim_grixis
 import mana_simulation_eternal_harvest as sim_golgari
-import mana_simulation_compleated_dominion as sim_compleated
 import mana_simulation_mutant_multiplication as sim_wubrg
-import mana_simulation_azure_dominion as sim_mono_blue
 import mana_simulation_genesis_protocol as sim_azorius
 import mana_simulation_planar_decree as sim_jeskai
-import mana_simulation_forge_and_fury as sim_jund
 import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 
@@ -107,22 +104,6 @@ NUMBER_WORDS = {
 }
 
 KEY_COMBOS = {
-    "azure-dominion": [
-        {
-            "name": "Isochron Reversal",
-            "pieces": ["Isochron Scepter", "Dramatic Reversal"],
-            "requiresCommander": False,
-            "description": "2-card infinite untap line once nonland mana is online.",
-        }
-    ],
-    "compleated-dominion": [
-        {
-            "name": "Magistrate Engine",
-            "pieces": ["Magistrate's Scepter", "Contagion Engine", "Tekuthal, Inquiry Dominus"],
-            "requiresCommander": False,
-            "description": "Charge-counter extra-turn engine.",
-        }
-    ],
     "dark-dominion": [
         {
             "name": "Worldgorger Loop",
@@ -145,14 +126,6 @@ KEY_COMBOS = {
             "pieces": ["Walking Ballista", "Mikaeus, the Unhallowed"],
             "requiresCommander": False,
             "description": "Repeatable undying damage loop with any sacrifice outlet.",
-        }
-    ],
-    "forge-and-fury": [
-        {
-            "name": "Skeleton Treasury",
-            "pieces": ["Pitiless Plunderer", "Warren Soultrader", "Reassembling Skeleton"],
-            "requiresCommander": False,
-            "description": "3-card treasure and death-trigger loop.",
         }
     ],
     "the-white-forge": [
@@ -1892,19 +1865,6 @@ def export_golgari(metadata: dict) -> dict:
 
 
 
-def export_compleated_dominion(metadata: dict) -> dict:
-    """Export Compleated Dominion (Atraxa B4) simulation."""
-    return _export_colored(
-        sim_module=sim_compleated,
-        deck_id="compleated-dominion",
-        deck_name="Compleated Dominion",
-        commander_name="Atraxa, Praetors' Voice",
-        commander_cmc=4,
-        colors=["W", "U", "B", "G"],
-        metadata=metadata,
-    )
-
-
 def export_wubrg(metadata: dict) -> dict:
     """Export Mutant Multiplication (WUBRG) simulation."""
     return _export_colored(
@@ -1914,32 +1874,6 @@ def export_wubrg(metadata: dict) -> dict:
         commander_name="Donatello, the Brains",
         commander_cmc=3,
         colors=["W", "U", "B", "R", "G"],
-        metadata=metadata,
-    )
-
-
-def export_mono_blue(metadata: dict) -> dict:
-    """Export Azure Dominion (mono-blue Urza) simulation."""
-    return _export_colored(
-        sim_module=sim_mono_blue,
-        deck_id="azure-dominion",
-        deck_name="Azure Dominion",
-        commander_name="Urza, Lord High Artificer",
-        commander_cmc=4,
-        colors=["U"],
-        metadata=metadata,
-    )
-
-
-def export_forge(metadata: dict) -> dict:
-    """Export Forge & Fury (Jund Korvold) simulation."""
-    return _export_colored(
-        sim_module=sim_jund,
-        deck_id="forge-and-fury",
-        deck_name="Forge & Fury",
-        commander_name="Korvold, Fae-Cursed King",
-        commander_cmc=5,
-        colors=["B", "R", "G"],
         metadata=metadata,
     )
 
@@ -2058,10 +1992,7 @@ DECKS = [
     ("eternal-agony", "Eternal Agony", export_rakdos),
     ("dark-dominion", "Dark Dominion", export_grixis),
     ("eternal-harvest", "Eternal Harvest", export_golgari),
-    ("forge-and-fury", "Forge & Fury", export_forge),
-    ("compleated-dominion", "Compleated Dominion", export_compleated_dominion),
     ("mutant-multiplication", "Mutant Multiplication", export_wubrg),
-    ("azure-dominion", "Azure Dominion", export_mono_blue),
     ("genesis-protocol", "Genesis Protocol", export_azorius),
     ("planar-decree", "Planar Decree", export_jeskai),
     ("the-white-forge", "The White Forge", export_mono_white),
