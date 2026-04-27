@@ -73,9 +73,9 @@ ROCK_DEFS = {
 
 # --- Land subtype definitions (for check lands and fetch targets) ---
 
-ISLAND_TYPED_LANDS = {"Island", "Watery Grave", "Steam Vents", "Sunken Hollow"}
-SWAMP_TYPED_LANDS = {"Swamp", "Watery Grave", "Blood Crypt", "Sunken Hollow"}
-MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Steam Vents"}
+ISLAND_TYPED_LANDS = {"Island", "Watery Grave", "Steam Vents", "Sunken Hollow", "Turbulent Springs"}
+SWAMP_TYPED_LANDS = {"Swamp", "Watery Grave", "Blood Crypt", "Sunken Hollow", "Smoldering Marsh"}
+MOUNTAIN_TYPED_LANDS = {"Blood Crypt", "Steam Vents", "Smoldering Marsh", "Turbulent Springs"}
 
 FETCH_LANDS = {"Bloodstained Mire", "Polluted Delta"}
 
@@ -92,9 +92,11 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         return True
 
     # Check lands (need matching basic land type on board)
-    if name == "Dragonskull Summit":
-        return not any(l in SWAMP_TYPED_LANDS or l in MOUNTAIN_TYPED_LANDS
-                       for l in battlefield_lands)
+    if name == "Smoldering Marsh":
+        basics = sum(1 for l in battlefield_lands if l in {"Swamp", "Island"})
+        return basics < 2
+    if name == "Turbulent Springs":
+        return len(battlefield_lands) < 2
     if name == "Drowned Catacomb":
         return not any(l in ISLAND_TYPED_LANDS or l in SWAMP_TYPED_LANDS
                        for l in battlefield_lands)
@@ -104,7 +106,7 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
 
     # Battle land (need 2+ basics)
     if name == "Sunken Hollow":
-        basics = sum(1 for l in battlefield_lands if l in {"Swamp", "Island", "Mountain"})
+        basics = sum(1 for l in battlefield_lands if l in {"Swamp", "Island"})
         return basics < 2
 
     # Rivendell: tapped unless you control a legendary creature.
@@ -114,7 +116,7 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
 
     # Agna Qel'a: tapped unless you control a basic land
     if name == "Agna Qel'a":
-        return not any(l in {"Swamp", "Island", "Mountain"} for l in battlefield_lands)
+        return not any(l in {"Swamp", "Island"} for l in battlefield_lands)
 
     # Gloomlake Verge: always enters untapped (color production is conditional, not ETB)
     # Shock lands (Watery Grave, Blood Crypt, Steam Vents): always untapped (pay 2 life)
@@ -134,8 +136,8 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
         return [frozenset({"B"})]
     if name == "Island":
         return [frozenset({"U"})]
-    if name == "Mountain":
-        return [frozenset({"R"})]
+    if name == "Turbulent Springs":
+        return [frozenset({"U", "R"})]
 
     # Tri-color lands
     if name in {"Command Tower", "Exotic Orchard", "Crumbling Necropolis"}:
@@ -147,7 +149,7 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
         return [frozenset({"U", "B"})]
 
     # BR duals
-    if name in {"Blood Crypt", "Luxury Suite", "Dragonskull Summit", "Sulfurous Springs"}:
+    if name in {"Blood Crypt", "Luxury Suite", "Smoldering Marsh", "Sulfurous Springs"}:
         return [frozenset({"B", "R"})]
 
     # UR duals

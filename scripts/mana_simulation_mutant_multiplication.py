@@ -71,12 +71,12 @@ RAMP_DEFS = {
 # --- Land subtype definitions ---
 
 PLAINS_TYPED_LANDS = {"Plains", "Temple Garden",
-                      "Hallowed Fountain", "Spara's Headquarters"}
+                      "Hallowed Fountain", "Spara's Headquarters", "Canopy Vista"}
 ISLAND_TYPED_LANDS = {"Island", "Breeding Pool",
-                      "Hallowed Fountain", "Spara's Headquarters"}
+                      "Hallowed Fountain", "Spara's Headquarters", "Turbulent Wilderness"}
 SWAMP_TYPED_LANDS = set()
 FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Temple Garden",
-                      "Spara's Headquarters"}
+                      "Spara's Headquarters", "Canopy Vista", "Turbulent Wilderness"}
 MOUNTAIN_TYPED_LANDS = set()
 
 BASIC_LANDS = {"Plains", "Island", "Forest"}
@@ -126,17 +126,18 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     if name == "Sunpetal Grove":
         return not any(l in FOREST_TYPED_LANDS or l in PLAINS_TYPED_LANDS
                        for l in battlefield_lands)
-    if name == "Hinterland Harbor":
-        return not any(l in FOREST_TYPED_LANDS or l in ISLAND_TYPED_LANDS
-                       for l in battlefield_lands)
     if name == "Glacial Fortress":
         return not any(l in PLAINS_TYPED_LANDS or l in ISLAND_TYPED_LANDS
                        for l in battlefield_lands)
 
-    # Reveal land: tapped unless reveal Forest or Plains from hand
-    if name == "Fortified Village":
-        return not any(l in FOREST_TYPED_LANDS or l in PLAINS_TYPED_LANDS
-                       for l in hand)
+    # Battle land: tapped unless 2+ basics on battlefield
+    if name == "Canopy Vista":
+        basics = sum(1 for l in battlefield_lands if l in BASIC_LANDS)
+        return basics < 2
+
+    # Turbulent land: tapped unless opponents control 8+ lands (proxy: you have 2+ lands)
+    if name == "Turbulent Wilderness":
+        return len(battlefield_lands) < 2
 
     # Shock lands, pain lands, filter lands, channel lands, Command Tower, etc. — always untapped
     return False
@@ -171,13 +172,13 @@ def compute_land_sources(name: str) -> list[frozenset]:
     # Check lands
     if name == "Sunpetal Grove":
         return [frozenset({"W", "G"})]
-    if name == "Hinterland Harbor":
+    if name == "Turbulent Wilderness":
         return [frozenset({"U", "G"})]
     if name == "Glacial Fortress":
         return [frozenset({"W", "U"})]
 
-    # Reveal land
-    if name == "Fortified Village":
+    # Battle land
+    if name == "Canopy Vista":
         return [frozenset({"W", "G"})]
 
     # Pain lands

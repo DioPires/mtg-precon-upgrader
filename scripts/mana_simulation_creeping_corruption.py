@@ -67,9 +67,9 @@ DORK_DEFS = {
 
 # --- Land subtype definitions ---
 
-PLAINS_TYPED = {"Plains", "Temple Garden", "Hallowed Fountain", "Godless Shrine", "Indatha Triome"}
+PLAINS_TYPED = {"Plains", "Temple Garden", "Hallowed Fountain", "Godless Shrine", "Indatha Triome", "Turbulent Moor"}
 ISLAND_TYPED = {"Island", "Breeding Pool", "Hallowed Fountain", "Watery Grave", "Zagoth Triome"}
-SWAMP_TYPED = {"Swamp", "Overgrown Tomb", "Watery Grave", "Godless Shrine", "Zagoth Triome", "Indatha Triome"}
+SWAMP_TYPED = {"Swamp", "Overgrown Tomb", "Watery Grave", "Godless Shrine", "Zagoth Triome", "Indatha Triome", "Turbulent Moor"}
 FOREST_TYPED = {"Forest", "Breeding Pool", "Temple Garden", "Overgrown Tomb", "Zagoth Triome", "Indatha Triome"}
 
 BASIC_LANDS = {"Plains", "Island", "Swamp", "Forest"}
@@ -107,6 +107,8 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         return True
     if name in FAST_LANDS:
         return len(battlefield_lands) > 2
+    if name == "Turbulent Moor":
+        return len(battlefield_lands) < 2
     return False
 
 
@@ -134,6 +136,8 @@ def compute_land_sources(name: str) -> list[frozenset]:
     if name == "Hallowed Fountain":
         return [frozenset({"W", "U"})]
     if name == "Godless Shrine":
+        return [frozenset({"W", "B"})]
+    if name == "Turbulent Moor":
         return [frozenset({"W", "B"})]
 
     if name == "Zagoth Triome":
