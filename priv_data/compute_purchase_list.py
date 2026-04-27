@@ -36,7 +36,13 @@ def parse_owned_csv(filename: str) -> dict[str, int]:
                 continue
             qty = int(row.get('Quantity', row.get('quantity', '1')).strip() or '1')
             cards[name] += qty
-    return dict(cards)
+    result = dict(cards)
+    for name, qty in list(result.items()):
+        if ' // ' in name:
+            front_face = name.split(' // ')[0]
+            if front_face not in result:
+                result[front_face] = qty
+    return result
 
 
 def load_deck(deck_id: str) -> dict | None:

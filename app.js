@@ -3266,7 +3266,7 @@ function loadShoppingOwnedCardsFromStorage() {
     const raw = localStorage.getItem('grimoire-owned-cards');
     if (raw) {
       const parsed = JSON.parse(raw);
-      ownedCards = new Map(parsed);
+      ownedCards = addFrontFaceAliases(new Map(parsed));
       updateOwnedStatus();
     }
   } catch { /* ignore */ }
@@ -3373,10 +3373,23 @@ function parseOwnedTextList(text) {
   return cards;
 }
 
+function addFrontFaceAliases(cards) {
+  for (const [name, qty] of [...cards]) {
+    const slashIdx = name.indexOf(' // ');
+    if (slashIdx > 0) {
+      const frontFace = name.substring(0, slashIdx);
+      if (!cards.has(frontFace)) {
+        cards.set(frontFace, qty);
+      }
+    }
+  }
+  return cards;
+}
+
 function parseOwnedFile(text) {
   const parsedCsv = parseOwnedCsv(text);
-  if (parsedCsv !== null) return parsedCsv;
-  return parseOwnedTextList(text);
+  if (parsedCsv !== null) return addFrontFaceAliases(parsedCsv);
+  return addFrontFaceAliases(parseOwnedTextList(text));
 }
 
 function updateOwnedStatus() {
