@@ -96,7 +96,8 @@ PAIN_LANDS = {
     "Llanowar Wastes":  frozenset({"B", "G"}),
     "Yavimaya Coast":   frozenset({"U", "G"}),
     "Underground River": frozenset({"U", "B"}),
-    "Mana Confluence":  frozenset({"W", "U", "B", "G"}),
+    "Caves of Koilos":  frozenset({"W", "B"}),
+    "Brushland":        frozenset({"W", "G"}),
     "City of Brass":    frozenset({"W", "U", "B", "G"}),
 }
 
@@ -119,7 +120,7 @@ def compute_land_sources(name: str) -> list[frozenset]:
     if name == "Forest":
         return [frozenset({"G"})]
 
-    if name in {"Command Tower", "Exotic Orchard", "Mana Confluence", "City of Brass"}:
+    if name in {"Command Tower", "Exotic Orchard", "Reflecting Pool", "City of Brass"}:
         return [frozenset({"W", "U", "B", "G"})]
 
     if name == "Breeding Pool":
@@ -145,11 +146,6 @@ def compute_land_sources(name: str) -> list[frozenset]:
 
     if name in PAIN_LANDS:
         return [PAIN_LANDS[name]]
-
-    if name == "Otawara, Soaring City":
-        return [frozenset({"U"})]
-    if name == "Boseiju, Who Endures":
-        return [frozenset({"G"})]
 
     if name in {"Karn's Bastion", "Inkmoth Nexus", "The Seedcore"}:
         return [frozenset({"C"})]
