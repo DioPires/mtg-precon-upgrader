@@ -3258,6 +3258,7 @@ function loadPreferences() {
 
 let shoppingSortMode = 'type'; // 'type' or 'az'
 const shoppingSelectedDecks = new Set(); // deck IDs selected for shopping
+const shoppingBuiltDecks = new Set(); // deck IDs marked as already built
 let ownedCards = new Map(); // cardName -> quantity owned
 
 function loadShoppingOwnedCardsFromStorage() {
@@ -3394,6 +3395,24 @@ function updateOwnedStatus() {
   }
 }
 
+function renderShoppingBuiltChips() {
+  const chipsEl = document.getElementById('shopping-built-chips');
+  const allBtn = document.getElementById('shopping-built-select-all');
+  if (!deckIndex?.commanders) return;
+  chipsEl.innerHTML = deckIndex.commanders.map(cmd => {
+    const selected = shoppingBuiltDecks.has(cmd.id);
+    const colors = cmd.colors || ['C'];
+    const colorPips = colors.map(c =>
+      `<span class="shopping-chip-pip pip-${escapeHtml(c)}"></span>`
+    ).join('');
+    return `<button class="shopping-built-chip${selected ? ' selected' : ''}" data-deck-id="${escapeHtml(cmd.id)}">
+      ${colorPips}<span class="shopping-chip-name">${escapeHtml(cmd.name)}</span><span class="shopping-built-check">\u2713</span>
+    </button>`;
+  }).join('');
+  const allSelected = deckIndex.commanders.length > 0 && shoppingBuiltDecks.size === deckIndex.commanders.length;
+  if (allBtn) allBtn.textContent = allSelected ? 'None' : 'All';
+}
+
 function renderShoppingDeckChips() {
   const chipsEl = document.getElementById('shopping-deck-chips');
   if (!deckIndex?.commanders) return;
@@ -3430,49 +3449,69 @@ const BASIC_LAND_NAMES = new Set([
   'Snow-Covered Mountain', 'Snow-Covered Forest'
 ]);
 
+function addDeckCardsToMap(deck, deckId, cardMap) {
+  const cmd = deck.commander || '';
+  const partner = deck.partner || '';
+  if (cmd && !BASIC_LAND_NAMES.has(cmd)) {
+    if (cardMap.has(cmd)) {
+      cardMap.get(cmd).quantity += 1;
+      cardMap.get(cmd).decks.add(deckId);
+    } else {
+      cardMap.set(cmd, { quantity: 1, type: 'Creature', isCommander: true, decks: new Set([deckId]) });
+    }
+  }
+  if (partner && !BASIC_LAND_NAMES.has(partner)) {
+    if (cardMap.has(partner)) {
+      cardMap.get(partner).quantity += 1;
+      cardMap.get(partner).decks.add(deckId);
+    } else {
+      cardMap.set(partner, { quantity: 1, type: 'Creature', isCommander: true, decks: new Set([deckId]) });
+    }
+  }
+  deck.decklist.forEach(card => {
+    const name = card.name;
+    if (BASIC_LAND_NAMES.has(name)) return;
+    if (cardMap.has(name)) {
+      cardMap.get(name).quantity += 1;
+      cardMap.get(name).decks.add(deckId);
+    } else {
+      cardMap.set(name, { quantity: 1, type: normalizeCardType(card.type || 'Other'), isCommander: false, decks: new Set([deckId]) });
+    }
+  });
+}
+
 async function aggregateShoppingCards() {
-  const cardMap = new Map(); // name -> { quantity: 1, type, isCommander, decks: Set }
+  const builtCardCounts = new Map(); // name -> count of built decks using it
+  for (const deckId of shoppingBuiltDecks) {
+    const deck = await loadDeckData(deckId);
+    if (!deck?.decklist) continue;
+    const names = new Set();
+    if (deck.commander) names.add(deck.commander);
+    if (deck.partner) names.add(deck.partner);
+    deck.decklist.forEach(c => { if (!BASIC_LAND_NAMES.has(c.name)) names.add(c.name); });
+    for (const name of names) {
+      builtCardCounts.set(name, (builtCardCounts.get(name) || 0) + 1);
+    }
+  }
+
+  const cardMap = new Map(); // name -> { quantity, type, isCommander, decks: Set }
   for (const deckId of shoppingSelectedDecks) {
     const deck = await loadDeckData(deckId);
     if (!deck?.decklist) continue;
-    const cmd = deck.commander || '';
-    const partner = deck.partner || '';
-    // Add commander(s) — deduplicated, 1 copy each
-    if (cmd) {
-      if (!cardMap.has(cmd)) {
-        cardMap.set(cmd, { quantity: 1, type: 'Creature', isCommander: true, decks: new Set([deckId]) });
-      } else {
-        cardMap.get(cmd).decks.add(deckId);
-      }
-    }
-    if (partner) {
-      if (!cardMap.has(partner)) {
-        cardMap.set(partner, { quantity: 1, type: 'Creature', isCommander: true, decks: new Set([deckId]) });
-      } else {
-        cardMap.get(partner).decks.add(deckId);
-      }
-    }
-    // Add decklist cards, skipping basic lands — deduplicated across decks
-    deck.decklist.forEach(card => {
-      const name = card.name;
-      if (BASIC_LAND_NAMES.has(name)) return;
-      if (!cardMap.has(name)) {
-        cardMap.set(name, { quantity: 1, type: normalizeCardType(card.type || 'Other'), isCommander: false, decks: new Set([deckId]) });
-      } else {
-        cardMap.get(name).decks.add(deckId);
-      }
-    });
+    addDeckCardsToMap(deck, deckId, cardMap);
   }
-  return cardMap;
+  return { cardMap, builtCardCounts };
 }
 
-function splitByOwnership(cardMap) {
+function splitByOwnership(cardMap, builtCardCounts) {
   const buy = [];
   const own = [];
   for (const [name, info] of cardMap) {
     const ownedQty = ownedCards.get(name) || 0;
-    const needQty = Math.max(0, info.quantity - ownedQty);
-    const ownQty = Math.min(info.quantity, ownedQty);
+    const builtClaims = builtCardCounts.get(name) || 0;
+    const availableForShopping = Math.max(0, ownedQty - builtClaims);
+    const needQty = Math.max(0, info.quantity - availableForShopping);
+    const ownQty = Math.min(info.quantity, availableForShopping);
     if (needQty > 0) {
       buy.push({ name, quantity: needQty, type: info.type, isCommander: info.isCommander, decks: info.decks });
     }
@@ -3580,6 +3619,7 @@ async function renderShoppingList() {
   const buySectionCount = document.getElementById('shopping-buy-section-count');
   const ownSectionCount = document.getElementById('shopping-own-section-count');
 
+  renderShoppingBuiltChips();
   renderShoppingDeckChips();
 
   if (shoppingSelectedDecks.size === 0) {
@@ -3591,8 +3631,8 @@ async function renderShoppingList() {
     return;
   }
 
-  const cardMap = await aggregateShoppingCards();
-  const { buy, own } = splitByOwnership(cardMap);
+  const { cardMap, builtCardCounts } = await aggregateShoppingCards();
+  const { buy, own } = splitByOwnership(cardMap, builtCardCounts);
   const buyTotal = buy.reduce((s, c) => s + c.quantity, 0);
   const ownTotal = own.reduce((s, c) => s + c.quantity, 0);
 
@@ -3853,6 +3893,36 @@ if (searchHint) {
   });
 }
 
+// Built deck chip toggle
+document.getElementById('shopping-built-chips')?.addEventListener('click', (e) => {
+  const chip = e.target.closest('.shopping-built-chip');
+  if (!chip) return;
+  const deckId = chip.dataset.deckId;
+  if (shoppingBuiltDecks.has(deckId)) {
+    shoppingBuiltDecks.delete(deckId);
+  } else {
+    shoppingBuiltDecks.add(deckId);
+    shoppingSelectedDecks.delete(deckId);
+  }
+  renderShoppingList();
+});
+
+// Built deck "Select All / None" toggle
+document.getElementById('shopping-built-select-all')?.addEventListener('click', () => {
+  if (deckIndex?.commanders) {
+    const allSelected = shoppingBuiltDecks.size === deckIndex.commanders.length;
+    if (allSelected) {
+      shoppingBuiltDecks.clear();
+    } else {
+      deckIndex.commanders.forEach(cmd => {
+        shoppingBuiltDecks.add(cmd.id);
+        shoppingSelectedDecks.delete(cmd.id);
+      });
+    }
+    renderShoppingList();
+  }
+});
+
 // Shopping deck chip toggle
 document.getElementById('shopping-deck-chips')?.addEventListener('click', (e) => {
   const chip = e.target.closest('.shopping-deck-chip');
@@ -3862,6 +3932,7 @@ document.getElementById('shopping-deck-chips')?.addEventListener('click', (e) =>
     shoppingSelectedDecks.delete(deckId);
   } else {
     shoppingSelectedDecks.add(deckId);
+    shoppingBuiltDecks.delete(deckId);
   }
   renderShoppingList();
 });
