@@ -64,7 +64,7 @@ ROCK_DEFS = {
     "Mind Stone":            {"cmc": 2, "B": 0, "R": 0, "C": 1, "burst": False},
     "Rakdos Signet":         {"cmc": 2, "B": 1, "R": 1, "C": 0, "burst": False, "flexible": True},
     "Talisman of Indulgence": {"cmc": 2, "B": 1, "R": 1, "C": 0, "burst": False, "flexible": True},
-    "Mana Vault":            {"cmc": 1, "B": 0, "R": 0, "C": 3, "burst": True},
+    "Cursed Mirror":         {"cmc": 3, "B": 0, "R": 1, "C": 0, "burst": False},
 }
 
 # --- Land definitions ---
@@ -559,8 +559,8 @@ class GameState:
 
     def _try_cast_rocks(self, pool: ManaPool):
         """Try to cast mana rocks and Crypt Ghast from hand, priority order."""
-        # Priority: Sol Ring > Mana Vault > 2-CMC rocks > Crypt Ghast
-        priority_order = ["Sol Ring", "Mana Vault", "Arcane Signet", "Rakdos Signet", "Talisman of Indulgence", "Mind Stone"]
+        # Priority: Sol Ring > 2-CMC rocks > Cursed Mirror > Crypt Ghast
+        priority_order = ["Sol Ring", "Arcane Signet", "Rakdos Signet", "Talisman of Indulgence", "Mind Stone", "Cursed Mirror"]
 
         for rock_name in priority_order:
             if rock_name not in self.hand:

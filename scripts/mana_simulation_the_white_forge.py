@@ -71,9 +71,6 @@ ROCK_DEFS = {
     "Basalt Monolith":    {"cmc": 3, "C": 3, "burst": False},  # doesn't untap normally, but sim treats all rocks as available each turn
 }
 
-# Chrome Mox has special deploy logic
-CHROME_MOX = "Chrome Mox"
-SPECIAL_ROCKS = {CHROME_MOX}
 
 # --- Cost reducer definitions ---
 # These reduce artifact costs but don't produce mana directly
@@ -88,7 +85,7 @@ COST_REDUCERS = {
 
 ARTIFACT_LANDS = {"Ancient Den", "Darksteel Citadel"}
 
-ALWAYS_TAPPED = set()  # No always-tapped lands in this deck
+ALWAYS_TAPPED = {"Emeria, the Sky Ruin", "Mistveil Plains"}
 
 
 def land_enters_tapped(name: str, battlefield_lands: list[str]) -> bool:
@@ -178,8 +175,8 @@ def compute_land_mana(name: str) -> tuple[int, int]:
     if name == "Nykthos, Shrine to Nyx":
         return (0, 1)  # Default C; devotion ability modeled as C
 
-    if name == "Ancient Tomb":
-        return (0, 2)
+    if name == "Emeria, the Sky Ruin":
+        return (1, 0)
 
     if name == "Urza's Saga":
         return (0, 1)
@@ -187,8 +184,8 @@ def compute_land_mana(name: str) -> tuple[int, int]:
     if name in {"Buried Ruin", "Inventors' Fair", "War Room", "Scavenger Grounds"}:
         return (0, 1)
 
-    if name == "Strip Mine":
-        return (0, 1)
+    if name == "Mistveil Plains":
+        return (1, 0)
 
     # Fallback: colorless
     return (0, 1)
@@ -208,7 +205,7 @@ def build_decklist(deck_data: dict) -> list[str]:
 
 def classify_cards(decklist: list[str], metadata: dict) -> dict:
     """Classify each card as land, rock, or spell."""
-    ramp_names = set(ROCK_DEFS) | SPECIAL_ROCKS
+    ramp_names = set(ROCK_DEFS)
     classified = {"lands": [], "rocks": [], "spells": []}
     for name in decklist:
         if name in ramp_names:
@@ -230,7 +227,7 @@ MAX_MULLIGANS = 2
 
 def should_mulligan(hand: list[str], land_set: set[str]) -> bool:
     """Mulligan if 0-1 mana sources (lands + rocks)."""
-    ramp_names = set(ROCK_DEFS) | SPECIAL_ROCKS
+    ramp_names = set(ROCK_DEFS)
     sources = sum(1 for c in hand if c in land_set or c in ramp_names)
     return sources <= 1
 
@@ -238,7 +235,7 @@ def should_mulligan(hand: list[str], land_set: set[str]) -> bool:
 def choose_bottom_cards(hand: list[str], count: int, metadata: dict,
                         land_set: set[str]) -> list[str]:
     """Choose cards to bottom (London mulligan). Bottom highest CMC non-source cards."""
-    ramp_names = set(ROCK_DEFS) | SPECIAL_ROCKS
+    ramp_names = set(ROCK_DEFS)
     candidates = [c for c in hand if c not in land_set and c not in ramp_names]
     candidates.sort(key=lambda c: metadata.get(c, {}).get("cmc", 0), reverse=True)
     return candidates[:count]
@@ -260,7 +257,6 @@ class GameState:
         self.mana_per_turn: list[ManaPool] = []
         self.mulligan_attempt = 0
 
-        self.has_chrome_mox = False
         self.burst_rocks_active: dict[str, bool] = {}
         self.saga_play_turns: dict[int, int] = {}  # land index -> turn played
 
@@ -284,8 +280,8 @@ class GameState:
             base += 5
         elif name == "Ancient Den":
             base += 5  # W-producing artifact land
-        elif name == "Ancient Tomb":
-            base += 7  # 2 mana very valuable early
+        elif name == "Emeria, the Sky Ruin":
+            base += 3  # W-producing but always tapped
         elif name == "Eiganjo, Seat of the Empire":
             base += 4
         elif name == "Minas Tirith":
@@ -298,8 +294,8 @@ class GameState:
             base += 4
         elif name in {"Buried Ruin", "Inventors' Fair"}:
             base += 2
-        elif name == "Strip Mine":
-            base += 1
+        elif name == "Mistveil Plains":
+            base += 3  # W-producing but always tapped
 
         return base
 
@@ -326,10 +322,6 @@ class GameState:
                 else:
                     pool.W += rdef.get("W", 0)
                     pool.C += rdef.get("C", 0)
-
-        # Chrome Mox
-        if self.has_chrome_mox:
-            pool.W += 1
 
         return pool
 
@@ -393,23 +385,6 @@ class GameState:
     def _try_cast_ramp(self, pool: ManaPool):
         """Try to cast mana rocks from hand."""
 
-        # Chrome Mox: free if we have a non-artifact, non-land card to imprint
-        if CHROME_MOX in self.hand:
-            imprint_candidates = [c for c in self.hand
-                                  if c != CHROME_MOX
-                                  and c not in self.land_set
-                                  and c not in ROCK_DEFS
-                                  and c not in SPECIAL_ROCKS
-                                  and "Artifact" not in self.metadata.get(c, {}).get("type_line", "")]
-            if imprint_candidates:
-                # Imprint worst card (highest CMC among non-key spells)
-                imprint_candidates.sort(key=lambda c: self.metadata.get(c, {}).get("cmc", 0))
-                imprint = imprint_candidates[0]
-                self.hand.remove(CHROME_MOX)
-                self.hand.remove(imprint)
-                self.has_chrome_mox = True
-                pool = self.compute_mana_pool()
-
         # Priority order for rocks
         rock_priority = [
             "Sol Ring",         # CMC 1, +2C
@@ -460,7 +435,7 @@ def commander_mulligan(decklist: list[str], metadata: dict,
 
 def can_cast_from_hand(state: GameState, pool: ManaPool) -> list[str]:
     """Return list of castable non-ramp spells from hand."""
-    ramp_cards = set(ROCK_DEFS) | SPECIAL_ROCKS
+    ramp_cards = set(ROCK_DEFS)
     castable = []
     for card in state.hand:
         if card in ramp_cards or card in state.land_set:

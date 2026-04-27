@@ -105,7 +105,7 @@ G_PRODUCING_LANDS = {
 }
 
 C_ONLY_LANDS = {
-    "Ancient Tomb", "Phyrexian Tower", "High Market",
+    "Phyrexian Tower", "High Market",
 }
 
 # Lands with Swamp subtype (for Urborg, Woodland Cemetery checks, fetch targets)
@@ -301,8 +301,8 @@ def compute_land_mana(name: str, battlefield_lands: list[str]) -> tuple[int, int
     if name == "High Market":
         return (0, 0, 1, 0)
 
-    if name == "Ancient Tomb":
-        return (0, 0, 2, 0)
+    if name == "Fabled Passage":
+        return (0, 0, 0, 0)
 
     if name == "Urborg, Tomb of Yawgmoth":
         return (1, 0, 0, 0)
@@ -411,7 +411,7 @@ class GameState:
         """Higher = play first. Untapped > tapped. Color-fixing > mono."""
         tapped = land_enters_tapped(name, self.battlefield_lands, self.hand)
 
-        if name == "Verdant Catacombs":
+        if name in {"Verdant Catacombs", "Fabled Passage"}:
             return 20  # Fetch: always play and crack immediately
 
         if tapped:
@@ -430,17 +430,25 @@ class GameState:
         return base
 
     def _resolve_fetch(self, fetch_name: str):
-        """Resolve Verdant Catacombs: search library for Forest or Swamp card."""
+        """Resolve a fetch land: search library for a land card."""
         b_sources = sum(1 for l in self.battlefield_lands if l in B_PRODUCING_LANDS)
         g_sources = sum(1 for l in self.battlefield_lands if l in G_PRODUCING_LANDS)
 
-        fetchable = []
-        for i, card in enumerate(self.library):
-            if card in SWAMP_TYPED_LANDS or card in FOREST_TYPED_LANDS or card in BASIC_SWAMPS or card in BASIC_FORESTS:
-                fetchable.append((i, card))
+        if fetch_name == "Fabled Passage":
+            fetchable = []
+            for i, card in enumerate(self.library):
+                if card in BASIC_SWAMPS or card in BASIC_FORESTS:
+                    fetchable.append((i, card))
+        else:
+            fetchable = []
+            for i, card in enumerate(self.library):
+                if card in SWAMP_TYPED_LANDS or card in FOREST_TYPED_LANDS or card in BASIC_SWAMPS or card in BASIC_FORESTS:
+                    fetchable.append((i, card))
 
         if not fetchable:
             return
+
+        enters_tapped = (fetch_name == "Fabled Passage" and len(self.battlefield_lands) < 4)
 
         # Prefer Overgrown Tomb early (both colors), then basic matching color need
         tomb = [(i, c) for i, c in fetchable if c == "Overgrown Tomb"]
@@ -448,6 +456,8 @@ class GameState:
             idx, card = tomb[0]
             self.library.pop(idx)
             self.battlefield_lands.append(card)
+            if enters_tapped:
+                self.tapped_lands.add(len(self.battlefield_lands) - 1)
             return
 
         if b_sources <= g_sources:
@@ -456,6 +466,8 @@ class GameState:
                 idx, card = swamps[0]
                 self.library.pop(idx)
                 self.battlefield_lands.append(card)
+                if enters_tapped:
+                    self.tapped_lands.add(len(self.battlefield_lands) - 1)
                 return
         else:
             forests = [(i, c) for i, c in fetchable if c == "Forest"]
@@ -463,12 +475,16 @@ class GameState:
                 idx, card = forests[0]
                 self.library.pop(idx)
                 self.battlefield_lands.append(card)
+                if enters_tapped:
+                    self.tapped_lands.add(len(self.battlefield_lands) - 1)
                 return
 
         # Fallback: fetch first available
         idx, card = fetchable[0]
         self.library.pop(idx)
         self.battlefield_lands.append(card)
+        if enters_tapped:
+            self.tapped_lands.add(len(self.battlefield_lands) - 1)
 
     def _fetch_basic_land(self, fetch_type: str, enters_tapped: bool):
         """Fetch a basic land from library and put it on battlefield.
@@ -559,7 +575,7 @@ class GameState:
             _, land_name = hand_lands[0]
             self.hand.remove(land_name)
 
-            if land_name == "Verdant Catacombs":
+            if land_name in {"Verdant Catacombs", "Fabled Passage"}:
                 self._resolve_fetch(land_name)
             else:
                 tapped = land_enters_tapped(land_name, self.battlefield_lands, self.hand)
@@ -732,14 +748,14 @@ def print_static_analysis(decklist: list[str], metadata: dict, classified: dict)
     g_sources = sum(1 for l in lands if l in G_PRODUCING_LANDS)
     both_sources = sum(1 for l in lands if l in B_PRODUCING_LANDS and l in G_PRODUCING_LANDS)
     c_only = sum(1 for l in lands if l in C_ONLY_LANDS)
-    special = sum(1 for l in lands if l in {"Verdant Catacombs"})
+    special = sum(1 for l in lands if l in {"Verdant Catacombs", "Fabled Passage"})
 
     print(f"\n--- Mana Source Inventory ---")
     print(f"  B-producing lands: {b_sources}")
     print(f"  G-producing lands: {g_sources}")
     print(f"  Dual (B+G) lands: {both_sources}")
     print(f"  C-only lands: {c_only}")
-    print(f"  Fetch: {special} (Verdant Catacombs)")
+    print(f"  Fetch: {special} (Verdant Catacombs, Fabled Passage)")
 
     rock_flex = sum(1 for r in classified["rocks"] if r in ROCK_DEFS and ROCK_DEFS[r].get("flexible"))
     rock_c = sum(1 for r in classified["rocks"] if r in ROCK_DEFS and not ROCK_DEFS[r].get("flexible"))

@@ -58,7 +58,7 @@ def parse_mana_cost(mana_cost: str) -> dict:
 ROCK_DEFS = {
     "Sol Ring":      {"cmc": 1, "colors": frozenset({"C"}), "count": 2, "burst": False},
     "Arcane Signet": {"cmc": 2, "colors": frozenset({"W", "U", "B", "R", "G"}), "count": 1, "burst": False},
-    "Chrome Mox":    {"cmc": 0, "colors": frozenset({"W", "U", "G"}), "count": 1, "burst": False},
+    "Fellwar Stone": {"cmc": 2, "colors": frozenset({"W", "U", "G"}), "count": 1, "burst": False},
 }
 
 # --- Ramp spell definitions ---
@@ -200,8 +200,6 @@ def compute_land_sources(name: str) -> list[frozenset]:
     # Channel lands
     if name == "Otawara, Soaring City":
         return [frozenset({"U"})]
-    if name == "Boseiju, Who Endures":
-        return [frozenset({"G"})]
     if name == "Eiganjo, Seat of the Empire":
         return [frozenset({"W"})]
 
@@ -209,9 +207,8 @@ def compute_land_sources(name: str) -> list[frozenset]:
     if name == "Spara's Headquarters":
         return [frozenset({"W", "U", "G"})]
 
-    # Colorless fast mana
-    if name == "Ancient Tomb":
-        return [frozenset({"C"}), frozenset({"C"})]
+    if name == "Horizon Canopy":
+        return [frozenset({"G", "W"})]
 
     # Utility lands (colorless)
     if name in {"Rogue's Passage", "Reliquary Tower", "Scavenger Grounds"}:
@@ -533,9 +530,9 @@ class GameState:
 
     def _try_cast_rocks(self, pool: ManaPool):
         priority_order = [
-            "Chrome Mox",
             "Sol Ring",
             "Arcane Signet",
+            "Fellwar Stone",
         ]
 
         for rock_name in priority_order:
