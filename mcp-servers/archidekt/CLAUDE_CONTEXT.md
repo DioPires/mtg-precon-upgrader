@@ -50,7 +50,6 @@ Hardcoded in `tools/decks.py:KNOWN_ARCHIDEKT_IDS`:
 - eternal-agony → 20759936
 - dark-dominion → 20760109
 - mutant-multiplication → 20786495
-- planar-decree → 20949443
 - genesis-protocol → 20946250
 - eternal-harvest → 20946261
 

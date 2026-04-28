@@ -29,7 +29,6 @@ import mana_simulation_dark_dominion as sim_grixis
 import mana_simulation_eternal_harvest as sim_golgari
 import mana_simulation_mutant_multiplication as sim_wubrg
 import mana_simulation_genesis_protocol as sim_azorius
-import mana_simulation_planar_decree as sim_jeskai
 import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
@@ -151,14 +150,6 @@ KEY_COMBOS = {
             "pieces": ["Basking Broodscale", "Rosie Cotton of South Lane"],
             "requiresCommander": False,
             "description": "Counter-driven infinite token engine.",
-        }
-    ],
-    "planar-decree": [
-        {
-            "name": "Puzzle Lock",
-            "pieces": ["Teferi's Puzzle Box", "Narset, Parter of Veils"],
-            "requiresCommander": False,
-            "description": "Opponents spin hands into one-card turns.",
         }
     ],
     "titan-convergence": [
@@ -1932,19 +1923,6 @@ def export_azorius(metadata: dict) -> dict:
     return result
 
 
-def export_jeskai(metadata: dict) -> dict:
-    """Export Planar Decree (Jeskai Commodore Guff) simulation."""
-    return _export_colored(
-        sim_module=sim_jeskai,
-        deck_id="planar-decree",
-        deck_name="Planar Decree",
-        commander_name="Commodore Guff",
-        commander_cmc=4,
-        colors=["W", "U", "R"],
-        metadata=metadata,
-    )
-
-
 def export_mono_white(metadata: dict) -> dict:
     """Export The White Forge (mono-white Gandalf) simulation."""
     return _export_colored(
@@ -2016,7 +1994,6 @@ DECKS = [
     ("eternal-harvest", "Eternal Harvest", export_golgari),
     ("mutant-multiplication", "Mutant Multiplication", export_wubrg),
     ("genesis-protocol", "Genesis Protocol", export_azorius),
-    ("planar-decree", "Planar Decree", export_jeskai),
     ("the-white-forge", "The White Forge", export_mono_white),
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
     ("creeping-corruption", "Creeping Corruption", export_wubg_poison),
