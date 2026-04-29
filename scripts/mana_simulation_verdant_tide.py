@@ -151,11 +151,8 @@ class ManaPool:
 def compute_land_mana(name: str) -> tuple[int, int]:
     """Return (G, C) mana production for an untapped land."""
 
-    if name == "Forest":
+    if name in ("Forest", "Snow-Covered Forest"):
         return (1, 0)
-
-    if name == "Command Tower":
-        return (1, 0)  # Mono-green: produces G
 
     if name == "The Shire":
         return (1, 0)  # Legendary land, taps for G
@@ -261,9 +258,7 @@ class GameState:
         tapped = land_enters_tapped(name, self.battlefield_lands)
         base = 0 if tapped else 10
 
-        if name == "Forest":
-            base += 5
-        elif name == "Command Tower":
+        if name in ("Forest", "Snow-Covered Forest"):
             base += 5
         elif name == "The Shire":
             base += 4
@@ -278,7 +273,7 @@ class GameState:
 
     def _fetch_forest(self, enters_tapped: bool):
         """Fetch a Forest from library and put on battlefield."""
-        targets = [i for i, c in enumerate(self.library) if c == "Forest"]
+        targets = [i for i, c in enumerate(self.library) if c in ("Forest", "Snow-Covered Forest")]
         if targets:
             idx = targets[0]
             card = self.library.pop(idx)
