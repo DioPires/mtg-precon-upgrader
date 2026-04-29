@@ -622,9 +622,9 @@ def main():
 
     if args.json:
         import export_simulation_results as exporter
-        result = exporter.export_forge(metadata)
+        result = exporter.export_mono_white(metadata)
         if not exporter.validate_output(result, "the-white-forge"):
-            raise ValueError("export_forge produced invalid simulation output")
+            raise ValueError("export_mono_white produced invalid simulation output")
         JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         with open(JSON_OUTPUT, "w") as f:
             json.dump(result, f, indent=2)
