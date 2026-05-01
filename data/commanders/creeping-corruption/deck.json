@@ -69,11 +69,11 @@
         "Blighted Agent",
         "Phyrexian Crusader",
         "Plague Stinger",
-        "Glistener Elf",
         "Ichor Rats",
         "Skithiryx, the Blight Dragon",
         "Viral Drake",
-        "Hand of the Praetors"
+        "Hand of the Praetors",
+        "Phyrexian Swarmlord"
       ]
     },
     {
@@ -82,7 +82,7 @@
         "Skrelv, Defector Mite",
         "Venerated Rotpriest",
         "Bloated Contaminator",
-        "Bilious Skulldweller",
+        "Vishgraz, the Doomhive",
         "Blightbelly Rat",
         "Contaminant Grafter",
         "Necrogen Rotpriest"
@@ -111,7 +111,8 @@
         "Vorinclex, Monstrous Raider",
         "Prologue to Phyresis",
         "Phyresis Outbreak",
-        "Vraska's Fall"
+        "Vraska's Fall",
+        "Wurmquake"
       ]
     },
     {
@@ -153,9 +154,9 @@
         "Birds of Paradise",
         "Llanowar Elves",
         "Elves of Deep Shadow",
-        "Plague Myr",
         "Bloom Tender",
-        "Glistening Sphere"
+        "Glistening Sphere",
+        "Fabled Passage"
       ]
     },
     {
@@ -396,6 +397,69 @@
       ]
     },
     {
+      "title": "Swarmlord Token Engine",
+      "cards": [
+        "Phyrexian Swarmlord",
+        "Hand of the Praetors",
+        "Atraxa, Praetors' Voice"
+      ],
+      "description": "Phyrexian Swarmlord creates an infect Phyrexian Insect token at every upkeep for each poison counter opponents have. With opponents at 4-5 poison from early seeding, Swarmlord generates 4-5 tokens per turn. Hand of the Praetors anthems each token to a 2/2 infect. Atraxa's end-step proliferate compounds the poison count, snowballing the token output every cycle.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-86 board-approved swap synergy"
+        }
+      ]
+    },
+    {
+      "title": "Vishgraz Mite Production",
+      "cards": [
+        "Vishgraz, the Doomhive",
+        "Skullclamp",
+        "Hand of the Praetors"
+      ],
+      "description": "Vishgraz ETBs with three 1/1 toxic mite tokens — four bodies for one card. Skullclamp targets a mite for +1/+1 (becomes a 2/2 with 1 toughness, dies, draws 2). Hand of the Praetors anthems the mites to 2/2 infect, and Vishgraz itself scales +1/+1 per opponent poison counter, becoming an enormous menace threat in the late game.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-86 board-approved swap synergy"
+        }
+      ]
+    },
+    {
+      "title": "Wurmquake Corrupted Payoff",
+      "cards": [
+        "Wurmquake",
+        "Skrelv, Defector Mite",
+        "Triumph of the Hordes"
+      ],
+      "description": "Wurmquake's entire effect is gated on Corrupted (any opponent with 3+ poison) — turn-2 Skrelv plus Venerated Rotpriest or Ichor Rats reliably enables it by turn 3-4. Once active, 6 mana yields multiple 6/6 trample toxic-1 wurms, with flashback for a second wave. Triumph of the Hordes converts the resulting board into lethal infect damage.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-86 board-approved swap synergy"
+        }
+      ]
+    },
+    {
+      "title": "Fabled Passage Double Landfall",
+      "cards": [
+        "Fabled Passage",
+        "Evolution Sage"
+      ],
+      "description": "Sacrifice Fabled Passage for landfall #1 (Evolution Sage proliferates), search basic and put it onto the battlefield for landfall #2 (proliferate again). Mirrors the existing 5 typed fetches and turns Evolution Sage into a 6th double-proliferate trigger — also fixes any of the four colors via basic search.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-86 board-approved swap synergy"
+        }
+      ]
+    },
+    {
       "title": "Vorinclex Poison Doubler",
       "cards": [
         "Vorinclex, Monstrous Raider",
@@ -530,6 +594,39 @@
           "detail": "Identified during SOS/SOC set review as the only relevant new card for poison strategy"
         }
       ]
+    },
+    {
+      "name": "Phyrexian Swarmlord",
+      "reason": "{4}{G}{G} 4/4 with infect that creates a 1/1 infect Phyrexian Insect token at every upkeep for each poison counter your opponents have. Once any opponent is at 3-4 poison, the board floods with infect tokens that scale exponentially with proliferate. Hand of the Praetors anthem turns each token into a 2/2 infect.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-86 board-approved swap"
+        }
+      ]
+    },
+    {
+      "name": "Vishgraz, the Doomhive",
+      "reason": "{2}{W}{B}{G} 3/3 menace toxic 1 that ETBs with three 1/1 mites and gets +1/+1 for each poison counter opponents have. Four immediate bodies for Skullclamp draws, and a self-anthem that scales with the deck's natural game plan.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-86 board-approved swap"
+        }
+      ]
+    },
+    {
+      "name": "Wurmquake",
+      "reason": "{4}{G}{G} Corrupted sorcery: once any opponent has 3+ poison, create a 6/6 trample toxic-1 Phyrexian Wurm token (X = mana spent), plus an extra token for each corrupted opponent. Flashback {8}{G}{G} for a second wave. Pays off the deck's natural seed-poison-then-snowball plan with a giant trample threat.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-86 board-approved swap"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -543,10 +640,6 @@
     },
     {
       "name": "Plague Stinger",
-      "type": "Creature"
-    },
-    {
-      "name": "Glistener Elf",
       "type": "Creature"
     },
     {
@@ -578,7 +671,11 @@
       "type": "Creature"
     },
     {
-      "name": "Bilious Skulldweller",
+      "name": "Vishgraz, the Doomhive",
+      "type": "Creature"
+    },
+    {
+      "name": "Phyrexian Swarmlord",
       "type": "Creature"
     },
     {
@@ -631,10 +728,6 @@
     },
     {
       "name": "Elves of Deep Shadow",
-      "type": "Creature"
-    },
-    {
-      "name": "Plague Myr",
       "type": "Creature"
     },
     {
@@ -703,6 +796,10 @@
     },
     {
       "name": "Phyresis Outbreak",
+      "type": "Sorcery"
+    },
+    {
+      "name": "Wurmquake",
       "type": "Sorcery"
     },
     {
@@ -908,7 +1005,7 @@
     {
       "name": "Forest",
       "type": "Land",
-      "quantity": 3
+      "quantity": 2
     },
     {
       "name": "Swamp",
@@ -921,22 +1018,13 @@
     {
       "name": "Island",
       "type": "Land"
+    },
+    {
+      "name": "Fabled Passage",
+      "type": "Land"
     }
   ],
   "tokens": [
-    {
-      "name": "Phyrexian Mite",
-      "type_line": "Token Artifact Creature — Phyrexian Mite",
-      "oracle_text": "Toxic 1 (Players dealt combat damage by this creature also get a poison counter.)\nThis creature can't block.",
-      "power": "1",
-      "toughness": "1",
-      "colors": [],
-      "scryfall_id": "96ec91a9-659a-455f-98e0-cd30b6c6c2a4",
-      "image_uri": "https://cards.scryfall.io/normal/front/9/6/96ec91a9-659a-455f-98e0-cd30b6c6c2a4.jpg?1675957569",
-      "produced_by": [
-        "Skrelv's Hive"
-      ]
-    },
     {
       "name": "Beast",
       "type_line": "Token Creature — Beast",
@@ -950,6 +1038,34 @@
       "image_uri": "https://cards.scryfall.io/normal/front/5/8/5871be0a-0fd6-441d-8f9e-76c66b5bd8bc.jpg?1775827152",
       "produced_by": [
         "Beast Within"
+      ]
+    },
+    {
+      "name": "Bird",
+      "type_line": "Token Creature — Bird",
+      "oracle_text": "Flying",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "U"
+      ],
+      "scryfall_id": "2a3d4bf9-2107-4686-8df5-cd7c934d0691",
+      "image_uri": "https://cards.scryfall.io/normal/front/2/a/2a3d4bf9-2107-4686-8df5-cd7c934d0691.jpg?1752946401",
+      "produced_by": [
+        "Swan Song"
+      ]
+    },
+    {
+      "name": "Phyrexian Mite",
+      "type_line": "Token Artifact Creature — Phyrexian Mite",
+      "oracle_text": "Toxic 1 (Players dealt combat damage by this creature also get a poison counter.)\nThis creature can't block.",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "scryfall_id": "a0b4b9cc-b0a4-4383-881b-e843e5d8a8c1",
+      "image_uri": "https://cards.scryfall.io/normal/front/a/0/a0b4b9cc-b0a4-4383-881b-e843e5d8a8c1.jpg?1675957569",
+      "produced_by": [
+        "Skrelv's Hive"
       ]
     }
   ]

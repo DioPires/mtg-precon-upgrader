@@ -62,7 +62,6 @@ DORK_DEFS = {
     "Llanowar Elves":       {"cast_pips": {"generic": 0, "G": 1}, "colors": frozenset({"G"})},
     "Elves of Deep Shadow": {"cast_pips": {"generic": 0, "G": 1}, "colors": frozenset({"B"})},
     "Bloom Tender":         {"cast_pips": {"generic": 1, "G": 1}, "colors": frozenset({"W", "U", "B", "G"})},
-    "Plague Myr":           {"cast_pips": {"generic": 2}, "colors": frozenset({"C"})},
 }
 
 # --- Land subtype definitions ---
@@ -82,6 +81,7 @@ TYPED_FETCH_LANDS = {
     "Verdant Catacombs": {"targets": SWAMP_TYPED | FOREST_TYPED},
     "Windswept Heath":   {"targets": FOREST_TYPED | PLAINS_TYPED},
     "Marsh Flats":       {"targets": SWAMP_TYPED | PLAINS_TYPED},
+    "Fabled Passage":    {"targets": BASIC_LANDS, "fetched_tapped_below_lands": 4},
 }
 FETCH_LANDS = set(TYPED_FETCH_LANDS.keys())
 
@@ -374,11 +374,15 @@ class GameState:
             self.hand.remove(land_name)
 
             if land_name in TYPED_FETCH_LANDS:
-                targets = TYPED_FETCH_LANDS[land_name]["targets"]
+                fetch_def = TYPED_FETCH_LANDS[land_name]
+                targets = fetch_def["targets"]
                 target = self._find_best_fetchable(targets)
                 if target:
                     self.library.remove(target)
                     self.battlefield_lands.append(target)
+                    threshold = fetch_def.get("fetched_tapped_below_lands")
+                    if threshold is not None and len(self.battlefield_lands) < threshold:
+                        self.tapped_lands.add(len(self.battlefield_lands) - 1)
             else:
                 tapped = land_enters_tapped(land_name, self.battlefield_lands, self.hand)
                 self.battlefield_lands.append(land_name)
@@ -398,7 +402,6 @@ class GameState:
             ("dork", "Elves of Deep Shadow"),
             ("dork", "Noble Hierarch"),
             ("dork", "Birds of Paradise"),
-            ("dork", "Plague Myr"),
             ("dork", "Bloom Tender"),
             ("rock", "Glistening Sphere"),
         ]
