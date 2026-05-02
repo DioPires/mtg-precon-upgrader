@@ -60,7 +60,7 @@ If we want to ship something today and iterate: **start with A (playbook) + B (m
 ## Open questions for the board
 
 1. **Scope:** Pure process (A), pure infra (B), or hybrid (C)? *— pending*
-2. **Cadence:** Daily Scryfall bulk refresh — manual, on-demand, or scheduled? *— pending*
+2. **Cadence:** Daily Scryfall bulk refresh — manual, on-demand, or scheduled? *— resolved: **on-demand trigger, fully automated execution**.* Single entrypoint `scripts/refresh_card_pool.py [--deck DECK_ID | --all]`: checks Scryfall bulk-data API → downloads `oracle-cards` if stale → regenerates `candidates.json` for targeted deck(s) → prints per-deck summary. Idempotent: no-op if mirror fresh and decks unchanged. `generated_at` field exposes staleness. No cron — Scryfall changes most days don't impact our 9 decks; on-demand naturally clusters around set releases, new deck builds, and review sessions.
 3. **Storage:** Commit `candidates.json` per deck, or gitignore? *— recommended: **commit, trimmed payload, top-200**.* Reasoning: aligns with existing `recommendations.json` / `simulation.json` precedent; auditability is the whole point of the artifact (gitignore erases the "did we consider it?" trail); reviewer reproducibility without forcing mirror setup; ≈900 KB total across all current decks at top-200 trimmed; diffs against new sets become a reviewable signal. Mirror itself stays gitignored (~150 MB).
 4. **Threshold:** What size candidate pool is useful — top 50 per deck? Top 200? All matches? *— pending; recommendation defaults to top-200 alongside Q3 above.*
 5. **Trigger:** Should the candidate pool be regenerated on every deck change, or only on demand? *— pending*
