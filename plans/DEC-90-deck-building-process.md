@@ -1,6 +1,6 @@
 # DEC-90 — Deck Building Process Overview
 
-**Status:** Proposal — awaiting board approval before any implementation.
+**Status:** Plan revision **r1** — board has selected direction; **awaiting explicit final approval before implementation begins.**
 
 ## The Problem
 
@@ -17,53 +17,73 @@ Discovery is *recall-led* (we query for cards we think of) instead of *retrieval
 
 Agreed standard from `agents-files/global/AGENTS.md`: *"Retrieval over recall — verify domain facts against specs, docs, or APIs before relying on training knowledge."* We're violating this for card discovery.
 
-## Options
+## Resolved direction (board-confirmed via interaction `de4c1ade`, 2026-05-02)
 
-### A — Process only (lightweight)
-**What:** Author an archetype → Scryfall query playbook (`docs/discovery-playbook.md`). Mandate running it before any deck build/review. Each archetype lists required Scryfall queries (e.g. graveyard reanimator: `o:"return target creature card from your graveyard to the battlefield" f:commander id<={colors} cmc<=6`).
+| Question | Answer |
+|---|---|
+| Scope | **C — Hybrid: mirror + playbook + candidate-pool generator** |
+| Storage of `candidates.json` | **Commit, trimmed payload, top-200** |
+| Refresh cadence | **On-demand trigger, fully automated execution** |
 
-**Pros:** Zero infrastructure, immediate, no maintenance.
-**Cons:** Per-query API round trips. Still depends on agent discipline. Can't easily multi-criterion score the universe.
-**Effort:** ~1 day of playbook authoring.
+(Other options A / B / D evaluated in [revision r0 history](#revision-history) below.)
 
-### B — Local Scryfall mirror (infrastructure only)
-**What:** Daily fetch of Scryfall `oracle-cards` bulk (~150 MB, ~33k cards). Store as `priv_data/scryfall-oracle.json` (gitignored) or SQLite. Refresh script + jq/SQL helpers.
+## Implementation plan (revision r1)
 
-**Pros:** Full search space queryable instantly. Complex multi-criteria filters. Owned-cards joins are trivial.
-**Cons:** Storage + freshness discipline. By itself doesn't change *behaviour* — still needs a process layer.
-**Effort:** ~0.5 day for fetch script; ~1 day for query helpers.
+### Phase 1 — Local Scryfall mirror
 
-### C — Hybrid: mirror + playbook + candidate-pool generator (recommended)
-**What:**
-1. Local Scryfall mirror (B).
-2. Archetype playbook with named queries (A).
-3. New script `scripts/generate_candidate_pool.py` that, for each deck, emits `data/commanders/{id}/candidates.json` — every commander-legal card matching the deck's color identity + archetype tags + CMC envelope, ranked by a coarse fitness score (oracle-text matches against archetype keywords + owned flag + game-changer flag).
-4. Deck-review checklist gains a "diff decklist vs candidates.json" step. Anything in the top N of candidates not in the decklist must be explicitly considered (and rejected with a reason if cut).
+- Add `scripts/refresh_scryfall_mirror.py`:
+  - Hits `https://api.scryfall.com/bulk-data` to discover the `oracle_cards` URL + `updated_at`.
+  - Downloads to `priv_data/scryfall-oracle.json` (gitignored) only if remote is newer than local. Stores `priv_data/scryfall-oracle.meta.json` with `updated_at` for staleness checks.
+  - Filters to commander-legal at write time (`legalities.commander == "legal"`) to keep the local file lean.
+- Update `.gitignore` to exclude `priv_data/scryfall-oracle.json` and `priv_data/scryfall-oracle.meta.json`.
+- No new runtime dependencies — `urllib` + `json` from stdlib.
 
-**Pros:** Forces breadth at review time. Persists per-deck. Bridges into existing `recommendations.json` pipeline. Owned-cards integration native.
-**Cons:** Most build effort. Candidate files add ~50–500 KB per deck (gitignored or committed — open question).
-**Effort:** ~1 day mirror + ~1 day playbook + ~1.5 days candidate generator + integration with review workflow.
+### Phase 2 — Archetype playbook
 
-### D — Per-deck candidate snapshots only (no playbook, no mirror)
-**What:** Use existing Scryfall MCP (`scryfall_search`) at deck-review time to dynamically build candidate pools. No persisted local mirror.
+- Author `docs/discovery-playbook.md`:
+  - Per archetype (graveyard reanimator, tokens/go-wide, voltron, infect/poison, eldrazi/ramp, +1/+1 counters, lands matter, spellslinger, etc.), document the canonical Scryfall queries that surface candidates.
+  - Each entry: archetype name → bullet list of `oracle_text` patterns + `type_line` constraints + CMC envelopes.
+  - Tag each existing deck with one or more archetype labels in `data/commanders/{id}/deck.json` under a new optional `archetypes` field. (Backwards-compatible additive; absent ⇒ falls back to `commander_color_identity` + manual review.)
+- Cross-link from `AGENTS.md` so the playbook is referenced from the standing process.
 
-**Pros:** No mirror maintenance. Existing tooling.
-**Cons:** API rate limits during enumeration. Slower iteration. Discovery still depends on the reviewer choosing the right queries — the recall-bias problem is unsolved.
-**Effort:** ~1 day for review helper script.
+### Phase 3 — Candidate pool generator
 
-## Recommendation
+- Add `scripts/generate_candidate_pool.py`:
+  - Reads `data/commanders/{id}/deck.json` → extracts color identity, archetype tags, current CMC distribution.
+  - Loads local mirror; filters cards by color identity ⊆ deck identity, commander-legal, archetype query matches.
+  - Scores each candidate (0–100):
+    - Archetype keyword density in oracle text (0–40)
+    - CMC fit vs deck curve (0–20)
+    - Owned flag from `priv_data/owned_formatted.csv` (0–15)
+    - Game Changer status weighted by deck bracket (0–15)
+    - Already-in-decklist demotion (caps at 5 so present cards still rank but yield to alternatives)
+  - Trims to **top-200** with payload `{name, cmc, mana_cost, type_line, oracle_text, score, score_breakdown, owned, game_changer}`.
+  - Writes `data/commanders/{id}/candidates.json` with `generated_at`, `scryfall_mirror_updated_at`, `methodology_version` headers.
 
-**Option C.** The mirror is the only thing that makes "score every commander-legal card against this deck" tractable, and it pays back every time we review a deck. The playbook keeps the *process* honest — without it, infra alone doesn't change behaviour. The candidate pool file is the durable artifact that makes overlooks visible.
+### Phase 4 — One-shot orchestrator
 
-If we want to ship something today and iterate: **start with A (playbook) + B (mirror)**, then layer C's candidate generator next heartbeat once we see what queries actually find.
+- Add `scripts/refresh_card_pool.py [--deck DECK_ID | --all]`:
+  - Calls `refresh_scryfall_mirror.py` (no-op if fresh).
+  - Calls `generate_candidate_pool.py` per target deck.
+  - Prints summary line per deck: `dark-dominion: 200 candidates, 17 new since last run, top score 87`.
+  - Idempotent — re-running with no upstream changes is a no-op.
 
-## Open questions for the board
+### Phase 5 — Deck-review workflow integration
 
-1. **Scope:** Pure process (A), pure infra (B), or hybrid (C)? *— pending*
-2. **Cadence:** Daily Scryfall bulk refresh — manual, on-demand, or scheduled? *— resolved: **on-demand trigger, fully automated execution**.* Single entrypoint `scripts/refresh_card_pool.py [--deck DECK_ID | --all]`: checks Scryfall bulk-data API → downloads `oracle-cards` if stale → regenerates `candidates.json` for targeted deck(s) → prints per-deck summary. Idempotent: no-op if mirror fresh and decks unchanged. `generated_at` field exposes staleness. No cron — Scryfall changes most days don't impact our 9 decks; on-demand naturally clusters around set releases, new deck builds, and review sessions.
-3. **Storage:** Commit `candidates.json` per deck, or gitignore? *— recommended: **commit, trimmed payload, top-200**.* Reasoning: aligns with existing `recommendations.json` / `simulation.json` precedent; auditability is the whole point of the artifact (gitignore erases the "did we consider it?" trail); reviewer reproducibility without forcing mirror setup; ≈900 KB total across all current decks at top-200 trimmed; diffs against new sets become a reviewable signal. Mirror itself stays gitignored (~150 MB).
-4. **Threshold:** What size candidate pool is useful — top 50 per deck? Top 200? All matches? *— pending; recommendation defaults to top-200 alongside Q3 above.*
-5. **Trigger:** Should the candidate pool be regenerated on every deck change, or only on demand? *— pending*
+- Update `AGENTS.md` (project) with a "Deck Review Checklist" section:
+  - Run `scripts/refresh_card_pool.py --deck {id}` before review.
+  - Diff `decklist` vs top-N of `candidates.json`.
+  - Any top-N candidate not in the decklist must be explicitly considered; cuts require a reason captured in deck `sources` or review notes.
+
+### Phase 6 — Smoke validation
+
+- Pick one existing deck (e.g. `dark-dominion`) as the canary.
+- Generate its `candidates.json`. Spot-check the top 20 vs the existing decklist; confirm signal is meaningful.
+- Adjust scoring weights if the canary surfaces obvious noise.
+
+## Effort estimate
+
+~3.5 dev-days, broken down: P1 0.5 / P2 1.0 / P3 1.5 / P4 0.25 / P5 0.25 / P6 (interleaved).
 
 ## Out of scope (for this issue)
 
@@ -71,6 +91,24 @@ If we want to ship something today and iterate: **start with A (playbook) + B (m
 - UI changes to surface candidates in the Grimoire app.
 - Changing the existing `recommendations.json` scoring methodology.
 
-## Next action
+## Risks & mitigations
 
-Board chooses A / B / C / D (or another direction). Until then, no code changes.
+| Risk | Mitigation |
+|---|---|
+| Scoring tuned to current heuristics misses subtle archetypes | P6 canary; iterate on weights post-canary review |
+| Mirror file becomes stale silently | `generated_at` + `scryfall_mirror_updated_at` headers in every output; orchestrator surfaces age |
+| Repo bloat from many decks | Top-200 cap + trimmed payload; revisit if total exceeds 5 MB |
+| Wizards/Scryfall license concerns | Trimmed payload + non-commercial repo; mirrors existing precedent in `card-metadata.json` |
+
+## Revision history
+
+- **r0 (2026-05-02 18:16 UTC):** Initial proposal with options A / B / C / D and 5 open questions. Comment `f51d4561`.
+- **r0a (2026-05-02 19:03 UTC):** Q2 storage recommendation (commit, top-200) added. Comment `c503afd9`.
+- **r0b (2026-05-02 19:05 UTC):** Q3 cadence resolved (on-demand + automated). Comment `c73f5a30`.
+- **r1 (2026-05-02 19:06 UTC):** Board confirmed C / commit / on-demand via interaction `de4c1ade`. Plan finalized; awaiting explicit go.
+
+## Approval gate
+
+The board's issue description states: *"don't do anything without my approval ... only when ... I give my explicit approval, then we can proceed with changes."*
+
+Per Paperclip protocol I'm raising a `request_confirmation` interaction targeting plan revision **r1**. Implementation does not begin until that is accepted.
