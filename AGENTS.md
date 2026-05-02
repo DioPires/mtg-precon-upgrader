@@ -99,18 +99,30 @@ Every card add, synergy, and deck must have a `sources` array for traceability.
 
 When building or updating deck guides, use all available sources and cross-reference findings:
 
-1. **YouTube** — Search for commander deck tech videos, fetch transcripts, extract card recommendations
-2. **EDHREC** — Check commander pages for top cards, new additions from recent sets
-3. **Commander Spellbook** — Use `commanderspellbook_find_combos` MCP tool with the full decklist.
+1. **Candidate Pool (mandatory first step — DEC-90)** — Run `python scripts/refresh_card_pool.py --deck {id}` before any review. This refreshes the local Scryfall mirror and regenerates `data/commanders/{id}/candidates.json`: the top-200 commander-legal cards scored against the deck's archetype tags + color identity + curve + ownership. Diff the `decklist` against the top of `candidates.json`. Any high-scoring candidate that is *not* in the decklist must be explicitly considered. Cuts require a reason captured in deck `sources` or review notes. See [`docs/discovery-playbook.md`](docs/discovery-playbook.md) for the archetype tagging contract.
+2. **YouTube** — Search for commander deck tech videos, fetch transcripts, extract card recommendations
+3. **EDHREC** — Check commander pages for top cards, new additions from recent sets
+4. **Commander Spellbook** — Use `commanderspellbook_find_combos` MCP tool with the full decklist.
    - Record `included` combos as synergies with `"type": "commanderspellbook"` source
    - **Review `almost_included` combos** (1-2 cards away) — evaluate whether adding the missing card(s) makes strategic sense given deck strategy, budget, and bracket target
    - If a near-miss card enables a strong combo without hurting consistency, recommend it as an add with `commanderspellbook` source and note it was discovered via near-miss analysis
    - Combo URLs: `https://commanderspellbook.com/combo/{id}/`
-4. **Moxfield** — Search popular decklists for the commander
-5. **Scryfall** — Use `scryfall_card_by_name`, `scryfall_search`, and `scryfall_collection` MCP tools to verify card names, check oracle text, and look up card data
-6. **Web Search** — Articles, Reddit discussions, deck tech write-ups
+5. **Moxfield** — Search popular decklists for the commander
+6. **Scryfall** — Use `scryfall_card_by_name`, `scryfall_search`, and `scryfall_collection` MCP tools to verify card names, check oracle text, and look up card data
+7. **Web Search** — Articles, Reddit discussions, deck tech write-ups
 
 Attribute every recommendation to its source(s). Multiple sources for the same card strengthens the recommendation.
+
+### Deck Review Checklist (DEC-90)
+
+Before recommending changes to any deck:
+
+1. Confirm `archetypes` is set on `data/commanders/{id}/deck.json`. If missing, tag with one or more IDs from [`data/discovery-playbook.json`](data/discovery-playbook.json).
+2. Run `python scripts/refresh_card_pool.py --deck {id}`.
+3. Open `data/commanders/{id}/candidates.json`. Scan the top 50 — each entry not already in the decklist is a potential overlook.
+4. For each top candidate not in the deck, decide: include, defer (with note), or reject (with reason).
+5. Verify any candidate you plan to add via `scryfall_card_by_name` MCP — never trust the playbook's pattern match without confirming the card text.
+6. Update `decklist`, `highlights`, `synergies` as needed. Always attribute via `sources`.
 
 ## Common Tasks
 

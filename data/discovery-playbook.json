@@ -1,0 +1,253 @@
+{
+  "version": 1,
+  "comment": "Source of truth for archetype-driven candidate discovery. Consumed by scripts/generate_candidate_pool.py. See docs/discovery-playbook.md for human-readable context. Patterns are case-insensitive Python regex matched against oracle_text.",
+  "archetypes": {
+    "graveyard-reanimator": {
+      "name": "Graveyard Reanimator",
+      "summary": "Mill or sacrifice creatures into the yard, then return them to play or hand for value.",
+      "oracle_patterns": [
+        "return target [^.]*creature card[^.]* from your graveyard to the battlefield",
+        "return [^.]*creature card[^.]* from your graveyard to your hand",
+        "put [^.]*creature card[^.]* from (?:your |a )?graveyard onto the battlefield",
+        "whenever [^.]*creature[^.]*dies",
+        "mill (?:\\d+|target|cards equal)",
+        "exile [^.]*card[^.]* from (?:your |a )?graveyard",
+        "discard [^.]*card",
+        "encore",
+        "unearth",
+        "embalm",
+        "delve",
+        "escape",
+        "disturb"
+      ],
+      "type_constraints": [],
+      "cmc_max": 7,
+      "staples": ["Reanimate", "Animate Dead", "Victimize", "Living Death", "Sevinne's Reclamation", "Eternal Witness", "Meren of Clan Nel Toth", "Karador, Ghost Chieftain"],
+      "anti_patterns": ["exile your graveyard", "graveyard hate"]
+    },
+    "aristocrats": {
+      "name": "Aristocrats / Sacrifice",
+      "summary": "Free or cheap sacrifice outlets plus death-trigger payoffs and recursion.",
+      "oracle_patterns": [
+        "sacrifice (?:a |another |target )?creature",
+        "whenever [^.]*creature[^.]*dies",
+        "drains? \\d+ life",
+        "each opponent loses \\d+ life",
+        "you (?:gain|lose) \\d+ life",
+        "create a \\d+/\\d+ [^.]*token",
+        "blood token",
+        "food token"
+      ],
+      "type_constraints": [],
+      "cmc_max": 5,
+      "staples": ["Viscera Seer", "Carrion Feeder", "Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance"],
+      "anti_patterns": []
+    },
+    "tokens-go-wide": {
+      "name": "Tokens / Go Wide",
+      "summary": "Generate many small creature tokens; pump and overrun the board with anthems and doublers.",
+      "oracle_patterns": [
+        "create (?:a |\\d+|x|that many)[^.]*token",
+        "creature tokens? you control",
+        "if (?:a|one or more) tokens? would be created",
+        "double the number of",
+        "populate",
+        "convoke",
+        "amass"
+      ],
+      "type_constraints": [],
+      "cmc_max": 6,
+      "staples": ["Anointed Procession", "Parallel Lives", "Doubling Season", "Divine Visitation", "Cathars' Crusade"],
+      "anti_patterns": ["destroy all creatures"]
+    },
+    "plus-one-counters": {
+      "name": "+1/+1 Counters",
+      "summary": "Place, double, and pay off +1/+1 counters via proliferate, doublers, and counter-matters cards.",
+      "oracle_patterns": [
+        "\\+1/\\+1 counters?",
+        "proliferate",
+        "double the number of \\+1/\\+1 counters",
+        "if .* would (?:put|place) (?:one or more|a) \\+1/\\+1 counter",
+        "modular",
+        "outlast",
+        "adapt",
+        "evolve",
+        "bolster"
+      ],
+      "type_constraints": [],
+      "cmc_max": 6,
+      "staples": ["Hardened Scales", "Doubling Season", "Branching Evolution", "Inspiring Call", "Ozolith, the Shattered Spire"],
+      "anti_patterns": []
+    },
+    "infect-poison": {
+      "name": "Infect / Toxic / Corrupted",
+      "summary": "Win via poison counters using infect, toxic, proliferate, and corrupted payoffs.",
+      "oracle_patterns": [
+        "infect",
+        "toxic \\d+",
+        "poison counter",
+        "corrupted",
+        "proliferate",
+        "deals? combat damage to a player"
+      ],
+      "type_constraints": [],
+      "cmc_max": 6,
+      "staples": ["Glistener Elf", "Phyrexian Crusader", "Skithiryx, the Blight Dragon", "Tainted Strike", "Inkmoth Nexus", "Grafted Exoskeleton"],
+      "anti_patterns": ["protection from"]
+    },
+    "voltron": {
+      "name": "Voltron",
+      "summary": "Stack auras/equipment on a single creature with evasion + protection to commander-damage out.",
+      "oracle_patterns": [
+        "equip\\b",
+        "enchant creature",
+        "creature you control gets",
+        "(?:trample|flying|menace|unblockable|hexproof|shroud|indestructible|double strike|first strike)",
+        "can't be (?:blocked|the target of|countered)",
+        "protection from",
+        "attached creature"
+      ],
+      "type_constraints": ["Equipment", "Aura"],
+      "cmc_max": 5,
+      "staples": ["Swiftfoot Boots", "Lightning Greaves", "Sword of Feast and Famine", "Shadowspear", "Shield of the Oversoul"],
+      "anti_patterns": ["destroy target creature"]
+    },
+    "spellslinger": {
+      "name": "Spellslinger",
+      "summary": "Cast lots of instants/sorceries with cost reduction, copy effects, and prowess/magecraft payoffs.",
+      "oracle_patterns": [
+        "whenever you cast (?:an|a noncreature|your first|an instant or sorcery)",
+        "copy target (?:instant|sorcery|spell)",
+        "prowess",
+        "magecraft",
+        "storm",
+        "instant or sorcery spells? you cast cost",
+        "draw a card.*?(?:instant|sorcery)"
+      ],
+      "type_constraints": [],
+      "cmc_max": 5,
+      "staples": ["Mizzix's Mastery", "Thousand-Year Storm", "Guttersnipe", "Young Pyromancer", "Birgi, God of Storytelling"],
+      "anti_patterns": []
+    },
+    "group-slug": {
+      "name": "Group Slug / Punisher",
+      "summary": "Deal incremental damage to all opponents on triggers; punish actions like spellcasting or drawing.",
+      "oracle_patterns": [
+        "deals? \\d+ damage to (?:each opponent|each player|that player)",
+        "whenever (?:a player|an opponent) (?:casts|draws|searches)",
+        "each opponent loses \\d+ life",
+        "players? can't gain life",
+        "if a player would gain life",
+        "lifelink"
+      ],
+      "type_constraints": [],
+      "cmc_max": 4,
+      "staples": ["Eidolon of the Great Revel", "Pyrostatic Pillar", "Harsh Mentor", "Manabarbs", "Sulfuric Vortex"],
+      "anti_patterns": ["you gain", "you may gain"]
+    },
+    "stax-control": {
+      "name": "Stax / Hatebears / Control",
+      "summary": "Asymmetric resource denial — taxes, restrictions, and disruption that hurt opponents more than you.",
+      "oracle_patterns": [
+        "spells? cost \\{[1-9]\\} more to cast",
+        "can't (?:cast|attack|untap|search)",
+        "skip (?:your|each) (?:untap|draw|combat) step",
+        "each player[^.]*can(?:not|'t)",
+        "doesn't untap",
+        "no more than one (?:land|creature|spell)",
+        "counter target spell"
+      ],
+      "type_constraints": [],
+      "cmc_max": 5,
+      "staples": ["Winter Orb", "Stasis", "Tangle Wire", "Trinisphere", "Cursed Totem", "Drannith Magistrate", "Thalia, Guardian of Thraben"],
+      "anti_patterns": []
+    },
+    "artifacts-matter": {
+      "name": "Artifacts Matter",
+      "summary": "Artifact density with cost reduction, enters/leaves triggers, and flicker/recursion engines.",
+      "oracle_patterns": [
+        "artifact spells? you cast cost",
+        "whenever an artifact enters",
+        "whenever (?:you cast|an opponent casts) an artifact",
+        "metalcraft",
+        "improvise",
+        "affinity for artifacts",
+        "blink|exile [^.]*then return.*?to the battlefield",
+        "artifact creatures? you control",
+        "treasure token"
+      ],
+      "type_constraints": [],
+      "cmc_max": 6,
+      "staples": ["Sai, Master Thopterist", "Urza, Lord High Artificer", "Saheeli, the Gifted", "Reckoner Bankbuster", "Mox Opal", "Foundry Inspector"],
+      "anti_patterns": []
+    },
+    "ramp-big-mana": {
+      "name": "Ramp / Big Mana",
+      "summary": "Accelerate mana to cast oversized threats earlier than the curve allows.",
+      "oracle_patterns": [
+        "search your library for (?:a|up to)[^.]*land card",
+        "add \\{[wubrgcx0-9]\\}",
+        "cost \\{[1-9]\\} less to cast",
+        "(?:double|treble|triple) (?:the )?mana",
+        "cascade",
+        "untap target [^.]*(?:creature|land|artifact)",
+        "(?:eldrazi|colossus|titan)"
+      ],
+      "type_constraints": [],
+      "cmc_max": 4,
+      "staples": ["Sol Ring", "Rampant Growth", "Cultivate", "Three Visits", "Nature's Lore", "Carpet of Flowers", "Mana Crypt"],
+      "anti_patterns": []
+    },
+    "elf-tribal": {
+      "name": "Elf Tribal / Creature Tribal",
+      "summary": "Lean on a creature type for anthems, mana production, and tribal payoffs.",
+      "oracle_patterns": [
+        "elves you control",
+        "elf creatures? you control",
+        "another elf",
+        "creatures of the chosen type",
+        "lord of",
+        "\\+1/\\+1 to creatures? you control",
+        "(?:elf|elves)"
+      ],
+      "type_constraints": ["Creature — Elf"],
+      "cmc_max": 5,
+      "staples": ["Llanowar Elves", "Elvish Mystic", "Heritage Druid", "Priest of Titania", "Elvish Archdruid", "Imperious Perfect", "Marwyn, the Nurturer"],
+      "anti_patterns": []
+    },
+    "lands-matter": {
+      "name": "Lands Matter / Landfall",
+      "summary": "Trigger off lands entering or being in your graveyard; recur lands or play extra lands per turn.",
+      "oracle_patterns": [
+        "landfall",
+        "whenever a land enters[^.]*under your control",
+        "play an additional land",
+        "return target land card from your graveyard",
+        "search your library for (?:a|any number of)[^.]*land",
+        "(?:you may )?play a land from your graveyard",
+        "lands? you control"
+      ],
+      "type_constraints": [],
+      "cmc_max": 5,
+      "staples": ["Crucible of Worlds", "Ramunap Excavator", "Lord Windgrace", "Roiling Regrowth", "Scapeshift", "Wayward Swordtooth", "Azusa, Lost but Seeking"],
+      "anti_patterns": []
+    },
+    "etb-flicker": {
+      "name": "ETB Value / Flicker",
+      "summary": "Stack enters-the-battlefield triggers and re-fire them via flicker/blink/bounce.",
+      "oracle_patterns": [
+        "when [^.]*enters",
+        "whenever [^.]*enters the battlefield under your control",
+        "exile [^.]*then return.*?to the battlefield",
+        "blink",
+        "(?:return|put) [^.]*onto the battlefield",
+        "flash",
+        "phasing"
+      ],
+      "type_constraints": [],
+      "cmc_max": 5,
+      "staples": ["Eldrazi Displacer", "Conjurer's Closet", "Soulherder", "Cloudshift", "Ephemerate", "Roon of the Hidden Realm"],
+      "anti_patterns": []
+    }
+  }
+}
