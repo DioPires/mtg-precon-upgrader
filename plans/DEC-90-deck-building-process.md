@@ -75,15 +75,23 @@ Agreed standard from `agents-files/global/AGENTS.md`: *"Retrieval over recall �
   - Diff `decklist` vs top-N of `candidates.json`.
   - Any top-N candidate not in the decklist must be explicitly considered; cuts require a reason captured in deck `sources` or review notes.
 
-### Phase 6 — Smoke validation
+### Phase 6 — Deck-by-deck adoption (board-requested 2026-05-02)
 
-- Pick one existing deck (e.g. `dark-dominion`) as the canary.
-- Generate its `candidates.json`. Spot-check the top 20 vs the existing decklist; confirm signal is meaningful.
-- Adjust scoring weights if the canary surfaces obvious noise.
+Infrastructure (P1–P5) is landed. P6 tracks **operational adoption** — applying the candidate-pool review to every deck so the new workflow becomes the default, not just available.
+
+- Per-deck adoption pass (one child issue per deck under P6 tracker):
+  1. Confirm `archetypes` tag is correct on `data/commanders/{id}/deck.json` (already present on all 9 decks; re-check fit).
+  2. Run `python scripts/refresh_card_pool.py --deck {id}`.
+  3. Walk the top 50 of `candidates.json`; for each card not in the decklist, decide **include / defer / reject** with a one-line reason.
+  4. Verify any add via `scryfall_card_by_name` MCP before recommending.
+  5. Land swaps as separate commits with `sources` attribution; close the per-deck adoption issue with a summary of include/defer/reject counts.
+- P6 tracker rolls up status across all 9 decks: `dark-dominion`, `eternal-agony`, `eternal-harvest`, `genesis-protocol`, `mutant-multiplication`, `the-white-forge`, `titan-convergence`, `verdant-tide`, `creeping-corruption`.
+- Smoke validation (the original Phase 6 scope) was absorbed into P3-P5 via the `dark-dominion` canary captured in run `d08b39d8` / status comment `f059bbfc`. No standalone smoke phase remains.
 
 ## Effort estimate
 
-~3.5 dev-days, broken down: P1 0.5 / P2 1.0 / P3 1.5 / P4 0.25 / P5 0.25 / P6 (interleaved).
+~3.5 dev-days infra (P1 0.5 / P2 1.0 / P3 1.5 / P4 0.25 / P5 0.25, all landed in `fd03a81`).
+P6 adoption: ~0.5–1.0 dev-day per deck × 9 decks, paced by board priority — not a single sprint.
 
 ## Out of scope (for this issue)
 
@@ -95,7 +103,7 @@ Agreed standard from `agents-files/global/AGENTS.md`: *"Retrieval over recall �
 
 | Risk | Mitigation |
 |---|---|
-| Scoring tuned to current heuristics misses subtle archetypes | P6 canary; iterate on weights post-canary review |
+| Scoring tuned to current heuristics misses subtle archetypes | P6 per-deck adoption surfaces noise across archetypes; tune weights once we have signal from ≥3 decks |
 | Mirror file becomes stale silently | `generated_at` + `scryfall_mirror_updated_at` headers in every output; orchestrator surfaces age |
 | Repo bloat from many decks | Top-200 cap + trimmed payload; revisit if total exceeds 5 MB |
 | Wizards/Scryfall license concerns | Trimmed payload + non-commercial repo; mirrors existing precedent in `card-metadata.json` |
@@ -106,6 +114,7 @@ Agreed standard from `agents-files/global/AGENTS.md`: *"Retrieval over recall �
 - **r0a (2026-05-02 19:03 UTC):** Q2 storage recommendation (commit, top-200) added. Comment `c503afd9`.
 - **r0b (2026-05-02 19:05 UTC):** Q3 cadence resolved (on-demand + automated). Comment `c73f5a30`.
 - **r1 (2026-05-02 19:06 UTC):** Board confirmed C / commit / on-demand via interaction `de4c1ade`. Plan finalized; awaiting explicit go.
+- **r2 (2026-05-02 23:30 UTC):** Board requested formal P6 tracking deck-by-deck adoption (comment `f30c6b9d`). Replaced original P6 (smoke validation, already absorbed into canary) with per-deck adoption tracker.
 
 ## Approval gate
 
