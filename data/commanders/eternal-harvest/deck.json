@@ -83,7 +83,6 @@
         "Animate Dead",
         "Victimize",
         "Necromancy",
-        "Chthonian Nightmare",
         "Agadeem's Awakening",
         "Grave Researcher",
         "Cauldron of Essence"
@@ -162,7 +161,9 @@
         "Teval's Judgment",
         "Grave Researcher",
         "Mikaeus, the Unhallowed",
-        "Gravecrawler"
+        "Gravecrawler",
+        "Insidious Roots",
+        "Culling the Weak"
       ]
     }
   ],
@@ -1023,15 +1024,38 @@
       ]
     },
     {
-      "name": "Chthonian Nightmare",
-      "price": "$3-5",
+      "name": "Insidious Roots",
+      "price": "$3-6",
       "isGameChanger": false,
-      "reason": "Reusable reanimation engine. Self-bouncing enchantment that reanimates creatures using energy. Loops with sacrifice outlets for repeated ETB triggers.",
+      "reason": "Per-trigger Plant token + +1/+1 counter on each Plant whenever creature cards leave your graveyard. Fires on every reanimation engine: Meren end-step, Bloodghast landfall, Nether Traitor return, Gravecrawler recast, every reanimate spell, Tyvar -2, Cauldron, Sidisi, Grave Researcher, and Living Death. Static also gives every creature token (Faeries, Zombies, Soldiers, Treasures-as-mana via Teval, Currency Converter Rogues, Twilight Diviner copies) the ability to tap for any color. With Tyvar's haste static, plants tap for mana the turn they're created — true ramp engine, not just a counter pile.",
       "sources": [
         {
-          "type": "edhrec",
-          "name": "EDHREC - Meren",
-          "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth"
+          "type": "scryfall",
+          "name": "Scryfall - Insidious Roots",
+          "url": "https://scryfall.com/card/mkm/208/insidious-roots"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Board-approved swap for Chthonian Nightmare (DEC-88)"
+        }
+      ]
+    },
+    {
+      "name": "Culling the Weak",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "{B} instant: sacrifice a creature, add {B}{B}{B}{B}. Net +{B}{B}{B} ritual where the sacrifice cost is upside — triggers Meren XP, Blood Artist / Zulaport / Bastion drain, Sephiroth death counter, Grave Pact opponent sac, Yawgmoth proliferate, Cauldron drain, and Insidious Roots Plant trigger. Self-recurring fodder (Bloodghast, Nether Traitor, Gravecrawler) makes the sac effectively free. Enables explosive turn-2 Mikaeus / Yawgmoth / Reanimate-Archon plays and instant-speed combo lines (flash in Reanimate, Animate Dead, Necromancy, Plumb the Forbidden in response to removal). Also unlocks the Changing Loyalty + Toxic Deluge steal-and-wipe line at 7-8 mana.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Culling the Weak",
+          "url": "https://scryfall.com/card/exo/55/culling-the-weak"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Board-approved swap for Perpetual Timepiece (DEC-88)"
         }
       ]
     },
@@ -1675,9 +1699,9 @@
       "role": "reanimation"
     },
     {
-      "name": "Chthonian Nightmare",
+      "name": "Insidious Roots",
       "type": "Enchantment",
-      "role": "reanimation"
+      "role": "engine"
     },
     {
       "name": "Agadeem's Awakening",
@@ -1725,8 +1749,9 @@
       "role": "enhancer"
     },
     {
-      "name": "Perpetual Timepiece",
-      "type": "Artifact"
+      "name": "Culling the Weak",
+      "type": "Instant",
+      "role": "ramp"
     },
     {
       "name": "Emeritus of Woe",
