@@ -248,6 +248,56 @@
       "cmc_max": 5,
       "staples": ["Eldrazi Displacer", "Conjurer's Closet", "Soulherder", "Cloudshift", "Ephemerate", "Roon of the Hidden Realm"],
       "anti_patterns": []
+    },
+    "amass-orcs": {
+      "name": "Amass Orcs / Orcs Tribal",
+      "summary": "Amass Orcs payoffs and Orc-army synergy. Tag together with amass-armies for maximum coverage; this entry catches LotR-specific Orc payoffs.",
+      "oracle_patterns": [
+        "amass orcs",
+        "orc army",
+        "orc creature",
+        "whenever an orc",
+        "orcs? you control",
+        "the ring tempts you"
+      ],
+      "type_constraints": [],
+      "cmc_max": 6,
+      "staples": ["Sauron, the Dark Lord", "Orcish Bowmasters", "Lord of the Nazgûl", "Mauhúr, Uruk-hai Captain", "Grishnákh, Brash Instigator", "Saruman of Many Colors"],
+      "anti_patterns": []
+    },
+    "amass-armies": {
+      "name": "Amass / Army Tokens",
+      "summary": "Generic amass mechanic and Army-token synergy from War of the Spark and LotR. Catches non-tribal amass payoffs and Army-cares effects.",
+      "oracle_patterns": [
+        "\\bamass\\b",
+        "army you control",
+        "armies? you control",
+        "whenever an army",
+        "create [^.]*army [^.]*token",
+        "(?:[+]1/[+]1 counter|p/t).*?army"
+      ],
+      "type_constraints": [],
+      "cmc_max": 6,
+      "staples": ["Eternal Taskmaster", "Eastern Front Ogre", "Cleaving Skyrider", "Toxin Analysis", "Widespread Brutality", "Invasion of Amonkhet"],
+      "anti_patterns": []
+    },
+    "eldrazi-colorless": {
+      "name": "Eldrazi / Colorless Creatures",
+      "summary": "Big colorless threats, devoid, annihilator, processor/ingest, and colorless-mana payoffs. Pair with ramp-big-mana for the cast-side enablers.",
+      "oracle_patterns": [
+        "\\beldrazi\\b",
+        "annihilator \\d+",
+        "\\bdevoid\\b",
+        "colorless creatures? you control",
+        "spend only colorless mana",
+        "exile [^.]*top [^.]*cards? of (?:your|target opponent's) library",
+        "scion|spawn token",
+        "when[^.]*cast[^.]* exile [^.]*creature"
+      ],
+      "type_constraints": [],
+      "cmc_max": 12,
+      "staples": ["Kozilek, Butcher of Truth", "Ulamog, the Infinite Gyre", "Emrakul, the Aeons Torn", "It That Betrays", "Void Winnower", "Conduit of Ruin"],
+      "anti_patterns": []
     }
   }
 }
