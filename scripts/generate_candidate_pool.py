@@ -19,6 +19,9 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from auto_tag_roles import classify as classify_role
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 COMMANDERS_DIR = DATA_DIR / "commanders"
@@ -28,7 +31,7 @@ MIRROR_FILE = PROJECT_ROOT / "priv_data" / "scryfall-oracle.json"
 MIRROR_META = PROJECT_ROOT / "priv_data" / "scryfall-oracle.meta.json"
 OWNED_FILE = PROJECT_ROOT / "priv_data" / "owned_formatted.csv"
 
-METHODOLOGY_VERSION = "candidate-pool-v1"
+METHODOLOGY_VERSION = "candidate-pool-v2"
 DEFAULT_LIMIT = 200
 
 KEEP_FIELDS = (
@@ -129,7 +132,7 @@ def score_card(
     name = card.get("name", "")
 
     # Anti-pattern disqualification across any archetype
-    matched_archetypes = []
+    archetype_hits: list[tuple[str, float]] = []  # (archetype_name, per-archetype score)
     pattern_score = 0.0
     total_patterns = 0
     type_constraint_satisfied = False
@@ -149,16 +152,24 @@ def score_card(
         for compiled in arch["_compiled"]:
             if compiled.search(oracle):
                 local_matches += 1
-        if local_matches > 0 or name in arch["_staples"]:
-            matched_archetypes.append(arch["name"])
+        is_staple = name in arch["_staples"]
+        if local_matches > 0 or is_staple:
+            n_patterns = len(arch["_compiled"])
+            arch_strength = float(local_matches)
+            if is_staple:
+                arch_strength = max(arch_strength, n_patterns * 0.5)
+            archetype_hits.append((arch["name"], arch_strength))
             pattern_score += local_matches
-            total_patterns += len(arch["_compiled"])
-            if name in arch["_staples"]:
+            total_patterns += n_patterns
+            if is_staple:
                 # staples always count for at least 50% of pattern score
                 pattern_score = max(pattern_score, total_patterns * 0.5)
 
-    if not matched_archetypes:
+    if not archetype_hits:
         return 0.0, {"disqualified": "no archetype match"}, []
+    # Sort matched archetypes by per-archetype strength desc, preserving order for ties
+    archetype_hits.sort(key=lambda t: -t[1])
+    matched_archetypes = [n for n, _ in archetype_hits]
     if type_constraint_required and not type_constraint_satisfied:
         # Voltron archetype with type_constraints requires Equipment/Aura
         return 0.0, {"disqualified": "type constraint not satisfied"}, []
@@ -232,7 +243,26 @@ def commander_color_identity(deck: dict, mirror_index: dict[str, dict]) -> set[s
     return set("WUBRG")
 
 
-def trim_card(card: dict, score: float, breakdown: dict, archetypes: list[str], owned: bool, gc: bool) -> dict:
+def load_gap_roles(deck_id: str) -> list[str]:
+    """Read metrics.json for the deck and return ordered gap[].role list (worst first)."""
+    metrics_path = COMMANDERS_DIR / deck_id / "metrics.json"
+    if not metrics_path.exists():
+        return []
+    metrics = json.loads(metrics_path.read_text())
+    return [g.get("role") for g in metrics.get("gaps", []) if g.get("role")]
+
+
+def trim_card(
+    card: dict,
+    score: float,
+    breakdown: dict,
+    archetypes: list[str],
+    owned: bool,
+    gc: bool,
+    deck_role: str | None,
+    strategy_line: str | None,
+    mitigates_gap: str | None,
+) -> dict:
     out = {k: card.get(k) for k in KEEP_FIELDS if k in card}
     if "card_faces" in card:
         out["card_faces"] = [
@@ -244,6 +274,9 @@ def trim_card(card: dict, score: float, breakdown: dict, archetypes: list[str], 
     out["matched_archetypes"] = archetypes
     out["owned"] = owned
     out["game_changer"] = gc
+    out["deck_role"] = deck_role
+    out["strategy_line"] = strategy_line
+    out["mitigates_gap"] = mitigates_gap
     return out
 
 
@@ -296,6 +329,25 @@ def generate_for_deck(
     candidates.sort(key=lambda t: (-t[0], t[1].get("name", "")))
     top = candidates[:limit]
 
+    gap_roles = load_gap_roles(deck_id)
+    gap_role_set = set(gap_roles)
+
+    enriched = []
+    for s, c, b, m in top:
+        role, _conf = classify_role(c)
+        strategy_line = m[0] if m else None
+        mitigates = role if role and role in gap_role_set else None
+        enriched.append(
+            trim_card(
+                c, s, b, m,
+                c.get("name") in owned,
+                c.get("name") in game_changers,
+                role,
+                strategy_line,
+                mitigates,
+            )
+        )
+
     output = {
         "version": 1,
         "methodology": METHODOLOGY_VERSION,
@@ -307,11 +359,9 @@ def generate_for_deck(
         "bracket": bracket,
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "scryfall_mirror_updated_at": mirror_updated_at,
-        "candidate_count": len(top),
-        "candidates": [
-            trim_card(c, s, b, m, c.get("name") in owned, c.get("name") in game_changers)
-            for s, c, b, m in top
-        ],
+        "deck_gaps": gap_roles,
+        "candidate_count": len(enriched),
+        "candidates": enriched,
     }
     return output
 
@@ -365,8 +415,13 @@ def main(argv: list[str]) -> int:
 
         out_path = COMMANDERS_DIR / deck_id / "candidates.json"
         existing = json.loads(out_path.read_text()) if out_path.exists() else None
-        # idempotency: skip write if mirror, archetypes, decklist unchanged AND existing candidates identical
-        if existing and existing.get("scryfall_mirror_updated_at") == out["scryfall_mirror_updated_at"]:
+        # idempotency: skip write if mirror, methodology, archetypes, decklist unchanged AND existing candidates identical
+        if (
+            existing
+            and existing.get("scryfall_mirror_updated_at") == out["scryfall_mirror_updated_at"]
+            and existing.get("methodology") == out["methodology"]
+            and existing.get("deck_gaps") == out.get("deck_gaps")
+        ):
             existing_names = [c.get("name") for c in existing.get("candidates", [])]
             new_names = [c.get("name") for c in out["candidates"]]
             if existing_names == new_names:
