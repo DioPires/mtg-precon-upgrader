@@ -7,7 +7,7 @@
 When analysing a new deck or reviewing an existing one we routinely overlook printed cards. Symptoms:
 
 - Recommendations skew to staples/recent prints we already remember.
-- The recommendation engine (`scripts/generate_recommendations.py`) **scores cards we already have in scope** — it does not enumerate the full commander-legal universe matching deck criteria.
+- The legacy recommendation engine (retired in P8.5) **scored cards we already had in scope** — it did not enumerate the full commander-legal universe matching deck criteria.
 - No archetype → query mapping forces a broad sweep before review.
 - Owned-cards CSV (`priv_data/owned_formatted.csv`, 4,206 rows) is referenced as an overlay but not as a *discovery* source for adds.
 
@@ -114,7 +114,7 @@ P8 sub-phases (issue tree under DEC-136):
 - **P8.2 — Maladies panel** (DEC-138). New panel rendering `gaps[]` as clickable chips. Click filters Remedies. Blocks on P8.1.
 - **P8.3 — Visualizations** (DEC-139). Curve chart + Karsten color sources chart + role coverage chart. Vanilla SVG, no library deps. Blocks on P8.1.
 - **P8.4 — Remedies list source swap + section rename** (DEC-140). `candidates.json` top-N, gap-addressers floated first with `Addresses: {role}` badge. Renames section to "The Apothecary" with sub-headings. Blocks on DEC-121 + P8.2.
-- **P8.5 — Deprecation** (DEC-141). Delete `generate_recommendations.py`, `recommendations.json`, simulation health pipeline. One cycle of dual-running before this issue starts. Blocks on P8.4.
+- **P8.5 — Deprecation** (DEC-141, ✅ landed). Retired the legacy simulation-driven recommendations pipeline: deleted `scripts/generate_recommendations.py`, all per-deck recommendations files, `data/recommendation-methodology.md`, and the legacy `loadRecommendations` / `recommendationsCache` / `HEALTH_COMPONENT_*` paths in `app.js`. Compare view migrated to `metrics.json` (`global_health` + 5 deterministic metrics).
 
 ## Effort estimate
 
@@ -127,7 +127,6 @@ P8: ~3.5 dev-days (P8.1 0.5 / P8.2 0.5 / P8.3 1.5 / P8.4 0.75 / P8.5 0.25).
 
 - Auto-applying candidate-pool suggestions to decklists (would still need board approval).
 - UI changes to surface candidates in the Grimoire app.
-- Changing the existing `recommendations.json` scoring methodology.
 
 ## Risks & mitigations
 

@@ -4140,7 +4140,6 @@ function initViewToggle() {
 const REMEDIES_TOP_N = 30;
 
 let candidatesCache = {};
-let recommendationsCache = {};
 let recommendationOwnedCards = null;
 
 async function loadCandidates(deckId) {
@@ -4156,25 +4155,6 @@ async function loadCandidates(deckId) {
     return data;
   } catch {
     candidatesCache[deckId] = null;
-    return null;
-  }
-}
-
-// Retained for the Scrying Pool deck-comparison view (still consumes recommendations.healthBaseline).
-// P8.5 (DEC-141) deprecates recommendations.json; that issue will retire this loader.
-async function loadRecommendations(deckId) {
-  if (recommendationsCache[deckId] !== undefined) return recommendationsCache[deckId];
-  try {
-    const response = await fetch(`data/commanders/${deckId}/recommendations.json`);
-    if (!response.ok) {
-      recommendationsCache[deckId] = null;
-      return null;
-    }
-    const data = await response.json();
-    recommendationsCache[deckId] = data;
-    return data;
-  } catch {
-    recommendationsCache[deckId] = null;
     return null;
   }
 }
@@ -4218,23 +4198,6 @@ function getHealthGradeClass(grade) {
   return `grade-${letter}`;
 }
 
-const HEALTH_COMPONENT_LABELS = {
-  manaReliability: 'Mana Reliability',
-  threatDeployment: 'Threat Deployment',
-  interactionDensity: 'Interaction Density',
-  comboConsistency: 'Combo Consistency',
-  commanderIndependence: 'Commander Independence',
-};
-
-const HEALTH_COMPONENT_DESCRIPTIONS = {
-  manaReliability: 'How consistently the deck hits land drops and produces the right colors on curve.',
-  threatDeployment: 'How quickly and reliably the deck deploys its key threats and win conditions.',
-  interactionDensity: 'The density of removal, counterspells, and other answers to opponent threats.',
-  comboConsistency: 'How reliably the deck assembles its synergy engines or combo finishers.',
-  commanderIndependence: 'How well the deck functions when the commander is unavailable or removed.',
-};
-
-// DEC-90 P8.1 — keys mirror metrics.json `metrics.*` shape.
 const METRICS_KEYS = ['manabase_health', 'role_coverage_health', 'curve_health', 'interaction_density', 'gameplan_cohesion'];
 
 const METRICS_LABELS = {
@@ -6100,15 +6063,23 @@ async function renderCompareView() {
 
   wrap.innerHTML = '<div class="compare-loading">Loading health data...</div>';
 
-  // Load all recommendations in parallel
   const results = await Promise.all(
     allDecks.map(async (cmd) => {
-      const rec = await loadRecommendations(cmd.id);
-      return { cmd, health: rec?.healthBaseline || null };
+      const m = await loadMetrics(cmd.id);
+      if (!m || m.global_health == null) return { cmd, health: null };
+      const components = {};
+      for (const key of METRICS_KEYS) {
+        const s = m.metrics?.[key]?.score;
+        if (s != null) components[key] = Math.round(s);
+      }
+      const score = Math.round(m.global_health);
+      return {
+        cmd,
+        health: { score, grade: gradeForGlobalHealth(score), components },
+      };
     })
   );
 
-  // Filter to decks with health data
   const rows = results.filter(r => r.health);
   if (rows.length === 0) {
     wrap.innerHTML = '<div class="compare-empty">No decks have health data yet.</div>';
@@ -6152,7 +6123,7 @@ function renderCompareTable(wrap, rows) {
     { key: 'commander', label: 'Commander' },
     { key: 'grade', label: 'Grade' },
     { key: 'score', label: 'Score' },
-    ...Object.entries(HEALTH_COMPONENT_LABELS).map(([key, label]) => ({ key, label })),
+    ...METRICS_KEYS.map(key => ({ key, label: METRICS_LABELS[key] })),
   ];
 
   const arrow = (key) => {
@@ -6186,7 +6157,7 @@ function renderCompareTable(wrap, rows) {
     html += `<td class="compare-cell compare-cell-commander">${escapeHtml(cmd.commander)}</td>`;
     html += `<td class="compare-cell compare-cell-grade"><span class="compare-grade ${gradeClass}">${escapeHtml(health.grade || '\u2014')}</span></td>`;
     html += scoreCell(health.score);
-    for (const key of Object.keys(HEALTH_COMPONENT_LABELS)) {
+    for (const key of METRICS_KEYS) {
       html += scoreCell(health.components?.[key]);
     }
     html += '</tr>';

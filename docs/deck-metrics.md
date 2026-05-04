@@ -201,7 +201,7 @@ The Vitals card on each deck page renders `global_health` as a letter grade. Pro
 
 The spread is sane: tuned B4 builds cluster B (80–89), competent-but-incomplete builds land C (70–79), and a single outlier (titan-convergence, hit by curve=0 from avg CMC 5.58 + topcurve penalty) earns the F. No deck currently scores A — re-tune thresholds once a deck legitimately reaches 90+ on the global blend; if A becomes unreachable in practice, lower the bar to 88+ rather than handing out A grades to merit-B decks.
 
-The Vitals card sources this score and grade from `metrics.json` only — no `recommendations.json` fallback.
+The Vitals card sources this score and grade from `metrics.json` only.
 
 ## Why these formulas
 
