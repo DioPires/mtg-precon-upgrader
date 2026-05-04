@@ -4232,6 +4232,67 @@ const METRICS_DESCRIPTIONS = {
   gameplan_cohesion: 'Share of non-land cards on a payoff/engine/wincon/threat role aligned with the archetype.',
 };
 
+// DEC-138 P8.2 — Maladies panel. `gaps[]` roles map to user-facing labels for chips.
+// Filter state targets the Remedies list (P8.4 will swap the data source to candidates.json).
+const ROLE_LABELS = {
+  ramp: 'Ramp',
+  'card-draw': 'Card Draw',
+  tutor: 'Tutors',
+  'removal-spot': 'Spot Removal',
+  'removal-board': 'Board Wipes',
+  counterspell: 'Counterspells',
+  protection: 'Protection',
+  recursion: 'Recursion',
+  payoff: 'Payoffs',
+  wincon: 'Win Conditions',
+  engine: 'Engines',
+  threat: 'Threats',
+  utility: 'Utility',
+};
+
+let maladiesFilterRole = null;
+
+function maladyScoreTier(score) {
+  if (score == null) return 'crit';
+  if (score >= 75) return 'ok';
+  if (score >= 50) return 'warn';
+  return 'crit';
+}
+
+function formatMaladyCount(n) {
+  if (n == null) return '0';
+  // Drop trailing .0; keep .5 for half-counts (MDFCs, etc.)
+  return Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/, '');
+}
+
+function renderMaladiesPanel(gaps) {
+  if (!Array.isArray(gaps) || gaps.length === 0) return '';
+  const chips = gaps.map(gap => {
+    const role = gap.role;
+    const label = ROLE_LABELS[role] || role;
+    const tier = maladyScoreTier(gap.score);
+    const isActive = maladiesFilterRole === role;
+    const actual = formatMaladyCount(gap.actual);
+    const target = formatMaladyCount(gap.target);
+    return `<button type="button" class="malady-chip${isActive ? ' is-active' : ''}" data-malady-role="${escapeHtml(role)}" data-score-tier="${tier}" aria-pressed="${isActive}" title="${escapeHtml(label)}: ${actual}/${target} (score ${Math.round(gap.score ?? 0)})">
+      <span class="malady-chip-dot" aria-hidden="true"></span>
+      <span class="malady-chip-label">${escapeHtml(label)}</span>
+      <span class="malady-chip-counts">${escapeHtml(actual)}/${escapeHtml(target)}</span>
+    </button>`;
+  }).join('');
+  const clearBtn = maladiesFilterRole
+    ? `<button type="button" class="malady-chip-clear" data-malady-clear>Clear filter</button>`
+    : '';
+  return `<section id="maladies-panel" class="maladies-panel" aria-label="Maladies">
+    <div class="maladies-panel-header">
+      <span class="maladies-panel-title">Maladies</span>
+      <span class="maladies-panel-hint">Click a role to filter remedies</span>
+      ${clearBtn}
+    </div>
+    <div class="maladies-chips">${chips}</div>
+  </section>`;
+}
+
 // Provisional A–F grade thresholds (DEC-137). Calibrated against 9 real metrics.json outputs;
 // table documented in docs/deck-metrics.md.
 function gradeForGlobalHealth(score) {
@@ -4308,6 +4369,17 @@ async function renderUpgradePaths() {
     recs = recs.filter(r => r._owned);
   }
 
+  // DEC-138 P8.2 — Reset stale filter if the active role isn't in current gaps[].
+  const activeGaps = metricsData?.gaps || [];
+  if (maladiesFilterRole && !activeGaps.some(g => g.role === maladiesFilterRole)) {
+    maladiesFilterRole = null;
+  }
+  if (maladiesFilterRole) {
+    // recommendations.json doesn't carry primary_role today; P8.4 swaps to candidates.json
+    // which will. For now this filter resolves to an empty list with a clear empty-state.
+    recs = recs.filter(r => r.primary_role === maladiesFilterRole);
+  }
+
   countEl.textContent = recs.length;
 
   let html = '';
@@ -4364,9 +4436,14 @@ async function renderUpgradePaths() {
     </details>`;
   }
 
+  // DEC-138 P8.2 — Maladies panel (gaps[] chips). Below Vitals, above Remedies.
+  html += renderMaladiesPanel(metricsData?.gaps);
+
   if (recs.length === 0) {
-    html += '<div class="upgrade-empty">No upgrade recommendations available' +
-      (showOwnedOnly ? ' in your collection' : '') + '.</div>';
+    const emptyMsg = maladiesFilterRole
+      ? `No remedies match <strong>${escapeHtml(ROLE_LABELS[maladiesFilterRole] || maladiesFilterRole)}</strong> in current data. Full role-aware Remedies list lands with P8.4.`
+      : 'No upgrade recommendations available' + (showOwnedOnly ? ' in your collection' : '') + '.';
+    html += `<div class="upgrade-empty">${emptyMsg}</div>`;
     content.innerHTML = html;
     return;
   }
@@ -4439,6 +4516,24 @@ async function renderUpgradePaths() {
 // Wire up owned-only filter
 document.getElementById('upgrade-owned-filter')?.addEventListener('change', () => {
   renderUpgradePaths();
+});
+
+// DEC-138 P8.2 — Maladies chip click → toggle filter, re-render Remedies.
+document.getElementById('upgrade-paths-content')?.addEventListener('click', (e) => {
+  const clear = e.target.closest('[data-malady-clear]');
+  if (clear) {
+    e.preventDefault();
+    maladiesFilterRole = null;
+    renderUpgradePaths();
+    return;
+  }
+  const chip = e.target.closest('.malady-chip');
+  if (chip) {
+    e.preventDefault();
+    const role = chip.dataset.maladyRole;
+    maladiesFilterRole = (maladiesFilterRole === role) ? null : role;
+    renderUpgradePaths();
+  }
 });
 
 // === OPENING HAND SIMULATOR ===
