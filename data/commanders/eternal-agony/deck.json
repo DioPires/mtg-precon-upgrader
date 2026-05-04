@@ -29,6 +29,11 @@
       "type": "ai-inferred",
       "name": "Claude analysis",
       "detail": "Bracket 5 (cEDH) optimization and synergy identification"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-101 board-approved adoption swaps",
+      "detail": "3 swaps: Ankh of Mishra->Mogis, Vial Smasher->Fear of Burning Alive, Coruscation Mage->Tectonic Giant. Removes symmetric trap + random variance, adds asymmetric punishers."
     }
   ],
   "guideContent": {
@@ -792,20 +797,15 @@
       ]
     },
     {
-      "name": "Ankh of Mishra",
-      "price": "$3-5",
+      "name": "Mogis, God of Slaughter",
+      "price": "$1-2",
       "isGameChanger": false,
-      "reason": "2 damage whenever a land enters the battlefield. Doubled to 4 by Solphim (Solphim only doubles damage to opponents, self-damage stays at 2). Replaces Polluted Bonds at 3 less mana",
+      "reason": "Asymmetric upkeep punisher: 2 damage to each opponent unless they sacrifice a creature. No symmetric self-damage trap. Indestructible god body when devotion hits 7.",
       "sources": [
-        {
-          "type": "edhrec",
-          "name": "EDHREC - The Lord of Pain",
-          "url": "https://edhrec.com/commanders/the-lord-of-pain"
-        },
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Replaces Polluted Bonds \u2014 cheaper, DAMAGE not life loss (doubled by Solphim)"
+          "detail": "DEC-101: replaces Ankh of Mishra (symmetric land-entry damage trap). Asymmetric trigger only hits opponents."
         }
       ]
     },
@@ -1297,14 +1297,15 @@
       ]
     },
     {
-      "name": "Vial Smasher the Fierce",
-      "price": "$1.68",
+      "name": "Fear of Burning Alive",
+      "price": "$0.50",
       "isGameChanger": false,
-      "reason": "First spell each turn deals damage equal to its MV to a random opponent. Passive damage per spell cast",
+      "reason": "ETB deals 4 to each opponent. Delirium: noncombat damage to opponent also pings their creatures. Deterministic targeting (vs Vial Smasher's random first-spell variance).",
       "sources": [
         {
           "type": "ai-inferred",
-          "name": "Claude analysis"
+          "name": "Claude analysis",
+          "detail": "DEC-101: replaces Vial Smasher the Fierce (random target + first-spell variance). 4 guaranteed ETB to each opponent."
         }
       ]
     },
@@ -1424,15 +1425,15 @@
       ]
     },
     {
-      "name": "Coruscation Mage",
-      "price": "$0.25",
+      "name": "Tectonic Giant",
+      "price": "$1-2",
       "isGameChanger": false,
-      "reason": "Upkeep: 1 damage each opponent, gain that life. Zero-condition passive drain at 2 CMC. With multipliers, upkeep drain escalates fast",
+      "reason": "Attack or be targeted: 3 to each opponent OR exile-2-and-play-one card advantage. 3/4 body resists removal sweepers; punishes targeted interaction.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Unconditional passive drain at minimal mana investment"
+          "detail": "DEC-101: replaces Coruscation Mage (5th redundant noncreature-spell pinger, fragile body). Adds new attack/targeting axis + selective draw."
         }
       ]
     },
@@ -1472,7 +1473,7 @@
       "primary_role": "engine"
     },
     {
-      "name": "Vial Smasher the Fierce",
+      "name": "Fear of Burning Alive",
       "type": "Creature",
       "primary_role": "engine"
     },
@@ -1687,8 +1688,8 @@
       "primary_role": "engine"
     },
     {
-      "name": "Ankh of Mishra",
-      "type": "Artifact",
+      "name": "Mogis, God of Slaughter",
+      "type": "Creature",
       "primary_role": "engine"
     },
     {
@@ -1870,7 +1871,7 @@
       "primary_role": "engine"
     },
     {
-      "name": "Coruscation Mage",
+      "name": "Tectonic Giant",
       "type": "Creature",
       "primary_role": "engine"
     },
