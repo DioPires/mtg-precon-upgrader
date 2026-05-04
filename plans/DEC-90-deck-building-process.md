@@ -1,6 +1,6 @@
 # DEC-90 — Deck Building Process Overview
 
-**Status:** Plan revision **r3** — P7 (foundation-first taxonomy + metrics) approved by board on 2026-05-04 and sequenced before P6 deck-by-deck adoption (DEC-99). DEC-99 is blocked by DEC-114 (P7 tracker).
+**Status:** Plan revision **r4** — P8 (UI integration as **The Apothecary**) approved by board on 2026-05-04. P7 (DEC-114) sequenced before both P6 (DEC-99) and P8 (DEC-136). DEC-99 blocked by DEC-114; P8.1 blocked by DEC-119; P8.4 blocked by DEC-121.
 
 ## The Problem
 
@@ -104,11 +104,24 @@ P7 sub-phases (issue tree under DEC-114):
 
 After P7.7 lands, DEC-99 (P6) unblocks and per-deck adoption resumes — but each adoption pass now has a metrics.json and gaps[] driving review, not just raw scores.
 
+### Phase 8 — The Apothecary: UI integration of deck metrics (board-requested 2026-05-04)
+
+The new metrics + gaps[] are user-facing; surface them in the Grimoire tab. Current "Upgrade Paths" section is replaced by **The Apothecary** with three sub-headings: **Diagnosis** (metrics) → **Maladies** (gaps) → **Remedies** (gap-aware candidates). Section name approved by board.
+
+P8 sub-phases (issue tree under DEC-136):
+
+- **P8.1 — Vitals card data swap** (DEC-137). Read `metrics.json`; render `global_health` + A–F grade + 5-bar component breakdown. Calibrate A–F buckets against ≥3 real outputs. Provisional table: 90+ A / 80–89 B / 70–79 C / 60–69 D / <60 F. Blocks on DEC-119.
+- **P8.2 — Maladies panel** (DEC-138). New panel rendering `gaps[]` as clickable chips. Click filters Remedies. Blocks on P8.1.
+- **P8.3 — Visualizations** (DEC-139). Curve chart + Karsten color sources chart + role coverage chart. Vanilla SVG, no library deps. Blocks on P8.1.
+- **P8.4 — Remedies list source swap + section rename** (DEC-140). `candidates.json` top-N, gap-addressers floated first with `Addresses: {role}` badge. Renames section to "The Apothecary" with sub-headings. Blocks on DEC-121 + P8.2.
+- **P8.5 — Deprecation** (DEC-141). Delete `generate_recommendations.py`, `recommendations.json`, simulation health pipeline. One cycle of dual-running before this issue starts. Blocks on P8.4.
+
 ## Effort estimate
 
 ~3.5 dev-days infra (P1 0.5 / P2 1.0 / P3 1.5 / P4 0.25 / P5 0.25, all landed in `fd03a81`).
 P6 adoption: ~0.5–1.0 dev-day per deck × 9 decks, paced by board priority — not a single sprint.
 P7: ~3 dev-days (P7.1 0.25 / P7.2 0.25 / P7.3 0.5 / P7.4 0.5 [auto-tag is fast; human review is the bottleneck] / P7.5 0.75 / P7.6 0.25 / P7.7 0.5).
+P8: ~3.5 dev-days (P8.1 0.5 / P8.2 0.5 / P8.3 1.5 / P8.4 0.75 / P8.5 0.25).
 
 ## Out of scope (for this issue)
 
@@ -133,6 +146,7 @@ P7: ~3 dev-days (P7.1 0.25 / P7.2 0.25 / P7.3 0.5 / P7.4 0.5 [auto-tag is fast; 
 - **r1 (2026-05-02 19:06 UTC):** Board confirmed C / commit / on-demand via interaction `de4c1ade`. Plan finalized; awaiting explicit go.
 - **r2 (2026-05-02 23:30 UTC):** Board requested formal P6 tracking deck-by-deck adoption (comment `f30c6b9d`). Replaced original P6 (smoke validation, already absorbed into canary) with per-deck adoption tracker.
 - **r3 (2026-05-04 06:00 UTC):** Board approved foundation-first P7 (role taxonomy → deck metrics → gaps → enrichment) sequenced before P6 resumes. Created DEC-114 (P7 tracker) + DEC-115..121 (sub-phases). Set DEC-99 `blockedByIssueIds = [DEC-114]`. P7.1 docs landed alongside this revision.
+- **r4 (2026-05-04 16:10 UTC):** Board approved P8 — UI integration as **The Apothecary** (Diagnosis / Maladies / Remedies). All 7 components in scope; section rename approved; A–F bucket calibration deferred to P8.1 with real data. Created DEC-136 (P8 tracker) + DEC-137..141 (sub-phases). P8.1 blocks on DEC-119; P8.4 blocks on DEC-121.
 
 ## Approval gate
 
