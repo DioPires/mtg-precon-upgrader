@@ -1,6 +1,6 @@
 # DEC-90 — Deck Building Process Overview
 
-**Status:** Plan revision **r1** — board has selected direction; **awaiting explicit final approval before implementation begins.**
+**Status:** Plan revision **r3** — P7 (foundation-first taxonomy + metrics) approved by board on 2026-05-04 and sequenced before P6 deck-by-deck adoption (DEC-99). DEC-99 is blocked by DEC-114 (P7 tracker).
 
 ## The Problem
 
@@ -88,10 +88,27 @@ Infrastructure (P1–P5) is landed. P6 tracks **operational adoption** — apply
 - P6 tracker rolls up status across all 9 decks: `dark-dominion`, `eternal-agony`, `eternal-harvest`, `genesis-protocol`, `mutant-multiplication`, `the-white-forge`, `titan-convergence`, `verdant-tide`, `creeping-corruption`.
 - Smoke validation (the original Phase 6 scope) was absorbed into P3-P5 via the `dark-dominion` canary captured in run `d08b39d8` / status comment `f059bbfc`. No standalone smoke phase remains.
 
+### Phase 7 — Role taxonomy, deck metrics, weakness-driven enrichment (board-requested 2026-05-04)
+
+P6 adoption surfaced that scoring candidates without a deck-state model produces top-N lists detached from what the deck actually needs. P7 builds the missing foundation so candidate-pool review can prioritize gaps, not just raw scores. **DEC-99 (P6) is blocked by DEC-114 (P7 tracker).**
+
+P7 sub-phases (issue tree under DEC-114):
+
+- **P7.1 — Role taxonomy + metric formula docs** (DEC-115). Write [`docs/role-taxonomy.md`](../docs/role-taxonomy.md) (15-role closed set, schema spec for `primary_role` / `secondary_role` / `commanderRoles` / `wincon_style` / `is_mdfc_land`) and [`docs/deck-metrics.md`](../docs/deck-metrics.md) (5 deterministic metrics + global blend + per-bracket targets). Cross-link from project AGENTS.md.
+- **P7.2 — Schema migration** (DEC-116). Migrate existing `role` field on `decklist[]` to `primary_role` (+ optional `secondary_role`). Add `commanderRoles` to deck root. Mark MDFCs with `is_mdfc_land`. No semantic changes — pure rename + structural additions.
+- **P7.3 — Heuristic auto-tagger** (DEC-117). `scripts/tag_deck_roles.py` — proposes `primary_role` / `secondary_role` from Scryfall oracle text + archetype hints. Outputs a diff for human review; never writes without confirmation. Flags ambiguous cards.
+- **P7.4 — Per-deck role tagging passes** (DEC-118). Run auto-tagger across all 9 decks, human-confirm each diff, commit per-deck. Required before P7.5 can produce meaningful metrics.
+- **P7.5 — Metrics computer** (DEC-119). `scripts/compute_deck_metrics.py` — produces `data/commanders/{id}/metrics.json` per the formulas in [`docs/deck-metrics.md`](../docs/deck-metrics.md). Idempotent; runs as part of `refresh_card_pool.py`.
+- **P7.6 — Wire `gaps[]` derivation** (DEC-120). `gaps[]` is computed by P7.5 (any role with `per_role_score < 70`) and persisted in `metrics.json` only — never duplicated to `deck.json`.
+- **P7.7 — Option-D candidate enrichment** (DEC-121). Update `scripts/generate_candidate_pool.py` to read `metrics.json`'s `gaps[]` and rerank the top 200: candidates whose `primary_role` (heuristically inferred from oracle text) matches a gap get a +20 boost. Each candidate's payload gains `gap_addressed` so reviewers can see *why* a card surfaced.
+
+After P7.7 lands, DEC-99 (P6) unblocks and per-deck adoption resumes — but each adoption pass now has a metrics.json and gaps[] driving review, not just raw scores.
+
 ## Effort estimate
 
 ~3.5 dev-days infra (P1 0.5 / P2 1.0 / P3 1.5 / P4 0.25 / P5 0.25, all landed in `fd03a81`).
 P6 adoption: ~0.5–1.0 dev-day per deck × 9 decks, paced by board priority — not a single sprint.
+P7: ~3 dev-days (P7.1 0.25 / P7.2 0.25 / P7.3 0.5 / P7.4 0.5 [auto-tag is fast; human review is the bottleneck] / P7.5 0.75 / P7.6 0.25 / P7.7 0.5).
 
 ## Out of scope (for this issue)
 
@@ -115,6 +132,7 @@ P6 adoption: ~0.5–1.0 dev-day per deck × 9 decks, paced by board priority —
 - **r0b (2026-05-02 19:05 UTC):** Q3 cadence resolved (on-demand + automated). Comment `c73f5a30`.
 - **r1 (2026-05-02 19:06 UTC):** Board confirmed C / commit / on-demand via interaction `de4c1ade`. Plan finalized; awaiting explicit go.
 - **r2 (2026-05-02 23:30 UTC):** Board requested formal P6 tracking deck-by-deck adoption (comment `f30c6b9d`). Replaced original P6 (smoke validation, already absorbed into canary) with per-deck adoption tracker.
+- **r3 (2026-05-04 06:00 UTC):** Board approved foundation-first P7 (role taxonomy → deck metrics → gaps → enrichment) sequenced before P6 resumes. Created DEC-114 (P7 tracker) + DEC-115..121 (sub-phases). Set DEC-99 `blockedByIssueIds = [DEC-114]`. P7.1 docs landed alongside this revision.
 
 ## Approval gate
 

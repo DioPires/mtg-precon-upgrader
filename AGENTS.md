@@ -124,6 +124,14 @@ Before recommending changes to any deck:
 5. Verify any candidate you plan to add via `scryfall_card_by_name` MCP — never trust the playbook's pattern match without confirming the card text.
 6. Update `decklist`, `highlights`, `synergies` as needed. Always attribute via `sources`.
 
+### Role taxonomy & deck metrics (DEC-90 P7)
+
+When tagging cards, building decks, or reading metrics output:
+
+- **Roles**: every `decklist[]` card has `primary_role` (required) and optional `secondary_role` from the closed 15-role set in [`docs/role-taxonomy.md`](docs/role-taxonomy.md). Commander has `commanderRoles` at deck root. `wincon` cards carry `wincon_style`; MDFCs are flagged `is_mdfc_land: true`.
+- **Metrics**: `data/commanders/{id}/metrics.json` carries 5 deterministic scores (manabase health, role coverage, curve, interaction density, gameplan cohesion) + `global_health` + `gaps[]`. Formulas in [`docs/deck-metrics.md`](docs/deck-metrics.md).
+- **Use gaps[] to drive review** — top-50 candidate review (step 3 above) should explicitly check whether each candidate addresses a `gaps[]` entry. The candidate-pool generator (P7.7) boosts gap-addressing cards in the score.
+
 ## Common Tasks
 
 ### Add a New Commander Deck
