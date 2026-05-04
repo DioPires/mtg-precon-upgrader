@@ -4213,6 +4213,55 @@ const HEALTH_COMPONENT_DESCRIPTIONS = {
   commanderIndependence: 'How well the deck functions when the commander is unavailable or removed.',
 };
 
+// DEC-90 P8.1 — keys mirror metrics.json `metrics.*` shape.
+const METRICS_KEYS = ['manabase_health', 'role_coverage_health', 'curve_health', 'interaction_density', 'gameplan_cohesion'];
+
+const METRICS_LABELS = {
+  manabase_health: 'Manabase Health',
+  role_coverage_health: 'Role Coverage',
+  curve_health: 'Curve Health',
+  interaction_density: 'Interaction Density',
+  gameplan_cohesion: 'Gameplan Cohesion',
+};
+
+const METRICS_DESCRIPTIONS = {
+  manabase_health: 'Karsten color sources, untapped ratio, fetch density, and land-count fit vs. average CMC.',
+  role_coverage_health: 'Counts of ramp, draw, removal, protection, tutors, wincons vs. bracket targets.',
+  curve_health: 'Average non-land CMC vs. archetype target; penalty for excess top-end.',
+  interaction_density: 'Weighted removal + counterspells + protection vs. bracket target.',
+  gameplan_cohesion: 'Share of non-land cards on a payoff/engine/wincon/threat role aligned with the archetype.',
+};
+
+// Provisional A–F grade thresholds (DEC-137). Calibrated against 9 real metrics.json outputs;
+// table documented in docs/deck-metrics.md.
+function gradeForGlobalHealth(score) {
+  if (score == null) return null;
+  if (score >= 90) return 'A';
+  if (score >= 80) return 'B';
+  if (score >= 70) return 'C';
+  if (score >= 60) return 'D';
+  return 'F';
+}
+
+const metricsCache = {};
+
+async function loadMetrics(deckId) {
+  if (metricsCache[deckId] !== undefined) return metricsCache[deckId];
+  try {
+    const response = await fetch(`data/commanders/${deckId}/metrics.json`);
+    if (!response.ok) {
+      metricsCache[deckId] = null;
+      return null;
+    }
+    const data = await response.json();
+    metricsCache[deckId] = data;
+    return data;
+  } catch {
+    metricsCache[deckId] = null;
+    return null;
+  }
+}
+
 async function renderUpgradePaths() {
   const section = document.getElementById('upgrade-paths-section');
   const content = document.getElementById('upgrade-paths-content');
@@ -4226,9 +4275,10 @@ async function renderUpgradePaths() {
     return;
   }
 
-  const [recData, owned] = await Promise.all([
+  const [recData, owned, metricsData] = await Promise.all([
     loadRecommendations(currentDeckId),
     loadRecommendationOwnedCards(),
+    loadMetrics(currentDeckId),
   ]);
 
   if (!recData || !recData.recommendations || recData.recommendations.length === 0) {
@@ -4262,43 +4312,53 @@ async function renderUpgradePaths() {
 
   let html = '';
 
-  // Health baseline summary
-  const health = recData.healthBaseline;
-  if (health && health.grade) {
-    const weakLabel = HEALTH_COMPONENT_LABELS[health.weakestComponent] || health.weakestComponent;
-    const weakScore = health.components?.[health.weakestComponent];
+  // Health baseline summary — DEC-137: sourced from metrics.json (deterministic), not recommendations.json.
+  if (metricsData && metricsData.metrics && metricsData.global_health != null) {
+    const score = Math.round(metricsData.global_health);
+    const grade = gradeForGlobalHealth(score);
 
-    // Build component breakdown rows
-    let componentRows = '';
-    if (health.components) {
-      const entries = Object.entries(health.components);
-      for (const [key, score] of entries) {
-        const label = HEALTH_COMPONENT_LABELS[key] || key;
-        const desc = HEALTH_COMPONENT_DESCRIPTIONS[key] || '';
-        const isWeakest = key === health.weakestComponent;
-        const barColor = score >= 75 ? 'var(--accent-green)' : score >= 50 ? 'var(--accent-gold)' : 'var(--accent-red)';
-        componentRows += `<div class="health-component-row${isWeakest ? ' is-weakest' : ''}">
-          <div class="health-component-header">
-            <span class="health-component-label">${escapeHtml(label)}${isWeakest ? ' <span class="health-weakest-badge">Weakest</span>' : ''}</span>
-            <span class="health-component-score" style="color: ${barColor}">${score}</span>
-          </div>
-          <div class="health-component-bar-track"><div class="health-component-bar-fill" style="width: ${Math.min(score, 100)}%; background: ${barColor}"></div></div>
-          <div class="health-component-desc">${escapeHtml(desc)}</div>
-        </div>`;
+    // Find weakest of the 5 component scores.
+    let weakestKey = null;
+    let weakestScore = Infinity;
+    for (const key of METRICS_KEYS) {
+      const s = metricsData.metrics[key]?.score;
+      if (s != null && s < weakestScore) {
+        weakestScore = s;
+        weakestKey = key;
       }
+    }
+    const weakLabel = METRICS_LABELS[weakestKey] || '';
+
+    let componentRows = '';
+    for (const key of METRICS_KEYS) {
+      const raw = metricsData.metrics[key]?.score;
+      if (raw == null) continue;
+      const score = Math.round(raw);
+      const label = METRICS_LABELS[key];
+      const desc = METRICS_DESCRIPTIONS[key];
+      const isWeakest = key === weakestKey;
+      const barColor = score >= 75 ? 'var(--accent-green)' : score >= 50 ? 'var(--accent-gold)' : 'var(--accent-red)';
+      componentRows += `<div class="health-component-row${isWeakest ? ' is-weakest' : ''}">
+        <div class="health-component-header">
+          <span class="health-component-label" title="${escapeHtml(desc)}">${escapeHtml(label)}${isWeakest ? ' <span class="health-weakest-badge">Weakest</span>' : ''}</span>
+          <span class="health-component-score" style="color: ${barColor}">${score}</span>
+        </div>
+        <div class="health-component-bar-track"><div class="health-component-bar-fill" style="width: ${Math.min(score, 100)}%; background: ${barColor}"></div></div>
+        <div class="health-component-desc">${escapeHtml(desc)}</div>
+      </div>`;
     }
 
     html += `<details class="upgrade-health-baseline">
       <summary class="upgrade-health-summary">
-        <span class="upgrade-health-grade ${getHealthGradeClass(health.grade)}">${escapeHtml(health.grade)}</span>
+        <span class="upgrade-health-grade ${getHealthGradeClass(grade)}">${escapeHtml(grade)}</span>
         <span class="upgrade-health-detail">
-          Deck Health: ${health.score}/100
-          ${health.weakestComponent ? ` · Weakest: <span class="upgrade-health-weak">${escapeHtml(weakLabel)}${weakScore != null ? ` (${weakScore})` : ''}</span>` : ''}
+          Deck Health: ${score}/100
+          ${weakestKey ? ` · Weakest: <span class="upgrade-health-weak">${escapeHtml(weakLabel)} (${Math.round(weakestScore)})</span>` : ''}
         </span>
         <span class="health-expand-hint">Details</span>
       </summary>
       <div class="health-breakdown">
-        <div class="health-breakdown-intro">Deck Health measures how well the deck performs across 5 key reliability dimensions.</div>
+        <div class="health-breakdown-intro">Deterministic deck-health score across 5 metrics. Methodology: <code>${escapeHtml(metricsData.methodology || 'deck-metrics-v1')}</code>.</div>
         ${componentRows}
       </div>
     </details>`;

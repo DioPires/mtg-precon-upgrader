@@ -173,6 +173,36 @@ Mana and roles dominate because they're the most actionable failure modes. Cohes
 
 `gaps[]` is the **single feed** into the candidate-enrichment step (P7.7) — that step prioritizes candidate cards whose `primary_role` matches a gap.
 
+## A–F grade table (DEC-90 P8.1)
+
+The Vitals card on each deck page renders `global_health` as a letter grade. Provisional thresholds:
+
+| Grade | `global_health` range |
+|---|---|
+| A | 90–100 |
+| B | 80–89 |
+| C | 70–79 |
+| D | 60–69 |
+| F | <60 |
+
+### Calibration snapshot (2026-05-04, all 9 built decks)
+
+| Deck | global | mana | role | curve | int | cohesion | grade |
+|---|---:|---:|---:|---:|---:|---:|---|
+| creeping-corruption | 86 | 83 | 81 | 92 | 120 | 47 | B |
+| genesis-protocol | 84 | 80 | 97 | 82 | 120 | 11 | B |
+| the-white-forge | 84 | 69 | 103 | 87 | 120 | 14 | B |
+| mutant-multiplication | 82 | 84 | 66 | 90 | 118 | 57 | B |
+| dark-dominion | 78 | 74 | 72 | 96 | 114 | 29 | C |
+| eternal-agony | 76 | 75 | 65 | 98 | 94 | 55 | C |
+| verdant-tide | 76 | 69 | 88 | 79 | 80 | 47 | C |
+| eternal-harvest | 73 | 71 | 60 | 98 | 93 | 46 | C |
+| titan-convergence | 58 | 69 | 62 | 0 | 93 | 44 | F |
+
+The spread is sane: tuned B4 builds cluster B (80–89), competent-but-incomplete builds land C (70–79), and a single outlier (titan-convergence, hit by curve=0 from avg CMC 5.58 + topcurve penalty) earns the F. No deck currently scores A — re-tune thresholds once a deck legitimately reaches 90+ on the global blend; if A becomes unreachable in practice, lower the bar to 88+ rather than handing out A grades to merit-B decks.
+
+The Vitals card sources this score and grade from `metrics.json` only — no `recommendations.json` fallback.
+
 ## Why these formulas
 
 Each formula is auditable and reversible. If a metric reads poorly on a known-good deck, the failing component is visible in the JSON output, and the formula can be tuned in this doc (with version note) — not by editing per-deck overrides.
