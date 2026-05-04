@@ -31,8 +31,39 @@ MIRROR_FILE = PROJECT_ROOT / "priv_data" / "scryfall-oracle.json"
 MIRROR_META = PROJECT_ROOT / "priv_data" / "scryfall-oracle.meta.json"
 OWNED_FILE = PROJECT_ROOT / "priv_data" / "owned_formatted.csv"
 
-METHODOLOGY_VERSION = "candidate-pool-v2"
+METHODOLOGY_VERSION = "candidate-pool-v3"
 DEFAULT_LIMIT = 200
+SATURATION_THRESHOLD = 8
+SATURATION_FLOOR = 0.35
+ASYMMETRIC_ONLY_MULTIPLIER = 0.55
+
+TOKEN_ENTRY_MISMATCH = re.compile(
+    r"tokens? you control (?:that )?entered this turn|whenever [^.]*tokens? enters?",
+    re.IGNORECASE,
+)
+OFF_TRIBE_AMASS = re.compile(r"\bamass zombies?\b", re.IGNORECASE)
+SACRIFICE_CREATURE = re.compile(r"sacrifice (?:a |another |target |this )?creature", re.IGNORECASE)
+SELF_DEATH_TRIGGER = re.compile(r"when(?:ever)? (?:this creature|[^.]{0,40}) dies", re.IGNORECASE)
+SYMMETRIC_REANIMATION = re.compile(
+    r"each player exiles all creature cards.*sacrifices all creatures.*puts all cards",
+    re.IGNORECASE | re.DOTALL,
+)
+EACH_PLAYER_EFFECT = re.compile(
+    r"\beach player(?:'s)?\b|\beach opponent and you\b|\bwhenever a player\b",
+    re.IGNORECASE,
+)
+SYMMETRIC_LIFEGAIN_LOCK = re.compile(
+    r"\bplayers? (?:can't|cannot) gain life\b|\bif a player would gain life\b",
+    re.IGNORECASE,
+)
+SYMMETRIC_LAND_ENTRY = re.compile(
+    r"\bwhenever (?:a|one or more) lands? enters? the battlefield\b",
+    re.IGNORECASE,
+)
+OPPONENT_LAND_ENTRY = re.compile(
+    r"\bwhenever (?:a|one or more) lands? enters? the battlefield under an opponent's control\b",
+    re.IGNORECASE,
+)
 
 KEEP_FIELDS = (
     "name", "cmc", "mana_cost", "type_line", "oracle_text",
@@ -117,6 +148,144 @@ def archetype_match_score(card_oracle: str, card_type: str, archetype: dict) -> 
     return len(matches), matches
 
 
+def archetype_raw_strength(
+    card_oracle: str,
+    card_type: str,
+    card_name: str,
+    archetype: dict,
+) -> tuple[float, int]:
+    """Return (raw pattern strength, pattern denominator) for one archetype."""
+    for anti in archetype["_anti_compiled"]:
+        if anti.search(card_oracle):
+            return -1.0, len(archetype["_compiled"])
+    if archetype["_type_constraints"] and not any(tc in card_type for tc in archetype["_type_constraints"]):
+        return 0.0, len(archetype["_compiled"])
+
+    local_matches = sum(1 for compiled in archetype["_compiled"] if compiled.search(card_oracle))
+    is_staple = card_name in archetype["_staples"]
+    if local_matches <= 0 and not is_staple:
+        return 0.0, len(archetype["_compiled"])
+
+    strength = float(local_matches)
+    if is_staple:
+        strength = max(strength, len(archetype["_compiled"]) * 0.5)
+    return strength, len(archetype["_compiled"])
+
+
+def saturation_multiplier(match_count: int) -> float:
+    """Diminish same-archetype density once a deck is already deep on that tag."""
+    if match_count <= SATURATION_THRESHOLD:
+        return 1.0
+    return max(SATURATION_FLOOR, SATURATION_THRESHOLD / float(match_count))
+
+
+def deck_archetype_match_counts(
+    deck: dict,
+    mirror_index: dict[str, dict],
+    archetypes: list[dict],
+) -> dict[str, int]:
+    counts = {arch["name"]: 0 for arch in archetypes}
+    for entry in deck.get("decklist", []):
+        card = mirror_index.get(entry.get("name", ""))
+        if not card and " // " in entry.get("name", ""):
+            card = mirror_index.get(entry["name"].split(" // ", 1)[0])
+        if not card:
+            continue
+        oracle = card_oracle_blob(card).lower()
+        type_blob = card_type_blob(card)
+        quantity = max(1, int(entry.get("quantity") or 1))
+        for arch in archetypes:
+            strength, _denom = archetype_raw_strength(oracle, type_blob, card.get("name", ""), arch)
+            if strength > 0:
+                counts[arch["name"]] += quantity
+    return counts
+
+
+def deck_context(
+    deck: dict,
+    mirror_index: dict[str, dict],
+    archetype_ids: list[str],
+    archetype_counts: dict[str, int],
+) -> dict:
+    creature_count = 0
+    sac_outlet_count = 0
+    for entry in deck.get("decklist", []):
+        card = mirror_index.get(entry.get("name", ""))
+        if not card and " // " in entry.get("name", ""):
+            card = mirror_index.get(entry["name"].split(" // ", 1)[0])
+        if not card:
+            continue
+        quantity = max(1, int(entry.get("quantity") or 1))
+        type_blob = card_type_blob(card)
+        oracle = card_oracle_blob(card)
+        if "creature" in type_blob:
+            creature_count += quantity
+        if SACRIFICE_CREATURE.search(oracle):
+            sac_outlet_count += quantity
+
+    return {
+        "archetype_ids": set(archetype_ids),
+        "archetype_counts": archetype_counts,
+        "asymmetric_only": bool(deck.get("asymmetric_only")),
+        "creature_count": creature_count,
+        "sac_outlet_count": sac_outlet_count,
+    }
+
+
+def has_symmetric_effect(card_oracle: str) -> bool:
+    """Return true for broad symmetric templates an asymmetric-only deck avoids."""
+    if EACH_PLAYER_EFFECT.search(card_oracle):
+        return True
+    if SYMMETRIC_LIFEGAIN_LOCK.search(card_oracle):
+        return True
+    if SYMMETRIC_LAND_ENTRY.search(card_oracle) and not OPPONENT_LAND_ENTRY.search(card_oracle):
+        return True
+    return False
+
+
+def detect_anti_synergy(card: dict, context: dict) -> list[dict]:
+    """Return deterministic deck-context anti-synergy signals with point penalties."""
+    oracle = card_oracle_blob(card)
+    archetype_ids = context["archetype_ids"]
+    flags: list[dict] = []
+
+    if (
+        ("amass-orcs" in archetype_ids or "amass-armies" in archetype_ids)
+        and TOKEN_ENTRY_MISMATCH.search(oracle)
+    ):
+        flags.append({
+            "name": "amass-token-entry-mismatch",
+            "penalty": 12.0,
+        })
+    if "amass-orcs" in archetype_ids and OFF_TRIBE_AMASS.search(oracle):
+        flags.append({
+            "name": "off-tribe-amass",
+            "penalty": 8.0,
+        })
+    if context["sac_outlet_count"] < 3 and SACRIFICE_CREATURE.search(oracle):
+        flags.append({
+            "name": "low-sacrifice-support",
+            "penalty": 12.0,
+        })
+    if context["sac_outlet_count"] < 3 and SELF_DEATH_TRIGGER.search(oracle):
+        flags.append({
+            "name": "death-trigger-low-sacrifice-support",
+            "penalty": 8.0,
+        })
+    if context["creature_count"] < 25 and SYMMETRIC_REANIMATION.search(oracle):
+        flags.append({
+            "name": "creature-light-symmetric-reanimation",
+            "penalty": 15.0,
+        })
+    if context.get("asymmetric_only") and has_symmetric_effect(oracle):
+        flags.append({
+            "name": "symmetric-effect-in-asymmetric-only",
+            "multiplier": ASYMMETRIC_ONLY_MULTIPLIER,
+        })
+
+    return flags
+
+
 def score_card(
     card: dict,
     archetypes: list[dict],
@@ -125,6 +294,7 @@ def score_card(
     owned: set[str],
     game_changers: set[str],
     bracket: int,
+    context: dict | None = None,
 ) -> tuple[float, dict, list[str]]:
     """Return (score, breakdown, matched_archetypes)."""
     oracle = card_oracle_blob(card).lower()
@@ -133,10 +303,12 @@ def score_card(
 
     # Anti-pattern disqualification across any archetype
     archetype_hits: list[tuple[str, float]] = []  # (archetype_name, per-archetype score)
-    pattern_score = 0.0
+    raw_pattern_score = 0.0
+    adjusted_pattern_score = 0.0
     total_patterns = 0
     type_constraint_satisfied = False
     type_constraint_required = False
+    saturated_archetypes = []
 
     for arch in archetypes:
         for anti in arch["_anti_compiled"]:
@@ -148,22 +320,20 @@ def score_card(
             if any(tc in type_blob for tc in arch["_type_constraints"]):
                 type_constraint_satisfied = True
 
-        local_matches = 0
-        for compiled in arch["_compiled"]:
-            if compiled.search(oracle):
-                local_matches += 1
-        is_staple = name in arch["_staples"]
-        if local_matches > 0 or is_staple:
-            n_patterns = len(arch["_compiled"])
-            arch_strength = float(local_matches)
-            if is_staple:
-                arch_strength = max(arch_strength, n_patterns * 0.5)
+        arch_strength, n_patterns = archetype_raw_strength(oracle, type_blob, name, arch)
+        if arch_strength > 0:
             archetype_hits.append((arch["name"], arch_strength))
-            pattern_score += local_matches
+            raw_pattern_score += arch_strength
             total_patterns += n_patterns
-            if is_staple:
-                # staples always count for at least 50% of pattern score
-                pattern_score = max(pattern_score, total_patterns * 0.5)
+            match_count = (context or {}).get("archetype_counts", {}).get(arch["name"], 0)
+            multiplier = saturation_multiplier(match_count)
+            adjusted_pattern_score += arch_strength * multiplier
+            if multiplier < 1.0:
+                saturated_archetypes.append({
+                    "archetype": arch["name"],
+                    "deck_matches": match_count,
+                    "multiplier": round(multiplier, 2),
+                })
 
     if not archetype_hits:
         return 0.0, {"disqualified": "no archetype match"}, []
@@ -175,8 +345,11 @@ def score_card(
         return 0.0, {"disqualified": "type constraint not satisfied"}, []
 
     # 1. Keyword density (0–40)
-    density = (pattern_score / total_patterns) if total_patterns else 0.0
+    raw_density = (raw_pattern_score / total_patterns) if total_patterns else 0.0
+    density = (adjusted_pattern_score / total_patterns) if total_patterns else 0.0
+    raw_density_score = min(40.0, raw_density * 40.0)
     density_score = min(40.0, density * 40.0)
+    saturation_penalty = max(0.0, raw_density_score - density_score)
 
     # 2. CMC fit (0–20)
     cmc = card.get("cmc") or 0
@@ -201,23 +374,45 @@ def score_card(
         gc_score = 0.0
 
     # 5. Already-in-decklist demotion: cap total at 5
-    base_total = density_score + cmc_score + owned_score + gc_score
-    if name in decklist_names:
-        return min(5.0, base_total), {
-            "density": round(density_score, 1),
-            "cmc_fit": round(cmc_score, 1),
-            "owned": owned_score,
-            "bracket_fit": gc_score,
-            "decklist_demoted": True,
-        }, matched_archetypes
-
-    return round(base_total, 1), {
+    raw_total = density_score + cmc_score + owned_score + gc_score
+    anti_synergy = detect_anti_synergy(card, context) if context else []
+    flat_anti_synergy_penalty = sum(flag.get("penalty", 0.0) for flag in anti_synergy)
+    anti_synergy_multiplier = 1.0
+    for flag in anti_synergy:
+        anti_synergy_multiplier *= flag.get("multiplier", 1.0)
+    base_total = max(0.0, (raw_total - flat_anti_synergy_penalty) * anti_synergy_multiplier)
+    anti_synergy_penalty = max(0.0, raw_total - base_total)
+    breakdown = {
         "density": round(density_score, 1),
         "cmc_fit": round(cmc_score, 1),
         "owned": owned_score,
         "bracket_fit": gc_score,
-        "decklist_demoted": False,
-    }, matched_archetypes
+        "decklist_demoted": name in decklist_names,
+    }
+    if saturation_penalty > 0:
+        breakdown["density_raw"] = round(raw_density_score, 1)
+        breakdown["saturation_penalty"] = round(saturation_penalty, 1)
+        breakdown["saturated_archetypes"] = saturated_archetypes
+    if anti_synergy_penalty > 0:
+        breakdown["anti_synergy_penalty"] = round(anti_synergy_penalty, 1)
+        if anti_synergy_multiplier < 1.0:
+            breakdown["anti_synergy_multiplier"] = round(anti_synergy_multiplier, 2)
+        breakdown["anti_synergy_flags"] = []
+        multiplier_base = max(0.0, raw_total - flat_anti_synergy_penalty)
+        for flag in anti_synergy:
+            visible = {"name": flag["name"]}
+            if "penalty" in flag:
+                visible["penalty"] = flag["penalty"]
+            if "multiplier" in flag:
+                visible["multiplier"] = flag["multiplier"]
+                visible["penalty"] = round(multiplier_base * (1.0 - flag["multiplier"]), 1)
+                multiplier_base *= flag["multiplier"]
+            breakdown["anti_synergy_flags"].append(visible)
+
+    if name in decklist_names:
+        return min(5.0, base_total), breakdown, matched_archetypes
+
+    return round(base_total, 1), breakdown, matched_archetypes
 
 
 def deck_avg_cmc(deck: dict, mirror_index: dict[str, dict]) -> float:
@@ -297,6 +492,8 @@ def generate_for_deck(
         return None
 
     archetypes = [compile_archetype(playbook["archetypes"][a]) for a in archetype_ids]
+    archetype_counts = deck_archetype_match_counts(deck, mirror_index, archetypes)
+    context = deck_context(deck, mirror_index, archetype_ids, archetype_counts)
     deck_ci = commander_color_identity(deck, mirror_index)
     avg_cmc = deck_avg_cmc(deck, mirror_index)
     decklist_names = {e["name"] for e in deck.get("decklist", [])}
@@ -319,7 +516,7 @@ def generate_for_deck(
             continue
 
         score, breakdown, matched = score_card(
-            card, archetypes, avg_cmc, decklist_names, owned, game_changers, bracket
+            card, archetypes, avg_cmc, decklist_names, owned, game_changers, bracket, context
         )
         if score <= 0:
             continue
@@ -354,12 +551,18 @@ def generate_for_deck(
         "deck_id": deck_id,
         "commander": commander_name,
         "archetypes": archetype_ids,
+        "asymmetric_only": bool(deck.get("asymmetric_only")),
         "deck_avg_cmc": round(avg_cmc, 2),
         "deck_color_identity": sorted(deck_ci),
         "bracket": bracket,
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "scryfall_mirror_updated_at": mirror_updated_at,
         "deck_gaps": gap_roles,
+        "deck_archetype_match_counts": archetype_counts,
+        "saturation": {
+            "threshold": SATURATION_THRESHOLD,
+            "floor": SATURATION_FLOOR,
+        },
         "candidate_count": len(enriched),
         "candidates": enriched,
     }
@@ -421,6 +624,7 @@ def main(argv: list[str]) -> int:
             and existing.get("scryfall_mirror_updated_at") == out["scryfall_mirror_updated_at"]
             and existing.get("methodology") == out["methodology"]
             and existing.get("deck_gaps") == out.get("deck_gaps")
+            and existing.get("asymmetric_only") == out.get("asymmetric_only")
         ):
             existing_names = [c.get("name") for c in existing.get("candidates", [])]
             new_names = [c.get("name") for c in out["candidates"]]

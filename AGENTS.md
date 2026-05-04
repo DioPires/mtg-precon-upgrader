@@ -40,6 +40,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
   "cost": "$200-350",
   "bracket": "4",
   "gameChangers": 2,
+  "asymmetric_only": false,
   "sources": [...],
   "guideContent": {
     "strategyOverview": "...",
@@ -56,6 +57,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - `type: "commander"` (required)
 - `bracket` — display field indicating deck power level
 - `gameChangers` — count of Game Changer cards in the deck
+- `asymmetric_only` — optional deck-side discovery modifier; set `true` only when symmetric punisher/resource-denial effects are strategic traps and the deck should prefer opponent-only templates
 - `guideContent.deckCategories` — deck theme groupings
 - `decklist` — full 99-card list as `{name, type}` objects with optional `quantity` field
 - `adds` — notable/highlighted cards
