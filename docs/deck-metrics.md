@@ -65,7 +65,18 @@ role_coverage_health = mean(per_role_score across applicable rows)
 
 `actual_count` includes both `primary_role == R` and `secondary_role == R` (secondary at 0.5 weight) plus commander roles.
 
-**`gaps[]`**: any role with `per_role_score < 70` is appended to `metrics.json`'s `gaps[]` array as `{role, actual, target, score}`. Stored only in `metrics.json` (not `deck.json`) since it's derived state.
+**`wincon` target adjustment by deck-level `wincon_style`** (overrides the bracket row above):
+
+| `wincon_style` | wincon target | Engine substitution |
+|---|---|---|
+| `combo` | 1 | no |
+| `value-incremental` | 1 | yes — `engine` cards count toward the wincon shortfall (capped at target so engine-stuffed decks don't double-credit) |
+| `discrete-threats` | 2 | no |
+| (unset) | bracket row above | no |
+
+Rationale: a tuned combo deck closes off one assembled line; a value-incremental deck's engine *is* its closer (Meren chains, Zur fetches), so engines substitute for the missing wincon-tagged card; a discrete-threats deck must threaten on at least two independent axes to keep pressure under removal.
+
+**`gaps[]`**: any role with `per_role_score < 70` is appended to `metrics.json`'s `gaps[]` array as `{role, actual, target, score}` (plus `wincon_style` on a wincon gap). Stored only in `metrics.json` (not `deck.json`) since it's derived state. The math behind every gap is reproducible from the inputs in `metrics.json` plus this doc.
 
 ### 3. `curve_health` (0–100)
 

@@ -46,6 +46,19 @@ ROLE_TARGETS = {
 
 INTERACTION_TARGETS = {3: 10, 4: 14, 5: 18}
 
+# Deck-level `wincon_style` adjusts the wincon row in role_coverage. See
+# docs/deck-metrics.md §role_coverage_health/wincon_style for rationale.
+#   - combo:            single assembly closes the game, target = 1
+#   - value-incremental:engine *is* the closer; target = 1 with engines
+#                       substituting for missing wincon-tagged cards
+#   - discrete-threats: must threaten on multiple axes; target = 2
+WINCON_STYLE_TARGET = {
+    "combo": 1,
+    "value-incremental": 1,
+    "discrete-threats": 2,
+}
+WINCON_STYLE_ENGINE_SUB = {"value-incremental"}
+
 # Curve targets keyed by archetype id. Multiple deck archetypes are averaged.
 CURVE_TARGETS = {
     "ramp-big-mana": 4.2,
@@ -394,17 +407,35 @@ def role_coverage_health(deck: dict, deck_ci: set[str], bracket: int) -> tuple[d
     per_scores = []
     gaps: list[dict] = []
 
+    wincon_style = deck.get("wincon_style")
+    wincon_target_override = WINCON_STYLE_TARGET.get(wincon_style)
+    engine_substitutes = wincon_style in WINCON_STYLE_ENGINE_SUB
+
     for role, by_bracket in ROLE_TARGETS.items():
         if role == "counterspell" and "U" not in deck_ci:
             continue
         target = by_bracket.get(bracket, by_bracket[4])
         actual = counts.get(role, 0.0)
+
+        if role == "wincon":
+            if wincon_target_override is not None:
+                target = wincon_target_override
+            if engine_substitutes:
+                # value-incremental decks treat engine cards as their closer.
+                # Engines substitute *only* for the shortfall — never inflate
+                # past target.
+                shortfall = max(0.0, target - actual)
+                actual = actual + min(counts.get("engine", 0.0), shortfall)
+
         ratio = (actual / target) if target else 1.0
         per = round(min(ratio, 1.2) * 100)
         per_scores.append(per)
         by_role[role] = {"actual": round(actual, 1), "target": target, "score": per}
         if per < 70:
-            gaps.append({"role": role, "actual": round(actual, 1), "target": target, "score": per})
+            gap_entry = {"role": role, "actual": round(actual, 1), "target": target, "score": per}
+            if role == "wincon" and wincon_style:
+                gap_entry["wincon_style"] = wincon_style
+            gaps.append(gap_entry)
 
     score = round(sum(per_scores) / len(per_scores)) if per_scores else 0
     return (
