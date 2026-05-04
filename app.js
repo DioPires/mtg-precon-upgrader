@@ -4134,15 +4134,36 @@ function initViewToggle() {
 
 }
 
-// === UPGRADE PATHS (RECOMMENDATIONS ENGINE) ===
+// === THE APOTHECARY (CANDIDATES + DIAGNOSIS) ===
 
+// DEC-90 P8.4 — Remedies render from candidates.json. Top-N is configurable.
+const REMEDIES_TOP_N = 30;
+
+let candidatesCache = {};
 let recommendationsCache = {};
 let recommendationOwnedCards = null;
 
-async function loadRecommendations(deckId) {
-  if (recommendationsCache[deckId]) return recommendationsCache[deckId];
-  if (recommendationsCache[deckId] === null) return null;
+async function loadCandidates(deckId) {
+  if (candidatesCache[deckId] !== undefined) return candidatesCache[deckId];
+  try {
+    const response = await fetch(`data/commanders/${deckId}/candidates.json`);
+    if (!response.ok) {
+      candidatesCache[deckId] = null;
+      return null;
+    }
+    const data = await response.json();
+    candidatesCache[deckId] = data;
+    return data;
+  } catch {
+    candidatesCache[deckId] = null;
+    return null;
+  }
+}
 
+// Retained for the Scrying Pool deck-comparison view (still consumes recommendations.healthBaseline).
+// P8.5 (DEC-141) deprecates recommendations.json; that issue will retire this loader.
+async function loadRecommendations(deckId) {
+  if (recommendationsCache[deckId] !== undefined) return recommendationsCache[deckId];
   try {
     const response = await fetch(`data/commanders/${deckId}/recommendations.json`);
     if (!response.ok) {
@@ -4285,7 +4306,6 @@ function renderMaladiesPanel(gaps) {
     : '';
   return `<section id="maladies-panel" class="maladies-panel" aria-label="Maladies">
     <div class="maladies-panel-header">
-      <span class="maladies-panel-title">Maladies</span>
       <span class="maladies-panel-hint">Click a role to filter remedies</span>
       ${clearBtn}
     </div>
@@ -4523,6 +4543,30 @@ async function loadMetrics(deckId) {
   }
 }
 
+function formatMirrorAge(iso) {
+  if (!iso) return '';
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return '';
+  const ageMs = Date.now() - t;
+  if (ageMs < 0) return 'just now';
+  const mins = Math.round(ageMs / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 48) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  return `${days}d ago`;
+}
+
+function formatGeneratedAt(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleString(undefined, {
+    year: 'numeric', month: 'short', day: '2-digit',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
 async function renderUpgradePaths() {
   const section = document.getElementById('upgrade-paths-section');
   const content = document.getElementById('upgrade-paths-content');
@@ -4536,20 +4580,19 @@ async function renderUpgradePaths() {
     return;
   }
 
-  const [recData, owned, metricsData] = await Promise.all([
-    loadRecommendations(currentDeckId),
+  const [candData, owned, metricsData] = await Promise.all([
+    loadCandidates(currentDeckId),
     loadRecommendationOwnedCards(),
     loadMetrics(currentDeckId),
   ]);
 
-  if (!recData || !recData.recommendations || recData.recommendations.length === 0) {
+  if (!candData || !Array.isArray(candData.candidates) || candData.candidates.length === 0) {
     section.style.display = 'none';
     return;
   }
 
   section.style.display = '';
 
-  // Show owned filter toggle if user has owned cards
   if (owned.size > 0) {
     ownedToggle.style.display = '';
   } else {
@@ -4558,38 +4601,46 @@ async function renderUpgradePaths() {
 
   const showOwnedOnly = document.getElementById('upgrade-owned-filter')?.checked || false;
 
-  let recs = recData.recommendations;
-
-  // Tag owned status from live owned data
-  recs.forEach(rec => {
-    rec._owned = owned.has(rec.card);
-  });
-
-  if (showOwnedOnly) {
-    recs = recs.filter(r => r._owned);
-  }
-
-  // DEC-138 P8.2 — Reset stale filter if the active role isn't in current gaps[].
+  // DEC-138 P8.2 — reset stale filter if the active role left current gaps[].
   const activeGaps = metricsData?.gaps || [];
   if (maladiesFilterRole && !activeGaps.some(g => g.role === maladiesFilterRole)) {
     maladiesFilterRole = null;
   }
-  if (maladiesFilterRole) {
-    // recommendations.json doesn't carry primary_role today; P8.4 swaps to candidates.json
-    // which will. For now this filter resolves to an empty list with a clear empty-state.
-    recs = recs.filter(r => r.primary_role === maladiesFilterRole);
+
+  // Top-N candidates with live owned status overlay.
+  let pool = candData.candidates.slice(0, REMEDIES_TOP_N).map(c => ({
+    ...c,
+    _owned: owned.has(c.name),
+  }));
+
+  if (showOwnedOnly) {
+    pool = pool.filter(c => c._owned);
   }
 
-  countEl.textContent = recs.length;
+  if (maladiesFilterRole) {
+    pool = pool.filter(c => c.deck_role === maladiesFilterRole || c.mitigates_gap === maladiesFilterRole);
+  }
+
+  // Float gap-addressers (mitigates_gap matches an active gap) to top, retain score order within groups.
+  pool.sort((a, b) => {
+    const aGap = a.mitigates_gap ? 0 : 1;
+    const bGap = b.mitigates_gap ? 0 : 1;
+    if (aGap !== bGap) return aGap - bGap;
+    return (b.score ?? 0) - (a.score ?? 0);
+  });
+
+  countEl.textContent = pool.length;
 
   let html = '';
 
-  // Health baseline summary — DEC-137: sourced from metrics.json (deterministic), not recommendations.json.
+  // === DIAGNOSIS ===
+  html += '<div class="apothecary-subhead"><span class="apothecary-subhead-label">Diagnosis</span></div>';
+
+  // Vitals (DEC-137): metrics.json health baseline.
   if (metricsData && metricsData.metrics && metricsData.global_health != null) {
     const score = Math.round(metricsData.global_health);
     const grade = gradeForGlobalHealth(score);
 
-    // Find weakest of the 5 component scores.
     let weakestKey = null;
     let weakestScore = Infinity;
     for (const key of METRICS_KEYS) {
@@ -4605,17 +4656,17 @@ async function renderUpgradePaths() {
     for (const key of METRICS_KEYS) {
       const raw = metricsData.metrics[key]?.score;
       if (raw == null) continue;
-      const score = Math.round(raw);
+      const cscore = Math.round(raw);
       const label = METRICS_LABELS[key];
       const desc = METRICS_DESCRIPTIONS[key];
       const isWeakest = key === weakestKey;
-      const barColor = score >= 75 ? 'var(--accent-green)' : score >= 50 ? 'var(--accent-gold)' : 'var(--accent-red)';
+      const barColor = cscore >= 75 ? 'var(--accent-green)' : cscore >= 50 ? 'var(--accent-gold)' : 'var(--accent-red)';
       componentRows += `<div class="health-component-row${isWeakest ? ' is-weakest' : ''}">
         <div class="health-component-header">
           <span class="health-component-label" title="${escapeHtml(desc)}">${escapeHtml(label)}${isWeakest ? ' <span class="health-weakest-badge">Weakest</span>' : ''}</span>
-          <span class="health-component-score" style="color: ${barColor}">${score}</span>
+          <span class="health-component-score" style="color: ${barColor}">${cscore}</span>
         </div>
-        <div class="health-component-bar-track"><div class="health-component-bar-fill" style="width: ${Math.min(score, 100)}%; background: ${barColor}"></div></div>
+        <div class="health-component-bar-track"><div class="health-component-bar-fill" style="width: ${Math.min(cscore, 100)}%; background: ${barColor}"></div></div>
         <div class="health-component-desc">${escapeHtml(desc)}</div>
       </div>`;
     }
@@ -4636,73 +4687,91 @@ async function renderUpgradePaths() {
     </details>`;
   }
 
-  // DEC-139 P8.3 — Diagnosis charts (curve, color sources, role coverage).
-  // Render between Vitals and Maladies so the visualization deepens the score breakdown.
+  // Diagnosis charts (DEC-139)
   html += renderDiagnosisCharts(metricsData);
 
-  // DEC-138 P8.2 — Maladies panel (gaps[] chips). Below Vitals, above Remedies.
-  html += renderMaladiesPanel(metricsData?.gaps);
-
-  if (recs.length === 0) {
-    const emptyMsg = maladiesFilterRole
-      ? `No remedies match <strong>${escapeHtml(ROLE_LABELS[maladiesFilterRole] || maladiesFilterRole)}</strong> in current data. Full role-aware Remedies list lands with P8.4.`
-      : 'No upgrade recommendations available' + (showOwnedOnly ? ' in your collection' : '') + '.';
-    html += `<div class="upgrade-empty">${emptyMsg}</div>`;
-    content.innerHTML = html;
-    return;
+  // === MALADIES ===
+  if (Array.isArray(metricsData?.gaps) && metricsData.gaps.length > 0) {
+    html += '<div class="apothecary-subhead"><span class="apothecary-subhead-label">Maladies</span></div>';
+    html += renderMaladiesPanel(metricsData.gaps);
   }
 
-  for (const rec of recs) {
-    const imgAttr = cardImgAttr(rec.card, null);
-    const ownedClass = rec._owned ? ' is-owned' : '';
+  // === REMEDIES ===
+  html += `<div class="apothecary-subhead">
+    <span class="apothecary-subhead-label">Remedies</span>
+    <span class="apothecary-subhead-hint">Top ${REMEDIES_TOP_N} candidates · gap-addressers floated</span>
+  </div>`;
 
-    // Tags
-    let tags = '';
-    if (rec.category === 'combo-enabler') {
-      tags += '<span class="upgrade-tag upgrade-tag-combo">Combo</span>';
-    }
-    if (rec.scoring?.healthGapFill > 0) {
-      tags += '<span class="upgrade-tag upgrade-tag-health">Health Fix</span>';
-    }
-    if (rec._owned) {
-      tags += '<span class="upgrade-tag upgrade-tag-owned">Owned</span>';
-    }
-    if (rec.impact?.gameChangerAdded) {
-      tags += '<span class="upgrade-tag upgrade-tag-gc">Game Changer</span>';
-    }
+  if (pool.length === 0) {
+    const emptyMsg = maladiesFilterRole
+      ? `No remedies match <strong>${escapeHtml(ROLE_LABELS[maladiesFilterRole] || maladiesFilterRole)}</strong> in the top ${REMEDIES_TOP_N} candidates${showOwnedOnly ? ' you own' : ''}.`
+      : 'No remedies available' + (showOwnedOnly ? ' in your collection' : '') + '.';
+    html += `<div class="upgrade-empty">${emptyMsg}</div>`;
+  } else {
+    // Score ring uses dynamic max for candidate scale (~50 typical top).
+    const maxScore = Math.max(50, ...pool.map(c => c.score ?? 0));
 
-    // Swap suggestion
-    let swapHtml = '';
-    if (rec.swapSuggestion) {
-      swapHtml = `<div class="upgrade-swap">Swap for <span class="upgrade-swap-cut" data-card-name="${escapeHtml(rec.swapSuggestion.cut)}">${escapeHtml(rec.swapSuggestion.cut)}</span></div>`;
-    }
+    for (const c of pool) {
+      const imgAttr = cardImgAttr(c.name, null);
+      const isGapAddresser = !!c.mitigates_gap;
+      const cardClasses = ['upgrade-card'];
+      if (c._owned) cardClasses.push('is-owned');
+      if (isGapAddresser) cardClasses.push('is-gap-addresser');
 
-    // Source links
-    let sourceHtml = '';
-    if (rec.sources) {
-      for (const src of rec.sources) {
-        if (src.url) {
-          sourceHtml += `<a class="upgrade-source-link" href="${sanitizeUrl(src.url)}" target="_blank" rel="noopener">${escapeHtml(src.name || src.type)}</a> `;
-        }
+      let tags = '';
+      if (isGapAddresser) {
+        const role = c.mitigates_gap;
+        const label = ROLE_LABELS[role] || role;
+        tags += `<span class="upgrade-tag upgrade-tag-addresses" title="Addresses gap: ${escapeHtml(label)}">Addresses: ${escapeHtml(label)}</span>`;
       }
-    }
+      if (c._owned) {
+        tags += '<span class="upgrade-tag upgrade-tag-owned">Owned</span>';
+      }
+      if (c.game_changer) {
+        tags += '<span class="upgrade-tag upgrade-tag-gc">Game Changer</span>';
+      }
+      if (c.deck_role && c.deck_role !== c.mitigates_gap) {
+        const roleLabel = ROLE_LABELS[c.deck_role] || c.deck_role;
+        tags += `<span class="upgrade-tag upgrade-tag-role">${escapeHtml(roleLabel)}</span>`;
+      }
 
-    html += `<div class="upgrade-card${ownedClass}" data-card-name="${escapeHtml(rec.card)}">
-      <div class="upgrade-card-img">
-        <img ${imgAttr} alt="${escapeHtml(rec.card)}" loading="lazy">
-      </div>
-      <div class="upgrade-card-body">
-        <div class="upgrade-card-name">${escapeHtml(rec.card)}</div>
-        <div class="upgrade-card-type">${escapeHtml(rec.impact?.typeLine || '')}</div>
-        <div class="upgrade-card-rationale">${linkifyRationaleCards(rec.rationale || '', rec.comboDetails?.cardsInDeck)}</div>
-        <div class="upgrade-card-tags">${tags}</div>
-        ${swapHtml}
-        ${sourceHtml ? `<div style="margin-top:4px">${sourceHtml}</div>` : ''}
-      </div>
-      <div class="upgrade-card-score">
-        ${renderScoreRing(rec.score)}
-      </div>
-    </div>`;
+      const rationale = c.strategy_line
+        ? `<span class="remedy-strategy">${escapeHtml(c.strategy_line)}</span>`
+        : '';
+      const typeLine = c.type_line || '';
+
+      const scoreVal = Math.round(c.score ?? 0);
+
+      html += `<div class="${cardClasses.join(' ')}" data-card-name="${escapeHtml(c.name)}">
+        <div class="upgrade-card-img">
+          <img ${imgAttr} alt="${escapeHtml(c.name)}" loading="lazy">
+        </div>
+        <div class="upgrade-card-body">
+          <div class="upgrade-card-name">${escapeHtml(c.name)}</div>
+          <div class="upgrade-card-type">${escapeHtml(typeLine)}</div>
+          ${rationale ? `<div class="upgrade-card-rationale">${rationale}</div>` : ''}
+          <div class="upgrade-card-tags">${tags}</div>
+        </div>
+        <div class="upgrade-card-score">
+          ${renderScoreRing(scoreVal, maxScore)}
+        </div>
+      </div>`;
+    }
+  }
+
+  // === FOOTER === metrics.generated_at + scryfall mirror age.
+  const metricsGen = metricsData?.generated_at ? formatGeneratedAt(metricsData.generated_at) : null;
+  const mirrorAge = candData?.scryfall_mirror_updated_at ? formatMirrorAge(candData.scryfall_mirror_updated_at) : null;
+  if (metricsGen || mirrorAge) {
+    html += '<div class="apothecary-footer">';
+    if (metricsGen) {
+      html += `<span class="apothecary-footer-item" title="metrics.json generated_at">Metrics: ${escapeHtml(metricsGen)}</span>`;
+    }
+    if (mirrorAge) {
+      html += `<span class="apothecary-footer-sep">·</span>`;
+      html += `<span class="apothecary-footer-item" title="Scryfall bulk mirror last refreshed">Scryfall mirror: ${escapeHtml(mirrorAge)}</span>`;
+    }
+    html += '</div>';
   }
 
   content.innerHTML = html;

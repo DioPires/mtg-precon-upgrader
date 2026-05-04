@@ -2666,6 +2666,71 @@ details[open].upgrade-health-baseline .health-expand-hint { opacity: 0.4; }
   }
 }
 
+/* DEC-140 P8.4 — Apothecary sub-headings (Diagnosis / Maladies / Remedies). */
+.apothecary-subhead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 14px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.apothecary-subhead:first-child {
+  margin-top: 0;
+}
+.apothecary-subhead-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--deck-accent, var(--accent-purple));
+  font-weight: 600;
+}
+.apothecary-subhead-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Gap-addresser visual emphasis on remedy cards. */
+.upgrade-card.is-gap-addresser {
+  border-left: 3px solid var(--deck-accent, var(--accent-purple));
+  background: linear-gradient(90deg, rgba(122, 84, 200, 0.06), transparent 40%);
+}
+
+/* Addresses-gap badge — replaces the legacy Health Fix tag. */
+.upgrade-tag-addresses {
+  background: var(--deck-accent, var(--accent-purple));
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.upgrade-tag-role {
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  font-weight: 500;
+}
+
+.remedy-strategy {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.apothecary-footer {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: 'Fira Code', monospace;
+}
+.apothecary-footer-sep { opacity: 0.5; }
+
 /* === TOKENS NEEDED === */
 .guide-section.tokens .guide-section-title {
   display: flex;
