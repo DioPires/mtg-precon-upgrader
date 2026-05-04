@@ -53,7 +53,16 @@ def main(argv: list[str]) -> int:
         gen_cmd += ["--deck", args.deck]
     else:
         gen_cmd.append("--all")
-    return run(gen_cmd)
+    rc = run(gen_cmd)
+    if rc != 0:
+        return rc
+
+    metrics_cmd = [sys.executable, str(SCRIPTS / "compute_deck_metrics.py")]
+    if args.deck:
+        metrics_cmd += ["--deck", args.deck]
+    else:
+        metrics_cmd.append("--all")
+    return run(metrics_cmd)
 
 
 if __name__ == "__main__":
