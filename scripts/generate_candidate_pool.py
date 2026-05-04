@@ -15,6 +15,7 @@ import argparse
 import csv
 import json
 import re
+import statistics
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -31,11 +32,14 @@ MIRROR_FILE = PROJECT_ROOT / "priv_data" / "scryfall-oracle.json"
 MIRROR_META = PROJECT_ROOT / "priv_data" / "scryfall-oracle.meta.json"
 OWNED_FILE = PROJECT_ROOT / "priv_data" / "owned_formatted.csv"
 
-METHODOLOGY_VERSION = "candidate-pool-v3"
+METHODOLOGY_VERSION = "candidate-pool-v4"
 DEFAULT_LIMIT = 200
 SATURATION_THRESHOLD = 8
 SATURATION_FLOOR = 0.35
 ASYMMETRIC_ONLY_MULTIPLIER = 0.55
+ARCHETYPE_POSITION_WEIGHTS = (1.0, 0.5, 0.25)
+ROLE_SATURATION_THRESHOLD = 8
+ROLE_REDUNDANCY_FLOOR = 0.65
 
 TOKEN_ENTRY_MISMATCH = re.compile(
     r"tokens? you control (?:that )?entered this turn|whenever [^.]*tokens? enters?",
@@ -179,6 +183,18 @@ def saturation_multiplier(match_count: int) -> float:
     return max(SATURATION_FLOOR, SATURATION_THRESHOLD / float(match_count))
 
 
+def archetype_position_weight(index: int) -> float:
+    """Position-1 archetype gets full weight; later positions decay."""
+    if index < len(ARCHETYPE_POSITION_WEIGHTS):
+        return ARCHETYPE_POSITION_WEIGHTS[index]
+    return ARCHETYPE_POSITION_WEIGHTS[-1]
+
+
+def build_position_weights(archetypes: list[dict]) -> dict[str, float]:
+    """Map compiled-archetype name → position weight (1.0×, 0.5×, 0.25×, ...)."""
+    return {arch["name"]: archetype_position_weight(i) for i, arch in enumerate(archetypes)}
+
+
 def deck_archetype_match_counts(
     deck: dict,
     mirror_index: dict[str, dict],
@@ -295,6 +311,8 @@ def score_card(
     game_changers: set[str],
     bracket: int,
     context: dict | None = None,
+    position_weights: dict[str, float] | None = None,
+    role_pool: dict[str, dict] | None = None,
 ) -> tuple[float, dict, list[str]]:
     """Return (score, breakdown, matched_archetypes)."""
     oracle = card_oracle_blob(card).lower()
@@ -309,6 +327,7 @@ def score_card(
     type_constraint_satisfied = False
     type_constraint_required = False
     saturated_archetypes = []
+    position_weights_applied: dict[str, float] = {}
 
     for arch in archetypes:
         for anti in arch["_anti_compiled"]:
@@ -326,14 +345,17 @@ def score_card(
             raw_pattern_score += arch_strength
             total_patterns += n_patterns
             match_count = (context or {}).get("archetype_counts", {}).get(arch["name"], 0)
-            multiplier = saturation_multiplier(match_count)
-            adjusted_pattern_score += arch_strength * multiplier
-            if multiplier < 1.0:
+            sat_mult = saturation_multiplier(match_count)
+            pos_mult = (position_weights or {}).get(arch["name"], 1.0)
+            adjusted_pattern_score += arch_strength * sat_mult * pos_mult
+            if sat_mult < 1.0:
                 saturated_archetypes.append({
                     "archetype": arch["name"],
                     "deck_matches": match_count,
-                    "multiplier": round(multiplier, 2),
+                    "multiplier": round(sat_mult, 2),
                 })
+            if pos_mult < 1.0:
+                position_weights_applied[arch["name"]] = round(pos_mult, 2)
 
     if not archetype_hits:
         return 0.0, {"disqualified": "no archetype match"}, []
@@ -393,6 +415,8 @@ def score_card(
         breakdown["density_raw"] = round(raw_density_score, 1)
         breakdown["saturation_penalty"] = round(saturation_penalty, 1)
         breakdown["saturated_archetypes"] = saturated_archetypes
+    if position_weights_applied:
+        breakdown["archetype_position_weights"] = position_weights_applied
     if anti_synergy_penalty > 0:
         breakdown["anti_synergy_penalty"] = round(anti_synergy_penalty, 1)
         if anti_synergy_multiplier < 1.0:
@@ -409,10 +433,80 @@ def score_card(
                 multiplier_base *= flag["multiplier"]
             breakdown["anti_synergy_flags"].append(visible)
 
+    if role_pool is not None and base_total > 0:
+        cand_role, _conf = classify_role(card)
+        if cand_role:
+            bucket = role_pool.get(cand_role)
+            if (
+                bucket
+                and bucket.get("count", 0) >= ROLE_SATURATION_THRESHOLD
+                and base_total < bucket.get("median", 0.0)
+            ):
+                demoted_total = base_total * ROLE_REDUNDANCY_FLOOR
+                breakdown["redundancy_below_roster_median"] = {
+                    "role": cand_role,
+                    "bucket_count": bucket["count"],
+                    "bucket_median": bucket["median"],
+                    "multiplier": ROLE_REDUNDANCY_FLOOR,
+                    "penalty": round(base_total - demoted_total, 1),
+                }
+                base_total = demoted_total
+
     if name in decklist_names:
         return min(5.0, base_total), breakdown, matched_archetypes
 
     return round(base_total, 1), breakdown, matched_archetypes
+
+
+def compute_role_pool_scores(
+    deck: dict,
+    mirror_index: dict[str, dict],
+    archetypes: list[dict],
+    deck_avg_cmc_value: float,
+    owned: set[str],
+    game_changers: set[str],
+    bracket: int,
+    context: dict,
+    position_weights: dict[str, float],
+) -> dict[str, dict]:
+    """For each in-deck primary_role, compute count + median candidate-pool score.
+
+    Each in-deck card is scored as if it were a fresh candidate (no decklist
+    demotion, no role-redundancy demote) so the median is a comparable
+    quality benchmark for incoming candidates. Median includes zero-scored
+    cards because those are still part of the role bucket the candidate
+    competes against.
+    """
+    by_role: dict[str, list[float]] = {}
+    for entry in deck.get("decklist", []):
+        role = entry.get("primary_role")
+        if not role:
+            continue
+        card_name = entry.get("name", "")
+        card = mirror_index.get(card_name)
+        if not card and " // " in card_name:
+            card = mirror_index.get(card_name.split(" // ", 1)[0])
+        if not card:
+            continue
+        score, _bd, _m = score_card(
+            card,
+            archetypes,
+            deck_avg_cmc_value,
+            decklist_names=set(),
+            owned=owned,
+            game_changers=game_changers,
+            bracket=bracket,
+            context=context,
+            position_weights=position_weights,
+            role_pool=None,
+        )
+        by_role.setdefault(role, []).append(score)
+
+    return {
+        role: {"count": len(scores), "median": round(statistics.median(scores), 1)}
+        for role, scores in by_role.items()
+        if scores
+    }
 
 
 def deck_avg_cmc(deck: dict, mirror_index: dict[str, dict]) -> float:
@@ -503,6 +597,12 @@ def generate_for_deck(
     except (TypeError, ValueError):
         bracket = 4
 
+    position_weights = build_position_weights(archetypes)
+    role_pool = compute_role_pool_scores(
+        deck, mirror_index, archetypes, avg_cmc,
+        owned, game_changers, bracket, context, position_weights,
+    )
+
     candidates = []
     commander_name = deck.get("commander", "")
 
@@ -516,7 +616,8 @@ def generate_for_deck(
             continue
 
         score, breakdown, matched = score_card(
-            card, archetypes, avg_cmc, decklist_names, owned, game_changers, bracket, context
+            card, archetypes, avg_cmc, decklist_names, owned, game_changers, bracket,
+            context, position_weights=position_weights, role_pool=role_pool,
         )
         if score <= 0:
             continue
@@ -559,9 +660,17 @@ def generate_for_deck(
         "scryfall_mirror_updated_at": mirror_updated_at,
         "deck_gaps": gap_roles,
         "deck_archetype_match_counts": archetype_counts,
+        "archetype_position_weights": {
+            arch["name"]: position_weights[arch["name"]] for arch in archetypes
+        },
+        "role_pool": role_pool,
         "saturation": {
             "threshold": SATURATION_THRESHOLD,
             "floor": SATURATION_FLOOR,
+        },
+        "role_redundancy": {
+            "threshold": ROLE_SATURATION_THRESHOLD,
+            "floor": ROLE_REDUNDANCY_FLOOR,
         },
         "candidate_count": len(enriched),
         "candidates": enriched,
