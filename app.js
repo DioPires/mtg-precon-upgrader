@@ -4293,6 +4293,206 @@ function renderMaladiesPanel(gaps) {
   </section>`;
 }
 
+// DEC-139 P8.3 — Diagnosis charts: curve, color sources, role coverage.
+// Vanilla SVG, no chart-library dependency. Bars get native title tooltips.
+const MTG_COLOR_HEX = {
+  W: '#f0e3b3',
+  U: '#3a78c0',
+  B: '#5a4d63',
+  R: '#d3613e',
+  G: '#3a9457',
+};
+const ROLE_CHART_ORDER = [
+  'ramp', 'card-draw', 'removal-spot', 'removal-board',
+  'protection', 'tutor', 'wincon', 'counterspell',
+];
+
+function fmtCount(n) {
+  if (n == null) return '0';
+  return Number.isInteger(n) ? String(n) : Number(n).toFixed(1).replace(/\.0$/, '');
+}
+
+function renderCurveChart(curve) {
+  if (!curve || !curve.cmc_distribution) return '';
+  const dist = curve.cmc_distribution;
+  const target = Number(curve.target_avg_cmc) || 0;
+  const penaltyActive = (curve.topcurve_penalty || 0) > 0;
+  const buckets = ['0', '1', '2', '3', '4', '5', '6', '7'];
+  const values = buckets.map(b => Number(dist[b] || 0));
+  const max = Math.max(8, ...values);
+
+  const W = 320, H = 170, padL = 28, padR = 12, padT = 22, padB = 28;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+  const barW = innerW / buckets.length;
+  const barGap = 4;
+  const yScale = v => padT + innerH - (v / max) * innerH;
+  const xForCmc = c => padL + (Math.min(c, 7) + 0.5) * barW;
+  const targetX = xForCmc(target);
+
+  let grid = '';
+  for (let g = 0; g <= 4; g++) {
+    const v = (max * g) / 4;
+    const y = yScale(v);
+    grid += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" class="chart-gridline"/>`;
+    grid += `<text x="${padL - 4}" y="${y + 3}" text-anchor="end" class="chart-axis-label">${Math.round(v)}</text>`;
+  }
+
+  let bars = '';
+  for (let i = 0; i < buckets.length; i++) {
+    const v = values[i];
+    const isHigh = i >= 6;
+    const isRed = isHigh && penaltyActive;
+    const color = isRed ? 'var(--accent-red)' : 'var(--deck-accent, var(--accent-purple))';
+    const x = padL + i * barW + barGap / 2;
+    const w = barW - barGap;
+    const y = yScale(v);
+    const h = padT + innerH - y;
+    const label = i === 7 ? '7+' : String(i);
+    const tip = `CMC ${label}: ${fmtCount(v)} spells${isRed ? ' (top-curve penalty)' : ''}`;
+    bars += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${color}" rx="2" class="chart-bar"><title>${tip}</title></rect>`;
+    bars += `<text x="${x + w / 2}" y="${padT + innerH + 14}" text-anchor="middle" class="chart-axis-label">${label}</text>`;
+  }
+
+  const targetLine = `<line x1="${targetX}" y1="${padT - 4}" x2="${targetX}" y2="${padT + innerH}" class="chart-target-line"/>
+    <text x="${targetX}" y="${padT - 8}" text-anchor="middle" class="chart-target-label">target avg ${target.toFixed(2)}</text>`;
+
+  return `<svg class="diagnosis-chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="CMC distribution chart">
+    ${grid}${bars}${targetLine}
+  </svg>`;
+}
+
+function renderColorSourcesChart(mana, colorIdentity) {
+  const reqs = mana?.inputs?.color_requirements;
+  if (!reqs) return '';
+  const colors = (Array.isArray(colorIdentity) ? colorIdentity : []).filter(c => reqs[c]);
+  if (colors.length === 0) return '';
+
+  const W = 320, H = 170, padL = 28, padR = 12, padT = 20, padB = 36;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+  const slotW = innerW / colors.length;
+  const barW = Math.min(36, slotW * 0.55);
+  const barGap = (slotW - barW) / 2;
+
+  const reqsArr = colors.map(c => Number(reqs[c].required) || 0);
+  const actsArr = colors.map(c => Number(reqs[c].actual) || 0);
+  const strictest = Math.max(...reqsArr);
+  const max = Math.max(...reqsArr, ...actsArr) + 4;
+  const yScale = v => padT + innerH - (v / max) * innerH;
+
+  let grid = '';
+  for (let g = 0; g <= 4; g++) {
+    const v = (max * g) / 4;
+    const y = yScale(v);
+    grid += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" class="chart-gridline"/>`;
+    grid += `<text x="${padL - 4}" y="${y + 3}" text-anchor="end" class="chart-axis-label">${Math.round(v)}</text>`;
+  }
+
+  // Strictest required red baseline across all colors.
+  const strictY = yScale(strictest);
+  const strictLine = `<line x1="${padL}" y1="${strictY}" x2="${W - padR}" y2="${strictY}" class="chart-target-line is-red"/>
+    <text x="${W - padR}" y="${strictY - 4}" text-anchor="end" class="chart-target-label is-red">strictest req ${strictest}</text>`;
+
+  let bars = '';
+  for (let i = 0; i < colors.length; i++) {
+    const c = colors[i];
+    const r = reqs[c];
+    const actual = Number(r.actual) || 0;
+    const required = Number(r.required) || 0;
+    const meets = actual >= required;
+    const x = padL + i * slotW + barGap;
+    const yA = yScale(actual);
+    const hA = padT + innerH - yA;
+    const yReq = yScale(required);
+    const tip = `${c}: ${fmtCount(actual)} sources / ${required} required${meets ? ' ✓' : ' (short)'}`;
+
+    bars += `<rect x="${x}" y="${yA}" width="${barW}" height="${hA}" fill="${MTG_COLOR_HEX[c]}" stroke="${meets ? 'var(--accent-green)' : 'var(--accent-red)'}" stroke-width="${meets ? 0.5 : 1.5}" rx="2" class="chart-bar"><title>${tip}</title></rect>`;
+    // per-color required tick line
+    bars += `<line x1="${x - 3}" y1="${yReq}" x2="${x + barW + 3}" y2="${yReq}" class="chart-require-tick"><title>${c} required: ${required}</title></line>`;
+    // color label + count
+    bars += `<text x="${x + barW / 2}" y="${padT + innerH + 14}" text-anchor="middle" class="chart-color-label" style="fill: ${MTG_COLOR_HEX[c]}">${c}</text>`;
+    bars += `<text x="${x + barW / 2}" y="${padT + innerH + 26}" text-anchor="middle" class="chart-axis-label">${fmtCount(actual)}/${required}</text>`;
+  }
+
+  return `<svg class="diagnosis-chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Color sources vs Karsten requirements">
+    ${grid}${strictLine}${bars}
+  </svg>`;
+}
+
+function renderRoleCoverageChart(roleCov, bracket) {
+  const details = roleCov?.details;
+  if (!details) return '';
+  const present = ROLE_CHART_ORDER.filter(r => details[r]);
+  if (present.length === 0) return '';
+
+  const rowH = 22;
+  const W = 340, padL = 96, padR = 56, padT = 18, padB = 12;
+  const innerW = W - padL - padR;
+  const H = padT + padB + present.length * rowH;
+  const max = Math.max(1, ...present.map(r => Math.max(Number(details[r].actual) || 0, Number(details[r].target) || 0)));
+  const xScale = v => padL + (v / max) * innerW;
+
+  let body = '';
+  for (let i = 0; i < present.length; i++) {
+    const r = present[i];
+    const d = details[r];
+    const actual = Number(d.actual) || 0;
+    const target = Number(d.target) || 0;
+    const score = Number(d.score) || 0;
+    const y = padT + i * rowH;
+    const cy = y + rowH / 2;
+    const isGap = actual < target;
+    const tier = score >= 75 ? 'ok' : score >= 50 ? 'warn' : 'crit';
+    const fillColor = tier === 'ok'
+      ? 'var(--deck-accent, var(--accent-purple))'
+      : tier === 'warn' ? 'var(--accent-gold)' : 'var(--accent-red)';
+    const bw = Math.max(0, xScale(actual) - padL);
+    const targetX = xScale(target);
+    const label = ROLE_LABELS[r] || r;
+    const tip = `${label}: ${fmtCount(actual)} / ${fmtCount(target)} target (score ${Math.round(score)})`;
+
+    body += `<text x="${padL - 8}" y="${cy + 4}" text-anchor="end" class="chart-row-label${isGap ? ' is-gap' : ''}" data-tier="${tier}">${escapeHtml(label)}</text>`;
+    body += `<rect x="${padL}" y="${y + 4}" width="${innerW}" height="${rowH - 8}" class="chart-row-track" rx="2"/>`;
+    body += `<rect x="${padL}" y="${y + 4}" width="${bw}" height="${rowH - 8}" fill="${fillColor}" rx="2" class="chart-bar"><title>${tip}</title></rect>`;
+    body += `<line x1="${targetX}" y1="${y + 2}" x2="${targetX}" y2="${y + rowH - 2}" class="chart-target-marker"><title>target ${fmtCount(target)}</title></line>`;
+    body += `<text x="${W - padR + 4}" y="${cy + 4}" class="chart-row-value" data-tier="${tier}">${fmtCount(actual)}/${fmtCount(target)}</text>`;
+  }
+
+  return `<svg class="diagnosis-chart-svg role-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Role coverage vs B${bracket} targets">
+    ${body}
+  </svg>`;
+}
+
+function renderDiagnosisCharts(metricsData) {
+  if (!metricsData?.metrics) return '';
+  const curve = metricsData.metrics.curve_health;
+  const mana = metricsData.metrics.manabase_health;
+  const roles = metricsData.metrics.role_coverage_health;
+  const colorIdentity = metricsData.color_identity || [];
+  const bracket = metricsData.bracket || '';
+
+  const curveSvg = renderCurveChart(curve);
+  const colorSvg = renderColorSourcesChart(mana, colorIdentity);
+  const roleSvg = renderRoleCoverageChart(roles, bracket);
+  if (!curveSvg && !colorSvg && !roleSvg) return '';
+
+  return `<section class="diagnosis-charts" aria-label="Diagnosis charts">
+    ${curveSvg ? `<figure class="diagnosis-chart-card">
+      <figcaption class="diagnosis-chart-title">Mana Curve <span class="diagnosis-chart-sub">avg ${Number(curve.actual_avg_cmc).toFixed(2)} · target ${Number(curve.target_avg_cmc).toFixed(2)}</span></figcaption>
+      ${curveSvg}
+    </figure>` : ''}
+    ${colorSvg ? `<figure class="diagnosis-chart-card">
+      <figcaption class="diagnosis-chart-title">Color Sources <span class="diagnosis-chart-sub">Karsten requirement</span></figcaption>
+      ${colorSvg}
+    </figure>` : ''}
+    ${roleSvg ? `<figure class="diagnosis-chart-card">
+      <figcaption class="diagnosis-chart-title">Role Coverage <span class="diagnosis-chart-sub">vs B${bracket} target</span></figcaption>
+      ${roleSvg}
+    </figure>` : ''}
+  </section>`;
+}
+
 // Provisional A–F grade thresholds (DEC-137). Calibrated against 9 real metrics.json outputs;
 // table documented in docs/deck-metrics.md.
 function gradeForGlobalHealth(score) {
@@ -4435,6 +4635,10 @@ async function renderUpgradePaths() {
       </div>
     </details>`;
   }
+
+  // DEC-139 P8.3 — Diagnosis charts (curve, color sources, role coverage).
+  // Render between Vitals and Maladies so the visualization deepens the score breakdown.
+  html += renderDiagnosisCharts(metricsData);
 
   // DEC-138 P8.2 — Maladies panel (gaps[] chips). Below Vitals, above Remedies.
   html += renderMaladiesPanel(metricsData?.gaps);

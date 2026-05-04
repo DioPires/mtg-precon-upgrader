@@ -457,6 +457,7 @@ def archetype_curve_target(archetypes: list[str]) -> tuple[float, list[str]]:
 def curve_health(deck: dict, mirror: dict[str, dict]) -> dict:
     weights: list[tuple[float, float]] = []  # (cmc, weight)
     high_curve_weight = 0.0
+    distribution: dict[int, float] = {}
 
     for entry in deck.get("decklist", []):
         scry = get_scry(entry, mirror)
@@ -467,6 +468,8 @@ def curve_health(deck: dict, mirror: dict[str, dict]) -> dict:
             continue
         cmc = spell_face_cmc(entry, scry)
         weights.append((cmc, sw))
+        bucket = min(7, int(cmc))  # 7+ collapsed into one bucket
+        distribution[bucket] = distribution.get(bucket, 0.0) + sw
         if cmc >= 6:
             high_curve_weight += sw
 
@@ -486,6 +489,7 @@ def curve_health(deck: dict, mirror: dict[str, dict]) -> dict:
         topcurve_penalty = (high_count - 8) * 5
 
     score = round(max(0.0, raw - topcurve_penalty))
+    cmc_distribution = {str(b): round(distribution.get(b, 0.0), 1) for b in range(0, 8)}
     return {
         "score": score,
         "actual_avg_cmc": round(actual, 2),
@@ -493,6 +497,7 @@ def curve_health(deck: dict, mirror: dict[str, dict]) -> dict:
         "matched_archetype_targets": matched,
         "high_curve_count": round(high_count, 1),
         "topcurve_penalty": round(topcurve_penalty, 1),
+        "cmc_distribution": cmc_distribution,
     }
 
 

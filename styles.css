@@ -2534,6 +2534,129 @@ details[open].upgrade-health-baseline .health-expand-hint { opacity: 0.4; }
 .malady-chip.is-active .malady-chip-counts { color: rgba(255, 255, 255, 0.85); }
 .malady-chip.is-active .malady-chip-dot { background: #fff; }
 
+/* DEC-139 P8.3 — Diagnosis charts */
+.diagnosis-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.diagnosis-chart-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 10px 12px 8px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.diagnosis-chart-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.diagnosis-chart-sub {
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--text-muted);
+  opacity: 0.75;
+  font-weight: 500;
+  font-family: 'Fira Code', monospace;
+}
+.diagnosis-chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.diagnosis-chart-svg .chart-bar {
+  transition: opacity 0.15s, filter 0.15s;
+}
+.diagnosis-chart-svg .chart-bar:hover {
+  filter: brightness(1.15);
+  cursor: default;
+}
+.chart-gridline {
+  stroke: var(--border-subtle);
+  stroke-width: 0.5;
+  opacity: 0.5;
+}
+.chart-axis-label {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: 'Fira Code', monospace;
+}
+.chart-color-label {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4));
+}
+.chart-target-line {
+  stroke: var(--text-secondary);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+.chart-target-line.is-red {
+  stroke: var(--accent-red);
+  opacity: 0.9;
+}
+.chart-target-label {
+  fill: var(--text-secondary);
+  font-size: 9px;
+  font-family: 'Fira Code', monospace;
+}
+.chart-target-label.is-red {
+  fill: var(--accent-red);
+}
+.chart-require-tick {
+  stroke: var(--accent-red);
+  stroke-width: 1.5;
+  opacity: 0.8;
+}
+.chart-target-marker {
+  stroke: var(--text-primary);
+  stroke-width: 1.5;
+  opacity: 0.85;
+}
+.chart-row-track {
+  fill: var(--bg-base);
+  stroke: var(--border-subtle);
+  stroke-width: 0.5;
+}
+.chart-row-label {
+  fill: var(--text-secondary);
+  font-size: 10px;
+  font-family: 'Inter', sans-serif;
+}
+.chart-row-label.is-gap {
+  fill: var(--text-primary);
+  font-weight: 600;
+}
+.chart-row-label[data-tier="crit"].is-gap { fill: var(--accent-red); }
+.chart-row-label[data-tier="warn"].is-gap { fill: var(--accent-gold); }
+.chart-row-value {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: 'Fira Code', monospace;
+}
+.chart-row-value[data-tier="crit"] { fill: var(--accent-red); }
+.chart-row-value[data-tier="warn"] { fill: var(--accent-gold); }
+
+@media (max-width: 600px) {
+  .diagnosis-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .upgrade-card {
     grid-template-columns: 1fr auto;
