@@ -1,0 +1,24 @@
+/* Global reset for the new app shell. The legacy index.html stays untouched
+   until the Phase 6 cutover. */
+html, body, #root { margin: 0; padding: 0; min-height: 100%; height: 100%; }
+body { background: var(--gv1-bg); color: var(--gv1-ink); }
+
+.gv1-app { min-height: 100vh; display: flex; flex-direction: column; }
+.gv1-app > main { flex: 1; padding: var(--gv1-space-12) var(--gv1-space-16); }
+
+/* Phase 0 placeholder shell — replaced surface-by-surface in later phases. */
+.gv1-stub {
+  font-family: var(--gv1-mono);
+  font-size: var(--gv1-text-xs-size);
+  letter-spacing: var(--gv1-text-xs-tracking);
+  text-transform: uppercase;
+  color: var(--gv1-ink-dim);
+}
+.gv1-stub-title {
+  font-family: var(--gv1-serif);
+  font-size: var(--gv1-text-2xl-size);
+  color: var(--gv1-ink-bright);
+  margin: 0 0 var(--gv1-space-3);
+  text-transform: none;
+  letter-spacing: 0;
+}
