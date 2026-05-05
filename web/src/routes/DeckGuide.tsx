@@ -6,6 +6,7 @@ import { WinCons } from '../components/organisms/WinCons';
 import { Engine } from '../components/organisms/Engine';
 import { Combos } from '../components/organisms/Combos';
 import { Performance } from '../components/organisms/Performance';
+import { Apothecary } from '../components/organisms/Apothecary';
 import { Decklist } from '../components/organisms/Decklist';
 
 export function DeckGuide() {
@@ -57,6 +58,7 @@ export function DeckGuide() {
         composition={deck.composition}
         assessment={deck.assessment}
       />
+      <Apothecary apothecary={deck.apothecary} />
       <Decklist list={deck.list} />
     </div>
   );
