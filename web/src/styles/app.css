@@ -5,6 +5,11 @@ body { background: var(--gv1-bg); color: var(--gv1-ink); }
 
 .gv1-app { min-height: 100vh; display: flex; flex-direction: column; }
 .gv1-app > main { flex: 1; padding: var(--gv1-space-12) var(--gv1-space-16); }
+/* Deck guide organisms own their horizontal padding (matching the prototype's
+   GuideArtboard, which renders without an outer padded wrapper). Negate the
+   main's horizontal pad so the stat grid keeps full width — otherwise the
+   BUDGET column wraps `$200-350` to two lines. */
+.gv1-app > main:has(.gv1-deck-guide) { padding-left: 0; padding-right: 0; }
 
 /* Phase 0 placeholder shell — replaced surface-by-surface in later phases. */
 .gv1-stub {
