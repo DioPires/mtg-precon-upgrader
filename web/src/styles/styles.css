@@ -1285,7 +1285,7 @@ em { font-style: italic; color: var(--gv1-gold); }
 }
 .gv1-codex-card:hover { background: var(--gv1-bg-2); }
 .gv1-codex-card:focus-visible {
-  outline: 1px solid var(--gv1-line-rune);
+  outline: 2px solid var(--gv1-focus-ring);
   outline-offset: 2px;
 }
 .gv1-codex-card-head {
@@ -1427,20 +1427,35 @@ em { font-style: italic; color: var(--gv1-gold); }
 }
 .gv1-cmp-th {
   text-align: left;
-  padding: 10px 12px;
+  padding: 0;
   font-weight: 500;
   letter-spacing: 0.05em;
   color: var(--gv1-ink-dim);
   border-bottom: 1px solid var(--gv1-line-strong);
   background: var(--gv1-bg-2);
   white-space: nowrap;
-  cursor: pointer;
   user-select: none;
   transition: var(--gv1-transition-quick);
 }
 .gv1-cmp-th:hover { color: var(--gv1-ink); background: var(--gv1-bg-3); }
 .gv1-cmp-th--num { text-align: right; }
 .gv1-cmp-th--active { color: var(--gv1-rune-bright); background: var(--gv1-bg-3); }
+.gv1-cmp-th-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+.gv1-cmp-th-btn:focus-visible {
+  outline: 2px solid var(--gv1-focus-ring);
+  outline-offset: -2px;
+}
 .gv1-cmp-th-label { display: inline-block; }
 .gv1-cmp-th-dir {
   display: inline-block;
@@ -1448,10 +1463,6 @@ em { font-style: italic; color: var(--gv1-gold); }
   opacity: 0.4;
 }
 .gv1-cmp-th-dir--on { opacity: 1; color: var(--gv1-rune-bright); }
-.gv1-cmp-th:focus-visible {
-  outline: 1px solid var(--gv1-line-rune);
-  outline-offset: -1px;
-}
 
 .gv1-cmp-row { transition: background-color 0.12s ease; }
 .gv1-cmp-row:hover { background: var(--gv1-bg-2); }
@@ -1479,9 +1490,10 @@ em { font-style: italic; color: var(--gv1-gold); }
 .gv1-cmp-deck-btn:hover { color: var(--gv1-rune-bright); }
 .gv1-cmp-deck-btn:hover .gv1-cmp-open { opacity: 1; color: var(--gv1-rune-bright); }
 .gv1-cmp-deck-btn:focus-visible {
-  outline: 1px solid var(--gv1-line-rune);
+  outline: 2px solid var(--gv1-focus-ring);
   outline-offset: 2px;
 }
+.gv1-cmp-deck-btn:focus-visible .gv1-cmp-open { opacity: 1; color: var(--gv1-rune-bright); }
 .gv1-cmp-open { opacity: 0; transition: var(--gv1-transition-quick); }
 
 .gv1-cmp-pips { display: inline-flex; }
@@ -1572,7 +1584,11 @@ em { font-style: italic; color: var(--gv1-gold); }
     font-size: 12px;
   }
   .gv1-cmp-table thead { position: sticky; top: 0; z-index: 2; }
-  .gv1-cmp-th, .gv1-cmp-td { padding: 8px 10px; }
+  .gv1-cmp-th { padding: 0; }
+  .gv1-cmp-th-btn, .gv1-cmp-td { padding: 8px 10px; }
+  /* Keep keyboard-focused cells from being scrolled behind the sticky # + Deck columns. */
+  .gv1-cmp-table-wrap { scroll-padding-inline-start: 184px; scroll-padding-block-start: 36px; }
+  .gv1-cmp-th-btn, .gv1-cmp-deck-btn { scroll-margin-inline-start: 184px; scroll-margin-block-start: 36px; }
 
   .gv1-cmp-th:nth-child(1),
   .gv1-cmp-td:nth-child(1) {

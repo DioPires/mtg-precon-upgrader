@@ -114,29 +114,24 @@ function HeaderCell({ col, sortKey, asc, onClick }: HeaderCellProps) {
     .filter(Boolean)
     .join(' ');
   const ariaSort: 'ascending' | 'descending' | 'none' = active ? (asc ? 'ascending' : 'descending') : 'none';
+  // W3C APG sortable-table pattern: <th> keeps role + aria-sort; native <button> drives interaction.
   return (
-    <th
-      scope="col"
-      className={cls}
-      aria-sort={ariaSort}
-      onClick={() => onClick(col.key)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onClick(col.key);
-        }
-      }}
-      tabIndex={0}
-      role="columnheader"
-      title={`Sort by ${col.label}`}
-    >
-      <span className="gv1-mono-xs gv1-cmp-th-label">{col.label}</span>
-      <span
-        className={`gv1-mono-xs gv1-cmp-th-dir ${active ? 'gv1-cmp-th-dir--on' : ''}`}
-        aria-hidden="true"
+    <th scope="col" className={cls} aria-sort={ariaSort}>
+      <button
+        type="button"
+        className="gv1-cmp-th-btn"
+        onClick={() => onClick(col.key)}
+        title={`Sort by ${col.label}`}
+        aria-label={`Sort by ${col.label}${active ? `, currently ${asc ? 'ascending' : 'descending'}` : ''}`}
       >
-        {dir}
-      </span>
+        <span className="gv1-mono-xs gv1-cmp-th-label">{col.label}</span>
+        <span
+          className={`gv1-mono-xs gv1-cmp-th-dir ${active ? 'gv1-cmp-th-dir--on' : ''}`}
+          aria-hidden="true"
+        >
+          {dir}
+        </span>
+      </button>
     </th>
   );
 }
@@ -263,6 +258,7 @@ export function Compare({ decks }: CompareProps) {
                         className="gv1-cmp-deck-btn"
                         onClick={() => handleRowClick(d)}
                         title={`Open ${d.deckName} guide`}
+                        aria-label={`Open ${d.deckName} guide`}
                       >
                         <span className="gv1-serif-md">{d.deckName}</span>
                         <span className="gv1-mono-xs gv1-dim gv1-cmp-open" aria-hidden="true">
