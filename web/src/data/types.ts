@@ -126,20 +126,56 @@ export interface RawAssessment {
   commanderTiming?: string;
 }
 
+export interface RawSimMetadata {
+  numGames?: number;
+  numTurns?: number;
+  generatedAt?: string;
+}
+
+export interface RawSimManaTurn {
+  median: number;
+  p25: number;
+  p75: number;
+  mean?: number;
+}
+
+export interface RawSimMulliganStats {
+  keptFirst?: number;
+  freeMulligan?: number;
+  paidMulligan?: number;
+}
+
+export interface RawSimOpeningHand {
+  landDistribution?: Record<string, number>;
+}
+
+export interface RawSimCommanderTiming {
+  name?: string;
+  cmc?: number;
+  byTurn?: Record<string, number>;
+  medianTurn?: number;
+}
+
+export interface RawSimCurveEfficiency {
+  castableByTurn?: Record<string, number>;
+  byTurn?: Record<string, number>;
+  curveOutRate?: number;
+}
+
 export interface RawSimulation {
   deckHealthScore?: RawDeckHealthScore;
   deckComposition?: RawDeckComposition;
   assessment?: RawAssessment;
   goldfish?: unknown;
-  manaByTurn?: unknown;
-  metadata?: unknown;
-  mulliganStats?: unknown;
-  openingHand?: unknown;
+  manaByTurn?: Record<string, RawSimManaTurn>;
+  metadata?: RawSimMetadata;
+  mulliganStats?: RawSimMulliganStats;
+  openingHand?: RawSimOpeningHand;
   reliabilityMetrics?: unknown;
   specialMetrics?: unknown;
   colorBalance?: unknown;
-  commanderTiming?: unknown;
-  curveEfficiency?: unknown;
+  commanderTiming?: RawSimCommanderTiming;
+  curveEfficiency?: RawSimCurveEfficiency;
 }
 
 export interface RawMetricsGap {
