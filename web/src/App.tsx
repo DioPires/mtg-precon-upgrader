@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Topbar } from './components/Topbar';
 import { GV1CardHoverLayer } from './components/global/GV1CardHoverLayer';
 import { Home } from './routes/Home';
@@ -23,7 +23,8 @@ export function App() {
           <Route path="/compare" element={<Compare />} />
           <Route path="/shopping" element={<Shopping />} />
           <Route path="/scrying/:id" element={<Scrying />} />
-          <Route path="/mobile/:id" element={<Mobile />} />
+          <Route path="/m/:id" element={<Mobile />} />
+          <Route path="/mobile/:id" element={<MobileRedirect />} />
           <Route path="/_dev" element={<Dev />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -31,4 +32,9 @@ export function App() {
       <GV1CardHoverLayer />
     </div>
   );
+}
+
+function MobileRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/m/${id}`} replace />;
 }

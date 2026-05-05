@@ -14,7 +14,7 @@ test('home renders the token-themed shell with topbar', async ({ page }) => {
 });
 
 test('each artboard route has a heading', async ({ page }) => {
-  for (const path of ['/codex', '/compare', '/shopping', '/deck/x', '/scrying/x', '/mobile/x']) {
+  for (const path of ['/codex', '/compare', '/shopping', '/deck/x', '/scrying/x', '/m/x']) {
     await page.goto(path);
     await expect(page.locator('h1')).toBeVisible();
   }
