@@ -31,6 +31,18 @@ The 15 roles are deliberately coarse. They power deterministic deck metrics (man
 
 Roles are **deck-contextual**, not card-intrinsic. Eternal Witness in a graveyard-reanimator deck is `engine`; in a value midrange deck it might be `recursion`.
 
+## Tutor classification
+
+Use `tutor` for library-search effects that find a specific card or a non-mana-development category, including hand tutors (Demonic Tutor, Worldly Tutor), graveyard tutors (Entomb, Buried Alive), and battlefield tutors (Finale of Devastation, Whir of Invention). One-shot tutors are usually `primary_role: "tutor"`.
+
+Use `secondary_role: "tutor"` when the card's primary role is structurally dominant:
+
+- Repeatable engine tutors such as Birthing Pod, Oswald Fiddlebender, Fauna Shaman, or Survival of the Fittest are `engine` primary and `tutor` secondary.
+- Lands remain `land` primary. Utility lands that tutor a nonland card or unrestricted land card, such as Urza's Saga, Eye of Ugin, Sanctum of Ugin, Inventors' Fair, or Urza's Cave, use `secondary_role: "tutor"`.
+- Modal or secondary-use cards keep their main role primary and use `tutor` secondary when the tutor mode is meaningful, such as Muddle the Mixture's transmute mode.
+
+Land-search convention: basic/typed land ramp and fetchlands stay `ramp` or `land`, not `tutor`. Unrestricted land-card search that can find utility lands, such as Crop Rotation, Sylvan Scrying, or Wight of the Reliquary's land mode, counts as `tutor`; add `ramp` secondary when it also accelerates mana by putting the land onto the battlefield.
+
 ## Mapping from existing inconsistent vocab
 
 The current `role` field across `data/commanders/*/deck.json` uses 26 distinct values. Migration rules:

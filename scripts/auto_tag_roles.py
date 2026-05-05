@@ -19,6 +19,7 @@ Existing `primary_role` values are never overwritten unless --force.
 Usage:
     python scripts/auto_tag_roles.py --deck DECK_ID [--force] [--dry-run]
     python scripts/auto_tag_roles.py --all [--force] [--dry-run]
+    python scripts/auto_tag_roles.py --all --retag-tutors [--dry-run]
 """
 
 from __future__ import annotations
@@ -112,6 +113,18 @@ _LAND_SEARCH = re.compile(
     r"search your library for .{0,80}?(?:basic land|land cards?|plains|island|swamp|mountain|forest)",
     re.DOTALL,
 )
+
+_MANA_DEVELOPMENT_LAND_SEARCH = re.compile(
+    r"search your library for .{0,80}?(?:basic land|plains|island|swamp|mountain|forest)",
+    re.DOTALL,
+)
+
+_UNRESTRICTED_LAND_TUTOR = re.compile(
+    r"search your library for (?:a |an |up to (?:one|two) )?land cards?",
+    re.DOTALL,
+)
+
+_SEARCH_LIBRARY = re.compile(r"search your library for", re.DOTALL)
 
 
 def _detect_ramp(oracle: str, type_line: str) -> tuple[str, float] | None:
@@ -230,9 +243,81 @@ def classify(card_data: dict) -> tuple[str | None, float]:
     return (None, 0.0)
 
 
+def _is_land_card(card_data: dict) -> bool:
+    if is_mdfc_with_land_back(card_data):
+        return False
+    return "land" in (card_data.get("type_line") or "").lower()
+
+
+def _has_permanent_face(type_line: str) -> bool:
+    return any(
+        token in type_line
+        for token in ("artifact", "creature", "enchantment", "planeswalker", "battle")
+    )
+
+
+def classify_tutor_roles(
+    card_data: dict, existing_primary: str | None
+) -> tuple[str, str | None, float] | None:
+    """Return a primary/secondary tutor retag when oracle text warrants one.
+
+    This is intentionally narrower than --force: it only changes cards with
+    library-search tutor text, leaving unrelated role judgments untouched.
+    """
+    oracle, type_line = spell_oracle_and_type(card_data)
+    oracle_lc = oracle.lower()
+    type_lc = type_line.lower()
+    if not _SEARCH_LIBRARY.search(oracle_lc):
+        return None
+
+    is_mana_land_search = bool(_MANA_DEVELOPMENT_LAND_SEARCH.search(oracle_lc))
+    is_unrestricted_land_tutor = bool(_UNRESTRICTED_LAND_TUTOR.search(oracle_lc))
+
+    if is_mana_land_search and not is_unrestricted_land_tutor:
+        return None
+
+    if _is_land_card(card_data):
+        return ("land", "tutor", 0.9)
+
+    is_instant_or_sorcery = "instant" in type_lc or "sorcery" in type_lc
+    has_permanent_face = _has_permanent_face(type_lc)
+
+    if "counter target" in oracle_lc and "transmute" in oracle_lc:
+        return (existing_primary or "counterspell", "tutor", 0.85)
+
+    if "planeswalker" in type_lc:
+        return (existing_primary or "engine", "tutor", 0.75)
+
+    repeatable_or_engine_tutor = (
+        re.search(r"\{t\}.{0,160}search your library", oracle_lc, re.DOTALL)
+        or "becomes prepared" in oracle_lc
+        or re.search(r"search your library.{0,160}activate only as a sorcery", oracle_lc, re.DOTALL)
+        or re.search(r"whenever[^.]+search your library", oracle_lc, re.DOTALL)
+    )
+    if has_permanent_face and repeatable_or_engine_tutor:
+        return ("engine", "tutor", 0.85)
+
+    if is_unrestricted_land_tutor:
+        secondary = "ramp" if "onto the battlefield" in oracle_lc else None
+        return ("tutor", secondary, 0.85)
+
+    if is_instant_or_sorcery and not has_permanent_face:
+        return ("tutor", None, 0.9)
+
+    if has_permanent_face:
+        secondary = None
+        if "costs {" in oracle_lc and "less to cast" in oracle_lc:
+            secondary = "ramp"
+        elif "untap another target permanent" in oracle_lc:
+            secondary = "engine"
+        return ("tutor", secondary, 0.8)
+
+    return ("tutor", None, 0.8)
+
+
 # ---- Per-deck processing ----------------------------------------------------
 
-def process_deck(path: Path, mirror: dict, force: bool) -> dict:
+def process_deck(path: Path, mirror: dict, force: bool, retag_tutors: bool) -> dict:
     deck = json.loads(path.read_text())
     deck_id = deck.get("id") or path.parent.name
     proposals = []
@@ -241,7 +326,7 @@ def process_deck(path: Path, mirror: dict, force: bool) -> dict:
     for card in deck.get("decklist", []):
         name = card.get("name", "")
         existing = card.get("primary_role")
-        if existing and not force:
+        if not retag_tutors and existing and not force:
             continue
         scry = mirror.get(name)
         if not scry and " // " in name:
@@ -250,6 +335,37 @@ def process_deck(path: Path, mirror: dict, force: bool) -> dict:
             proposals.append(
                 {"name": name, "old": existing, "new": None, "confidence": 0.0, "action": "missing"}
             )
+            continue
+
+        old_secondary = card.get("secondary_role")
+        if retag_tutors:
+            tutor_roles = classify_tutor_roles(scry, existing)
+            if not tutor_roles:
+                continue
+            new_role, new_secondary, conf = tutor_roles
+            changed = existing != new_role or old_secondary != new_secondary
+            proposals.append(
+                {
+                    "name": name,
+                    "old": existing,
+                    "old_secondary": old_secondary,
+                    "new": new_role,
+                    "new_secondary": new_secondary,
+                    "confidence": round(conf, 2),
+                    "action": "apply" if changed else "unchanged",
+                    "needs_review": False,
+                }
+            )
+            if not changed:
+                continue
+            card["primary_role"] = new_role
+            if new_secondary:
+                card["secondary_role"] = new_secondary
+            elif "secondary_role" in card:
+                del card["secondary_role"]
+            if "_needs_review" in card:
+                del card["_needs_review"]
+            cards_changed += 1
             continue
 
         role, conf = classify(scry)
@@ -264,7 +380,9 @@ def process_deck(path: Path, mirror: dict, force: bool) -> dict:
             {
                 "name": name,
                 "old": existing,
+                "old_secondary": old_secondary,
                 "new": new_role,
+                "new_secondary": None,
                 "confidence": round(conf, 2),
                 "action": action,
                 "needs_review": needs_review,
@@ -291,19 +409,26 @@ def process_deck(path: Path, mirror: dict, force: bool) -> dict:
 def print_report(result: dict, dry_run: bool) -> None:
     deck_id = result["deck_id"]
     proposals = result["proposals"]
-    by_action: dict[str, list] = {"apply": [], "review": [], "low": [], "missing": []}
+    by_action: dict[str, list] = {"apply": [], "review": [], "low": [], "missing": [], "unchanged": []}
     for p in proposals:
         by_action[p["action"]].append(p)
     print(f"\n[{deck_id}]")
     print(
         f"  apply: {len(by_action['apply'])}  review: {len(by_action['review'])}  "
-        f"low: {len(by_action['low'])}  missing: {len(by_action['missing'])}"
+        f"low: {len(by_action['low'])}  missing: {len(by_action['missing'])}  "
+        f"unchanged: {len(by_action['unchanged'])}"
     )
     if not dry_run:
         return
     for p in by_action["apply"]:
+        old_role = str(p["old"])
+        old_secondary = p.get("old_secondary")
+        old = f"{old_role}/{old_secondary}" if old_secondary else old_role
+        new_role = p["new"]
+        new_secondary = p.get("new_secondary")
+        new = f"{new_role}/{new_secondary}" if new_secondary else new_role
         print(
-            f"    APPLY    {p['confidence']:.2f}  {str(p['old']):>14} -> {p['new']:<14} {p['name']}"
+            f"    APPLY    {p['confidence']:.2f}  {old:>22} -> {new:<22} {p['name']}"
         )
     for p in by_action["review"]:
         print(
@@ -322,6 +447,11 @@ def main(argv: list[str]) -> int:
     target.add_argument("--all", action="store_true", help="All decks")
     parser.add_argument(
         "--force", action="store_true", help="Overwrite existing primary_role values"
+    )
+    parser.add_argument(
+        "--retag-tutors",
+        action="store_true",
+        help="Correct existing library-search cards to tutor primary/secondary roles only",
     )
     parser.add_argument(
         "--dry-run", action="store_true", help="Print proposed diffs; don't write deck.json"
@@ -343,10 +473,10 @@ def main(argv: list[str]) -> int:
         if not p.exists():
             print(f"missing: {p}", file=sys.stderr)
             continue
-        result = process_deck(p, mirror, args.force)
+        result = process_deck(p, mirror, args.force, args.retag_tutors)
         print_report(result, args.dry_run)
         if not args.dry_run and result["cards_changed"] > 0:
-            p.write_text(json.dumps(result["deck"], indent=2) + "\n")
+            p.write_text(json.dumps(result["deck"], indent=2, ensure_ascii=False) + "\n")
         total_changed += result["cards_changed"]
 
     print(f"\nTotal cards updated: {total_changed}")
