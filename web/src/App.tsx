@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { Topbar } from './components/Topbar';
+import { GV1CardHoverLayer } from './components/global/GV1CardHoverLayer';
 import { Home } from './routes/Home';
 import { Codex } from './routes/Codex';
 import { DeckGuide } from './routes/DeckGuide';
@@ -7,6 +8,7 @@ import { Compare } from './routes/Compare';
 import { Shopping } from './routes/Shopping';
 import { Scrying } from './routes/Scrying';
 import { Mobile } from './routes/Mobile';
+import { Dev } from './routes/Dev';
 import { NotFound } from './routes/NotFound';
 
 export function App() {
@@ -22,9 +24,11 @@ export function App() {
           <Route path="/shopping" element={<Shopping />} />
           <Route path="/scrying/:id" element={<Scrying />} />
           <Route path="/mobile/:id" element={<Mobile />} />
+          <Route path="/_dev" element={<Dev />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
+      <GV1CardHoverLayer />
     </div>
   );
 }
