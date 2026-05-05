@@ -5,6 +5,7 @@ import { DeckSelector } from '../components/organisms/DeckSelector';
 import { WinCons } from '../components/organisms/WinCons';
 import { Engine } from '../components/organisms/Engine';
 import { Combos } from '../components/organisms/Combos';
+import { Performance } from '../components/organisms/Performance';
 import { Decklist } from '../components/organisms/Decklist';
 
 export function DeckGuide() {
@@ -48,6 +49,14 @@ export function DeckGuide() {
       <WinCons wincons={deck.wincons} />
       <Engine engine={deck.engine} />
       <Combos combos={deck.combos} />
+      <Performance
+        curve={deck.curve}
+        func={deck.func}
+        sources={deck.sources}
+        health={deck.health}
+        composition={deck.composition}
+        assessment={deck.assessment}
+      />
       <Decklist list={deck.list} />
     </div>
   );
