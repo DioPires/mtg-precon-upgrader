@@ -1175,6 +1175,8 @@ em { font-style: italic; color: var(--gv1-gold); }
 @media (prefers-reduced-motion: reduce) {
   .gv1-cardhover { animation: none; }
   .gv1-cardhover-img { transition: none; }
+  .gv1-scry-card-selectable:hover .gv1-scry-card-img { transform: none; }
+  .gv1-scry-hist-bar { transition: none; }
 }
 
 /* Live Scryfall image inside card tile (replaces SVG placeholder) */
@@ -2213,6 +2215,10 @@ em { font-style: italic; color: var(--gv1-gold); }
   color: var(--gv1-status-error);
   border-color: var(--gv1-status-error);
 }
+.gv1-scry-swap-clear:focus-visible {
+  outline: 2px solid var(--gv1-rune);
+  outline-offset: 2px;
+}
 
 /* Picker (cut: select; add: search) */
 .gv1-scry-swap-picker { width: 100%; display: grid; gap: 6px; }
@@ -2262,6 +2268,11 @@ em { font-style: italic; color: var(--gv1-gold); }
 }
 .gv1-scry-search-result:last-child { border-bottom: none; }
 .gv1-scry-search-result:hover { background: var(--gv1-bg-2); }
+.gv1-scry-search-result:focus-visible {
+  outline: 2px solid var(--gv1-rune);
+  outline-offset: -2px;
+  background: var(--gv1-bg-2);
+}
 .gv1-scry-search-result-type {
   color: var(--gv1-ink-dim);
   font-size: 10px;
