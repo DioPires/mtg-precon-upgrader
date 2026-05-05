@@ -11,6 +11,16 @@ body { background: var(--gv1-bg); color: var(--gv1-ink); }
    BUDGET column wraps `$200-350` to two lines. */
 .gv1-app > main:has(.gv1-deck-guide) { padding-left: 0; padding-right: 0; }
 
+/* The mobile artboard is a fixed 390×844 bezel preview. On viewports narrower
+   than the bezel, contain the horizontal scroll within main so the page chrome
+   stays anchored. */
+.gv1-app > main:has(.gv1-mobile) {
+  padding-left: 0;
+  padding-right: 0;
+  overflow-x: auto;
+}
+.gv1-app > main:has(.gv1-mobile) > * { margin-inline: auto; }
+
 /* Phase 0 placeholder shell — replaced surface-by-surface in later phases. */
 .gv1-stub {
   font-family: var(--gv1-mono);
