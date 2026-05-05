@@ -1,0 +1,170 @@
+// Deck JSON loader.
+//
+// Fetches data/index.json + per-deck {deck,simulation,metrics,candidates}.json,
+// caches each response in localStorage with a 24h TTL, and returns the bundle
+// shape that normalize.ts expects.
+//
+// Production deploy (Phase 6) places dist/ next to data/ at the host root, so
+// `/data/...` is the same origin. In dev the vite middleware in vite.config.ts
+// proxies /data/* to ../data/*.
+
+import type {
+  RawCandidates,
+  RawDeck,
+  RawDeckBundle,
+  RawDeckIndex,
+  RawDeckIndexEntry,
+  RawMetrics,
+  RawSimulation,
+} from './types';
+
+const STORAGE_PREFIX = 'gv1-deck-data:';
+const TTL_MS = 24 * 60 * 60 * 1000;
+
+interface PersistedEnvelope<T> {
+  fetchedAt: number;
+  payload: T;
+}
+
+interface LoaderDeps {
+  fetchImpl?: typeof fetch;
+  storage?: Storage | null;
+  now?: () => number;
+}
+
+function defaultStorage(): Storage | null {
+  if (typeof window !== 'undefined' && window.localStorage) return window.localStorage;
+  return null;
+}
+
+export interface DeckLoader {
+  loadIndex(): Promise<RawDeckIndex>;
+  loadDeck(id: string): Promise<RawDeckBundle | null>;
+  loadAll(): Promise<RawDeckBundle[]>;
+  /** Test-only: drop in-memory state. */
+  _reset(): void;
+}
+
+export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
+  const fetchImpl = deps.fetchImpl ?? (typeof fetch !== 'undefined' ? fetch : undefined);
+  const explicitStorage = deps.storage;
+  const resolveStorage = (): Storage | null =>
+    explicitStorage === undefined ? defaultStorage() : explicitStorage;
+  const now = deps.now ?? (() => Date.now());
+
+  const indexInflight = new Map<string, Promise<RawDeckIndex>>();
+  const deckInflight = new Map<string, Promise<RawDeckBundle | null>>();
+  let memIndex: RawDeckIndex | null = null;
+  const memDecks = new Map<string, RawDeckBundle>();
+
+  function readPersisted<T>(key: string): T | null {
+    const storage = resolveStorage();
+    if (!storage) return null;
+    try {
+      const raw = storage.getItem(STORAGE_PREFIX + key);
+      if (!raw) return null;
+      const env = JSON.parse(raw) as PersistedEnvelope<T>;
+      if (!env.fetchedAt || now() - env.fetchedAt > TTL_MS) {
+        storage.removeItem(STORAGE_PREFIX + key);
+        return null;
+      }
+      return env.payload;
+    } catch {
+      return null;
+    }
+  }
+
+  function writePersisted<T>(key: string, payload: T): void {
+    const storage = resolveStorage();
+    if (!storage) return;
+    try {
+      const env: PersistedEnvelope<T> = { fetchedAt: now(), payload };
+      storage.setItem(STORAGE_PREFIX + key, JSON.stringify(env));
+    } catch {
+      // Quota exceeded — skip persistence; in-memory cache still works.
+    }
+  }
+
+  async function fetchJson<T>(url: string): Promise<T | null> {
+    if (!fetchImpl) throw new Error('fetch unavailable');
+    const r = await fetchImpl(url);
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+    return (await r.json()) as T;
+  }
+
+  async function loadIndex(): Promise<RawDeckIndex> {
+    if (memIndex) return memIndex;
+    const cached = readPersisted<RawDeckIndex>('index');
+    if (cached) {
+      memIndex = cached;
+      return cached;
+    }
+    const existing = indexInflight.get('index');
+    if (existing) return existing;
+    const promise = (async () => {
+      const data = await fetchJson<RawDeckIndex>('/data/index.json');
+      if (!data) throw new Error('index.json missing');
+      memIndex = data;
+      writePersisted('index', data);
+      return data;
+    })().finally(() => indexInflight.delete('index'));
+    indexInflight.set('index', promise);
+    return promise;
+  }
+
+  async function fetchDeckBundle(entry: RawDeckIndexEntry): Promise<RawDeckBundle> {
+    const id = entry.id;
+    const base = `/data/commanders/${id}`;
+    const [deck, sim, metrics, candidates] = await Promise.all([
+      fetchJson<RawDeck>(`${base}/deck.json`),
+      fetchJson<RawSimulation>(`${base}/simulation.json`),
+      fetchJson<RawMetrics>(`${base}/metrics.json`),
+      fetchJson<RawCandidates>(`${base}/candidates.json`),
+    ]);
+    if (!deck) throw new Error(`deck.json missing for ${id}`);
+    return { id, index: entry, deck, sim: sim ?? null, metrics: metrics ?? null, candidates: candidates ?? null };
+  }
+
+  async function loadDeck(id: string): Promise<RawDeckBundle | null> {
+    const cachedMem = memDecks.get(id);
+    if (cachedMem) return cachedMem;
+    const persisted = readPersisted<RawDeckBundle>(`deck:${id}`);
+    if (persisted) {
+      memDecks.set(id, persisted);
+      return persisted;
+    }
+    const existing = deckInflight.get(id);
+    if (existing) return existing;
+
+    const promise = (async (): Promise<RawDeckBundle | null> => {
+      const index = await loadIndex();
+      const entry = index.commanders.find((c) => c.id === id);
+      if (!entry) return null;
+      const bundle = await fetchDeckBundle(entry);
+      memDecks.set(id, bundle);
+      writePersisted(`deck:${id}`, bundle);
+      return bundle;
+    })().finally(() => deckInflight.delete(id));
+
+    deckInflight.set(id, promise);
+    return promise;
+  }
+
+  async function loadAll(): Promise<RawDeckBundle[]> {
+    const index = await loadIndex();
+    const bundles = await Promise.all(index.commanders.map((c) => loadDeck(c.id)));
+    return bundles.filter((b): b is RawDeckBundle => !!b);
+  }
+
+  function _reset(): void {
+    memIndex = null;
+    memDecks.clear();
+    indexInflight.clear();
+    deckInflight.clear();
+  }
+
+  return { loadIndex, loadDeck, loadAll, _reset };
+}
+
+export const deckLoader: DeckLoader = createDeckLoader();

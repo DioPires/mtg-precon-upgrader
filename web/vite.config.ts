@@ -1,9 +1,63 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type Plugin } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { readFile } from 'node:fs/promises';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const dataRoot = resolve(__dirname, '..', 'data');
+
+// Dev/preview-only middleware: serve the parent repo's data/ tree at /data/*.
+// Production build (Phase 6 cutover per DEC-149-plan.md) places dist/ next to
+// data/ at the host root, so this dependency only matters in development.
+function serveDeckData(): Plugin {
+  return {
+    name: 'gv1-serve-deck-data',
+    configureServer(server) {
+      server.middlewares.use('/data', async (req, res, next) => {
+        try {
+          if (!req.url) return next();
+          const cleaned = req.url.split('?')[0];
+          if (cleaned.includes('..')) {
+            res.statusCode = 400;
+            res.end('bad path');
+            return;
+          }
+          const filePath = resolve(dataRoot, '.' + cleaned);
+          const buf = await readFile(filePath);
+          res.setHeader('content-type', cleaned.endsWith('.json') ? 'application/json' : 'application/octet-stream');
+          res.setHeader('cache-control', 'no-cache');
+          res.end(buf);
+        } catch {
+          next();
+        }
+      });
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use('/data', async (req, res, next) => {
+        try {
+          if (!req.url) return next();
+          const cleaned = req.url.split('?')[0];
+          if (cleaned.includes('..')) {
+            res.statusCode = 400;
+            res.end('bad path');
+            return;
+          }
+          const filePath = resolve(dataRoot, '.' + cleaned);
+          const buf = await readFile(filePath);
+          res.setHeader('content-type', cleaned.endsWith('.json') ? 'application/json' : 'application/octet-stream');
+          res.end(buf);
+        } catch {
+          next();
+        }
+      });
+    },
+  };
+}
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), serveDeckData()],
   server: { port: 5173 },
   test: {
     globals: true,
