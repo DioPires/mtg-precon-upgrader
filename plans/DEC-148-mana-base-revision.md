@@ -1,7 +1,9 @@
-# DEC-148: Mana Base Revision (rev 2)
+# DEC-148: Mana Base Revision (rev 3)
 
 Author: CEO • Status: **Awaiting board approval (no edits applied)**
-Date: 2026-05-05 • Supersedes rev 1
+Date: 2026-05-05 • Supersedes rev 1, rev 2
+
+Rev 3 delta: **+ The White Forge** added to scope per board comment 2026-05-05.
 
 ## Board pushback (acknowledged)
 1. **I missed the landfall payoffs.** Verdant Tide runs Scute Swarm + Avenger of Zendikar + Elfsworn Giant. Mutant Multiplication runs Scute Swarm + Avenger of Zendikar. Per memory, Fabled Passage triggers landfall **twice**. With Scute Swarm at 6+ lands (token copies *itself*), Fabled Passage = explosive. **Fabled Passage swap is correct in both decks.**
@@ -21,6 +23,7 @@ Date: 2026-05-05 • Supersedes rev 1
 | Eternal Harvest | 99 | 35 | 4 | Golgari (BG) | Bloodghast |
 | Verdant Tide | 99 | 34 | 2 | Mono-G | Scute Swarm, Avenger of Zendikar, Elfsworn Giant |
 | Creeping Corruption | 99 | 35 | 4 | 4-color (WUBG) | none |
+| The White Forge | 99 | 33 | 4 | Mono-W | none |
 
 ## Verbatim oracle text for new adds (Scryfall-verified)
 
@@ -30,6 +33,8 @@ Date: 2026-05-05 • Supersedes rev 1
 - **Memorial to Folly** — Land. *"This land enters tapped. {T}: Add {B}. {2}{B}, {T}, Sacrifice this land: Return target creature card from your graveyard to your hand."*
 - **Crypt of Agadeem** — Land. *"This land enters tapped. {T}: Add {B}. {2}, {T}: Add {B} for each black creature card in your graveyard."*
 - **Seaside Citadel** — Land. *"This land enters tapped. {T}: Add {G}, {W}, or {U}."*
+- **Reliquary Tower** — Land. *"You have no maximum hand size. {T}: Add {C}."*
+- **Tyrite Sanctum** — Land. *"{T}: Add {C}. {2}, {T}: Target legendary creature becomes a God in addition to its other types. Put a +1/+1 counter on it. {4}, {T}, Sacrifice this land: Put an indestructible counter on target God."*
 
 ## Per-deck proposal
 
@@ -82,6 +87,27 @@ Date: 2026-05-05 • Supersedes rev 1
 - Strong scry-density add (Path of Ancestry) + 3rd Bant-color tritand for color-source diversity.
 - Tradeoff: 2 untapped basics → 2 ETB-tapped lands. Atraxa is a deathtouch/lifelink commander that values mid-game stability over T1 tempo.
 
+### 5. The White Forge — Gandalf the White (Avatar Wizard), 33 lands → 33
+
+**Diagnosis:**
+- Mono-W artifact value engine. Gandalf doubles ETB/LTB triggers on legendary/artifact permanents and gives flash to legendary/artifact spells.
+- 33 lands, 20 Plains. Already runs Emeria, Buried Ruin, Inventors' Fair, Urza's Saga, War Room, Eiganjo, Nykthos, Lotus Field, Monumental Henge, Scavenger Grounds, Minas Tirith, Ancient Den, Darksteel Citadel.
+- Mono-W typically struggles with card draw. Deck has 13 draw-effect cards; Gandalf doubles many of them (Mind's Eye, Skullclamp triggers, etc.) → real risk of overflowing 7-card hand size.
+- Gandalf is a high-priority commander target (legendary 4-CMC engine creature). Removal protection is valuable.
+- Path of Ancestry skipped: Gandalf is Avatar Wizard, deck has 0 Avatars and 0 Wizards in non-commander slots; only Gandalf himself triggers (1 scry per game).
+- Bonders' Enclave skipped: power-4 condition is unreliable in artifact-heavy mono-W; conflicts with Reliquary Tower's hand-hoarding plan.
+- Sea Gate Wreckage skipped: empty-hand draw is anti-synergy with Reliquary Tower; pick one axis (we pick the overflow side).
+
+| Cut | Add | Rationale |
+|---|---|---|
+| 1 Plains | **Reliquary Tower** | "You have no maximum hand size." Mono-W's only access to hand-size relief. With Gandalf doubling triggered draw effects, deck regularly draws 4–6 cards in a turn cycle. Reliquary Tower prevents end-step discards. (4 owned, 2 used → 2 free. ✓) |
+| 1 Plains | **Tyrite Sanctum** | Gandalf is a legendary creature commander. Tyrite turns him into a God (legendary God, no rules impact alone) **and** stacks +1/+1 counters; sac mode adds indestructible counter to a God — turning Gandalf into a hard-to-remove value engine. Pure protection upgrade. (1 owned, 0 used. ✓) |
+
+**Net effect:**
+- Lands 33 → 33; 20 Plains → 18 Plains.
+- 2 untapped Plains → 2 untapped colorless utility lands (both Reliquary and Tyrite Sanctum tap for {C} untapped, so this is *not* a tempo loss — only a color-source loss). Mono-W has zero color-fixing pressure; W sources still ample.
+- Gains: hand-size cap removed, commander protection chain.
+
 ## Summary table
 
 | Deck | Cuts | Adds | Land count Δ |
@@ -90,8 +116,9 @@ Date: 2026-05-05 • Supersedes rev 1
 | Eternal Harvest | 2 Swamp | Memorial to Folly, Crypt of Agadeem | 0 |
 | Verdant Tide | 2 Snow-Covered Forest | Fabled Passage, Path of Ancestry | 0 |
 | Creeping Corruption | 1 Forest, 1 Swamp | Path of Ancestry, Seaside Citadel | 0 |
+| The White Forge | 2 Plains | Reliquary Tower, Tyrite Sanctum | 0 |
 
-**Total: 9 swaps. Zero net land count change.**
+**Total: 11 swaps across 5 decks. Zero net land count change.**
 
 ## Constraint compliance check
 
@@ -103,10 +130,12 @@ Date: 2026-05-05 • Supersedes rev 1
 | Memorial to Folly | 1 | 0 | ✓ |
 | Crypt of Agadeem | 1 | 0 | ✓ |
 | Seaside Citadel | 1 | 0 | ✓ |
+| Reliquary Tower | 4 | 2 (mutant-multiplication, titan-convergence) | 2 free → 1 needed → ✓ |
+| Tyrite Sanctum | 1 | 0 | ✓ |
 
 ## Next action (post-approval)
-1. Apply 9 swaps across 4 `deck.json` files.
-2. Add `sources` entry on each swap citing DEC-148 + ai-inferred mana-base review (with landfall-payoff note for the Fabled Passage adds).
-3. Run `python scripts/validate_deck_json.py --deck mutant-multiplication --deck eternal-harvest --deck verdant-tide --deck creeping-corruption`.
+1. Apply 11 swaps across 5 `deck.json` files.
+2. Add `sources` entry on each swap citing DEC-148 + ai-inferred mana-base review (with landfall-payoff note for Fabled Passage adds, hand-size note for Reliquary Tower).
+3. Run `python scripts/validate_deck_json.py --deck mutant-multiplication --deck eternal-harvest --deck verdant-tide --deck creeping-corruption --deck the-white-forge`.
 4. Re-run `scripts/refresh_card_pool.py` per deck.
 5. Commit + push.
