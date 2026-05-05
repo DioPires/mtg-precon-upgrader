@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 
 import './styles/tokens.css';
+import './styles/deck-theme.css';
 import './styles/states.css';
 import './styles/styles.css';
 import './styles/app.css';

@@ -1,10 +1,12 @@
 import { useParams } from 'react-router-dom';
 import { useDeckBundle } from '../hooks/useDeckBundle';
+import { useDeckColorTheme } from '../hooks/useDeckColorTheme';
 import { Mobile as MobileOrganism } from '../components/organisms/Mobile';
 
 export function Mobile() {
   const { id } = useParams<{ id: string }>();
   const { status, deck, error } = useDeckBundle(id);
+  useDeckColorTheme(id);
 
   if (status === 'loading') {
     return (

@@ -1,0 +1,79 @@
+/* Per-deck color identity theming
+ * ─────────────────────────────────────────────────────────────────
+ * `useDeckColorTheme` toggles `body.colors-{sorted-WUBRG-letters}` on
+ * the deck routes (DeckGuide / Scrying / Mobile). The class names are
+ * the alphabetically sorted color-identity letters from
+ * `data/index.json` (e.g. ['B','R','U'] → "BRU"), matching the legacy
+ * convention from `legacy/app.js:1729`.
+ *
+ * Tokens follow the gv1 3-layer scheme:
+ *   --gv1-deck-accent      primary tint (links, glyphs, accents)
+ *   --gv1-deck-accent-dim  muted variant for secondary surfaces
+ *   --gv1-deck-glow        rgba glow used for soft surfaces / shadows
+ *   --gv1-deck-bg-tint     very subtle page-level wash
+ * Defaults live in tokens.css (purple, the gv1 idle accent). Each
+ * `body.colors-*` block below overrides those four tokens only.
+ * ─────────────────────────────────────────────────────────────── */
+
+body.colors-C {
+  --gv1-deck-accent:     #6b7280;
+  --gv1-deck-accent-dim: rgba(107, 114, 128, 0.20);
+  --gv1-deck-glow:       rgba(107, 114, 128, 0.20);
+  --gv1-deck-bg-tint:    rgba(107, 114, 128, 0.03);
+}
+
+body.colors-W {
+  --gv1-deck-accent:     #d4cea8;
+  --gv1-deck-accent-dim: rgba(212, 206, 168, 0.20);
+  --gv1-deck-glow:       rgba(212, 206, 168, 0.22);
+  --gv1-deck-bg-tint:    rgba(212, 206, 168, 0.04);
+}
+
+body.colors-G {
+  --gv1-deck-accent:     #6aa478;
+  --gv1-deck-accent-dim: rgba(106, 164, 120, 0.20);
+  --gv1-deck-glow:       rgba(106, 164, 120, 0.22);
+  --gv1-deck-bg-tint:    rgba(106, 164, 120, 0.04);
+}
+
+body.colors-BG {
+  --gv1-deck-accent:     #5a7a4a;
+  --gv1-deck-accent-dim: rgba(90, 122, 74, 0.20);
+  --gv1-deck-glow:       rgba(90, 122, 74, 0.22);
+  --gv1-deck-bg-tint:    rgba(90, 122, 74, 0.04);
+}
+
+body.colors-BR {
+  --gv1-deck-accent:     #c23028;
+  --gv1-deck-accent-dim: rgba(194, 48, 40, 0.15);
+  --gv1-deck-glow:       rgba(194, 48, 40, 0.20);
+  --gv1-deck-bg-tint:    rgba(194, 48, 40, 0.03);
+}
+
+body.colors-UW {
+  --gv1-deck-accent:     #8aa8c8;
+  --gv1-deck-accent-dim: rgba(138, 168, 200, 0.20);
+  --gv1-deck-glow:       rgba(138, 168, 200, 0.22);
+  --gv1-deck-bg-tint:    rgba(138, 168, 200, 0.04);
+}
+
+body.colors-BRU {
+  --gv1-deck-accent:     #6d28d9;
+  --gv1-deck-accent-dim: rgba(109, 40, 217, 0.20);
+  --gv1-deck-glow:       rgba(109, 40, 217, 0.20);
+  --gv1-deck-bg-tint:    rgba(109, 40, 217, 0.03);
+}
+
+body.colors-GUW {
+  --gv1-deck-accent:     #6ec2a8;
+  --gv1-deck-accent-dim: rgba(110, 194, 168, 0.20);
+  --gv1-deck-glow:       rgba(110, 194, 168, 0.22);
+  --gv1-deck-bg-tint:    rgba(110, 194, 168, 0.04);
+}
+
+body.colors-BGUW {
+  --gv1-deck-accent:     #c8a654;
+  --gv1-deck-accent-dim: rgba(200, 166, 84, 0.20);
+  --gv1-deck-glow:       rgba(200, 166, 84, 0.22);
+  --gv1-deck-bg-tint:    rgba(200, 166, 84, 0.04);
+}

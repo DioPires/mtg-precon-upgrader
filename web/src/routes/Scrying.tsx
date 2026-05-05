@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDeckBundle } from '../hooks/useDeckBundle';
+import { useDeckColorTheme } from '../hooks/useDeckColorTheme';
 import { useAllDecks } from '../hooks/useAllDecks';
 import { Scrying as ScryingOrganism } from '../components/organisms/Scrying';
 import { DeckSelector } from '../components/organisms/DeckSelector';
@@ -9,6 +10,7 @@ export function Scrying() {
   const navigate = useNavigate();
   const { status, deck, stubs, error } = useDeckBundle(id);
   const all = useAllDecks();
+  useDeckColorTheme(id);
 
   if (status === 'loading' || all.status === 'loading') {
     return (
