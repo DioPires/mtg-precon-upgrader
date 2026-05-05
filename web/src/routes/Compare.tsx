@@ -1,8 +1,23 @@
+import { useAllDecks } from '../hooks/useAllDecks';
+import { Compare as CompareOrganism } from '../components/organisms/Compare';
+
 export function Compare() {
-  return (
-    <section aria-labelledby="compare-title">
-      <h1 id="compare-title" className="gv1-stub-title">§X Compare</h1>
-      <p className="gv1-stub">Cross-deck table — port in Phase 3.</p>
-    </section>
-  );
+  const { status, decks, error } = useAllDecks();
+
+  if (status === 'loading') {
+    return (
+      <section className="gv1-stub" aria-busy="true">
+        <p className="gv1-mono-xs gv1-dim">◇ scrying the codex …</p>
+      </section>
+    );
+  }
+  if (status === 'error') {
+    return (
+      <section className="gv1-stub" role="alert">
+        <h1 className="gv1-stub-title">Could not scry the codex</h1>
+        <p className="gv1-mono-xs gv1-dim">{error ?? 'unknown error'}</p>
+      </section>
+    );
+  }
+  return <CompareOrganism decks={decks} />;
 }

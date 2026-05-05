@@ -19,9 +19,9 @@ describe('App shell', () => {
     expect(screen.getByRole('main')).toBeInTheDocument();
   });
 
-  it('routes /codex to the codex stub', () => {
+  it('routes /codex to the codex surface (loading state shown synchronously)', () => {
     renderAt('/codex');
-    expect(screen.getByRole('heading', { name: /codex/i })).toBeInTheDocument();
+    expect(screen.getByText(/scrying the codex/i)).toBeInTheDocument();
   });
 
   it('routes /deck/:id and reads the param', () => {
