@@ -1,8 +1,23 @@
+import { useAllDecks } from '../hooks/useAllDecks';
+import { Shopping as ShoppingOrganism } from '../components/organisms/Shopping';
+
 export function Shopping() {
-  return (
-    <section aria-labelledby="shopping-title">
-      <h1 id="shopping-title" className="gv1-stub-title">§IX Shopping</h1>
-      <p className="gv1-stub">Aggregated buy list — port in Phase 4.</p>
-    </section>
-  );
+  const { status, decks, error } = useAllDecks();
+
+  if (status === 'loading') {
+    return (
+      <section className="gv1-stub" aria-busy="true">
+        <p className="gv1-mono-xs gv1-dim">◇ shelving the tomes …</p>
+      </section>
+    );
+  }
+  if (status === 'error') {
+    return (
+      <section className="gv1-stub" role="alert">
+        <h1 className="gv1-stub-title">Could not scry the codex</h1>
+        <p className="gv1-mono-xs gv1-dim">{error ?? 'unknown error'}</p>
+      </section>
+    );
+  }
+  return <ShoppingOrganism decks={decks} />;
 }

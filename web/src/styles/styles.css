@@ -1615,3 +1615,263 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-cmp-score { min-width: 36px; }
   .gv1-cmp-meter { width: 28px; }
 }
+
+/* ─── Shopping list (gv1-shop-*) — port of design_handoff_grimoire/prototype/gv1-shopping.css */
+
+.gv1-shop-hero { padding-bottom: 16px; }
+.gv1-shop-lede {
+  font-family: var(--gv1-serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--gv1-ink);
+  max-width: 880px;
+  margin: 8px 0 12px 0;
+}
+.gv1-shop-lede em { font-style: italic; color: var(--gv1-gold); }
+
+.gv1-shop-section {
+  border-top: 1px solid var(--gv1-line);
+  padding-top: 20px;
+}
+
+.gv1-shop-rail-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.gv1-shop-rail-spacer { flex: 1; }
+
+.gv1-shop-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.gv1-shop-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--gv1-bg-2);
+  border: 1px solid var(--gv1-line);
+  color: var(--gv1-ink-dim);
+  cursor: pointer;
+  font: inherit;
+  transition: var(--gv1-transition-quick);
+  text-align: left;
+}
+.gv1-shop-chip:hover { color: var(--gv1-ink); border-color: var(--gv1-line-strong); }
+.gv1-shop-chip.gv1-active {
+  background: var(--gv1-bg-3);
+  border-color: var(--gv1-line-rune);
+  color: var(--gv1-ink-bright);
+}
+.gv1-shop-chip.gv1-active .gv1-shop-chip-idx { color: var(--gv1-rune); }
+.gv1-shop-chip-idx { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.gv1-shop-chip-name { white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.gv1-shop-chip-pips { display: inline-flex; }
+.gv1-shop-chip:focus-visible { outline: 2px solid var(--gv1-focus-ring); outline-offset: 2px; }
+
+.gv1-shop-owned-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--gv1-bg-2);
+  border: 1px solid var(--gv1-line);
+}
+
+.gv1-shop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--gv1-bg-3);
+  border: 1px solid var(--gv1-line-strong);
+  color: var(--gv1-ink);
+  font-family: var(--gv1-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: var(--gv1-transition-quick);
+}
+.gv1-shop-btn:hover {
+  background: var(--gv1-bg-elevated);
+  border-color: var(--gv1-line-rune);
+  color: var(--gv1-ink-bright);
+}
+.gv1-shop-btn:focus-visible { outline: 2px solid var(--gv1-focus-ring); outline-offset: 2px; }
+.gv1-shop-btn[disabled], .gv1-shop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.gv1-shop-btn-primary {
+  background: var(--gv1-rune-900);
+  border-color: var(--gv1-rune-700);
+  color: var(--gv1-rune-100);
+}
+.gv1-shop-btn-primary:hover:not(:disabled) {
+  background: var(--gv1-rune-700);
+  border-color: var(--gv1-rune);
+  color: var(--gv1-parchment-100);
+}
+.gv1-shop-btn-success {
+  background: var(--gv1-rune-700);
+  border-color: var(--gv1-rune);
+  color: var(--gv1-parchment-100);
+}
+.gv1-shop-btn-error {
+  background: rgba(198, 106, 90, 0.18);
+  border-color: var(--gv1-status-error);
+  color: var(--gv1-status-error);
+}
+
+.gv1-shop-mini-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--gv1-line);
+  color: var(--gv1-ink-dim);
+  font-family: var(--gv1-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: var(--gv1-transition-quick);
+}
+.gv1-shop-mini-btn:hover { color: var(--gv1-ink-bright); border-color: var(--gv1-line-strong); }
+.gv1-shop-mini-btn.gv1-active {
+  color: var(--gv1-rune-bright);
+  border-color: var(--gv1-line-rune);
+  background: var(--gv1-focus-bg);
+}
+.gv1-shop-mini-btn:focus-visible { outline: 2px solid var(--gv1-focus-ring); outline-offset: 2px; }
+.gv1-shop-mini-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.gv1-shop-import-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px 14px;
+  border: 1px solid;
+}
+.gv1-shop-import-ok  { color: var(--gv1-rune); border-color: var(--gv1-line-rune); background: var(--gv1-focus-bg); }
+.gv1-shop-import-err { color: var(--gv1-status-error); border-color: var(--gv1-status-error); background: rgba(198, 106, 90, 0.10); }
+
+.gv1-shop-summary {
+  display: grid;
+  grid-template-columns: repeat(4, max-content) 1fr;
+  gap: 32px;
+  align-items: end;
+  padding: 16px 20px;
+  background: var(--gv1-bg-2);
+  border: 1px solid var(--gv1-line);
+}
+.gv1-shop-stat { display: grid; gap: 4px; align-content: end; }
+.gv1-shop-stat .gv1-serif-xl { line-height: 1; }
+
+.gv1-shop-summary-actions {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  justify-self: end;
+}
+.gv1-shop-sort { display: inline-flex; align-items: center; gap: 6px; }
+
+.gv1-shop-list { display: grid; gap: 18px; }
+.gv1-shop-group { display: grid; gap: 0; }
+.gv1-shop-group-head {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 8px 0 4px 0;
+  border-bottom: 1px solid var(--gv1-line);
+  margin-bottom: 4px;
+}
+.gv1-shop-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--gv1-line);
+  transition: var(--gv1-transition-quick);
+}
+.gv1-shop-row:hover { background: var(--gv1-bg-2); border-bottom-color: var(--gv1-line-rune); }
+.gv1-shop-row-qty { text-align: right; font-variant-numeric: tabular-nums; }
+.gv1-shop-row-name { cursor: default; letter-spacing: 0.005em; }
+.gv1-shop-row-name:hover { color: var(--gv1-rune-bright); }
+.gv1-shop-row-mana { letter-spacing: 0.06em; }
+.gv1-shop-row-decks { display: inline-flex; gap: 3px; align-items: center; }
+.gv1-shop-deck-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.4);
+  flex-shrink: 0;
+}
+.gv1-shop-row-price { font-variant-numeric: tabular-nums; min-width: 56px; text-align: right; }
+
+.gv1-shop-mana { display: inline-flex; gap: 2px; align-items: center; }
+.gv1-shop-mana-pip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-family: var(--gv1-mono);
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid;
+}
+.gv1-shop-mana-num { background: var(--gv1-mana-c); border-color: var(--gv1-mana-c-stroke); color: #1a1410; }
+.gv1-shop-mana-W   { background: var(--gv1-mana-w); border-color: var(--gv1-mana-w-stroke); color: #1a1410; }
+.gv1-shop-mana-U   { background: var(--gv1-mana-u); border-color: var(--gv1-mana-u-stroke); color: #1a1410; }
+.gv1-shop-mana-B   { background: var(--gv1-mana-b); border-color: var(--gv1-mana-b-stroke); color: #d8d0c0; }
+.gv1-shop-mana-R   { background: var(--gv1-mana-r); border-color: var(--gv1-mana-r-stroke); color: #1a1410; }
+.gv1-shop-mana-G   { background: var(--gv1-mana-g); border-color: var(--gv1-mana-g-stroke); color: #1a1410; }
+
+.gv1-shop-own-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  color: var(--gv1-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+.gv1-shop-own-head:hover { color: var(--gv1-rune-bright); }
+.gv1-shop-own-head:focus-visible { outline: 2px solid var(--gv1-focus-ring); outline-offset: 2px; }
+.gv1-shop-collapsed .gv1-shop-own-head .gv1-serif-xl { color: var(--gv1-ink-dim); }
+
+.gv1-shop-foot {
+  margin-top: 18px;
+  line-height: 1.6;
+  max-width: 920px;
+  color: var(--gv1-ink-dim);
+}
+
+@media (max-width: 768px) {
+  .gv1-shop-lede { font-size: 15px; }
+  .gv1-shop-summary {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    padding: 14px 16px;
+  }
+  .gv1-shop-summary-actions {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    justify-content: space-between;
+  }
+  .gv1-shop-row {
+    grid-template-columns: 28px 1fr auto;
+    gap: 8px;
+    grid-template-rows: auto auto;
+  }
+  .gv1-shop-row-decks { grid-column: 2; grid-row: 2; }
+  .gv1-shop-row-price { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
+  .gv1-shop-mana { grid-column: 2; grid-row: 2; justify-self: end; }
+  .gv1-shop-owned-bar { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+  .gv1-shop-chip-name { max-width: 140px; }
+}

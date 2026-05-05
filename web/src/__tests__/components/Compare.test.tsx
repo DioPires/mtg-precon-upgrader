@@ -103,10 +103,11 @@ describe('Compare', () => {
     const healthHeader = screen
       .getAllByRole('columnheader')
       .find((h) => /health/i.test(h.textContent ?? ''))!;
-    fireEvent.click(healthHeader);
+    const healthBtn = healthHeader.querySelector('button')!;
+    fireEvent.click(healthBtn);
     expect(getRowDeckNames()).toEqual(['Alpha', 'Gamma', 'Beta']);
     // Click again toggles direction.
-    fireEvent.click(healthHeader);
+    fireEvent.click(healthBtn);
     expect(getRowDeckNames()).toEqual(['Beta', 'Gamma', 'Alpha']);
   });
 
@@ -129,7 +130,7 @@ describe('Compare', () => {
     const headers = screen.getAllByRole('columnheader');
     const idxHeader = headers.find((h) => /^#/.test(h.textContent ?? ''))!;
     expect(idxHeader.getAttribute('aria-sort')).toBe('ascending');
-    fireEvent.click(idxHeader);
+    fireEvent.click(idxHeader.querySelector('button')!);
     expect(idxHeader.getAttribute('aria-sort')).toBe('descending');
   });
 });
