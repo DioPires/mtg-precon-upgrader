@@ -4,7 +4,11 @@
 
 ## Tooling
 
-No build step. Static files. Serve with any HTTP server or open index.html directly.
+Two frontends coexist during the DEC-149 redesign:
+- **Legacy** (`index.html`, `app.js`, `styles.css`): static, no build step. Serve with any HTTP server or open `index.html` directly. Frozen for new features; deck-data fixes still allowed.
+- **New** (`web/`, planned): Vite + React + TypeScript. Build with `npm install && npm run build` in `web/`; static `dist/` output. See [`DEC-149-plan.md`](DEC-149-plan.md).
+
+Cutover is a single big-bang event when all 7 surfaces reach parity (per board decision 2026-05-05).
 
 ## Project Overview
 

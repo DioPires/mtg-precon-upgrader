@@ -1,10 +1,25 @@
 ---
 issue: DEC-149
 title: Web UI redesign — implementation plan
-revision: 1
-status: draft (awaiting board input on open questions)
+revision: 2
+status: approved (board answered 2026-05-05; decisions locked)
 owner: CEO
 date: 2026-05-05
+---
+
+## Board decisions (locked 2026-05-05)
+
+- **Stack**: Vite + React + TypeScript ✓
+- **Migration**: Build alongside in `web/`, swap when ready ✓
+- **Team**: Hire `frontend-eng`, refactor `design-eng` → `design-system-eng`, merge `interactive-eng` into `frontend-eng` ✓
+- **Rollout**: **Big-bang** — hold until all 7 surfaces reach parity, then a single coordinated launch. (Overrode my phased-deploy recommendation.)
+
+What "big-bang" changes from the original phased plan:
+- Phases still run sequentially (work has dependencies); but no `/v2/...` deployable-each-phase gating.
+- The new app lives entirely in `web/` until cutover. Legacy site keeps serving production traffic the whole time.
+- Each phase still produces a real PR + working slice — they merge into the rewrite branch / `web/`, not into a public route.
+- Phase 6 (cutover) becomes the **only** production-visible event: domain swap, legacy archive, CHANGELOG, comms.
+
 ---
 
 # DEC-149 — Grimoire v1 Implementation Plan
@@ -42,7 +57,7 @@ Open questions at the bottom — please react.
 - No font-size token scale — utility classes per component
 - Several patterns visible in design but not factored into components: `Sigil`, `MonoLabel`, `RuneRule`, `PriceChip`, `StatBlock`, `SwapRow`
 
-**Source-data gap**: handoff `source-data/commanders/` has 8 decks; production has 12. Either the prototype regenerates against current data, or someone reconciles the deltas. Confirm before phase 2.
+**Source-data gap**: handoff `source-data/commanders/` has 8 decks; production has 9 (HANDOFF.md's "12" is stale). Resolved in DEC-150 — snapshot dropped, production canonical. See [`design_handoff_grimoire/RECONCILIATION.md`](design_handoff_grimoire/RECONCILIATION.md).
 
 ---
 
@@ -120,7 +135,7 @@ Each phase is a separable PR that ships a working slice. Phases run roughly sequ
 - Set up routing (`react-router`) with empty routes for the 7 artboards
 - CI: lint + tsc + vitest + playwright on `web/**`
 - Deploy a hello-world build to confirm host pipeline
-- **Exit criteria**: visiting `/v2/` renders an empty token-themed shell with the topbar
+- **Exit criteria** (in `web/` dev build only — not deployed): visiting `/` renders an empty token-themed shell with the topbar
 
 ### Phase 1 — Atoms, molecules, hooks (frontend-eng, 3–4 days)
 - Port `useCard()` hook with localStorage 24h cache addition
@@ -131,18 +146,18 @@ Each phase is a separable PR that ships a working slice. Phases run roughly sequ
 - **Exit criteria**: a Storybook-equivalent route (`/v2/_dev`) renders all atoms/molecules with sample data
 
 ### Phase 2 — Data layer + Deck Guide (frontend-eng + founding-eng, 5–7 days)
-- founding-eng: reconcile 12 production decks vs 8 in `source-data/`. Either move source JSON or update prototype's expectations
-- founding-eng: write loader that fetches `data/commanders/{id}/{deck,recommendations,simulation,metrics,candidates}.json` for each of 12 decks
+- founding-eng: ✅ resolved (DEC-150) — `source-data/` dropped as snapshot; production canonical. See [`design_handoff_grimoire/RECONCILIATION.md`](design_handoff_grimoire/RECONCILIATION.md). Actual deck count is **9**, not 12.
+- frontend-eng: write loader that fetches `data/commanders/{id}/{deck,simulation,metrics,candidates}.json` for each of 9 decks. (`recommendations.json` from HANDOFF.md does not exist — drop it.)
 - frontend-eng: port `gv1-data.js` → `web/src/data/normalize.ts` with TypeScript types for `DeckFull`
 - frontend-eng: port Deck Guide organisms (Topbar, Hero, DeckSelector, Commander, WinCons, Engine, Combos, Apothecary, Performance, Decklist)
 - design-system-eng: visual QA pass against prototype screenshots
-- **Exit criteria**: `/v2/deck/:id` renders all 12 decks with full Deck Guide parity
+- **Exit criteria**: `web/` dev build at `/deck/:id` renders all 9 decks with full Deck Guide parity
 
 ### Phase 3 — Codex + Compare (frontend-eng, 3–4 days)
 - Port `GV1Codex` (cross-deck overview)
 - Port `GV1Compare` (sortable table with health components)
 - design-system-eng: a11y audit (tablist patterns, keyboard nav, focus rings)
-- **Exit criteria**: `/v2/codex` and `/v2/compare` render all 12 decks; click a deck → navigates to Deck Guide
+- **Exit criteria**: `web/` dev build at `/codex` and `/compare` render all 9 decks; click a deck → navigates to Deck Guide
 
 ### Phase 4 — Shopping + Mobile reflows (frontend-eng + design-system-eng, 4–5 days)
 - Port `GV1Shopping` with localStorage `grimoire-owned-cards` (preserve existing key for migration)
@@ -178,7 +193,7 @@ Each phase is a separable PR that ships a working slice. Phases run roughly sequ
 
 | Item | Owner | When |
 |---|---|---|
-| 12-deck reconciliation (source-data has 8) | founding-eng | Phase 2 prep |
+| ~~12-deck reconciliation (source-data has 8)~~ | ✅ founding-eng (DEC-150, 2026-05-05) — actual count 9; snapshot dropped, production canonical |
 | Source-attribution rendering (existing `sources` field — verify it surfaces somewhere in new UI) | frontend-eng | Phase 2 |
 | Bracket philosophy display (existing `bracket` field) | frontend-eng | Phase 2 (Hero) |
 | Validate `python scripts/validate_deck_json.py` still passes after any data-layer changes | founding-eng | Each phase |
@@ -216,19 +231,28 @@ Sum of phases: **~25–35 focused workdays** for frontend-eng, **~6–10 days** 
 
 ---
 
-## Open questions for the board
+## Open questions — resolutions
 
-1. **Stack confirmation**: Vite + React + TS — confirm or veto?
-2. **Migration strategy**: Build alongside in `web/` and swap (recommended) vs replace in place?
-3. **Team changes**: Approve hiring frontend-eng + refactoring design-eng + merging interactive-eng?
-4. **Rollout**: Phased ship (each phase deployable to `/v2/...`) vs hold for big-bang launch?
-5. **AGENTS.md rule retirement**: OK to drop the "No build step" line in project AGENTS.md? (Required for Vite.)
-6. **TypeScript yes/no**: I'm recommending TS for the data normalization safety; if you want plain JS to keep barrier-to-entry low, say so.
-7. **URL state**: Pick up the cut `?deck=...&view=...` in this rewrite (recommended) or defer again?
-8. **Source-data reconciliation**: prototype source-data has 8 decks; production has 12. Direction: regenerate `source-data/` from production or update production data shape?
-9. **Cutover cleanliness**: When we retire `index.html`/`app.js`/`styles.css`, move to `legacy/` for one release, or hard-delete?
-10. **Old-app maintenance freeze**: During the rewrite, do we freeze deck-data updates against the old app, or keep both updated until cutover? (Recommend: keep updating `data/commanders/{id}/*.json` since both apps consume them; freeze only `index.html`/`app.js` edits.)
+| # | Question | Resolution |
+|---|---|---|
+| 1 | Stack | Vite + React + TS (locked) |
+| 2 | Migration | `web/` alongside, swap when ready (locked) |
+| 3 | Team | Hire `frontend-eng`, refactor `design-eng`, merge `interactive-eng` (locked) |
+| 4 | Rollout | Big-bang (locked) |
+| 5 | AGENTS.md "no build step" rule | Implicitly retired by stack decision; updated 2026-05-05 |
+| 6 | TS yes/no | TS (locked via #1) |
+| 7 | URL state | **Defaulting to YES** (recommended in rev1; no veto received). Wire `?deck=...&view=...` during the rewrite. |
+| 8 | Source-data reconciliation | **Resolved 2026-05-05 (DEC-150)**: drop `source-data/` as snapshot, do not reconcile. Production `data/commanders/{id}/*.json` canonical. Loader contract documented in [`design_handoff_grimoire/RECONCILIATION.md`](design_handoff_grimoire/RECONCILIATION.md). Audit also corrected stale "12 decks" → actual 9. |
+| 9 | Cutover cleanliness | **Defaulting to: move legacy to `legacy/` for one release**, then delete in a follow-up. |
+| 10 | Old-app freeze policy | **Defaulting to: deck-data updates allowed (both consume same JSON), freeze edits to `index.html`/`app.js`/`styles.css`.** |
+
+If any default (#7–#10) is wrong, raise on the issue and I'll adjust before the affected phase starts.
 
 ---
 
-**Next action on board approval**: I'll create child issues per phase with the right specialty assignments, draft the hire request for frontend-eng via `paperclip-create-agent`, and submit a config update for design-eng → design-system-eng.
+## Status
+
+- **Plan**: approved (rev2)
+- **Team changes**: in progress (this run)
+- **Child issues**: pending creation (this run)
+- **Phase 0 start**: pending `frontend-eng` hire confirmation
