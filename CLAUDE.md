@@ -1,5 +1,9 @@
 @AGENTS.md
 
+## Frontend (post-DEC-149 cutover, 2026-05-05)
+
+The Grimoire is now `web/` (Vite + React 18 + TypeScript). The vanilla-JS app is archived in `legacy/` for one release. Build with `cd web && npm install && npm run build` — output `web/dist/`. Deploy config is `vercel.json` at repo root. See [`AGENTS.md`](AGENTS.md) for the full file map.
+
 ## Deck JSON Validation
 
 After changing any commander `deck.json`, run `python scripts/validate_deck_json.py --deck {id}`. This is also called by `scripts/smoke_test.sh`.

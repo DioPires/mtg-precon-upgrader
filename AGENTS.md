@@ -4,11 +4,21 @@
 
 ## Tooling
 
-Two frontends coexist during the DEC-149 redesign:
-- **Legacy** (`index.html`, `app.js`, `styles.css`): static, no build step. Serve with any HTTP server or open `index.html` directly. Frozen for new features; deck-data fixes still allowed.
-- **New** (`web/`, planned): Vite + React + TypeScript. Build with `npm install && npm run build` in `web/`; static `dist/` output. See [`DEC-149-plan.md`](DEC-149-plan.md).
+The Grimoire is a Vite + React + TypeScript app in [`web/`](web). DEC-149 cutover landed 2026-05-05; the previous vanilla-JS app is archived in [`legacy/`](legacy) for one release.
 
-Cutover is a single big-bang event when all 7 surfaces reach parity (per board decision 2026-05-05).
+```bash
+cd web
+npm install
+npm run dev      # http://localhost:5173 — vite serves /data/* via middleware
+npm run build    # tsc -b && vite build → web/dist/
+npm run preview  # http://127.0.0.1:4173 — serves dist/
+npm run test     # vitest (unit + data layer)
+npm run test:e2e # playwright smoke per artboard
+npm run lint
+npm run typecheck
+```
+
+Production deploy (`vercel.json`) runs `npm run build` in `web/`, copies `data/` into `dist/data/`, and serves `web/dist/` as the host root.
 
 ## Project Overview
 
@@ -16,19 +26,26 @@ A web application that provides recommended commander deck builds for Magic: The
 
 ## Architecture
 
-- **Frontend**: Single-page vanilla JS app (`index.html`)
-- **Data**: JSON files in `data/commanders/{id}/deck.json`
-- **External API**: Scryfall for card metadata/images
-- **Hosting**: Static files (no backend)
+- **Frontend**: React 18 + Vite + TypeScript SPA (`web/`), react-router with `?deck=...&view=...` URL state, 7 artboard routes (Deck Guide, Codex, Compare, Shopping, Mobile, Scrying, Dev)
+- **Data**: JSON files in `data/commanders/{id}/{deck,simulation,metrics,candidates}.json`, fetched at runtime and normalized via `web/src/data/normalize.ts` (`DeckFull` shape)
+- **Card metadata**: Scryfall via `useCard()` hook (`web/src/hooks/useCard.ts`) — 80ms throttle + dedupe + 24h localStorage cache
+- **Styling**: CSS modules + global tokens in `web/src/styles/tokens.css` (3-layer: primitive → semantic → component). No Tailwind, no CSS-in-JS.
+- **Hosting**: Static `web/dist/` (no backend)
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Main application (HTML + CSS + JS) |
+| `web/src/App.tsx` | Routing root |
+| `web/src/data/loader.ts` | Deck JSON loader (24h localStorage TTL) |
+| `web/src/data/normalize.ts` | Raw deck.json → `DeckFull` normalization + types |
+| `web/src/hooks/useCard.ts` | Scryfall card cache hook |
+| `web/src/components/` | Atoms / molecules / organisms / global |
+| `web/src/styles/tokens.css` | Design-token system (`--gv1-*`) |
 | `data/index.json` | Deck catalog (commanders) |
-| `data/commanders/{id}/deck.json` | Per-commander deck data |
+| `data/commanders/{id}/deck.json` | Per-commander deck data (canonical) |
 | `data/game-changers.json` | Official Game Changers card list |
+| `legacy/` | Archived vanilla-JS app (one release; delete in follow-up) |
 
 ## Commander Deck Data Structure
 

@@ -1,5 +1,5 @@
 {
-  "buildCommand": "python3 scripts/fetch_card_images.py",
-  "outputDirectory": ".",
-  "installCommand": "echo 'No dependencies to install'"
+  "installCommand": "cd web && npm install",
+  "buildCommand": "cd web && npm run build && mkdir -p dist/data && cp -R ../data/* dist/data/",
+  "outputDirectory": "web/dist"
 }

@@ -253,6 +253,12 @@ If any default (#7–#10) is wrong, raise on the issue and I'll adjust before th
 ## Status
 
 - **Plan**: approved (rev2)
-- **Team changes**: in progress (this run)
-- **Child issues**: pending creation (this run)
-- **Phase 0 start**: pending `frontend-eng` hire confirmation
+- **Team changes**: complete (`frontend-eng` hired, `design-eng` → `design-system-eng`, `interactive-eng` merged)
+- **Phase 0** (DEC-151): ✅ complete — Vite + React + TS scaffold, tokens, CI
+- **Phase 1** (DEC-152): ✅ complete — atoms, molecules, `useCard`, card-hover layer
+- **Phase 2** (DEC-153): ✅ complete — data layer + 7 Deck Guide organisms
+- **Phase 3** (DEC-154 + DEC-161): ✅ complete — Codex + Compare + a11y
+- **Phase 4** (DEC-155 + DEC-162): ✅ complete — Shopping + Mobile + bezel overflow fix
+- **Phase 5** (DEC-156): ✅ complete — Scrying Pool + a11y
+- **Phase 6** (DEC-157): ✅ complete — **big-bang cutover landed 2026-05-05**. Legacy archived to `legacy/`; `web/dist/` promoted; docs and memory updated. Visual regression sweep handed to design-system-eng (DEC-163, child issue).
+- **Phase 7**: queued — post-port factoring (Sigil, MonoLabel, RuneRule, PriceChip, StatBlock, SwapRow), font-size token scale, hex-to-token sweep, optional service worker. design-system-eng owns scoping.
