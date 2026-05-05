@@ -1,5 +1,9 @@
 @AGENTS.md
 
+## Deck JSON Validation
+
+After changing any commander `deck.json`, run `python scripts/validate_deck_json.py --deck {id}`. This is also called by `scripts/smoke_test.sh`.
+
 ## YouTube Research MCP Server
 
 **Location**: `mcp-servers/youtube-research/`

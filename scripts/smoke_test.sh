@@ -13,6 +13,10 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 FAILED=0
 TOTAL=0
 
+echo "=== Deck JSON Validation ==="
+python3 "$ROOT/scripts/validate_deck_json.py" || exit 1
+echo ""
+
 # Start server
 python3 -m http.server "$PORT" --directory "$ROOT" &>/dev/null &
 SERVER_PID=$!

@@ -5,10 +5,10 @@ import unittest
 from pathlib import Path
 
 
-validator = importlib.import_module("scripts.validate_deck_card_names")
+validator = importlib.import_module("scripts.validate_deck_json")
 
 
-class ValidateDeckCardNamesTests(unittest.TestCase):
+class ValidateDeckJsonTests(unittest.TestCase):
     def test_load_scryfall_name_index_includes_face_names(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             mirror_file = Path(tmpdir) / "scryfall-oracle.json"
@@ -24,11 +24,20 @@ class ValidateDeckCardNamesTests(unittest.TestCase):
 
             names = validator.load_scryfall_name_index(mirror_file)
 
-        self.assertIn("Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun", names)
-        self.assertIn("Growing Rites of Itlimoc", names)
-        self.assertIn("Itlimoc, Cradle of the Sun", names)
+        self.assertEqual(
+            names.resolve("Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun"),
+            "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+        )
+        self.assertEqual(
+            names.resolve("Growing Rites of Itlimoc"),
+            "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+        )
+        self.assertEqual(
+            names.resolve("Itlimoc, Cradle of the Sun"),
+            "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+        )
 
-    def test_validate_deck_card_names_reports_missing_strict_fields(self):
+    def test_validate_deck_json_reports_missing_and_off_deck_references(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             deck_file = Path(tmpdir) / "deck.json"
             deck_file.write_text(
@@ -37,10 +46,10 @@ class ValidateDeckCardNamesTests(unittest.TestCase):
                     "commander": "Known Commander",
                     "decklist": [
                         {"name": "Known Spell"},
-                        {"name": "Typo Spell"},
+                        {"name": "Known DFC Front"},
                     ],
                     "adds": [{"name": "Known Add"}],
-                    "highlights": [{"name": "Missing Highlight"}],
+                    "highlights": [{"name": "Off Deck Highlight"}],
                     "synergies": [
                         {
                             "title": "Narrative slot",
@@ -49,14 +58,24 @@ class ValidateDeckCardNamesTests(unittest.TestCase):
                     ],
                 })
             )
-            scryfall_names = {"Known Commander", "Known Spell", "Known Add"}
+            scryfall_names = validator.ScryfallNameIndex({
+                "Known Commander": "Known Commander",
+                "Known Spell": "Known Spell",
+                "Known Add": "Known Add",
+                "Known DFC Front": "Known DFC // Known Back",
+                "Known DFC // Known Back": "Known DFC // Known Back",
+                "Off Deck Highlight": "Off Deck Highlight",
+            })
 
-            missing = validator.validate_deck_card_names([deck_file], scryfall_names)
+            issues = validator.validate_deck_json([deck_file], scryfall_names)
 
-        self.assertEqual([item.name for item in missing], ["Typo Spell", "Missing Highlight"])
         self.assertEqual(
-            [item.json_path for item in missing],
-            ["decklist[1].name", "highlights[0].name"],
+            [(issue.issue_type, issue.reference.json_path, issue.reference.name) for issue in issues],
+            [
+                ("not_in_decklist", "adds[0].name", "Known Add"),
+                ("not_in_decklist", "highlights[0].name", "Off Deck Highlight"),
+                ("missing_scryfall", "synergies[0].cards[0]", "any damage source"),
+            ],
         )
 
     @unittest.skipUnless(
@@ -65,7 +84,7 @@ class ValidateDeckCardNamesTests(unittest.TestCase):
     )
     def test_checked_in_deck_card_names_exist_in_local_scryfall_mirror(self):
         scryfall_names = validator.load_scryfall_name_index()
-        missing = validator.validate_deck_card_names(
+        missing = validator.validate_deck_json(
             validator.available_deck_paths(),
             scryfall_names,
         )

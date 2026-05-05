@@ -70,6 +70,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - Every card recommendation must be attributed via `sources`
 - **Card pool**: Cards printed through March 2026
 - **Card text validation**: ALWAYS verify card names and oracle text via the `scryfall_card_by_name` MCP tool before recommending cards. Never assume card text or abilities from memory — validate every card considered. For bulk validation, use `scryfall_collection`.
+- **Deck JSON validation**: After editing any `deck.json`, run `python scripts/validate_deck_json.py --deck {id}`. The validator checks commander/decklist/highlight/category/win-condition/synergy card references against `priv_data/scryfall-oracle.json` and fails if reference blocks point to cards not in that deck. If the mirror is missing or stale, run `python scripts/refresh_scryfall_mirror.py`.
 - **Bracket 4/5 deckbuilding principles**: See [`data/bracket-philosophy.md`](data/bracket-philosophy.md) for mana base, fast mana, free spells, interaction, and card quality standards. Apply when building or updating B4+ decks.
 
 ## Source Attribution Schema
@@ -141,6 +142,7 @@ When tagging cards, building decks, or reading metrics output:
 2. Add entry to `data/index.json` `commanders` array (with `theme` and `colors`)
 3. Include full 99-card `decklist` array
 4. Use `deckCategories` in `guideContent` for deck theme groupings
+5. Run `python scripts/validate_deck_json.py --deck {new-id}` before handing off the change
 
 ### Research Deck Updates (with YouTube MCP)
 1. Search YouTube for relevant videos
@@ -148,3 +150,4 @@ When tagging cards, building decks, or reading metrics output:
 3. Extract card recommendations
 4. Compare with existing deck data
 5. Update deck.json with new findings
+6. Run `python scripts/validate_deck_json.py --deck {id}`
