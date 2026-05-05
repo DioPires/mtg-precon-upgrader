@@ -1,141 +1,112 @@
-# DEC-148: Mana Base Revision (Mutant / Eternal Harvest / Verdant Tide / Creeping Corruption)
+# DEC-148: Mana Base Revision (rev 2)
 
 Author: CEO • Status: **Awaiting board approval (no edits applied)**
-Date: 2026-05-05
+Date: 2026-05-05 • Supersedes rev 1
+
+## Board pushback (acknowledged)
+1. **I missed the landfall payoffs.** Verdant Tide runs Scute Swarm + Avenger of Zendikar + Elfsworn Giant. Mutant Multiplication runs Scute Swarm + Avenger of Zendikar. Per memory, Fabled Passage triggers landfall **twice**. With Scute Swarm at 6+ lands (token copies *itself*), Fabled Passage = explosive. **Fabled Passage swap is correct in both decks.**
+2. **"Appropriate as-is" was a weak framing.** Replaced with concrete upgrades wherever owned, unused lands materially improve consistency.
 
 ## Constraints
-- New lands must be in `priv_data/owned_formatted.csv`.
-- Avoid lands already used in non-Genesis-Protocol decks (genesis-protocol = exempt/shareable).
-- Verbatim oracle text per Scryfall (verified for every proposed add).
-- No deck.json edits without explicit board approval (per feedback memory).
+- New lands must exist in `priv_data/owned_formatted.csv`.
+- Must not be claimed by any non-Genesis-Protocol deck.
+- Verbatim Scryfall oracle text verified for every proposed add.
+- No `deck.json` edits applied. Gated on board approval.
 
-## Pre-flight numbers (current state)
+## Pre-flight numbers
 
-| Deck | Cards | Lands | % Lands | Bracket | Colors | global_health |
-|---|---|---|---|---|---|---|
-| Mutant Multiplication | 98 | 38 | 38.8% | 4 | Bant (GWU) | 82 |
-| Eternal Harvest | 99 | 35 | 35.4% | 4 | Golgari (BG) | 78 |
-| Verdant Tide | 99 | 34 | 34.3% | 2 | Mono-G | 76 |
-| Creeping Corruption | 99 | 35 | 35.4% | 4 | 4-color (WUBG) | 86 |
+| Deck | Cards | Lands | Bracket | Colors | Landfall payoffs |
+|---|---|---|---|---|---|
+| Mutant Multiplication | 98 | 38 | 4 | Bant (GWU) | Scute Swarm, Avenger of Zendikar |
+| Eternal Harvest | 99 | 35 | 4 | Golgari (BG) | Bloodghast |
+| Verdant Tide | 99 | 34 | 2 | Mono-G | Scute Swarm, Avenger of Zendikar, Elfsworn Giant |
+| Creeping Corruption | 99 | 35 | 4 | 4-color (WUBG) | none |
 
-Note: Mutant Multiplication shows 98 in decklist (one card short of 99). Pre-existing accounting issue, **out of scope for this issue** — flag for follow-up.
+## Verbatim oracle text for new adds (Scryfall-verified)
 
----
+- **Fabled Passage** — Land. *"{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Then if you control four or more lands, untap that land."*
+- **Hall of Oracles** — Land. *"{T}: Add {C}. {1}, {T}: Add one mana of any color. {T}: Put a +1/+1 counter on target creature. Activate only as a sorcery and only if you've cast an instant or sorcery spell this turn."*
+- **Path of Ancestry** — Land. *"This land enters tapped. {T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1."*
+- **Memorial to Folly** — Land. *"This land enters tapped. {T}: Add {B}. {2}{B}, {T}, Sacrifice this land: Return target creature card from your graveyard to your hand."*
+- **Crypt of Agadeem** — Land. *"This land enters tapped. {T}: Add {B}. {2}, {T}: Add {B} for each black creature card in your graveyard."*
+- **Seaside Citadel** — Land. *"This land enters tapped. {T}: Add {G}, {W}, or {U}."*
 
-## Per-deck analysis
+## Per-deck proposal
 
-### 1. Mutant Multiplication — Leonardo, the Balance (Bant tokens, B4)
+### 1. Mutant Multiplication — Leonardo, the Balance (Mutant Ninja Turtle), 38 lands → 38
 
-**Current land slate (38):**
-6 Forest / 3 Plains / 1 Island; Command Tower, Exotic Orchard, Mana Confluence, City of Brass, Spara's HQ; Temple Garden, Breeding Pool, Hallowed Fountain; Windswept Heath, Flooded Strand, Prismatic Vista; Sunpetal Grove, Glacial Fortress; Brushland, Adarkar Wastes, Yavimaya Coast; Botanical Sanctum, Razorverge Thicket, Seachrome Coast; Wooded Bastion; Canopy Vista; Otawara, Eiganjo, Reliquary Tower, Rogue's Passage, Scavenger Grounds, Turbulent Wilderness, Horizon Canopy.
-
-**Diagnosis:**
-- 38 lands is **above** the typical Bracket-4 Bant target (36–37); fixing density already very high (3 fetches + tritand + 3 shocks + 3 fast + 3 pain + 3 check + filter).
-- No landfall payoffs in deck (token / +1/+1 counter strategy).
-
-**Board prompt: "consider Fabled Passage instead of one Forest"** → **Recommend AGAINST.**
-Reasoning: deck already has 3 basic-fetchers (Windswept Heath, Flooded Strand, Prismatic Vista). A 4th adds redundancy at the cost of an untapped Turn-1 G source. No landfall payoff to justify the tempo loss. Fabled Passage's value-add is fixing flexibility, which this deck doesn't lack.
-
-**Proposed swap (instead):**
-| Cut | Add | Why |
+| Cut | Add | Rationale |
 |---|---|---|
-| 1 Forest | **Hall of Oracles** (1 owned, free) | Late-game mana sink that buffs Leonardo's +1/+1 counter strategy. Ungated G land replaced by a counter-payoff utility land at 38→37 land count (still safe). |
+| 1 Forest | **Fabled Passage** | Triggers landfall **twice** (place + fetched basic). Scute Swarm at 6+ lands = self-copies; Avenger pumps each Plant. Two landfall triggers per drop = exponential growth on Scute Swarm board states. |
+| 1 Forest | **Hall of Oracles** | Late-game mana sink that puts a +1/+1 counter on any creature once per turn. Direct fit for Leonardo's "+1/+1 counter on each creature when a token enters" engine. 13 instant/sorcery enablers in deck. |
+| 1 Plains | **Path of Ancestry** | Leonardo is Mutant Ninja Turtle. Deck has ~11 Mutant/Ninja/Turtle creatures = 11 scry triggers per game on average. Tapped Bant tritand-equivalent. |
 
-**Hall of Oracles oracle (verified):** *"{T}: Add {C}. {1}, {T}: Add one mana of any color. {T}: Put a +1/+1 counter on target creature. Activate only as a sorcery and only if you've cast an instant or sorcery spell this turn."*
-Synergy fit: deck runs 9 instants + 4 sorceries (13 enablers). Hall converts late-game floating mana into permanent stat growth on Leonardo's tokens.
+**Net effect:**
+- Lands 38 → 38; 6 Forest → 4 Forest; 3 Plains → 2 Plains.
+- New synergy lands: 1 landfall enabler, 1 +1/+1 counter sink, 1 tribal scry.
+- Tradeoff: 3 untapped basics → 3 ETB-tapped lands. Mitigated by deck's high land count (38) and curve clustering at 3+ CMC.
 
-**Net effect (before/after):**
-- Lands: 38 → 37 (−1)
-- Untapped G sources: 16 → 15 (−1) — still well above 13-source threshold for {G}{G}{G} curves.
-- Counter-producing utility lands: 0 → 1
-- 5-color sources via Hall's `{1}, {T}: Add one mana of any color`: +1 (Bant fixing depth).
+### 2. Eternal Harvest — Meren of Clan Nel Toth (Human Shaman), 35 lands → 35
 
----
-
-### 2. Eternal Harvest — Meren of Clan Nel Toth (Golgari reanimator, B4)
-
-**Current land slate (35):**
-6 Forest / 7 Swamp; Command Tower, Bojuka Bog, Boseiju, Urborg, Castle Locthwain, Takenuma, Dryad Arbor, Phyrexian Tower, High Market; Overgrown Tomb; Verdant Catacombs; Llanowar Wastes; Woodland Cemetery; Blooming Marsh; Nurturing Peatland; Darkbore Pathway; Deathcap Glade; Underground Mortuary; Undergrowth Stadium; Twilight Mire; Vernal Fen; Turbulent Fen.
-
-**Diagnosis:**
-- 35 lands is appropriate for Golgari reanimator with on-curve graveyard fillers and 2 sac-lands (Phyrexian Tower, High Market).
-- Already utility-saturated: 2 sac outlets, 2 graveyard hate (Bojuka, Scavenger n/a), 2 land-disruption (Boseiju, Strip Mine n/a).
-
-**Proposed swap:**
-| Cut | Add | Why |
+| Cut | Add | Rationale |
 |---|---|---|
-| 1 Swamp (7→6) | **Memorial to Folly** (1 owned, free) | Sac-to-recur from yard → hand. Direct Meren synergy: hand-target replays via mana, complementing Meren's battlefield-target end-step trigger. Doubles as Swamp source. |
+| 1 Swamp | **Memorial to Folly** | Sac to recur creature from yard → hand. Pairs with Meren's end-step yard → battlefield trigger to give the deck a hand-recursion line independent of Meren. |
+| 1 Swamp | **Crypt of Agadeem** | Scales with black creatures in yard: a Cabal Coffers-lite for Meren's mid-game where 4–6 black creatures sit in yard. Effectively reads "Add {BBB+}" by turn 5. |
 
-**Memorial to Folly oracle (verified):** *"This land enters tapped. {T}: Add {B}. {2}{B}, {T}, Sacrifice this land: Return target creature card from your graveyard to your hand."*
+**Net effect:**
+- Lands 35 → 35; 7 Swamp → 5 Swamp.
+- 2 untapped Swamp → 2 tapped utility lands. Slowdown is real but graveyard-deck mid-game mana spike (Crypt) and recursion redundancy (Memorial) outweigh it.
+- Path of Ancestry skipped: only 5 Humans + 4 Shamans (~9 enablers, often overlap). Crypt + Memorial dominate.
 
-**Net effect (before/after):**
-- Lands: 35 → 35 (no change)
-- B sources: unchanged (Memorial = Swamp-functional after T1)
-- Reanimation outlets: Meren-only → Meren + Memorial (one-shot pseudo-recursion redundancy)
-- Tradeoff: 1 untapped Swamp → 1 ETB-tapped land. Mitigated by deck's slower reanimator pivot (curve clusters at 3+ CMC).
+### 3. Verdant Tide — Eladamri, Korvecdal (Elf Druid Warrior), 34 lands → 34
 
----
+| Cut | Add | Rationale |
+|---|---|---|
+| 1 Snow-Covered Forest | **Fabled Passage** | Two landfall triggers per drop. Scute Swarm at 6+ lands = self-copy on each trigger; Avenger pumps Plants twice; Elfsworn Giant creates 2 Elf Warrior tokens (which then chain into Eladamri's Elf Druid Warrior identity for Path of Ancestry triggers if queued). Snow type is vestigial — verified zero snow synergies in deck. |
+| 1 Snow-Covered Forest | **Path of Ancestry** | Eladamri is Elf Druid Warrior. Deck runs 21+ elves. Scry-1 on every elf cast = ~21 scry triggers per game. Highest-density tribal scry of any deck in the project. |
 
-### 3. Verdant Tide — Eladamri, Korvecdal (Mono-G elfball, B2)
+**Net effect:**
+- Lands 34 → 34; 28 Snow-Covered Forest → 26 Snow-Covered Forest.
+- 2 untapped basics → 2 tapped synergy lands. Bracket 2 deck has tempo slack.
+- Mono-G fixing burden = zero, so any fixing-flavored land (Path of Ancestry, Fabled Passage) costs nothing in color sources.
 
-**Current land slate (34):**
-28 Snow-Covered Forest, The Shire, Three Tree City, Rogue's Passage, Oran-Rief the Vastwood, Wirewood Lodge, Nykthos Shrine to Nyx.
+### 4. Creeping Corruption — Atraxa, Praetors' Voice (Phyrexian Angel Horror), 35 lands → 35
 
-**Diagnosis:**
-- **No snow synergies** in deck. Snow-Covered Forest = vestigial choice; functionally identical to Forest for this build.
-- Mono-G has zero color-fixing burden. Tempo-sensitive elfball needs untapped T1.
-- 6 utility lands already; basics aggressively tuned for explosive mana via Priest of Titania / Marwyn / Heritage Druid.
+| Cut | Add | Rationale |
+|---|---|---|
+| 1 Forest (2 → 1) | **Path of Ancestry** | Atraxa = Phyrexian Angel Horror. Deck runs **19 Phyrexians + 1 Angel + 4 Horrors = ~24 type-shared creatures** out of 27 creatures. Highest-percentage scry density of any deck (~89% of creatures trigger). |
+| 1 Swamp (1 → 0) | **Seaside Citadel** | Adds 3rd triome (Bant WUG) to complement existing Indatha (WBG) + Zagoth (UBG). Atraxa is WUBG; this tritand covers W/U/G simultaneously, smoothing 3-color color requirements for spells like Atraxa (GWUB) and 4-color shocks. |
 
-**Board prompt: "consider Fabled Passage instead of one Snow-Covered Forest"** → **Recommend AGAINST.**
-Reasoning:
-1. No landfall payoffs in deck (verified via decklist scan).
-2. No snow payoffs to lose by swapping (Snow basics are cosmetic).
-3. Fabled Passage ETBs tapped, then fetches a *tapped* Forest, untapping only if 4+ lands controlled. T1–T3 = strict tempo loss with zero upside in a mono-G deck where Forest = perfect mana.
-4. Fabled Passage's only edge over a Forest is "shuffle library" (relevant for Sylvan Library / Brainstorm — not in deck) and "double landfall" (no payoffs).
+**Net effect:**
+- Lands 35 → 35; basics 4 → 2 (mostly relying on shocks/triomes anyway).
+- Strong scry-density add (Path of Ancestry) + 3rd Bant-color tritand for color-source diversity.
+- Tradeoff: 2 untapped basics → 2 ETB-tapped lands. Atraxa is a deathtouch/lifelink commander that values mid-game stability over T1 tempo.
 
-**Proposed swap: NONE.** Mana base is Bracket-2 appropriate.
+## Summary table
 
-(Optional consideration noted but **not** included in formal proposal: trim 1 Snow-Covered Forest → +1 Reliquary Tower (2 free copies). Eladamri's hand-cheat ability rewards a fuller hand; Reliquary Tower removes max-hand-size cap. Deferred unless board wants to pursue.)
-
----
-
-### 4. Creeping Corruption — Atraxa, Praetors' Voice (4-color WUBG proliferate, B4)
-
-**Current land slate (35):**
-2 Forest / 1 Swamp / 1 Island; Command Tower, Exotic Orchard, Reflecting Pool, City of Brass, Mana Confluence n/a; 2 triomes (Zagoth, Indatha); 6 shocks (Breeding Pool, Temple Garden, Overgrown Tomb, Watery Grave, Hallowed Fountain, Godless Shrine); 5 fetches (Polluted Delta, Flooded Strand, Verdant Catacombs, Windswept Heath, Marsh Flats); 4 fast lands (Darkslick, Blooming Marsh, Razorverge, Botanical Sanctum); 4 pain lands (Caves of Koilos, Llanowar Wastes, Yavimaya Coast, Underground River); Brushland, Karn's Bastion, Inkmoth Nexus, The Seedcore, Turbulent Moor, Fabled Passage.
-
-**Diagnosis:**
-- Excellent 4-color base. 35 lands appropriate.
-- Already has Fabled Passage. Has 5 fetches feeding 6 shocks (textbook fetch-shock chain).
-- Missing: Spara's HQ (Bant triome — claimed by Mutant), Raffine's Tower (Esper triome — not owned).
-
-**Proposed swap: NONE required.** Mana base is at Bracket-4 standard.
-
-(Optional consideration: +1 Path of Ancestry (7 free) for Atraxa-cast scry-1 trigger. Tradeoff: tapped land for marginal scry. **Not** included in formal proposal — current base is strong; adding tapped utility for low-value scry isn't a clear win.)
-
----
-
-## Summary of proposed changes
-
-| Deck | Cut | Add | Net land Δ |
+| Deck | Cuts | Adds | Land count Δ |
 |---|---|---|---|
-| Mutant Multiplication | 1 Forest | Hall of Oracles | −1 |
-| Eternal Harvest | 1 Swamp | Memorial to Folly | 0 |
-| Verdant Tide | — | — | 0 |
-| Creeping Corruption | — | — | 0 |
+| Mutant Multiplication | 2 Forest, 1 Plains | Fabled Passage, Hall of Oracles, Path of Ancestry | 0 |
+| Eternal Harvest | 2 Swamp | Memorial to Folly, Crypt of Agadeem | 0 |
+| Verdant Tide | 2 Snow-Covered Forest | Fabled Passage, Path of Ancestry | 0 |
+| Creeping Corruption | 1 Forest, 1 Swamp | Path of Ancestry, Seaside Citadel | 0 |
 
-**Two swaps total.** Both use lands the user owns and that are free in non-Genesis decks.
+**Total: 9 swaps. Zero net land count change.**
 
-## Verification
+## Constraint compliance check
 
-- [x] Oracle text verified verbatim via Scryfall MCP for every candidate land (Hall of Oracles, Memorial to Folly, Fabled Passage, Path of Ancestry, Reliquary Tower, etc.).
-- [x] Cross-deck claim check: Hall of Oracles (1 owned, 0 used in any deck), Memorial to Folly (1 owned, 0 used in any deck).
-- [x] Decline-to-swap rationale on both Fabled Passage prompts.
-- [ ] Board approval — **gating implementation**.
+| Land | Owned qty | Used in non-GP deck? | Status |
+|---|---|---|---|
+| Fabled Passage | 6 | 1 (creeping-corruption) | 5 free → 2 needed → ✓ |
+| Hall of Oracles | 1 | 0 | ✓ |
+| Path of Ancestry | 7 | 0 | 3 needed → ✓ |
+| Memorial to Folly | 1 | 0 | ✓ |
+| Crypt of Agadeem | 1 | 0 | ✓ |
+| Seaside Citadel | 1 | 0 | ✓ |
 
 ## Next action (post-approval)
-1. Apply two swaps in `data/commanders/{mutant-multiplication,eternal-harvest}/deck.json`.
-2. Add `sources` entry citing DEC-148 + ai-inferred mana-base review.
-3. Run `python scripts/validate_deck_json.py --deck mutant-multiplication --deck eternal-harvest`.
-4. Re-run candidate pool refresh on both decks.
+1. Apply 9 swaps across 4 `deck.json` files.
+2. Add `sources` entry on each swap citing DEC-148 + ai-inferred mana-base review (with landfall-payoff note for the Fabled Passage adds).
+3. Run `python scripts/validate_deck_json.py --deck mutant-multiplication --deck eternal-harvest --deck verdant-tide --deck creeping-corruption`.
+4. Re-run `scripts/refresh_card_pool.py` per deck.
 5. Commit + push.
