@@ -11,6 +11,11 @@ import {
 } from 'react';
 import { GV1ManaPips } from '../atoms/GV1ManaPips';
 import { cardCache } from '../../data/cardCache';
+import {
+  aggregateBuiltClaims,
+  computeBuyOwnSplit,
+} from '../../data/builtDecks';
+import { useBuiltDecks } from '../../hooks/useBuiltDecks';
 import type { DeckFull } from '../../data/types';
 
 const SHOP_OWNED_KEY = 'grimoire-owned-cards';
@@ -147,6 +152,13 @@ export function aggregateCards(selectedSlugs: Set<string>, allDecks: DeckFull[])
         qty: 1, fallbackType: 'Creature', isCommander: true, decks: new Set([slug]),
       });
     }
+    if (d.partner) {
+      const cur = map.get(d.partner);
+      if (cur) cur.decks.add(slug);
+      else map.set(d.partner, {
+        qty: 1, fallbackType: 'Creature', isCommander: true, decks: new Set([slug]),
+      });
+    }
     (d.list || []).forEach((group) => {
       if (group.name === 'Commander') return;
       (group.cards || []).forEach((c) => {
@@ -164,22 +176,27 @@ export function aggregateCards(selectedSlugs: Set<string>, allDecks: DeckFull[])
 
 interface ShopRowCard extends AggregateInfo {
   name: string;
+  reservedBy: number;
 }
 
 export function splitOwnership(
   cardMap: Map<string, AggregateInfo>,
   ownedMap: Map<string, number>,
+  builtClaims: Map<string, number> = new Map(),
 ): { buy: ShopRowCard[]; own: ShopRowCard[] } {
-  const buy: ShopRowCard[] = [];
-  const own: ShopRowCard[] = [];
-  cardMap.forEach((info, name) => {
-    const ownedQty = ownedMap.get(name) || 0;
-    const need = Math.max(0, info.qty - ownedQty);
-    const have = Math.min(info.qty, ownedQty);
-    if (need > 0) buy.push({ name, ...info, qty: need });
-    if (have > 0) own.push({ name, ...info, qty: have });
+  // planned shape required by computeBuyOwnSplit
+  const planned = new Map<string, AggregateInfo & { quantity: number }>();
+  cardMap.forEach((info, name) => planned.set(name, { ...info, quantity: info.qty }));
+  const split = computeBuyOwnSplit(planned, ownedMap, builtClaims);
+  const toRow = (r: { name: string; info: AggregateInfo; qty: number; reservedBy: number }): ShopRowCard => ({
+    name: r.name,
+    qty: r.qty,
+    fallbackType: r.info.fallbackType,
+    isCommander: r.info.isCommander,
+    decks: r.info.decks,
+    reservedBy: r.reservedBy,
   });
-  return { buy, own };
+  return { buy: split.buy.map(toRow), own: split.own.map(toRow) };
 }
 
 const MANA_LETTER: Record<string, string> = { W: 'W', U: 'U', B: 'B', R: 'R', G: 'G', C: 'C' };
@@ -220,9 +237,10 @@ interface ShopRowProps {
   multiDeck: boolean;
   allDecks: DeckFull[];
   fallbackType: string;
+  reservedBy: number;
 }
 
-function ShopRow({ name, qty, decks, multiDeck, allDecks, fallbackType }: ShopRowProps) {
+function ShopRow({ name, qty, decks, multiDeck, allDecks, fallbackType, reservedBy }: ShopRowProps) {
   // Subscribe to Scryfall arrival for this row.
   const [, bump] = useState(0);
   useEffect(() => {
@@ -263,6 +281,11 @@ function ShopRow({ name, qty, decks, multiDeck, allDecks, fallbackType }: ShopRo
       <span className="gv1-shop-row-price gv1-mono-xs">
         {price ? <span className="gv1-rune">{price}</span> : <span className="gv1-dim">—</span>}
       </span>
+      {reservedBy > 0 && (
+        <span className="gv1-shop-row-reserved gv1-mono-xs gv1-dim">
+          Reserved by {reservedBy} built deck{reservedBy === 1 ? '' : 's'}
+        </span>
+      )}
     </div>
   );
 }
@@ -311,6 +334,7 @@ export function Shopping({ decks }: ShoppingProps) {
   const [selected, setSelected] = useState<Set<string>>(() =>
     new Set(decks.length ? [decks[0].slug] : []),
   );
+  const { built, toggle: toggleBuilt, setAll: setAllBuilt, clear: clearBuilt } = useBuiltDecks();
   const [owned, setOwned] = useState<Map<string, number>>(() => loadOwned());
   const [sortMode, setSortMode] = useState<'type' | 'az'>('type');
   const [ownedCollapsed, setOwnedCollapsed] = useState(true);
@@ -333,7 +357,11 @@ export function Shopping({ decks }: ShoppingProps) {
   }, [decks, selected.size]);
 
   const cardMap = useMemo(() => aggregateCards(selected, decks), [selected, decks]);
-  const { buy, own } = useMemo(() => splitOwnership(cardMap, owned), [cardMap, owned]);
+  const builtClaims = useMemo(() => aggregateBuiltClaims(built, decks), [built, decks]);
+  const { buy, own } = useMemo(
+    () => splitOwnership(cardMap, owned, builtClaims),
+    [cardMap, owned, builtClaims],
+  );
   const buyGroups = useMemo(() => groupRows(buy, sortMode), [buy, sortMode]);
   const ownGroups = useMemo(() => groupRows(own, sortMode), [own, sortMode]);
 
@@ -345,12 +373,37 @@ export function Shopping({ decks }: ShoppingProps) {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(slug)) next.delete(slug);
-      else next.add(slug);
+      else {
+        next.add(slug);
+        // Mutually exclusive with the Built rail (legacy behavior).
+        if (built.has(slug)) toggleBuilt(slug);
+      }
       return next;
     });
   };
   const selectAll = () => setSelected(new Set(decks.map((d) => d.slug)));
   const clearSelection = () => setSelected(new Set());
+
+  const toggleBuiltDeckLocal = (slug: string) => {
+    if (selected.has(slug)) {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        next.delete(slug);
+        return next;
+      });
+    }
+    toggleBuilt(slug);
+  };
+  const allBuiltSelected = decks.length > 0 && built.size === decks.length;
+  const toggleBuiltAll = () => {
+    if (allBuiltSelected) {
+      clearBuilt();
+    } else {
+      setAllBuilt(decks.map((d) => d.slug));
+      // Drop any selected decks that just became built.
+      setSelected(new Set());
+    }
+  };
 
   const onFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -426,6 +479,46 @@ export function Shopping({ decks }: ShoppingProps) {
           ownership data stays in your browser — nothing leaves the page.
         </p>
       </header>
+
+      <section className="gv1-section gv1-shop-section">
+        <div className="gv1-shop-rail-head">
+          <span className="gv1-mono-xs gv1-dim">BUILT DECKS</span>
+          <span className="gv1-mono-xs gv1-dim">· {built.size} reserved</span>
+          <span className="gv1-shop-rail-spacer" />
+          <button
+            id="shopping-built-select-all"
+            className="gv1-shop-mini-btn"
+            onClick={toggleBuiltAll}
+            type="button"
+            disabled={decks.length === 0}
+          >
+            {allBuiltSelected ? 'None' : 'All'}
+          </button>
+        </div>
+        <div className="gv1-shop-built-chips" role="group" aria-label="Built decks (reserves owned cards)">
+          {decks.map((d) => {
+            const on = built.has(d.slug);
+            return (
+              <button
+                key={d.slug}
+                type="button"
+                className={'gv1-shop-built-chip' + (on ? ' gv1-active' : '')}
+                onClick={() => toggleBuiltDeckLocal(d.slug)}
+                aria-pressed={on}
+                aria-label={on ? `Unmark ${d.deckName} as built` : `Mark ${d.deckName} as built`}
+                title={on ? `Unmark ${d.deckName} as built` : `Mark ${d.deckName} as built`}
+              >
+                <span className="gv1-shop-chip-pips"><GV1ManaPips colors={d.colors} /></span>
+                <span className="gv1-shop-chip-name gv1-serif-sm">{d.deckName}</span>
+                <span className="gv1-shop-built-check" aria-hidden="true">✓</span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="gv1-mono-xs gv1-dim gv1-shop-built-note">
+          // Cards in built decks reserve owned copies before the buy list is computed.
+        </p>
+      </section>
 
       <section className="gv1-section gv1-shop-section">
         <div className="gv1-shop-rail-head">
@@ -580,6 +673,7 @@ export function Shopping({ decks }: ShoppingProps) {
                       multiDeck={selected.size > 1}
                       allDecks={decks}
                       fallbackType={c.fallbackType}
+                      reservedBy={c.reservedBy}
                     />
                   ))}
                 </div>
@@ -620,6 +714,7 @@ export function Shopping({ decks }: ShoppingProps) {
                       multiDeck={selected.size > 1}
                       allDecks={decks}
                       fallbackType={c.fallbackType}
+                      reservedBy={c.reservedBy}
                     />
                   ))}
                 </div>

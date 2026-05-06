@@ -87,6 +87,7 @@ export interface RawDeck {
   name: string;
   subtitle?: string;
   commander: string;
+  partner?: string;
   cost?: string;
   bracket: string;
   gameChangers?: number;
@@ -316,6 +317,8 @@ export interface DeckFull {
   slug: string;
   deckName: string;
   commander: string;
+  /** Optional partner commander (e.g. partner mechanic, background). */
+  partner?: string;
   commanderMv: string;
   /** "Commander · {theme}" caption. */
   type: string;

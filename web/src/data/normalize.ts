@@ -273,6 +273,7 @@ export function normalizeDeck(bundle: RawDeckBundle, idx: number): DeckFull {
     slug: id,
     deckName: deck.name,
     commander: deck.commander,
+    partner: deck.partner || undefined,
     commanderMv: '—',
     type: `Commander · ${idxEntry.theme}`,
     colors: colorsToGlyphs(idxEntry.colors),
