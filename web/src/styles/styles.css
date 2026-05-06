@@ -50,6 +50,10 @@ em { font-style: italic; color: var(--gv1-gold); }
   padding: 10px 32px;
   border-bottom: 1px solid var(--gv1-line);
   background: var(--gv1-bg-2);
+  /* `.gv1-root > *` puts header + main + cardhover all at z:1; without
+     this bump, <main>'s later position in DOM wins, and the DEC-181
+     hamburger dropdown gets painted under codex/shopping/etc. content. */
+  z-index: 10;
 }
 .gv1-topbar-left, .gv1-topbar-right { display: flex; align-items: center; gap: 14px; }
 .gv1-topbar-right { justify-self: end; }
@@ -1146,6 +1150,9 @@ em { font-style: italic; color: var(--gv1-gold); }
   filter: drop-shadow(0 24px 32px rgba(8, 14, 22, 0.55))
           drop-shadow(0 4px 8px rgba(8, 14, 22, 0.35));
   animation: gv1-cardhover-in 140ms ease-out;
+  /* Sit above the topbar (z:10) so popovers triggered near the top of
+     the viewport never get clipped by the nav header. */
+  z-index: 100;
 }
 @keyframes gv1-cardhover-in {
   from { opacity: 0; transform: translateY(-4px) scale(0.98); }
