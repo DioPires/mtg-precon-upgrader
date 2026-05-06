@@ -26,7 +26,7 @@ A web application that provides recommended commander deck builds for Magic: The
 
 ## Architecture
 
-- **Frontend**: React 18 + Vite + TypeScript SPA (`web/`), react-router with `?deck=...&view=...` URL state, 7 artboard routes (Deck Guide, Codex, Compare, Shopping, Mobile, Scrying, Dev)
+- **Frontend**: React 18 + Vite + TypeScript SPA (`web/`), react-router with `?deck=...&view=...` URL state, 6 routes (Deck Guide, Codex, Compare, Shopping, Scrying, Dev). Every surface is fully responsive at phone widths; the iPhone-bezel `/m/:id` artboard retired per DEC-183 — `/m/:id` is now a redirect-only stub kept for one release.
 - **Data**: JSON files in `data/commanders/{id}/{deck,simulation,metrics,candidates}.json`, fetched at runtime and normalized via `web/src/data/normalize.ts` (`DeckFull` shape)
 - **Card metadata**: Scryfall via `useCard()` hook (`web/src/hooks/useCard.ts`) — 80ms throttle + dedupe + 24h localStorage cache
 - **Styling**: CSS modules + global tokens in `web/src/styles/tokens.css` (3-layer: primitive → semantic → component). No Tailwind, no CSS-in-JS.

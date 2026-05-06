@@ -39,24 +39,20 @@ for (const width of WIDTHS) {
       await page.locator('.gv1-codex').waitFor();
       if (await pageOverflows(page)) overflows.push('codex');
 
+      // DEC-183: /deck/:id renders responsively at every width — no /m/:id redirect.
       await page.goto(`/deck/${deck}`);
-      if (width <= 768) {
-        await expect(page).toHaveURL(new RegExp(`/m/${deck}$`));
-      } else {
-        await expect(page).toHaveURL(new RegExp(`/deck/${deck}$`));
-      }
+      await expect(page).toHaveURL(new RegExp(`/deck/${deck}$`));
+      await expect(page.locator('.gv1-deck-guide')).toBeVisible();
       await page.waitForLoadState('networkidle');
       if (await pageOverflows(page)) overflows.push('deck');
 
+      // DEC-183: /m/:id is preserved as a redirect to /deck/:id for one release
+      // so existing bookmarks don't 404. The bezel artboard is retired.
       await page.goto(`/m/${deck}`);
-      if (width > 768) {
-        await expect(page).toHaveURL(new RegExp(`/deck/${deck}$`));
-      } else {
-        await expect(page).toHaveURL(new RegExp(`/m/${deck}$`));
-        await expect(page.locator('.gv1-mobile')).toBeVisible();
-      }
+      await expect(page).toHaveURL(new RegExp(`/deck/${deck}$`));
+      await expect(page.locator('.gv1-deck-guide')).toBeVisible();
       await page.waitForLoadState('networkidle');
-      if (await pageOverflows(page)) overflows.push('mobile');
+      if (await pageOverflows(page)) overflows.push('mobile-redirect');
 
       await page.goto('/compare');
       await page.locator('.gv1-cmp-table').waitFor();

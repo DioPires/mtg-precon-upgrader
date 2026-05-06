@@ -15,6 +15,7 @@ test('home renders the token-themed shell with topbar', async ({ page }) => {
 });
 
 test('unknown deck slugs land on the not-found stub', async ({ page }) => {
+  // /m/x redirects to /deck/x (DEC-183) which then renders the not-found stub.
   for (const path of ['/deck/x', '/scrying/x', '/m/x']) {
     await page.goto(path);
     await expect(page.locator('h1', { hasText: /not found/i })).toBeVisible();
@@ -60,7 +61,7 @@ test('SPA refresh serves index.html on deep routes (DEC-173)', async ({ page }) 
   }
 });
 
-test.describe('mobile responsive routing (DEC-181)', () => {
+test.describe('mobile responsive routing (DEC-181 + DEC-183)', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test('Topbar collapses to hamburger and exposes all surfaces', async ({ page }) => {
@@ -81,13 +82,22 @@ test.describe('mobile responsive routing (DEC-181)', () => {
     await expect(menu.getByRole('link', { name: /compare/i })).toBeVisible();
   });
 
-  test('/deck/:id redirects to /m/:id on mobile (URL state survives)', async ({ page }) => {
+  test('/m/:id redirects to /deck/:id on mobile (DEC-183: bezel artboard retired)', async ({ page }) => {
+    const idx = await (await page.request.get('/data/index.json')).json();
+    const first = idx.commanders[0].id as string;
+
+    await page.goto(`/m/${first}`);
+    await expect(page).toHaveURL(new RegExp(`/deck/${first}$`));
+    await expect(page.locator('.gv1-deck-guide')).toBeVisible();
+  });
+
+  test('/deck/:id renders responsively at phone widths (DEC-183: no /m/ redirect)', async ({ page }) => {
     const idx = await (await page.request.get('/data/index.json')).json();
     const first = idx.commanders[0].id as string;
 
     await page.goto(`/deck/${first}`);
-    await expect(page).toHaveURL(new RegExp(`/m/${first}$`));
-    await expect(page.locator('.gv1-mobile')).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/deck/${first}$`));
+    await expect(page.locator('.gv1-deck-guide')).toBeVisible();
   });
 
   test('each surface renders something at 390x844 (no broken layout)', async ({ page }) => {
@@ -103,8 +113,8 @@ test.describe('mobile responsive routing (DEC-181)', () => {
     await page.goto('/shopping');
     await expect(page.locator('.gv1-shop-rail')).toBeVisible();
 
-    await page.goto(`/m/${first}`);
-    await expect(page.locator('.gv1-mobile')).toBeVisible();
+    await page.goto(`/deck/${first}`);
+    await expect(page.locator('.gv1-deck-guide')).toBeVisible();
 
     await page.goto(`/scrying/${first}`);
     await expect(page.locator('[data-gv1-screen="scrying"]')).toBeVisible();

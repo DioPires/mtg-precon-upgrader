@@ -1074,72 +1074,6 @@ em { font-style: italic; color: var(--gv1-gold); }
 .gv1-dl-star { color: var(--gv1-gold); font-size: 10px; }
 .gv1-dl-price { font-size: 10px; min-width: 40px; text-align: right; }
 
-/* Mobile artboard */
-.gv1-mobile {
-  width: 390px;
-  height: 844px;
-  background: var(--gv1-bg);
-  color: var(--gv1-ink);
-  font-family: var(--gv1-serif);
-  display: flex; flex-direction: column;
-  position: relative;
-  overflow: hidden;
-}
-.gv1-mobile::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(var(--gv1-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--gv1-grid) 1px, transparent 1px);
-  background-size: 24px 24px;
-  pointer-events: none;
-}
-.gv1-mobile > * { position: relative; z-index: 1; }
-.gv1-mobile-status {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 24px 8px;
-  flex-shrink: 0;
-}
-.gv1-mobile-head {
-  padding: 18px 24px 14px;
-  border-bottom: 1px solid var(--gv1-line);
-}
-.gv1-mobile-head h1 { margin: 8px 0 6px; font-size: 36px; line-height: 1; }
-.gv1-mobile-tabs { display: flex; gap: 16px; margin-top: 18px; }
-.gv1-mobile-tabs button {
-  all: unset;
-  font-family: var(--gv1-mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
-  color: var(--gv1-ink-dim); cursor: pointer;
-  padding-bottom: 6px;
-  border-bottom: 2px solid transparent;
-}
-.gv1-mobile-tabs button.gv1-active { color: var(--gv1-rune); border-bottom-color: var(--gv1-rune); }
-.gv1-mobile-body {
-  flex: 1;
-  padding: 18px 24px;
-  display: flex; flex-direction: column; gap: 20px;
-  overflow: hidden;
-}
-.gv1-mobile-block { display: flex; flex-direction: column; gap: 8px; }
-.gv1-mobile-block h3 { margin: 4px 0 2px; }
-.gv1-mobile-desc { font-size: 14px; line-height: 1.45; }
-.gv1-mobile-prob {
-  display: inline-flex; align-items: baseline; gap: 10px;
-  padding: 8px 12px;
-  border: 1px solid var(--gv1-line-strong);
-  align-self: flex-start;
-  margin-top: 4px;
-}
-.gv1-mobile-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.gv1-mobile-curve-block .gv1-curve-sm { height: 90px; gap: 4px; }
-.gv1-mobile-nav {
-  display: flex; justify-content: space-around; align-items: center;
-  padding: 14px 24px 28px;
-  border-top: 1px solid var(--gv1-line);
-  background: var(--gv1-bg-2);
-  flex-shrink: 0;
-}
-
 /* ─────────────────────────────────────────────────────────────
    Card hover popover — full Scryfall frame on any [data-card-name]
    ───────────────────────────────────────────────────────────── */
@@ -2840,20 +2774,6 @@ em { font-style: italic; color: var(--gv1-gold); }
     justify-self: end;
   }
 
-  /* Mobile artboard: fluid fills the viewport instead of 390x844 frame.
-     The /m/:id route is the per-deck mobile guide, and on a real phone
-     the bezel-emulation looks broken. */
-  .gv1-mobile {
-    width: 100%;
-    height: auto;
-    min-height: calc(100vh - 56px);
-  }
-  .gv1-mobile-status { padding: 10px 18px 6px; }
-  .gv1-mobile-head { padding: 14px 18px 12px; }
-  .gv1-mobile-head h1 { font-size: 32px; }
-  .gv1-mobile-body { padding: 16px 18px; gap: 16px; overflow: visible; }
-  .gv1-mobile-nav { padding: 12px 18px 22px; }
-
   /* Codex — grid stacks; stats bar wraps. */
   .gv1-codex { padding: 28px 16px 48px; }
   .gv1-codex-title { font-size: 56px; }
@@ -2971,7 +2891,30 @@ em { font-style: italic; color: var(--gv1-gold); }
 
   /* Decklist columns → single column */
   .gv1-decklist-cols { grid-template-columns: 1fr; gap: 16px; }
-  .gv1-dl-toolbar { gap: 10px; }
+  .gv1-dl-toolbar { gap: 10px; flex-wrap: wrap; }
+
+  /* Apothecary (DEC-183): vitals 4-col grid overflows at 360px; stack into
+     two rows so the grade block + weakest readout don't get sliced. Maladies
+     and remedies already wrap; just tighten gutters and tap targets. */
+  .gv1-apo-vitals {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px 16px;
+    align-items: stretch;
+  }
+  .gv1-apo-vitals-divider { display: none; }
+  .gv1-apo-grade-block { gap: 14px; }
+  .gv1-apo-grade { width: 56px; height: 56px; font-size: 28px; }
+  .gv1-apo-weakest { min-width: 0; word-break: break-word; }
+  .gv1-apo-details-btn {
+    align-self: flex-start;
+    min-height: 44px;
+  }
+  .gv1-apo-breakdown { padding: 16px; gap: 14px; }
+  .gv1-apo-maladies { flex-wrap: wrap; gap: 8px; }
+  .gv1-apo-malady { min-height: 44px; }
+  .gv1-apo-remedies { gap: 12px; }
+  .gv1-apo-remedy { padding: 14px; }
 }
 
 /* Scrying mobile banner — phones below 480px nudge to desktop for the
