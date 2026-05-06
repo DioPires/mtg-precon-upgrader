@@ -2,10 +2,11 @@
 // Role grouping is the redesign default; type grouping mirrors Shopping's bucket
 // order. Mode persists in `?manifest=type|role` URL state.
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ManaCost } from '../atoms/ManaCost';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
+import { cardCache } from '../../data/cardCache';
 import type { DeckCardTile, DeckListGroup } from '../../data/types';
 
 interface DecklistProps {
@@ -20,10 +21,24 @@ export function cardCount(cards: DeckCardTile[]): number {
 }
 
 /**
+ * Subsection comparator: mana value ascending, alphabetical tiebreak.
+ * Tiles without a known cmc collapse to 0 — desirable for lands (cmc=0)
+ * and acceptable for not-yet-hydrated entries (the view re-sorts as
+ * `cardCache` fills in).
+ */
+export const byCmcThenName = (a: DeckCardTile, b: DeckCardTile): number => {
+  const ca = a.cmc ?? 0;
+  const cb = b.cmc ?? 0;
+  if (ca !== cb) return ca - cb;
+  return a.n.localeCompare(b.n);
+};
+
+/**
  * Group cards by type bucket, pinning the commander at the top.
  * Iterates the role-grouped list, skipping the synthetic Commander group, and
  * re-buckets cards via the shared `typeBucket` helper. Output groups follow
- * `TYPE_ORDER`; cards within each group sort alphabetically.
+ * `TYPE_ORDER`; cards within each group sort by `byCmcThenName` (mana value
+ * ascending, alphabetical tiebreak).
  */
 export function groupByType(list: DeckListGroup[], commander: string): DeckListGroup[] {
   const buckets: Partial<Record<TypeBucket, DeckCardTile[]>> = {};
@@ -45,7 +60,7 @@ export function groupByType(list: DeckListGroup[], commander: string): DeckListG
     if (!cards?.length) return;
     out.push({
       name: `${t} (${cardCount(cards)})`,
-      cards: [...cards].sort((a, b) => a.n.localeCompare(b.n)),
+      cards: [...cards].sort(byCmcThenName),
     });
   });
   return out;
@@ -54,22 +69,75 @@ export function groupByType(list: DeckListGroup[], commander: string): DeckListG
 /**
  * Serialize the full deck list to Moxfield/Archidekt-pasteable text:
  *   1x {commander}
- *   {qty}x {card name}            (alphabetical by name; basics keep their qty)
+ *   {qty}x {card name}            (cmc ascending, alphabetical tiebreak)
  * Pure + deterministic — input list+commander → identical output every time.
  */
 export function serializeFullList(list: DeckListGroup[], commander: string): string {
   const totals = new Map<string, number>();
+  const cmcByName = new Map<string, number | undefined>();
   list.forEach((g) => {
     if (g.name === 'Commander') return;
     g.cards.forEach((c) => {
       totals.set(c.n, (totals.get(c.n) || 0) + (c.qty ?? 1));
+      if (!cmcByName.has(c.n)) cmcByName.set(c.n, c.cmc);
     });
   });
   const lines = [`1x ${commander}`];
   [...totals.entries()]
-    .sort((a, b) => a[0].localeCompare(b[0]))
+    .sort((a, b) => {
+      const ca = cmcByName.get(a[0]) ?? 0;
+      const cb = cmcByName.get(b[0]) ?? 0;
+      if (ca !== cb) return ca - cb;
+      return a[0].localeCompare(b[0]);
+    })
     .forEach(([name, qty]) => lines.push(`${qty}x ${name}`));
   return lines.join('\n');
+}
+
+/**
+ * Subscribe to `cardCache` for every card name in the manifest so cmc values
+ * (Scryfall) flow into tiles for the cmc-ascending sort. Re-renders whenever a
+ * card hydrates. The cache itself dedupes + throttles the underlying fetches.
+ */
+function useNameSet(list: DeckListGroup[]): string[] {
+  return useMemo(() => {
+    const seen = new Set<string>();
+    list.forEach((g) => g.cards.forEach((c) => { if (c.n) seen.add(c.n); }));
+    return [...seen];
+  }, [list]);
+}
+
+function useCmcMap(names: string[]): Map<string, number> {
+  // Bump a version counter whenever any subscribed card hydrates; the resulting
+  // re-render rebuilds the map from cardCache (cheap — sync get(), ≤ 99 entries).
+  const [version, setVersion] = useState(0);
+  useEffect(() => {
+    const unsubs = names.map((n) => {
+      cardCache.enqueue(n);
+      return cardCache.subscribe(n, () => setVersion((v) => v + 1));
+    });
+    return () => unsubs.forEach((u) => u());
+  }, [names]);
+  return useMemo(() => {
+    const map = new Map<string, number>();
+    names.forEach((n) => {
+      const e = cardCache.get(n);
+      if (e?.status === 'loaded' && typeof e.cmc === 'number') {
+        map.set(n.toLowerCase(), e.cmc);
+      }
+    });
+    return map;
+  }, [names, version]);
+}
+
+function enrichWithCmc(list: DeckListGroup[], cmcMap: Map<string, number>): DeckListGroup[] {
+  return list.map((g) => ({
+    ...g,
+    cards: g.cards.map((c) => {
+      const cmc = cmcMap.get(c.n.toLowerCase());
+      return cmc != null ? { ...c, cmc } : c;
+    }),
+  }));
 }
 
 export function Decklist({ list, commander }: DecklistProps) {
@@ -85,15 +153,23 @@ export function Decklist({ list, commander }: DecklistProps) {
     setParams(sp, { replace: true });
   };
 
-  const view = useMemo(
-    () => (mode === 'type' ? groupByType(list, commander) : list),
-    [mode, list, commander],
-  );
+  const names = useNameSet(list);
+  const cmcMap = useCmcMap(names);
+  const enriched = useMemo(() => enrichWithCmc(list, cmcMap), [list, cmcMap]);
+
+  const view = useMemo(() => {
+    if (mode === 'type') return groupByType(enriched, commander);
+    // Role grouping: preserve normalize.ts group order, sort cards within each
+    // subsection by cmc-then-name. Skip the synthetic Commander group.
+    return enriched.map((g) =>
+      g.name === 'Commander' ? g : { ...g, cards: [...g.cards].sort(byCmcThenName) },
+    );
+  }, [mode, enriched, commander]);
   const total = view.reduce((n, g) => n + cardCount(g.cards), 0);
   const sortedBy = mode === 'type' ? 'sorted by type' : 'sorted by function';
 
   const copyAll = async () => {
-    const text = serializeFullList(list, commander);
+    const text = serializeFullList(enriched, commander);
     try {
       await navigator.clipboard.writeText(text);
       setCopyState('ok');

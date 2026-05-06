@@ -3,13 +3,33 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import {
   Decklist,
+  byCmcThenName,
   groupByType,
   serializeFullList,
 } from '../../components/organisms/Decklist';
+import { cardCache } from '../../data/cardCache';
 import type { DeckCardTile, DeckListGroup } from '../../data/types';
 
-function tile(n: string, type: string, qty?: number): DeckCardTile {
-  return { n, mv: '—', type, price: '—', gc: false, ...(qty ? { qty } : {}) };
+// Decklist subscribes to cardCache for cmc lookup. Reset between tests so
+// background Scryfall fetches don't bleed across them; mocked fetch keeps
+// jsdom from reaching the network.
+beforeEach(() => {
+  cardCache._reset();
+  // Stall the Scryfall fetch — we don't want async cache writes to fire
+  // re-renders (force()) after the test has finished asserting.
+  vi.spyOn(globalThis, 'fetch').mockReturnValue(new Promise(() => {}));
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+function tile(n: string, type: string, qty?: number, cmc?: number): DeckCardTile {
+  return {
+    n, mv: '—', type, price: '—', gc: false,
+    ...(qty ? { qty } : {}),
+    ...(cmc != null ? { cmc } : {}),
+  };
 }
 
 function group(name: string, cards: DeckCardTile[]): DeckListGroup {
@@ -28,6 +48,42 @@ const SAMPLE_LIST: DeckListGroup[] = [
   group('Threats (2)', [tile('Serra Angel', 'Creature'), tile('Bident of Thassa', 'Enchantment')]),
 ];
 
+describe('byCmcThenName', () => {
+  it('sorts by mana value ascending with alphabetical tiebreak', () => {
+    const cards: DeckCardTile[] = [
+      tile('Sol Ring', 'Artifact', undefined, 1),
+      tile('Mox Diamond', 'Artifact', undefined, 0),
+      tile('Black Lotus', 'Artifact', undefined, 0),
+    ];
+    expect([...cards].sort(byCmcThenName).map((c) => c.n)).toEqual([
+      'Black Lotus', 'Mox Diamond', 'Sol Ring',
+    ]);
+  });
+
+  it('treats missing cmc as 0 (collapses with lands to alpha tiebreak)', () => {
+    const cards: DeckCardTile[] = [
+      tile('Plains', 'Land'),
+      tile('Command Tower', 'Land'),
+      tile('Island', 'Land'),
+    ];
+    expect([...cards].sort(byCmcThenName).map((c) => c.n)).toEqual([
+      'Command Tower', 'Island', 'Plains',
+    ]);
+  });
+
+  it('orders mixed cmc subsection ascending', () => {
+    const cards: DeckCardTile[] = [
+      tile('Worldspine Wurm', 'Creature', undefined, 11),
+      tile('Lightning Bolt', 'Instant', undefined, 1),
+      tile('Counterspell', 'Instant', undefined, 2),
+      tile('Birds of Paradise', 'Creature', undefined, 1),
+    ];
+    expect([...cards].sort(byCmcThenName).map((c) => c.n)).toEqual([
+      'Birds of Paradise', 'Lightning Bolt', 'Counterspell', 'Worldspine Wurm',
+    ]);
+  });
+});
+
 describe('groupByType', () => {
   it('orders buckets per TYPE_ORDER and pins commander at top', () => {
     const out = groupByType(SAMPLE_LIST, 'Captain');
@@ -37,12 +93,29 @@ describe('groupByType', () => {
     expect(out[0].cards[0].n).toBe('Captain');
   });
 
-  it('alpha-sorts cards within each bucket', () => {
+  it('sorts cards within each bucket by mana value, alpha tiebreak', () => {
     const out = groupByType(SAMPLE_LIST, 'Captain');
+    // No cmc on these tiles → all cmc=0 → alpha tiebreak.
     const artifacts = out.find((g) => g.name.startsWith('Artifact'))!;
     expect(artifacts.cards.map((c) => c.n)).toEqual(['Arcane Signet', 'Sol Ring']);
     const lands = out.find((g) => g.name.startsWith('Land'))!;
     expect(lands.cards.map((c) => c.n)).toEqual(['Command Tower', 'Island', 'Plains']);
+  });
+
+  it('ascends by cmc inside a bucket when cards expose it', () => {
+    const list: DeckListGroup[] = [
+      group('Commander', [tile('Captain', 'Commander')]),
+      group('Threats', [
+        tile('Worldspine Wurm', 'Creature', undefined, 11),
+        tile('Birds of Paradise', 'Creature', undefined, 1),
+        tile('Serra Angel', 'Creature', undefined, 5),
+      ]),
+    ];
+    const out = groupByType(list, 'Captain');
+    const creatures = out.find((g) => g.name.startsWith('Creature'))!;
+    expect(creatures.cards.map((c) => c.n)).toEqual([
+      'Birds of Paradise', 'Serra Angel', 'Worldspine Wurm',
+    ]);
   });
 
   it('counts basics by quantity in the bucket header', () => {

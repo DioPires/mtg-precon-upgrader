@@ -257,6 +257,8 @@ export interface DeckCardTile {
   note?: string;
   /** Number of physical copies (basics with quantity > 1). Defaults to 1 when omitted. */
   qty?: number;
+  /** Front-face mana value (Scryfall `cmc`). Populated lazily from `cardCache` at render time. */
+  cmc?: number;
 }
 
 /** Two-half title: [head, emphasized tail] used by wincon/combo headings. */
