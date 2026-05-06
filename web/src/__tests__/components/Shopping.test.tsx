@@ -138,6 +138,42 @@ describe('aggregateCards', () => {
     expect(sol!.decks.has('alpha')).toBe(true);
     expect(sol!.decks.has('beta')).toBe(true);
   });
+
+  it('respects multi-copy non-basic tiles via tile.qty (DEC-177)', () => {
+    const RATS: DeckFull = makeDeck({
+      slug: 'rats',
+      deckName: 'Rats',
+      commander: 'Marrow-Gnawer',
+      list: [
+        group('Commander', ['Marrow-Gnawer']),
+        {
+          name: 'Threats (4)',
+          cards: [{ n: 'Relentless Rats', mv: '{1}{B}{B}', type: 'Creature', price: '—', gc: false, qty: 4 }],
+        },
+      ],
+    });
+    const map = aggregateCards(new Set(['rats']), [RATS]);
+    expect(map.get('Relentless Rats')?.qty).toBe(4);
+  });
+
+  it('takes max qty across decks for shared multi-copy entries (DEC-177)', () => {
+    const A: DeckFull = makeDeck({
+      slug: 'a', deckName: 'A', commander: 'A Cmd',
+      list: [
+        group('Commander', ['A Cmd']),
+        { name: 'Threats', cards: [{ n: 'Relentless Rats', mv: '—', type: 'Creature', price: '—', gc: false, qty: 2 }] },
+      ],
+    });
+    const B: DeckFull = makeDeck({
+      slug: 'b', deckName: 'B', commander: 'B Cmd',
+      list: [
+        group('Commander', ['B Cmd']),
+        { name: 'Threats', cards: [{ n: 'Relentless Rats', mv: '—', type: 'Creature', price: '—', gc: false, qty: 4 }] },
+      ],
+    });
+    const map = aggregateCards(new Set(['a', 'b']), [A, B]);
+    expect(map.get('Relentless Rats')?.qty).toBe(4);
+  });
 });
 
 describe('splitOwnership', () => {

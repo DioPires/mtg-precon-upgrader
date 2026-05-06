@@ -138,23 +138,30 @@ export function aggregateCards(selectedSlugs: Set<string>, allDecks: DeckFull[])
   // Keys are front-face names so DFC / split / adventure cards reconcile
   // with the owned map. Display name preserves the canonical Scryfall form.
   const map = new Map<string, AggregateInfo>();
-  const addEntry = (name: string, fallbackType: string, isCommander: boolean, slug: string) => {
+  const addEntry = (name: string, fallbackType: string, isCommander: boolean, slug: string, qty: number) => {
     if (!name || BASIC_LANDS.has(name)) return;
     const key = frontFace(name);
     const cur = map.get(key);
-    if (cur) cur.decks.add(slug);
-    else map.set(key, {
-      qty: 1, fallbackType, isCommander, decks: new Set([slug]), displayName: name,
-    });
+    if (cur) {
+      cur.decks.add(slug);
+      // One physical copy per unique card serves any deck that uses it; for
+      // non-basic multi-copy entries (e.g. Relentless Rats x4) take the max
+      // across decks so we don't undercount.
+      if (qty > cur.qty) cur.qty = qty;
+    } else {
+      map.set(key, {
+        qty, fallbackType, isCommander, decks: new Set([slug]), displayName: name,
+      });
+    }
   };
   selectedSlugs.forEach((slug) => {
     const d = allDecks.find((x) => x.slug === slug);
     if (!d) return;
-    if (d.commander) addEntry(d.commander, 'Creature', true, slug);
-    if (d.partner) addEntry(d.partner, 'Creature', true, slug);
+    if (d.commander) addEntry(d.commander, 'Creature', true, slug, 1);
+    if (d.partner) addEntry(d.partner, 'Creature', true, slug, 1);
     (d.list || []).forEach((group) => {
       if (group.name === 'Commander') return;
-      (group.cards || []).forEach((c) => addEntry(c.n, c.type || 'Other', false, slug));
+      (group.cards || []).forEach((c) => addEntry(c.n, c.type || 'Other', false, slug, c.qty ?? 1));
     });
   });
   return map;
