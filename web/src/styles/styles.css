@@ -2716,6 +2716,7 @@ em { font-style: italic; color: var(--gv1-gold); }
   align-items: center;
   gap: 10px;
   padding: 6px 12px;
+  min-height: 44px;
   background: var(--gv1-bg);
   border: 1px solid var(--gv1-line);
   color: var(--gv1-ink);
@@ -2786,6 +2787,17 @@ em { font-style: italic; color: var(--gv1-gold); }
     flex-wrap: wrap;
     gap: 8px;
   }
+  /* DEC-188: wrap each half so the sort row's trailing chip can't clip
+     against the viewport edge at 360px, and bump chips to 44px tap target. */
+  .gv1-codex-toolbar-l,
+  .gv1-codex-toolbar-r { flex-wrap: wrap; row-gap: 8px; }
+  .gv1-codex-toolbar .gv1-chip {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
   .gv1-codex-grid {
     grid-template-columns: 1fr;
   }
@@ -2827,6 +2839,11 @@ em { font-style: italic; color: var(--gv1-gold); }
     padding-bottom: 4px;
   }
   .gv1-shop-built-chips .gv1-shop-built-chip { flex-shrink: 0; }
+  /* DEC-187: bump rail interactive controls to ≥44px tap target */
+  .gv1-shop-chip,
+  .gv1-shop-built-chip,
+  .gv1-shop-mini-btn { min-height: 44px; }
+  .gv1-shop-mini-btn { padding-block: 10px; }
   .gv1-shop-summary {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px 14px;
