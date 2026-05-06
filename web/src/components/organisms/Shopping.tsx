@@ -349,12 +349,15 @@ export function Shopping({ decks }: ShoppingProps) {
     return () => window.clearInterval(id);
   }, []);
 
-  // Re-sync default selection when decks first arrive.
+  // Default-select the first deck on initial arrival only — re-firing on
+  // selected.size would undo the user's "None" / clear-all action.
+  const didInitSelectionRef = useRef(false);
   useEffect(() => {
-    if (decks.length && selected.size === 0) {
-      setSelected(new Set([decks[0].slug]));
-    }
-  }, [decks, selected.size]);
+    if (didInitSelectionRef.current) return;
+    if (!decks.length) return;
+    didInitSelectionRef.current = true;
+    setSelected(new Set([decks[0].slug]));
+  }, [decks]);
 
   const cardMap = useMemo(() => aggregateCards(selected, decks), [selected, decks]);
   const builtClaims = useMemo(() => aggregateBuiltClaims(built, decks), [built, decks]);

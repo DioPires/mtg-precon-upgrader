@@ -185,6 +185,18 @@ describe('Shopping organism', () => {
     expect(screen.getByRole('button', { name: /Remove Beta/i })).toBeInTheDocument();
   });
 
+  it('Clear empties the selection and does not re-select the first deck (DEC-172)', () => {
+    renderShopping([ALPHA, BETA]);
+    // First deck is preselected on mount.
+    expect(screen.getByRole('button', { name: /Remove Alpha/i })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByRole('button', { name: /^Clear$/i }));
+    // After clear, no deck chip should be aria-pressed.
+    expect(screen.getByRole('button', { name: /Add Alpha/i })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: /Add Beta/i })).toHaveAttribute('aria-pressed', 'false');
+    // Counter reads "0 of 2".
+    expect(screen.getByText(/· 0 of 2/)).toBeInTheDocument();
+  });
+
   it('persists imported owned cards in localStorage on mount and removes them from the buy list', () => {
     localStorage.setItem(
       STORAGE_KEY,
