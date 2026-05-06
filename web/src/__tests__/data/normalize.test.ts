@@ -209,6 +209,45 @@ describe('normalizeDeck', () => {
     expect(lands?.cards[0].mv).toBe('LAND');
   });
 
+  it('expands quantity into list group counts and curve roleCounts (DEC-174)', () => {
+    const bundle = makeBundle();
+    bundle.deck.decklist = [
+      { name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' },
+      { name: 'Plains', type: 'Land', primary_role: 'land', quantity: 7 },
+      { name: 'Island', type: 'Land', primary_role: 'land', quantity: 6 },
+      { name: 'Forest', type: 'Land', primary_role: 'land' },
+    ];
+    const out = normalizeDeck(bundle, 1);
+
+    const lands = out.list.find((g) => g.name.startsWith('Lands'));
+    expect(lands).toBeDefined();
+    // 7 Plains + 6 Islands + 1 Forest = 14 lands
+    expect(lands!.name).toBe('Lands (14)');
+
+    const plainsTile = lands!.cards.find((c) => c.n === 'Plains');
+    expect(plainsTile?.qty).toBe(7);
+    const forestTile = lands!.cards.find((c) => c.n === 'Forest');
+    // qty omitted when 1
+    expect(forestTile?.qty).toBeUndefined();
+
+    // Curve role distribution counts physical copies, not entries.
+    const landCurve = out.curve.find((c) => c.cmc === 'Lands');
+    expect(landCurve?.n).toBe(14);
+  });
+});
+
+describe('Decklist count helper', () => {
+  it('cardCount sums qty (defaulting missing to 1) — DEC-174', async () => {
+    const { cardCount } = await import('../../components/organisms/Decklist');
+    expect(
+      cardCount([
+        { n: 'Plains', mv: 'LAND', type: 'Land', price: '—', gc: false, qty: 7 },
+        { n: 'Sol Ring', mv: '{1}', type: 'Artifact', price: '$2', gc: false },
+      ]),
+    ).toBe(8);
+    expect(cardCount([])).toBe(0);
+  });
+
   it('keeps health/composition/assessment from sim', () => {
     const out = normalizeDeck(makeBundle(), 1);
     expect(out.health?.grade).toBe('C');

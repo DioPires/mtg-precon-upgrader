@@ -1,14 +1,18 @@
 // Port of gv1-mobile.jsx GV1Decklist (lines 3–36).
 
 import { ManaCost } from '../atoms/ManaCost';
-import type { DeckListGroup } from '../../data/types';
+import type { DeckCardTile, DeckListGroup } from '../../data/types';
 
 interface DecklistProps {
   list: DeckListGroup[];
 }
 
+export function cardCount(cards: DeckCardTile[]): number {
+  return cards.reduce((n, c) => n + (c.qty ?? 1), 0);
+}
+
 export function Decklist({ list }: DecklistProps) {
-  const total = list.reduce((n, g) => n + g.cards.length, 0);
+  const total = list.reduce((n, g) => n + cardCount(g.cards), 0);
   return (
     <section className="gv1-section gv1-decklist">
       <div className="gv1-section-head">
@@ -23,7 +27,7 @@ export function Decklist({ list }: DecklistProps) {
           <div key={i} className="gv1-dl-group">
             <div className="gv1-dl-group-head">
               <span className="gv1-serif-sm">{grp.name}</span>
-              <span className="gv1-mono-xs gv1-dim">{grp.cards.length}</span>
+              <span className="gv1-mono-xs gv1-dim">{cardCount(grp.cards)}</span>
             </div>
             <ul className="gv1-dl-list">
               {grp.cards.map((c, j) => (
@@ -35,6 +39,9 @@ export function Decklist({ list }: DecklistProps) {
                   <span className="gv1-dl-name">
                     {c.gc && <span className="gv1-dl-star">★</span>}
                     {c.n}
+                    {c.qty && c.qty > 1 ? (
+                      <span className="gv1-dl-qty gv1-mono-xs gv1-dim"> ×{c.qty}</span>
+                    ) : null}
                   </span>
                   <span className="gv1-dl-mv">
                     <ManaCost mv={c.mv} />

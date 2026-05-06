@@ -195,7 +195,7 @@ function transformCurveAndFunc(deck: RawDeck): { curve: DeckCurveEntry[]; func: 
   const roleCounts: Record<string, number> = {};
   (deck.decklist || []).forEach((c) => {
     const role = c.primary_role || 'other';
-    roleCounts[role] = (roleCounts[role] || 0) + 1;
+    roleCounts[role] = (roleCounts[role] || 0) + (c.quantity ?? 1);
   });
   const entries = Object.entries(roleCounts).sort((a, b) => b[1] - a[1]);
   const maxRole = Math.max(1, ...entries.map(([, n]) => n));
@@ -228,16 +228,18 @@ function transformList(deck: RawDeck, ctx: DeckCtx): DeckListGroup[] {
     type: 'Commander',
   };
   const groups: DeckListGroup[] = [{ name: 'Commander', cards: [commanderTile] }];
+  const qtySum = (cs: RawDecklistCard[]) => cs.reduce((n, c) => n + (c.quantity ?? 1), 0);
   const sortedRoles = [...byRole.entries()].sort((a, b) => {
     if (a[0] === 'land') return 1;
     if (b[0] === 'land') return -1;
-    return b[1].length - a[1].length;
+    return qtySum(b[1]) - qtySum(a[1]);
   });
   for (const [role, cards] of sortedRoles) {
     groups.push({
-      name: `${ROLE_LABEL[role] || role} (${cards.length})`,
+      name: `${ROLE_LABEL[role] || role} (${qtySum(cards)})`,
       cards: cards.map((c) => {
         const hl = ctx.highlightsByName.get(c.name.toLowerCase());
+        const qty = c.quantity ?? 1;
         return {
           n: c.name,
           mv: c.primary_role === 'land' ? 'LAND' : '—',
@@ -245,6 +247,7 @@ function transformList(deck: RawDeck, ctx: DeckCtx): DeckListGroup[] {
           type: c.type,
           gc: !!hl?.isGameChanger,
           note: hl?.reason,
+          ...(qty > 1 ? { qty } : {}),
         };
       }),
     });

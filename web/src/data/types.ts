@@ -255,6 +255,8 @@ export interface DeckCardTile {
   gc: boolean;
   /** Editor's note shown below type line. */
   note?: string;
+  /** Number of physical copies (basics with quantity > 1). Defaults to 1 when omitted. */
+  qty?: number;
 }
 
 /** Two-half title: [head, emphasized tail] used by wincon/combo headings. */
