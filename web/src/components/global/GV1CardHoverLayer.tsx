@@ -16,7 +16,7 @@ interface HoverState {
 }
 
 const cardFrameUrl = (name: string) =>
-  `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}&format=image&version=normal`;
+  `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}&format=image&version=large`;
 
 // Module-level cache: success/failure per card name. Skips the loading flash
 // on repeat hovers — the popover is a derivative of view state, not source of truth.
@@ -41,9 +41,9 @@ export function GV1CardHoverLayer() {
       hoverTimer.current = setTimeout(() => {
         const rect = t.getBoundingClientRect();
         const vw = window.innerWidth;
-        const side: HoverSide = (rect.right + 320 > vw) ? 'left' : 'right';
+        const side: HoverSide = (rect.right + 480 > vw) ? 'left' : 'right';
         const x = side === 'right' ? rect.right + 12 : rect.left - 12;
-        const y = Math.max(20, Math.min(rect.top, window.innerHeight - 460));
+        const y = Math.max(20, Math.min(rect.top, window.innerHeight - 580));
         lastNameRef.current = name;
         setCard({ name, x, y, side });
         const cached = imgCache[name.toLowerCase()];
@@ -84,8 +84,8 @@ export function GV1CardHoverLayer() {
   if (!card) return null;
   const cacheKey = card.name.toLowerCase();
   const cached = cardCache.get(card.name);
-  const imgSrc = (cached?.status === 'loaded' && cached.image_normal)
-    ? cached.image_normal
+  const imgSrc = (cached?.status === 'loaded' && (cached.image_large || cached.image_normal))
+    ? (cached.image_large || cached.image_normal)!
     : cardFrameUrl(card.name);
 
   return (
@@ -131,7 +131,7 @@ export function GV1CardHoverLayer() {
         />
       </div>
       <div className="gv1-cardhover-caption gv1-mono-xs gv1-dim">
-        ◇ scryfall · normal frame
+        ◇ scryfall · large frame
       </div>
     </div>
   );

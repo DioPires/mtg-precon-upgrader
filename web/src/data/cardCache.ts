@@ -24,6 +24,7 @@ export interface CardEntry {
   type_line?: string;
   image_small?: string;
   image_normal?: string;
+  image_large?: string;
   art_crop?: string;
   price?: string | null;
   error?: string;
@@ -184,6 +185,7 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
           type_line: data.type_line || face.type_line || '',
           image_small: imgs.small || '',
           image_normal: imgs.normal || '',
+          image_large: imgs.large || '',
           art_crop: imgs.art_crop || '',
           price: data.prices?.usd ? `$${parseFloat(data.prices.usd).toFixed(2)}` : null,
           fetchedAt: now(),

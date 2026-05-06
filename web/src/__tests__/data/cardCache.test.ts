@@ -19,7 +19,7 @@ function scryfallResponse(name: string, overrides: Partial<Record<string, unknow
       mana_cost: '{1}',
       cmc: 1,
       type_line: 'Artifact',
-      image_uris: { small: `s-${name}`, normal: `n-${name}`, art_crop: `a-${name}` },
+      image_uris: { small: `s-${name}`, normal: `n-${name}`, large: `l-${name}`, art_crop: `a-${name}` },
       prices: { usd: '0.42' },
       ...overrides,
     }),
@@ -39,6 +39,8 @@ describe('cardCache', () => {
     expect(entry.status).toBe('loaded');
     expect(entry.name).toBe('Sol Ring');
     expect(entry.image_small).toBe('s-Sol Ring');
+    expect(entry.image_normal).toBe('n-Sol Ring');
+    expect(entry.image_large).toBe('l-Sol Ring');
     expect(entry.price).toBe('$0.42');
     // Listener should fire at least twice: loading → loaded.
     expect(listener).toHaveBeenCalled();
