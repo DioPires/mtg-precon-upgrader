@@ -15,6 +15,7 @@ import {
   aggregateBuiltClaims,
   computeBuyOwnSplit,
 } from '../../data/builtDecks';
+import { frontFace } from '../../data/cardName';
 import { useBuiltDecks } from '../../hooks/useBuiltDecks';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
 import type { DeckFull } from '../../data/types';
@@ -74,7 +75,8 @@ export function parseOwnedFile(text: string): Map<string, number> {
         const name = (r[ni] || '').trim();
         if (!name) return;
         const q = parseInt((r[qi] || '1').trim(), 10) || 1;
-        out.set(name, (out.get(name) || 0) + q);
+        const key = frontFace(name);
+        out.set(key, (out.get(key) || 0) + q);
       });
       return out;
     }
@@ -86,10 +88,11 @@ export function parseOwnedFile(text: string): Map<string, number> {
     const m = trimmed.match(/^(\d+)x?\s+(.+)$/i);
     if (m) {
       const q = parseInt(m[1], 10) || 1;
-      const name = m[2].trim();
-      out.set(name, (out.get(name) || 0) + q);
+      const key = frontFace(m[2].trim());
+      out.set(key, (out.get(key) || 0) + q);
     } else {
-      out.set(trimmed, (out.get(trimmed) || 0) + 1);
+      const key = frontFace(trimmed);
+      out.set(key, (out.get(key) || 0) + 1);
     }
   });
   return out;
@@ -98,7 +101,16 @@ export function parseOwnedFile(text: string): Map<string, number> {
 function loadOwned(): Map<string, number> {
   try {
     const raw = localStorage.getItem(SHOP_OWNED_KEY);
-    if (raw) return new Map(JSON.parse(raw));
+    if (raw) {
+      // Re-key to front-face on load so legacy/full-DFC entries reconcile
+      // with deck.json names. Idempotent for non-DFC cards.
+      const out = new Map<string, number>();
+      (JSON.parse(raw) as Array<[string, number]>).forEach(([n, q]) => {
+        const key = frontFace(n);
+        out.set(key, (out.get(key) || 0) + q);
+      });
+      return out;
+    }
   } catch {
     // ignore
   }
@@ -118,37 +130,31 @@ interface AggregateInfo {
   fallbackType: string;
   isCommander: boolean;
   decks: Set<string>;
+  /** Full deck name (may include `// Back`). Used for UI + Scryfall lookup. */
+  displayName: string;
 }
 
 export function aggregateCards(selectedSlugs: Set<string>, allDecks: DeckFull[]): Map<string, AggregateInfo> {
+  // Keys are front-face names so DFC / split / adventure cards reconcile
+  // with the owned map. Display name preserves the canonical Scryfall form.
   const map = new Map<string, AggregateInfo>();
+  const addEntry = (name: string, fallbackType: string, isCommander: boolean, slug: string) => {
+    if (!name || BASIC_LANDS.has(name)) return;
+    const key = frontFace(name);
+    const cur = map.get(key);
+    if (cur) cur.decks.add(slug);
+    else map.set(key, {
+      qty: 1, fallbackType, isCommander, decks: new Set([slug]), displayName: name,
+    });
+  };
   selectedSlugs.forEach((slug) => {
     const d = allDecks.find((x) => x.slug === slug);
     if (!d) return;
-    if (d.commander) {
-      const cur = map.get(d.commander);
-      if (cur) cur.decks.add(slug);
-      else map.set(d.commander, {
-        qty: 1, fallbackType: 'Creature', isCommander: true, decks: new Set([slug]),
-      });
-    }
-    if (d.partner) {
-      const cur = map.get(d.partner);
-      if (cur) cur.decks.add(slug);
-      else map.set(d.partner, {
-        qty: 1, fallbackType: 'Creature', isCommander: true, decks: new Set([slug]),
-      });
-    }
+    if (d.commander) addEntry(d.commander, 'Creature', true, slug);
+    if (d.partner) addEntry(d.partner, 'Creature', true, slug);
     (d.list || []).forEach((group) => {
       if (group.name === 'Commander') return;
-      (group.cards || []).forEach((c) => {
-        if (!c.n || BASIC_LANDS.has(c.n)) return;
-        const cur = map.get(c.n);
-        if (cur) cur.decks.add(slug);
-        else map.set(c.n, {
-          qty: 1, fallbackType: c.type || 'Other', isCommander: false, decks: new Set([slug]),
-        });
-      });
+      (group.cards || []).forEach((c) => addEntry(c.n, c.type || 'Other', false, slug));
     });
   });
   return map;
@@ -166,14 +172,15 @@ export function splitOwnership(
 ): { buy: ShopRowCard[]; own: ShopRowCard[] } {
   // planned shape required by computeBuyOwnSplit
   const planned = new Map<string, AggregateInfo & { quantity: number }>();
-  cardMap.forEach((info, name) => planned.set(name, { ...info, quantity: info.qty }));
+  cardMap.forEach((info, key) => planned.set(key, { ...info, quantity: info.qty }));
   const split = computeBuyOwnSplit(planned, ownedMap, builtClaims);
   const toRow = (r: { name: string; info: AggregateInfo; qty: number; reservedBy: number }): ShopRowCard => ({
-    name: r.name,
+    name: r.info.displayName || r.name,
     qty: r.qty,
     fallbackType: r.info.fallbackType,
     isCommander: r.info.isCommander,
     decks: r.info.decks,
+    displayName: r.info.displayName,
     reservedBy: r.reservedBy,
   });
   return { buy: split.buy.map(toRow), own: split.own.map(toRow) };

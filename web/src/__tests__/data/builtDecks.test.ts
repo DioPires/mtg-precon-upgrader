@@ -147,6 +147,21 @@ describe('aggregateBuiltClaims', () => {
     const claims = aggregateBuiltClaims(new Set(['ghost']), [ALPHA, BETA]);
     expect(claims.size).toBe(0);
   });
+
+  it('keys DFC entries by front face so the owned map reconciles (DEC-178)', () => {
+    const DFC = makeDeck({
+      slug: 'dfc',
+      deckName: 'DFC Deck',
+      commander: 'DFC Commander',
+      list: [
+        group('Commander', ['DFC Commander']),
+        group('Threats', ['Sephiroth, Fabled SOLDIER // Final Heaven']),
+      ],
+    });
+    const claims = aggregateBuiltClaims(new Set(['dfc']), [DFC]);
+    expect(claims.get('Sephiroth, Fabled SOLDIER')).toBe(1);
+    expect(claims.has('Sephiroth, Fabled SOLDIER // Final Heaven')).toBe(false);
+  });
 });
 
 describe('computeBuyOwnSplit', () => {

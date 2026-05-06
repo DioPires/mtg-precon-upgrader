@@ -6,6 +6,7 @@
 // over the legacy app, which lost state on refresh).
 
 import type { DeckFull } from './types';
+import { frontFace } from './cardName';
 
 const STORAGE_KEY = 'grimoire-built-decks';
 
@@ -61,16 +62,18 @@ export function aggregateBuiltClaims(
   builtSlugs.forEach((slug) => {
     const d = allDecks.find((x) => x.slug === slug);
     if (!d) return;
-    const names = new Set<string>();
-    if (d.commander && !BASIC_LANDS.has(d.commander)) names.add(d.commander);
-    if (d.partner && !BASIC_LANDS.has(d.partner)) names.add(d.partner);
+    // Keys are front-face names so DFC / split / adventure cards reconcile
+    // against the same key the owned map uses (see data/cardName.ts).
+    const keys = new Set<string>();
+    if (d.commander && !BASIC_LANDS.has(d.commander)) keys.add(frontFace(d.commander));
+    if (d.partner && !BASIC_LANDS.has(d.partner)) keys.add(frontFace(d.partner));
     (d.list || []).forEach((group) => {
       if (group.name === 'Commander') return;
       (group.cards || []).forEach((c) => {
-        if (c.n && !BASIC_LANDS.has(c.n)) names.add(c.n);
+        if (c.n && !BASIC_LANDS.has(c.n)) keys.add(frontFace(c.n));
       });
     });
-    names.forEach((n) => claims.set(n, (claims.get(n) || 0) + 1));
+    keys.forEach((k) => claims.set(k, (claims.get(k) || 0) + 1));
   });
   return claims;
 }

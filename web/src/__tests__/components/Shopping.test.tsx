@@ -111,6 +111,12 @@ describe('parseOwnedFile', () => {
     const map = parseOwnedFile('Name,Quantity\nSol Ring,1\nSol Ring,2\n');
     expect(map.get('Sol Ring')).toBe(3);
   });
+
+  it('keys DFC owned entries by front face (DEC-178)', () => {
+    const map = parseOwnedFile('Name,Quantity\nBrazen Borrower // Petty Theft,1\n');
+    expect(map.get('Brazen Borrower')).toBe(1);
+    expect(map.has('Brazen Borrower // Petty Theft')).toBe(false);
+  });
 });
 
 describe('aggregateCards', () => {
@@ -141,6 +147,25 @@ describe('splitOwnership', () => {
     expect(buy.find((c) => c.name === 'Sol Ring')).toBeUndefined();
     expect(own.find((c) => c.name === 'Sol Ring')?.qty).toBe(1);
     expect(buy.find((c) => c.name === 'Swords to Plowshares')).toBeTruthy();
+  });
+
+  it('reconciles DFC deck entries against front-face owned names and shows the full DFC name (DEC-178)', () => {
+    const DFC = makeDeck({
+      slug: 'dfc',
+      deckName: 'DFC Deck',
+      commander: 'DFC Commander',
+      list: [
+        group('Commander', ['DFC Commander']),
+        group('Threats', ['Sephiroth, Fabled SOLDIER // Final Heaven']),
+      ],
+    });
+    const cardMap = aggregateCards(new Set(['dfc']), [DFC]);
+    const owned = new Map<string, number>([['Sephiroth, Fabled SOLDIER', 1]]);
+    const { buy, own } = splitOwnership(cardMap, owned);
+    expect(buy.find((c) => c.name.startsWith('Sephiroth'))).toBeUndefined();
+    const ownedRow = own.find((c) => c.name.startsWith('Sephiroth'));
+    expect(ownedRow?.name).toBe('Sephiroth, Fabled SOLDIER // Final Heaven');
+    expect(ownedRow?.qty).toBe(1);
   });
 });
 
