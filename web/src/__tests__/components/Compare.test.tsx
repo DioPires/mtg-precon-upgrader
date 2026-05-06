@@ -48,6 +48,7 @@ function makeDeck(over: Partial<DeckFull>): DeckFull {
     composition: { totalCards: 100, lands: 36, avgCmc: 3.5 },
     sim: null,
     rawDecklist: [],
+    physicalDecklist: [],
     synergies: [],
     gameChangers: 2,
   };

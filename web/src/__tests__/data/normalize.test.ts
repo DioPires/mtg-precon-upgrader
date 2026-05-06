@@ -209,6 +209,30 @@ describe('normalizeDeck', () => {
     expect(lands?.cards[0].mv).toBe('LAND');
   });
 
+  it('flattens rawDecklist into physicalDecklist by quantity (DEC-176)', () => {
+    const bundle = makeBundle();
+    bundle.deck.decklist = [
+      { name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' },
+      { name: 'Plains', type: 'Land', primary_role: 'land', quantity: 7 },
+      { name: 'Island', type: 'Land', primary_role: 'land', quantity: 6 },
+      { name: 'Forest', type: 'Land', primary_role: 'land' },
+    ];
+    const out = normalizeDeck(bundle, 1);
+
+    // rawDecklist preserves authoring shape (one entry per unique card).
+    expect(out.rawDecklist).toHaveLength(4);
+
+    // physicalDecklist expands to one entry per copy: 1 + 7 + 6 + 1 = 15.
+    expect(out.physicalDecklist).toHaveLength(15);
+    const plainsCount = out.physicalDecklist.filter((c) => c.name === 'Plains').length;
+    expect(plainsCount).toBe(7);
+    const islandCount = out.physicalDecklist.filter((c) => c.name === 'Island').length;
+    expect(islandCount).toBe(6);
+
+    // quantity is stripped from emitted physical entries — each entry is one copy.
+    expect(out.physicalDecklist.every((c) => c.quantity === undefined)).toBe(true);
+  });
+
   it('expands quantity into list group counts and curve roleCounts (DEC-174)', () => {
     const bundle = makeBundle();
     bundle.deck.decklist = [

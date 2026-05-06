@@ -113,6 +113,21 @@ function buildCtx(deck: RawDeck): DeckCtx {
   return { decklistByName, highlightsByName };
 }
 
+/**
+ * Flatten a decklist to one entry per physical copy. Basics like
+ * `{name:'Plains',quantity:7}` become 7 entries so the shuffle pool reflects
+ * actual deck composition. Strips `quantity` from emitted entries.
+ */
+function expandToCopies(decklist: RawDecklistCard[]): RawDecklistCard[] {
+  const out: RawDecklistCard[] = [];
+  for (const c of decklist) {
+    const qty = Math.max(1, c.quantity ?? 1);
+    const { quantity: _q, ...rest } = c;
+    for (let i = 0; i < qty; i++) out.push({ ...rest });
+  }
+  return out;
+}
+
 function mvFromRow(row: RawDecklistCard | undefined): string {
   if (!row) return '—';
   if (row.type === 'Land' || row.primary_role === 'land') return 'LAND';
@@ -304,6 +319,7 @@ export function normalizeDeck(bundle: RawDeckBundle, idx: number): DeckFull {
     composition: sim?.deckComposition || null,
     sim: sim || null,
     rawDecklist: deck.decklist || [],
+    physicalDecklist: expandToCopies(deck.decklist || []),
     synergies: (deck.synergies || []).map((s) => ({
       title: s.title || '',
       cards: s.cards || [],

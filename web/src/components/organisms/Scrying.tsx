@@ -117,7 +117,9 @@ interface HandSimulatorProps {
 }
 
 function HandSimulator({ deck, onLandsChange }: HandSimulatorProps) {
-  const decklist = deck.rawDecklist;
+  // Physical copies (99 for prod decks) — basics with quantity>1 must be
+  // represented N times in the shuffle pool. See DEC-176.
+  const decklist = deck.physicalDecklist;
   const sim = deck.sim;
 
   const [phase, setPhase] = useState<HandPhase>('empty');
@@ -560,7 +562,7 @@ function SwapAnalyzer({ deck, allDecks }: SwapAnalyzerProps) {
                     ))}
                 </select>
                 <span className="gv1-scry-search-hint">
-                  Choose any card from the {decklist.length}-card list
+                  Choose any card from the {deck.physicalDecklist.length}-card list
                 </span>
               </div>
             )}
@@ -1064,7 +1066,7 @@ export function Scrying({ deck, allDecks }: ScryingProps) {
         </div>
         <p className="gv1-scry-lede">
           Two interactive instruments, one passive baseline. The <em>Hand Simulator</em> deals from
-          this deck&apos;s {deck.rawDecklist.length}-card list and grades the result against the
+          this deck&apos;s {deck.physicalDecklist.length}-card list and grades the result against the
           full simulation. The <em>Swap Analyzer</em> lets you weigh a single cut + add against the
           existing mana value, color balance, and known synergies. Below them, the{' '}
           <em>Simulation Baseline</em> shows the underlying numbers the assessments draw from.

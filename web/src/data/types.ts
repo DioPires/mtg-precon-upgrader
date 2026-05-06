@@ -351,7 +351,10 @@ export interface DeckFull {
 
   /** Raw payloads kept for downstream surfaces (Scrying / Compare). */
   sim: RawSimulation | null;
+  /** Decklist as authored — one entry per unique card; basics carry `quantity`. */
   rawDecklist: RawDecklistCard[];
+  /** Decklist flattened to physical copies (one entry per card). 99 entries for production decks. */
+  physicalDecklist: RawDecklistCard[];
   synergies: Array<{ title: string; cards: string[]; description: string }>;
   gameChangers: number;
 }
