@@ -42,6 +42,24 @@ test('Guide and Scrying nav links resolve to a real deck (DEC-168)', async ({ pa
   await expect(page.locator('.gv1-stub-title', { hasText: /not found/i })).toHaveCount(0);
 });
 
+test('SPA refresh serves index.html on deep routes (DEC-173)', async ({ page }) => {
+  const indexResp = await page.request.get('/data/index.json');
+  const idx = (await indexResp.json()) as { commanders: { id: string }[] };
+  const first = idx.commanders[0]!.id;
+
+  await page.goto(`/deck/${first}`);
+  await expect(page.locator('.gv1-deck-guide')).toBeVisible();
+  await page.reload();
+  await expect(page.locator('.gv1-deck-guide')).toBeVisible();
+
+  for (const path of ['/codex', '/compare', '/shopping', `/scrying/${first}`, `/m/${first}`]) {
+    await page.goto(path);
+    await page.reload();
+    await expect(page.getByRole('banner')).toBeVisible();
+    await expect(page.locator('.gv1-stub-title', { hasText: /not found/i })).toHaveCount(0);
+  }
+});
+
 test('last-viewed deck persists across reload (DEC-168)', async ({ page }) => {
   await page.goto('/codex');
   // Wait for the first index load → Guide link points at first deck.
