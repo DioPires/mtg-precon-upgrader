@@ -1,10 +1,26 @@
 ---
 issue: DEC-149
 title: Web UI redesign — implementation plan
-revision: 2
-status: approved (board answered 2026-05-05; decisions locked)
+revision: 3
+status: approved + post-launch amendments
 owner: CEO
-date: 2026-05-05
+date: 2026-05-06
+---
+
+## Rev3 amendment (2026-05-06) — mobile strategy pivot
+
+Board (after launch): "I want full parity on mobile, unless there's something on the web ui that we can't port."
+
+The earlier mobile decision (DEC-181, 2026-05-06) routed phone visitors of `/deck/:id` to `/m/:id` (the iPhone-bezel artboard, intentionally lean per the design handoff). That was the wrong default given board intent.
+
+**New direction**: make every desktop surface fully responsive at phone widths; retire the iPhone-bezel artboard. Tracked under [DEC-183](/DEC/issues/DEC-183). Supersedes DEC-182 (cancelled).
+
+Cramped-but-functional carve-outs (ship as-is unless QA flags them):
+- Scrying swap analyzer's 7-category delta panel
+- Compare's 16-column table (horizontal-scroll + sticky deck-name)
+
+Nothing is fundamentally un-portable.
+
 ---
 
 ## Board decisions (locked 2026-05-05)
