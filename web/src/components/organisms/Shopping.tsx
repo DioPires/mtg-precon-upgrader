@@ -16,6 +16,7 @@ import {
   computeBuyOwnSplit,
 } from '../../data/builtDecks';
 import { useBuiltDecks } from '../../hooks/useBuiltDecks';
+import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
 import type { DeckFull } from '../../data/types';
 
 const SHOP_OWNED_KEY = 'grimoire-owned-cards';
@@ -25,27 +26,6 @@ const BASIC_LANDS = new Set([
   'Snow-Covered Plains', 'Snow-Covered Island', 'Snow-Covered Swamp',
   'Snow-Covered Mountain', 'Snow-Covered Forest',
 ]);
-
-const TYPE_ORDER = [
-  'Commander', 'Creature', 'Planeswalker', 'Artifact',
-  'Enchantment', 'Instant', 'Sorcery', 'Battle', 'Land', 'Other',
-] as const;
-
-type TypeBucket = (typeof TYPE_ORDER)[number];
-
-function typeBucket(name: string, fallback: string | undefined): TypeBucket {
-  const cached = cardCache.get(name);
-  const tl = (cached?.type_line || fallback || '').toLowerCase();
-  if (tl.includes('creature')) return 'Creature';
-  if (tl.includes('planeswalker')) return 'Planeswalker';
-  if (tl.includes('land')) return 'Land';
-  if (tl.includes('artifact')) return 'Artifact';
-  if (tl.includes('enchantment')) return 'Enchantment';
-  if (tl.includes('instant')) return 'Instant';
-  if (tl.includes('sorcery')) return 'Sorcery';
-  if (tl.includes('battle')) return 'Battle';
-  return 'Other';
-}
 
 // CSV parser that respects quoted fields.
 export function parseCsvRows(text: string): string[][] {
