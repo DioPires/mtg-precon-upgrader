@@ -115,4 +115,22 @@ describe('Codex', () => {
     expect(titles[0]).toHaveTextContent('Alpha');
     expect(titles[1]).toHaveTextContent('Beta');
   });
+
+  it('renders both names with hover hooks when partner is set (DEC-190)', () => {
+    const decks = [
+      makeDeck({
+        slug: 'turtle-power',
+        deckName: 'Turtle Power',
+        commander: 'Leonardo, the Balance',
+        partner: 'Donatello, the Brains',
+      }),
+    ];
+    renderCodex(decks);
+    expect(
+      document.querySelector('[data-card-name="Leonardo, the Balance"]'),
+    ).not.toBeNull();
+    expect(
+      document.querySelector('[data-card-name="Donatello, the Brains"]'),
+    ).not.toBeNull();
+  });
 });

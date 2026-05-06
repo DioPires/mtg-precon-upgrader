@@ -285,6 +285,28 @@ describe('Decklist count helper', () => {
     expect(out.winRate).toBeNull();
     expect(out.apothecary).toBeNull();
   });
+
+  it('surfaces partner commander on DeckFull and pins both in the Commanders list group (DEC-190)', () => {
+    const bundle = makeBundle();
+    bundle.deck.commander = 'Leonardo, the Balance';
+    bundle.deck.partner = 'Donatello, the Brains';
+    const out = normalizeDeck(bundle, 1);
+    expect(out.commander).toBe('Leonardo, the Balance');
+    expect(out.partner).toBe('Donatello, the Brains');
+    const cmdGroup = out.list[0];
+    expect(cmdGroup.name).toBe('Commanders');
+    expect(cmdGroup.cards.map((c) => c.n)).toEqual([
+      'Leonardo, the Balance',
+      'Donatello, the Brains',
+    ]);
+  });
+
+  it('keeps singular Commander group when partner missing', () => {
+    const out = normalizeDeck(makeBundle(), 1);
+    expect(out.partner).toBeUndefined();
+    expect(out.list[0].name).toBe('Commander');
+    expect(out.list[0].cards).toHaveLength(1);
+  });
 });
 
 describe('buildDeckStubs', () => {

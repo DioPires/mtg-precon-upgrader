@@ -79,7 +79,10 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
                 <GV1ManaPips colors={d.colors} />
               </div>
               <div className="gv1-sel-pill-name">{d.name}</div>
-              <div className="gv1-mono-xs gv1-sel-pill-cmd">{d.cmd}</div>
+              <div className="gv1-mono-xs gv1-sel-pill-cmd">
+                {d.cmd}
+                {d.partner ? <> + {d.partner}</> : null}
+              </div>
               <div className="gv1-sel-pill-foot">
                 <span className="gv1-mono-xs gv1-sel-pill-bracket">BRACKET {d.bracket}</span>
                 <span className="gv1-mono-xs gv1-dim">{d.price}</span>

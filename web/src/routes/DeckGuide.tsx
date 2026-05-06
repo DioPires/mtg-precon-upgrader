@@ -66,7 +66,7 @@ export function DeckGuide() {
         assessment={deck.assessment}
       />
       <Apothecary apothecary={deck.apothecary} />
-      <Decklist list={deck.list} commander={deck.commander} />
+      <Decklist list={deck.list} commander={deck.commander} partner={deck.partner} />
     </div>
   );
 }

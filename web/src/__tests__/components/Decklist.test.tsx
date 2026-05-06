@@ -124,6 +124,19 @@ describe('groupByType', () => {
     // Plains x7 + Island x6 + Command Tower x1 = 14
     expect(lands.name).toBe('Land (14)');
   });
+
+  it('pins commander + partner under "Commanders" plural (DEC-190)', () => {
+    const listWithPartnerGroup: DeckListGroup[] = [
+      group('Commanders', [tile('Leo', 'Commander'), tile('Don', 'Commander')]),
+      group('Ramp (1)', [tile('Sol Ring', 'Artifact')]),
+    ];
+    const out = groupByType(listWithPartnerGroup, 'Leo', 'Don');
+    expect(out[0].name).toBe('Commanders');
+    expect(out[0].cards.map((c) => c.n)).toEqual(['Leo', 'Don']);
+    // Commander tiles must not leak into the Artifact bucket.
+    const artifacts = out.find((g) => g.name.startsWith('Artifact'))!;
+    expect(artifacts.cards.map((c) => c.n)).toEqual(['Sol Ring']);
+  });
 });
 
 describe('serializeFullList', () => {
@@ -154,6 +167,18 @@ describe('serializeFullList', () => {
     const text = serializeFullList(SAMPLE_LIST, 'Captain');
     // Commander appears exactly once (as the leading "1x Captain" line).
     expect(text.match(/Captain/g)).toHaveLength(1);
+  });
+
+  it('emits partner on the second line and skips Commanders group cards (DEC-190)', () => {
+    const listWithPartnerGroup: DeckListGroup[] = [
+      group('Commanders', [tile('Leo', 'Commander'), tile('Don', 'Commander')]),
+      group('Ramp (1)', [tile('Sol Ring', 'Artifact')]),
+    ];
+    const text = serializeFullList(listWithPartnerGroup, 'Leo', 'Don');
+    expect(text.split('\n').slice(0, 2)).toEqual(['1x Leo', '1x Don']);
+    // Each commander appears exactly once across the whole serialization.
+    expect(text.match(/Leo/g)).toHaveLength(1);
+    expect(text.match(/Don/g)).toHaveLength(1);
   });
 });
 

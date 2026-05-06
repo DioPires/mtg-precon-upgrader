@@ -9,10 +9,16 @@ interface CommanderProps {
 }
 
 export function Commander({ deck }: CommanderProps) {
+  const hasPartner = !!deck.partner;
   return (
     <section className="gv1-commander">
-      <div className="gv1-cmd-grid">
-        <GV1CommanderArt name={deck.commander} slug={deck.slug} />
+      <div className={'gv1-cmd-grid' + (hasPartner ? ' gv1-cmd-grid-partner' : '')}>
+        <div className={'gv1-cmd-art-stack' + (hasPartner ? ' gv1-cmd-art-stack-dual' : '')}>
+          <GV1CommanderArt name={deck.commander} slug={deck.slug} />
+          {hasPartner && (
+            <GV1CommanderArt name={deck.partner!} slug={`${deck.slug}-partner`} />
+          )}
+        </div>
 
         <div className="gv1-cmd-body">
           <div className="gv1-cmd-eyebrow">
@@ -30,6 +36,14 @@ export function Commander({ deck }: CommanderProps) {
             <span className="gv1-cmd-commander-name" data-card-name={deck.commander}>
               {deck.commander}
             </span>
+            {hasPartner && (
+              <>
+                <span className="gv1-cmd-commander-amp" aria-hidden="true">+</span>
+                <span className="gv1-cmd-commander-name" data-card-name={deck.partner}>
+                  {deck.partner}
+                </span>
+              </>
+            )}
             <span className="gv1-mono-xs gv1-dim">· {deck.type}</span>
           </div>
 

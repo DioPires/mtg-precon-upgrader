@@ -367,6 +367,8 @@ export interface DeckStub {
   slug: string;
   name: string;
   cmd: string;
+  /** Optional partner commander; rendered alongside `cmd` when present. */
+  partner?: string;
   colors: string;
   bracket: string;
   price: string;

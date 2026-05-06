@@ -134,4 +134,21 @@ describe('Compare', () => {
     fireEvent.click(idxHeader.querySelector('button')!);
     expect(idxHeader.getAttribute('aria-sort')).toBe('descending');
   });
+
+  it('renders partner alongside commander in the Commander cell (DEC-190)', () => {
+    renderCompare([
+      makeDeck({
+        slug: 'turtle-power',
+        deckName: 'Turtle Power',
+        commander: 'Leonardo, the Balance',
+        partner: 'Donatello, the Brains',
+      }),
+    ]);
+    expect(
+      document.querySelector('[data-card-name="Leonardo, the Balance"]'),
+    ).not.toBeNull();
+    expect(
+      document.querySelector('[data-card-name="Donatello, the Brains"]'),
+    ).not.toBeNull();
+  });
 });

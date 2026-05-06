@@ -235,14 +235,26 @@ function transformList(deck: RawDeck, ctx: DeckCtx): DeckListGroup[] {
     arr.push(c);
     byRole.set(role, arr);
   });
-  const commanderTile: DeckCardTile = {
-    n: deck.commander,
-    gc: (deck.gameChangers || 0) > 0,
-    mv: '—',
-    price: '—',
-    type: 'Commander',
-  };
-  const groups: DeckListGroup[] = [{ name: 'Commander', cards: [commanderTile] }];
+  const commanderTiles: DeckCardTile[] = [
+    {
+      n: deck.commander,
+      gc: (deck.gameChangers || 0) > 0,
+      mv: '—',
+      price: '—',
+      type: 'Commander',
+    },
+  ];
+  if (deck.partner) {
+    commanderTiles.push({
+      n: deck.partner,
+      gc: false,
+      mv: '—',
+      price: '—',
+      type: 'Commander',
+    });
+  }
+  const groupName = deck.partner ? 'Commanders' : 'Commander';
+  const groups: DeckListGroup[] = [{ name: groupName, cards: commanderTiles }];
   const qtySum = (cs: RawDecklistCard[]) => cs.reduce((n, c) => n + (c.quantity ?? 1), 0);
   const sortedRoles = [...byRole.entries()].sort((a, b) => {
     if (a[0] === 'land') return 1;
@@ -343,6 +355,7 @@ export function buildDeckStubs(decks: DeckFull[]): DeckStub[] {
     slug: d.slug,
     name: d.deckName,
     cmd: d.commander,
+    partner: d.partner,
     colors: d.colors,
     bracket: d.bracket,
     price: d.price,

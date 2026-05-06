@@ -12,7 +12,11 @@ import type { DeckCardTile, DeckListGroup } from '../../data/types';
 interface DecklistProps {
   list: DeckListGroup[];
   commander: string;
+  partner?: string;
 }
+
+/** Synthetic group name used to pin commander(s) at the top of the manifest. */
+const COMMANDER_GROUPS = new Set(['Commander', 'Commanders']);
 
 export type ManifestMode = 'role' | 'type';
 
@@ -40,19 +44,29 @@ export const byCmcThenName = (a: DeckCardTile, b: DeckCardTile): number => {
  * `TYPE_ORDER`; cards within each group sort by `byCmcThenName` (mana value
  * ascending, alphabetical tiebreak).
  */
-export function groupByType(list: DeckListGroup[], commander: string): DeckListGroup[] {
+export function groupByType(
+  list: DeckListGroup[],
+  commander: string,
+  partner?: string,
+): DeckListGroup[] {
   const buckets: Partial<Record<TypeBucket, DeckCardTile[]>> = {};
   list.forEach((g) => {
-    if (g.name === 'Commander') return;
+    if (COMMANDER_GROUPS.has(g.name)) return;
     g.cards.forEach((c) => {
       const t = typeBucket(c.n, c.type);
       (buckets[t] ||= []).push(c);
     });
   });
   const out: DeckListGroup[] = [];
+  const commanderCards: DeckCardTile[] = [
+    { n: commander, mv: '—', type: 'Commander', price: '—', gc: false },
+  ];
+  if (partner) {
+    commanderCards.push({ n: partner, mv: '—', type: 'Commander', price: '—', gc: false });
+  }
   out.push({
-    name: 'Commander',
-    cards: [{ n: commander, mv: '—', type: 'Commander', price: '—', gc: false }],
+    name: partner ? 'Commanders' : 'Commander',
+    cards: commanderCards,
   });
   TYPE_ORDER.forEach((t) => {
     if (t === 'Commander') return;
@@ -72,17 +86,22 @@ export function groupByType(list: DeckListGroup[], commander: string): DeckListG
  *   {qty}x {card name}            (cmc ascending, alphabetical tiebreak)
  * Pure + deterministic — input list+commander → identical output every time.
  */
-export function serializeFullList(list: DeckListGroup[], commander: string): string {
+export function serializeFullList(
+  list: DeckListGroup[],
+  commander: string,
+  partner?: string,
+): string {
   const totals = new Map<string, number>();
   const cmcByName = new Map<string, number | undefined>();
   list.forEach((g) => {
-    if (g.name === 'Commander') return;
+    if (COMMANDER_GROUPS.has(g.name)) return;
     g.cards.forEach((c) => {
       totals.set(c.n, (totals.get(c.n) || 0) + (c.qty ?? 1));
       if (!cmcByName.has(c.n)) cmcByName.set(c.n, c.cmc);
     });
   });
   const lines = [`1x ${commander}`];
+  if (partner) lines.push(`1x ${partner}`);
   [...totals.entries()]
     .sort((a, b) => {
       const ca = cmcByName.get(a[0]) ?? 0;
@@ -155,7 +174,7 @@ function enrichWithMeta(list: DeckListGroup[], metaMap: Map<string, CardMeta>): 
   }));
 }
 
-export function Decklist({ list, commander }: DecklistProps) {
+export function Decklist({ list, commander, partner }: DecklistProps) {
   const [params, setParams] = useSearchParams();
   const rawMode = params.get('manifest');
   const mode: ManifestMode = rawMode === 'type' ? 'type' : 'role';
@@ -173,18 +192,18 @@ export function Decklist({ list, commander }: DecklistProps) {
   const enriched = useMemo(() => enrichWithMeta(list, metaMap), [list, metaMap]);
 
   const view = useMemo(() => {
-    if (mode === 'type') return groupByType(enriched, commander);
+    if (mode === 'type') return groupByType(enriched, commander, partner);
     // Role grouping: preserve normalize.ts group order, sort cards within each
-    // subsection by cmc-then-name. Skip the synthetic Commander group.
+    // subsection by cmc-then-name. Skip the synthetic Commander(s) group.
     return enriched.map((g) =>
-      g.name === 'Commander' ? g : { ...g, cards: [...g.cards].sort(byCmcThenName) },
+      COMMANDER_GROUPS.has(g.name) ? g : { ...g, cards: [...g.cards].sort(byCmcThenName) },
     );
-  }, [mode, enriched, commander]);
+  }, [mode, enriched, commander, partner]);
   const total = view.reduce((n, g) => n + cardCount(g.cards), 0);
   const sortedBy = mode === 'type' ? 'sorted by type' : 'sorted by function';
 
   const copyAll = async () => {
-    const text = serializeFullList(enriched, commander);
+    const text = serializeFullList(enriched, commander, partner);
     try {
       await navigator.clipboard.writeText(text);
       setCopyState('ok');

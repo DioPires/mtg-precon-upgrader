@@ -270,6 +270,14 @@ export function Compare({ decks }: CompareProps) {
                       <span className="gv1-mono-xs" data-card-name={d.commander}>
                         {d.commander}
                       </span>
+                      {d.partner && (
+                        <>
+                          <span className="gv1-mono-xs gv1-dim" aria-hidden="true"> + </span>
+                          <span className="gv1-mono-xs" data-card-name={d.partner}>
+                            {d.partner}
+                          </span>
+                        </>
+                      )}
                     </td>
                     <td className="gv1-cmp-td">
                       <span className="gv1-cmp-pips">

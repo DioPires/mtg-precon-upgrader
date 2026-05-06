@@ -1062,6 +1062,7 @@ export function Scrying({ deck, allDecks }: ScryingProps) {
           <h2 className="gv1-section-title">The Scrying Pool</h2>
           <span className="gv1-mono-xs gv1-dim">
             · {deck.deckName} · {deck.commander}
+            {deck.partner ? ` + ${deck.partner}` : ''}
             {sim?.metadata?.numGames ? ` · ${sim.metadata.numGames.toLocaleString()} simulations` : ''}
           </span>
         </div>

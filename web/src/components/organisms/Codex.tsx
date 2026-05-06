@@ -203,8 +203,14 @@ function CodexCard({ deck, rank, onOpen }: CodexCardProps) {
         <GV1ManaPips colors={deck.colors} />
       </div>
       <h3 className="gv1-codex-card-title">{deck.deckName}</h3>
-      <div className="gv1-codex-card-cmd" data-card-name={deck.commander}>
-        {deck.commander}
+      <div className="gv1-codex-card-cmd">
+        <span data-card-name={deck.commander}>{deck.commander}</span>
+        {deck.partner && (
+          <>
+            <span className="gv1-codex-card-cmd-amp" aria-hidden="true"> + </span>
+            <span data-card-name={deck.partner}>{deck.partner}</span>
+          </>
+        )}
       </div>
       <div className="gv1-codex-card-type gv1-mono-xs gv1-dim">{deck.type}</div>
 
