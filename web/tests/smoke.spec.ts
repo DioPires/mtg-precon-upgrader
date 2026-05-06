@@ -60,6 +60,69 @@ test('SPA refresh serves index.html on deep routes (DEC-173)', async ({ page }) 
   }
 });
 
+test.describe('mobile responsive routing (DEC-181)', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('Topbar collapses to hamburger and exposes all surfaces', async ({ page }) => {
+    await page.goto('/codex');
+
+    // Desktop nav is hidden by CSS; the hamburger should be the visible
+    // navigation entry-point.
+    const hamburger = page.getByRole('button', { name: /open navigation menu/i });
+    await expect(hamburger).toBeVisible();
+
+    await hamburger.click();
+    const menu = page.locator('.gv1-topbar-mobile-menu');
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole('link', { name: /codex/i })).toBeVisible();
+    await expect(menu.getByRole('link', { name: /guide/i })).toBeVisible();
+    await expect(menu.getByRole('link', { name: /scrying/i })).toBeVisible();
+    await expect(menu.getByRole('link', { name: /shopping/i })).toBeVisible();
+    await expect(menu.getByRole('link', { name: /compare/i })).toBeVisible();
+  });
+
+  test('/deck/:id redirects to /m/:id on mobile (URL state survives)', async ({ page }) => {
+    const idx = await (await page.request.get('/data/index.json')).json();
+    const first = idx.commanders[0].id as string;
+
+    await page.goto(`/deck/${first}`);
+    await expect(page).toHaveURL(new RegExp(`/m/${first}$`));
+    await expect(page.locator('.gv1-mobile')).toBeVisible();
+  });
+
+  test('each surface renders something at 390x844 (no broken layout)', async ({ page }) => {
+    const idx = await (await page.request.get('/data/index.json')).json();
+    const first = idx.commanders[0].id as string;
+
+    await page.goto('/codex');
+    await expect(page.locator('.gv1-codex')).toBeVisible();
+
+    await page.goto('/compare');
+    await expect(page.locator('.gv1-cmp-table')).toBeVisible();
+
+    await page.goto('/shopping');
+    await expect(page.locator('.gv1-shop-rail')).toBeVisible();
+
+    await page.goto(`/m/${first}`);
+    await expect(page.locator('.gv1-mobile')).toBeVisible();
+
+    await page.goto(`/scrying/${first}`);
+    await expect(page.locator('[data-gv1-screen="scrying"]')).toBeVisible();
+  });
+
+  test('Scrying surfaces a desktop-suggested banner under 480px', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const idx = await (await page.request.get('/data/index.json')).json();
+    const first = idx.commanders[0].id as string;
+    await page.goto(`/scrying/${first}`);
+    await expect(page.locator('.gv1-scry-mobile-banner')).toBeVisible();
+
+    await page.setViewportSize({ width: 1024, height: 800 });
+    await page.goto(`/scrying/${first}`);
+    await expect(page.locator('.gv1-scry-mobile-banner')).toBeHidden();
+  });
+});
+
 test('last-viewed deck persists across reload (DEC-168)', async ({ page }) => {
   await page.goto('/codex');
   // Wait for the first index load → Guide link points at first deck.

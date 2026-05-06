@@ -10,6 +10,7 @@
 // `cardCache.get` directly without subscribing.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { cardCache, type CardEntry } from '../../data/cardCache';
 import { isGameChanger } from '../../data/gameChangers';
 import { useCard } from '../../hooks/useCard';
@@ -1070,6 +1071,12 @@ export function Scrying({ deck, allDecks }: ScryingProps) {
           full simulation. The <em>Swap Analyzer</em> lets you weigh a single cut + add against the
           existing mana value, color balance, and known synergies. Below them, the{' '}
           <em>Simulation Baseline</em> shows the underlying numbers the assessments draw from.
+        </p>
+        <p className="gv1-scry-mobile-banner" role="note">
+          The Scrying Pool reflows to phones, but the swap analyzer sees more at desk
+          width.{' '}
+          <Link to={`/deck/${deck.slug}`}>↗ Open the {deck.deckName} guide</Link> if you
+          just need the deck overview.
         </p>
       </header>
 

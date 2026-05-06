@@ -2761,3 +2761,230 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-scry-hist-label { font-size: 8px; }
   .gv1-scry-hist-pct { font-size: 8px; }
 }
+
+/* ─── DEC-181 — Responsive routing per SCOPE § 4 ─────────────
+   All viewport-driven mobile reflows live below. Component-scoped
+   container queries (Scrying) stay above; everything that depends
+   on the actual phone window goes here so it's findable in one
+   block. */
+
+/* Topbar mobile button + dropdown — desktop hidden */
+.gv1-topbar-mobile { display: none; position: relative; }
+.gv1-topbar-mobile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: var(--gv1-bg);
+  border: 1px solid var(--gv1-line);
+  color: var(--gv1-ink);
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: 0.04em;
+  transition: var(--gv1-transition-quick);
+}
+.gv1-topbar-mobile-btn:hover {
+  border-color: var(--gv1-line-strong);
+  color: var(--gv1-ink-bright);
+}
+.gv1-topbar-mobile-btn:focus-visible {
+  outline: 2px solid var(--gv1-focus-ring);
+  outline-offset: 2px;
+}
+.gv1-topbar-mobile-btn[aria-expanded="true"] {
+  background: var(--gv1-bg-3);
+  border-color: var(--gv1-line-rune);
+  color: var(--gv1-rune-bright);
+}
+.gv1-topbar-mobile-label { letter-spacing: 0.05em; }
+.gv1-topbar-mobile-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 4px;
+  background: var(--gv1-bg-2);
+  border: 1px solid var(--gv1-line);
+  box-shadow: 0 12px 32px rgba(8, 14, 22, 0.55);
+  z-index: 50;
+}
+.gv1-topbar-mobile-menu .gv1-nav-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--gv1-line);
+}
+.gv1-topbar-mobile-menu .gv1-nav-item:last-child { border-bottom: none; }
+
+@media (max-width: 768px) {
+  /* Topbar collapses: prompt, full nav, right meta hide; hamburger shows. */
+  .gv1-topbar {
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    padding: 10px 16px;
+  }
+  .gv1-topbar-prompt { display: none; }
+  .gv1-topbar-nav { display: none; }
+  .gv1-topbar-right { display: none; }
+  .gv1-topbar-mobile {
+    display: block;
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  /* Mobile artboard: fluid fills the viewport instead of 390x844 frame.
+     The /m/:id route is the per-deck mobile guide, and on a real phone
+     the bezel-emulation looks broken. */
+  .gv1-mobile {
+    width: 100%;
+    height: auto;
+    min-height: calc(100vh - 56px);
+  }
+  .gv1-mobile-status { padding: 10px 18px 6px; }
+  .gv1-mobile-head { padding: 14px 18px 12px; }
+  .gv1-mobile-head h1 { font-size: 32px; }
+  .gv1-mobile-body { padding: 16px 18px; gap: 16px; overflow: visible; }
+  .gv1-mobile-nav { padding: 12px 18px 22px; }
+
+  /* Codex — grid stacks; stats bar wraps. */
+  .gv1-codex { padding: 28px 16px 48px; }
+  .gv1-codex-title { font-size: 56px; }
+  .gv1-codex-sub { font-size: 15px; }
+  .gv1-codex-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .gv1-codex-stat { padding: 14px 16px; }
+  .gv1-codex-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .gv1-codex-grid {
+    grid-template-columns: 1fr;
+  }
+  .gv1-codex-card { padding: 18px 18px 16px; }
+  .gv1-codex-card-title { font-size: 22px; }
+  .gv1-codex-card-stats { grid-template-columns: repeat(2, 1fr); }
+
+  /* Shopping — sticky deck-pill rail + summary chip row collapse.
+     Pre-DEC-181 we already collapsed `.gv1-shop-summary` and `.gv1-shop-row`;
+     this completes the spec by making the deck-selection rail sticky and
+     compressing the chip row. */
+  .gv1-shop-section { padding-top: 16px; }
+  .gv1-shop-section.gv1-shop-rail {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--gv1-bg);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gv1-line);
+  }
+  .gv1-shop-rail-head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .gv1-shop-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+  .gv1-shop-chips .gv1-shop-chip { flex-shrink: 0; }
+  .gv1-shop-built-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .gv1-shop-built-chips .gv1-shop-built-chip { flex-shrink: 0; }
+  .gv1-shop-summary {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px 14px;
+  }
+  .gv1-shop-summary-stat .gv1-serif-xl { font-size: 28px; }
+  .gv1-shop-summary-actions {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Section padding on phones — desktop's 72px gutter is too much. */
+  .gv1-section { padding: 32px 16px; }
+  .gv1-section-head {
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+  }
+  .gv1-section-head .gv1-mono-xs { display: none; }
+  .gv1-section-title { font-size: 38px; white-space: normal; }
+
+  /* Hero/commander gutters */
+  .gv1-hero { padding: 36px 16px 28px; }
+  .gv1-hero-title { font-size: 64px; line-height: 1; }
+  .gv1-hero-title em { font-size: 76px; }
+  .gv1-hero-sub { font-size: 17px; margin-bottom: 24px; }
+  .gv1-hero-meta { grid-template-columns: 1fr 1fr; }
+  .gv1-hero-meta-item { padding: 14px 0; padding-right: 12px; }
+
+  .gv1-commander { padding: 28px 16px 32px; }
+  .gv1-cmd-grid { grid-template-columns: 1fr; gap: 24px; }
+  .gv1-cmd-art { max-width: 320px; }
+  .gv1-cmd-deckname { font-size: 56px; max-width: none; }
+  .gv1-cmd-stats { grid-template-columns: 1fr 1fr; }
+
+  /* Engine: tabs above panel instead of beside */
+  .gv1-engine-shell { grid-template-columns: 1fr; }
+  .gv1-engine-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--gv1-line);
+  }
+  .gv1-engine-tab {
+    grid-template-columns: auto 1fr auto;
+    padding: 12px 14px;
+    border-bottom: none;
+    border-right: 1px solid var(--gv1-line);
+    flex-shrink: 0;
+  }
+  .gv1-engine-tab.gv1-active {
+    box-shadow: inset 0 -2px 0 var(--gv1-rune);
+  }
+  .gv1-engine-panel { padding: 18px 16px; }
+  .gv1-engine-cards { grid-template-columns: repeat(2, 1fr); }
+
+  /* Wincons / Combos / Performance — 2-col → 1-col */
+  .gv1-wincons-grid,
+  .gv1-combo-grid,
+  .gv1-perf-grid { grid-template-columns: 1fr; gap: 18px; }
+  .gv1-wincon, .gv1-combo, .gv1-perf-block { padding: 18px; }
+  .gv1-wincon-title, .gv1-combo-title { font-size: 24px; }
+
+  /* Decklist columns → single column */
+  .gv1-decklist-cols { grid-template-columns: 1fr; gap: 16px; }
+  .gv1-dl-toolbar { gap: 10px; }
+}
+
+/* Scrying mobile banner — phones below 480px nudge to desktop for the
+   swap analyzer (per SCOPE § 4 recommendation: keep the container
+   reflow but flag the smaller surface). */
+.gv1-scry-mobile-banner {
+  display: none;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  background: var(--gv1-bg-2);
+  border: 1px solid var(--gv1-line-rune);
+  border-left: 2px solid var(--gv1-rune);
+  font-family: var(--gv1-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--gv1-ink-dim);
+  line-height: 1.5;
+}
+.gv1-scry-mobile-banner a { color: var(--gv1-rune-bright); }
+.gv1-scry-mobile-banner a:hover { color: var(--gv1-gold); }
+@media (max-width: 480px) {
+  .gv1-scry-mobile-banner { display: block; }
+}

@@ -517,7 +517,7 @@ export function Shopping({ decks }: ShoppingProps) {
         </p>
       </section>
 
-      <section className="gv1-section gv1-shop-section">
+      <section className="gv1-section gv1-shop-section gv1-shop-rail">
         <div className="gv1-shop-rail-head">
           <span className="gv1-mono-xs gv1-dim">SELECT DECKS</span>
           <span className="gv1-mono-xs gv1-dim">· {selected.size} of {decks.length}</span>

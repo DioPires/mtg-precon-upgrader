@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDeckBundle } from '../hooks/useDeckBundle';
 import { useDeckColorTheme } from '../hooks/useDeckColorTheme';
+import { useIsMobileViewport } from '../hooks/useViewport';
 import { rememberLastDeck } from '../data/lastDeck';
 import { Commander } from '../components/organisms/Commander';
 import { DeckSelector } from '../components/organisms/DeckSelector';
@@ -15,11 +16,19 @@ import { Decklist } from '../components/organisms/Decklist';
 export function DeckGuide() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
+  const { search } = useLocation();
   const { status, deck, stubs, error } = useDeckBundle(id);
   useDeckColorTheme(id);
   useEffect(() => {
     if (status === 'loaded' && deck) rememberLastDeck(id);
   }, [status, deck, id]);
+
+  // Per SCOPE § 4: ≤768px viewport mounts the mobile Guide artboard.
+  // Redirect to /m/:id so URL state survives and reflects the actual surface.
+  if (isMobile && id) {
+    return <Navigate to={`/m/${id}${search}`} replace />;
+  }
 
   if (status === 'loading') {
     return (
