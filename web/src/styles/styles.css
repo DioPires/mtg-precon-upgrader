@@ -647,8 +647,9 @@ em { font-style: italic; color: var(--gv1-gold); }
 .gv1-card-tile:hover .gv1-card-tile-hint { opacity: 0.7; }
 
 /* Mana pips */
-.gv1-mv { display: inline-flex; gap: 3px; }
+.gv1-mv { display: inline-flex; gap: 3px; align-items: center; }
 .gv1-mv-pip {
+  position: relative;
   display: inline-flex; align-items: center; justify-content: center;
   width: 18px; height: 18px;
   border-radius: 50%;
@@ -656,9 +657,65 @@ em { font-style: italic; color: var(--gv1-gold); }
   background: var(--gv1-bg); color: var(--gv1-ink);
   border: 1px solid var(--gv1-line-strong);
 }
-.gv1-mv-c { background: #d4cdb6; color: #2a2520; border-color: #d4cdb6; }
+.gv1-mv-c {
+  background: var(--gv1-mana-c);
+  color: #1a1410;
+  border-color: var(--gv1-mana-c-stroke);
+}
 .gv1-mv-n { background: var(--gv1-bg); color: var(--gv1-ink); }
 .gv1-mv-g { background: var(--gv1-rune-dim); color: var(--gv1-ink); }
+.gv1-mv-x {
+  background: var(--gv1-rune-dim);
+  color: var(--gv1-ink);
+  border-color: var(--gv1-line-strong);
+  font-style: italic;
+}
+.gv1-mv-s {
+  background: var(--gv1-mana-u);
+  color: #1a1410;
+  border-color: var(--gv1-mana-u-stroke);
+  font-size: 11px;
+}
+.gv1-mv-W { background: var(--gv1-mana-w); color: #1a1410; border-color: var(--gv1-mana-w-stroke); }
+.gv1-mv-U { background: var(--gv1-mana-u); color: #1a1410; border-color: var(--gv1-mana-u-stroke); }
+.gv1-mv-B { background: var(--gv1-mana-b); color: #d8d0c0; border-color: var(--gv1-mana-b-stroke); }
+.gv1-mv-R { background: var(--gv1-mana-r); color: #1a1410; border-color: var(--gv1-mana-r-stroke); }
+.gv1-mv-G { background: var(--gv1-mana-g); color: #1a1410; border-color: var(--gv1-mana-g-stroke); }
+
+/* Hybrid: split pip with two color halves and the two letters as halves */
+.gv1-mv-hyb {
+  background: linear-gradient(135deg, var(--gv1-mv-a) 0% 50%, var(--gv1-mv-b) 50% 100%);
+  border-color: var(--gv1-mv-stroke, var(--gv1-line-strong));
+  color: #1a1410;
+  overflow: hidden;
+}
+.gv1-mv-hyb-a, .gv1-mv-hyb-b {
+  position: absolute;
+  font-size: 8px;
+  line-height: 1;
+}
+.gv1-mv-hyb-a { top: 2px; left: 3px; }
+.gv1-mv-hyb-b { bottom: 2px; right: 3px; }
+.gv1-mv-mhy {
+  width: 20px; height: 20px;
+}
+
+/* Phyrexian: colored pip with Φ glyph */
+.gv1-mv-phy { color: #1a1410; }
+.gv1-mv-phy-W { background: var(--gv1-mana-w); border-color: var(--gv1-mana-w-stroke); }
+.gv1-mv-phy-U { background: var(--gv1-mana-u); border-color: var(--gv1-mana-u-stroke); }
+.gv1-mv-phy-B { background: var(--gv1-mana-b); color: #d8d0c0; border-color: var(--gv1-mana-b-stroke); }
+.gv1-mv-phy-R { background: var(--gv1-mana-r); border-color: var(--gv1-mana-r-stroke); }
+.gv1-mv-phy-G { background: var(--gv1-mana-g); border-color: var(--gv1-mana-g-stroke); }
+.gv1-mv-phy-glyph {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  text-shadow: 0 0 2px rgba(0,0,0,0.6);
+  color: #fff;
+}
+
 .gv1-mv-land {
   font-family: var(--gv1-mono); font-size: 10px; letter-spacing: 0.08em;
   color: var(--gv1-ink-dim); border: 1px solid var(--gv1-line); padding: 2px 6px;

@@ -107,7 +107,12 @@ function useNameSet(list: DeckListGroup[]): string[] {
   }, [list]);
 }
 
-function useCmcMap(names: string[]): Map<string, number> {
+interface CardMeta {
+  cmc?: number;
+  mana_cost?: string;
+}
+
+function useCardMetaMap(names: string[]): Map<string, CardMeta> {
   // Bump a version counter whenever any subscribed card hydrates; the resulting
   // re-render rebuilds the map from cardCache (cheap — sync get(), ≤ 99 entries).
   const [version, setVersion] = useState(0);
@@ -119,23 +124,33 @@ function useCmcMap(names: string[]): Map<string, number> {
     return () => unsubs.forEach((u) => u());
   }, [names]);
   return useMemo(() => {
-    const map = new Map<string, number>();
+    const map = new Map<string, CardMeta>();
     names.forEach((n) => {
       const e = cardCache.get(n);
-      if (e?.status === 'loaded' && typeof e.cmc === 'number') {
-        map.set(n.toLowerCase(), e.cmc);
+      if (e?.status !== 'loaded') return;
+      const meta: CardMeta = {};
+      if (typeof e.cmc === 'number') meta.cmc = e.cmc;
+      if (typeof e.mana_cost === 'string') meta.mana_cost = e.mana_cost;
+      if (meta.cmc != null || meta.mana_cost != null) {
+        map.set(n.toLowerCase(), meta);
       }
     });
     return map;
   }, [names, version]);
 }
 
-function enrichWithCmc(list: DeckListGroup[], cmcMap: Map<string, number>): DeckListGroup[] {
+function enrichWithMeta(list: DeckListGroup[], metaMap: Map<string, CardMeta>): DeckListGroup[] {
   return list.map((g) => ({
     ...g,
     cards: g.cards.map((c) => {
-      const cmc = cmcMap.get(c.n.toLowerCase());
-      return cmc != null ? { ...c, cmc } : c;
+      const meta = metaMap.get(c.n.toLowerCase());
+      if (!meta) return c;
+      const next = { ...c };
+      if (meta.cmc != null) next.cmc = meta.cmc;
+      // Replace placeholder '—' with real Scryfall mana_cost. Lands keep 'LAND'
+      // sentinel; empty mana_cost (some lands/MDFCs) leaves the placeholder.
+      if (c.mv !== 'LAND' && meta.mana_cost) next.mv = meta.mana_cost;
+      return next;
     }),
   }));
 }
@@ -154,8 +169,8 @@ export function Decklist({ list, commander }: DecklistProps) {
   };
 
   const names = useNameSet(list);
-  const cmcMap = useCmcMap(names);
-  const enriched = useMemo(() => enrichWithCmc(list, cmcMap), [list, cmcMap]);
+  const metaMap = useCardMetaMap(names);
+  const enriched = useMemo(() => enrichWithMeta(list, metaMap), [list, metaMap]);
 
   const view = useMemo(() => {
     if (mode === 'type') return groupByType(enriched, commander);
