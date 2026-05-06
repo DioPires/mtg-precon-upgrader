@@ -74,7 +74,8 @@ export function CardTile({ card, size = 'md' }: CardTileProps) {
   const seed = (card.n || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   const variant = seed % 4;
   const live = useCard(card.n);
-  const hasImg = live?.status === 'loaded' && !!live.image_small;
+  const imgSrc = live?.status === 'loaded' ? (live.image_normal || live.image_small) : null;
+  const hasImg = !!imgSrc;
   const mvLive = live?.status === 'loaded' && live.mana_cost ? live.mana_cost : null;
   const mv = (card.mv && card.mv !== '—') ? card.mv : (mvLive || card.mv || '—');
   const priceLive = live?.status === 'loaded' && live.price ? live.price : null;
@@ -88,7 +89,7 @@ export function CardTile({ card, size = 'md' }: CardTileProps) {
       <div className="gv1-card-tile-art">
         {hasImg && (
           <img
-            src={live!.image_small}
+            src={imgSrc!}
             alt=""
             className="gv1-card-tile-img"
             loading="lazy"
