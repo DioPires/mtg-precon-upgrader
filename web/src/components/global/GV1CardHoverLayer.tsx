@@ -24,6 +24,52 @@ const imgCache: Record<string, 'loaded' | 'error'> = {};
 
 const HOVER_DELAY_MS = 140;
 
+// Sync with .gv1-cardhover width in styles.css (DEC-169 → 396px).
+// Height is approximate (frame + caption); the y-clamp is best-effort.
+export const POPOVER_W = 396;
+export const POPOVER_H = 580;
+export const HOVER_GAP = 12;
+
+interface HoverRect {
+  top: number;
+  left: number;
+  right: number;
+}
+
+export interface HoverPosition {
+  side: HoverSide;
+  x: number;
+  y: number;
+}
+
+// Pure: pick the side that fits, then clamp x/y so the popover never overflows
+// the viewport. For side='right', x is the popover's left edge; for side='left',
+// x is the popover's right edge (paired with `right: vw - x` at render time).
+export function computeHoverPosition({
+  rect,
+  vw,
+  vh,
+}: {
+  rect: HoverRect;
+  vw: number;
+  vh: number;
+}): HoverPosition {
+  const fitsRight = rect.right + HOVER_GAP + POPOVER_W <= vw;
+  const fitsLeft = rect.left - HOVER_GAP - POPOVER_W >= 0;
+  let side: HoverSide;
+  if (fitsRight) side = 'right';
+  else if (fitsLeft) side = 'left';
+  else side = vw - rect.right >= rect.left ? 'right' : 'left';
+
+  const rawX = side === 'right' ? rect.right + HOVER_GAP : rect.left - HOVER_GAP;
+  const x =
+    side === 'right'
+      ? Math.min(rawX, vw - POPOVER_W - HOVER_GAP)
+      : Math.max(rawX, POPOVER_W + HOVER_GAP);
+  const y = Math.max(HOVER_GAP, Math.min(rect.top, vh - POPOVER_H - HOVER_GAP));
+  return { side, x, y };
+}
+
 export function GV1CardHoverLayer() {
   const [card, setCard] = useState<HoverState | null>(null);
   const [imgStatus, setImgStatus] = useState<ImgStatus>('idle');
@@ -40,10 +86,11 @@ export function GV1CardHoverLayer() {
       if (hoverTimer.current) clearTimeout(hoverTimer.current);
       hoverTimer.current = setTimeout(() => {
         const rect = t.getBoundingClientRect();
-        const vw = window.innerWidth;
-        const side: HoverSide = (rect.right + 480 > vw) ? 'left' : 'right';
-        const x = side === 'right' ? rect.right + 12 : rect.left - 12;
-        const y = Math.max(20, Math.min(rect.top, window.innerHeight - 580));
+        const { side, x, y } = computeHoverPosition({
+          rect,
+          vw: window.innerWidth,
+          vh: window.innerHeight,
+        });
         lastNameRef.current = name;
         setCard({ name, x, y, side });
         const cached = imgCache[name.toLowerCase()];
