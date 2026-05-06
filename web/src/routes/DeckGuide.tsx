@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDeckBundle } from '../hooks/useDeckBundle';
 import { useDeckColorTheme } from '../hooks/useDeckColorTheme';
+import { rememberLastDeck } from '../data/lastDeck';
 import { Commander } from '../components/organisms/Commander';
 import { DeckSelector } from '../components/organisms/DeckSelector';
 import { WinCons } from '../components/organisms/WinCons';
@@ -15,6 +17,9 @@ export function DeckGuide() {
   const navigate = useNavigate();
   const { status, deck, stubs, error } = useDeckBundle(id);
   useDeckColorTheme(id);
+  useEffect(() => {
+    if (status === 'loaded' && deck) rememberLastDeck(id);
+  }, [status, deck, id]);
 
   if (status === 'loading') {
     return (

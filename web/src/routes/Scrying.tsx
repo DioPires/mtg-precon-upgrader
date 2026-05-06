@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDeckBundle } from '../hooks/useDeckBundle';
 import { useDeckColorTheme } from '../hooks/useDeckColorTheme';
 import { useAllDecks } from '../hooks/useAllDecks';
+import { rememberLastDeck } from '../data/lastDeck';
 import { Scrying as ScryingOrganism } from '../components/organisms/Scrying';
 import { DeckSelector } from '../components/organisms/DeckSelector';
 
@@ -11,6 +13,9 @@ export function Scrying() {
   const { status, deck, stubs, error } = useDeckBundle(id);
   const all = useAllDecks();
   useDeckColorTheme(id);
+  useEffect(() => {
+    if (status === 'loaded' && deck) rememberLastDeck(id);
+  }, [status, deck, id]);
 
   if (status === 'loading' || all.status === 'loading') {
     return (
