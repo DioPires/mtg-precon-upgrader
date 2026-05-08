@@ -24,6 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { kind: 'deck', surface: 'scrying', rune: 'VIII', label: 'Scrying' },
   { kind: 'static', to: '/shopping', rune: 'IX', label: 'Shopping' },
   { kind: 'static', to: '/compare', rune: 'X', label: 'Compare' },
+  { kind: 'static', to: '/atlas', rune: 'XI', label: 'Atlas' },
 ];
 
 export function Topbar() {

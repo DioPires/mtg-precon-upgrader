@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Topbar } from './components/Topbar';
 import { GV1CardHoverLayer } from './components/global/GV1CardHoverLayer';
 import { Codex } from './routes/Codex';
+import { CardAtlas } from './routes/CardAtlas';
 import { DeckGuide } from './routes/DeckGuide';
 import { Compare } from './routes/Compare';
 import { Shopping } from './routes/Shopping';
@@ -18,6 +19,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/codex" replace />} />
           <Route path="/codex" element={<Codex />} />
+          <Route path="/atlas" element={<CardAtlas />} />
           <Route path="/deck/:id" element={<DeckGuide />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/shopping" element={<Shopping />} />

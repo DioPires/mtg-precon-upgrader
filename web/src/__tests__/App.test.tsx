@@ -24,6 +24,11 @@ describe('App shell', () => {
     expect(screen.getByText(/scrying the codex/i)).toBeInTheDocument();
   });
 
+  it('routes /atlas to the card atlas surface (loading state shown synchronously)', () => {
+    renderAt('/atlas');
+    expect(screen.getByText(/charting the atlas/i)).toBeInTheDocument();
+  });
+
   it('routes /deck/:id and reads the param', () => {
     renderAt('/deck/titan-convergence');
     expect(screen.getByText(/titan-convergence/)).toBeInTheDocument();

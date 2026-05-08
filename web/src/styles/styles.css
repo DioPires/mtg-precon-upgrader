@@ -3029,3 +3029,205 @@ em { font-style: italic; color: var(--gv1-gold); }
 @media (max-width: 480px) {
   .gv1-scry-mobile-banner { display: block; }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Card Atlas (DEC-197) — card-name reverse lookup surface
+   ───────────────────────────────────────────────────────────── */
+.gv1-atlas {
+  padding: 56px 64px 80px;
+  position: relative;
+}
+.gv1-atlas::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--gv1-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gv1-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none; opacity: 0.5;
+}
+.gv1-atlas > * { position: relative; z-index: 1; }
+
+.gv1-atlas-head { max-width: 720px; margin-bottom: 28px; }
+.gv1-atlas-eyebrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.gv1-atlas-title {
+  font-family: var(--gv1-serif);
+  font-size: 88px; font-weight: 400; line-height: 1;
+  margin: 14px 0 14px;
+  color: var(--gv1-ink);
+}
+.gv1-atlas-title em { font-family: var(--gv1-serif-italic); font-style: italic; color: var(--gv1-rune); }
+.gv1-atlas-sub {
+  font-family: var(--gv1-serif);
+  font-size: 18px; line-height: 1.5;
+  color: var(--gv1-ink-dim);
+  max-width: 640px;
+}
+
+.gv1-atlas-search {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 640px;
+  margin: 12px 0 28px;
+}
+.gv1-atlas-input {
+  width: 100%;
+  background: var(--gv1-bg);
+  border: 1px solid var(--gv1-line-strong);
+  color: var(--gv1-ink);
+  font-family: var(--gv1-mono);
+  font-size: 16px;
+  padding: 14px 16px;
+  outline: none;
+  min-height: 44px;
+}
+.gv1-atlas-input:focus-visible {
+  border-color: var(--gv1-rune-dim);
+  outline: 2px solid var(--gv1-focus-ring);
+  outline-offset: 2px;
+}
+.gv1-atlas-listbox {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--gv1-bg);
+  border: 1px solid var(--gv1-line-strong);
+  z-index: 5;
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+}
+.gv1-atlas-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--gv1-line);
+  min-height: 44px;
+}
+.gv1-atlas-option:last-child { border-bottom: 0; }
+.gv1-atlas-option-active,
+.gv1-atlas-option:hover { background: var(--gv1-bg-2); }
+.gv1-atlas-option-name {
+  font-family: var(--gv1-serif);
+  font-size: 15px;
+  color: var(--gv1-ink);
+}
+
+.gv1-atlas-result {
+  border: 1px solid var(--gv1-line-strong);
+  background: var(--gv1-bg);
+  padding: 24px 28px;
+}
+.gv1-atlas-result-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--gv1-line);
+  margin-bottom: 18px;
+}
+.gv1-atlas-result-stats {
+  display: flex;
+  gap: 32px;
+}
+.gv1-atlas-result-stat {
+  display: flex; flex-direction: column; gap: 2px;
+}
+
+.gv1-atlas-empty {
+  padding: 16px 0;
+}
+
+.gv1-atlas-usage-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--gv1-line);
+  border: 1px solid var(--gv1-line);
+}
+.gv1-atlas-usage {
+  background: var(--gv1-bg);
+}
+.gv1-atlas-usage-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 18px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-height: 56px;
+}
+.gv1-atlas-usage-btn:hover { background: var(--gv1-bg-2); }
+.gv1-atlas-usage-btn:focus-visible {
+  outline: 2px solid var(--gv1-focus-ring);
+  outline-offset: -2px;
+}
+.gv1-atlas-usage-l {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.gv1-atlas-usage-l > div { min-width: 0; }
+.gv1-atlas-usage-l .gv1-serif-md {
+  font-family: var(--gv1-serif);
+  font-size: 17px;
+  color: var(--gv1-ink);
+  line-height: 1.2;
+}
+.gv1-atlas-usage-colors {
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.gv1-atlas-usage-r {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.gv1-atlas-usage-role {
+  border: 1px solid var(--gv1-rune-dim);
+  padding: 3px 8px;
+  background: rgba(124, 200, 146, 0.06);
+}
+.gv1-atlas-usage-bracket {
+  border: 1px solid var(--gv1-line-strong);
+  padding: 3px 8px;
+}
+
+.gv1-atlas-hint {
+  border-top: 1px dashed var(--gv1-line);
+  padding-top: 16px;
+  max-width: 640px;
+}
+
+@media (max-width: 768px) {
+  .gv1-atlas { padding: 28px 16px 56px; }
+  .gv1-atlas-title { font-size: 56px; }
+  .gv1-atlas-sub { font-size: 15px; }
+  .gv1-atlas-result { padding: 18px 16px; }
+  .gv1-atlas-result-head { gap: 16px; }
+  .gv1-atlas-result-stats { gap: 20px; }
+  .gv1-atlas-usage-btn { flex-wrap: wrap; gap: 10px; padding: 14px; }
+  .gv1-atlas-usage-r { flex-wrap: wrap; gap: 8px; }
+}
