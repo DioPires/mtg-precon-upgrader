@@ -17,6 +17,7 @@ import type {
   DeckFull,
   DeckListGroup,
   DeckStub,
+  DeckToken,
   DeckWincon,
   RawCategory,
   RawDeck,
@@ -227,6 +228,13 @@ function transformCurveAndFunc(deck: RawDeck): { curve: DeckCurveEntry[]; func: 
   return { curve, func };
 }
 
+function transformTokens(deck: RawDeck): DeckToken[] {
+  const raw = Array.isArray(deck.tokens) ? deck.tokens : [];
+  return raw
+    .filter((t): t is DeckToken => !!t && typeof (t as DeckToken).name === 'string' && (t as DeckToken).name.length > 0)
+    .map((t) => ({ ...t, produced_by: Array.isArray(t.produced_by) ? t.produced_by : [] }));
+}
+
 function transformList(deck: RawDeck, ctx: DeckCtx): DeckListGroup[] {
   const byRole = new Map<string, RawDecklistCard[]>();
   (deck.decklist || []).forEach((c) => {
@@ -338,6 +346,7 @@ export function normalizeDeck(bundle: RawDeckBundle, idx: number): DeckFull {
       description: s.description || '',
     })),
     gameChangers: deck.gameChangers || 0,
+    tokens: transformTokens(deck),
   };
 }
 

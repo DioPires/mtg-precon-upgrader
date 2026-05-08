@@ -8,6 +8,7 @@ import { DeckSelector } from '../components/organisms/DeckSelector';
 import { WinCons } from '../components/organisms/WinCons';
 import { Engine } from '../components/organisms/Engine';
 import { Combos } from '../components/organisms/Combos';
+import { Tokens } from '../components/organisms/Tokens';
 import { Performance } from '../components/organisms/Performance';
 import { Apothecary } from '../components/organisms/Apothecary';
 import { Decklist } from '../components/organisms/Decklist';
@@ -57,6 +58,7 @@ export function DeckGuide() {
       <WinCons wincons={deck.wincons} />
       <Engine engine={deck.engine} />
       <Combos combos={deck.combos} />
+      <Tokens tokens={deck.tokens} />
       <Performance
         curve={deck.curve}
         func={deck.func}

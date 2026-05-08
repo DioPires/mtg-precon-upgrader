@@ -22,7 +22,7 @@ export function Performance({ curve, func, sources, health, composition, assessm
   return (
     <section className="gv1-section gv1-perf">
       <div className="gv1-section-head">
-        <span className="gv1-rune" aria-hidden="true">§ VI</span>
+        <span className="gv1-rune" aria-hidden="true">§ VII</span>
         <h2 className="gv1-section-title">Performance · Scrying Pool</h2>
         <span className="gv1-mono-xs gv1-dim">· 10,000 simulated games</span>
       </div>

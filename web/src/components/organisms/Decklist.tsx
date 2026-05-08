@@ -216,7 +216,7 @@ export function Decklist({ list, commander, partner }: DecklistProps) {
   return (
     <section className="gv1-section gv1-decklist">
       <div className="gv1-section-head">
-        <span className="gv1-rune" aria-hidden="true">§ VII</span>
+        <span className="gv1-rune" aria-hidden="true">§ VIII</span>
         <h2 className="gv1-section-title">The Manifest</h2>
         <span className="gv1-mono-xs gv1-dim">
           · {total} cards · {view.length} {mode === 'type' ? 'types' : 'roles'} · {sortedBy}

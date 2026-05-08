@@ -117,7 +117,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
     return (
       <section className="gv1-section gv1-apothecary">
         <div className="gv1-section-head">
-          <span className="gv1-rune" aria-hidden="true">§ V</span>
+          <span className="gv1-rune" aria-hidden="true">§ VI</span>
           <h2 className="gv1-section-title">The Apothecary</h2>
         </div>
         <div className="gv1-empty">No diagnosis on file for this commander.</div>
@@ -158,7 +158,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
   return (
     <section className="gv1-section gv1-apothecary">
       <div className="gv1-section-head">
-        <span className="gv1-rune" aria-hidden="true">§ V</span>
+        <span className="gv1-rune" aria-hidden="true">§ VI</span>
         <h2 className="gv1-section-title">The Apothecary</h2>
         <span className="gv1-mono-xs gv1-dim">diagnosis · maladies · remedies</span>
       </div>

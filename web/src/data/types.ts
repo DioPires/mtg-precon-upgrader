@@ -81,6 +81,23 @@ export interface RawDeckIndex {
   commanders: RawDeckIndexEntry[];
 }
 
+/**
+ * Token populated by `scripts/compute_tokens.py` from Scryfall `all_parts`.
+ * Producers (`produced_by`) are real card names from the decklist; the rest
+ * mirrors the Scryfall token-card shape.
+ */
+export interface DeckToken {
+  name: string;
+  type_line?: string;
+  oracle_text?: string;
+  power?: string;
+  toughness?: string;
+  colors?: string[];
+  scryfall_id?: string;
+  image_uri?: string;
+  produced_by: string[];
+}
+
 export interface RawDeck {
   id: string;
   type: string;
@@ -103,7 +120,7 @@ export interface RawDeck {
   synergies?: RawSynergy[];
   winConditions?: RawWinCondition[];
   decklist: RawDecklistCard[];
-  tokens?: unknown;
+  tokens?: DeckToken[];
 }
 
 export interface RawDeckHealthScore {
@@ -359,6 +376,7 @@ export interface DeckFull {
   physicalDecklist: RawDecklistCard[];
   synergies: Array<{ title: string; cards: string[]; description: string }>;
   gameChangers: number;
+  tokens: DeckToken[];
 }
 
 /** Lightweight selector entry used by DeckSelector / nav menus. */

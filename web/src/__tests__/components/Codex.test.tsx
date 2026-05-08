@@ -37,6 +37,7 @@ function makeDeck(over: Partial<DeckFull>): DeckFull {
     physicalDecklist: [],
     synergies: [],
     gameChangers: 1,
+    tokens: [],
   };
   return { ...base, ...over };
 }

@@ -307,6 +307,34 @@ describe('Decklist count helper', () => {
     expect(out.list[0].name).toBe('Commander');
     expect(out.list[0].cards).toHaveLength(1);
   });
+
+  it('passes deck.tokens through and skips entries missing a name (DEC-199)', () => {
+    const bundle = makeBundle();
+    bundle.deck.tokens = [
+      {
+        name: 'Eldrazi Scion',
+        type_line: 'Token Creature — Eldrazi Scion',
+        power: '1',
+        toughness: '1',
+        produced_by: ['Warping Wail'],
+      },
+      // malformed entries: missing/blank name → dropped
+      { name: '', produced_by: [] } as never,
+      { produced_by: ['X'] } as never,
+    ];
+    const out = normalizeDeck(bundle, 1);
+    expect(out.tokens).toHaveLength(1);
+    expect(out.tokens[0].name).toBe('Eldrazi Scion');
+    expect(out.tokens[0].produced_by).toEqual(['Warping Wail']);
+  });
+
+  it('defaults tokens to [] when deck.tokens is missing or invalid', () => {
+    const bundle = makeBundle();
+    delete bundle.deck.tokens;
+    expect(normalizeDeck(bundle, 1).tokens).toEqual([]);
+    bundle.deck.tokens = 'nope' as never;
+    expect(normalizeDeck(bundle, 1).tokens).toEqual([]);
+  });
 });
 
 describe('buildDeckStubs', () => {

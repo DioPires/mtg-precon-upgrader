@@ -824,7 +824,65 @@ em { font-style: italic; color: var(--gv1-gold); }
 .gv1-combo-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .gv1-combo-src { display: flex; gap: 10px; align-items: center; padding-top: 10px; border-top: 1px dashed var(--gv1-line); }
 
-/* ─── The Apothecary (§ V) ───────────────────────────────────
+/* ─── Tokens (§ V) ─────────────────────────────────────────── */
+.gv1-tokens-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.gv1-token-card {
+  background: var(--gv1-bg-2);
+  border: 1px solid var(--gv1-line);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.gv1-token-img {
+  width: 100%;
+  aspect-ratio: 488 / 680;
+  border-radius: 8px;
+  display: block;
+  object-fit: cover;
+  background: var(--gv1-bg-1);
+}
+.gv1-token-img-stub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--gv1-line);
+}
+.gv1-token-name {
+  font-family: var(--gv1-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--gv1-ink);
+  line-height: 1.2;
+}
+.gv1-token-meta { line-height: 1.4; }
+.gv1-token-pt { color: var(--gv1-ink); }
+.gv1-token-producers { line-height: 1.5; }
+.gv1-token-producer {
+  color: var(--gv1-ink-dim);
+  cursor: pointer;
+  border-bottom: 1px dotted var(--gv1-line-strong);
+  transition: color 0.15s;
+}
+.gv1-token-producer:hover,
+.gv1-token-producer:focus-visible {
+  color: var(--gv1-rune);
+  outline: none;
+  border-bottom-color: var(--gv1-rune-dim);
+}
+@media (max-width: 768px) {
+  .gv1-tokens-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .gv1-token-name { font-size: 15px; }
+}
+
+/* ─── The Apothecary (§ VI) ──────────────────────────────────
    Diagnosis · Maladies · Remedies. Each subsection is a labeled
    band; remedies are score-ranked candidate cards. */
 .gv1-apothecary { display: flex; flex-direction: column; gap: 0; }
