@@ -82,7 +82,6 @@
     {
       "name": "Sacrifice Outlets",
       "cards": [
-        "Umbral Collar Zealot",
         "Carrion Feeder",
         "Ashnod's Altar",
         "Phyrexian Altar",
@@ -99,8 +98,7 @@
         "Victimize",
         "Necromancy",
         "Agadeem's Awakening",
-        "Grave Researcher",
-        "Cauldron of Essence"
+        "Grave Researcher"
       ]
     },
     {
@@ -145,7 +143,8 @@
         "Fauna Shaman",
         "Liliana, Dreadhorde General",
         "Emeritus of Woe",
-        "Witherbloom Charm"
+        "Witherbloom Charm",
+        "Harvester of Souls"
       ]
     },
     {
@@ -156,7 +155,8 @@
         "Haywire Mite",
         "Deadly Rollick",
         "Massacre Wurm",
-        "Immoral Bargain"
+        "Immoral Bargain",
+        "Hagra Mauling // Hagra Broodpit"
       ]
     },
     {
@@ -709,7 +709,7 @@
         "Ashnod's Altar",
         "Phyrexian Altar"
       ],
-      "description": "Every non-Human creature dies twice with Mikaeus — once normally, once with undying. Each altar sacrifice generates double mana. With Yawgmoth also in play to remove +1/+1 counters, loops go truly infinite: infinite colorless mana (Ashnod's) or infinite colored mana (Phyrexian). Carrion Feeder, Altar of Dementia, and Umbral Collar Zealot also combo the same way.",
+      "description": "Every non-Human creature dies twice with Mikaeus — once normally, once with undying. Each altar sacrifice generates double mana. With Yawgmoth also in play to remove +1/+1 counters, loops go truly infinite: infinite colorless mana (Ashnod's) or infinite colored mana (Phyrexian). Carrion Feeder and Altar of Dementia also combo the same way.",
       "sources": [
         {
           "type": "commanderspellbook",
@@ -848,23 +848,23 @@
       ]
     },
     {
-      "title": "Cauldron Drain Engine",
+      "title": "Harvester Death-Trigger Draw",
       "cards": [
-        "Cauldron of Essence",
+        "Harvester of Souls",
         "Meren of Clan Nel Toth",
-        "Blood Artist"
+        "Mikaeus, the Unhallowed"
       ],
-      "description": "Cauldron's passive drains opponents 1 life per creature death — stacking with Blood Artist, Zulaport Cutthroat, and Bastion of Remembrance for 4 drain per death. Its activated ability sacrifices a creature (triggering all drain effects + Grave Pact + Meren XP) to reanimate another creature from graveyard. Two parallel reanimation engines running simultaneously — Meren's end-step trigger + Cauldron's sorcery-speed activation — doubling recursion output each turn cycle.",
+      "description": "Harvester of Souls draws a card whenever another nontoken creature dies. Each Meren end-step reanimate of a sac outlet target produces 1+ death and a card. With Mikaeus + Carrion Feeder, every undying double-death yields a draw on the second death (the first death excludes due to undying-counter timing — but the second death does count). With Phyrexian Altar/Yawgmoth/Carrion Feeder loops, Harvester turns each combo line into deck-drawing alongside drain. Deathtouch on a 5/5 also makes it a removal threat in combat.",
       "sources": [
         {
-          "type": "scryfall",
-          "name": "Scryfall - Cauldron of Essence",
-          "url": "https://scryfall.com/card/sos/179/cauldron-of-essence"
+          "type": "edhrec",
+          "name": "EDHREC - Meren",
+          "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth"
         },
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Multi-axis engine synergy with existing sacrifice infrastructure"
+          "detail": "Death-trigger draw redundancy with sac engine"
         }
       ]
     },
@@ -1115,19 +1115,20 @@
       ]
     },
     {
-      "name": "Umbral Collar Zealot",
-      "price": "$1-2",
+      "name": "Harvester of Souls",
+      "price": "$1-3",
       "isGameChanger": false,
-      "reason": "Free sacrifice outlet with surveil 1. No tap cost, no mana cost. Strict upgrade over Viscera Seer with a 3/2 body.",
+      "reason": "Repeatable card draw on a death trigger: \"Whenever another nontoken creature dies, you may draw a card.\" Deathtouch on a 5/5 body makes it a combat threat as well. With ~14 creature deaths possible per turn cycle in Meren combos, Harvester chains into deck-drawing. Non-Human for Mikaeus undying. Direct upgrade over Umbral Collar Zealot — replaces a redundant 14th sac outlet (surveil 1 was the weakest filter we had) with the dedicated card-draw piece the deck was missing.",
       "sources": [
         {
-          "type": "other",
-          "name": "Edge of Eternities spoilers",
-          "url": "https://flipsidegaming.com/blogs/magic-blog/best-commander-cards-from-edge-of-eternities"
+          "type": "edhrec",
+          "name": "EDHREC - Meren",
+          "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth"
         },
         {
           "type": "ai-inferred",
-          "name": "Claude analysis"
+          "name": "Claude analysis",
+          "detail": "Board-approved swap for Umbral Collar Zealot (DEC-192) — addresses card-draw role gap (70 → 80) and trims excess sac outlet count (14 → 13)"
         }
       ]
     },
@@ -1244,7 +1245,7 @@
       "name": "Mikaeus, the Unhallowed",
       "price": "$8-15",
       "isGameChanger": false,
-      "reason": "Global undying for all non-Human creatures doubles the value of every sacrifice. Combined with Yawgmoth's -1/-1 counters to cancel undying's +1/+1, enables infinite loops that draw the deck and drain all opponents. Commander Spellbook confirms 7 combo lines with existing cards: Yawgmoth + Gray Merchant for infinite ETB drain, Yawgmoth + Kokusho for infinite death drain, and 5 sac outlet combos with Ashnod's/Phyrexian Altar, Carrion Feeder, Altar of Dementia, and Umbral Collar Zealot.",
+      "reason": "Global undying for all non-Human creatures doubles the value of every sacrifice. Combined with Yawgmoth's -1/-1 counters to cancel undying's +1/+1, enables infinite loops that draw the deck and drain all opponents. Commander Spellbook confirms 6 combo lines with existing cards: Yawgmoth + Gray Merchant for infinite ETB drain, Yawgmoth + Kokusho for infinite death drain, and 4 sac outlet combos with Ashnod's/Phyrexian Altar, Carrion Feeder, and Altar of Dementia.",
       "sources": [
         {
           "type": "commanderspellbook",
@@ -1379,20 +1380,20 @@
       ]
     },
     {
-      "name": "Cauldron of Essence",
-      "price": "$2-5",
+      "name": "Hagra Mauling // Hagra Broodpit",
+      "price": "$2-4",
       "isGameChanger": false,
-      "reason": "Triple-role artifact: built-in Blood Artist drain (each creature death drains opponents 1), sacrifice outlet, and reanimation engine. {1}{B}{G}, {T}, sacrifice a creature to reanimate any creature from graveyard. Survives creature board wipes and Living Death as an artifact. Every sacrifice triggers its own drain plus Grave Pact, Meren XP, and the drain battery. Parallel reanimation to Meren — doesn't require XP counters.",
+      "reason": "MDFC removal-or-land flex slot. Front face is a {2}{B}{B} instant `Destroy target creature` (costs {1} less if an opponent controls no basic lands). Back face is `{T}: Add {B}.` (enters tapped). Shores up two gaps simultaneously: raises lands from 36 to 37 toward the 39 target while adding a 6th instant-speed spot removal. Drawn early it's a land that always sees play; drawn late it's removal that never goes dead.",
       "sources": [
         {
           "type": "scryfall",
-          "name": "Scryfall - Cauldron of Essence",
-          "url": "https://scryfall.com/card/sos/179/cauldron-of-essence"
+          "name": "Scryfall - Hagra Mauling",
+          "url": "https://scryfall.com/card/znr/97/hagra-mauling-hagra-broodpit"
         },
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Board-approved swap for Formidable Speaker (DEC-75)"
+          "detail": "Board-approved swap for Cauldron of Essence (DEC-192) — raises land count 36→37 and adds 6th spot removal; replaces a 14th sac outlet/redundant reanimator the deck did not need"
         }
       ]
     },
@@ -1427,7 +1428,7 @@
       "name": "Witherbloom Charm",
       "price": "$1-2",
       "isGameChanger": false,
-      "reason": "{B}{G} instant, modal: (1) sacrifice any permanent, draw two cards; (2) gain 5 life; (3) destroy target nonland permanent with mana value 2 or less. Mode 1 is the headline use — 2-mana instant-speed sac+draw is unique in the deck. Fires Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, Cauldron of Essence, Grave Pact, Sephiroth's death counter, and a Meren XP at end of opponent's turn. Sac fodder targets Bloodghast, Nether Traitor, Gravecrawler, Bitterblossom token, or any non-load-bearing permanent. Mode 3 is real spot-removal hitting Sol Ring, mana dorks, Esper Sentinel, Aether Vial, Cursed Totem, Stony Silence, Drannith Magistrate, Bowmasters. Mode 2 is filler against aggro.",
+      "reason": "{B}{G} instant, modal: (1) sacrifice any permanent, draw two cards; (2) gain 5 life; (3) destroy target nonland permanent with mana value 2 or less. Mode 1 is the headline use — 2-mana instant-speed sac+draw is unique in the deck. Fires Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, Harvester of Souls, Grave Pact, Sephiroth's death counter, and a Meren XP at end of opponent's turn. Sac fodder targets Bloodghast, Nether Traitor, Gravecrawler, Bitterblossom token, or any non-load-bearing permanent. Mode 3 is real spot-removal hitting Sol Ring, mana dorks, Esper Sentinel, Aether Vial, Cursed Totem, Stony Silence, Drannith Magistrate, Bowmasters. Mode 2 is filler against aggro.",
       "sources": [
         {
           "type": "scryfall",
@@ -1688,9 +1689,9 @@
       "primary_role": "removal-board"
     },
     {
-      "name": "Umbral Collar Zealot",
+      "name": "Harvester of Souls",
       "type": "Creature",
-      "primary_role": "utility"
+      "primary_role": "card-draw"
     },
     {
       "name": "Carrion Feeder",
@@ -1885,9 +1886,10 @@
       "primary_role": "removal-spot"
     },
     {
-      "name": "Cauldron of Essence",
-      "type": "Artifact",
-      "primary_role": "recursion"
+      "name": "Hagra Mauling // Hagra Broodpit",
+      "type": "Land",
+      "is_mdfc_land": true,
+      "primary_role": "removal-spot"
     },
     {
       "name": "Memorial to Folly",
