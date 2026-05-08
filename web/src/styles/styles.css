@@ -3071,6 +3071,10 @@ em { font-style: italic; color: var(--gv1-gold); }
   gap: 6px;
   max-width: 640px;
   margin: 12px 0 28px;
+  /* Hoist above .gv1-atlas-result (a later sibling at z-index:1 from
+     .gv1-atlas > *), otherwise DOM order paints the result section over
+     the listbox and the dropdown reads as transparent. */
+  z-index: 10;
 }
 .gv1-atlas-input {
   width: 100%;
