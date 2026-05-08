@@ -16,8 +16,9 @@ export function Tokens({ tokens }: TokensProps) {
       <div className="gv1-section-head">
         <span className="gv1-rune" aria-hidden="true">§ V</span>
         <h2 className="gv1-section-title">Tokens</h2>
-        <span className="gv1-mono-xs gv1-dim">({tokens.length})</span>
-        <span className="gv1-mono-xs gv1-dim">· created by this deck</span>
+        <span className="gv1-mono-xs gv1-dim">
+          · {tokens.length} {tokens.length === 1 ? 'token' : 'tokens'} created by this deck
+        </span>
       </div>
       <div className="gv1-tokens-grid">
         {tokens.map((t, i) => {

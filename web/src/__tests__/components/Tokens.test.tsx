@@ -36,7 +36,9 @@ describe('Tokens', () => {
     render(<Tokens tokens={SAMPLE} />);
 
     expect(screen.getByRole('heading', { name: /tokens/i })).toBeInTheDocument();
-    expect(screen.getByText(`(${SAMPLE.length})`)).toBeInTheDocument();
+    expect(
+      screen.getByText(new RegExp(`${SAMPLE.length} tokens? created by this deck`)),
+    ).toBeInTheDocument();
 
     expect(screen.getByText('Eldrazi Scion')).toBeInTheDocument();
     expect(screen.getByText('Spirit')).toBeInTheDocument();
