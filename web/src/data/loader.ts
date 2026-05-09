@@ -18,7 +18,11 @@ import type {
   RawSimulation,
 } from './types';
 
-const STORAGE_PREFIX = 'gv1-deck-data:';
+// Bump suffix when the persisted shape or upstream data semantics change so
+// returning users don't read 24h-stale bundles. v2 (DEC-202): tokens[]
+// expanded to include game-state markers (Experience, Poison Counter,
+// City's Blessing, etc.) and many decks gained new producers.
+const STORAGE_PREFIX = 'gv1-deck-data-v2:';
 const TTL_MS = 24 * 60 * 60 * 1000;
 
 interface PersistedEnvelope<T> {
