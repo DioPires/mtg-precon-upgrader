@@ -19,10 +19,10 @@ import type {
 } from './types';
 
 // Bump suffix when the persisted shape or upstream data semantics change so
-// returning users don't read 24h-stale bundles. v2 (DEC-202): tokens[]
-// expanded to include game-state markers (Experience, Poison Counter,
-// City's Blessing, etc.) and many decks gained new producers.
-const STORAGE_PREFIX = 'gv1-deck-data-v2:';
+// returning users don't read 24h-stale bundles. v3 (DEC-202 follow-up):
+// dedup key for tokens[] now includes oracle_text, surfacing both Wurmcoil
+// Engine Wurms (lifelink + deathtouch) instead of collapsing them.
+const STORAGE_PREFIX = 'gv1-deck-data-v3:';
 const TTL_MS = 24 * 60 * 60 * 1000;
 
 interface PersistedEnvelope<T> {

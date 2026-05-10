@@ -172,8 +172,14 @@ def is_marker_part(part: dict, card_name: str) -> bool:
     )
 
 
-def token_identity_key(token_card: dict) -> tuple[str, str | None, str | None]:
-    """Return (name, power, toughness) for deduplication across printings."""
+def token_identity_key(token_card: dict) -> tuple[str, str | None, str | None, str]:
+    """Return (name, power, toughness, oracle_text) for deduplication.
+
+    Oracle text is part of the key because some cards (Wurmcoil Engine,
+    Mirrorworks, etc.) produce multiple distinct tokens that share name
+    and P/T but differ in keyword abilities — the lifelink Wurm vs the
+    deathtouch Wurm collapse without it.
+    """
     face = token_card
     if "card_faces" in token_card and token_card["card_faces"]:
         face = token_card["card_faces"][0]
@@ -181,6 +187,7 @@ def token_identity_key(token_card: dict) -> tuple[str, str | None, str | None]:
         face.get("name", token_card.get("name", "Unknown")),
         face.get("power", token_card.get("power")),
         face.get("toughness", token_card.get("toughness")),
+        face.get("oracle_text", token_card.get("oracle_text", "")) or "",
     )
 
 
