@@ -6,7 +6,7 @@
   "commander": "Sauron, the Dark Lord",
   "cost": "$350-450",
   "bracket": "4+",
-  "gameChangers": 12,
+  "gameChangers": 9,
   "lastUpdatedSet": "Duskmourn: House of Horror",
   "sources": [
     {
@@ -35,14 +35,13 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Sauron, the Dark Lord is the engine that powers a tutored Thassa's Oracle combo deck. Sauron amasses Orcs every time an opponent casts a spell, building card advantage, Ring temptation looting, and Bargain/sacrifice fuel via token production. The deck's primary win condition is Thassa's Oracle + Demonic Consultation (3 mana, tutorable with five tutors). Backup plans include Beseech-the-Mirror tutoring and free-casting Oracle off a sacrificed Army token, Breach the Multiverse reanimation, and a lethal Army swing with shadow/menace evasion. Free interaction (Force of Will, Fierce Guardianship, Deadly Rollick, Deflecting Swat) protects the combo turn or stops opposing wincons.",
+    "strategyOverview": "Sauron, the Dark Lord powers a tutored cEDH-staple combo deck with two finisher lines: (1) Thassa's Oracle / Jace, Wielder of Mysteries / Laboratory Maniac + Demonic Consultation OR Tainted Pact (3-5 mana win). The mana base runs 1 Swamp + 1 Island + 6 non-basic UBR duals so Tainted Pact exiles the entire library without hitting duplicate-name basics. Plan A: deploy a wincon-permanent (any of 3 permanents), cast Consultation or Tainted Pact, win. Plan B: Sauron's amass engine fuels Beseech-bargain free-casts and reanimation. Plan C: lethal Army swing with shadow/menace evasion. Free interaction (Force of Will, Fierce Guardianship, Deadly Rollick, Deflecting Swat) protects the combo turn.",
     "deckCategories": [
       {
         "name": "Amass Payoffs",
         "description": "Cards that grow or benefit from the Orc Army token",
         "cards": [
           "Call of the Ring",
-          "Saruman, the White Hand",
           "Grishnákh, Brash Instigator",
           "Corsairs of Umbar",
           "Barad-dûr",
@@ -72,7 +71,6 @@
           "Relic of Sauron",
           "Thirst for Discovery",
           "Consider",
-          "Stinging Study",
           "Mystic Remora",
           "Mystic Confluence",
           "Painful Truths"
@@ -93,12 +91,14 @@
         ]
       },
       {
-        "name": "Combo Win — Thoracle Line",
-        "description": "Two-card win condition. Cast Thassa's Oracle, then Demonic Consultation naming a card not in the deck — the Consultation exiles your library, and the Oracle's ETB trigger wins on an empty library. Beseech the Mirror bargained on a Sauron Army token tutors and casts Thoracle for free.",
+        "name": "Combo Win — Thoracle Lines",
+        "description": "Three wincon-permanents × two exile-library finishers = six tutored combo lines. Cast any of Thoracle / Jace / Lab Maniac on the battlefield, then cast Demonic Consultation OR Tainted Pact naming a card not in the deck. The finisher exiles the entire library (singleton basics for Tainted Pact); the wincon-permanent's static ability turns the next draw into a win.",
         "cards": [
           "Thassa's Oracle",
+          "Jace, Wielder of Mysteries",
+          "Laboratory Maniac",
           "Demonic Consultation",
-          "Beseech the Mirror"
+          "Tainted Pact"
         ]
       },
       {
@@ -120,7 +120,6 @@
       "description": "Cards that grow or benefit from the Orc Army token. Orcish Bowmasters creates its own Army.",
       "cards": [
         "Call of the Ring",
-        "Saruman, the White Hand",
         "Grishnákh, Brash Instigator",
         "Corsairs of Umbar",
         "Gothmog, Morgul Lieutenant",
@@ -133,7 +132,6 @@
       "description": "Keeping your hand full to outpace the table with card advantage and efficient tutors.",
       "cards": [
         "Rhystic Study",
-        "Notion Thief",
         "Phyrexian Arena",
         "Dark Ritual",
         "Demand Answers",
@@ -141,7 +139,6 @@
         "Relic of Sauron",
         "Thirst for Discovery",
         "Consider",
-        "Stinging Study",
         "Mystic Remora",
         "Mystic Confluence",
         "Painful Truths"
@@ -201,26 +198,32 @@
         "Agna Qel'a",
         "Otawara, Soaring City",
         "Takenuma, Abandoned Mire",
-        "Chrome Mox"
+        "Chrome Mox",
+        "Stormcarved Coast",
+        "Darkwater Catacombs"
       ]
     },
     {
-      "name": "Combo Win — Thoracle Line",
-      "description": "Two-card win condition that closes T5-T7 with tutor support. Thassa's Oracle + Demonic Consultation empties the library with the ETB trigger on the stack, winning instantly.",
+      "name": "Combo Win — Thoracle Lines",
+      "description": "Six tutored combo lines: 3 wincon-permanents (Thoracle, Jace, Lab Maniac) × 2 exile-library finishers (Consultation, Tainted Pact). Tainted Pact requires the singleton-basics mana base (1 Swamp + 1 Island + duals).",
       "cards": [
         "Thassa's Oracle",
-        "Demonic Consultation"
+        "Jace, Wielder of Mysteries",
+        "Laboratory Maniac",
+        "Demonic Consultation",
+        "Tainted Pact"
       ]
     },
     {
       "name": "Tutors",
       "description": "Five tutors to assemble combo or find spot answers. Beseech the Mirror is the standout — bargain on a Sauron Army token to tutor + cast for free if MV ≤ 4.",
       "cards": [
-        "Grim Tutor",
-        "Diabolic Intent",
         "Beseech the Mirror",
-        "Spellseeker",
-        "Mystical Tutor"
+        "Demonic Tutor",
+        "Diabolic Intent",
+        "Grim Tutor",
+        "Mystical Tutor",
+        "Spellseeker"
       ]
     },
     {
@@ -275,6 +278,82 @@
         {
           "type": "commanderspellbook",
           "name": "cEDH wincon redundancy"
+        }
+      ]
+    },
+    {
+      "title": "Laboratory Maniac + Demonic Consultation",
+      "kind": "combo",
+      "pieces": [
+        "Laboratory Maniac",
+        "Demonic Consultation"
+      ],
+      "cards": [
+        "Laboratory Maniac",
+        "Demonic Consultation"
+      ],
+      "description": "Cast Laboratory Maniac (3 MV, creature). She has the same static replacement as Thoracle: 'If you would draw a card while your library has no cards in it, you win the game instead.' Cast Demonic Consultation naming a card not in the deck — Consultation exiles your library. Any subsequent draw (from a draw spell, +1 ability, or natural draw step) wins. 4 mana total.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Lab Maniac + Consultation cEDH combo"
+        }
+      ]
+    },
+    {
+      "title": "Thassa's Oracle + Tainted Pact",
+      "kind": "combo",
+      "pieces": [
+        "Thassa's Oracle",
+        "Tainted Pact"
+      ],
+      "cards": [
+        "Thassa's Oracle",
+        "Tainted Pact"
+      ],
+      "description": "Cast Thassa's Oracle ({U}{U}). With her ETB trigger on the stack, cast Tainted Pact ({1}{B}) naming any card; in a singleton deck (1 of each basic) Tainted Pact exiles cards until it hits a same-named pair, but since the deck is singleton it exiles the entire library. Oracle's ETB then resolves on a 0-card library and wins. 5 mana total. Requires the deck to have at most 1 copy of every card (achieved here via 1 Swamp + 1 Island + non-basic duals).",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Thoracle + Tainted Pact cEDH combo"
+        }
+      ]
+    },
+    {
+      "title": "Jace, Wielder of Mysteries + Tainted Pact",
+      "kind": "combo",
+      "pieces": [
+        "Jace, Wielder of Mysteries",
+        "Tainted Pact"
+      ],
+      "cards": [
+        "Jace, Wielder of Mysteries",
+        "Tainted Pact"
+      ],
+      "description": "Cast Jace ({1}{U}{U}{U}). Cast Tainted Pact naming a card; Pact exiles entire library (singleton deck). Any next draw wins via Jace's static. 7 mana total.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Wincon redundancy"
+        }
+      ]
+    },
+    {
+      "title": "Laboratory Maniac + Tainted Pact",
+      "kind": "combo",
+      "pieces": [
+        "Laboratory Maniac",
+        "Tainted Pact"
+      ],
+      "cards": [
+        "Laboratory Maniac",
+        "Tainted Pact"
+      ],
+      "description": "Cast Laboratory Maniac ({2}{U}). Cast Tainted Pact naming any card; Pact exiles entire library (singleton deck). Any next draw wins via Lab Maniac's static. 5 mana total.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Wincon redundancy"
         }
       ]
     },
@@ -379,7 +458,6 @@
     {
       "title": "Saruman's Army",
       "cards": [
-        "Saruman, the White Hand",
         "Grishnákh, Brash Instigator"
       ],
       "description": "Saruman amasses Orcs X when you cast noncreature spells, scaling with mana value. Witch-king's flying body deters attacks and forces opponents to sacrifice creatures that hit you. Grishnakh's ETB amasses Orcs 2 and steals an opponent's creature based on Army power.",
@@ -411,8 +489,7 @@
     {
       "title": "The One Ring Engine",
       "cards": [
-        "Sauron, the Dark Lord",
-        "Notion Thief"
+        "Sauron, the Dark Lord"
       ],
       "description": "The One Ring draws increasing cards each turn while providing protection on ETB. Notion Thief steals opponents' draws. Together with Sauron's amass triggers from opponent casts, you out-resource the entire table.",
       "sources": [
@@ -538,20 +615,6 @@
           "name": "EDHREC #1 Synergy",
           "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
           "detail": "78% inclusion, 69% synergy"
-        }
-      ]
-    },
-    {
-      "name": "Saruman, the White Hand",
-      "price": "$1-2",
-      "isGameChanger": false,
-      "reason": "Amasses Orcs X (where X is the spell's mana value) every time you cast a noncreature spell. Scales with spell cost and stacks with Sauron's triggers. Also gives Goblins and Orcs ward {2}.",
-      "sources": [
-        {
-          "type": "edhrec",
-          "name": "EDHREC Top Synergy",
-          "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-          "detail": "67% inclusion"
         }
       ]
     },
@@ -938,19 +1001,6 @@
       ]
     },
     {
-      "name": "Notion Thief",
-      "price": "$2-4",
-      "isGameChanger": true,
-      "reason": "Flash creature that steals opponents' card draws. Devastating with wheel effects and shuts down opponents' draw engines while fueling yours.",
-      "sources": [
-        {
-          "type": "edhrec",
-          "name": "EDHREC High Synergy",
-          "url": "https://edhrec.com/commanders/sauron-the-dark-lord"
-        }
-      ]
-    },
-    {
       "name": "Fierce Guardianship",
       "price": "$8-12",
       "isGameChanger": true,
@@ -1094,19 +1144,6 @@
           "type": "ai-inferred",
           "name": "Mana Base Optimization",
           "detail": "Replaces Temple of Deceit — repeatable loot > one-time scry, almost always untapped with 10 basics"
-        }
-      ]
-    },
-    {
-      "name": "Stinging Study",
-      "price": "$3-5",
-      "isGameChanger": false,
-      "reason": "Draw 6, lose 6 at instant speed (Sauron MV=6). Massive card advantage burst that matches the reactive counterspell game plan. Proven performer in Eternal Agony.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "CZ template analysis",
-          "detail": "Card advantage gap fix. Draw 6 at instant speed for Sauron MV=6"
         }
       ]
     },
@@ -1343,17 +1380,96 @@
           "detail": "DEC-205 path C-light — second 2-card combo line to raise comboLethal floor"
         }
       ]
+    },
+    {
+      "name": "Demonic Tutor",
+      "price": "$30-50",
+      "isGameChanger": true,
+      "reason": "Two-mana universal tutor to hand. Premium B4+ combo enabler. Finds any combo piece (Thoracle, Jace, Lab Maniac, Consultation, Tainted Pact, Reanimate, or interaction). Cast and use the tutored card the same turn — combo turn is single-cast.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Premium universal tutor for combo redundancy"
+        }
+      ]
+    },
+    {
+      "name": "Laboratory Maniac",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Third wincon-permanent (alongside Thassa's Oracle and Jace, Wielder of Mysteries). Same static replacement: 'If you would draw a card while your library has no cards in it, you win the game instead.' Pairs with Demonic Consultation or Tainted Pact for a 4-mana 2-card win.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Lab Maniac + Consultation cEDH wincon redundancy"
+        }
+      ]
+    },
+    {
+      "name": "Tainted Pact",
+      "price": "$15-20",
+      "isGameChanger": false,
+      "reason": "Second Demonic Consultation-style finisher. Cast naming any card; in a singleton deck the Pact exiles your entire library (no duplicates trigger the stop condition). Any subsequent draw wins via Thoracle/Jace/Lab Maniac static. Requires singleton basic land base — this deck runs 1 Swamp + 1 Island + 6 non-basic duals exactly for this reason.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Tainted Pact cEDH finisher"
+        }
+      ]
+    },
+    {
+      "name": "Cascade Bluffs",
+      "price": "$3-7",
+      "isGameChanger": false,
+      "reason": "Filter land — always enters untapped, taps for colorless, then activate {U/R},{T}: Add {U}{U}, {U}{R}, or {R}{R}. Premium UR mana fixing for combo turns.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Owned dual added during Tainted Pact mana-base restructure"
+        }
+      ]
+    },
+    {
+      "name": "Sulfur Falls",
+      "price": "$2-5",
+      "isGameChanger": false,
+      "reason": "Check-land — enters untapped if you control an Island or a Mountain. Deck has 7+ Islands/Mountains (Watery Grave, Steam Vents, Drowned Catacomb, Shivan Reef, Smoldering Marsh, Blood Crypt, Mount Doom), so nearly always untapped.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Owned UR check-land for Tainted Pact restructure"
+        }
+      ]
+    },
+    {
+      "name": "Dragonskull Summit",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Check-land — enters untapped if you control a Swamp or a Mountain. Deck has 5+ Swamps/Mountains, so nearly always untapped. Cheap B/R fixing.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Owned BR check-land for Tainted Pact restructure"
+        }
+      ]
+    },
+    {
+      "name": "Blackcleave Cliffs",
+      "price": "$5-10",
+      "isGameChanger": false,
+      "reason": "Fast-land — enters untapped if you control two or fewer other lands. T1-T3 untapped BR fixing, exactly when you want to deploy mana rocks and combo pieces.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Owned BR fast-land for Tainted Pact restructure"
+        }
+      ]
     }
   ],
   "decklist": [
     {
       "name": "Call of the Ring",
       "type": "Enchantment",
-      "primary_role": "engine"
-    },
-    {
-      "name": "Saruman, the White Hand",
-      "type": "Creature",
       "primary_role": "engine"
     },
     {
@@ -1379,11 +1495,6 @@
     {
       "name": "Mystic Remora",
       "type": "Enchantment",
-      "primary_role": "card-draw"
-    },
-    {
-      "name": "Notion Thief",
-      "type": "Creature",
       "primary_role": "card-draw"
     },
     {
@@ -1535,11 +1646,6 @@
       "name": "Relic of Sauron",
       "type": "Artifact",
       "primary_role": "ramp"
-    },
-    {
-      "name": "Stinging Study",
-      "type": "Instant",
-      "primary_role": "card-draw"
     },
     {
       "name": "Mind Stone",
@@ -1739,18 +1845,13 @@
     {
       "name": "Swamp",
       "type": "Land",
-      "quantity": 5,
+      "quantity": 1,
       "primary_role": "land"
     },
     {
       "name": "Island",
       "type": "Land",
-      "quantity": 3,
-      "primary_role": "land"
-    },
-    {
-      "name": "Turbulent Springs",
-      "type": "Land",
+      "quantity": 1,
       "primary_role": "land"
     },
     {
@@ -1791,14 +1892,20 @@
       "name": "Spellseeker",
       "type": "Creature",
       "primary_role": "tutor",
-      "tutor_targets": ["instant", "sorcery"],
+      "tutor_targets": [
+        "instant",
+        "sorcery"
+      ],
       "tutor_mv_cap": 2
     },
     {
       "name": "Mystical Tutor",
       "type": "Instant",
       "primary_role": "tutor",
-      "tutor_targets": ["instant", "sorcery"]
+      "tutor_targets": [
+        "instant",
+        "sorcery"
+      ]
     },
     {
       "name": "Cabal Ritual",
@@ -1821,6 +1928,58 @@
       "primary_role": "wincon",
       "secondary_role": "card-draw",
       "wincon_style": "combo"
+    },
+    {
+      "name": "Demonic Tutor",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Laboratory Maniac",
+      "type": "Creature",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Tainted Pact",
+      "type": "Instant",
+      "primary_role": "wincon",
+      "secondary_role": "tutor"
+    },
+    {
+      "name": "Cascade Bluffs",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sulfur Falls",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Dragonskull Summit",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Blackcleave Cliffs",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Turbulent Springs",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Stormcarved Coast",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Darkwater Catacombs",
+      "type": "Land",
+      "primary_role": "land"
     }
   ],
   "tokens": [
