@@ -19,10 +19,12 @@ import type {
 } from './types';
 
 // Bump suffix when the persisted shape or upstream data semantics change so
-// returning users don't read 24h-stale bundles. v3 (DEC-202 follow-up):
-// dedup key for tokens[] now includes oracle_text, surfacing both Wurmcoil
-// Engine Wurms (lifelink + deathtouch) instead of collapsing them.
-const STORAGE_PREFIX = 'gv1-deck-data-v3:';
+// returning users don't read 24h-stale bundles. v4 (DEC-205): Dark Dominion
+// retune adds Demonic Tutor / Laboratory Maniac / Tainted Pact with new
+// winConditions tagged kind:"combo" and decklist tutor_targets/tutor_mv_cap
+// schema fields; basics restructured to singleton (1 Swamp + 1 Island) plus
+// 6 owned UBR dual lands.
+const STORAGE_PREFIX = 'gv1-deck-data-v4:';
 const TTL_MS = 24 * 60 * 60 * 1000;
 
 interface PersistedEnvelope<T> {
