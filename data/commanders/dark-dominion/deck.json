@@ -141,7 +141,6 @@
         "Relic of Sauron",
         "Thirst for Discovery",
         "Consider",
-        "The Mouth of Sauron",
         "Stinging Study",
         "Mystic Remora",
         "Mystic Confluence",
@@ -257,6 +256,25 @@
           "name": "The Command Zone - Bracket 4 (Ep 731)",
           "url": "https://www.youtube.com/watch?v=jzeTz9clIC8",
           "detail": "Cited as the expected 2-card kill in B4+ blue combo decks"
+        }
+      ]
+    },
+    {
+      "title": "Jace, Wielder of Mysteries + Demonic Consultation (Redundant Wincon)",
+      "kind": "combo",
+      "pieces": [
+        "Jace, Wielder of Mysteries",
+        "Demonic Consultation"
+      ],
+      "cards": [
+        "Jace, Wielder of Mysteries",
+        "Demonic Consultation"
+      ],
+      "description": "Cast Jace ({1}{U}{U}{U}, 4 MV). His static ability — 'If you would draw a card while your library has no cards in it, you win the game instead' — turns any subsequent draw into a win once your library is empty. Cast Demonic Consultation ({B}) naming a card not in the deck; Consultation exiles your entire library. Jace's +1 ability (or any draw effect) then wins the game. 5 mana total. Provides redundancy if Thoracle is countered, exiled, or stranded in the graveyard before reanimation is available.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "cEDH wincon redundancy"
         }
       ]
     },
@@ -463,6 +481,21 @@
           "type": "ai-inferred",
           "name": "Budget tutor chain",
           "detail": "Spellseeker → Mystical Tutor → Consultation = 6-mana guaranteed assembly"
+        }
+      ]
+    },
+    {
+      "title": "Jace, Wielder of Mysteries + Demonic Consultation",
+      "cards": [
+        "Jace, Wielder of Mysteries",
+        "Demonic Consultation"
+      ],
+      "description": "Cast Jace (4 MV, {1}{U}{U}{U}). With Jace on the battlefield, his static ability is active: drawing from an empty library wins the game. Cast Demonic Consultation naming a card not in the deck — Consultation exiles your library. On your next draw (or Jace's +1 ability, which draws), the win replacement fires. Identical win mechanism to Thassa's Oracle but on a planeswalker; pieces in the proxy OR with the Thoracle line, so either combo path triggers comboLethal.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Wincon redundancy",
+          "detail": "cEDH-staple alternative finisher for the Consultation line"
         }
       ]
     }
@@ -892,19 +925,6 @@
       ]
     },
     {
-      "name": "The Mouth of Sauron",
-      "price": "$0.50-1",
-      "isGameChanger": false,
-      "reason": "Instant-speed card selection based on lands you control. With kicker, digs deep. Triggers Saruman's amass at instant speed.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Card Draw",
-          "detail": "Instant-speed selection with kicker upside"
-        }
-      ]
-    },
-    {
       "name": "Rivendell",
       "price": "$1-3",
       "isGameChanger": false,
@@ -1305,6 +1325,24 @@
           "detail": "Free slot with reusable color fixing"
         }
       ]
+    },
+    {
+      "name": "Jace, Wielder of Mysteries",
+      "price": "$2-4",
+      "isGameChanger": false,
+      "reason": "Redundant Thassa's Oracle on a planeswalker chassis. Static replacement: 'If you would draw a card while your library has no cards in it, you win the game instead.' Cast Jace, then Demonic Consultation naming a card not in the deck — Consultation exiles the library, Jace's +1 (or any other card draw) triggers the win clause. Identical 5-mana win line to the Thoracle combo, doubling wincon redundancy. Jace's +1 also mills 2 + draws 1, which is incremental card advantage and graveyard fuel for the reanimation backup plan.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Jace, Wielder of Mysteries + Demonic Consultation",
+          "detail": "Standard cEDH wincon redundancy"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Wincon redundancy",
+          "detail": "DEC-205 path C-light — second 2-card combo line to raise comboLethal floor"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -1407,11 +1445,6 @@
       "name": "Consider",
       "type": "Instant",
       "primary_role": "card-draw"
-    },
-    {
-      "name": "The Mouth of Sauron",
-      "type": "Creature",
-      "primary_role": "engine"
     },
     {
       "name": "Dig Through Time",
@@ -1776,6 +1809,13 @@
       "name": "Jeweled Amulet",
       "type": "Artifact",
       "primary_role": "ramp"
+    },
+    {
+      "name": "Jace, Wielder of Mysteries",
+      "type": "Planeswalker",
+      "primary_role": "wincon",
+      "secondary_role": "card-draw",
+      "wincon_style": "combo"
     }
   ],
   "tokens": [
@@ -1799,8 +1839,7 @@
         "Orcish Bowmasters",
         "Saruman's Trickery",
         "Saruman, the White Hand",
-        "Sauron, the Dark Lord",
-        "The Mouth of Sauron"
+        "Sauron, the Dark Lord"
       ]
     },
     {
