@@ -137,6 +137,89 @@ Final cut list to be picked once swaps are approved; aim for 11 cuts matching 11
 
 **Risk**: changes the deck's feel from "fair infect midrange" to "tutor the kill." Board has historically pushed back on this style for some decks; confirm this commander gets the tutor treatment.
 
+### Option B-budget — Path B with alternatives within EU pricing + availability rule (2026-05-12 board revision)
+
+**Premise**: Path B's premium suite (Force of Will, Chrome Mox, Mana Vault, Ancient Tomb, Vampiric/Demonic Tutor, etc.) is fully blocked — either in another deck (excl. Genesis Protocol) or above EU € budget. Build the best B4-push achievable with budget-feasible, never-blocked alternatives.
+
+**Honest outcome target**: median lethal T8 → ~T7 (lethalProxy ~35-45% at T6, ~60-65% at T7). This is **soft B4 (DEC-205 classification)**, not true B4. The expensive tutors and Mana Vault / Chrome Mox / Grim Monolith are mandatory for true B4 speed; without them, the deck can't reach the lethalProxy ≥ 50% at T6 threshold.
+
+#### Availability audit performed 2026-05-12
+
+| Candidate | Status |
+|---|---|
+| Mox Amber | ✅ free (not in any other deck) |
+| Talisman of Curiosity / Hierarchy / Resilience | ✅ free |
+| Sylvan Tutor, Diabolic Tutor, Profane Tutor | ✅ free |
+| Pact of Negation, Slaughter Pact | ✅ free |
+| Stubborn Denial, An Offer You Can't Refuse, Daze, Misdirection | ✅ free |
+| Veil of Summer, Autumn's Veil | ✅ free |
+| Sign in Blood, Read the Bones | ✅ free |
+| Glistening Oil, Phyresis | ✅ free |
+| Lotus Petal | ❌ blocked (dark-dominion) |
+| Eladamri's Call, Worldly Tutor | ❌ blocked (mutant-multiplication) |
+| Mystical Tutor | ❌ blocked (dark-dominion, mutant-multiplication) |
+| Beseech the Mirror | ❌ blocked (dark-dominion) |
+| Phyrexian Arena | ❌ blocked (dark-dominion) |
+| Talisman of Indulgence, Fellwar Stone, Mind Stone | ❌ blocked |
+
+#### Proposed adds (10 cards, ~€40-85 EU spread across two tiers)
+
+##### Tier 1 — Core budget retune (~€35-50 EU)
+
+| Card | EU est. | Role | Oracle text condensed |
+|---|---|---|---|
+| Mox Amber | ~€10-15 | Fast mana | {0} legendary artifact; {T}: add any color from your legendaries' colors. Atraxa is legendary — taps for any of WUBG once she's out. |
+| Sylvan Tutor | ~€5-8 | Tutor (creature → top) | {G} sorcery. Finds Tekuthal / Vorinclex / Necrogen Rotpriest / Skithiryx / Triumph (no — Triumph is sorcery, won't grab). Wait — Sylvan only grabs creatures. |
+| Diabolic Tutor | ~€1 | Tutor (any → hand) | {2}{B}{B} sorcery. Universal. Slow at 4 mana but unblocked. |
+| Profane Tutor | ~€3-5 | Tutor (any → hand) | Suspend 2—{1}{B}. Cast T1, resolves T3 → tutored card by T3-T4. No hard-cast cost (suspend-only). |
+| Stubborn Denial | ~€1 | Counter | {U}. Counter noncreature unless {1} paid. **Ferocious (you control 4+ power creature): counters unconditionally.** Atraxa is 4/4 — qualifies natively. |
+| An Offer You Can't Refuse | ~€1-3 | Counter | {U} instant. Counter noncreature; opponent makes 2 Treasures. Cheap, fast, on-color. |
+| Veil of Summer | ~€10-15 | Free protection | {G} instant. Draw a card if opp cast U/B this turn. Your spells can't be countered. You + perms hexproof from U/B until EOT. Premier B4 protection. |
+| Glistening Oil | ~€1-2 | Infect aura | {B}{B} aura, enchanted creature has infect; -1/-1 counter on it each upkeep; **returns to hand from graveyard**. On Atraxa: 2 hits = 8 poison = lethal in 2 attacks. Self-recurs. |
+| Phyresis | ~€1-2 | Infect aura | {1}{U} aura, enchanted creature has infect (no downside). Redundancy with Glistening Oil. |
+| Sign in Blood | ~€1 | Card draw | {B}{B} sorcery. Target player draws 2; loses 2 life. Cheap, fast. |
+
+**Tier 1 spend: ~€35-55 EU.** Expected outcome: median lethal T8 → T7.3 (lethalProxy ~30% T6, ~55% T7).
+
+##### Tier 2 — Optional upgrade (+~€25-35 EU)
+
+| Card | EU est. | Role | Why |
+|---|---|---|---|
+| Pact of Negation | ~€25-35 | Free counter | {0} instant. Counter target spell. Next upkeep pay {3}{U}{U} or lose. **Free** on the kill turn — pay-or-lose triggers on a turn that probably ends the game anyway. Closest budget-accessible FoW analog. |
+
+**Tier 1 + Tier 2 spend: ~€60-90 EU.** Expected outcome: median lethal T7.1 (kill-turn protection improves resilience but doesn't accelerate the kill itself).
+
+#### Cuts (10 slots)
+
+| Cut | Reason |
+|---|---|
+| Wurmquake | 5-mana sorcery, no body, no proliferate trigger |
+| Phyresis Outbreak | Partial wipe, redundant with Toxic Deluge |
+| Norn's Choirmaster | Slow proliferate-on-attack, weak body |
+| Expansion Algorithm | Slow proliferate engine, weaker than already-in Tekuthal |
+| Grateful Apparition | 1/1 evasive proliferator, weak |
+| Hand of the Praetors | Narrow infect anthem; Necrogen Rotpriest covers broader |
+| Sword of Truth and Justice | Equipment, weaker than counters + draw at B4 speed |
+| Glistening Sphere | Slow corrupted payoff |
+| Skrelv's Hive | Slow build-up |
+| Infectious Bite | Narrow 1-poison-per-opp once |
+
+11 add slots vs 10 cuts → cut one of Glistening Oil/Phyresis if board prefers (keep Phyresis: no downside; or keep Glistening Oil: recurs from GY).
+
+#### GC count after Tier 1+2
+
+3 → **4** (adds Pact of Negation if included; otherwise stays at 3). Pact of Negation **is not on the official GC list** — verified via `data/game-changers.json`. So the deck would still be at 3 GCs and the B4 label remains a *user choice* not a *rule consequence*.
+
+If board wants ≥4 GCs to force B4-by-rule, the only budget-feasible candidates with availability would need separate research (e.g., Crop Rotation, Drannith Magistrate, Notion Thief, Orcish Bowmasters, Smothering Tithe — many are >€15 in EU). Surface as a follow-up if desired.
+
+#### Risks / honest caveats
+
+1. **This is soft B4, not true B4.** The promise of T6 median kill needs the premium suite. Don't expect Path B-budget to feel like a real B4 deck against pods that are actually B4.
+2. **Mox Amber is conditional**: useless before T3-T4 unless we mulligan for it + Atraxa. Adds variance.
+3. **Glistening Oil's downside** (-1/-1 counter on enchanted creature each upkeep) means it's a kill-turn aura on Atraxa, not a permanent buff. Atraxa dies in ~3 upkeeps if no proliferate-counter intervention.
+4. **Suspend tutor (Profane Tutor) commits early.** Cast T1, locked into 3 turns of upkeep ticks. Opponents see it coming.
+5. **Sim re-run required** after any swaps approved to verify the T8 → T7 projection actually holds. The estimate is a heuristic, not a measurement.
+
 ### Option C — Add a tutored Triumph-of-the-Hordes finisher line (mid-budget hybrid)
 
 **Premise**: don't go all the way to cEDH-tier card prices, but specifically address the "draw the finisher" reliability problem. Keep the deck's infect identity intact.
