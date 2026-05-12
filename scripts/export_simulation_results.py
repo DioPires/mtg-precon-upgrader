@@ -742,6 +742,58 @@ class GoldfishManaPool:
         return GoldfishManaPool(remaining if success else [])
 
 
+def combine_mana_costs(costs: list[dict]) -> dict:
+    """Sum a list of pip-cost dicts into one combined cost.
+
+    Used to build a synthetic mana cost for casting multiple combo pieces in one turn.
+    Drops the X flag (combo pieces with X are not modeled).
+    """
+    combined = {
+        "generic": 0, "W": 0, "U": 0, "B": 0, "R": 0, "G": 0, "C": 0, "total": 0, "X": False,
+    }
+    for cost in costs:
+        for key in ("generic", "W", "U", "B", "R", "G", "C", "total"):
+            combined[key] += cost.get(key, 0)
+    return combined
+
+
+def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
+    """Parse winConditions[] entries with kind=='combo' into combo-line specs.
+
+    Each combo line: {pieces: [name], costs: [pip_dict], permanentPieces: set[name]}.
+    Pieces not found in profiles are skipped (with the whole line dropped if any piece is missing).
+    """
+    lines = []
+    for wincon in deck_data.get("winConditions", []) or []:
+        if wincon.get("kind") != "combo":
+            continue
+        pieces = wincon.get("pieces") or []
+        if not pieces:
+            continue
+        if not all(p in profiles for p in pieces):
+            continue
+        costs = [profiles[p]["manaCost"] for p in pieces]
+        permanent_pieces = {p for p in pieces if profiles[p].get("isPermanent")}
+        lines.append({
+            "pieces": list(pieces),
+            "costs": costs,
+            "permanentPieces": permanent_pieces,
+        })
+    return lines
+
+
+def extract_tutor_names(deck_data: dict) -> set[str]:
+    """Collect tutor card names from decklist[].primary_role / secondary_role."""
+    tutors = set()
+    for entry in deck_data.get("decklist", []) or []:
+        name = entry.get("name")
+        if not name:
+            continue
+        if entry.get("primary_role") == "tutor" or entry.get("secondary_role") == "tutor":
+            tutors.add(name)
+    return tutors
+
+
 def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
                            commander_name: str, commander_colors: list[str]) -> dict:
     """Precompute per-card profiles for goldfish simulation."""
@@ -755,10 +807,14 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
             commander_colors=commander_colors,
             commander_name=commander_name,
         )
+    combo_lines = extract_combo_lines(deck_data, profiles)
+    tutor_names = extract_tutor_names(deck_data) if combo_lines else set()
     return {
         "profiles": profiles,
         "commanderName": commander_name,
         "commanderColors": commander_colors,
+        "comboLines": combo_lines,
+        "tutorNames": tutor_names,
     }
 
 
@@ -867,9 +923,55 @@ def turn_sources(permanents: list[dict], turn: int) -> list[frozenset]:
     return sources
 
 
+def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
+                          combo_lines: list[dict], tutor_costs: list[dict]) -> bool:
+    """Check whether any combo line is fully assembled and castable this turn.
+
+    Piece is "available" if it is in hand, already on the battlefield (by name), or
+    can be substituted by a tutor in hand (at the cost of the tutor's mana cost).
+    Combined cost = sum of mana_cost pip dicts for pieces NOT already on battlefield,
+    plus tutor costs for each substituted piece.
+
+    `tutor_costs` is the list of pip-dict costs for tutor cards currently in hand,
+    sorted ascending by total mana value (cheapest tutors substitute first).
+    Returns True if any combo line passes piece-presence (incl. tutor substitution)
+    AND mana-availability.
+    """
+    if not combo_lines:
+        return False
+    battlefield_names = {permanent["name"] for permanent in permanents if permanent["kind"] != "land"}
+    hand_names = set(hand)
+    pool = GoldfishManaPool(turn_sources(permanents, turn))
+    for line in combo_lines:
+        to_cast_costs = []
+        tutor_pool = list(tutor_costs)
+        line_ok = True
+        for piece, piece_cost in zip(line["pieces"], line["costs"]):
+            if piece in battlefield_names:
+                continue
+            if piece in hand_names:
+                to_cast_costs.append(piece_cost)
+                continue
+            if tutor_pool:
+                tutor_cost = tutor_pool.pop(0)
+                to_cast_costs.append(tutor_cost)
+                to_cast_costs.append(piece_cost)
+                continue
+            line_ok = False
+            break
+        if not line_ok:
+            continue
+        if not to_cast_costs:
+            return True  # all pieces already on battlefield
+        combined = combine_mana_costs(to_cast_costs)
+        if pool.can_cast(combined):
+            return True
+    return False
+
+
 def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
                        commander_in_play: bool, cumulative_damage: float,
-                       meaningful_threshold: int) -> dict:
+                       meaningful_threshold: int, combo_ready_ever: bool) -> dict:
     """Summarize goldfish board state at end of turn."""
     lands = sum(1 for permanent in permanents if permanent["kind"] == "land")
     ramp = sum(1 for permanent in permanents if permanent["kind"] == "ramp")
@@ -892,6 +994,7 @@ def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
         "firstThreat": 1 if threats > 0 else 0,
         "meaningfulBoard": 1 if meaningful else 0,
         "lethalProxy": 1 if cumulative_damage >= GOLDFISH_LETHAL_DAMAGE_PROXY else 0,
+        "comboLethal": 1 if combo_ready_ever else 0,
     }
 
 
@@ -901,12 +1004,24 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     profiles = context["profiles"]
     commander_name = context["commanderName"]
     commander_colors = context["commanderColors"]
+    combo_lines = context.get("comboLines", [])
 
+    tutor_names = context.get("tutorNames", set())
     library, hand = commander_mulligan_goldfish(decklist, profiles)
     permanents = []
     battlefield_lands = []
     commander_in_play = False
     cumulative_damage = 0.0
+    combo_ready_ever = False
+    # Reserve non-permanent combo pieces (e.g. Demonic Consultation) and tutors — never
+    # cast as filler. Permanent pieces (e.g. Thassa's Oracle) can still be cast proactively;
+    # once on the battlefield they remain available for the combo check.
+    reserved_combo_pieces = {
+        piece
+        for line in combo_lines
+        for piece in line["pieces"]
+        if not profiles[piece].get("isPermanent")
+    } | tutor_names
     by_turn = {}
 
     for turn in range(1, NUM_TURNS + 1):
@@ -943,6 +1058,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             for name in ordered_unique(hand):
                 profile = profiles[name]
                 if profile["isLand"] or profile["isInteraction"]:
+                    continue
+                if name in reserved_combo_pieces:
                     continue
                 if not pool.can_cast(profile["manaCost"]):
                     continue
@@ -1017,6 +1134,12 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             permanent["combat"] for permanent in permanents
             if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
         )
+        if not combo_ready_ever and combo_lines:
+            tutor_costs = sorted(
+                (profiles[name]["manaCost"] for name in hand if name in tutor_names),
+                key=lambda cost: cost.get("total", 0),
+            )
+            combo_ready_ever = combo_ready_this_turn(turn, hand, permanents, combo_lines, tutor_costs)
         by_turn[turn] = metrics_from_board(
             turn=turn,
             permanents=permanents,
@@ -1024,6 +1147,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             commander_in_play=commander_in_play,
             cumulative_damage=cumulative_damage,
             meaningful_threshold=meaningful_threshold,
+            combo_ready_ever=combo_ready_ever,
         )
 
     return by_turn
@@ -1044,6 +1168,7 @@ def _run_goldfish_chunk(args):
         "first_threat": Counter(),
         "meaningful_board": Counter(),
         "lethal_proxy": Counter(),
+        "combo_lethal": Counter(),
     }
 
     for _ in range(num_games):
@@ -1061,6 +1186,7 @@ def _run_goldfish_chunk(args):
             aggregate["first_threat"][turn] += metrics["firstThreat"]
             aggregate["meaningful_board"][turn] += metrics["meaningfulBoard"]
             aggregate["lethal_proxy"][turn] += metrics["lethalProxy"]
+            aggregate["combo_lethal"][turn] += metrics["comboLethal"]
 
     return aggregate
 
@@ -1079,13 +1205,14 @@ def merge_goldfish_stats(chunks: list[dict]) -> dict:
         "first_threat": Counter(),
         "meaningful_board": Counter(),
         "lethal_proxy": Counter(),
+        "combo_lethal": Counter(),
     }
 
     for chunk in chunks:
         for key in ("lands", "ramp", "threats", "available_mana", "pressure", "combat", "cumulative_damage"):
             for turn in range(1, NUM_TURNS + 1):
                 merged[key][turn].extend(chunk[key][turn])
-        for key in ("commander_cast", "first_threat", "meaningful_board", "lethal_proxy"):
+        for key in ("commander_cast", "first_threat", "meaningful_board", "lethal_proxy", "combo_lethal"):
             merged[key].update(chunk[key])
     return merged
 
@@ -1115,12 +1242,14 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
     threat_curve = {}
     meaningful_curve = {}
     lethal_curve = {}
+    combo_curve = {}
 
     for turn in range(1, NUM_TURNS + 1):
         commander_curve[str(turn)] = pct(stats["commander_cast"][turn], GOLDFISH_GAMES)
         threat_curve[str(turn)] = pct(stats["first_threat"][turn], GOLDFISH_GAMES)
         meaningful_curve[str(turn)] = pct(stats["meaningful_board"][turn], GOLDFISH_GAMES)
         lethal_curve[str(turn)] = pct(stats["lethal_proxy"][turn], GOLDFISH_GAMES)
+        combo_curve[str(turn)] = pct(stats["combo_lethal"][turn], GOLDFISH_GAMES)
         by_turn[str(turn)] = {
             "lands": mana_stats(stats["lands"][turn]),
             "rampPermanents": mana_stats(stats["ramp"][turn]),
@@ -1133,11 +1262,16 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "firstThreat": threat_curve[str(turn)],
             "meaningfulBoard": meaningful_curve[str(turn)],
             "lethalProxy": lethal_curve[str(turn)],
+            "comboLethal": combo_curve[str(turn)],
         }
 
+    combo_lines = context.get("comboLines", [])
     return {
         "numGames": GOLDFISH_GAMES,
         "byTurn": by_turn,
+        "comboLines": [
+            {"pieces": line["pieces"]} for line in combo_lines
+        ],
         "speed": {
             "commanderCast": {
                 "byTurn": commander_curve,
@@ -1155,13 +1289,23 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
                 "byTurn": lethal_curve,
                 "medianTurn": median_turn_from_cumulative(lethal_curve),
             },
+            "comboLethal": {
+                "byTurn": combo_curve,
+                "medianTurn": median_turn_from_cumulative(combo_curve),
+            },
         },
         "methodology": (
             f"{GOLDFISH_GAMES:,}-game solitaire heuristic. Sequencing: land drop, cheapest ramp, "
             "commander on affordability, biggest affordable threat, then other proactive spells. "
             f"Meaningful board = pressure score >= {meaningful_threshold} or 2+ threats. "
             f"Lethal proxy = cumulative combat-pressure proxy >= {GOLDFISH_LETHAL_DAMAGE_PROXY}; "
-            "combat pressure uses mana-value-based creature scoring because card metadata omits power/toughness."
+            "combat pressure uses mana-value-based creature scoring because card metadata omits power/toughness. "
+            "Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces present "
+            "(hand, battlefield, or substitutable by a tutor in hand at +tutor mana cost) and combined "
+            "mana cost payable. Tutors (cards with primary_role or secondary_role == 'tutor') substitute "
+            "missing pieces using cheapest-first; tutors and non-permanent combo pieces are reserved from "
+            "filler casting. Does not model graveyard-piece recovery, token-state combo enablers, or "
+            "tutor-type restrictions (e.g. Mystical Tutor fetches only instants/sorceries)."
         ),
     }
 
