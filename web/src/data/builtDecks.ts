@@ -16,6 +16,11 @@ const BASIC_LANDS = new Set([
   'Snow-Covered Mountain', 'Snow-Covered Forest',
 ]);
 
+// normalize.ts names the commander group `'Commanders'` (plural) when a
+// partner is present and `'Commander'` otherwise. Skip both — the
+// commander/partner are claimed explicitly above.
+const COMMANDER_GROUPS = new Set(['Commander', 'Commanders']);
+
 export function getBuiltDecks(): Set<string> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -68,7 +73,7 @@ export function aggregateBuiltClaims(
     if (d.commander && !BASIC_LANDS.has(d.commander)) keys.add(frontFace(d.commander));
     if (d.partner && !BASIC_LANDS.has(d.partner)) keys.add(frontFace(d.partner));
     (d.list || []).forEach((group) => {
-      if (group.name === 'Commander') return;
+      if (COMMANDER_GROUPS.has(group.name)) return;
       (group.cards || []).forEach((c) => {
         if (c.n && !BASIC_LANDS.has(c.n)) keys.add(frontFace(c.n));
       });

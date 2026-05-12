@@ -28,6 +28,11 @@ const BASIC_LANDS = new Set([
   'Snow-Covered Mountain', 'Snow-Covered Forest',
 ]);
 
+// normalize.ts names the commander group `'Commanders'` (plural) when a
+// partner is present and `'Commander'` otherwise. Both must be skipped here —
+// the commanders are added explicitly via `d.commander`/`d.partner`.
+const COMMANDER_GROUPS = new Set(['Commander', 'Commanders']);
+
 // CSV parser that respects quoted fields.
 export function parseCsvRows(text: string): string[][] {
   const rows: string[][] = [];
@@ -160,7 +165,7 @@ export function aggregateCards(selectedSlugs: Set<string>, allDecks: DeckFull[])
     if (d.commander) addEntry(d.commander, 'Creature', true, slug, 1);
     if (d.partner) addEntry(d.partner, 'Creature', true, slug, 1);
     (d.list || []).forEach((group) => {
-      if (group.name === 'Commander') return;
+      if (COMMANDER_GROUPS.has(group.name)) return;
       (group.cards || []).forEach((c) => addEntry(c.n, c.type || 'Other', false, slug, c.qty ?? 1));
     });
   });

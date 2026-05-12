@@ -150,6 +150,26 @@ describe('aggregateBuiltClaims', () => {
     expect(claims.size).toBe(0);
   });
 
+  it('skips the plural "Commanders" group for partner decks (DEC-211)', () => {
+    // normalize.ts emits group name `'Commanders'` when partner is set; the
+    // commander + partner are added explicitly, so the group must be skipped
+    // to avoid double-counting.
+    const PARTNERS = makeDeck({
+      slug: 'partners',
+      deckName: 'Partner Deck',
+      commander: 'Leonardo, the Balance',
+      partner: 'Donatello, the Brains',
+      list: [
+        group('Commanders', ['Leonardo, the Balance', 'Donatello, the Brains']),
+        group('Ramp', ['Sol Ring']),
+      ],
+    });
+    const claims = aggregateBuiltClaims(new Set(['partners']), [PARTNERS]);
+    // Set-based, so even without the fix it'd be 1; assert presence.
+    expect(claims.get('Leonardo, the Balance')).toBe(1);
+    expect(claims.get('Donatello, the Brains')).toBe(1);
+  });
+
   it('keys DFC entries by front face so the owned map reconciles (DEC-178)', () => {
     const DFC = makeDeck({
       slug: 'dfc',

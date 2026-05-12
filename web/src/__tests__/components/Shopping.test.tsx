@@ -177,6 +177,25 @@ describe('aggregateCards', () => {
     expect(map.get('Demonic Tutor')?.qty).toBe(2);
   });
 
+  it('does not double-count commander/partner in partner decks (DEC-211)', () => {
+    // normalize.ts names the commander group `'Commanders'` (plural) when a
+    // partner is present. aggregateCards adds the commander + partner
+    // explicitly; the group iteration must skip both names so qty stays at 1.
+    const PARTNER_DECK: DeckFull = makeDeck({
+      slug: 'partners',
+      deckName: 'Partner Deck',
+      commander: 'Leonardo, the Balance',
+      partner: 'Donatello, the Brains',
+      list: [
+        group('Commanders', ['Leonardo, the Balance', 'Donatello, the Brains']),
+        group('Ramp', ['Sol Ring']),
+      ],
+    });
+    const map = aggregateCards(new Set(['partners']), [PARTNER_DECK]);
+    expect(map.get('Leonardo, the Balance')?.qty).toBe(1);
+    expect(map.get('Donatello, the Brains')?.qty).toBe(1);
+  });
+
   it('sums multi-copy qty across decks (DEC-209, generalizes DEC-177)', () => {
     // Two decks running Relentless Rats x2 and x4 → planned qty = 6.
     const A: DeckFull = makeDeck({
@@ -230,6 +249,29 @@ describe('splitOwnership', () => {
     const { buy, own } = splitOwnership(cardMap, owned);
     expect(buy.find((c) => c.name === 'Demonic Tutor')?.qty).toBe(1);
     expect(own.find((c) => c.name === 'Demonic Tutor')?.qty).toBe(1);
+  });
+
+  it('routes owned commander + partner to own (not buy) for partner decks (DEC-211)', () => {
+    const PARTNER_DECK: DeckFull = makeDeck({
+      slug: 'partners',
+      deckName: 'Partner Deck',
+      commander: 'Leonardo, the Balance',
+      partner: 'Donatello, the Brains',
+      list: [
+        group('Commanders', ['Leonardo, the Balance', 'Donatello, the Brains']),
+        group('Ramp', ['Sol Ring']),
+      ],
+    });
+    const cardMap = aggregateCards(new Set(['partners']), [PARTNER_DECK]);
+    const owned = new Map<string, number>([
+      ['Leonardo, the Balance', 1],
+      ['Donatello, the Brains', 1],
+    ]);
+    const { buy, own } = splitOwnership(cardMap, owned);
+    expect(buy.find((c) => c.name === 'Leonardo, the Balance')).toBeUndefined();
+    expect(buy.find((c) => c.name === 'Donatello, the Brains')).toBeUndefined();
+    expect(own.find((c) => c.name === 'Leonardo, the Balance')?.qty).toBe(1);
+    expect(own.find((c) => c.name === 'Donatello, the Brains')?.qty).toBe(1);
   });
 
   it('reconciles DFC deck entries against front-face owned names and shows the full DFC name (DEC-178)', () => {
