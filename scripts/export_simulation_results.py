@@ -782,16 +782,52 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
     return lines
 
 
-def extract_tutor_names(deck_data: dict) -> set[str]:
-    """Collect tutor card names from decklist[].primary_role / secondary_role."""
-    tutors = set()
+PIECE_TYPE_KEYWORDS = ("creature", "instant", "sorcery", "planeswalker", "artifact", "enchantment", "land", "battle")
+
+
+def card_type_tokens(type_line: str) -> set[str]:
+    """Lowercase set of card-type tokens present in a typeLine."""
+    lowered = (type_line or "").lower()
+    return {token for token in PIECE_TYPE_KEYWORDS if token in lowered}
+
+
+def extract_tutor_metadata(deck_data: dict) -> dict:
+    """Build per-tutor metadata table.
+
+    Returns name → {targets: set[str], mv_cap: int|None, free_cast_via_bargain: bool}.
+    Default tutor with no schema overrides is universal (targets={"any"}, mv_cap=None).
+    """
+    tutors = {}
     for entry in deck_data.get("decklist", []) or []:
         name = entry.get("name")
         if not name:
             continue
-        if entry.get("primary_role") == "tutor" or entry.get("secondary_role") == "tutor":
-            tutors.add(name)
+        if entry.get("primary_role") != "tutor" and entry.get("secondary_role") != "tutor":
+            continue
+        targets = entry.get("tutor_targets") or ["any"]
+        tutors[name] = {
+            "targets": {t.lower() for t in targets},
+            "mv_cap": entry.get("tutor_mv_cap"),
+            "free_cast_via_bargain": bool(entry.get("tutor_free_cast_via_bargain", False)),
+        }
     return tutors
+
+
+def extract_tutor_names(deck_data: dict) -> set[str]:
+    """Collect tutor card names from decklist[].primary_role / secondary_role."""
+    return set(extract_tutor_metadata(deck_data).keys())
+
+
+def extract_reanimation_names(deck_data: dict) -> set[str]:
+    """Collect reanimation card names from decklist[].primary_role / secondary_role == 'recursion'."""
+    names = set()
+    for entry in deck_data.get("decklist", []) or []:
+        name = entry.get("name")
+        if not name:
+            continue
+        if entry.get("primary_role") == "recursion" or entry.get("secondary_role") == "recursion":
+            names.add(name)
+    return names
 
 
 def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
@@ -808,13 +844,16 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
             commander_name=commander_name,
         )
     combo_lines = extract_combo_lines(deck_data, profiles)
-    tutor_names = extract_tutor_names(deck_data) if combo_lines else set()
+    tutor_meta = extract_tutor_metadata(deck_data) if combo_lines else {}
+    reanim_names = extract_reanimation_names(deck_data) if combo_lines else set()
     return {
         "profiles": profiles,
         "commanderName": commander_name,
         "commanderColors": commander_colors,
         "comboLines": combo_lines,
-        "tutorNames": tutor_names,
+        "tutorNames": set(tutor_meta.keys()),
+        "tutorMeta": tutor_meta,
+        "reanimationNames": reanim_names,
     }
 
 
@@ -923,28 +962,74 @@ def turn_sources(permanents: list[dict], turn: int) -> list[frozenset]:
     return sources
 
 
+def piece_type_matches(piece_types: set[str], tutor_targets: set[str]) -> bool:
+    """Check whether a tutor's target-type list permits fetching a piece of these types."""
+    if "any" in tutor_targets:
+        return True
+    return bool(piece_types & tutor_targets)
+
+
+def is_bargainable_battlefield(permanents: list[dict], profiles: dict,
+                               commander_in_play: bool, commander_play_turn: int | None,
+                               current_turn: int) -> bool:
+    """Whether at least one bargain-legal target exists on battlefield.
+
+    Bargain (per Beseech the Mirror): sacrifice an artifact, enchantment, or token.
+    Approximated as: any enchantment permanent on battlefield OR (commander in play
+    for >= 1 prior turn — proxy for "Sauron's Army token has appeared via opponent
+    casts in a real 4-player game"). Mana rocks are excluded as bargain targets to
+    avoid double-counting their mana production.
+    """
+    for permanent in permanents:
+        if permanent["kind"] == "land":
+            continue
+        if permanent["kind"] == "ramp":
+            continue  # don't bargain mana rocks
+        type_line = profiles.get(permanent["name"], {}).get("typeLine", "")
+        if "Enchantment" in type_line:
+            return True
+    if commander_in_play and commander_play_turn is not None and current_turn > commander_play_turn:
+        return True
+    return False
+
+
 def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
-                          combo_lines: list[dict], tutor_costs: list[dict]) -> bool:
+                          combo_lines: list[dict], profiles: dict,
+                          tutor_meta: dict, reanim_names: set[str],
+                          commander_in_play: bool, commander_play_turn: int | None) -> bool:
     """Check whether any combo line is fully assembled and castable this turn.
 
-    Piece is "available" if it is in hand, already on the battlefield (by name), or
-    can be substituted by a tutor in hand (at the cost of the tutor's mana cost).
-    Combined cost = sum of mana_cost pip dicts for pieces NOT already on battlefield,
-    plus tutor costs for each substituted piece.
+    Three substitution paths for a missing piece, tried in priority order:
+      1. Bargain-free-cast tutor (e.g. Beseech the Mirror) — if bargainable + piece MV ≤
+         tutor's mv_cap + piece type matches tutor's targets. Adds tutor cost; piece is free.
+      2. Type-matched regular tutor — cheapest tutor whose targets include piece's type
+         and whose mv_cap permits the piece's MV. Adds tutor cost + piece cost.
+      3. Reanimation — only for permanent pieces (creature/planeswalker). Adds reanim cost;
+         piece's cast cost is replaced by reanim's cost.
 
-    `tutor_costs` is the list of pip-dict costs for tutor cards currently in hand,
-    sorted ascending by total mana value (cheapest tutors substitute first).
-    Returns True if any combo line passes piece-presence (incl. tutor substitution)
-    AND mana-availability.
+    Returns True if any combo line has all pieces resolved (via presence or substitution)
+    AND the synthetic combined mana cost is payable from this turn's mana pool.
     """
     if not combo_lines:
         return False
     battlefield_names = {permanent["name"] for permanent in permanents if permanent["kind"] != "land"}
     hand_names = set(hand)
     pool = GoldfishManaPool(turn_sources(permanents, turn))
+    bargainable = is_bargainable_battlefield(
+        permanents, profiles, commander_in_play, commander_play_turn, turn,
+    )
+
+    # Pre-build cheapest-first ordered lists of substitute resources currently in hand.
+    tutors_in_hand = [name for name in hand if name in tutor_meta]
+    tutors_in_hand.sort(key=lambda n: profiles[n]["manaCost"].get("total", 0))
+    reanims_in_hand = [name for name in hand if name in reanim_names]
+    reanims_in_hand.sort(key=lambda n: profiles[n]["manaCost"].get("total", 0))
+
     for line in combo_lines:
         to_cast_costs = []
-        tutor_pool = list(tutor_costs)
+        # Per-line copies so consumption doesn't bleed across lines.
+        tutor_pool = list(tutors_in_hand)
+        reanim_pool = list(reanims_in_hand)
         line_ok = True
         for piece, piece_cost in zip(line["pieces"], line["costs"]):
             if piece in battlefield_names:
@@ -952,13 +1037,59 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
             if piece in hand_names:
                 to_cast_costs.append(piece_cost)
                 continue
-            if tutor_pool:
-                tutor_cost = tutor_pool.pop(0)
-                to_cast_costs.append(tutor_cost)
+
+            piece_profile = profiles.get(piece, {})
+            piece_types = card_type_tokens(piece_profile.get("typeLine", ""))
+            piece_mv = piece_profile.get("manaCost", {}).get("total", 0)
+            piece_is_permanent = piece_profile.get("isPermanent", False)
+
+            # Path 1: bargain free-cast (e.g. Beseech the Mirror)
+            bargain_idx = None
+            if bargainable:
+                for idx, tname in enumerate(tutor_pool):
+                    meta = tutor_meta[tname]
+                    if not meta["free_cast_via_bargain"]:
+                        continue
+                    if meta["mv_cap"] is not None and piece_mv > meta["mv_cap"]:
+                        continue
+                    if not piece_type_matches(piece_types, meta["targets"]):
+                        continue
+                    bargain_idx = idx
+                    break
+            if bargain_idx is not None:
+                tname = tutor_pool.pop(bargain_idx)
+                to_cast_costs.append(profiles[tname]["manaCost"])
+                # piece cast is free under bargain; nothing added for the piece itself
+                continue
+
+            # Path 2: type-matched regular tutor (cheapest-first)
+            tutor_idx = None
+            for idx, tname in enumerate(tutor_pool):
+                meta = tutor_meta[tname]
+                if meta["free_cast_via_bargain"]:
+                    continue  # reserved for bargain path (or rejected by bargainable=False)
+                if meta["mv_cap"] is not None and piece_mv > meta["mv_cap"]:
+                    continue
+                if not piece_type_matches(piece_types, meta["targets"]):
+                    continue
+                tutor_idx = idx
+                break
+            if tutor_idx is not None:
+                tname = tutor_pool.pop(tutor_idx)
+                to_cast_costs.append(profiles[tname]["manaCost"])
                 to_cast_costs.append(piece_cost)
                 continue
+
+            # Path 3: reanimation for permanent pieces (creature/planeswalker etc.)
+            if piece_is_permanent and reanim_pool:
+                rname = reanim_pool.pop(0)
+                to_cast_costs.append(profiles[rname]["manaCost"])
+                # piece cast cost replaced by reanim cost (piece comes from graveyard)
+                continue
+
             line_ok = False
             break
+
         if not line_ok:
             continue
         if not to_cast_costs:
@@ -1007,21 +1138,25 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     combo_lines = context.get("comboLines", [])
 
     tutor_names = context.get("tutorNames", set())
+    tutor_meta = context.get("tutorMeta", {})
+    reanim_names = context.get("reanimationNames", set())
     library, hand = commander_mulligan_goldfish(decklist, profiles)
     permanents = []
     battlefield_lands = []
     commander_in_play = False
+    commander_play_turn = None
     cumulative_damage = 0.0
     combo_ready_ever = False
-    # Reserve non-permanent combo pieces (e.g. Demonic Consultation) and tutors — never
-    # cast as filler. Permanent pieces (e.g. Thassa's Oracle) can still be cast proactively;
-    # once on the battlefield they remain available for the combo check.
+    # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
+    # reanimation spells — never cast as filler. Permanent pieces (e.g. Thassa's Oracle)
+    # can still be cast proactively; once on the battlefield they remain available for
+    # the combo check.
     reserved_combo_pieces = {
         piece
         for line in combo_lines
         for piece in line["pieces"]
         if not profiles[piece].get("isPermanent")
-    } | tutor_names
+    } | tutor_names | reanim_names
     by_turn = {}
 
     for turn in range(1, NUM_TURNS + 1):
@@ -1125,6 +1260,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
 
             if chosen == commander_name:
                 commander_in_play = True
+                if commander_play_turn is None:
+                    commander_play_turn = turn
 
             for _ in range(chosen_profile["immediateDraw"]):
                 if library:
@@ -1135,11 +1272,17 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
         )
         if not combo_ready_ever and combo_lines:
-            tutor_costs = sorted(
-                (profiles[name]["manaCost"] for name in hand if name in tutor_names),
-                key=lambda cost: cost.get("total", 0),
+            combo_ready_ever = combo_ready_this_turn(
+                turn=turn,
+                hand=hand,
+                permanents=permanents,
+                combo_lines=combo_lines,
+                profiles=profiles,
+                tutor_meta=tutor_meta,
+                reanim_names=reanim_names,
+                commander_in_play=commander_in_play,
+                commander_play_turn=commander_play_turn,
             )
-            combo_ready_ever = combo_ready_this_turn(turn, hand, permanents, combo_lines, tutor_costs)
         by_turn[turn] = metrics_from_board(
             turn=turn,
             permanents=permanents,
@@ -1300,12 +1443,18 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             f"Meaningful board = pressure score >= {meaningful_threshold} or 2+ threats. "
             f"Lethal proxy = cumulative combat-pressure proxy >= {GOLDFISH_LETHAL_DAMAGE_PROXY}; "
             "combat pressure uses mana-value-based creature scoring because card metadata omits power/toughness. "
-            "Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces present "
-            "(hand, battlefield, or substitutable by a tutor in hand at +tutor mana cost) and combined "
-            "mana cost payable. Tutors (cards with primary_role or secondary_role == 'tutor') substitute "
-            "missing pieces using cheapest-first; tutors and non-permanent combo pieces are reserved from "
-            "filler casting. Does not model graveyard-piece recovery, token-state combo enablers, or "
-            "tutor-type restrictions (e.g. Mystical Tutor fetches only instants/sorceries)."
+            "Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces "
+            "present (hand, battlefield, or substitutable) and combined mana cost payable. Substitution "
+            "priority for missing pieces: (1) bargain free-cast tutor (e.g. Beseech the Mirror) when a "
+            "non-rock enchantment is on battlefield OR commander has been in play for 1+ turn (approximates "
+            "Sauron-style amass token from real-game opponent casts); (2) type-matched regular tutor "
+            "whose tutor_targets includes piece's card type and tutor_mv_cap permits piece's MV; "
+            "(3) reanimation spell (decklist[].primary_role/secondary_role == 'recursion') for permanent "
+            "pieces only — cost replaces piece's cast cost (treats piece as if in graveyard). Each substitute "
+            "is consumed once per combo line. Tutors, non-permanent combo pieces, and reanimation spells "
+            "are reserved from filler casting. v2 limitations: no literal graveyard tracking (reanim "
+            "assumes piece could be in GY), no opponent interaction, no multi-turn assembly tracking, "
+            "no stack-trigger ordering."
         ),
     }
 
