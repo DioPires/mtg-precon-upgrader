@@ -5,8 +5,8 @@
   "subtitle": "Maximum Amass Synergy",
   "commander": "Sauron, the Dark Lord",
   "cost": "$350-450",
-  "bracket": "5",
-  "gameChangers": 10,
+  "bracket": "4+",
+  "gameChangers": 12,
   "lastUpdatedSet": "Duskmourn: House of Horror",
   "sources": [
     {
@@ -26,10 +26,16 @@
       "name": "The Gamer - Sauron Deck Guide",
       "url": "https://www.thegamer.com/magic-the-gathering-mtg-sauron-the-dark-lord-commander-deck-guide/",
       "detail": "Card recommendations and mana base"
+    },
+    {
+      "type": "article",
+      "name": "Bracket Philosophy (CZ731)",
+      "url": "https://www.youtube.com/watch?v=jzeTz9clIC8",
+      "detail": "Bracket 4 retune per Command Zone Episode 731 — tutored 2-card combo + fast mana + free interaction (DEC-205, 2026-05-12)"
     }
   ],
   "guideContent": {
-    "strategyOverview": "Sauron, the Dark Lord is a Grixis value engine that rewards you for casting spells and attacking. Every time an opponent casts a spell, Sauron amasses Orcs, growing a single massive Army token. When your Army deals combat damage, the Ring tempts you, providing card selection and graveyard fuel. The deck maximizes these triggers through amass synergies, evasion for the Army token, and leveraging the graveyard through reanimation.",
+    "strategyOverview": "Sauron, the Dark Lord is the engine that powers a tutored Thassa's Oracle combo deck. Sauron amasses Orcs every time an opponent casts a spell, building card advantage, Ring temptation looting, and Bargain/sacrifice fuel via token production. The deck's primary win condition is Thassa's Oracle + Demonic Consultation (3 mana, tutorable with five tutors). Backup plans include Beseech-the-Mirror tutoring and free-casting Oracle off a sacrificed Army token, Breach the Multiverse reanimation, and a lethal Army swing with shadow/menace evasion. Free interaction (Force of Will, Fierce Guardianship, Deadly Rollick, Deflecting Swat) protects the combo turn or stops opposing wincons.",
     "deckCategories": [
       {
         "name": "Amass Payoffs",
@@ -37,15 +43,11 @@
         "cards": [
           "Call of the Ring",
           "Saruman, the White Hand",
-          "Witch-king of Angmar",
           "Grishnákh, Brash Instigator",
           "Corsairs of Umbar",
           "Barad-dûr",
-          "Lord of the Nazgûl",
-          "Mauhúr, Uruk-hai Captain",
           "Gothmog, Morgul Lieutenant",
-          "March from the Black Gate",
-          "Warg Rider"
+          "March from the Black Gate"
         ]
       },
       {
@@ -89,6 +91,26 @@
           "The Black Gate",
           "Chrome Mox"
         ]
+      },
+      {
+        "name": "Combo Win — Thoracle Line",
+        "description": "Two-card win condition. Cast Thassa's Oracle, then Demonic Consultation naming a card not in the deck — the Consultation exiles your library, and the Oracle's ETB trigger wins on an empty library. Beseech the Mirror bargained on a Sauron Army token tutors and casts Thoracle for free.",
+        "cards": [
+          "Thassa's Oracle",
+          "Demonic Consultation",
+          "Beseech the Mirror"
+        ]
+      },
+      {
+        "name": "Tutors",
+        "description": "Combo assembly and silver-bullet answers. Spellseeker chains into Demonic Consultation or Mystical Tutor; Beseech the Mirror tutors any card and casts it free if mana value ≤ 4 (Thoracle, Animate Dead, Reanimate, Demonic Consultation, Counterspell all qualify).",
+        "cards": [
+          "Grim Tutor",
+          "Diabolic Intent",
+          "Beseech the Mirror",
+          "Spellseeker",
+          "Mystical Tutor"
+        ]
       }
     ]
   },
@@ -99,14 +121,10 @@
       "cards": [
         "Call of the Ring",
         "Saruman, the White Hand",
-        "Witch-king of Angmar",
         "Grishnákh, Brash Instigator",
         "Corsairs of Umbar",
-        "Lord of the Nazgûl",
-        "Mauhúr, Uruk-hai Captain",
         "Gothmog, Morgul Lieutenant",
         "March from the Black Gate",
-        "Warg Rider",
         "Orcish Bowmasters"
       ]
     },
@@ -124,7 +142,6 @@
         "Thirst for Discovery",
         "Consider",
         "The Mouth of Sauron",
-        "Treason of Isengard",
         "Stinging Study",
         "Mystic Remora",
         "Mystic Confluence",
@@ -136,8 +153,6 @@
       "description": "Making the Army unblockable to guarantee Ring temptation triggers every combat.",
       "cards": [
         "In the Darkness Bind Them",
-        "Aqueous Form",
-        "Whispersilk Cloak",
         "Minas Morgul, Dark Fortress"
       ]
     },
@@ -169,7 +184,6 @@
         "Reanimate",
         "Stitch Together",
         "Animate Dead",
-        "Worldgorger Dragon",
         "Takenuma, Abandoned Mire"
       ]
     },
@@ -190,69 +204,100 @@
         "Takenuma, Abandoned Mire",
         "Chrome Mox"
       ]
+    },
+    {
+      "name": "Combo Win — Thoracle Line",
+      "description": "Two-card win condition that closes T5-T7 with tutor support. Thassa's Oracle + Demonic Consultation empties the library with the ETB trigger on the stack, winning instantly.",
+      "cards": [
+        "Thassa's Oracle",
+        "Demonic Consultation"
+      ]
+    },
+    {
+      "name": "Tutors",
+      "description": "Five tutors to assemble combo or find spot answers. Beseech the Mirror is the standout — bargain on a Sauron Army token to tutor + cast for free if MV ≤ 4.",
+      "cards": [
+        "Grim Tutor",
+        "Diabolic Intent",
+        "Beseech the Mirror",
+        "Spellseeker",
+        "Mystical Tutor"
+      ]
+    },
+    {
+      "name": "Fast Mana — Budget",
+      "description": "Zero- and one-mana acceleration that enables T3-T4 Sauron or early combo turns.",
+      "cards": [
+        "Lotus Petal",
+        "Jeweled Amulet",
+        "Cabal Ritual"
+      ]
     }
   ],
   "winConditions": [
     {
-      "title": "Lethal Army Swing",
+      "title": "Thassa's Oracle + Demonic Consultation (Primary)",
       "cards": [
+        "Thassa's Oracle",
+        "Demonic Consultation"
+      ],
+      "description": "Cast Thassa's Oracle (UU). With her ETB trigger on the stack, cast Demonic Consultation (B) naming a card you do not own. Consultation resolves first, exiling your entire library. Oracle's trigger resolves on a 0-card library — X (devotion ≥ 1) ≥ 0 (library) — you win. 3 mana total. Tutorable with all five tutors in the deck.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Standard cEDH 2-card combo"
+        },
+        {
+          "type": "youtube",
+          "name": "The Command Zone - Bracket 4 (Ep 731)",
+          "url": "https://www.youtube.com/watch?v=jzeTz9clIC8",
+          "detail": "Cited as the expected 2-card kill in B4+ blue combo decks"
+        }
+      ]
+    },
+    {
+      "title": "Beseech the Mirror — Single-Card Win",
+      "cards": [
+        "Beseech the Mirror",
         "Sauron, the Dark Lord",
-        "In the Darkness Bind Them",
-        "Whispersilk Cloak"
+        "Thassa's Oracle"
       ],
-      "description": "Sauron amasses Orcs every time an opponent casts a spell, growing a single massive Army token. In the Darkness Bind Them adds menace Wraith tokens and repeated Ring temptation. Whispersilk Cloak or Aqueous Form makes the Army unblockable. A 15+ power Army with evasion one-shots opponents through commander damage or regular combat.",
+      "description": "Once Sauron has triggered once and created an Orc Army token, Bargain on the token to cast Beseech the Mirror ({1}{B}{B}{B}). Tutor Thassa's Oracle and cast her for free (Bargain free-cast clause, MV 2 ≤ 4). Then cast Demonic Consultation (B) to win — total mana 5 (4 for Beseech + 1 for Consultation). A 5-mana T5–T6 win line off a single tutored card.",
       "sources": [
         {
           "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Strategic win path identification"
+          "name": "Token-bargain combo line"
         }
       ]
     },
     {
-      "title": "Worldgorger Dragon Infinite Mana",
-      "cards": [
-        "Worldgorger Dragon",
-        "Animate Dead",
-        "Sauron, the Dark Lord"
-      ],
-      "description": "Animate Dead targeting Worldgorger Dragon in the graveyard creates an infinite loop: Dragon exiles all other permanents including Animate Dead, which returns everything untapped. Float mana each cycle for infinite mana. Break the loop by targeting a different creature with Animate Dead. Use infinite mana to recast Sauron and amass an arbitrarily large Army, or fuel a lethal Stinging Study.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Strategic win path identification"
-        }
-      ]
-    },
-    {
-      "title": "Breach the Multiverse Reanimation",
+      "title": "Breach the Multiverse Reanimation (Backup)",
       "cards": [
         "Breach the Multiverse",
         "Reanimate",
-        "Sauron, the Dark Lord"
+        "Sauron, the Dark Lord",
+        "Thassa's Oracle"
       ],
-      "description": "Ring temptation fills your graveyard through looting. Breach the Multiverse mills each player 10, then reanimates a creature and planeswalker from each graveyard. Steal opponents' best threats while deploying your own. Combined with cheaper reanimation (Reanimate, Animate Dead, Stitch Together), rebuild a dominant board from any position.",
+      "description": "Ring temptation fills your graveyard. Breach the Multiverse mills each player 10, then reanimates a creature/planeswalker from each graveyard. Steal opponents' best threats while reanimating Sauron or a pre-discarded Thoracle. Combined with Reanimate / Animate Dead / Stitch Together, rebuild from any position or recover a countered combo piece.",
       "sources": [
         {
           "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Strategic win path identification"
+          "name": "Recursion plan B"
         }
       ]
     },
     {
-      "title": "Draw Punishment Drain",
+      "title": "Lethal Army Swing (Tertiary)",
       "cards": [
-        "Orcish Bowmasters",
-        "Notion Thief"
+        "Sauron, the Dark Lord",
+        "In the Darkness Bind Them",
+        "Lightning Greaves"
       ],
-      "description": "Notion Thief steals opponents' extra card draws, triggering Orcish Bowmasters for each stolen draw (1 damage + Army growth). Each opponent's draw step and draw spell feeds Bowmasters damage. Over 2-3 turn cycles, cumulative drain and a growing Army token close the game.",
+      "description": "If the combo is disrupted and the table forgets about Sauron, the Army can still win combat. In the Darkness Bind Them produces menace Wraiths, The Black Gate makes a creature unblockable by the life leader, and Minas Morgul grants shadow. A 15+ power Army with evasion one-shots opponents through commander damage.",
       "sources": [
         {
           "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Strategic win path identification"
+          "name": "Combat backup plan"
         }
       ]
     }
@@ -278,9 +323,7 @@
     {
       "title": "Ring Temptation Card Engine",
       "cards": [
-        "Sauron, the Dark Lord",
-        "Aqueous Form",
-        "Whispersilk Cloak"
+        "Sauron, the Dark Lord"
       ],
       "description": "Making the Army unblockable ensures combat damage every turn, which tempts you with the Ring — looting through your deck for free card selection and graveyard fuel.",
       "sources": [
@@ -298,8 +341,7 @@
         "Breach the Multiverse",
         "Reanimate",
         "Stitch Together",
-        "Animate Dead",
-        "Worldgorger Dragon"
+        "Animate Dead"
       ],
       "description": "Ring temptation fills your graveyard with creatures. Reanimate brings back any creature for 1 mana. Animate Dead does the same from any graveyard for {1}{B}. Stitch Together returns a creature to battlefield with Threshold (trivial with Ring looting). Breach the Multiverse mills everyone 10, then steals a creature from each graveyard. Worldgorger Dragon + Animate Dead creates an infinite mana loop: Dragon exiles all other permanents including Animate Dead, which returns everything, float mana each cycle, break the loop by targeting a different creature.",
       "sources": [
@@ -315,7 +357,6 @@
       "title": "Saruman's Army",
       "cards": [
         "Saruman, the White Hand",
-        "Witch-king of Angmar",
         "Grishnákh, Brash Instigator"
       ],
       "description": "Saruman amasses Orcs X when you cast noncreature spells, scaling with mana value. Witch-king's flying body deters attacks and forces opponents to sacrifice creatures that hit you. Grishnakh's ETB amasses Orcs 2 and steals an opponent's creature based on Army power.",
@@ -363,8 +404,7 @@
       "title": "Amass Army Assault",
       "cards": [
         "Gothmog, Morgul Lieutenant",
-        "March from the Black Gate",
-        "Warg Rider"
+        "March from the Black Gate"
       ],
       "description": "Recurring amass triggers every combat that grow the Army token rapidly. Gothmog gives creature tokens deathtouch, Warg Rider grants menace to Orcs — making the Army nearly impossible to block profitably while it grows larger each turn.",
       "sources": [
@@ -372,6 +412,52 @@
           "type": "ai-inferred",
           "name": "Amass Combat Synergy",
           "detail": "Recurring amass triggers with evasion and deathtouch"
+        }
+      ]
+    },
+    {
+      "title": "Thassa's Oracle + Demonic Consultation",
+      "cards": [
+        "Thassa's Oracle",
+        "Demonic Consultation"
+      ],
+      "description": "Cast Thassa's Oracle. With her ETB trigger on the stack, cast Demonic Consultation naming a card you do not own (or any cEDH staple not in the deck). Consultation resolves first, exiling your entire library. Oracle's trigger then resolves on a 0-card library — devotion to blue (≥1 from Oracle's UU mana cost) ≥ 0 cards in library — you win the game.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Standard cEDH 2-card combo",
+          "detail": "Industry-standard 3-mana win"
+        }
+      ]
+    },
+    {
+      "title": "Beseech the Mirror + Orc Army Token",
+      "cards": [
+        "Beseech the Mirror",
+        "Sauron, the Dark Lord"
+      ],
+      "description": "Bargain on a Sauron-produced Orc Army token (Bargain allows sacrificing tokens). Tutor any card and cast it for free if mana value ≤ 4 — Thassa's Oracle, Demonic Consultation, Animate Dead, Reanimate, Counterspell, Mystic Confluence all qualify. Effectively a 4-mana single-card combo enabler once Sauron has triggered once.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Bargain + token synergy",
+          "detail": "Token bargain + free MV≤4 cast is the deck's signature line"
+        }
+      ]
+    },
+    {
+      "title": "Tutor Chain — Spellseeker Pivot",
+      "cards": [
+        "Spellseeker",
+        "Mystical Tutor",
+        "Demonic Consultation"
+      ],
+      "description": "Spellseeker ETB tutors for an instant or sorcery with mana value ≤ 2. Fetches Mystical Tutor (which then fetches the next combo piece) or Demonic Consultation directly. Two-step assembly that bypasses the need for Demonic Tutor / Vampiric Tutor at a fraction of the price.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Budget tutor chain",
+          "detail": "Spellseeker → Mystical Tutor → Consultation = 6-mana guaranteed assembly"
         }
       ]
     }
@@ -428,20 +514,6 @@
           "name": "EDHREC Top Synergy",
           "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
           "detail": "67% inclusion"
-        }
-      ]
-    },
-    {
-      "name": "Witch-king of Angmar",
-      "price": "$2-4",
-      "isGameChanger": false,
-      "reason": "Flying body that forces each opponent to sacrifice a creature that dealt combat damage to you, then the Ring tempts you. Can discard a card to gain indestructible until end of turn (taps it). Defensive powerhouse that triggers Ring temptation.",
-      "sources": [
-        {
-          "type": "edhrec",
-          "name": "EDHREC Top Synergy",
-          "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-          "detail": "57% inclusion"
         }
       ]
     },
@@ -541,32 +613,6 @@
         {
           "type": "edhrec",
           "name": "EDHREC Staple",
-          "url": "https://edhrec.com/commanders/sauron-the-dark-lord"
-        }
-      ]
-    },
-    {
-      "name": "Lord of the Nazgûl",
-      "price": "$1-2",
-      "isGameChanger": false,
-      "reason": "Creates a 3/3 Wraith token with menace whenever you cast an instant or sorcery. Flying 4/3 body that gives Wraiths protection from Ring-bearers. LotR-themed token engine.",
-      "sources": [
-        {
-          "type": "edhrec",
-          "name": "EDHREC Synergy",
-          "url": "https://edhrec.com/commanders/sauron-the-dark-lord"
-        }
-      ]
-    },
-    {
-      "name": "Mauhúr, Uruk-hai Captain",
-      "price": "$0.50-1",
-      "isGameChanger": false,
-      "reason": "Adds one extra +1/+1 counter whenever counters are placed on an Army, Goblin, or Orc (that many plus one). Menace body that steadily accelerates Army growth.",
-      "sources": [
-        {
-          "type": "edhrec",
-          "name": "EDHREC Synergy",
           "url": "https://edhrec.com/commanders/sauron-the-dark-lord"
         }
       ]
@@ -675,32 +721,6 @@
           "type": "article",
           "name": "TCG Playmat Pros Guide",
           "url": "https://tcgplaymatpros.com/blogs/tcg-blog/sauron-the-dark-lord-commander-deck-guide-amass-the-armies-of-mordor"
-        }
-      ]
-    },
-    {
-      "name": "Aqueous Form",
-      "price": "$0.50-1",
-      "isGameChanger": false,
-      "reason": "Makes your Army unblockable and scries on attack. Guarantees Ring temptation triggers every combat.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Synergy Analysis",
-          "detail": "Evasion ensures Ring temptation triggers"
-        }
-      ]
-    },
-    {
-      "name": "Whispersilk Cloak",
-      "price": "$1-3",
-      "isGameChanger": false,
-      "reason": "Shroud and unblockable for your Army. Protection and evasion in one equipment.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Synergy Analysis",
-          "detail": "Redundant evasion for Army token"
         }
       ]
     },
@@ -815,20 +835,6 @@
       ]
     },
     {
-      "name": "Warg Rider",
-      "price": "$0.50-1",
-      "isGameChanger": false,
-      "reason": "Gives other Orcs and Goblins menace, and amasses Orcs 2 at the beginning of combat. Evasion plus consistent Army growth.",
-      "sources": [
-        {
-          "type": "edhrec",
-          "name": "EDHREC Synergy",
-          "url": "https://edhrec.com/commanders/sauron-the-dark-lord",
-          "detail": "Menace lord + amass trigger"
-        }
-      ]
-    },
-    {
       "name": "Dauthi Voidwalker",
       "price": "$4-6",
       "isGameChanger": false,
@@ -851,20 +857,6 @@
           "type": "ai-inferred",
           "name": "Evasion Land",
           "detail": "Shadow = near-unblockable for Army token"
-        }
-      ]
-    },
-    {
-      "name": "Worldgorger Dragon",
-      "price": "$7-10",
-      "isGameChanger": false,
-      "reason": "Combo with Animate Dead, Reanimate, or Stitch Together for infinite mana. Animate Dead on Worldgorger exiles all other permanents (including Animate Dead), which returns them all — float mana each cycle, then break the loop by targeting a different creature in the graveyard. Infinite mana wins with existing cards.",
-      "sources": [
-        {
-          "type": "commanderspellbook",
-          "name": "Commander Spellbook Combo",
-          "url": "https://commanderspellbook.com/combo/4812-4846/",
-          "detail": "Worldgorger Dragon + Animate Dead infinite mana loop"
         }
       ]
     },
@@ -904,19 +896,6 @@
           "type": "ai-inferred",
           "name": "Card Draw",
           "detail": "Instant-speed selection with kicker upside"
-        }
-      ]
-    },
-    {
-      "name": "Treason of Isengard",
-      "price": "$0.25-0.50",
-      "isGameChanger": false,
-      "reason": "Returns an instant or sorcery from graveyard to top of library and amasses Orcs 2 — spell recursion with Army growth. (Instant alternative: Mission Briefing ({U}{U}) — casts the spell immediately instead of putting on top.)",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Spell Recursion",
-          "detail": "LotR spell recursion with amass upside"
         }
       ]
     },
@@ -1183,6 +1162,144 @@
           "detail": "Premium 0-cost ramp. Replaces Opt (weakest cantrip with 6+ draw engines)"
         }
       ]
+    },
+    {
+      "name": "Thassa's Oracle",
+      "price": "$12-18",
+      "isGameChanger": true,
+      "reason": "Two-mana wincon. Cast Oracle, then with the ETB trigger on the stack cast Demonic Consultation naming a card not in the deck — Consultation exiles your library, Oracle resolves on a 0-card library and wins. Standard cEDH 2-card combo, tutorable with all five tutors.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Thassa's Oracle + Demonic Consultation",
+          "url": "https://commanderspellbook.com/combo/",
+          "detail": "Premier 3-mana 2-card win in UB"
+        },
+        {
+          "type": "youtube",
+          "name": "The Command Zone - Bracket 4 (Ep 731)",
+          "url": "https://www.youtube.com/watch?v=jzeTz9clIC8",
+          "detail": "Thoracle line cited as expected in B4+ blue combo decks"
+        }
+      ]
+    },
+    {
+      "name": "Demonic Consultation",
+      "price": "$6-10",
+      "isGameChanger": false,
+      "reason": "One-mana instant that pairs with Thoracle to win. Name a card you don't have (any cEDH staple not in this deck) to exile your entire library, then resolve Oracle's ETB on a 0-card library.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Thassa's Oracle combo piece",
+          "url": "https://commanderspellbook.com/combo/",
+          "detail": "Mandatory pair for the Thoracle line"
+        }
+      ]
+    },
+    {
+      "name": "Beseech the Mirror",
+      "price": "$12-18",
+      "isGameChanger": false,
+      "reason": "Bargain (sacrifice an artifact, enchantment, or token) to tutor any card AND cast it for free if its mana value is ≤ 4. Sauron's Orc Army tokens are bargain fuel. Tutoring Thassa's Oracle and casting her free is a 4-mana win line; tutoring Demonic Consultation, Animate Dead, Reanimate, or Counterspell all qualify for the free cast.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Bargain + Army token analysis",
+          "detail": "Sauron's token engine enables Bargain's free-cast clause for any MV≤4 piece — most flexible tutor in the deck"
+        }
+      ]
+    },
+    {
+      "name": "Grim Tutor",
+      "price": "$8-12",
+      "isGameChanger": false,
+      "reason": "Three-mana straight tutor for any card. Three life loss is negligible at B4 power level. Fetches combo pieces, removal, or counterspells as the game demands.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Tutor density",
+          "detail": "Replaces Witch-king of Angmar — tutor over defensive creature for combo consistency"
+        }
+      ]
+    },
+    {
+      "name": "Diabolic Intent",
+      "price": "$1-2",
+      "isGameChanger": false,
+      "reason": "Two-mana tutor with a sacrifice-a-creature cost. Sauron's 0/0 Orc Army tokens make the sac trivial — effectively a 2-mana Demonic Tutor in this deck. Strictly better than Diabolic Tutor (4 mana) in a token-producing shell.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Token-sac tutor synergy",
+          "detail": "Sauron Army token feeds the sac cost — same logic as Beseech bargain"
+        }
+      ]
+    },
+    {
+      "name": "Spellseeker",
+      "price": "$4-7",
+      "isGameChanger": false,
+      "reason": "Creature tutor for any instant or sorcery with mana value ≤ 2. Fetches Demonic Consultation (MV 1), Mystical Tutor (MV 1), Reanimate (MV 1), Cabal Ritual (MV 2), or Counterspell (MV 2). Chains into a second tutor for guaranteed combo assembly.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Tutor chain",
+          "detail": "Spellseeker → Mystical Tutor → Demonic Consultation is a guaranteed 6-mana assembly"
+        }
+      ]
+    },
+    {
+      "name": "Mystical Tutor",
+      "price": "$12-18",
+      "isGameChanger": true,
+      "reason": "One-mana instant-speed tutor for any instant or sorcery. Fetches Demonic Consultation (combo), Reanimate (rebuild plan), Cyclonic Rift (interaction), or Mystic Confluence (card advantage). Premier blue tutor and an official Game Changer.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Premier blue tutor",
+          "detail": "1-MV instant-speed tutor for the combo finisher"
+        }
+      ]
+    },
+    {
+      "name": "Cabal Ritual",
+      "price": "$1-3",
+      "isGameChanger": false,
+      "reason": "Two-mana instant that adds {B}{B}{B} — net +1 mana. With threshold (7+ cards in graveyard, trivial via Ring temptation looting from T3 onward), it adds {B}{B}{B}{B}{B} for a +3 mana burst. Functional Dark Ritual #2 that scales with the game.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Threshold ramp",
+          "detail": "Ring temptation hits threshold by T4 — second Dark Ritual at full power"
+        }
+      ]
+    },
+    {
+      "name": "Lotus Petal",
+      "price": "$2-4",
+      "isGameChanger": false,
+      "reason": "Zero-mana artifact, sacrifice for one mana of any color. Color-fixes a turn-1 Demonic Consultation or accelerates Sauron one turn. One-shot but free.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "B4 fast mana",
+          "detail": "0-mana color fixer for early combo turns"
+        }
+      ]
+    },
+    {
+      "name": "Jeweled Amulet",
+      "price": "$3-6",
+      "isGameChanger": false,
+      "reason": "Zero-mana artifact. {1},{T} to charge with a color (sorcery speed), then {T} to add that color. Two-turn break-even but reusable across the game. Color fixing from a free slot in a 3-color deck.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "B4 fast mana",
+          "detail": "Free slot with reusable color fixing"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -1195,11 +1312,6 @@
       "name": "Saruman, the White Hand",
       "type": "Creature",
       "primary_role": "engine"
-    },
-    {
-      "name": "Witch-king of Angmar",
-      "type": "Creature",
-      "primary_role": "protection"
     },
     {
       "name": "Grishnákh, Brash Instigator",
@@ -1215,11 +1327,6 @@
       "name": "Orcish Bowmasters",
       "type": "Creature",
       "primary_role": "engine"
-    },
-    {
-      "name": "Lord of the Nazgûl",
-      "type": "Creature",
-      "primary_role": "protection"
     },
     {
       "name": "Gothmog, Morgul Lieutenant",
@@ -1240,11 +1347,6 @@
       "name": "Mana Drain",
       "type": "Instant",
       "primary_role": "counterspell"
-    },
-    {
-      "name": "Warg Rider",
-      "type": "Creature",
-      "primary_role": "engine"
     },
     {
       "name": "Dauthi Voidwalker",
@@ -1320,16 +1422,6 @@
       "name": "Hero's Downfall",
       "type": "Instant",
       "primary_role": "removal-spot"
-    },
-    {
-      "name": "Summons of Saruman",
-      "type": "Sorcery",
-      "primary_role": "engine"
-    },
-    {
-      "name": "Treason of Isengard",
-      "type": "Sorcery",
-      "primary_role": "engine"
     },
     {
       "name": "Demand Answers",
@@ -1417,11 +1509,6 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Whispersilk Cloak",
-      "type": "Artifact",
-      "primary_role": "protection"
-    },
-    {
       "name": "Lightning Greaves",
       "type": "Artifact",
       "primary_role": "protection"
@@ -1457,21 +1544,9 @@
       "primary_role": "engine"
     },
     {
-      "name": "Worldgorger Dragon",
-      "type": "Creature",
-      "primary_role": "utility",
-      "secondary_role": "wincon",
-      "wincon_style": "combo"
-    },
-    {
       "name": "Dark Ritual",
       "type": "Instant",
       "primary_role": "ramp"
-    },
-    {
-      "name": "Aqueous Form",
-      "type": "Enchantment",
-      "primary_role": "engine"
     },
     {
       "name": "Animate Dead",
@@ -1487,16 +1562,6 @@
       "name": "Frantic Search",
       "type": "Instant",
       "primary_role": "card-draw"
-    },
-    {
-      "name": "Reality Shift",
-      "type": "Instant",
-      "primary_role": "removal-spot"
-    },
-    {
-      "name": "Mauhúr, Uruk-hai Captain",
-      "type": "Creature",
-      "primary_role": "engine"
     },
     {
       "name": "Reanimate",
@@ -1654,6 +1719,58 @@
       "name": "Scorched Geyser",
       "type": "Land",
       "primary_role": "land"
+    },
+    {
+      "name": "Thassa's Oracle",
+      "type": "Creature",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Demonic Consultation",
+      "type": "Instant",
+      "primary_role": "wincon",
+      "secondary_role": "tutor"
+    },
+    {
+      "name": "Beseech the Mirror",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Grim Tutor",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Diabolic Intent",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Spellseeker",
+      "type": "Creature",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Mystical Tutor",
+      "type": "Instant",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Cabal Ritual",
+      "type": "Instant",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Lotus Petal",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Jeweled Amulet",
+      "type": "Artifact",
+      "primary_role": "ramp"
     }
   ],
   "tokens": [
@@ -1678,10 +1795,7 @@
         "Saruman's Trickery",
         "Saruman, the White Hand",
         "Sauron, the Dark Lord",
-        "Summons of Saruman",
-        "The Mouth of Sauron",
-        "Treason of Isengard",
-        "Warg Rider"
+        "The Mouth of Sauron"
       ]
     },
     {
@@ -1696,8 +1810,7 @@
       "produced_by": [
         "Call of the Ring",
         "In the Darkness Bind Them",
-        "Sauron, the Dark Lord",
-        "Witch-king of Angmar"
+        "Sauron, the Dark Lord"
       ]
     },
     {
@@ -1712,8 +1825,7 @@
       "scryfall_id": "9afb58e8-f5a7-49f9-8287-77757bd3268c",
       "image_uri": "https://cards.scryfall.io/normal/front/9/a/9afb58e8-f5a7-49f9-8287-77757bd3268c.jpg?1709590980",
       "produced_by": [
-        "In the Darkness Bind Them",
-        "Lord of the Nazgûl"
+        "In the Darkness Bind Them"
       ]
     }
   ],
