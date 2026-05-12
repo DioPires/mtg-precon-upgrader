@@ -1,0 +1,455 @@
+// Grimoire v1 — Combos, Upgrades, Performance/Curve
+const { useState: useStateCB } = React;
+
+function GV1Combos({ combos }) {
+  if (!combos || combos.length === 0) {
+    return (
+      <section className="gv1-section gv1-combos">
+        <div className="gv1-section-head">
+          <span className="gv1-rune" aria-hidden="true">§ IV</span>
+          <h2 className="gv1-section-title">Combos & Interactions</h2>
+        </div>
+        <div className="gv1-empty">No synergies scribed yet.</div>
+      </section>
+    );
+  }
+  return (
+    <section className="gv1-section gv1-combos">
+      <div className="gv1-section-head">
+        <span className="gv1-rune" aria-hidden="true">§ IV</span>
+        <h2 className="gv1-section-title">Combos & Interactions</h2>
+        <span className="gv1-mono-xs gv1-dim">· cited chains and soft-locks</span>
+      </div>
+      <div className="gv1-combo-grid">
+        {combos.map((c, i) => (
+          <div key={i} className="gv1-combo">
+            <div className="gv1-combo-head">
+              <svg className="gv1-combo-glyph" viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
+                <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" strokeWidth="0.6" opacity="0.4"/>
+                <circle cx="20" cy="20" r="13" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
+                <path d="M20 4 L26 20 L20 36 L14 20 Z" fill="none" stroke="currentColor" strokeWidth="1"/>
+                <circle cx="20" cy="20" r="2" fill="currentColor"/>
+              </svg>
+              <div>
+                <div className="gv1-mono-xs gv1-dim">{c.tag}</div>
+                <h3 className="gv1-combo-title">
+                  <span>{c.title[0]}</span>
+                  <em>{c.title[1]}</em>
+                </h3>
+              </div>
+            </div>
+            <p className="gv1-combo-desc">{c.desc}</p>
+            <div className="gv1-combo-cards">
+              {c.cards.map((cc, j) => <CardTile key={j} card={cc} size="sm" />)}
+            </div>
+            <div className="gv1-combo-src">
+              <span className="gv1-mono-xs gv1-dim">SOURCE</span>
+              <span className="gv1-mono-xs gv1-rune">{c.src}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// === The Apothecary === (was GV1Upgrades / § V Upgrade Path)
+// Diagnosis · Maladies · Remedies. Mirrors upstream app.js renderUpgradePaths,
+// adapted to Grimoire v1 visual language.
+
+const METRICS_KEYS = ['manabase_health', 'role_coverage_health', 'curve_health', 'interaction_density', 'gameplan_cohesion'];
+const METRICS_LABELS = {
+  manabase_health: 'Manabase Health',
+  role_coverage_health: 'Role Coverage',
+  curve_health: 'Curve Health',
+  interaction_density: 'Interaction Density',
+  gameplan_cohesion: 'Gameplan Cohesion',
+};
+const METRICS_DESCRIPTIONS = {
+  manabase_health: 'Karsten color sources, untapped ratio, fetch density, land-count fit vs. avg CMC.',
+  role_coverage_health: 'Counts of ramp, draw, removal, protection, tutors, wincons vs. bracket targets.',
+  curve_health: 'Average CMC vs. target curve and topcurve penalty; archetype-aware.',
+  interaction_density: 'Weighted count of removal, counterspells, protection vs. target.',
+  gameplan_cohesion: 'How concentrated the deck is in its primary archetypes (in-set ratio).',
+};
+const ROLE_LABELS = {
+  ramp: 'Ramp',
+  'card-draw': 'Card Draw',
+  'removal-spot': 'Spot Removal',
+  'removal-board': 'Board Wipes',
+  protection: 'Protection',
+  tutor: 'Tutors',
+  wincon: 'Wincons',
+  counterspell: 'Counters',
+};
+const REMEDIES_TOP_N = 30;
+
+function gradeForGlobalHealth(s) {
+  if (s == null) return '—';
+  if (s >= 87) return 'A+';
+  if (s >= 83) return 'A';
+  if (s >= 78) return 'A-';
+  if (s >= 73) return 'B+';
+  if (s >= 68) return 'B';
+  if (s >= 63) return 'B-';
+  if (s >= 58) return 'C+';
+  if (s >= 53) return 'C';
+  if (s >= 48) return 'C-';
+  if (s >= 43) return 'D+';
+  if (s >= 38) return 'D';
+  if (s >= 33) return 'D-';
+  return 'F';
+}
+function maladyTier(s) {
+  if (s == null) return 'crit';
+  if (s >= 75) return 'ok';
+  if (s >= 50) return 'warn';
+  if (s >= 25) return 'bad';
+  return 'crit';
+}
+function fmtMaladyCount(v) {
+  if (v == null) return '—';
+  return Number.isInteger(v) ? String(v) : v.toFixed(1);
+}
+
+function ScoreRing({ score, max = 50, size = 44 }) {
+  const r = (size / 2) - 4;
+  const C = 2 * Math.PI * r;
+  const pct = Math.max(0, Math.min(1, (score ?? 0) / max));
+  const off = C * (1 - pct);
+  return (
+    <div className="gv1-apo-ring" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle className="gv1-apo-ring-bg" cx={size/2} cy={size/2} r={r} fill="none" strokeWidth="2.5"/>
+        <circle className="gv1-apo-ring-fill" cx={size/2} cy={size/2} r={r}
+          fill="none" strokeWidth="2.5"
+          strokeDasharray={C} strokeDashoffset={off}
+          transform={`rotate(-90 ${size/2} ${size/2})`} strokeLinecap="round"/>
+      </svg>
+      <span className="gv1-apo-ring-num">{Math.round(score ?? 0)}</span>
+    </div>
+  );
+}
+
+function GV1Apothecary({ apothecary }) {
+  const [filterRole, setFilterRole] = useStateCB(null);
+  const [showDetails, setShowDetails] = useStateCB(false);
+
+  if (!apothecary) {
+    return (
+      <section className="gv1-section gv1-apothecary">
+        <div className="gv1-section-head">
+          <span className="gv1-rune" aria-hidden="true">§ V</span>
+          <h2 className="gv1-section-title">The Apothecary</h2>
+        </div>
+        <div className="gv1-empty">No diagnosis on file for this commander.</div>
+      </section>
+    );
+  }
+
+  const { diagnosis, maladies, remedies } = apothecary;
+  const score = Math.round(diagnosis.score ?? 0);
+  const grade = gradeForGlobalHealth(diagnosis.score);
+
+  // Find weakest component
+  let weakKey = null, weakScore = Infinity;
+  for (const k of METRICS_KEYS) {
+    const s = diagnosis.components?.[k]?.score;
+    if (s != null && s < weakScore) { weakScore = s; weakKey = k; }
+  }
+
+  // Active gap-set so we can flag stale filters
+  const activeRoles = new Set((maladies || []).map(g => g.role));
+  const effectiveFilter = filterRole && activeRoles.has(filterRole) ? filterRole : null;
+
+  // Sort remedies: gap-addressers first, then by score
+  let pool = (remedies || []).slice(0, REMEDIES_TOP_N);
+  if (effectiveFilter) {
+    pool = pool.filter(c => c.deck_role === effectiveFilter || c.mitigates_gap === effectiveFilter);
+  }
+  pool = pool.slice().sort((a, b) => {
+    const ga = a.mitigates_gap ? 0 : 1;
+    const gb = b.mitigates_gap ? 0 : 1;
+    if (ga !== gb) return ga - gb;
+    return (b.score ?? 0) - (a.score ?? 0);
+  });
+
+  const maxRemedyScore = Math.max(50, ...pool.map(c => c.score ?? 0));
+
+  return (
+    <section className="gv1-section gv1-apothecary">
+      <div className="gv1-section-head">
+        <span className="gv1-rune" aria-hidden="true">§ V</span>
+        <h2 className="gv1-section-title">The Apothecary</h2>
+        <span className="gv1-mono-xs gv1-dim">diagnosis · maladies · remedies</span>
+      </div>
+
+      {/* DIAGNOSIS */}
+      <div className="gv1-apo-subhead">
+        <span className="gv1-mono-xs gv1-rune">DIAGNOSIS</span>
+        <span className="gv1-apo-rule" aria-hidden="true"/>
+        <span className="gv1-mono-xs gv1-dim">methodology · {diagnosis.methodology}</span>
+      </div>
+
+      <div className="gv1-apo-vitals">
+        <div className="gv1-apo-grade-block">
+          <div className={'gv1-apo-grade gv1-apo-grade-' + grade.charAt(0).toLowerCase()}>{grade}</div>
+          <div className="gv1-apo-grade-meta">
+            <div className="gv1-serif-xxl">{score}<span className="gv1-mono-xs gv1-dim"> / 100</span></div>
+            <div className="gv1-mono-xs gv1-dim">DECK HEALTH</div>
+          </div>
+        </div>
+        <div className="gv1-apo-vitals-divider" aria-hidden="true"/>
+        <div className="gv1-apo-weakest">
+          <div className="gv1-mono-xs gv1-dim">WEAKEST COMPONENT</div>
+          {weakKey ? (
+            <>
+              <div className="gv1-serif-md gv1-apo-weak-name">{METRICS_LABELS[weakKey]}</div>
+              <div className="gv1-mono-xs gv1-apo-weak-score">{Math.round(weakScore)} / 100</div>
+            </>
+          ) : (
+            <div className="gv1-mono-xs gv1-dim">No clear weakness.</div>
+          )}
+        </div>
+        <button
+          type="button"
+          className="gv1-apo-details-btn"
+          onClick={() => setShowDetails(v => !v)}
+          aria-expanded={showDetails}
+        >
+          {showDetails ? 'Hide breakdown' : 'Show breakdown'}
+        </button>
+      </div>
+
+      {showDetails && (
+        <div className="gv1-apo-breakdown">
+          {METRICS_KEYS.map(k => {
+            const s = diagnosis.components?.[k]?.score;
+            if (s == null) return null;
+            const pct = Math.min(Math.max(s, 0), 100);
+            const isWeak = k === weakKey;
+            const tier = pct >= 75 ? 'ok' : pct >= 50 ? 'warn' : 'bad';
+            return (
+              <div key={k} className={'gv1-apo-bk-row gv1-apo-tier-' + tier + (isWeak ? ' is-weakest' : '')}>
+                <div className="gv1-apo-bk-head">
+                  <span className="gv1-serif-sm">{METRICS_LABELS[k]}{isWeak && <em className="gv1-apo-weak-badge">weakest</em>}</span>
+                  <span className="gv1-mono-xs">{Math.round(s)}</span>
+                </div>
+                <div className="gv1-apo-bk-track">
+                  <div className="gv1-apo-bk-fill" style={{width: pct + '%'}}/>
+                </div>
+                <div className="gv1-mono-xs gv1-dim gv1-apo-bk-desc">{METRICS_DESCRIPTIONS[k]}</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* MALADIES */}
+      {(maladies || []).length > 0 && (
+        <>
+          <div className="gv1-apo-subhead">
+            <span className="gv1-mono-xs gv1-rune">MALADIES</span>
+            <span className="gv1-apo-rule" aria-hidden="true"/>
+            <span className="gv1-mono-xs gv1-dim">click to filter remedies</span>
+          </div>
+          <div className="gv1-apo-maladies">
+            {maladies.map(g => {
+              const tier = maladyTier(g.score);
+              const isActive = effectiveFilter === g.role;
+              return (
+                <button
+                  key={g.role}
+                  type="button"
+                  className={'gv1-apo-malady gv1-apo-tier-' + tier + (isActive ? ' is-active' : '')}
+                  onClick={() => setFilterRole(isActive ? null : g.role)}
+                  aria-pressed={isActive}
+                >
+                  <span className="gv1-apo-malady-label">{ROLE_LABELS[g.role] || g.role}</span>
+                  <span className="gv1-mono-xs gv1-apo-malady-fig">
+                    {fmtMaladyCount(g.actual)}<span className="gv1-dim"> / {fmtMaladyCount(g.target)}</span>
+                  </span>
+                </button>
+              );
+            })}
+            {effectiveFilter && (
+              <button
+                type="button"
+                className="gv1-apo-malady-clear"
+                onClick={() => setFilterRole(null)}
+              >Clear filter ×</button>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* REMEDIES */}
+      <div className="gv1-apo-subhead">
+        <span className="gv1-mono-xs gv1-rune">REMEDIES</span>
+        <span className="gv1-apo-rule" aria-hidden="true"/>
+        <span className="gv1-mono-xs gv1-dim">
+          top {REMEDIES_TOP_N} candidates
+          {effectiveFilter ? ` · filtered: ${ROLE_LABELS[effectiveFilter] || effectiveFilter}` : ' · gap-addressers floated'}
+        </span>
+      </div>
+
+      {pool.length === 0 ? (
+        <div className="gv1-empty">
+          {effectiveFilter
+            ? <>No remedies match <em>{ROLE_LABELS[effectiveFilter] || effectiveFilter}</em>.</>
+            : 'No remedies available.'}
+        </div>
+      ) : (
+        <div className="gv1-apo-remedies">
+          {pool.map((c, i) => {
+            const isGapAddr = !!c.mitigates_gap;
+            const cls = ['gv1-apo-remedy'];
+            if (isGapAddr) cls.push('is-gap-addresser');
+            if (c.owned) cls.push('is-owned');
+            return (
+              <article key={c.name + i} className={cls.join(' ')} data-card-name={c.name}>
+                <div className="gv1-apo-remedy-num gv1-mono-xs gv1-dim">
+                  {String(i + 1).padStart(2, '0')}
+                </div>
+                <div className="gv1-apo-remedy-body">
+                  <div className="gv1-apo-remedy-head">
+                    <span className="gv1-apo-remedy-name">{c.name}</span>
+                    <ManaCost mv={c.mana_cost || (c.cmc != null ? `{${c.cmc}}` : '—')} />
+                  </div>
+                  <div className="gv1-mono-xs gv1-dim gv1-apo-remedy-type">{c.type_line || ''}</div>
+                  {c.strategy_line && <div className="gv1-apo-remedy-rationale">{c.strategy_line}</div>}
+                  <div className="gv1-apo-remedy-tags">
+                    {isGapAddr && (
+                      <span className="gv1-apo-tag gv1-apo-tag-addresses">
+                        addresses · {ROLE_LABELS[c.mitigates_gap] || c.mitigates_gap}
+                      </span>
+                    )}
+                    {c.owned && <span className="gv1-apo-tag gv1-apo-tag-owned">owned</span>}
+                    {c.game_changer && <span className="gv1-apo-tag gv1-apo-tag-gc">game changer</span>}
+                    {c.deck_role && c.deck_role !== c.mitigates_gap && (
+                      <span className="gv1-apo-tag gv1-apo-tag-role">
+                        {ROLE_LABELS[c.deck_role] || c.deck_role}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="gv1-apo-remedy-score">
+                  <ScoreRing score={c.score} max={maxRemedyScore} />
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+
+      {/* FOOTER */}
+      {(diagnosis.generatedAt || diagnosis.mirrorUpdatedAt) && (
+        <div className="gv1-apo-footer gv1-mono-xs gv1-dim">
+          {diagnosis.generatedAt && <span>metrics · {new Date(diagnosis.generatedAt).toISOString().slice(0,10)}</span>}
+          {diagnosis.generatedAt && diagnosis.mirrorUpdatedAt && <span aria-hidden="true">·</span>}
+          {diagnosis.mirrorUpdatedAt && <span>scryfall mirror · {new Date(diagnosis.mirrorUpdatedAt).toISOString().slice(0,10)}</span>}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function GV1Performance({ curve, func, sources, health, composition, assessment }) {
+  const maxCurve = Math.max(1, ...curve.map(c => c.n));
+  return (
+    <section className="gv1-section gv1-perf">
+      <div className="gv1-section-head">
+        <span className="gv1-rune" aria-hidden="true">§ VI</span>
+        <h2 className="gv1-section-title">Performance · Scrying Pool</h2>
+        <span className="gv1-mono-xs gv1-dim">· 10,000 simulated games</span>
+      </div>
+      <div className="gv1-perf-grid">
+        <div className="gv1-perf-block gv1-perf-kpis">
+          {health && (
+            <div className="gv1-kpi">
+              <div className="gv1-mono-xs gv1-dim">HEALTH SCORE</div>
+              <div className="gv1-serif-xxl">{Math.round(health.score)}</div>
+              <div className="gv1-mono-xs gv1-rune">grade {health.grade}</div>
+            </div>
+          )}
+          {composition && (
+            <div className="gv1-kpi">
+              <div className="gv1-mono-xs gv1-dim">AVG CMC</div>
+              <div className="gv1-serif-xxl">{composition.avgCmc}</div>
+              <div className="gv1-mono-xs gv1-dim">{composition.totalCards} cards · {composition.lands} lands</div>
+            </div>
+          )}
+          {assessment && (
+            <div className="gv1-kpi">
+              <div className="gv1-mono-xs gv1-dim">MANA</div>
+              <div className="gv1-serif-xxl">{assessment.manaAdequacy}</div>
+              <div className="gv1-mono-xs gv1-dim">mulligan · {assessment.mulliganVerdict}</div>
+            </div>
+          )}
+          {assessment && (
+            <div className="gv1-kpi">
+              <div className="gv1-mono-xs gv1-dim">COMMANDER</div>
+              <div className="gv1-serif-xxl">{assessment.commanderTiming}</div>
+              <div className="gv1-mono-xs gv1-dim">deploy timing</div>
+            </div>
+          )}
+        </div>
+
+        <div className="gv1-perf-block gv1-perf-curve">
+          <div className="gv1-perf-block-head">
+            <h3 className="gv1-serif-md">Role distribution</h3>
+            <span className="gv1-mono-xs gv1-dim">cards per function · from the manifest</span>
+          </div>
+          <div className="gv1-curve">
+            {curve.map((c, i) => (
+              <div key={i} className={'gv1-curve-col' + (c.peak ? ' gv1-peak' : '')}>
+                <div className="gv1-curve-n gv1-mono-xs">{c.n}</div>
+                <div className="gv1-curve-bar-wrap">
+                  <div className="gv1-curve-bar" style={{height: (c.n / maxCurve * 100) + '%'}}/>
+                </div>
+                <div className="gv1-curve-l gv1-mono-xs gv1-dim">{c.cmc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="gv1-perf-block gv1-perf-func">
+          <div className="gv1-perf-block-head">
+            <h3 className="gv1-serif-md">Function mix</h3>
+            <span className="gv1-mono-xs gv1-dim">cards per role · normalized</span>
+          </div>
+          <div className="gv1-func-rows">
+            {func.map((f, i) => (
+              <div key={i} className="gv1-func-row">
+                <span className="gv1-mono-xs gv1-func-label">{f.l}</span>
+                <div className="gv1-func-bar-wrap">
+                  <div className="gv1-func-bar" style={{width: f.pct + '%'}}/>
+                  <span className="gv1-func-bar-n gv1-mono-xs">{f.n}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="gv1-perf-block gv1-perf-sources">
+          <div className="gv1-perf-block-head">
+            <h3 className="gv1-serif-md">Scried from</h3>
+            <span className="gv1-mono-xs gv1-dim">source attributions</span>
+          </div>
+          <div className="gv1-src-list">
+            {sources.map((s, i) => (
+              <div key={i} className="gv1-src-row">
+                <span className="gv1-mono-xs gv1-dim">{String(i+1).padStart(2,'0')}</span>
+                <span className="gv1-mono-xs gv1-rune">{s[0]}</span>
+                <span className="gv1-serif-sm">{s[1]}</span>
+                <span className="gv1-mono-xs gv1-dim gv1-src-link">open →</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+Object.assign(window, { GV1Combos, GV1Apothecary, GV1Performance });

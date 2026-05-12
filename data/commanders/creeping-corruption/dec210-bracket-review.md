@@ -66,32 +66,76 @@ With 3 GCs, the deck is below the B4-forcing threshold (>3). Labeling it B4 is c
 **Spend**: $0–20.
 **Outcome**: deck labeled correctly; pod expectations match reality. Atraxa infect at B3 is a popular, well-respected build — there is no shame in this label.
 
-### Option B — Upgrade speed to a true B4 (DEC-205-style retune)
+### Option B — Upgrade speed to a true B4 (DEC-205-style retune) — **board-preferred**
 
 **Premise**: keep the B4 label and earn it. Apply the DEC-205 Dark Dominion playbook — add fast mana + tutors + a tutor-able win condition.
 
-**Concrete adds (~11 cards, costs ballpark)**:
+**Revised after 2026-05-12 board feedback**:
+- Board prefers Option B but flagged Force of Will as out of budget.
+- Verified owned inventory (`priv_data/owned_formatted.csv`): Force of Will **is owned** (×1, currently virtually-shared with Dark Dominion and Genesis Protocol). Listing it in Creeping Corruption's `deck.json` follows the project's existing card-sharing convention — no new purchase required.
+- If the board prefers not to expand the FoW share to a 3rd deck, **Force of Negation** ({1}{U}{U}, free on opponents' turns, ~$25-35) is the budget-friendly replacement. It loses the "free on our turn" mode (rare for protection) but is otherwise the closest analog. **Recommendation: list Force of Will (no spend, already owned) and only buy FoN if the board explicitly wants a dedicated 4th copy.**
 
-| Card | Role | Cost | Why |
+**Concrete adds — 11 cards** (✅ = owned per `priv_data/owned_formatted.csv` on 2026-05-12):
+
+#### Fast mana (3 pieces)
+
+| Card | Mana / Status | Owned? | Notes |
 |---|---|---|---|
-| Grim Monolith | Fast mana | ~$80 | T2 access to T3+ plays; double-proc with untap effects |
-| Chrome Mox | Fast mana | ~$80 | T1 acceleration; on official GC list (+1 GC) |
-| Lotus Petal | Fast mana | ~$3 | T1 one-shot acceleration |
-| Vampiric Tutor | Tutor | ~$25 | Universal — finds Triumph, Vorinclex, Tekuthal |
-| Demonic Tutor | Tutor | ~$30 | Universal — same; on GC list (+1 GC) |
-| Worldly Tutor | Tutor | ~$25 | Creature finder — fetches Tekuthal or a finisher |
-| Eladamri's Call | Tutor | ~$10 | Instant-speed creature tutor; flashy on Atraxa's trigger window |
-| Necropotence | Card advantage | ~$30 | Premier B4 draw engine; on GC list (+1 GC) |
-| Force of Will | Free counter | ~$80 | Strategy text already claims it; on GC list (+1 GC) |
-| Fierce Guardianship | Free counter | ~$30 | Strategy text already claims it; on GC list (+1 GC) |
-| Deadly Rollick | Free removal | ~$25 | Strategy text already claims it; commander already in play often |
+| Chrome Mox | {0} artifact | ✅ (shared with dark-dominion, genesis-protocol) | Exile a colored nonland card → that color mox. On GC list (+1 GC). T1 acceleration. |
+| Mana Vault | {1} artifact, taps for {C}{C}{C} | ✅ (shared with eternal-agony, genesis-protocol, titan-convergence) | Untap-step lock OK in Atraxa — proliferate doesn't help untap it, but {C}{C}{C} on T2 is huge. On GC list (+1 GC). |
+| Ancient Tomb | Land, {T}: {C}{C} | ✅ (shared with genesis-protocol, titan-convergence) | Trades 2 life for explosive mana. On GC list (+1 GC). Replaces a basic or a tapped utility land. |
 
-**Required cuts (~11 slots)**: candidates from the soft end of the curve — Wurmquake, Phyresis Outbreak (redundant with Toxic Deluge), one of the proliferate-only 1-drops (Thrummingbird or Grateful Apparition), one redundant infect lord (Hand of the Praetors vs Necrogen Rotpriest), the second sword (Sword of Truth and Justice if Skullclamp draws better), Norn's Choirmaster, Expansion Algorithm if not pulling weight.
+Skipping **Grim Monolith** for budget (~$80, unowned) and **Lotus Petal** (one-shot, low impact in 4c). All 3 selected pieces are already owned virtually.
 
-**GC count after**: 3 → ~8 (well into B4 by the rule).
-**Spend**: ~$400–450 (high — these are chase rares).
-**Outcome**: expected median lethal shifts ~T8 → T6 (estimated; needs sim re-run after swap). Brings the deck inside the DEC-205 case-study band of comboLethal/lethalProxy ≥ 50% at T6.
-**Risk**: changes the deck's feel from "fair infect midrange" to "tutor the kill." The board has historically pushed back on this style for some decks; check whether this commander gets that treatment.
+#### Tutors (4 pieces)
+
+| Card | Mana | Owned? | What it finds | Notes |
+|---|---|---|---|---|
+| Demonic Tutor | {1}{B} sorcery | ✅ (shared with dark-dominion, eternal-agony) | Any card → hand | Premier black tutor. On GC list (+1 GC). |
+| Vampiric Tutor | {B} instant | ❌ (~$25 buy) | Any card → top of library | Instant-speed, on GC list (+1 GC). Pair with end-step Atraxa proliferate. |
+| Eladamri's Call | {G}{W} instant | ❌ (~$10 buy) | Creature card → hand | Instant-speed creature tutor. Fetches Tekuthal, Vorinclex, Necrogen Rotpriest. Cheap, deep redundancy. |
+| Worldly Tutor | {G} instant | ❌ (~$25 buy) | Creature card → top of library | Instant-speed, cheaper-than-Eladamri activation, on GC list (+1 GC). Same finder role. |
+
+Alternative if board wants to cut tutor spend further: drop **Worldly Tutor** ($25) — keep 3 tutors (DT + Vamp + Eladamri's Call). Loses one finder; still hits the DEC-205 reliability floor. Or substitute **Enlightened Tutor** ({W} instant, owned, shared with genesis-protocol + the-white-forge) which finds Sylvan Library / Skullclamp / Glistening Sphere / Skrelv's Hive instead of creatures. Worth considering as a 5th tutor slot since it's free (owned).
+
+#### Free interaction / draw (4 pieces)
+
+| Card | Mana | Owned? | Notes |
+|---|---|---|---|
+| Force of Will | {3}{U}{U}, pitch blue card + 1 life | ✅ (shared with dark-dominion, genesis-protocol) | On GC list (+1 GC). **Or substitute Force of Negation (~$25-35) if board prefers not to triple-share the FoW slot.** |
+| Fierce Guardianship | {2}{U}, free if commander in play | ✅ (shared with dark-dominion, genesis-protocol, mutant-multiplication) | On GC list (+1 GC). Atraxa hits play often enough. |
+| Deadly Rollick | {3}{B}, free if commander in play | ✅ (×3, shared with dark-dominion, eternal-agony, eternal-harvest) | Adding Creeping Corruption = 4th-deck slot, need 1 more copy (~$25) to satisfy physical inventory — or accept that virtual-share already covers all 4. |
+| Necropotence | {B}{B}{B} enchantment | ✅ (shared only with eternal-agony) | On GC list (+1 GC). Premier B4 draw engine. Atraxa's lifelink offsets the life cost. |
+
+#### Required cuts (~11 slots)
+
+Soft-end-of-curve cuts identified for cut-list review:
+
+1. **Wurmquake** — 5-mana sorcery, no body, no proliferate trigger
+2. **Phyresis Outbreak** — partial board wipe, redundant with Toxic Deluge
+3. **Norn's Choirmaster** — slow proliferate-on-attack, no immediate impact
+4. **Expansion Algorithm** — slow proliferate engine, replaceable by Tekuthal-style triggers already in deck
+5. **Grateful Apparition** — 1/1 evasive proliferator, weak body
+6. **Hand of the Praetors** — anthem-only-for-infect, narrow (Necrogen Rotpriest does the broader job)
+7. **Sword of Truth and Justice** — protection equipment, weaker than direct disruption + ramps post-Skullclamp
+8. **Glistening Sphere** — slow corrupted payoff
+9. **Sword's other slot OR Lightning Greaves** — keep Greaves for Atraxa protection
+10. **Skrelv's Hive** — slow build-up
+11. **Infectious Bite** — 1-poison-per-opp once, narrow
+
+Final cut list to be picked once swaps are approved; aim for 11 cuts matching 11 adds.
+
+**GC count after**: 3 → **9** (Cyclonic Rift + Rhystic Study + Teferi's Protection + Chrome Mox + Mana Vault + Ancient Tomb + Demonic Tutor + Vampiric Tutor + Worldly Tutor + Force of Will + Fierce Guardianship + Necropotence = **12 GCs**). Well into B4 territory.
+
+**Spend (revised)**:
+- Owned (virtual share, no buy): Chrome Mox, Mana Vault, Ancient Tomb, Demonic Tutor, Fierce Guardianship, Necropotence, Force of Will = **$0**
+- Likely buy: Vampiric Tutor (~$25) + Eladamri's Call (~$10) + Worldly Tutor (~$25) = **~$60**
+- Optional shared-but-tight slots (1 extra copy each if board wants physical not virtual): Deadly Rollick 4th copy (~$25), Force of Negation if FoW share rejected (~$25-35)
+- **Net realistic spend: ~$60–120** (versus the ~$400 estimate in the original plan, which had assumed unowned baselines).
+
+**Outcome**: expected median lethal shifts ~T8 → T6 (estimated; needs sim re-run after swap). Brings the deck inside the DEC-205 case-study band of lethalProxy ≥ 50% at T6.
+
+**Risk**: changes the deck's feel from "fair infect midrange" to "tutor the kill." Board has historically pushed back on this style for some decks; confirm this commander gets the tutor treatment.
 
 ### Option C — Add a tutored Triumph-of-the-Hordes finisher line (mid-budget hybrid)
 
