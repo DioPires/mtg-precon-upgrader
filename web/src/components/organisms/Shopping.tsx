@@ -144,10 +144,10 @@ export function aggregateCards(selectedSlugs: Set<string>, allDecks: DeckFull[])
     const cur = map.get(key);
     if (cur) {
       cur.decks.add(slug);
-      // One physical copy per unique card serves any deck that uses it; for
-      // non-basic multi-copy entries (e.g. Relentless Rats x4) take the max
-      // across decks so we don't undercount.
-      if (qty > cur.qty) cur.qty = qty;
+      // DEC-209: sum copies across decks. Building 2 decks that each want
+      // 1 Demonic Tutor requires 2 physical copies, not 1. Matches the
+      // per-deck reservation model used by aggregateBuiltClaims.
+      cur.qty += qty;
     } else {
       map.set(key, {
         qty, fallbackType, isCommander, decks: new Set([slug]), displayName: name,
@@ -471,7 +471,7 @@ export function Shopping({ decks }: ShoppingProps) {
         </div>
         <p className="gv1-shop-lede">
           Pick the tomes you want to assemble. Import what you already own. The
-          ledger collapses duplicates across decks, skips basic lands, and splits
+          ledger sums copies needed across decks, skips basic lands, and splits
           the result into <em>need to buy</em> versus <em>already own</em>. All
           ownership data stays in your browser — nothing leaves the page.
         </p>
@@ -732,7 +732,7 @@ export function Shopping({ decks }: ShoppingProps) {
 
       <p className="gv1-mono-xs gv1-dim gv1-shop-foot">
         Basic lands (Plains, Island, Swamp, Mountain, Forest, Wastes, snow-covered) are excluded.
-        Cards shared across decks are deduped — a $40 staple bought once covers every deck that uses it.
+        Cards needed by multiple decks count once per deck — three decks each wanting Sol Ring shows 3 in the buy list.
         Prices are USD from Scryfall and load lazily; the est. cost updates as more arrive.
       </p>
     </>

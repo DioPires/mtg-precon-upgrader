@@ -157,7 +157,28 @@ describe('aggregateCards', () => {
     expect(map.get('Relentless Rats')?.qty).toBe(4);
   });
 
-  it('takes max qty across decks for shared multi-copy entries (DEC-177)', () => {
+  it('sums qty across decks for shared entries (DEC-209)', () => {
+    // Two decks each needing 1 Demonic Tutor → planned qty = 2.
+    const A: DeckFull = makeDeck({
+      slug: 'a', deckName: 'A', commander: 'A Cmd',
+      list: [
+        group('Commander', ['A Cmd']),
+        { name: 'Tutors', cards: [{ n: 'Demonic Tutor', mv: '{1}{B}', type: 'Sorcery', price: '—', gc: false }] },
+      ],
+    });
+    const B: DeckFull = makeDeck({
+      slug: 'b', deckName: 'B', commander: 'B Cmd',
+      list: [
+        group('Commander', ['B Cmd']),
+        { name: 'Tutors', cards: [{ n: 'Demonic Tutor', mv: '{1}{B}', type: 'Sorcery', price: '—', gc: false }] },
+      ],
+    });
+    const map = aggregateCards(new Set(['a', 'b']), [A, B]);
+    expect(map.get('Demonic Tutor')?.qty).toBe(2);
+  });
+
+  it('sums multi-copy qty across decks (DEC-209, generalizes DEC-177)', () => {
+    // Two decks running Relentless Rats x2 and x4 → planned qty = 6.
     const A: DeckFull = makeDeck({
       slug: 'a', deckName: 'A', commander: 'A Cmd',
       list: [
@@ -173,7 +194,7 @@ describe('aggregateCards', () => {
       ],
     });
     const map = aggregateCards(new Set(['a', 'b']), [A, B]);
-    expect(map.get('Relentless Rats')?.qty).toBe(4);
+    expect(map.get('Relentless Rats')?.qty).toBe(6);
   });
 });
 
@@ -185,6 +206,30 @@ describe('splitOwnership', () => {
     expect(buy.find((c) => c.name === 'Sol Ring')).toBeUndefined();
     expect(own.find((c) => c.name === 'Sol Ring')?.qty).toBe(1);
     expect(buy.find((c) => c.name === 'Swords to Plowshares')).toBeTruthy();
+  });
+
+  it('surfaces a buy quantity when two selected decks share a card the user only owns once (DEC-209)', () => {
+    // Repro for DEC-209: two decks each need 1 Demonic Tutor, user owns 1 →
+    // buy list should show qty 1, own list should show qty 1.
+    const A = makeDeck({
+      slug: 'eternal-agony', deckName: 'Eternal Agony', commander: 'EA Cmd',
+      list: [
+        group('Commander', ['EA Cmd']),
+        { name: 'Tutors', cards: [{ n: 'Demonic Tutor', mv: '{1}{B}', type: 'Sorcery', price: '—', gc: false }] },
+      ],
+    });
+    const B = makeDeck({
+      slug: 'dark-dominion', deckName: 'Dark Dominion', commander: 'DD Cmd',
+      list: [
+        group('Commander', ['DD Cmd']),
+        { name: 'Tutors', cards: [{ n: 'Demonic Tutor', mv: '{1}{B}', type: 'Sorcery', price: '—', gc: false }] },
+      ],
+    });
+    const cardMap = aggregateCards(new Set(['eternal-agony', 'dark-dominion']), [A, B]);
+    const owned = new Map<string, number>([['Demonic Tutor', 1]]);
+    const { buy, own } = splitOwnership(cardMap, owned);
+    expect(buy.find((c) => c.name === 'Demonic Tutor')?.qty).toBe(1);
+    expect(own.find((c) => c.name === 'Demonic Tutor')?.qty).toBe(1);
   });
 
   it('reconciles DFC deck entries against front-face owned names and shows the full DFC name (DEC-178)', () => {
