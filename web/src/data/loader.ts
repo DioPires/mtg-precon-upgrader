@@ -23,7 +23,10 @@ import type {
 // bracket re-tune to B4 — 6-card swap (Kederekt/Maddening Hex/Firebrand/Cursed
 // Mirror/Gleeful Arsonist/Fiery Inscription -> Vampiric/Diabolic Intent/Grim
 // Tutor/Mana Vault/Animate Dead/Entomb), bracket 5 -> 4, GCs 8 -> 10.
-const STORAGE_PREFIX = 'gv1-deck-data-v5:';
+// v5 -> v6: sim-fidelity follow-up (DEC-206) — Hidetsugu+Solphim tagged as
+// kind:combo, tutor_mode/extra_cost schema added; simulation.json values shift
+// for eternal-agony, dark-dominion, eternal-harvest.
+const STORAGE_PREFIX = 'gv1-deck-data-v6:';
 const TTL_MS = 24 * 60 * 60 * 1000;
 
 interface PersistedEnvelope<T> {

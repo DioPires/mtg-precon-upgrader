@@ -155,11 +155,16 @@
   "winConditions": [
     {
       "title": "Heartless Hidetsugu Lethal Activation",
+      "kind": "combo",
+      "pieces": [
+        "Heartless Hidetsugu",
+        "Solphim, Mayhem Dominus"
+      ],
       "cards": [
         "Heartless Hidetsugu",
         "Solphim, Mayhem Dominus"
       ],
-      "description": "Activate Heartless Hidetsugu to deal half each player's life total as damage. With any damage doubler (Solphim, Dictate of the Twin Gods, or Fiery Emancipation), the damage equals or exceeds their life total. Lethal to all opponents at even life totals. Stay at odd life to survive. Twinflame Tyrant doubles only opponent damage for a safer kill.",
+      "description": "Activate Heartless Hidetsugu to deal half each player's life total as damage. With any damage doubler (Solphim, Dictate of the Twin Gods, or Fiery Emancipation), the damage equals or exceeds their life total. Lethal to all opponents at even life totals. Stay at odd life to survive. Twinflame Tyrant doubles only opponent damage for a safer kill. Sim caveat: Heartless Hidetsugu's tap activation has summoning sickness, so the goldfish sim may over-credit comboLethal by one turn when both pieces are cast the same turn.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -1651,7 +1656,10 @@
     {
       "name": "Demonic Tutor",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "any"
+      ]
     },
     {
       "name": "Phyrexian Tower",
@@ -1892,17 +1900,27 @@
     {
       "name": "Vampiric Tutor",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "any"
+      ]
     },
     {
       "name": "Diabolic Intent",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "any"
+      ],
+      "tutor_extra_cost": "sacrifice-creature"
     },
     {
       "name": "Grim Tutor",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "any"
+      ]
     },
     {
       "name": "Mana Vault",
@@ -1917,7 +1935,11 @@
     {
       "name": "Entomb",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ],
+      "tutor_mode": "to_graveyard"
     }
   ],
   "tokens": [

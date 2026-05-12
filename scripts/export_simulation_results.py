@@ -794,8 +794,10 @@ def card_type_tokens(type_line: str) -> set[str]:
 def extract_tutor_metadata(deck_data: dict) -> dict:
     """Build per-tutor metadata table.
 
-    Returns name → {targets: set[str], mv_cap: int|None, free_cast_via_bargain: bool}.
-    Default tutor with no schema overrides is universal (targets={"any"}, mv_cap=None).
+    Returns name → {targets: set[str], mv_cap: int|None, free_cast_via_bargain: bool,
+    mode: "to_hand"|"to_graveyard", extra_cost: str|None}.
+    Default tutor with no schema overrides is universal (targets={"any"}, mv_cap=None,
+    mode="to_hand", extra_cost=None).
     """
     tutors = {}
     for entry in deck_data.get("decklist", []) or []:
@@ -809,6 +811,8 @@ def extract_tutor_metadata(deck_data: dict) -> dict:
             "targets": {t.lower() for t in targets},
             "mv_cap": entry.get("tutor_mv_cap"),
             "free_cast_via_bargain": bool(entry.get("tutor_free_cast_via_bargain", False)),
+            "mode": entry.get("tutor_mode") or "to_hand",
+            "extra_cost": entry.get("tutor_extra_cost"),
         }
     return tutors
 
@@ -996,16 +1000,27 @@ def is_bargainable_battlefield(permanents: list[dict], profiles: dict,
 def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
                           combo_lines: list[dict], profiles: dict,
                           tutor_meta: dict, reanim_names: set[str],
-                          commander_in_play: bool, commander_play_turn: int | None) -> bool:
+                          commander_in_play: bool, commander_play_turn: int | None,
+                          commander_name: str = "") -> bool:
     """Check whether any combo line is fully assembled and castable this turn.
 
     Three substitution paths for a missing piece, tried in priority order:
-      1. Bargain-free-cast tutor (e.g. Beseech the Mirror) — if bargainable + piece MV ≤
-         tutor's mv_cap + piece type matches tutor's targets. Adds tutor cost; piece is free.
+      1. Bargain-free-cast tutor (e.g. Beseech the Mirror) — to_hand tutors only.
+         If bargainable + piece MV ≤ tutor's mv_cap + piece type matches tutor's targets,
+         adds tutor cost; piece is free.
       2. Type-matched regular tutor — cheapest tutor whose targets include piece's type
-         and whose mv_cap permits the piece's MV. Adds tutor cost + piece cost.
+         and whose mv_cap permits the piece's MV.
+         - to_hand mode (default): adds tutor cost + piece cost.
+         - to_graveyard mode (e.g. Entomb, Buried Alive): requires piece is permanent AND
+           a reanim spell is popped from the per-line reanim_pool. Cost chain becomes
+           tutor cost + reanim cost (piece comes from graveyard).
       3. Reanimation — only for permanent pieces (creature/planeswalker). Adds reanim cost;
          piece's cast cost is replaced by reanim's cost.
+
+    Tutors with extra_cost == "sacrifice-creature" (e.g. Diabolic Intent) only fire if a
+    non-commander creature-typed permanent is on the battlefield. The commander itself does
+    not satisfy the cost (the goldfish always casts commander early; counting it as a free
+    sac target would neutralize the cost).
 
     Returns True if any combo line has all pieces resolved (via presence or substitution)
     AND the synthetic combined mana cost is payable from this turn's mana pool.
@@ -1018,6 +1033,19 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
     bargainable = is_bargainable_battlefield(
         permanents, profiles, commander_in_play, commander_play_turn, turn,
     )
+
+    # Non-commander creature-typed permanent available as a sac target?
+    sac_creature_available = any(
+        "creature" in (profiles.get(p["name"], {}).get("typeLine", "") or "").lower()
+        and p["name"] != commander_name
+        for p in permanents
+        if p["kind"] != "land"
+    )
+
+    def tutor_extra_cost_satisfied(meta: dict) -> bool:
+        if meta.get("extra_cost") == "sacrifice-creature":
+            return sac_creature_available
+        return True
 
     # Pre-build cheapest-first ordered lists of substitute resources currently in hand.
     tutors_in_hand = [name for name in hand if name in tutor_meta]
@@ -1043,16 +1071,20 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
             piece_mv = piece_profile.get("manaCost", {}).get("total", 0)
             piece_is_permanent = piece_profile.get("isPermanent", False)
 
-            # Path 1: bargain free-cast (e.g. Beseech the Mirror)
+            # Path 1: bargain free-cast (e.g. Beseech the Mirror) — to_hand only
             bargain_idx = None
             if bargainable:
                 for idx, tname in enumerate(tutor_pool):
                     meta = tutor_meta[tname]
                     if not meta["free_cast_via_bargain"]:
                         continue
+                    if meta.get("mode", "to_hand") != "to_hand":
+                        continue  # bargain semantics assume piece arrives in hand
                     if meta["mv_cap"] is not None and piece_mv > meta["mv_cap"]:
                         continue
                     if not piece_type_matches(piece_types, meta["targets"]):
+                        continue
+                    if not tutor_extra_cost_satisfied(meta):
                         continue
                     bargain_idx = idx
                     break
@@ -1062,22 +1094,41 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
                 # piece cast is free under bargain; nothing added for the piece itself
                 continue
 
-            # Path 2: type-matched regular tutor (cheapest-first)
-            tutor_idx = None
+            # Path 2: type-matched regular tutor (cheapest-first).
+            # to_graveyard tutors require a reanim spell and a permanent piece.
+            chosen_tutor_idx = None
+            chosen_reanim_idx = None  # only set for to_graveyard mode
             for idx, tname in enumerate(tutor_pool):
                 meta = tutor_meta[tname]
                 if meta["free_cast_via_bargain"]:
-                    continue  # reserved for bargain path (or rejected by bargainable=False)
+                    continue  # reserved for bargain path
                 if meta["mv_cap"] is not None and piece_mv > meta["mv_cap"]:
                     continue
                 if not piece_type_matches(piece_types, meta["targets"]):
                     continue
-                tutor_idx = idx
+                if not tutor_extra_cost_satisfied(meta):
+                    continue
+                mode = meta.get("mode", "to_hand")
+                if mode == "to_graveyard":
+                    if not piece_is_permanent:
+                        continue
+                    if not reanim_pool:
+                        continue  # graveyard tutor needs a reanim to deliver the piece
+                    chosen_tutor_idx = idx
+                    chosen_reanim_idx = 0  # cheapest reanim
+                    break
+                # to_hand
+                chosen_tutor_idx = idx
                 break
-            if tutor_idx is not None:
-                tname = tutor_pool.pop(tutor_idx)
+            if chosen_tutor_idx is not None:
+                tname = tutor_pool.pop(chosen_tutor_idx)
                 to_cast_costs.append(profiles[tname]["manaCost"])
-                to_cast_costs.append(piece_cost)
+                if chosen_reanim_idx is not None:
+                    rname = reanim_pool.pop(chosen_reanim_idx)
+                    to_cast_costs.append(profiles[rname]["manaCost"])
+                    # piece comes from graveyard for free
+                else:
+                    to_cast_costs.append(piece_cost)
                 continue
 
             # Path 3: reanimation for permanent pieces (creature/planeswalker etc.)
@@ -1282,6 +1333,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 reanim_names=reanim_names,
                 commander_in_play=commander_in_play,
                 commander_play_turn=commander_play_turn,
+                commander_name=commander_name,
             )
         by_turn[turn] = metrics_from_board(
             turn=turn,
