@@ -19,12 +19,11 @@ import type {
 } from './types';
 
 // Bump suffix when the persisted shape or upstream data semantics change so
-// returning users don't read 24h-stale bundles. v4 (DEC-205): Dark Dominion
-// retune adds Demonic Tutor / Laboratory Maniac / Tainted Pact with new
-// winConditions tagged kind:"combo" and decklist tutor_targets/tutor_mv_cap
-// schema fields; basics restructured to singleton (1 Swamp + 1 Island) plus
-// 6 owned UBR dual lands.
-const STORAGE_PREFIX = 'gv1-deck-data-v4:';
+// returning users don't read 24h-stale bundles. v5 (DEC-206): Eternal Agony
+// bracket re-tune to B4 — 6-card swap (Kederekt/Maddening Hex/Firebrand/Cursed
+// Mirror/Gleeful Arsonist/Fiery Inscription -> Vampiric/Diabolic Intent/Grim
+// Tutor/Mana Vault/Animate Dead/Entomb), bracket 5 -> 4, GCs 8 -> 10.
+const STORAGE_PREFIX = 'gv1-deck-data-v5:';
 const TTL_MS = 24 * 60 * 60 * 1000;
 
 interface PersistedEnvelope<T> {
