@@ -32,6 +32,7 @@ import mana_simulation_genesis_protocol as sim_azorius
 import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
+import mana_simulation_silverquill_the_disputant as sim_silverquill
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -2281,6 +2282,19 @@ def export_mono_white(metadata: dict) -> dict:
     )
 
 
+def export_orzhov(metadata: dict) -> dict:
+    """Export Quill of Casualties (Orzhov Silverquill aristocrats) simulation."""
+    return _export_colored(
+        sim_module=sim_silverquill,
+        deck_id="silverquill-the-disputant",
+        deck_name="Quill of Casualties",
+        commander_name="Silverquill, the Disputant",
+        commander_cmc=4,
+        colors=["W", "B"],
+        metadata=metadata,
+    )
+
+
 def export_wubg_poison(metadata: dict) -> dict:
     """Export Creeping Corruption (WUBG Atraxa poison/proliferate) simulation."""
     return _export_colored(
@@ -2342,6 +2356,7 @@ DECKS = [
     ("the-white-forge", "The White Forge", export_mono_white),
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
     ("creeping-corruption", "Creeping Corruption", export_wubg_poison),
+    ("silverquill-the-disputant", "Quill of Casualties", export_orzhov),
 ]
 
 
