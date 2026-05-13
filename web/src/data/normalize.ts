@@ -19,6 +19,8 @@ import type {
   DeckStub,
   DeckToken,
   DeckWincon,
+  RawCardMetadata,
+  RawCardMetadataEntry,
   RawCategory,
   RawDeck,
   RawDeckBundle,
@@ -100,9 +102,10 @@ export function splitTitle(t: string | undefined): SplitTitle {
 interface DeckCtx {
   decklistByName: Map<string, RawDecklistCard>;
   highlightsByName: Map<string, RawHighlight>;
+  metadataByName: Map<string, RawCardMetadataEntry>;
 }
 
-function buildCtx(deck: RawDeck): DeckCtx {
+function buildCtx(deck: RawDeck, cardMetadata?: RawCardMetadata): DeckCtx {
   const decklistByName = new Map<string, RawDecklistCard>();
   (deck.decklist || []).forEach((c) => {
     if (c?.name) decklistByName.set(c.name.toLowerCase(), c);
@@ -111,7 +114,11 @@ function buildCtx(deck: RawDeck): DeckCtx {
   (deck.highlights || []).forEach((h) => {
     if (h?.name) highlightsByName.set(h.name.toLowerCase(), h);
   });
-  return { decklistByName, highlightsByName };
+  const metadataByName = new Map<string, RawCardMetadataEntry>();
+  Object.entries(cardMetadata || {}).forEach(([name, meta]) => {
+    metadataByName.set(name.toLowerCase(), meta);
+  });
+  return { decklistByName, highlightsByName, metadataByName };
 }
 
 /**
@@ -129,9 +136,21 @@ function expandToCopies(decklist: RawDecklistCard[]): RawDecklistCard[] {
   return out;
 }
 
-function mvFromRow(row: RawDecklistCard | undefined): string {
-  if (!row) return '—';
-  if (row.type === 'Land' || row.primary_role === 'land') return 'LAND';
+function metaForName(name: string, ctx: DeckCtx): RawCardMetadataEntry | undefined {
+  return ctx.metadataByName.get(name.toLowerCase());
+}
+
+function isLandTypeLine(typeLine: string | undefined): boolean {
+  return /^(Basic |Legendary |Snow )*Land\b/.test(typeLine || '');
+}
+
+function mvFromRow(row: RawDecklistCard | undefined, meta?: RawCardMetadataEntry): string {
+  if (!row) {
+    if (isLandTypeLine(meta?.type_line)) return 'LAND';
+    return meta?.mana_cost || '—';
+  }
+  if (row.type === 'Land' || row.primary_role === 'land' || isLandTypeLine(meta?.type_line)) return 'LAND';
+  if (meta?.mana_cost) return meta.mana_cost;
   return '—';
 }
 
@@ -139,14 +158,17 @@ function tileFor(name: string, ctx: DeckCtx): DeckCardTile {
   if (!name) return { n: '—', mv: '—', price: '—', type: '—', gc: false };
   const dl = ctx.decklistByName.get(name.toLowerCase());
   const hl = ctx.highlightsByName.get(name.toLowerCase());
-  return {
+  const meta = metaForName(name, ctx);
+  const tile: DeckCardTile = {
     n: name,
-    mv: mvFromRow(dl),
+    mv: mvFromRow(dl, meta),
     price: hl?.price || '—',
-    type: dl?.type || '—',
+    type: dl?.type || meta?.type_line || '—',
     gc: !!hl?.isGameChanger,
     note: hl?.reason,
   };
+  if (typeof meta?.cmc === 'number') tile.cmc = meta.cmc;
+  return tile;
 }
 
 function transformWincons(deck: RawDeck, ctx: DeckCtx): DeckWincon[] {
@@ -243,23 +265,27 @@ function transformList(deck: RawDeck, ctx: DeckCtx): DeckListGroup[] {
     arr.push(c);
     byRole.set(role, arr);
   });
-  const commanderTiles: DeckCardTile[] = [
-    {
-      n: deck.commander,
-      gc: (deck.gameChangers || 0) > 0,
-      mv: '—',
-      price: '—',
-      type: 'Commander',
-    },
-  ];
+  const commanderMeta = metaForName(deck.commander, ctx);
+  const commanderTile: DeckCardTile = {
+    n: deck.commander,
+    gc: (deck.gameChangers || 0) > 0,
+    mv: commanderMeta?.mana_cost || '—',
+    price: '—',
+    type: commanderMeta?.type_line || 'Commander',
+  };
+  if (typeof commanderMeta?.cmc === 'number') commanderTile.cmc = commanderMeta.cmc;
+  const commanderTiles: DeckCardTile[] = [commanderTile];
   if (deck.partner) {
-    commanderTiles.push({
+    const partnerMeta = metaForName(deck.partner, ctx);
+    const partnerTile: DeckCardTile = {
       n: deck.partner,
       gc: false,
-      mv: '—',
+      mv: partnerMeta?.mana_cost || '—',
       price: '—',
-      type: 'Commander',
-    });
+      type: partnerMeta?.type_line || 'Commander',
+    };
+    if (typeof partnerMeta?.cmc === 'number') partnerTile.cmc = partnerMeta.cmc;
+    commanderTiles.push(partnerTile);
   }
   const groupName = deck.partner ? 'Commanders' : 'Commander';
   const groups: DeckListGroup[] = [{ name: groupName, cards: commanderTiles }];
@@ -274,16 +300,19 @@ function transformList(deck: RawDeck, ctx: DeckCtx): DeckListGroup[] {
       name: `${ROLE_LABEL[role] || role} (${qtySum(cards)})`,
       cards: cards.map((c) => {
         const hl = ctx.highlightsByName.get(c.name.toLowerCase());
+        const meta = metaForName(c.name, ctx);
         const qty = c.quantity ?? 1;
-        return {
+        const tile: DeckCardTile = {
           n: c.name,
-          mv: c.primary_role === 'land' ? 'LAND' : '—',
+          mv: mvFromRow(c, meta),
           price: hl?.price || '—',
-          type: c.type,
+          type: c.type || meta?.type_line || '—',
           gc: !!hl?.isGameChanger,
           note: hl?.reason,
           ...(qty > 1 ? { qty } : {}),
         };
+        if (typeof meta?.cmc === 'number') tile.cmc = meta.cmc;
+        return tile;
       }),
     });
   }
@@ -293,7 +322,7 @@ function transformList(deck: RawDeck, ctx: DeckCtx): DeckListGroup[] {
 /** Normalize one raw deck bundle into the UI-facing DeckFull shape. */
 export function normalizeDeck(bundle: RawDeckBundle, idx: number): DeckFull {
   const { id, index: idxEntry, deck, sim } = bundle;
-  const ctx = buildCtx(deck);
+  const ctx = buildCtx(deck, bundle.cardMetadata);
   const { curve, func } = transformCurveAndFunc(deck);
 
   const sources: Array<readonly [string, string]> = (deck.sources || []).map((s) =>

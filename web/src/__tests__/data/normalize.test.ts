@@ -209,6 +209,22 @@ describe('normalizeDeck', () => {
     expect(lands?.cards[0].mv).toBe('LAND');
   });
 
+  it('hydrates mana costs and cmc from generated card metadata before live Scryfall loads', () => {
+    const out = normalizeDeck(makeBundle({
+      cardMetadata: {
+        'Sol Ring': { mana_cost: '{1}', cmc: 1, type_line: 'Artifact' },
+        'Mana Vault': { mana_cost: '{1}', cmc: 1, type_line: 'Artifact' },
+        'Zhulodok, Void Gorger': { mana_cost: '{5}{C}', cmc: 6, type_line: 'Legendary Creature — Eldrazi' },
+      },
+    }), 1);
+
+    const ramp = out.list.find((g) => g.name.startsWith('Ramp'));
+    const solRing = ramp?.cards.find((c) => c.n === 'Sol Ring');
+    expect(solRing?.mv).toBe('{1}');
+    expect(solRing?.cmc).toBe(1);
+    expect(out.list[0].cards[0].mv).toBe('{5}{C}');
+  });
+
   it('flattens rawDecklist into physicalDecklist by quantity (DEC-176)', () => {
     const bundle = makeBundle();
     bundle.deck.decklist = [

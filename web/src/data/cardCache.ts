@@ -8,10 +8,10 @@
 //   cardCache.get(name)             → CardEntry | null  (synchronous lookup)
 //   cardCache.subscribe(name, fn)   → () => void        (notified on entry update)
 //   cardCache.fetch(name)           → Promise<CardEntry> (deduped)
-//   cardCache.enqueue(name)         → void              (throttled ≥80ms between Scryfall calls)
+//   cardCache.enqueue(name)         → void              (throttled ≥120ms between Scryfall calls)
 //
 // The throttled queue exists because Scryfall's docs request ≥50ms between calls;
-// we use 80ms for headroom. Dedupe both at the queue level (skip names already in
+// we use 120ms for headroom. Dedupe both at the queue level (skip names already in
 // queue or cache) and at the inflight level (concurrent fetch() calls share one promise).
 
 export type CardStatus = 'loading' | 'loaded' | 'error';
@@ -28,6 +28,7 @@ export interface CardEntry {
   art_crop?: string;
   price?: string | null;
   error?: string;
+  errorStatus?: number;
   /** Epoch ms when this entry was fetched; used for 24h TTL. */
   fetchedAt?: number;
 }
@@ -36,7 +37,10 @@ type Listener = (entry: CardEntry | null) => void;
 
 const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const STORAGE_PREFIX = 'gv1-card:';
-const THROTTLE_MS = 80;
+const THROTTLE_MS = 120;
+const ERROR_RETRY_MS = 30 * 1000;
+const MAX_FETCH_ATTEMPTS = 3;
+const DEFAULT_RETRY_MS = 750;
 
 /** Visible for testing — production callers should use the exported singleton. */
 export interface CardCache {
@@ -163,7 +167,7 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
 
     const fetchImpl = resolveFetch();
     if (!fetchImpl) {
-      const errEntry: CardEntry = { status: 'error', name, error: 'fetch unavailable' };
+      const errEntry: CardEntry = { status: 'error', name, error: 'fetch unavailable', fetchedAt: now() };
       cache.set(key, errEntry);
       notify(key);
       return errEntry;
@@ -172,8 +176,24 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
     const url = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}`;
     const promise = (async (): Promise<CardEntry> => {
       try {
-        const r = await fetchImpl(url);
-        if (!r.ok) throw new Error('scryfall ' + r.status);
+        let r: Response | null = null;
+        for (let attempt = 0; attempt < MAX_FETCH_ATTEMPTS; attempt += 1) {
+          r = await fetchImpl(url);
+          if (r.ok) break;
+          const retryable = r.status === 429 || r.status >= 500;
+          if (!retryable || attempt === MAX_FETCH_ATTEMPTS - 1) break;
+          const retryAfter = Number(r.headers?.get('retry-after') || '');
+          const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
+            ? retryAfter * 1000
+            : DEFAULT_RETRY_MS * (attempt + 1);
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+        }
+        if (!r) throw new Error('scryfall unavailable');
+        if (!r.ok) {
+          const error = new Error('scryfall ' + r.status) as Error & { status?: number };
+          error.status = r.status;
+          throw error;
+        }
         const data = await r.json();
         const face = (data.card_faces && data.card_faces[0]) || data;
         const imgs = data.image_uris || face.image_uris || {};
@@ -199,6 +219,10 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
           status: 'error',
           name,
           error: err instanceof Error ? err.message : String(err),
+          errorStatus: err instanceof Error && 'status' in err
+            ? (err as Error & { status?: number }).status
+            : undefined,
+          fetchedAt: now(),
         };
         cache.set(key, entry);
         notify(key);
@@ -232,7 +256,10 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
       if (existing !== cache.get(key)) cache.set(key, existing);
       return;
     }
-    if (queue.includes(name)) return;
+    if (existing?.status === 'error' && existing.fetchedAt && now() - existing.fetchedAt < ERROR_RETRY_MS) {
+      return;
+    }
+    if (queue.some((queued) => queued.toLowerCase() === key)) return;
     queue.push(name);
     pump();
   }

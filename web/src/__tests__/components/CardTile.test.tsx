@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { CardTile } from '../../components/molecules/CardTile';
 import { cardCache } from '../../data/cardCache';
 
@@ -16,7 +16,14 @@ beforeEach(() => {
 });
 
 describe('CardTile', () => {
-  it('renders the image_normal Scryfall URL, not image_small', async () => {
+  it('prefers the local downloaded card image before live Scryfall art', () => {
+    render(<CardTile card={{ n: 'Sol Ring', mv: '{1}', type: 'Artifact' }} />);
+
+    const img = document.querySelector<HTMLImageElement>('img.gv1-card-tile-img')!;
+    expect(img.src).toContain('/data/images/cards/sol-ring-normal.jpg');
+  });
+
+  it('falls back to live Scryfall image_normal when the local image is missing', async () => {
     window.localStorage.setItem(
       'gv1-card:sol ring',
       JSON.stringify({
@@ -29,16 +36,17 @@ describe('CardTile', () => {
       }),
     );
     render(<CardTile card={{ n: 'Sol Ring' }} />);
-    await waitFor(() => {
-      const img = screen.getByRole('presentation', { hidden: true }) as HTMLImageElement | null;
-      expect(img).toBeTruthy();
-    });
     const img = document.querySelector<HTMLImageElement>('img.gv1-card-tile-img')!;
-    expect(img.src).toContain('/normal/');
-    expect(img.src).not.toContain('/small/');
+    const initialSrc = img.src;
+    fireEvent.error(img);
+    await waitFor(() => expect(document.querySelector<HTMLImageElement>('img.gv1-card-tile-img')?.src).toContain('/normal/'));
+    expect(initialSrc).toContain('/data/images/cards/sol-ring-normal.jpg');
+    const liveImg = document.querySelector<HTMLImageElement>('img.gv1-card-tile-img')!;
+    expect(liveImg.src).toContain('/normal/');
+    expect(liveImg.src).not.toContain('/small/');
   });
 
-  it('falls back to image_small when image_normal is missing', async () => {
+  it('falls back to live Scryfall image_small when image_normal is missing', async () => {
     window.localStorage.setItem(
       'gv1-card:sol ring',
       JSON.stringify({
@@ -49,10 +57,18 @@ describe('CardTile', () => {
       }),
     );
     render(<CardTile card={{ n: 'Sol Ring' }} />);
-    await waitFor(() => {
-      expect(document.querySelector('img.gv1-card-tile-img')).toBeTruthy();
-    });
     const img = document.querySelector<HTMLImageElement>('img.gv1-card-tile-img')!;
-    expect(img.src).toContain('/small/');
+    fireEvent.error(img);
+    await waitFor(() => {
+      expect(document.querySelector<HTMLImageElement>('img.gv1-card-tile-img')?.src).toContain('/small/');
+    });
+    const liveImg = document.querySelector<HTMLImageElement>('img.gv1-card-tile-img')!;
+    expect(liveImg.src).toContain('/small/');
+  });
+
+  it('renders the local image file slug for punctuation-heavy names', () => {
+    render(<CardTile card={{ n: "Agadeem's Awakening", mv: '{X}{B}{B}{B}', type: 'Sorcery' }} />);
+    const img = document.querySelector<HTMLImageElement>('img.gv1-card-tile-img')!;
+    expect(img.src).toContain('/data/images/cards/agadeem-s-awakening-normal.jpg');
   });
 });

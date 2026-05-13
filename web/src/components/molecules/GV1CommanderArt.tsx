@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { localCardImageUrl } from '../../data/cardImages';
 
 type Status = 'loading' | 'loaded' | 'error';
+type ImageSource = 'local' | 'remote';
 
 interface GV1CommanderArtProps {
   name: string;
@@ -9,20 +11,33 @@ interface GV1CommanderArtProps {
 
 export function GV1CommanderArt({ name, slug }: GV1CommanderArtProps) {
   const [status, setStatus] = useState<Status>('loading');
-  const src = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}&format=image&version=art_crop`;
-  useEffect(() => { setStatus('loading'); }, [slug]);
+  const [source, setSource] = useState<ImageSource>('local');
+  const localSrc = localCardImageUrl(name, 'art_crop');
+  const remoteSrc = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}&format=image&version=art_crop`;
+  const src = source === 'local' ? localSrc : remoteSrc;
+  useEffect(() => {
+    setStatus('loading');
+    setSource('local');
+  }, [name, slug]);
   const glowId = `cmd-glow-${slug}`;
   return (
     <div className="gv1-cmd-art">
       <div className="gv1-cmd-art-inner">
         {status !== 'error' && (
           <img
-            key={slug}
+            key={`${slug}-${source}`}
             src={src}
             alt={name}
             className={`gv1-cmd-art-img${status === 'loaded' ? ' gv1-loaded' : ''}`}
             onLoad={() => setStatus('loaded')}
-            onError={() => setStatus('error')}
+            onError={() => {
+              if (source === 'local') {
+                setSource('remote');
+                setStatus('loading');
+              } else {
+                setStatus('error');
+              }
+            }}
             draggable={false}
           />
         )}
@@ -66,7 +81,9 @@ export function GV1CommanderArt({ name, slug }: GV1CommanderArtProps) {
         <span></span><span></span><span></span><span></span>
       </div>
       <div className="gv1-cmd-art-caption">
-        <span className="gv1-mono-xs gv1-dim">◇ scryfall.com · art_crop</span>
+        <span className="gv1-mono-xs gv1-dim">
+          ◇ {source === 'local' ? 'local atlas' : 'scryfall.com'} · art_crop
+        </span>
       </div>
     </div>
   );

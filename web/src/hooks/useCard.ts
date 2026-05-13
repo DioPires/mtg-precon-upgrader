@@ -11,7 +11,7 @@ export function useCard(name: string | undefined): CardEntry | null {
     const cur = cardCache.get(name);
     setEntry(cur);
     const unsub = cardCache.subscribe(name, setEntry);
-    if (!cur) cardCache.enqueue(name);
+    if (!cur || cur.status === 'error') cardCache.enqueue(name);
     return unsub;
   }, [name]);
   return entry;

@@ -50,6 +50,7 @@ export function groupByType(
   partner?: string,
 ): DeckListGroup[] {
   const buckets: Partial<Record<TypeBucket, DeckCardTile[]>> = {};
+  const commanderGroup = list.find((g) => COMMANDER_GROUPS.has(g.name));
   list.forEach((g) => {
     if (COMMANDER_GROUPS.has(g.name)) return;
     g.cards.forEach((c) => {
@@ -58,10 +59,10 @@ export function groupByType(
     });
   });
   const out: DeckListGroup[] = [];
-  const commanderCards: DeckCardTile[] = [
-    { n: commander, mv: '—', type: 'Commander', price: '—', gc: false },
-  ];
-  if (partner) {
+  const commanderCards: DeckCardTile[] = commanderGroup
+    ? commanderGroup.cards
+    : [{ n: commander, mv: '—', type: 'Commander', price: '—', gc: false }];
+  if (!commanderGroup && partner) {
     commanderCards.push({ n: partner, mv: '—', type: 'Commander', price: '—', gc: false });
   }
   out.push({
@@ -118,10 +119,16 @@ export function serializeFullList(
  * (Scryfall) flow into tiles for the cmc-ascending sort. Re-renders whenever a
  * card hydrates. The cache itself dedupes + throttles the underlying fetches.
  */
-function useNameSet(list: DeckListGroup[]): string[] {
+function useMissingMetaNames(list: DeckListGroup[]): string[] {
   return useMemo(() => {
     const seen = new Set<string>();
-    list.forEach((g) => g.cards.forEach((c) => { if (c.n) seen.add(c.n); }));
+    list.forEach((g) => {
+      g.cards.forEach((c) => {
+        if (!c.n) return;
+        if (c.mv === 'LAND') return;
+        if (c.cmc == null || c.mv === '—') seen.add(c.n);
+      });
+    });
     return [...seen];
   }, [list]);
 }
@@ -187,7 +194,7 @@ export function Decklist({ list, commander, partner }: DecklistProps) {
     setParams(sp, { replace: true });
   };
 
-  const names = useNameSet(list);
+  const names = useMissingMetaNames(list);
   const metaMap = useCardMetaMap(names);
   const enriched = useMemo(() => enrichWithMeta(list, metaMap), [list, metaMap]);
 

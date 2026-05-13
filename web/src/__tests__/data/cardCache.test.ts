@@ -110,6 +110,24 @@ describe('cardCache', () => {
     expect(storage.getItem('gv1-card:nonesuch')).toBeNull();
   });
 
+  it('retries transient Scryfall failures before surfacing an error', async () => {
+    vi.useFakeTimers();
+    const fetchImpl = vi.fn()
+      .mockResolvedValueOnce({ ok: false, status: 429, headers: { get: () => null }, json: async () => ({}) })
+      .mockResolvedValueOnce(scryfallResponse('Sol Ring'));
+    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 0 });
+
+    const promise = cache.fetch('Sol Ring');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(750);
+    const entry = await promise;
+
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(entry.status).toBe('loaded');
+    vi.useRealTimers();
+  });
+
   it('enqueue throttles successive fetches by the configured interval', async () => {
     vi.useFakeTimers();
     const fetchImpl = vi.fn().mockResolvedValue(scryfallResponse('Sol Ring'));

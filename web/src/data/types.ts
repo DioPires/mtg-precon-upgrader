@@ -246,6 +246,17 @@ export interface RawCandidates {
   version?: string;
 }
 
+export interface RawCardMetadataEntry {
+  type_line?: string;
+  cmc?: number;
+  mana_cost?: string;
+  colors?: string[];
+  oracle_text?: string;
+  layout?: string;
+}
+
+export type RawCardMetadata = Record<string, RawCardMetadataEntry>;
+
 /** Raw record passed into normalize() — one per deck. */
 export interface RawDeckBundle {
   id: string;
@@ -254,6 +265,7 @@ export interface RawDeckBundle {
   sim?: RawSimulation | null;
   metrics?: RawMetrics | null;
   candidates?: RawCandidates | null;
+  cardMetadata?: RawCardMetadata;
 }
 
 // ─── 2. DECK_FULL (UI shape) ────────────────────────────────────────

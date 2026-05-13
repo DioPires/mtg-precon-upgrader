@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useCard } from '../../hooks/useCard';
+import { localCardImageUrl } from '../../data/cardImages';
 import { ManaCost } from '../atoms/ManaCost';
 
 export interface CardTileCard {
@@ -70,11 +72,25 @@ function FallbackGlyph({ seed, variant }: { seed: number; variant: number }) {
 }
 
 export function CardTile({ card, size = 'md' }: CardTileProps) {
+  const [localImageFailed, setLocalImageFailed] = useState(false);
+  const [remoteImageFailed, setRemoteImageFailed] = useState(false);
+
+  useEffect(() => {
+    setLocalImageFailed(false);
+    setRemoteImageFailed(false);
+  }, [card.n]);
+
   // Deterministic glyph variant per card name so it looks curated, not random.
   const seed = (card.n || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   const variant = seed % 4;
-  const live = useCard(card.n);
-  const imgSrc = live?.status === 'loaded' ? (live.image_normal || live.image_small) : null;
+  const needsLiveMeta = !card.mv || card.mv === '—' || !card.type || card.type === '—';
+  const needsLiveImage = localImageFailed && !remoteImageFailed;
+  const live = useCard(needsLiveMeta || needsLiveImage ? card.n : undefined);
+  const remoteImgSrc = live?.status === 'loaded'
+    ? (live.image_normal || live.image_small || live.image_large || null)
+    : null;
+  const localImgSrc = localCardImageUrl(card.n);
+  const imgSrc = !localImageFailed ? localImgSrc : remoteImgSrc;
   const hasImg = !!imgSrc;
   const mvLive = live?.status === 'loaded' && live.mana_cost ? live.mana_cost : null;
   const mv = (card.mv && card.mv !== '—') ? card.mv : (mvLive || card.mv || '—');
@@ -94,6 +110,10 @@ export function CardTile({ card, size = 'md' }: CardTileProps) {
             className="gv1-card-tile-img"
             loading="lazy"
             draggable={false}
+            onError={() => {
+              if (!localImageFailed) setLocalImageFailed(true);
+              else setRemoteImageFailed(true);
+            }}
           />
         )}
         {!hasImg && (

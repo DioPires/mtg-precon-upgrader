@@ -10,6 +10,7 @@
 
 import type {
   RawCandidates,
+  RawCardMetadata,
   RawDeck,
   RawDeckBundle,
   RawDeckIndex,
@@ -27,7 +28,12 @@ import type {
 // kind:combo, tutor_mode/extra_cost schema added; simulation.json values shift
 // for eternal-agony, dark-dominion, eternal-harvest.
 // v6 -> v7 (DEC-226): added Witherbloom Balance deck + index reorder.
-const STORAGE_PREFIX = 'gv1-deck-data-v7:';
+// v7 -> v8 (DEC-235): card-metadata.json refreshed to cover all decks (was
+// missing ~80 cards including Vampiric Tutor, Demonic Consultation, Thassa's
+// Oracle, Witherbloom landbase); some tiles rendered "—" mana cost waiting on
+// the live-Scryfall fallback. Bump invalidates the persisted card-metadata
+// envelope so returning users pick up the fresh data immediately.
+const STORAGE_PREFIX = 'gv1-deck-data-v8:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
@@ -51,6 +57,7 @@ function defaultStorage(): Storage | null {
 
 export interface DeckLoader {
   loadIndex(): Promise<RawDeckIndex>;
+  loadCardMetadata(): Promise<RawCardMetadata>;
   loadDeck(id: string): Promise<RawDeckBundle | null>;
   loadAll(): Promise<RawDeckBundle[]>;
   /** Test-only: drop in-memory state. */
@@ -65,8 +72,10 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   const now = deps.now ?? (() => Date.now());
 
   const indexInflight = new Map<string, Promise<RawDeckIndex>>();
+  const metadataInflight = new Map<string, Promise<RawCardMetadata>>();
   const deckInflight = new Map<string, Promise<RawDeckBundle | null>>();
   let memIndex: RawDeckIndex | null = null;
+  let memCardMetadata: RawCardMetadata | null = null;
   const memDecks = new Map<string, RawDeckBundle>();
 
   function readPersisted<T>(key: string): T | null {
@@ -125,17 +134,57 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
     return promise;
   }
 
+  async function loadCardMetadata(): Promise<RawCardMetadata> {
+    if (memCardMetadata) return memCardMetadata;
+    const cached = readPersisted<RawCardMetadata>('card-metadata');
+    if (cached) {
+      memCardMetadata = cached;
+      return cached;
+    }
+    const existing = metadataInflight.get('card-metadata');
+    if (existing) return existing;
+    const promise = (async () => {
+      const data = await fetchJson<RawCardMetadata>('/data/card-metadata.json');
+      const metadata = data ?? {};
+      memCardMetadata = metadata;
+      writePersisted('card-metadata', metadata);
+      return metadata;
+    })().finally(() => metadataInflight.delete('card-metadata'));
+    metadataInflight.set('card-metadata', promise);
+    return promise;
+  }
+
+  function withoutCardMetadata(bundle: RawDeckBundle): RawDeckBundle {
+    const persistable = { ...bundle };
+    delete persistable.cardMetadata;
+    return persistable;
+  }
+
+  async function attachCardMetadata(bundle: RawDeckBundle): Promise<RawDeckBundle> {
+    const cardMetadata = await loadCardMetadata();
+    return { ...bundle, cardMetadata };
+  }
+
   async function fetchDeckBundle(entry: RawDeckIndexEntry): Promise<RawDeckBundle> {
     const id = entry.id;
     const base = `/data/commanders/${id}`;
-    const [deck, sim, metrics, candidates] = await Promise.all([
+    const [deck, sim, metrics, candidates, cardMetadata] = await Promise.all([
       fetchJson<RawDeck>(`${base}/deck.json`),
       fetchJson<RawSimulation>(`${base}/simulation.json`),
       fetchJson<RawMetrics>(`${base}/metrics.json`),
       fetchJson<RawCandidates>(`${base}/candidates.json`),
+      loadCardMetadata(),
     ]);
     if (!deck) throw new Error(`deck.json missing for ${id}`);
-    return { id, index: entry, deck, sim: sim ?? null, metrics: metrics ?? null, candidates: candidates ?? null };
+    return {
+      id,
+      index: entry,
+      deck,
+      sim: sim ?? null,
+      metrics: metrics ?? null,
+      candidates: candidates ?? null,
+      cardMetadata,
+    };
   }
 
   async function loadDeck(id: string): Promise<RawDeckBundle | null> {
@@ -143,8 +192,9 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
     if (cachedMem) return cachedMem;
     const persisted = readPersisted<RawDeckBundle>(`deck:${id}`);
     if (persisted) {
-      memDecks.set(id, persisted);
-      return persisted;
+      const withMetadata = await attachCardMetadata(persisted);
+      memDecks.set(id, withMetadata);
+      return withMetadata;
     }
     const existing = deckInflight.get(id);
     if (existing) return existing;
@@ -155,7 +205,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
       if (!entry) return null;
       const bundle = await fetchDeckBundle(entry);
       memDecks.set(id, bundle);
-      writePersisted(`deck:${id}`, bundle);
+      writePersisted(`deck:${id}`, withoutCardMetadata(bundle));
       return bundle;
     })().finally(() => deckInflight.delete(id));
 
@@ -171,12 +221,14 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
 
   function _reset(): void {
     memIndex = null;
+    memCardMetadata = null;
     memDecks.clear();
     indexInflight.clear();
+    metadataInflight.clear();
     deckInflight.clear();
   }
 
-  return { loadIndex, loadDeck, loadAll, _reset };
+  return { loadIndex, loadCardMetadata, loadDeck, loadAll, _reset };
 }
 
 export const deckLoader: DeckLoader = createDeckLoader();
