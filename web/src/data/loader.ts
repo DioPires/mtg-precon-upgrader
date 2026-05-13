@@ -19,15 +19,19 @@ import type {
 } from './types';
 
 // Bump suffix when the persisted shape or upstream data semantics change so
-// returning users don't read 24h-stale bundles. v5 (DEC-206): Eternal Agony
+// returning users don't read stale bundles. v5 (DEC-206): Eternal Agony
 // bracket re-tune to B4 — 6-card swap (Kederekt/Maddening Hex/Firebrand/Cursed
 // Mirror/Gleeful Arsonist/Fiery Inscription -> Vampiric/Diabolic Intent/Grim
 // Tutor/Mana Vault/Animate Dead/Entomb), bracket 5 -> 4, GCs 8 -> 10.
 // v5 -> v6: sim-fidelity follow-up (DEC-206) — Hidetsugu+Solphim tagged as
 // kind:combo, tutor_mode/extra_cost schema added; simulation.json values shift
 // for eternal-agony, dark-dominion, eternal-harvest.
-const STORAGE_PREFIX = 'gv1-deck-data-v6:';
-const TTL_MS = 24 * 60 * 60 * 1000;
+// v6 -> v7 (DEC-226): added Witherbloom Balance deck + index reorder.
+const STORAGE_PREFIX = 'gv1-deck-data-v7:';
+// TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
+// once a day; the cache is still useful for fast navigation within a session
+// without making returning users wait a full day to see new content.
+const TTL_MS = 60 * 60 * 1000;
 
 interface PersistedEnvelope<T> {
   fetchedAt: number;
