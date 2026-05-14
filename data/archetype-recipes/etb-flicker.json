@@ -1,0 +1,110 @@
+{
+  "id": "etb-flicker",
+  "name": "ETB / Flicker",
+  "summary": "Enter-the-battlefield trigger loops backed by flicker (exile-and-return) effects, end-step blink permanents, ETB doublers, and activated/triggered flicker creatures. Wins via incremental value: every flicker re-fires Mulldrifter / Solemn Simulacrum / Sun Titan / Cloudblazer-style ETB triggers, often doubled by Panharmonicon-class effects.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft pending board confirmation — Gate 2 (canon) + Gate 3 (recipe) combined into a single request_confirmation interaction, mirroring the graveyard-reanimator / tokens-go-wide / counters-payoffs / infect-poison / spellslinger / stax-control / group-slug collapsed-gate path. 20/20 = 100% canon recall validated empirically against Scryfall API on 2026-05-14.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Ephemerate",
+    "Cloudshift",
+    "Essence Flux",
+    "Momentary Blink",
+    "Acrobatic Maneuver",
+    "Eerie Interlude",
+    "Ghostway",
+    "Teleportation Circle",
+    "Conjurer's Closet",
+    "Far Traveler",
+    "Panharmonicon",
+    "Elesh Norn, Mother of Machines",
+    "Yarok, the Desecrated",
+    "Naban, Dean of Iteration",
+    "Virtue of Knowledge",
+    "Soulherder",
+    "Emiel the Blessed",
+    "Gilraen, Dúnedain Protector",
+    "Wispweaver Angel",
+    "Distinguished Conjurer"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "the-white-forge is the only deck currently tagged etb-flicker. From that deck the canon takes Teleportation Circle (recurring end-step flicker), Ephemerate (cheapest rebound flicker), Conjurer's Closet (recurring permanent flicker — added to canon for the etb-flicker prototype even though the live deck rotates it in/out), Panharmonicon (ETB doubler) and Elesh Norn, Mother of Machines (ETB doubler + opponent-ETB hoser). Solemn Simulacrum and Sun Titan are present in the deck but are pure ETB-value bodies that overlap with ramp/graveyard-reanimator recipes, so they sit outside canon and surface via those archetypes instead.",
+    "from_edhrec_archetype_pages": "EDHREC's flicker / blink landing pages anchor on Brago, Soulherder, Yorion, Felidar Guardian, Eldrazi Displacer, Restoration Angel, Reflector Mage, Mulldrifter as the canonical cards. From that set Soulherder is the cleanest activated end-step flicker creature; Cloudshift / Essence Flux / Momentary Blink / Acrobatic Maneuver are the staple cheap targeted flicker instants. Eerie Interlude and Ghostway are the canonical mass-flicker save-from-board-wipe spells. Wispweaver Angel + Distinguished Conjurer represent the ETB-flicker-yourself creatures. Far Traveler is the modern background commander pattern for recurring end-step flicker.",
+    "from_combo_pieces": "Commander Spellbook combo lines for flicker hinge on Felidar Guardian + Saheeli Rai (infinite Cat tokens) and Brago + Strionic Resonator (infinite ETBs); both lines route through the etb-doublers and flicker-activated-creatures sub-recipes. Emiel the Blessed + Pestermite / Deceiver Exarch is another archetype combo line, anchoring Emiel in canon. Gilraen, Dúnedain Protector is the LOTR-era activated flicker analog, included to test the recipe surfaces newer printings, not just MH-era staples.",
+    "from_doubler_family": "Yarok, the Desecrated, Naban, Dean of Iteration and Virtue of Knowledge are the conditional or alternate-cost variants of Panharmonicon — they all use the literal 'triggers an additional time' idiom, anchoring the etb_doublers sub-recipe to a deterministic Scryfall query rather than relying on partial-match phrases."
+  },
+  "sub_recipes": {
+    "flicker_targeted_spells": {
+      "intent": "Cheap instants and sorceries that exile a single target creature you control and return it to the battlefield — the workhorse 'flicker spell' bucket. Used to re-fire ETBs at instant speed, dodge removal, untap a tapped attacker, or activate a doubler trigger.",
+      "queries": [
+        "f:commander -t:creature -t:land o:\"exile target\" o:\"return\" o:\"battlefield\" o:\"you control\""
+      ],
+      "canon_recall": {
+        "expected": ["Ephemerate", "Cloudshift", "Essence Flux", "Momentary Blink", "Acrobatic Maneuver"],
+        "surfaced": ["Ephemerate", "Cloudshift", "Essence Flux", "Momentary Blink", "Acrobatic Maneuver"],
+        "count": "5/5",
+        "note": "24-result query, EDHREC-ordered. All 5 canon land in the top 15. Noise is bounded — every result is a flicker effect by construction; the only judgement calls are pirate/spirit/bird-tribal flavours (Splash Portal, Siren's Ruse) which still flicker a creature and re-fire its ETB, so they're tribe-flavoured variants of the same idiom, not false positives."
+      }
+    },
+    "flicker_mass_spells": {
+      "intent": "Single-card mass blinks — exile every (or any number of) creature(s) you control and return them at end of turn. The classic save-from-Wrath answer that also re-fires the whole board's ETBs in one shot.",
+      "queries": [
+        "f:commander -t:creature -t:land (o:\"exile each creature you control\" or o:\"exile any number of target creatures you control\")"
+      ],
+      "canon_recall": {
+        "expected": ["Eerie Interlude", "Ghostway"],
+        "surfaced": ["Eerie Interlude", "Ghostway"],
+        "count": "2/2",
+        "note": "2-result query — every match is the canonical mass-flicker idiom. Zero noise. Semester's End is the closest cousin in the broader pool but uses 'exile each creature, planeswalker, and battle you control' phrasing — recipe accepts surfacing it only via the broader 'exile + return' family below if a deck needs it."
+      }
+    },
+    "flicker_endstep_permanents": {
+      "intent": "Permanents (artifacts and enchantments) that re-fire flicker every end step — the recurring engine pieces that turn the deck from 'flicker package' into 'flicker engine'.",
+      "queries": [
+        "f:commander -t:creature -t:land o:\"at the beginning of your end step\" o:\"exile\" o:\"return\""
+      ],
+      "canon_recall": {
+        "expected": ["Teleportation Circle", "Conjurer's Closet", "Far Traveler"],
+        "surfaced": ["Teleportation Circle", "Conjurer's Closet", "Far Traveler"],
+        "count": "3/3",
+        "note": "6-result query. The other 3 results — Airbender Ascension (TLA, quest-counter gated), Nahiri's Resolve (delayed return next upkeep, RW), Spirit-Sister's Call (graveyard reanimation that exiles-on-leave, BW) — are recipe-adjacent and worth surfacing to the board for case-by-case adoption. They're not false positives in the strict sense; they're flicker-via-end-step with extra friction."
+      }
+    },
+    "etb_doublers": {
+      "intent": "Permanents that make every ETB trigger fire twice. The reason flicker is a deck and not just a removal-dodge. Doubles Mulldrifter draws, doubles Solemn Simulacrum ramps, doubles Sun Titan returns, doubles every flicker payoff.",
+      "queries": [
+        "f:commander o:\"entering causes a triggered ability\" o:\"triggers an additional time\""
+      ],
+      "canon_recall": {
+        "expected": ["Panharmonicon", "Elesh Norn, Mother of Machines", "Yarok, the Desecrated", "Naban, Dean of Iteration", "Virtue of Knowledge"],
+        "surfaced": ["Panharmonicon", "Elesh Norn, Mother of Machines", "Yarok, the Desecrated", "Naban, Dean of Iteration", "Virtue of Knowledge"],
+        "count": "5/5",
+        "note": "6-result query (only Ancient Greenwarden is non-canon — it's the lands-entering variant, true positive for lands-matter overlap rather than noise). Zero noise inside the etb-doubler family. Strionic Resonator is NOT surfaced because it uses 'copy target triggered ability' phrasing — it is intentionally left out of this sub-recipe; it surfaces via spellbook combo discovery on a per-deck basis when Brago / Aminatou are the commander."
+      }
+    },
+    "flicker_activated_creatures": {
+      "intent": "Creatures whose printed ability flickers another creature you control — either activated (Emiel, Gilraen, Distinguished Conjurer, Nephalia Smuggler) or triggered (Soulherder, Wispweaver Angel). The 'flicker on a body' bucket: every one of these stacks with the etb_doublers above for recurring value loops.",
+      "queries": [
+        "f:commander t:creature o:\"exile another target creature you control\" o:\"return\""
+      ],
+      "canon_recall": {
+        "expected": ["Soulherder", "Emiel the Blessed", "Gilraen, Dúnedain Protector", "Wispweaver Angel", "Distinguished Conjurer"],
+        "surfaced": ["Soulherder", "Emiel the Blessed", "Gilraen, Dúnedain Protector", "Wispweaver Angel", "Distinguished Conjurer"],
+        "count": "5/5",
+        "note": "9-result query. Non-canon results — Lilysplash Mentor (+1/+1 counter variant, GU), Kykar Zephyr Awakener (spellslinger-conditional flicker, UW commander), Nephalia Smuggler (mono-U 1-mana repeatable), Baboon Spirit (Spirit-tribal flicker) — are all legitimate etb-flicker tools but were ranked below canon for adoption simplicity. Eldrazi Displacer is intentionally NOT in canon: its text reads 'exile another target creature' without the 'you control' qualifier (it can also exile opponent creatures as removal), and so falls outside this sub-recipe's scope. Decks running Displacer should treat it as cross-archetype with stax-control / removal."
+      }
+    }
+  },
+  "noise_budget": {
+    "policy": "Each sub-recipe is anchored to a single oracle-text idiom and bounded by the f:commander filter; surfaced result counts range from 2 to 24, and false-positive rate across the recipe is <10% (every non-canon result is either a tribe-flavoured variant or a same-idiom new printing, not a different mechanic).",
+    "color_identity_handling": "All queries are deck-color-agnostic. At runtime the calling deck splices its commander color identity via id<=<colors> (e.g. id<=wu for Soulherder decks) onto each sub-recipe query. Mono-white decks (the-white-forge today) will not surface Soulherder / Yarok / Wispweaver / Emiel / Gilraen as adoption candidates — that's correct: those cards are illegal in mono-white. The full canon recall figures above are color-unfiltered."
+  },
+  "cross_archetype_overlap": {
+    "graveyard-reanimator": "Sun Titan, Karmic Guide, and Reveillark are flicker-adjacent (recur creatures with ETBs from the graveyard) but live in the graveyard-reanimator recipe — etb-flicker should not duplicate them.",
+    "artifacts-matter": "Solemn Simulacrum, Mycosynth Wellspring, Ichor Wellspring, Junk Diver, Myr Retriever, Scrap Trawler are ETB-payoff artifacts that pair with flicker but anchor to artifacts-matter — etb-flicker assumes them as background.",
+    "spellslinger": "Brago + Strionic Resonator and Felidar Guardian + Saheeli Rai are flicker combo lines but surface via Commander Spellbook's find-my-combos pass on a per-deck basis, not via etb-flicker queries."
+  }
+}
