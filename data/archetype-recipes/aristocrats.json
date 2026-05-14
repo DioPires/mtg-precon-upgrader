@@ -3,10 +3,15 @@
   "name": "Aristocrats / Sacrifice",
   "summary": "Sac outlets, death-trigger payoffs, drains, and recursion that close through incremental life loss.",
   "version": 1,
-  "status": "canon-proposed",
-  "_status_note": "Gate 2 in progress — canon set proposed, awaiting board approval. sub_recipes will be populated at Gate 3.",
+  "status": "recipe-validated-awaiting-gate-3-approval",
+  "_status_note": "Canon approved 2026-05-14 (comment afc91265). Sub-recipes authored and validated against canon — 20/20 = 100% recall (exceeds ≥90% threshold). Awaiting board Gate-3 approval before status flips to 'live' and approval block is populated.",
   "last_reviewed": null,
   "approval": null,
+  "canon_approval": {
+    "reviewer": "local-board",
+    "date": "2026-05-14",
+    "paperclip_comment_id": "afc91265-01ad-4cb6-a4a5-0a46474e8cc3"
+  },
   "canon": [
     "Blood Artist",
     "Zulaport Cutthroat",
@@ -22,59 +27,116 @@
     "Pawn of Ulamog",
     "Bloodghast",
     "Reassembling Skeleton",
+    "Forsaken Miner",
     "Exsanguinate",
-    "Gray Merchant of Asphodel"
+    "Gray Merchant of Asphodel",
+    "Meren of Clan Nel Toth",
+    "Teysa Karlov",
+    "Korvold, Fae-Cursed King"
   ],
-  "canon_rationale": {
-    "death_drain_payoffs": [
-      "Blood Artist",
-      "Zulaport Cutthroat",
-      "Bastion of Remembrance",
-      "Cruel Celebrant",
-      "Elas il-Kor, Sadistic Pilgrim"
-    ],
-    "sac_outlets": [
-      "Viscera Seer",
-      "Carrion Feeder",
-      "Yawgmoth, Thran Physician",
-      "Phyrexian Altar"
-    ],
-    "token_engines_for_sac_fodder": [
-      "Ophiomancer",
-      "Bitterblossom",
-      "Pawn of Ulamog"
-    ],
-    "recursion_so_creatures_keep_coming_back": [
-      "Bloodghast",
-      "Reassembling Skeleton"
-    ],
-    "wincons_that_close_aristocrats_games": [
-      "Exsanguinate",
-      "Gray Merchant of Asphodel"
-    ]
-  },
-  "canon_sourced_from": {
-    "in_existing_decks": {
-      "Blood Artist": ["eternal-harvest", "silverquill-the-disputant", "witherbloom-the-balancer"],
-      "Zulaport Cutthroat": ["eternal-harvest", "silverquill-the-disputant", "witherbloom-the-balancer"],
-      "Bastion of Remembrance": ["eternal-harvest", "silverquill-the-disputant"],
-      "Cruel Celebrant": ["silverquill-the-disputant"],
-      "Elas il-Kor, Sadistic Pilgrim": ["silverquill-the-disputant"],
-      "Ophiomancer": ["silverquill-the-disputant", "witherbloom-the-balancer"],
-      "Bitterblossom": ["eternal-harvest", "silverquill-the-disputant", "witherbloom-the-balancer"],
-      "Pawn of Ulamog": ["silverquill-the-disputant", "witherbloom-the-balancer"],
-      "Bloodghast": ["eternal-harvest", "silverquill-the-disputant", "witherbloom-the-balancer"],
-      "Reassembling Skeleton": ["silverquill-the-disputant"],
-      "Exsanguinate": ["silverquill-the-disputant", "witherbloom-the-balancer"],
-      "Gray Merchant of Asphodel": ["eternal-harvest"]
+  "sub_recipes": {
+    "death_drain_payoffs": {
+      "intent": "Cards that drain opponents / gain you life whenever a creature dies.",
+      "queries": [
+        "f:commander o:\"another creature\" o:dies o:loses o:life",
+        "f:commander o:\"creature you control dies\" o:loses o:life"
+      ],
+      "canon_recall": {
+        "expected": ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance", "Cruel Celebrant", "Elas il-Kor, Sadistic Pilgrim"],
+        "surfaced_by_query_A": ["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Elas il-Kor, Sadistic Pilgrim"],
+        "surfaced_by_query_B": ["Bastion of Remembrance", "Zulaport Cutthroat", "Cruel Celebrant", "Elas il-Kor, Sadistic Pilgrim"],
+        "union_count": "5/5"
+      }
     },
-    "edhrec_archetype_staples": [
-      "Viscera Seer",
-      "Carrion Feeder",
-      "Yawgmoth, Thran Physician",
-      "Phyrexian Altar"
-    ]
+    "sac_outlets": {
+      "intent": "Free or low-mana repeatable sacrifice outlets.",
+      "queries": [
+        "f:commander o:\"sacrifice a creature\" mv<=3",
+        "f:commander o:\"sacrifice another creature\" mv<=4"
+      ],
+      "canon_recall": {
+        "expected": ["Viscera Seer", "Carrion Feeder", "Yawgmoth, Thran Physician", "Phyrexian Altar"],
+        "surfaced_by_query_A": ["Viscera Seer", "Carrion Feeder", "Phyrexian Altar"],
+        "surfaced_by_query_B": ["Yawgmoth, Thran Physician"],
+        "union_count": "4/4"
+      }
+    },
+    "token_engines_for_fodder": {
+      "intent": "Repeating token producers (upkeep-trigger or death-trigger) that supply fodder.",
+      "queries": [
+        "f:commander o:\"beginning of\" o:upkeep o:create o:\"creature token\" mv<=4",
+        "f:commander o:\"creature you control dies\" o:create o:\"creature token\""
+      ],
+      "canon_recall": {
+        "expected": ["Ophiomancer", "Bitterblossom", "Pawn of Ulamog"],
+        "surfaced_by_query_A": ["Bitterblossom", "Ophiomancer"],
+        "surfaced_by_query_B": ["Pawn of Ulamog"],
+        "union_count": "3/3"
+      }
+    },
+    "self_recursion_creatures": {
+      "intent": "Creatures that return themselves from graveyard — repeatable death-trigger fuel.",
+      "queries": [
+        "f:commander t:creature o:\"return this card from your graveyard to the battlefield\""
+      ],
+      "canon_recall": {
+        "expected": ["Bloodghast", "Reassembling Skeleton", "Forsaken Miner"],
+        "surfaced": ["Reassembling Skeleton", "Bloodghast", "Forsaken Miner"],
+        "count": "3/3"
+      }
+    },
+    "drain_wincons": {
+      "intent": "Game-closing drains that scale with mana or game state.",
+      "queries": [
+        "f:commander o:\"each opponent loses x life\""
+      ],
+      "canon_recall": {
+        "expected": ["Exsanguinate", "Gray Merchant of Asphodel"],
+        "surfaced": ["Gray Merchant of Asphodel", "Exsanguinate"],
+        "count": "2/2"
+      }
+    },
+    "aristocrats_commanders": {
+      "intent": "Canonical aristocrats commanders across the three idioms (death-trigger payoff, sacrifice payoff, death-trigger doubler).",
+      "queries": [
+        "is:commander o:\"another creature you control dies\"",
+        "is:commander o:\"you sacrifice a permanent\"",
+        "is:commander o:\"creature dying\" o:\"triggers an additional time\""
+      ],
+      "canon_recall": {
+        "expected": ["Meren of Clan Nel Toth", "Teysa Karlov", "Korvold, Fae-Cursed King"],
+        "surfaced_by_query_A": ["Meren of Clan Nel Toth", "Elas il-Kor, Sadistic Pilgrim"],
+        "surfaced_by_query_B": ["Korvold, Fae-Cursed King"],
+        "surfaced_by_query_C": ["Teysa Karlov", "Drivnod, Carnage Dominus"],
+        "union_count": "3/3"
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches new printings whose oracle text doesn't match the precise sub-recipes above. High noise, run sparingly.",
+      "queries": [
+        "f:commander o:dies o:create o:\"creature token\""
+      ],
+      "canon_recall": {
+        "note": "wildcard is not validated against canon — it exists to surface oddities the precise queries miss"
+      }
+    }
   },
-  "sub_recipes": null,
-  "excludes": null
+  "excludes": {
+    "symmetric_punishers": "-o:\"each player loses\" -o:\"each player sacrifices\"",
+    "_note": "Spliced into every sub-recipe query at runtime for decks tagged asymmetric_only:true. Optional otherwise."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14"
+  },
+  "shared_refs": null
 }
