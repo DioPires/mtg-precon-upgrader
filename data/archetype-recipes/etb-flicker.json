@@ -3,11 +3,20 @@
   "name": "ETB / Flicker",
   "summary": "Enter-the-battlefield trigger loops backed by flicker (exile-and-return) effects, end-step blink permanents, ETB doublers, and activated/triggered flicker creatures. Wins via incremental value: every flicker re-fires Mulldrifter / Solemn Simulacrum / Sun Titan / Cloudblazer-style ETB triggers, often doubled by Panharmonicon-class effects.",
   "version": 1,
-  "status": "draft",
-  "_status_note": "Draft pending board confirmation — Gate 2 (canon) + Gate 3 (recipe) combined into a single request_confirmation interaction, mirroring the graveyard-reanimator / tokens-go-wide / counters-payoffs / infect-poison / spellslinger / stax-control / group-slug collapsed-gate path. 20/20 = 100% canon recall validated empirically against Scryfall API on 2026-05-14.",
+  "status": "live",
+  "_status_note": "Live recipe — Gate 2 (canon) + Gate 3 (recipe) approved 2026-05-14 by local-board via comment 3ab6079e. 22/22 = 100% canon recall validated empirically against Scryfall API. Canon expanded 20→22 mid-review on board comment d2d5f66b to cover the TLA airbend mechanic (exile-and-recast-for-{2}) as a flicker variant.",
   "last_reviewed": "2026-05-14",
-  "approval": null,
-  "canon_approval": null,
+  "approval": {
+    "reviewer": "local-board",
+    "date": "2026-05-14",
+    "paperclip_interaction_id": "5f8a4f8b-4f05-4ac7-9792-a43fc00ea98e",
+    "paperclip_confirming_comment_id": "3ab6079e-a233-4c1d-a0f6-951bf06704f2"
+  },
+  "canon_approval": {
+    "reviewer": "local-board",
+    "date": "2026-05-14",
+    "paperclip_comment_id": "3ab6079e-a233-4c1d-a0f6-951bf06704f2"
+  },
   "canon": [
     "Ephemerate",
     "Cloudshift",
@@ -28,13 +37,16 @@
     "Emiel the Blessed",
     "Gilraen, Dúnedain Protector",
     "Wispweaver Angel",
-    "Distinguished Conjurer"
+    "Distinguished Conjurer",
+    "Appa, Steadfast Guardian",
+    "Aang, Airbending Master"
   ],
   "canon_provenance": {
     "from_existing_decks": "the-white-forge is the only deck currently tagged etb-flicker. From that deck the canon takes Teleportation Circle (recurring end-step flicker), Ephemerate (cheapest rebound flicker), Conjurer's Closet (recurring permanent flicker — added to canon for the etb-flicker prototype even though the live deck rotates it in/out), Panharmonicon (ETB doubler) and Elesh Norn, Mother of Machines (ETB doubler + opponent-ETB hoser). Solemn Simulacrum and Sun Titan are present in the deck but are pure ETB-value bodies that overlap with ramp/graveyard-reanimator recipes, so they sit outside canon and surface via those archetypes instead.",
     "from_edhrec_archetype_pages": "EDHREC's flicker / blink landing pages anchor on Brago, Soulherder, Yorion, Felidar Guardian, Eldrazi Displacer, Restoration Angel, Reflector Mage, Mulldrifter as the canonical cards. From that set Soulherder is the cleanest activated end-step flicker creature; Cloudshift / Essence Flux / Momentary Blink / Acrobatic Maneuver are the staple cheap targeted flicker instants. Eerie Interlude and Ghostway are the canonical mass-flicker save-from-board-wipe spells. Wispweaver Angel + Distinguished Conjurer represent the ETB-flicker-yourself creatures. Far Traveler is the modern background commander pattern for recurring end-step flicker.",
     "from_combo_pieces": "Commander Spellbook combo lines for flicker hinge on Felidar Guardian + Saheeli Rai (infinite Cat tokens) and Brago + Strionic Resonator (infinite ETBs); both lines route through the etb-doublers and flicker-activated-creatures sub-recipes. Emiel the Blessed + Pestermite / Deceiver Exarch is another archetype combo line, anchoring Emiel in canon. Gilraen, Dúnedain Protector is the LOTR-era activated flicker analog, included to test the recipe surfaces newer printings, not just MH-era staples.",
-    "from_doubler_family": "Yarok, the Desecrated, Naban, Dean of Iteration and Virtue of Knowledge are the conditional or alternate-cost variants of Panharmonicon — they all use the literal 'triggers an additional time' idiom, anchoring the etb_doublers sub-recipe to a deterministic Scryfall query rather than relying on partial-match phrases."
+    "from_doubler_family": "Yarok, the Desecrated, Naban, Dean of Iteration and Virtue of Knowledge are the conditional or alternate-cost variants of Panharmonicon — they all use the literal 'triggers an additional time' idiom, anchoring the etb_doublers sub-recipe to a deterministic Scryfall query rather than relying on partial-match phrases.",
+    "from_airbend_variant": "TLA (Avatar: The Last Airbender, 2025-11-21) introduced the airbend keyword: 'exile target permanent; while exiled, its owner may cast it for {2}'. Functionally this is flicker-with-a-mana-tax — every airbend recast re-fires ETBs and stacks with Panharmonicon-class doublers. The legacy sub-recipes (which all require the 'return ... to the battlefield' idiom) miss every airbend card, so the canon adds the two strongest payoffs and a dedicated airbend sub-recipe. Appa, Steadfast Guardian is the flash/flying ETB-airbender that creates Ally tokens whenever you cast from exile (the recast loop itself draws value). Aang, Airbending Master converts every creature leaving without dying into experience counters, then mints Ally tokens per counter on upkeep — the experience engine pairs natively with both airbend and the rest of the flicker package."
   },
   "sub_recipes": {
     "flicker_targeted_spells": {
@@ -96,11 +108,24 @@
         "count": "5/5",
         "note": "9-result query. Non-canon results — Lilysplash Mentor (+1/+1 counter variant, GU), Kykar Zephyr Awakener (spellslinger-conditional flicker, UW commander), Nephalia Smuggler (mono-U 1-mana repeatable), Baboon Spirit (Spirit-tribal flicker) — are all legitimate etb-flicker tools but were ranked below canon for adoption simplicity. Eldrazi Displacer is intentionally NOT in canon: its text reads 'exile another target creature' without the 'you control' qualifier (it can also exile opponent creatures as removal), and so falls outside this sub-recipe's scope. Decks running Displacer should treat it as cross-archetype with stax-control / removal."
       }
+    },
+    "airbend_flicker_variant": {
+      "intent": "TLA-era airbend cards: exile a permanent you control; while exiled, its owner may recast it for {2}. Functionally flicker-with-a-mana-tax — each recast re-fires ETBs and stacks with Panharmonicon-class doublers. Mono-white only today (every printed airbend card is W or contains W). Caller decks must budget {2} per re-fire and treat airbend as deliberate-flicker, not free-flicker.",
+      "queries": [
+        "f:commander keyword:airbend"
+      ],
+      "canon_recall": {
+        "expected": ["Appa, Steadfast Guardian", "Aang, Airbending Master"],
+        "surfaced": ["Appa, Steadfast Guardian", "Aang, Airbending Master"],
+        "count": "2/2",
+        "note": "13-result query, all true positives — the keyword filter is deterministic. Other results worth surfacing to decks adopting airbend: Appa, Loyal Sky Bison (flying ETB+attack airbender, {4}{W}{W}), Aang, the Last Airbender ({3}{W} flying airbender with lesson-tribal lifelink), Monk Gyatso (reactive airbend on targeted-creature trigger), Airbender Ascension (quest-counter enchantment, conditional end-step flicker), Glider Staff (equipment airbender), Avatar's Wrath / Whirlwind Technique / Airbending Lesson / Airbender's Reversal (instants and sorceries). Zero noise — the keyword filter excludes any non-airbend card by construction."
+      }
     }
   },
   "noise_budget": {
-    "policy": "Each sub-recipe is anchored to a single oracle-text idiom and bounded by the f:commander filter; surfaced result counts range from 2 to 24, and false-positive rate across the recipe is <10% (every non-canon result is either a tribe-flavoured variant or a same-idiom new printing, not a different mechanic).",
-    "color_identity_handling": "All queries are deck-color-agnostic. At runtime the calling deck splices its commander color identity via id<=<colors> (e.g. id<=wu for Soulherder decks) onto each sub-recipe query. Mono-white decks (the-white-forge today) will not surface Soulherder / Yarok / Wispweaver / Emiel / Gilraen as adoption candidates — that's correct: those cards are illegal in mono-white. The full canon recall figures above are color-unfiltered."
+    "policy": "Each sub-recipe is anchored to a single oracle-text idiom or keyword and bounded by the f:commander filter; surfaced result counts range from 2 to 24, and false-positive rate across the recipe is <10% (every non-canon result is either a tribe-flavoured variant or a same-idiom new printing, not a different mechanic). The airbend_flicker_variant sub-recipe uses keyword:airbend which is zero-noise by construction.",
+    "color_identity_handling": "All queries are deck-color-agnostic. At runtime the calling deck splices its commander color identity via id<=<colors> (e.g. id<=wu for Soulherder decks) onto each sub-recipe query. Mono-white decks (the-white-forge today) will not surface Soulherder / Yarok / Wispweaver / Emiel / Gilraen as adoption candidates — that's correct: those cards are illegal in mono-white. The full canon recall figures above are color-unfiltered.",
+    "airbend_mana_tax": "Airbend recasts cost {2} per permanent. Caller decks adopting airbend should hold {2} open per intended re-fire, or pair with cost-reducers (e.g. Urza's Incubator, Herald's Horn for Ally-tribal Appa decks). Unlike free-flicker (Cloudshift, Ephemerate) airbend cannot be infinite-comboed off zero-cost recasts — treat it as deliberate-flicker rather than combo-flicker."
   },
   "cross_archetype_overlap": {
     "graveyard-reanimator": "Sun Titan, Karmic Guide, and Reveillark are flicker-adjacent (recur creatures with ETBs from the graveyard) but live in the graveyard-reanimator recipe — etb-flicker should not duplicate them.",
