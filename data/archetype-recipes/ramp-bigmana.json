@@ -4,7 +4,7 @@
   "summary": "Land ramp, mana rocks, and mana dorks that build to a critical mass, then close with oversized threats or cheat them into play. Absorbs eldrazi-colorless as a sub-recipe.",
   "version": 1,
   "status": "live",
-  "_status_note": "Live recipe — Gate 3 approved 2026-05-14 by local-board via interaction dec259-gate3. 17/17 = 100% canon recall validated empirically against Scryfall API.",
+  "_status_note": "Live recipe — Gate 3 approved 2026-05-14 by local-board via interaction dec259-gate3. 17/17 = 100% canon recall validated empirically against Scryfall API. v1 also includes the creature_mana_payoffs sub-recipe (added per board decision 2026-05-14, comment f54c85f6) — idiom-coverage sub-recipe with no canon anchor; surfaced cards validated empirically.",
   "last_reviewed": "2026-05-14",
   "approval": {
     "reviewer": "local-board",
@@ -99,6 +99,21 @@
         "sample_noise": "Elvish Mystic, Fyndhorn Elves are functional equivalents (correct noise — all valid includes). Delighted Halfling surfaces too (conditional colored mana, legitimate tech)."
       }
     },
+    "creature_mana_payoffs": {
+      "intent": "Mana-amplifier idiom — cards that trigger on tapping creatures for mana, dorks that produce mana scaling with creature count, and dorks that produce X-mana based on a board-state count. Idiom-coverage sub-recipe (no canon anchor; added 2026-05-14 per board decision in DEC-259 comment f54c85f6). The three sub-queries cover three distinct phrasings within the same family.",
+      "queries": [
+        "f:commander o:\"tap a creature for mana\"",
+        "f:commander t:creature o:\"Add\" o:\"for each creature you control\"",
+        "f:commander t:creature o:\"Add X mana\" o:\"number of\""
+      ],
+      "canon_recall": {
+        "note": "Idiom-coverage sub-recipe — no canon expectation; validated empirically by confirming target exemplars surface.",
+        "surfaced_by_query_A": ["Badgermole Cub", "Leyline of Abundance"],
+        "surfaced_by_query_B": ["Circle of Dreams Druid", "Overgrown Battlement"],
+        "surfaced_by_query_C": ["Sanctum Weaver", "Axebane Guardian", "Wirewood Channeler", "Harabaz Druid", "Deathbloom Ritualist", "Redshift, Rocketeer Chief", "The Legend of Kyoshi // Avatar Kyoshi"],
+        "sample_noise": "Query A is extremely tight (2 hits — both are direct exemplars). Query B catches enchantment-count and defender-count variants as legitimate noise. Query C surfaces tribe/condition-scaled dorks (Harabaz Druid=Allies, Wirewood Channeler=Elves, Deathbloom Ritualist=creature cards in GY) — all valid in their respective tribal/strategy contexts. Avatar Kyoshi DFC back face surfaces correctly."
+      }
+    },
     "cheat_into_play": {
       "intent": "Repeatable or one-shot effects that put creature cards from hand onto the battlefield without paying their mana costs — the payoff for building excess mana.",
       "queries": [
@@ -158,7 +173,7 @@
     "recall_pct": "100%",
     "threshold": "≥90% required for approval",
     "validation_date": "2026-05-14",
-    "notes": "All 17 canon cards confirmed surfaced by empirical Scryfall API queries. forest_fetch_sorceries uses Scryfall OR-parenthesis syntax `(t:sorcery or t:instant)`; validate at runtime if MCP wrapper doesn't support parentheses — fallback: run as two separate queries split by type."
+    "notes": "All 17 canon cards confirmed surfaced by empirical Scryfall API queries. forest_fetch_sorceries uses Scryfall OR-parenthesis syntax `(t:sorcery or t:instant)`; validate at runtime if MCP wrapper doesn't support parentheses — fallback: run as two separate queries split by type. creature_mana_payoffs added 2026-05-14 (per DEC-259 board decision in comment f54c85f6) as an idiom-coverage sub-recipe with no canon anchor — all three queries validated empirically against Scryfall API and surface their target exemplars (Badgermole Cub, Circle of Dreams Druid, Wirewood Channeler) cleanly. Canon recall denominator unchanged at 17."
   },
   "shared_refs": null
 }
