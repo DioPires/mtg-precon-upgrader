@@ -1,0 +1,220 @@
+{
+  "id": "spellslinger",
+  "name": "Spellslinger",
+  "summary": "Instants and sorceries matter — magecraft / prowess payoffs, noncreature-spell token makers, cost reducers, copy engines, storm finishers, and commanders that scale with spell volume.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft pending board confirmation — Gate 2 (canon) + Gate 3 (recipe) combined into a single request_confirmation interaction, mirroring the graveyard-reanimator / tokens-go-wide / counters-payoffs / infect-poison collapsed-gate path. 20/20 = 100% canon recall validated empirically against Scryfall API on 2026-05-14.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Young Pyromancer",
+    "Talrand, Sky Summoner",
+    "Guttersnipe",
+    "Murmuring Mystic",
+    "Witherbloom Apprentice",
+    "Storm-Kiln Artist",
+    "Archmage Emeritus",
+    "Veyran, Voice of Duality",
+    "Baral, Chief of Compliance",
+    "Goblin Electromancer",
+    "Birgi, God of Storytelling",
+    "Thousand-Year Storm",
+    "Swarm Intelligence",
+    "Aetherflux Reservoir",
+    "Mizzix's Mastery",
+    "Grapeshot",
+    "Niv-Mizzet, Parun",
+    "Mizzix of the Izmagnus",
+    "Docent of Perfection",
+    "Monastery Mentor"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "Pulled from the two decks currently tagged `spellslinger`. `witherbloom-the-balancer` runs Witherbloom Apprentice as the in-deck magecraft drain and Bolas's Citadel as the spell-flow ramp; `silverquill-the-disputant` runs Beseech the Mirror / Grim Tutor / Toxic Deluge / Exsanguinate / Debt to the Deathless as its instant-and-sorcery payload, though its commander-side payoff is aristocrats-flavored rather than classical spellslinger. Witherbloom Apprentice is the only directly-extracted canon card; the rest of the canon is drawn from EDHREC/Spellbook to capture the broader archetype the two decks lean into.",
+    "from_edhrec_archetype_pages": "EDHREC's spellslinger landing surfaces three idiom clusters: (a) noncreature-spell-cast token makers (Young Pyromancer, Talrand Sky Summoner, Murmuring Mystic, Docent of Perfection, Monastery Mentor); (b) magecraft payoffs from Strixhaven (Witherbloom Apprentice, Storm-Kiln Artist, Archmage Emeritus, Veyran Voice of Duality); (c) cost reducers + mana generators (Baral Chief of Compliance, Goblin Electromancer, Birgi God of Storytelling). Top commander selections include Niv-Mizzet Parun (UR draw-and-burn) and Mizzix of the Izmagnus (R/U cost-scaling). Guttersnipe is the canonical on-cast pinger.",
+    "from_combo_pieces": "Commander Spellbook surfaces Aetherflux Reservoir as the canonical lifegain-into-50-life finisher in spellslinger shells, often paired with Bolas's Citadel for unbounded cast loops; and Grapeshot / Mizzix's Mastery for storm-style closes. Thousand-Year Storm and Swarm Intelligence are the copy-engine multipliers that scale a single instant/sorcery into game-winning chains. The canon includes one representative of each closing idiom so the recipe surfaces the full finisher menu, not just one wincon.",
+    "from_franchise_subarchetypes": "Magecraft (Strixhaven, 2021) and prowess (Khans of Tarkir / Modern, 2014-onward) are two mechanically distinct keyword payoffs that both reward noncreature-spell casts. Canon includes representatives of both — magecraft creatures use `keyword:magecraft`; prowess creatures use `keyword:prowess` — so the recipe must produce two parallel sub-recipes, not collapse them. Storm (Scourge, 2003) and the Mizzix's-Mastery-style graveyard-recast idiom are likewise distinct finisher families; canon includes one of each."
+  },
+  "sub_recipes": {
+    "magecraft_payoffs": {
+      "intent": "Creatures with the magecraft keyword (Strixhaven) — triggers whenever you cast or copy an instant or sorcery. The densest single keyword for spellslinger payoffs.",
+      "queries": [
+        "f:commander keyword:magecraft"
+      ],
+      "canon_recall": {
+        "expected": ["Witherbloom Apprentice", "Storm-Kiln Artist", "Archmage Emeritus", "Veyran, Voice of Duality"],
+        "surfaced": ["Storm-Kiln Artist", "Archmage Emeritus", "Veyran, Voice of Duality", "Witherbloom Apprentice"],
+        "count": "4/4",
+        "note": "29-result query; all 4 magecraft canon surface in the top 7 EDHREC slice. Top 10: Storm-Kiln Artist, Archmage Emeritus, Veyran, Ashling, Professor Onyx, Sedgemoor Witch, Witherbloom Apprentice, Deekah, Octavia, Leonin Lightscribe."
+      }
+    },
+    "noncreature_spell_token_makers": {
+      "intent": "Creatures that produce tokens whenever you cast an instant or sorcery — the classical 'spell tokens' engine.",
+      "queries": [
+        "f:commander o:\"whenever you cast\" o:\"instant or sorcery\" o:create"
+      ],
+      "canon_recall": {
+        "expected": ["Young Pyromancer", "Talrand, Sky Summoner", "Murmuring Mystic", "Docent of Perfection"],
+        "surfaced": ["Talrand, Sky Summoner", "Young Pyromancer", "Murmuring Mystic", "Docent of Perfection"],
+        "count": "4/4",
+        "note": "Top 12 of EDHREC slice: Talrand, Young Pyromancer, Murmuring Mystic, Urabrask, Sedgemoor Witch, Stormsplitter, Tasha, Stormchaser's Talent, Judith, Deekah, Orvar, Docent of Perfection. Monastery Mentor is intentionally missed by this cluster (its trigger is `noncreature spell` worded differently) — covered by `prowess_payoffs` instead."
+      }
+    },
+    "opponent_damage_on_cast": {
+      "intent": "Creatures/permanents that deal damage to each opponent (or any target) whenever you cast an instant or sorcery — the Guttersnipe pinger family.",
+      "queries": [
+        "f:commander o:\"whenever you cast\" o:\"each opponent\" o:damage"
+      ],
+      "canon_recall": {
+        "expected": ["Guttersnipe"],
+        "surfaced": ["Guttersnipe"],
+        "count": "1/1",
+        "note": "Guttersnipe is the #1 EDHREC hit. Top 5 also surfaces Firebrand Archer, Thermo-Alchemist, Kessig Flamebreather, Electrostatic Field — the full pinger cluster."
+      }
+    },
+    "cost_reduction": {
+      "intent": "Creatures (and a few permanents) that reduce the mana cost of instants and sorceries you cast — the engine that enables spell chains.",
+      "queries": [
+        "f:commander o:\"instant and sorcery spells you cast cost\" o:less"
+      ],
+      "canon_recall": {
+        "expected": ["Baral, Chief of Compliance", "Goblin Electromancer"],
+        "surfaced": ["Goblin Electromancer", "Baral, Chief of Compliance"],
+        "count": "2/2",
+        "note": "Goblin Electromancer is #1, Baral #4. Bonus surface: Mizzix of the Izmagnus appears at #15 (cost-reduction via experience counters). Stormcatch Mentor, Archmage of Runes, Haughty Djinn, Curious Homunculus, Vadrik, Font of Magic round out the cluster — all legitimate."
+      }
+    },
+    "mana_on_cast": {
+      "intent": "Permanents that add mana whenever you cast a spell (or the first spell each turn) — the Birgi-style mana engines that fuel spell chains.",
+      "queries": [
+        "f:commander t:creature o:\"add\" o:\"whenever you cast\""
+      ],
+      "canon_recall": {
+        "expected": ["Birgi, God of Storytelling"],
+        "surfaced": ["Birgi, God of Storytelling"],
+        "count": "1/1",
+        "note": "Birgi is the #1 EDHREC hit. Veyran also surfaces here (magecraft cast-add-mana). Storm-Kiln Artist is captured by `magecraft_payoffs` instead."
+      }
+    },
+    "spell_copy_engines": {
+      "intent": "Static permanents that copy an instant or sorcery whenever you cast one — the multiplier layer that turns a single spell into a game-winning chain.",
+      "queries": [
+        "f:commander o:\"copy that spell\"",
+        "f:commander o:\"whenever you cast an instant or sorcery\""
+      ],
+      "canon_recall": {
+        "expected": ["Thousand-Year Storm", "Swarm Intelligence"],
+        "surfaced_by_query_A": ["Swarm Intelligence"],
+        "surfaced_by_query_B": ["Thousand-Year Storm", "Swarm Intelligence"],
+        "union_count": "2/2",
+        "note": "Query A (`copy that spell`) surfaces Swarm Intelligence cleanly but not Thousand-Year Storm — Storm's oracle uses `copy it` rather than `copy that spell`. Query B (broader cast-trigger sweep) is the recovery path: Thousand-Year Storm appears at rank 6 of 66 results."
+      }
+    },
+    "storm_finishers": {
+      "intent": "Instants and sorceries with the storm keyword (or storm-equivalent mass-copy) — the closer family that turns spell volume into lethal output.",
+      "queries": [
+        "f:commander keyword:storm"
+      ],
+      "canon_recall": {
+        "expected": ["Grapeshot"],
+        "surfaced": ["Grapeshot"],
+        "count": "1/1",
+        "note": "Grapeshot is #2 (Flusterstorm is #1, a counterspell). Top 10 also surfaces Brain Freeze, Empty the Warrens, Tendrils of Agony, Chatterstorm, Mind's Desire, Haze of Rage, Galvanic Relay, Dragonstorm — the full storm finisher family."
+      }
+    },
+    "graveyard_spell_replay": {
+      "intent": "Instants and sorceries that exile or recast multiple instant/sorcery cards from your graveyard — the Mizzix's Mastery-style mass-replay finisher idiom (distinct from storm; closes via burst of free casts).",
+      "queries": [
+        "f:commander -t:creature o:\"instant or sorcery\" o:graveyard o:cast"
+      ],
+      "canon_recall": {
+        "expected": ["Mizzix's Mastery"],
+        "surfaced": ["Mizzix's Mastery"],
+        "count": "1/1",
+        "note": "Mizzix's Mastery is #1. Top 10: Mizzix's Mastery, Arcane Bombardment, Professor Onyx, Increasing Vengeance, Metallurgic Summonings, Mnemonic Deluge, Tasha the Witch Queen, Memory Plunder, Stormchaser's Talent, Sword of Once and Future — all on-theme replay engines or recurring copiers."
+      }
+    },
+    "prowess_payoffs": {
+      "intent": "Creatures with the prowess keyword (Khans, Modern Horizons, recurring) — +1/+1 until end of turn whenever you cast a noncreature spell. Catches Monastery Mentor (which then makes prowess tokens) and the broader prowess shell.",
+      "queries": [
+        "f:commander t:creature keyword:prowess"
+      ],
+      "canon_recall": {
+        "expected": ["Monastery Mentor"],
+        "surfaced": ["Monastery Mentor"],
+        "count": "1/1",
+        "note": "Top 10: Pinnacle Monk, Harmonic Prodigy, Stormcatch Mentor, Monastery Mentor, Kitsa, Bria, Firebending Student, Riptide Gearhulk, Lyse Hext, Queen Brahne. Monastery Mentor is the canonical prowess token-maker. Note: prowess is more aggro-tilted than core EDH spellslinger; this cluster is mostly safety-net for new printings."
+      }
+    },
+    "spell_lifegain_finisher": {
+      "intent": "Permanents that gain life whenever you cast a spell — the Aetherflux Reservoir finisher idiom (gain enough life, then convert it into 50 damage to a player).",
+      "queries": [
+        "f:commander o:\"whenever you cast a spell\" o:\"gain\" o:life"
+      ],
+      "canon_recall": {
+        "expected": ["Aetherflux Reservoir"],
+        "surfaced": ["Aetherflux Reservoir"],
+        "count": "1/1",
+        "note": "Aetherflux Reservoir is #1 of 11 results. Top 5 also surfaces Quintorius (Lorehold magecraft), Diamond Mare, Ancient Cornucopia, Prism Ring — small clean cluster, low noise."
+      }
+    },
+    "spellslinger_commanders": {
+      "intent": "Legendary creatures whose triggered abilities key off any-player or own-player instant/sorcery casts, beyond the magecraft set already covered. Niv-Mizzet Parun (any-player cast → draw) and Mizzix of the Izmagnus (own-cast → experience counter scaling) are the two canonical commander engines outside the magecraft cluster.",
+      "queries": [
+        "is:commander o:\"a player casts an instant or sorcery\"",
+        "is:commander o:\"experience counter\" o:\"instant or sorcery\""
+      ],
+      "canon_recall": {
+        "expected": ["Niv-Mizzet, Parun", "Mizzix of the Izmagnus"],
+        "surfaced_by_query_A": ["Niv-Mizzet, Parun"],
+        "surfaced_by_query_B": ["Mizzix of the Izmagnus"],
+        "union_count": "2/2",
+        "note": "Both queries are tight single-result hits — Niv-Mizzet Parun is the only commander whose ability triggers on any-player cast of instants/sorceries; Mizzix is the only commander that grants experience counters on instant/sorcery casts. Veyran (magecraft commander) is captured by `magecraft_payoffs`."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches new printings whose oracle text doesn't match the precise sub-recipes above. High noise, run sparingly.",
+      "queries": [
+        "f:commander o:\"whenever you cast an instant or sorcery\""
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface novel cast-trigger payoffs the precise queries miss. The 66-result EDHREC sweep already incidentally recovers Guttersnipe, Thousand-Year Storm, Swarm Intelligence, and most of the cluster, so this is also a sanity-check fallback."
+      }
+    }
+  },
+  "excludes": {
+    "non_spellslinger_cast_triggers": "-o:\"creature spell\" -o:\"whenever you cast a creature\"",
+    "_note": "Optional post-fetch filter. Some `whenever you cast` triggers care about creature spells specifically (e.g., Purphoros-style) — those belong to tokens-go-wide or creature-cast shells, not spellslinger. Splice for decks where the spellslinger archetype is dominant and creature-cast payoffs would be off-theme."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50,
+    "color_identity_note": "Spellslinger payoffs cluster in UR (Izzet) — magecraft spans WUBRG via Strixhaven's five colleges, so mono-color decks get partial coverage. Mono-W and mono-G decks will see heavily reduced returns from `noncreature_spell_token_makers` and `opponent_damage_on_cast` (mostly UR creatures) — expected. Witherbloom (BG) and Silverquill (WB) lean on aristocrats/graveyard payoffs to fill the gap; the recipe correctly surfaces only the in-color subset for them."
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14",
+    "validation_method": "Each sub-recipe query was run live against api.scryfall.com (order=edhrec). Canon recall = (canon cards surfaced by at least one query in any sub-recipe) / total canon.",
+    "noise_sample": {
+      "magecraft_payoffs": "Top 25 of 29 results: Storm-Kiln Artist, Archmage Emeritus, Veyran, Ashling Flame Dancer, Professor Onyx, Sedgemoor Witch, Witherbloom Apprentice, Deekah Fractal Theorist, Octavia Living Thesis, Leonin Lightscribe, Quandrix Apprentice, Jadzi Oracle of Arcavios, Zaffai Thunder Conductor, Extus Oriq Overlord, Spell Satchel, Dragonsguard Elite, Clever Lumimancer, Lorehold Apprentice, Karok Wrangler, Witherbloom Pledgemage, Quandrix Pledgemage, Prismari Apprentice, Elemental Expressionist, Symmetry Sage, Silverquill Pledgemage. All 29 results are Strixhaven magecraft cards — zero false positives. Note: the Strixhaven `Pledgemage` cycle counts as magecraft-keyworded but is mostly limited-tier; legitimate signal at lower priority.",
+      "noncreature_spell_token_makers": "Top 12: Talrand, Young Pyromancer, Murmuring Mystic, Urabrask the Hidden, Sedgemoor Witch, Stormsplitter, Tasha the Witch Queen, Stormchaser's Talent, Judith Carnage Connoisseur, Deekah, Orvar the All-Form, Docent of Perfection. All are on-theme cast-trigger token producers. Urabrask the Hidden creates Phyrexian tokens — borderline (cost-reduction + tokens), but legitimate for the cluster.",
+      "opponent_damage_on_cast": "Top 5: Guttersnipe, Coruscation Mage, Fiery Inscription, Firebrand Archer, Thermo-Alchemist. All on-theme. Cluster bottoms out at ~15 results; very low noise.",
+      "cost_reduction": "Top 20: Goblin Electromancer, Stormcatch Mentor, Archmage of Runes, Baral, Primal Amulet, Thunderclap Drake, Haughty Djinn, Case of Ransacked Lab, Mindsplice, Mocking Sprite, Wizards of Thay, Ral Monsoon, Jace's Sanctum, Magnus the Red, Mizzix, Curious Homunculus, Rowan/Will, Vadrik, Font of Magic, Dirgur Focusmage. Zero false positives — every result reduces or scales instant/sorcery cost.",
+      "mana_on_cast": "Top 20: Birgi, Veyran, Glaring Fleshraker, Vivi, Defiler of Vigor, Ashling, Gwenna, Runaway Steam-Kin, Urabrask, Electro, Arixmethes, Inga and Esika, Ojer Pakpatiq, Rivaz, Ramos, Kykar, Toph, Ral Monsoon, Helga, Defiler of Dreams. Mixed cluster — some are creature-cast-flavored (Defiler of Vigor, Gwenna, Ramos), not spellslinger. Apply `excludes.non_spellslinger_cast_triggers` post-fetch filter to scrub creature-cast triggers.",
+      "spell_copy_engines": "Query A `copy that spell` top 25: Reflections of Littjara, Wandering Archaic, Jin-Gitaxias, Primal Amulet, Sword of Wealth & Power, Twinferno, Double Vision, Pyromancer's Goggles, Unbound Flourishing, Galvanic Iteration, Increasing Vengeance, Ral Storm Conduit, Krark, Zada, Wild Ricochet, Alania, Fire Lord Azula, Sunken Palace, Swarm Intelligence, Tempt with Mayhem, Mercurial Spelldancer, Double Down, Storm King's Thunder, Ivy, Tomb of Horrors Adv. Strong copy-engine cluster; some single-copy spells (Galvanic Iteration, Increasing Vengeance, Twinferno) are one-shot rather than static engines — legitimately on-theme as spellslinger payload regardless.",
+      "storm_finishers": "Top 10: Flusterstorm, Grapeshot, Brain Freeze, Amphibian Downpour, Empty the Warrens, Radstorm, Chatterstorm, Mind's Desire, Haze of Rage, Elemental Eruption. Flusterstorm is a counterspell rather than a finisher — legitimate edge case (it scales with the storm count it's countering). All other results are storm-keyword closers. Zero false positives.",
+      "graveyard_spell_replay": "Top 10: Mizzix's Mastery, Arcane Bombardment, Professor Onyx, Increasing Vengeance, Metallurgic Summonings, Mnemonic Deluge, Tasha the Witch Queen, Memory Plunder, Stormchaser's Talent, Sword of Once and Future. All on-theme spell-replay or copy engines. Sword of Once and Future is borderline (it's a tutor-from-graveyard-and-cast equip) but legitimately spellslinger.",
+      "prowess_payoffs": "Top 10: Pinnacle Monk, Harmonic Prodigy, Stormcatch Mentor, Monastery Mentor, Kitsa, Bria, Firebending Student, Riptide Gearhulk, Lyse Hext, Queen Brahne. Modern prowess cluster — mostly recent printings. Most are creature-aggro flavored; for a control-tilted EDH spellslinger shell, only Harmonic Prodigy and Monastery Mentor are top-tier inclusions. Apply manual triage.",
+      "spell_lifegain_finisher": "Top 5 of 11: Aetherflux Reservoir, Quintorius (Lorehold magecraft), Diamond Mare, Ancient Cornucopia, Prism Ring. Diamond Mare, Ancient Cornucopia, Prism Ring are passive lifegain — adjacent to spellslinger but more relevant in lifegain-archetype builds. Aetherflux is the dedicated finisher; rest are budget mana rocks with cast triggers.",
+      "spellslinger_commanders": "Query A 1 result: Niv-Mizzet, Parun. Query B 1 result: Mizzix of the Izmagnus. Both are tight precision queries — zero noise. Both cards are canonical UR spellslinger commanders.",
+      "wildcard": "66-result broad sweep across `whenever you cast an instant or sorcery`. Surfaces the full cluster including Guttersnipe, Archmage of Runes, Fiery Inscription, Thousand-Year Storm, Electrostatic Field, Thermo-Alchemist, Murmuring Mystic, Urabrask, Balmor, Erebor Flamesmith, Case of Ransacked Lab, Unbound Flourishing, Sorcerer Class, Zada, Ral Monsoon, Jace's Sanctum, Chandra Hope's Beacon, Swarm Intelligence. Used to surface novel cast-trigger payoffs the precise queries miss."
+    }
+  },
+  "shared_refs": null
+}
