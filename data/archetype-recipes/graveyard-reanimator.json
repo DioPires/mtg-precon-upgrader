@@ -1,0 +1,174 @@
+{
+  "id": "graveyard-reanimator",
+  "name": "Graveyard / Reanimator",
+  "summary": "Fill the graveyard, then return creature cards to play or hand for tempo/value. Spans cheap single-target reanimation, mass returns, self-recursion creatures, graveyard tutors, and the commanders that reward the loop.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Awaiting Gate 2 + Gate 3 approval by local-board. 20/20 = 100% canon recall validated empirically against Scryfall API on 2026-05-14.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Reanimate",
+    "Animate Dead",
+    "Necromancy",
+    "Victimize",
+    "Living Death",
+    "Sevinne's Reclamation",
+    "Buried Alive",
+    "Entomb",
+    "Eternal Witness",
+    "Karmic Guide",
+    "Sun Titan",
+    "Bloodghast",
+    "Reassembling Skeleton",
+    "Meren of Clan Nel Toth",
+    "Karador, Ghost Chieftain",
+    "Mikaeus, the Unhallowed",
+    "Sidisi, Brood Tyrant",
+    "Phyrexian Reclamation",
+    "Tortured Existence",
+    "Archon of Cruelty"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "Pulled from `eternal-harvest` and `silverquill-the-disputant` deck.json (the two decks tagged `graveyard-reanimator`). Shared staples: Reanimate, Animate Dead, Necromancy, Living Death, Buried Alive, Bloodghast, Reassembling Skeleton, Phyrexian Reclamation (silverquill only — but format-defining engine).",
+    "from_edhrec_archetype_pages": "Sevinne's Reclamation, Karmic Guide, Sun Titan, Eternal Witness — universal EDH reanimator/recursion staples that score in EDHREC top-20 across Karador/Meren/Alesha/Muldrotha pages.",
+    "from_commanders": "Meren of Clan Nel Toth, Karador (Ghost Chieftain), Mikaeus the Unhallowed, Sidisi (Brood Tyrant) — the four canonical reanimator-engine commanders by idiom (return-at-EoT, cast-from-yard, undying, self-mill).",
+    "from_targets": "Archon of Cruelty included as the canonical fat reanimation target — the recipe must surface high-MV ETB-or-attack threats people actually cheat in.",
+    "from_combo_pieces": "Mikaeus + persist/undying lines, Karmic Guide + Reveillark loops, and Buried Alive + Victimize lines all show up on Commander Spellbook for graveyard-reanimator combos; these canon picks anchor the well-known engines."
+  },
+  "sub_recipes": {
+    "single_target_reanimation_spells": {
+      "intent": "Spells and auras that put or return a creature card from a graveyard to the battlefield, the bread-and-butter of the archetype.",
+      "queries": [
+        "f:commander o:\"creature card\" o:\"graveyard\" o:\"onto the battlefield\"",
+        "f:commander o:\"return target creature card\" o:\"graveyard to the battlefield\"",
+        "f:commander o:\"return enchanted creature card to the battlefield\"",
+        "f:commander o:\"creature cards in your graveyard\" o:\"return\" o:battlefield"
+      ],
+      "canon_recall": {
+        "expected": ["Reanimate", "Animate Dead", "Necromancy", "Victimize", "Karmic Guide"],
+        "surfaced_by_query_A": ["Reanimate", "Animate Dead", "Necromancy", "Living Death"],
+        "surfaced_by_query_B": ["Karmic Guide"],
+        "surfaced_by_query_C": ["Animate Dead"],
+        "surfaced_by_query_D": ["Victimize"],
+        "union_count": "5/5"
+      }
+    },
+    "mass_and_permanent_reanimation": {
+      "intent": "Whole-graveyard sweeps and 'return target permanent card' effects (Sevinne's, Sun Titan-style recursion). Smaller cluster than single-target but catches game-ending swings.",
+      "queries": [
+        "f:commander o:\"creature cards from\" o:graveyard o:battlefield",
+        "f:commander o:\"return target permanent card\" o:graveyard o:battlefield"
+      ],
+      "canon_recall": {
+        "expected": ["Living Death", "Sevinne's Reclamation", "Sun Titan"],
+        "surfaced_by_query_A": ["Living Death"],
+        "surfaced_by_query_B": ["Sun Titan", "Sevinne's Reclamation"],
+        "union_count": "3/3"
+      }
+    },
+    "graveyard_tutors": {
+      "intent": "Tutors that load creature cards directly into your yard — the setup half of every reanimate-target play.",
+      "queries": [
+        "f:commander o:\"into your graveyard\" o:\"search your library\""
+      ],
+      "canon_recall": {
+        "expected": ["Buried Alive", "Entomb"],
+        "surfaced": ["Entomb", "Buried Alive"],
+        "count": "2/2"
+      }
+    },
+    "self_recursion_creatures": {
+      "intent": "Creatures that return themselves from graveyard — repeatable engines that don't burn a reanimation spell each cycle.",
+      "queries": [
+        "f:commander t:creature o:\"return this card from your graveyard\""
+      ],
+      "canon_recall": {
+        "expected": ["Bloodghast", "Reassembling Skeleton"],
+        "surfaced": ["Reassembling Skeleton", "Bloodghast"],
+        "count": "2/2"
+      }
+    },
+    "hand_recursion_engines": {
+      "intent": "Repeatable engines that return creature cards from graveyard to hand — Phyrexian Reclamation, Tortured Existence, and ETB-Witness-style triggers.",
+      "queries": [
+        "f:commander o:\"return target creature card\" o:\"graveyard\" o:\"hand\"",
+        "f:commander t:creature o:enters o:\"return target card from your graveyard\""
+      ],
+      "canon_recall": {
+        "expected": ["Phyrexian Reclamation", "Tortured Existence", "Eternal Witness"],
+        "surfaced_by_query_A": ["Phyrexian Reclamation", "Tortured Existence"],
+        "surfaced_by_query_B": ["Eternal Witness"],
+        "union_count": "3/3"
+      }
+    },
+    "reanimator_commanders": {
+      "intent": "Commanders that anchor the archetype across the four canonical engine idioms: return-at-end-step (Meren), cast-from-yard (Karador), undying (Mikaeus), and self-mill-into-tokens (Sidisi).",
+      "queries": [
+        "is:commander o:\"creature card\" o:graveyard o:battlefield",
+        "is:commander o:\"cast a creature spell from your graveyard\"",
+        "is:commander o:undying",
+        "is:commander o:\"creature cards\" o:\"into your graveyard from your library\""
+      ],
+      "canon_recall": {
+        "expected": ["Meren of Clan Nel Toth", "Karador, Ghost Chieftain", "Mikaeus, the Unhallowed", "Sidisi, Brood Tyrant"],
+        "surfaced_by_query_A": ["Meren of Clan Nel Toth"],
+        "surfaced_by_query_B": ["Karador, Ghost Chieftain"],
+        "surfaced_by_query_C": ["Mikaeus, the Unhallowed"],
+        "surfaced_by_query_D": ["Sidisi, Brood Tyrant"],
+        "union_count": "4/4"
+      }
+    },
+    "big_reanimation_targets": {
+      "intent": "Fat creatures with enters-or-attacks triggers that justify the reanimation tempo investment.",
+      "queries": [
+        "f:commander t:creature mv>=7 o:\"enters or attacks\""
+      ],
+      "canon_recall": {
+        "expected": ["Archon of Cruelty"],
+        "surfaced": ["Archon of Cruelty"],
+        "count": "1/1",
+        "note": "Tight 13-result query. Archon of Cruelty ranks #1 by EDHREC. Other strong hits: Ulamog the Defiler, Emrakul the Promised End — the actual targets reanimator decks want."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — looter / discard-then-return engines that don't fit the precise sub-recipes above. High noise, run sparingly.",
+      "queries": [
+        "f:commander o:\"discard a card\" o:\"return\" o:graveyard"
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface oddities like Trading Post, Obsessive Stitcher, Macabre Waltz, Awaken the Honored Dead that the precise queries miss."
+      }
+    }
+  },
+  "excludes": {
+    "graveyard_hate_collateral": "-o:\"exile target player's graveyard\" -o:\"exile all cards from\"",
+    "_note": "Optional post-fetch filter. Prevents Bojuka Bog / Leyline of the Void variants leaking into the reanimator candidate pool. Spliced when a deck signals a self-only reanimator package."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14",
+    "validation_method": "Each sub-recipe query was run live against api.scryfall.com (order=edhrec, cap=300). Canon recall = (canon cards surfaced by at least one query in any sub-recipe) / total canon.",
+    "noise_sample": {
+      "single_target_reanimation_spells": "Reanimate, Animate Dead, Finale of Devastation, Living Death, Rise of the Dark Realms — top-5 are reanimation/recursion variants, no false positives in top-20.",
+      "mass_and_permanent_reanimation": "Sun Titan, Sevinne's Reclamation, Angel of Indemnity, Court of Ardenvale — all permanent-recursion, clean signal.",
+      "graveyard_tutors": "Entomb, Buried Alive, Goblin Engineer, Unmarked Grave, Lively Dirge — all yard tutors, clean.",
+      "self_recursion_creatures": "Reassembling Skeleton, Bloodghast, Metalwork Colossus, Multani Yavimaya's Avatar, Jarad — all self-recur creatures, clean.",
+      "hand_recursion_engines": "Phyrexian Reclamation, Tortured Existence, Honest Rutstein, Oversold Cemetery, Stitch Together — strong hand-return cluster.",
+      "reanimator_commanders": "Syr Konrad (death-payoff, weak match), Sheoldred Whispering One, Junji Midnight Sky — query A overshoots into adjacent death-trigger commanders; queries B/C/D are tight. Noise is acceptable since these are still graveyard-adjacent commanders.",
+      "big_reanimation_targets": "Archon of Cruelty (#1), Threefold Thunderhulk, Colossal Grave-Reaver, Ureni of the Unwritten, Sin Spira's Punishment — tight 13-result list, all are credible reanimation targets.",
+      "wildcard": "Trading Post, Toph Hardheaded Teacher, Bag of Holding, The Restoration of Eiganjo, The Underworld Cookbook — surfaces looter/recursion artifacts the precise queries miss."
+    }
+  },
+  "shared_refs": null
+}
