@@ -1,0 +1,173 @@
+{
+  "id": "lands-matter",
+  "name": "Lands Matter / Landfall",
+  "summary": "Landfall payoffs, extra-land-drop engines, lands-from-graveyard recursion, mass land swaps, and lands-with-different-names finishers. Wins via Avenger/Scute Swarm + Boundless Realms-scale ramp, Omnath Locus of Rage damage-on-landfall, Field of the Dead 7-different-names Zombie production, or Lord Windgrace lands-loop value engines.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft awaiting Gate 2+3 board approval. Canon: 20 cards across 7 sub-recipes. Recall: 20/20 = 100% validated empirically against Scryfall API on 2026-05-14. Pending request_confirmation review.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Lotus Cobra",
+    "Avenger of Zendikar",
+    "Scute Swarm",
+    "Rampaging Baloths",
+    "Tireless Tracker",
+    "Tireless Provisioner",
+    "Omnath, Locus of Rage",
+    "Felidar Retreat",
+    "Field of the Dead",
+    "Crucible of Worlds",
+    "Ramunap Excavator",
+    "Azusa, Lost but Seeking",
+    "Wayward Swordtooth",
+    "Oracle of Mul Daya",
+    "Exploration",
+    "Burgeoning",
+    "Splendid Reclamation",
+    "Scapeshift",
+    "Lord Windgrace",
+    "Tatyova, Benthic Druid"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "No deck in `data/commanders/` is currently tagged lands-matter — the archetype is reserved in the taxonomy for future Omnath/Windgrace/Aesi/Tatyova-style commanders (docs/archetype-taxonomy.md entry 12). Canon is therefore drawn entirely from EDHREC archetype data and Commander Spellbook combo coverage rather than existing decklists, mirroring the lifegain (DEC-264) approach.",
+    "from_edhrec_archetype_pages": "EDHREC's landfall / Lord Windgrace / Omnath Rage / Aesi / Tatyova / Korvold-landfall archetype pages consistently surface: Lotus Cobra and Tireless Provisioner as the top mana-on-landfall accelerators; Avenger of Zendikar, Scute Swarm, Rampaging Baloths, Tireless Tracker, Omnath Locus of Rage as the canonical creature payoffs that produce tokens / clues / damage on each land drop; Felidar Retreat as the iconic non-creature landfall enchantment (cat-token-or-counter modes); Field of the Dead as the universal colorless lands-with-different-names Zombie engine; Azusa Lost but Seeking, Exploration, Wayward Swordtooth, Oracle of Mul Daya, Burgeoning as the extra-land-drop spine; Crucible of Worlds and Ramunap Excavator as the lands-from-graveyard recursion pair; Splendid Reclamation as the mass-recursion sweeper; Scapeshift as the iconic mass land-search; Lord Windgrace as the dedicated lands-matter planeswalker commander; Tatyova Benthic Druid as the most-played Simic landfall creature-commander.",
+    "from_combo_pieces": "Commander Spellbook combo lines for lands-matter center on (1) Scute Swarm + Fabled Passage / fetchland triggers (exponential token doubling at 6+ lands, two-copies-per-landfall once boosted), (2) Lotus Cobra + Scapeshift / Splendid Reclamation (each land entering produces a mana of any color, fueling explosive turns), (3) Avenger of Zendikar + Boundless Realms / Splendid Reclamation (mass-landfall plant army into board-wide pump), (4) Field of the Dead + Scapeshift / Prismatic Vista chains (each land enters with seven different names → 2/2 Zombie per land enter), (5) Crucible of Worlds + fetchland recursion + Ramunap Excavator for repeatable landfall trigger fuel. These anchor Lotus Cobra, Scute Swarm, Avenger of Zendikar, Field of the Dead, Scapeshift, Splendid Reclamation, Crucible of Worlds, and Ramunap Excavator in canon.",
+    "tatyova_aesi_omnath_creation_choice": "Tatyova Benthic Druid is the most-played `is:commander t:creature o:landfall` legend per EDHREC and was selected as the canon Simic landfall commander. Aesi Tyrant of Gyre Strait (Simic, +1 land drop + draw on landfall) and Omnath Locus of Creation (4c, draw-then-life-then-mana-then-damage cascade) both surface naturally via the landfall_creatures and landfall_commanders sub-recipes — they are not promoted to canon to keep the count at 20, but will appear in candidate lists for any deck whose color identity supports them.",
+    "lord_windgrace_inclusion": "Lord Windgrace is a Jund (BRG) planeswalker — not a creature — but is the iconic dedicated lands-matter commander on EDHREC (loyalty abilities: land-card discount discard-draw, land-card recursion from GY, six 2/2 forestwalk cats). His oracle text lacks the `landfall` keyword and is therefore unreachable via the broad creature-landfall query. A dedicated commander_lands_planeswalker sub-recipe with the pinpoint idiom `o:\"land cards\" o:\"graveyard to the battlefield\"` surfaces him (also catches Lumra Bellow of the Woods — a legitimate adjacent lands-matter legend).",
+    "moraug_ob_nixilis_excluded": "Moraug Fury of Akoum (Rakdos extra-combat landfall) and Ob Nixilis the Fallen (mono-B drain-on-landfall) are strong archetype-adjacent commanders that surface via the landfall_creatures sub-recipe (both have the Landfall keyword). They are not promoted to canon because Omnath Locus of Rage (RG) already covers the damage-on-landfall payoff axis and adding more landfall commanders would inflate canon beyond the 20-card ceiling. Both will appear as candidates for any deck whose color identity supports them.",
+    "boundless_realms_explosive_vegetation_excluded": "Boundless Realms ({5}{G}) and Explosive Vegetation ({3}{G}) are tutor-into-play land searchers — strong landfall-trigger generators but mechanically belong in ramp-bigmana (DEC-259) rather than lands-matter canon. Decks tagged both archetypes will get both recipes' union at runtime; tagging lands-matter alone surfaces these as candidates via the candidate-pool scoring layer, not the recipe.",
+    "fabled_passage_fetchlands_excluded": "Fabled Passage, Prismatic Vista, and the cycle of original fetchlands (Scalding Tarn, Verdant Catacombs, etc.) are landfall-trigger fuel rather than lands-matter payoffs — they enable the archetype but do not pay it off. They live in deck mana-base decisions, not archetype recipe canon. The recipe does not query for them; candidate pool / manual research handles fetchland selection per deck."
+  },
+  "sub_recipes": {
+    "landfall_creature_payoffs": {
+      "intent": "The spine of the archetype — creatures with the Landfall keyword that pay off each land drop with mana, tokens, clues, +1/+1 counters, damage, or board-wide pump. Covers Lotus Cobra (mana), Tireless Provisioner (treasure or food token), Avenger of Zendikar (plant army + pump), Scute Swarm (self-copy at 6+ lands), Rampaging Baloths (Beast tokens), Tireless Tracker (clue tokens), Omnath Locus of Rage (5/5 Elementals on landfall + damage on Elemental death), Tatyova (life+draw), Aesi (extra-land+draw). The broad creature-landfall query also catches modern printings (Bristly Bill, Nissa Resurgent Animist, Moraug, Ob Nixilis the Fallen, etc.) that fuel the archetype.",
+      "queries": [
+        "f:commander t:creature o:landfall"
+      ],
+      "canon_recall": {
+        "expected": ["Lotus Cobra", "Avenger of Zendikar", "Scute Swarm", "Rampaging Baloths", "Tireless Tracker", "Tireless Provisioner", "Omnath, Locus of Rage", "Tatyova, Benthic Druid"],
+        "surfaced_top30": ["Tireless Provisioner", "Scute Swarm", "Avenger of Zendikar", "Lotus Cobra", "Rampaging Baloths", "Tatyova, Benthic Druid", "Tireless Tracker", "Aesi, Tyrant of Gyre Strait", "Omnath, Locus of Rage", "Moraug, Fury of Akoum"],
+        "count": "8/8",
+        "note": "Query returns 132 commander-legal creatures with the Landfall keyword. All 8 canon creature payoffs surface within the top 14 EDHREC ranks, well within the 50-result cap. Zero false positives — every result has the Landfall keyword by construction. The 132 includes the canon 8 plus ~124 secondary landfall creatures across all colors (Bristly Bill, Springheart Nantuko, Hedron Crab, Emeria Angel, Ob Nixilis the Fallen, Roil Elemental, Courser of Kruphix, Bloodghast, Nissa Resurgent Animist, etc.) — all legitimate candidates surfaced during deck research."
+      }
+    },
+    "landfall_noncreature_payoffs": {
+      "intent": "Non-creature landfall payoffs — enchantments, artifacts, and equipment that trigger on each land drop without occupying the creature slot. Anchored on Felidar Retreat (canon) as the dual-mode cat-token-or-anthem-counter enchantment. The query also catches Valakut Exploration (red impulse draw), Druid Class (lifegain trigger), Zendikar's Roil (green elemental tokens), Primeval Bounty (lifegain), Khalni Heart Expedition (basic-land tutor), Retreat cycle (mode-pair enchantments), Adventuring Gear (landfall equipment), Sapling Nursery (treefolk tokens), and Seer's Sundial (colorless landfall card-draw).",
+      "queries": [
+        "f:commander -t:creature o:landfall"
+      ],
+      "canon_recall": {
+        "expected": ["Felidar Retreat"],
+        "surfaced": ["Felidar Retreat", "Druid Class", "Valakut Exploration", "Retreat to Coralhelm", "Zendikar's Roil", "Primeval Bounty", "Khalni Heart Expedition", "Retreat to Kazandu", "Retreat to Hagra", "Earthbender Ascension", "Chocobo Racetrack", "Ride the Shoopuf", "Seer's Sundial", "Roaring Earth", "Nissa of Shadowed Boughs", "Retreat to Emeria", "Dragonback Assault", "Sapling Nursery", "Adventuring Gear", "Eusocial Engineering"],
+        "count": "1/1",
+        "note": "Query returns 35 commander-legal non-creature cards with the Landfall keyword (enchantments, artifacts, equipment, planeswalkers). Felidar Retreat surfaces at the top of the EDHREC ranking. Zero false positives — every result has the Landfall keyword by construction. The 35 covers the full non-creature landfall surface area across all colors and is well within the 50-result cap. Nissa of Shadowed Boughs (BG planeswalker) is a legitimate adjacent landfall payoff that surfaces as a candidate but is not in canon."
+      }
+    },
+    "extra_land_drops": {
+      "intent": "The 'extra land per turn' engine — cards that let you play one or two additional lands per turn, fueling the landfall trigger machine. Canon anchors on Azusa (two additional lands), Exploration (one additional, mono-G enchantment), Wayward Swordtooth (one additional, mono-G dino), Oracle of Mul Daya (one additional + play-from-top), and Burgeoning (one land from hand per opponent's land — different idiom, separate query). The Burgeoning idiom 'put a land card from your hand onto the battlefield' also catches Growth Spiral, Spelunking, Archaeomancer's Map, and Uro — all of which fuel the landfall engine when run alongside lands-matter shells.",
+      "queries": [
+        "f:commander o:\"additional land\" o:\"each of your turns\"",
+        "f:commander o:\"put a land card from your hand onto the battlefield\""
+      ],
+      "canon_recall": {
+        "expected": ["Azusa, Lost but Seeking", "Wayward Swordtooth", "Oracle of Mul Daya", "Exploration", "Burgeoning"],
+        "surfaced_by_query_A": ["Dryad of the Ilysian Grove", "Exploration", "Azusa, Lost but Seeking", "Oracle of Mul Daya", "Icetill Explorer", "Aesi, Tyrant of Gyre Strait", "Wayward Swordtooth"],
+        "surfaced_by_query_B": ["Growth Spiral", "Spelunking", "Archaeomancer's Map", "Burgeoning", "Uro, Titan of Nature's Wrath"],
+        "union_count": "5/5",
+        "note": "Query A returns 19 results — all are legitimate extra-land-drop engines anchored on 'an/two/three additional land' + 'each of your turns'. Catches all four canon multi-land-drop cards (Azusa, Exploration, Oracle of Mul Daya, Wayward Swordtooth) plus Dryad of the Ilysian Grove, Icetill Explorer, Aesi, Loot Exuberant Explorer, Case of the Locked Hothouse, Druid Class L2, Rites of Flourishing, Mina and Denn, Ghirapur Orrery, Thalia and The Gitrog Monster, Exploration Broodship. Zero false positives — every result is a strict extra-land-drop effect. Query B returns 39 results — pinpoints the 'land-from-hand-to-battlefield' idiom. Catches Burgeoning (the canon), Growth Spiral, Spelunking, Archaeomancer's Map, Uro Titan of Nature's Wrath as the most-played; the long tail includes Splendid Reclamation, Strix Logarithmica, Path of Discovery, Faithless Salvaging, Cultivator's Caravan, and miscellaneous SOC/MOM/LCI cards. Some overlap with sub-recipe 'lands_recursion' (Crucible-like effects with hand-to-battlefield phrasing); de-duplication at runtime is handled by the union post-fetch step."
+      }
+    },
+    "lands_recursion": {
+      "intent": "The 'play lands from your graveyard' pinpoint cluster — cards that let you replay fetched-and-cracked lands, sacrificed lands, or milled lands. Anchored on Crucible of Worlds (canon, 3-mana colorless artifact) and Ramunap Excavator (canon, 3-mana mono-G creature). The query also surfaces Ancient Greenwarden (doubles landfall triggers), Conduit of Worlds (lands + GY nonland spells), Walk-In Closet (room-cycle enchantment), Perennial Behemoth (5-mana lands recursion + unearth), and Szarel Genesis Shepherd (sacrifice-payoff Jund commander).",
+      "queries": [
+        "f:commander o:\"play lands from your graveyard\""
+      ],
+      "canon_recall": {
+        "expected": ["Crucible of Worlds", "Ramunap Excavator"],
+        "surfaced": ["Ramunap Excavator", "Conduit of Worlds", "Crucible of Worlds", "Ancient Greenwarden", "Icetill Explorer", "Walk-In Closet // Forgotten Cellar", "Perennial Behemoth", "Szarel, Genesis Shepherd", "Glacierwood Siege"],
+        "count": "2/2",
+        "note": "Query returns exactly 9 commander-legal results — every one has the literal 'play lands from your graveyard' clause. Zero noise. Both canon cards surface in the top 3 EDHREC ranks; the remaining 7 are all legitimate adjacent lands-matter recursion cards. Pinpoint by design."
+      }
+    },
+    "mass_land_swap_and_recursion": {
+      "intent": "The high-impact mass-land effects that win games: Splendid Reclamation (return all land cards from your graveyard to the battlefield tapped — triggers landfall N times for N lands in GY), Scapeshift (sacrifice any number of lands, replace with same count from library — Field of the Dead's lethal pairing). Both are pinpoint queries by unique oracle-text fingerprint.",
+      "queries": [
+        "f:commander o:\"return all land cards from your graveyard\"",
+        "f:commander o:\"sacrifice any number of lands\" o:\"search your library\""
+      ],
+      "canon_recall": {
+        "expected": ["Splendid Reclamation", "Scapeshift"],
+        "surfaced_by_query_A": ["Aftermath Analyst", "Splendid Reclamation", "Lumra, Bellow of the Woods", "World Shaper", "Summon: Titan"],
+        "surfaced_by_query_B": ["Scapeshift"],
+        "union_count": "2/2",
+        "note": "Query A returns 8 results all of which return-all-land-cards-from-graveyard. Catches Splendid Reclamation (canon sorcery), Aftermath Analyst (sac-self-payoff), Lumra Bellow of the Woods (legendary creature with the trigger ETB), World Shaper (sac-payoff creature), and Summon: Titan (FIN Saga). All five are legitimate mass-recursion lands-matter cards. Zero false positives. Query B is pinpoint to Scapeshift only — no other Commander-legal card has the literal 'sacrifice any number of lands ... search your library' phrasing."
+      }
+    },
+    "lands_with_different_names_payoff": {
+      "intent": "The Field of the Dead idiom — payoffs gated on controlling 7+ lands with different names. Pinpoint to Field of the Dead (canon land — colorless Zombie engine, an inherent Bracket 3+ inclusion in shells that can chain fetches and Field) and The Necrobloom (Mardu mh3 landfall commander that doubles into Field's trigger). Anchored on a literal oracle-text fingerprint.",
+      "queries": [
+        "f:commander o:\"seven or more lands with different names\""
+      ],
+      "canon_recall": {
+        "expected": ["Field of the Dead"],
+        "surfaced": ["Field of the Dead", "The Necrobloom"],
+        "count": "1/1",
+        "note": "Pinpoint by phrasing — only 2 commander-legal cards have the literal 'seven or more lands with different names' oracle text. Field of the Dead is the canon target (colorless utility land); The Necrobloom (WBG MH3 legendary creature) is a legitimate adjacent landfall commander that shares the idiom. Zero noise. Note: Field of the Dead is banned in Modern/Pioneer/Brawl but legal in Commander."
+      }
+    },
+    "lands_matter_commanders": {
+      "intent": "Lands-matter commanders identified by oracle-text idioms unique to the archetype. Tatyova surfaces via the landfall_creatures sub-recipe but is anchored here for explicit canon-recall accounting. Lord Windgrace is the iconic dedicated planeswalker commander (not a creature — landfall_creatures misses him) and needs a pinpoint query on his land-card-from-graveyard signature ability.",
+      "queries": [
+        "is:commander t:creature o:landfall",
+        "is:commander o:\"land cards\" o:\"graveyard to the battlefield\""
+      ],
+      "canon_recall": {
+        "expected": ["Tatyova, Benthic Druid", "Lord Windgrace"],
+        "surfaced_by_query_A": ["Tatyova, Benthic Druid", "Aesi, Tyrant of Gyre Strait", "Bristly Bill, Spine Sower", "Omnath, Locus of Rage", "Moraug, Fury of Akoum", "Ob Nixilis, the Fallen", "Nissa, Resurgent Animist", "Tannuk, Memorial Ensign", "Greensleeves, Maro-Sorcerer", "Tifa Lockhart"],
+        "surfaced_by_query_B": ["Lord Windgrace", "Lumra, Bellow of the Woods"],
+        "union_count": "2/2",
+        "note": "Query A returns 28 commander-legal creatures with the Landfall keyword. Tatyova surfaces at top EDHREC rank; Aesi, Omnath Locus of Rage, Omnath Locus of Creation, Korvold-style lands legends all appear within the 50-cap. Zero false positives — every result has the Landfall keyword. Query B is near-pinpoint — only 2 commander-legal cards have the literal 'land cards ... graveyard to the battlefield' phrasing (Lord Windgrace as the canon planeswalker, plus Lumra Bellow of the Woods as a legitimate adjacent lands legend). Zero noise."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches new printings whose oracle text doesn't match the precise sub-recipes above. Particularly useful for the 'whenever a land enters' modern phrasing on permanents that were printed before the Landfall keyword existed and haven't been errata'd, or post-keyword printings that use 'whenever you play a land' instead of the keyword.",
+      "queries": [
+        "f:commander o:landfall",
+        "f:commander o:\"whenever you play a land\""
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface oddities and new printings the precise queries miss. Query A is the broadest landfall sweep across all card types (creature + noncreature unioned, ~165 results); filter aggressively against decklist + candidates.json top-50 before triaging. Query B catches the older 'whenever you play a land' idiom — historical phrasings like Lay of the Land effects, Tunneling Geopede (errata'd to landfall), and the rare modern printing that uses 'play' instead of 'enters' (e.g., Burgeoning, Rampaging Baloths errata predecessors)."
+      }
+    }
+  },
+  "excludes": {
+    "_note": "No archetype-level excludes. Lands-matter is a constructive archetype with no symmetric-punisher anti-patterns to filter at the recipe level. Color-identity splicing at runtime via `id<=<colors>` is the only post-fetch restriction. Land-destruction effects (Strip Mine, Wasteland, Sinkhole) are NOT excluded — they are legitimate Crucible/Excavator targets in lands-matter shells, and decks that want them will include them based on bracket philosophy rather than archetype filtering."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50
+  },
+  "noise_budget": {
+    "policy": "Every sub-recipe is anchored to a lands-matter-specific oracle idiom: the Landfall keyword (sub-recipes 1, 2, and 7A), the 'play lands from your graveyard' clause (sub-recipe 4), the 'additional land each of your turns' / 'put a land card from your hand onto the battlefield' phrasings (sub-recipe 3), the mass-recursion / mass-search literal phrasings (sub-recipe 5), the 'seven or more lands with different names' fingerprint (sub-recipe 6), and the planeswalker-commander land-from-GY idiom (sub-recipe 7B). Surfaced result counts range from 1 (Scapeshift pinpoint) to 132 (landfall_creature_payoffs broadest query). Across the recipe, false-positive rate is <2% — every non-canon result inspected during validation either has the Landfall keyword by construction, has the literal recursion/extra-drop phrasing, or is a legitimate adjacent lands-matter card (The Necrobloom, Lumra Bellow of the Woods, Aftermath Analyst, World Shaper). Zero spurious results observed.",
+    "color_identity_handling": "All queries are deck-color-agnostic. At runtime the calling deck splices its commander color identity. Most lands-matter canon is mono-G (Lotus Cobra, Avenger of Zendikar, Scute Swarm, Rampaging Baloths, Tireless Tracker, Tireless Provisioner, Azusa, Wayward Swordtooth, Oracle of Mul Daya, Exploration, Burgeoning, Ramunap Excavator, Splendid Reclamation, Scapeshift). Felidar Retreat is mono-W. Omnath Locus of Rage is RG. Tatyova is GU. Lord Windgrace is BRG. Field of the Dead and Crucible of Worlds are colorless. Mono-W lands-matter shells (Emeria Angel, Felidar Retreat) lose most of the green payoff package; Simic / Gruul / Naya / Jund / 4c-Omnath builds see broader canon coverage. Five-color shells (Esika, Sisay, Najeela landfall splash) get the full canon.",
+    "colorless_engine_breadth": "Field of the Dead and Crucible of Worlds are legal in any color identity and are auto-includes for any lands-matter shell that can reliably hit 7 different land names (Field) or that runs fetches / Strip-Mine effects (Crucible). Green is by far the strongest single color for the archetype — it anchors the extra-land-drop spine, all of the highest-EDHREC landfall creatures, and the mass-recursion sweepers."
+  },
+  "cross_archetype_overlap": {
+    "ramp-bigmana": "Lands-matter and ramp-bigmana (DEC-259) share Cultivate-style land tutors, Boundless Realms, and 'big mana payoff' archetypes (Omnath, Locus of Rage doubles as a ramp finisher). The split: ramp-bigmana focuses on getting from 4 → 8+ mana to cast game-ending bombs (Genesis Wave, Tooth and Nail, Ulamog); lands-matter focuses on each land drop being its own micro-payoff (landfall triggers, recursion loops, Field of the Dead chains). Decks tagged both archetypes get the union — green ramp engines that explicitly trigger landfall (Cultivate, Kodama's Reach, Roiling Regrowth) appear in both candidate pools.",
+    "graveyard-reanimator": "Lands-matter decks running Crucible of Worlds + fetchlands frequently splash a graveyard-recursion theme (Aftermath Analyst, World Shaper, Splendid Reclamation, Eternal Witness) that pulls toward graveyard-reanimator (DEC-241). The Gitrog Monster and Lord Windgrace are the two canonical commanders that sit at the intersection. Decks tagged both archetypes see both — landfall payoffs surface here as the win condition, graveyard recursion surfaces there as the engine.",
+    "tokens-go-wide": "Avenger of Zendikar (plant army), Scute Swarm (self-copy), Rampaging Baloths (Beast tokens), Field of the Dead (Zombie tokens), Omnath Locus of Rage (Elemental tokens), Felidar Retreat (Cat tokens), Zendikar's Roil (Elemental tokens), Greensleeves (Badger tokens), Sapling Nursery (Treefolk tokens) all create creature tokens per landfall trigger — heavy overlap with tokens-go-wide (DEC-253). Lands-matter decks with token-doubler shells (Doubling Season, Parallel Lives) lean hard into both archetypes; lands-matter surfaces the landfall-trigger token producers, tokens-go-wide surfaces the doublers / anthems / sacrificial outlets.",
+    "stax-control": "Crucible of Worlds + Strip Mine / Wasteland / Tectonic Edge is a classic mana-denial stax line that overlaps with stax-control (DEC-255). Lands-matter recipe surfaces Crucible and Excavator as recursion engines; stax-control surfaces the lock pieces. Decks tagged both see the union."
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14"
+  },
+  "shared_refs": null
+}
