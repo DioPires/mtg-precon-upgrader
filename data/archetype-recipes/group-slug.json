@@ -1,0 +1,209 @@
+{
+  "id": "group-slug",
+  "name": "Group Slug / Punisher",
+  "summary": "Pinger and punisher damage, opponent-action triggers (draw, cast, land-drop, tap-for-mana, activate, target), cost-tax forced choices, anti-lifegain locks, damage and life-loss doublers, and end-step lifeloss amplifiers that grind the table down while the controller closes through accumulated chip damage.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft pending board confirmation — Gate 2 (canon) + Gate 3 (recipe) combined into a single request_confirmation interaction, mirroring the spellslinger / graveyard-reanimator / tokens-go-wide / counters-payoffs / infect-poison / stax-control collapsed-gate path. 20/20 = 100% canon recall validated empirically against Scryfall API on 2026-05-14.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Underworld Dreams",
+    "Fate Unraveler",
+    "Sheoldred, the Apocalypse",
+    "Razorkin Needlehead",
+    "Orcish Bowmasters",
+    "Eidolon of the Great Revel",
+    "Pyrostatic Pillar",
+    "Roiling Vortex",
+    "Fiery Emancipation",
+    "Solphim, Mayhem Dominus",
+    "Dictate of the Twin Gods",
+    "Wound Reflection",
+    "Bloodletter of Aclazotz",
+    "Painful Quandary",
+    "Manabarbs",
+    "Zo-Zu the Punisher",
+    "Ankh of Mishra",
+    "Harsh Mentor",
+    "Tectonic Giant",
+    "Mogis, God of Slaughter"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "Eternal Agony (The Lord of Pain, BR Bracket 4) is the one deck currently tagged `group-slug`. 16 of 20 canon cards are in its 99 today: Underworld Dreams, Fate Unraveler, Sheoldred, Razorkin Needlehead, Orcish Bowmasters, Eidolon of the Great Revel, Pyrostatic Pillar, Roiling Vortex, Fiery Emancipation, Solphim, Dictate of the Twin Gods, Wound Reflection, Bloodletter of Aclazotz, Painful Quandary, Harsh Mentor, Tectonic Giant, Mogis (via Lord of Pain's anti-life shell). Four canon cards (Manabarbs, Zo-Zu the Punisher, Ankh of Mishra, Mogis explicitly) are EDHREC/format staples not in Eternal Agony today — they represent franchise idioms (land-drop punishers, must-pay tax-on-upkeep commanders) the recipe must surface even though the one tagged deck happens to lean a different direction.",
+    "from_edhrec_archetype_pages": "EDHREC's group-slug theme page (https://edhrec.com/themes/group-slug) clusters into six idioms that recur across the format: (a) draw-trigger pingers — Underworld Dreams, Fate Unraveler, Razorkin Needlehead, Orcish Bowmasters, Sheoldred the Apocalypse, Nekusar, Kederekt Parasite; (b) cheap-spell taxes — Eidolon of the Great Revel, Pyrostatic Pillar (the two-card 'Revel' cluster); (c) anti-lifegain — Roiling Vortex, Sulfuric Vortex, Erebos, Tibalt the Rakish Instigator, Archfiend of Despair (rounds into doublers); (d) damage / lifeloss amplifiers — Fiery Emancipation, Solphim, Dictate of the Twin Gods, Furnace of Rath, Gratuitous Violence, Wound Reflection, Bloodletter of Aclazotz, Curse of Bloodletting, Angrath's Marauders; (e) action-trigger punishers — land-drop (Zo-Zu, Ankh of Mishra), mana-use (Manabarbs, Overabundance), activated-ability (Harsh Mentor, Immolation Shaman, Burning-Tree Shaman), targeting (Tectonic Giant, Leyline of Combustion, Thunderbreak Regent); (f) upkeep tax commanders / forced-choice — Mogis God of Slaughter, Painful Quandary, Bottomless Pit. Canon includes representatives across all six clusters.",
+    "from_combo_pieces": "Commander Spellbook's group-slug-flavored combos cluster around damage-doubler stacking: Furnace of Rath + Dictate of the Twin Gods = 4x damage; Fiery Emancipation + any doubler = lethal off a 5-damage trigger; Bloodletter of Aclazotz + any single-target life-loss spell = doubled drain; Heartless Hidetsugu + any damage doubler = one-shot kill (Hidetsugu is in Eternal Agony today). Canon prioritizes the franchise-level doublers (Fiery Emancipation, Solphim, Dictate, Wound Reflection, Bloodletter) over Hidetsugu specifically because Hidetsugu is a Heartless-combo finisher, not a slug staple. The Eidolon + Pyrostatic Pillar 'Revel pair' is a recurring combo backbone with cheap-spell metagames (Storm, Cascade). Mogis-style 'lose 2 or sac' is a one-card softlock that combos with any sac-payoff (Korvold, Mayhem Devil) — listed as a standalone slug staple here.",
+    "from_franchise_subarchetypes": "Group-slug spans eight distinct franchise idioms that each warrant a dedicated sub-recipe: (1) draw-trigger pingers — three structurally distinct phrasings (`damage to that player` for Underworld Dreams/Fate Unraveler, `damage to them` for Razorkin, `loses N life` for Sheoldred, `damage to any target` for Orcish Bowmasters); (2) cheap-spell taxes — `mana value N or less` cost punishers (Eidolon, Pyrostatic Pillar); (3) anti-lifegain — `if a player would gain life` replacement (Sulfuric Vortex family) plus `opponents can't gain life` static lock (Roiling Vortex, Tibalt the Rakish Instigator family); (4) damage doublers — three sub-variants: combat-and-noncombat double (Dictate of the Twin Gods, Furnace of Rath), noncombat-only double (Solphim Mayhem Dominus), and triple (Fiery Emancipation, City on Fire); (5) life-loss doubler — `would lose life ... twice that much instead` (Bloodletter of Aclazotz); (6) cost-tax forced choice — `loses N life unless` (Painful Quandary, Remorseless Punishment); (7) action punishers — land-drop (`a land enters ... damage to that land's controller`), mana-use (`taps a land for mana`), activation (`activates an ability`), targeting (`becomes the target of a spell`); (8) upkeep tax / end-step amplifier — `opponent's upkeep ... unless they sacrifice` (Mogis God of Slaughter) and `each end step ... opponent loses life equal to` (Wound Reflection, Archfiend of Despair). Each idiom uses a mechanically distinct oracle phrasing — the recipe must surface all eight as parallel sub-recipes, not collapse them."
+  },
+  "sub_recipes": {
+    "draw_trigger_punishers": {
+      "intent": "Permanents that punish opponents for drawing cards — the core slug engine. Four parallel queries because the oracle phrasings differ structurally: `damage to that player` (Underworld Dreams family), `damage to them` (Razorkin Needlehead), `damage to any target` (Orcish Bowmasters' redirect-able damage), and `loses N life` (Sheoldred's life-loss form). Collapsing them into one query would miss Razorkin and Sheoldred.",
+      "queries": [
+        "f:commander o:\"opponent draws a card\" o:\"damage to that player\"",
+        "f:commander o:\"opponent draws a card\" o:\"damage to them\"",
+        "f:commander o:\"opponent draws a card\" o:\"deals 1 damage to any target\"",
+        "f:commander o:\"opponent draws a card\" o:\"loses\" o:life"
+      ],
+      "canon_recall": {
+        "expected": ["Underworld Dreams", "Fate Unraveler", "Razorkin Needlehead", "Orcish Bowmasters", "Sheoldred, the Apocalypse"],
+        "surfaced_by_query_A": ["Underworld Dreams", "Fate Unraveler"],
+        "surfaced_by_query_B": ["Razorkin Needlehead"],
+        "surfaced_by_query_C": ["Orcish Bowmasters"],
+        "surfaced_by_query_D": ["Sheoldred, the Apocalypse"],
+        "union_count": "5/5",
+        "note": "Query A 5 results: Underworld Dreams, Fate Unraveler, Kederekt Parasite, Nekusar the Mindrazer, Ob Nixilis the Hate-Twisted — all on-theme draw-trigger pingers. Query B is a 1-result tight hit on Razorkin Needlehead. Query C 1-result tight hit on Orcish Bowmasters. Query D surfaces Sheoldred plus Scrawling Crawler and a few other life-loss-on-draw payoffs."
+      }
+    },
+    "cheap_spell_punishers": {
+      "intent": "Permanents that punish opponents for casting cheap spells — the 'Revel pair' that taxes Storm, Cascade, and any low-curve combo deck. Tight 2-result query, zero noise.",
+      "queries": [
+        "f:commander o:\"mana value 3 or less\" o:\"deals 2 damage to that player\""
+      ],
+      "canon_recall": {
+        "expected": ["Eidolon of the Great Revel", "Pyrostatic Pillar"],
+        "surfaced": ["Eidolon of the Great Revel", "Pyrostatic Pillar"],
+        "count": "2/2",
+        "note": "2-result query. Both canon hits, zero noise. The old 'converted mana cost' phrasing was reworded by Wizards; queries must use 'mana value' going forward."
+      }
+    },
+    "anti_lifegain": {
+      "intent": "Permanents that prevent opponents from gaining life — closes the door on lifegain decks and prevents opposing recovery from accumulated slug damage. Two parallel queries cover the replacement-effect phrasing (Sulfuric Vortex family) and the static lock phrasing (Roiling Vortex, Tibalt Rakish Instigator family) — combining them would miss Roiling Vortex.",
+      "queries": [
+        "f:commander o:\"if a player would gain life\"",
+        "f:commander o:\"opponents can't gain life\""
+      ],
+      "canon_recall": {
+        "expected": ["Roiling Vortex"],
+        "surfaced_by_query_A": [],
+        "surfaced_by_query_B": ["Roiling Vortex"],
+        "union_count": "1/1",
+        "note": "Query A surfaces Sulfuric Vortex, Leyline of Punishment, Erebos God of the Dead, Knight of Dusk's Shadow — replacement-effect anti-lifegain. Query B surfaces Roiling Vortex, Tibalt the Rakish Instigator, Archfiend of Despair, Quakebringer, Grima Wormtongue, Atarka's Command, The Lord of Pain, Forsaken Crossroads — static / cast-on-resolution anti-lifegain. ~10 total results across both queries, all on-theme. Zero off-theme noise."
+      }
+    },
+    "damage_doublers": {
+      "intent": "Permanents that double or triple damage dealt — the franchise amplifiers that convert chip damage into lethal totals. Three parallel queries cover combat-and-noncombat double (Dictate, Furnace), noncombat-only double (Solphim), and triple (Fiery Emancipation, City on Fire). The lifeloss-doubler (Bloodletter of Aclazotz) is in its own sub-recipe because it uses 'would lose life' phrasing rather than 'would deal damage'.",
+      "queries": [
+        "f:commander o:\"would deal damage\" o:\"double that damage\" o:instead",
+        "f:commander o:\"would deal\" o:\"noncombat damage\" o:\"double that damage\" o:instead",
+        "f:commander o:\"would deal damage\" o:\"triple that damage\""
+      ],
+      "canon_recall": {
+        "expected": ["Dictate of the Twin Gods", "Solphim, Mayhem Dominus", "Fiery Emancipation"],
+        "surfaced_by_query_A": ["Dictate of the Twin Gods"],
+        "surfaced_by_query_B": ["Solphim, Mayhem Dominus"],
+        "surfaced_by_query_C": ["Fiery Emancipation"],
+        "union_count": "3/3",
+        "note": "Query A ~23 results: Dictate of the Twin Gods, Furnace of Rath, Gratuitous Violence, Twinflame Tyrant, Angrath's Marauders, Fiendish Duo, Curse of Bloodletting, Gisela Blade of Goldnight, Calamity Bearer, City on Fire, Obosh the Preypiercer — all canonical damage doublers, zero noise. Query B is a 1-result hit on Solphim Mayhem Dominus. Query C 3 results: Fiery Emancipation, City on Fire, Isengard Unleashed — the format's three damage triplers."
+      }
+    },
+    "lifeloss_doubler": {
+      "intent": "Permanents that double the life loss opponents take — structurally distinct from damage doublers because they trigger on 'would lose life' rather than 'would deal damage', catching drain spells, painlands, and replacement effects damage doublers miss.",
+      "queries": [
+        "f:commander o:\"would lose life\" o:\"twice that much\" o:instead"
+      ],
+      "canon_recall": {
+        "expected": ["Bloodletter of Aclazotz"],
+        "surfaced": ["Bloodletter of Aclazotz"],
+        "count": "1/1",
+        "note": "Tight 1-result query. Bloodletter is currently the only printed card with this exact phrasing — the recipe will need a re-audit if a second card is printed with the same idiom."
+      }
+    },
+    "cost_tax_forced_choice": {
+      "intent": "Permanents that force opponents to choose between losing significant life and paying a hand/board cost — the Painful Quandary idiom that punishes any opponent action.",
+      "queries": [
+        "f:commander o:\"loses 5 life unless\""
+      ],
+      "canon_recall": {
+        "expected": ["Painful Quandary"],
+        "surfaced": ["Painful Quandary"],
+        "count": "1/1",
+        "note": "2-result query: Painful Quandary, Remorseless Punishment. Both legitimate cost-tax effects; zero noise."
+      }
+    },
+    "action_punishers": {
+      "intent": "Permanents that punish opponents for taking specific game actions — land-drops, tapping for mana, activating abilities, and targeting. Four parallel queries because each action uses a structurally distinct trigger phrasing.",
+      "queries": [
+        "f:commander o:\"a land enters\" o:\"damage to that land's controller\"",
+        "f:commander o:\"taps a land for mana\" o:damage",
+        "f:commander o:\"activates an ability\" o:\"deals\" o:\"damage to that player\"",
+        "f:commander o:\"becomes the target of a spell\" o:\"opponent\" o:damage"
+      ],
+      "canon_recall": {
+        "expected": ["Zo-Zu the Punisher", "Ankh of Mishra", "Manabarbs", "Harsh Mentor", "Tectonic Giant"],
+        "surfaced_by_query_A": ["Zo-Zu the Punisher", "Ankh of Mishra"],
+        "surfaced_by_query_B": ["Manabarbs"],
+        "surfaced_by_query_C": ["Harsh Mentor"],
+        "surfaced_by_query_D": ["Tectonic Giant"],
+        "union_count": "5/5",
+        "note": "Query A: 2 results, both canon, zero noise. Query B 3 results: Manabarbs, Overabundance, Barbflare Gremlin — all on-theme. Query C 5 results: Harsh Mentor, Immolation Shaman, Burning-Tree Shaman, Flamescroll Celebrant, Avalanche of Sector 7 — all canonical activation-punishers. Query D 8 results: Tectonic Giant, Leyline of Combustion, Thunderbreak Regent, Heartfire Hero (on-theme), plus Mila/Lukka, Reidane God of the Worthy (off-theme but tolerable single-target punishers)."
+      }
+    },
+    "upkeep_tax_commander": {
+      "intent": "God-level / commander-level upkeep tax engines that force a sacrifice-or-take-damage choice each opponent's upkeep — the Mogis idiom, mechanically distinct from generic opponent-action triggers because it fires unconditionally on the timer.",
+      "queries": [
+        "f:commander o:\"opponent's upkeep\" o:\"unless they sacrifice\""
+      ],
+      "canon_recall": {
+        "expected": ["Mogis, God of Slaughter"],
+        "surfaced": ["Mogis, God of Slaughter"],
+        "count": "1/1",
+        "note": "1-result tight hit. Zero noise. The phrasing is unique to Mogis among commander-legal cards in the current era; the wildcard sub-recipe is the fallback if any new card prints with the same idiom under different wording."
+      }
+    },
+    "end_step_amplifier": {
+      "intent": "Permanents that re-apply life loss at end of turn — the Wound Reflection idiom that turns one trigger into two. Structurally distinct from doublers because it fires as a delayed end-step trigger, not as a replacement effect.",
+      "queries": [
+        "f:commander o:\"each end step\" o:\"opponent loses life equal to\""
+      ],
+      "canon_recall": {
+        "expected": ["Wound Reflection"],
+        "surfaced": ["Wound Reflection"],
+        "count": "1/1",
+        "note": "2-result query: Wound Reflection, Archfiend of Despair. Both legitimate end-step lifeloss amplifiers; zero noise."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches group-slug payoffs whose oracle text doesn't match the precise sub-recipes above (novel punisher phrasings, oddball amplifiers, must-pay-or-take effects with non-standard wording). High noise, run sparingly.",
+      "queries": [
+        "f:commander t:enchantment o:\"each opponent\" o:loses o:life mv<=5",
+        "f:commander t:creature o:\"opponent\" o:\"deals\" o:\"damage to that player\" mv<=4"
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface novel slug payoffs the precise queries miss, especially low-cost enchantment drains and creature-based punishers that don't fit the cleaner action-trigger family. Apply heavy manual triage."
+      }
+    }
+  },
+  "excludes": {
+    "symmetric_punishers": "-o:\"each player loses\" -o:\"each player is dealt\"",
+    "_note": "Spliced into every sub-recipe query at runtime for decks tagged asymmetric_only:true. Group-slug is particularly sensitive — Sulfuric Vortex, Manabarbs, Ankh of Mishra, Pyrostatic Pillar, Eidolon of the Great Revel are all symmetric on paper but become asymmetric in practice because the controller's deck is built to play around the tax (high curve avoidance, anti-life shell, lifeloss prevention via Sheoldred-style life-replacement). The Lord of Pain (Eternal Agony commander) is explicitly tagged asymmetric_only:true because the deck cannot reliably play around symmetric punishers and prefers opponent-only effects. For non-asymmetric-only slug decks (e.g., a Heartless Hidetsugu glass-cannon shell with no life-replacement), leave the splice off and let symmetric punishers stay in the candidate pool."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50,
+    "color_identity_note": "Group-slug clusters heavily in R (cheap-spell punishers, damage doublers, land-drop punishers, action-triggers — Eidolon, Pyrostatic Pillar, Roiling Vortex, Manabarbs, Zo-Zu, Ankh of Mishra, Harsh Mentor, Tectonic Giant, Fiery Emancipation, Solphim, Dictate of the Twin Gods) and B (draw-trigger pingers, anti-life, lifeloss doublers, cost-tax — Underworld Dreams, Fate Unraveler, Sheoldred, Orcish Bowmasters, Wound Reflection, Bloodletter, Painful Quandary). The classic group-slug pairing is BR (Mogis, Lord of Pain, Kaervek the Merciless) — both halves available. Mono-W slug shells exist but lean on attack-tax pillowfort (overlap with stax-control) rather than direct damage. Mono-U slug is essentially the draw-trigger half only (Nekusar shells run UB or UBR). Mono-G slug is thin (Manabarbs-adjacent only); group-hug-into-slug pivots run G but those tag closer to chaos than slug."
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14",
+    "validation_method": "Each sub-recipe query was run live against api.scryfall.com (order=edhrec). Canon recall = (canon cards surfaced by at least one query in any sub-recipe) / total canon.",
+    "noise_sample": {
+      "draw_trigger_punishers": "Across the 4 queries, full result set is ~10 cards: Underworld Dreams, Fate Unraveler, Razorkin Needlehead, Orcish Bowmasters, Sheoldred, Kederekt Parasite, Nekusar the Mindrazer, Ob Nixilis the Hate-Twisted, Scrawling Crawler. Every result is a canonical draw-trigger payoff; zero off-theme noise.",
+      "cheap_spell_punishers": "Tight 2-result query: Eidolon of the Great Revel, Pyrostatic Pillar. Zero noise. The two-card 'Revel pair' is the entire MV-tax cluster in current Commander; no third printing yet uses this exact phrasing.",
+      "anti_lifegain": "Combined ~10 results: Sulfuric Vortex, Leyline of Punishment, Erebos God of the Dead, Knight of Dusk's Shadow, Roiling Vortex, Tibalt the Rakish Instigator, Archfiend of Despair, Quakebringer, Grima Wormtongue, Atarka's Command, The Lord of Pain. Every result is a canonical anti-lifegain effect; zero noise.",
+      "damage_doublers": "Query A ~23 results — all on-theme damage doublers; zero false positives. Query B and C each tight 1-3 result hits. The category is extremely clean because 'would deal damage ... double/triple that damage instead' is a near-unique phrasing.",
+      "lifeloss_doubler": "1 result: Bloodletter of Aclazotz. Zero noise. Recipe will need re-audit if a second card is printed with this idiom.",
+      "cost_tax_forced_choice": "2 results: Painful Quandary, Remorseless Punishment. Both legitimate cost-tax effects; zero noise.",
+      "action_punishers": "Across 4 queries ~18 results: Zo-Zu, Ankh of Mishra, Manabarbs, Overabundance, Barbflare Gremlin, Harsh Mentor, Immolation Shaman, Burning-Tree Shaman, Flamescroll Celebrant, Avalanche of Sector 7, Tectonic Giant, Leyline of Combustion, Thunderbreak Regent, Heartfire Hero, plus a few off-theme single-target punishers (Mila/Lukka, Reidane). ~85% on-theme; the off-theme tail is single-target Aura-style retaliations rather than true slug pieces.",
+      "upkeep_tax_commander": "1-result tight hit on Mogis. Zero noise.",
+      "end_step_amplifier": "2 results: Wound Reflection, Archfiend of Despair. Both legitimate end-step lifeloss amplifiers; zero noise.",
+      "wildcard": "Broad sweep across enchantments and low-cost creatures with opponent-loss or opponent-damage clauses. Surfaces oddball slug pieces the precise queries miss (e.g., Curse of Bloodletting variants, low-cost drain enchantments, Polluted Bonds-style lifeloss-per-land-tap effects, Bottomless Pit's discard tax). Used as a fallback to catch novel slug printings and edge-case effects where the franchise idiom hasn't been pinned to a single oracle phrasing yet."
+    }
+  },
+  "shared_refs": null
+}
