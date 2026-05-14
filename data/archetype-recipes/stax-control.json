@@ -1,0 +1,226 @@
+{
+  "id": "stax-control",
+  "name": "Stax / Control",
+  "summary": "Asymmetric resource denial — pillowfort, spell-cost taxes, untap denial, upkeep stax, ability denial, graveyard hate, one-spell-per-turn locks, cast-zone restrictions, and tax-on-opponent-action engines that grind the table to a halt while the controller closes.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft pending board confirmation — Gate 2 (canon) + Gate 3 (recipe) combined into a single request_confirmation interaction, mirroring the spellslinger / graveyard-reanimator / tokens-go-wide / counters-payoffs / infect-poison collapsed-gate path. 20/20 = 100% canon recall validated empirically against Scryfall API on 2026-05-14.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Smothering Tithe",
+    "Rhystic Study",
+    "Blind Obedience",
+    "Authority of the Consuls",
+    "Thalia, Guardian of Thraben",
+    "Sphere of Resistance",
+    "Trinisphere",
+    "Winter Orb",
+    "Smokestack",
+    "Tangle Wire",
+    "Cursed Totem",
+    "Stony Silence",
+    "Null Rod",
+    "Linvala, Keeper of Silence",
+    "Rest in Peace",
+    "Grafdigger's Cage",
+    "Rule of Law",
+    "Drannith Magistrate",
+    "Humility",
+    "Ghostly Prison"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "Pulled from the one deck currently tagged `stax-control` — `genesis-protocol` (Shorikai, Genesis Engine, Bracket 4 cEDH-adjacent Azorius stax/combo). Genesis Protocol's `Stax / Lock Pieces` category directly contributes: Humility, Cursed Totem, Rest in Peace, Grafdigger's Cage, Blind Obedience, Smothering Tithe, Authority of the Consuls (7 canon cards extracted from in-deck use). Genesis Protocol is mono-WU so it cannot run R/G/B-only stax pieces; canon is broadened beyond its color identity to represent the full archetype that future stax decks may tag (e.g., a mono-W Hokori build or a Grand Arbiter shell would tap the WU subset, while a green Collector Ouphe-style or BG sac-stax variant would tap the colorless + green subset).",
+    "from_edhrec_archetype_pages": "EDHREC's stax archetype landing surfaces five idiom clusters that recur across the format: (a) pillowfort/ETB-tapped (Authority of the Consuls, Blind Obedience, Ghostly Prison, Propaganda, Kismet); (b) spell-cost taxes (Thalia Guardian of Thraben, Sphere of Resistance, Trinisphere, Thorn of Amethyst, Vryn Wingmare, Glowrider, Lodestone Golem); (c) resource denial / untap stax (Winter Orb, Static Orb, Smokestack, Tangle Wire, Stasis); (d) ability denial (Cursed Totem, Stony Silence, Null Rod, Linvala Keeper of Silence, Collector Ouphe, Karn the Great Creator, Pithing Needle); (e) format-level locks (Rule of Law, Eidolon of Rhetoric, Arcane Laboratory, Drannith Magistrate, Humility, Rest in Peace, Grafdigger's Cage). Canon includes one or more representatives of each cluster so the recipe surfaces the full menu, not just one corner.",
+    "from_combo_pieces": "Commander Spellbook surfaces several stax-flavored combos. Humility + Linvala-style ability-denial pairs that turn off opposing engines. Genesis Protocol uses Helm of Obedience + Rest in Peace as a 2-card mill kill — Rest in Peace earns canon as both a graveyard-hate staple AND a combo piece. Smothering Tithe is a Spellbook-frequent enabler for white mana-engine combos (e.g., Wheel of Fortune + Smothering Tithe = unbounded treasures). Rhystic Study is the canonical UR/U tax-on-cast engine that combos with Bolas's Citadel and other cast-trigger stacks. Drannith Magistrate is the canonical commander-tax lock against commander-driven combo decks. Each combo-piece canon also legitimately stands as a standalone stax staple.",
+    "from_franchise_subarchetypes": "Stax-control spans seven distinct franchise idioms that each warrant a dedicated sub-recipe: (1) ETB-tapped pillowfort (Authority, Blind Obedience, Kismet); (2) attack taxes (Ghostly Prison, Propaganda, Norn's Annex, Windborn Muse); (3) spell-cost taxes — noncreature (Thalia, Thorn, Vryn Wingmare), general (Sphere), and cost-floor (Trinisphere); (4) untap denial (Winter Orb, Static Orb, Smoke, Stasis); (5) upkeep sacrifice/tap stax (Smokestack, Tangle Wire); (6) activated-ability denial (Cursed Totem, Stony Silence, Null Rod, Linvala, Collector Ouphe, Karn the Great Creator); (7) format-level locks — one-spell-per-turn (Rule of Law, Eidolon of Rhetoric, Arcane Laboratory), cast-zone restriction (Drannith Magistrate), graveyard hate (Rest in Peace, Grafdigger's Cage), creatures-lose-abilities (Humility), tax-on-opponent-action (Smothering Tithe, Rhystic Study). Each idiom uses a mechanically distinct oracle phrasing — the recipe must surface all seven as parallel sub-recipes, not collapse them."
+  },
+  "sub_recipes": {
+    "etb_tapped_pillowfort": {
+      "intent": "Permanents that force opponents' creatures (and sometimes artifacts/lands) to enter tapped — the slow-down half of pillowfort, often paired with attack taxes.",
+      "queries": [
+        "f:commander o:\"opponents control enter tapped\""
+      ],
+      "canon_recall": {
+        "expected": ["Authority of the Consuls", "Blind Obedience"],
+        "surfaced": ["Authority of the Consuls", "Blind Obedience"],
+        "count": "2/2",
+        "note": "16-result query. Top 15 EDHREC slice: Authority of the Consuls, Blind Obedience, Thalia Heretic Cathar, Urabrask the Hidden, Manglehorn, Archon of Emeria, Kinjalli's Sunwing, Dauntless Dismantler, Thalia and The Gitrog Monster, Reidane God of the Worthy, Cone of Cold, Spider-Woman, Frozen Aether, Kismet, Imposing Sovereign. All on-theme."
+      }
+    },
+    "attack_taxes": {
+      "intent": "Permanents that prevent opponents from attacking unless their controller pays mana — the pillowfort half that gives the controller breathing room to assemble a lock or close.",
+      "queries": [
+        "f:commander o:\"can't attack you unless\""
+      ],
+      "canon_recall": {
+        "expected": ["Ghostly Prison"],
+        "surfaced": ["Ghostly Prison"],
+        "count": "1/1",
+        "note": "7-result query. Full set: Propaganda, Ghostly Prison, Windborn Muse, Summon: Yojimbo, Collective Restraint, Elephant Grass, Koskun Falls. Zero false positives — every result is a pay-to-attack effect."
+      }
+    },
+    "spell_cost_taxes": {
+      "intent": "Permanents that increase the mana cost of spells — the central engine of asymmetric stax (the controller plays around the tax by building mana rocks while opponents pay full price). Three parallel queries cover noncreature-only (Thalia/Thorn/Vryn family), all-spells (Sphere of Resistance), and cost-floor (Trinisphere).",
+      "queries": [
+        "f:commander o:\"noncreature spells cost\" o:more",
+        "f:commander o:\"Spells cost\" o:\"more to cast\" -o:\"noncreature spells\"",
+        "f:commander o:\"costs three mana to cast\""
+      ],
+      "canon_recall": {
+        "expected": ["Thalia, Guardian of Thraben", "Sphere of Resistance", "Trinisphere"],
+        "surfaced_by_query_A": ["Thalia, Guardian of Thraben"],
+        "surfaced_by_query_B": ["Sphere of Resistance"],
+        "surfaced_by_query_C": ["Trinisphere"],
+        "union_count": "3/3",
+        "note": "Query A (noncreature taxes) 5 results: Thalia, Thorn of Amethyst, Charitable Levy, Vryn Wingmare, Glowrider — the canonical 'hate-bear' tax cluster. Query B (general taxes) 8 results: Lodestone Golem, Sphere of Resistance, Chill, Feroz's Ban, High Seas, Gloom, Squeeze, Irini Sengir — mostly color- or type-specific taxes plus Sphere/Lodestone. Query C (cost-floor) is a 1-result tight hit on Trinisphere. Each query surfaces a mechanically distinct stax idiom; consolidating them into one query would lose Trinisphere (its 'costs three mana to cast' wording is unique)."
+      }
+    },
+    "untap_denial": {
+      "intent": "Permanents that prevent opponents from untapping their resources during their untap step — the original Winter Orb / Stasis lock that strangles the opponent's mana base.",
+      "queries": [
+        "f:commander o:\"can't untap\" o:\"untap step\""
+      ],
+      "canon_recall": {
+        "expected": ["Winter Orb"],
+        "surfaced": ["Winter Orb"],
+        "count": "1/1",
+        "note": "9-result query. Full set: Winter Moon, Winter Orb, Static Orb, Smoke, Dovin Baan (emblem clause), Stoic Angel, Imi Statue, Damping Field, Mungha Wurm. All on-theme except Mungha Wurm which is self-restrictive (lower-tier). High signal."
+      }
+    },
+    "upkeep_stax": {
+      "intent": "Permanents that force each player to sacrifice or tap a permanent on their upkeep — the slow burn-down engines that prey on resource asymmetry. Two parallel queries cover the sacrifice idiom (Smokestack family) and the tap idiom (Tangle Wire family).",
+      "queries": [
+        "f:commander o:\"each player's upkeep\" o:\"sacrifices a permanent\"",
+        "f:commander o:\"each player's upkeep\" o:\"taps an untapped\""
+      ],
+      "canon_recall": {
+        "expected": ["Smokestack", "Tangle Wire"],
+        "surfaced_by_query_A": ["Smokestack"],
+        "surfaced_by_query_B": ["Tangle Wire"],
+        "union_count": "2/2",
+        "note": "Each query is a tight 1-result hit. Smokestack ('sacrifices a permanent') and Tangle Wire ('taps an untapped artifact, creature, or land') use distinct oracle phrasings. Zero noise."
+      }
+    },
+    "activated_ability_denial": {
+      "intent": "Permanents that turn off opponents' activated abilities — the broadest single-vector lock in stax. Hits artifact-mana lock (Null Rod, Stony Silence), creature-mana/utility lock (Cursed Totem, Linvala), and the named-target locks (Pithing Needle, Phyrexian Revoker).",
+      "queries": [
+        "f:commander o:\"activated abilities\" o:\"can't be activated\""
+      ],
+      "canon_recall": {
+        "expected": ["Cursed Totem", "Stony Silence", "Null Rod", "Linvala, Keeper of Silence"],
+        "surfaced": ["Cursed Totem", "Stony Silence", "Null Rod", "Linvala, Keeper of Silence"],
+        "count": "4/4",
+        "note": "60-result query — the largest cluster in the recipe. Top 20 EDHREC slice: Koma Cosmos Serpent, Drana and Linvala, Karn the Great Creator, Collector Ouphe, Cursed Totem, Linvala Keeper of Silence, Phyrexian Revoker, Stony Silence, Planar Disruption, Pithing Needle, Trickbind, Clarion Conqueror, Linvala Shield of Sea Gate, Disruptor Flute, Petrify, Null Rod, Arrest, Stuck in Summoner's Sanctum, Scheming Fence, Braided Net. Most results are stax-relevant; ~30% are single-target Aura locks (Arrest, Petrify, Planar Disruption) — legitimate stax-adjacent removal."
+      }
+    },
+    "graveyard_hate": {
+      "intent": "Permanents and spells that lock down or exile graveyards — the format-level hate that turns off reanimator, Dredge, flashback, and graveyard-combo decks. Two parallel queries: 'exile all graveyards' catches the one-shot wipes plus Rest in Peace, and 'cards in graveyards can't' catches the static locks (Grafdigger's Cage family).",
+      "queries": [
+        "f:commander o:\"exile all graveyards\"",
+        "f:commander o:\"cards in graveyards\" o:\"can't\""
+      ],
+      "canon_recall": {
+        "expected": ["Rest in Peace", "Grafdigger's Cage"],
+        "surfaced_by_query_A": ["Rest in Peace"],
+        "surfaced_by_query_B": ["Grafdigger's Cage"],
+        "union_count": "2/2",
+        "note": "Query A 13 results: Farewell, Scavenger Grounds, Abstergo Entertainment, Rest in Peace, Final Act, Relic of Progenitus, Valki/Tibalt, Calamity's Wake, Hidetsugu Consumes All, Sentinel Totem. Mix of one-shot wipes and static locks. Query B 10 results: Grafdigger's Cage, Soulless Jailer, Weathered Runestone, Ashes of the Abhorrent, Kunoros Hound of Athreos, Ground Seal, Tomik Distinguished Advokist, Dennick, Silent Gravestone, Underworld Cerberus. Static graveyard locks. Leyline of the Void is intentionally missed by both — its oracle uses 'in a graveyard would be exiled' phrasing; covered by the wildcard sweep if needed."
+      }
+    },
+    "one_spell_per_turn": {
+      "intent": "Permanents that restrict each player to one spell per turn — the format-level lock that shuts down storm, Bolas's Citadel, and other multi-spell turns.",
+      "queries": [
+        "f:commander o:\"can't cast more than one spell\""
+      ],
+      "canon_recall": {
+        "expected": ["Rule of Law"],
+        "surfaced": ["Rule of Law"],
+        "count": "1/1",
+        "note": "10-result query. Top 10: Archon of Emeria, Eidolon of Rhetoric, Rule of Law, High Noon, Curse of Exhaustion, Arcane Laboratory, Moderation, Hedonist's Trove, Colfenor's Plans, Yawgmoth's Agenda. Top 6 are the canonical one-spell-per-turn cluster; bottom 4 are self-restrictive (you only cast one spell per turn but get a payoff). Apply manual triage for self-restrictive results."
+      }
+    },
+    "cast_zone_restriction": {
+      "intent": "Permanents that prevent opponents from casting spells from zones other than their hand — the Drannith Magistrate idiom that shuts off commander decks, flashback, escape, foretell, and graveyard combo.",
+      "queries": [
+        "f:commander o:\"can't cast spells from anywhere other than\""
+      ],
+      "canon_recall": {
+        "expected": ["Drannith Magistrate"],
+        "surfaced": ["Drannith Magistrate"],
+        "count": "1/1",
+        "note": "2-result query: Drannith Magistrate, Avatar's Wrath. Both restrict opponents to hand-only casting. Drannith is the canonical anti-commander lock. Zero noise."
+      }
+    },
+    "creatures_lose_abilities": {
+      "intent": "Mass-effect permanents/spells that strip all creatures of their abilities — the Humility-style nuclear option that disables opposing engines, hexproof, deathtouch, and triggered-ability boards in a single card.",
+      "queries": [
+        "f:commander o:\"all creatures lose all abilities\""
+      ],
+      "canon_recall": {
+        "expected": ["Humility"],
+        "surfaced": ["Humility"],
+        "count": "1/1",
+        "note": "2-result query: Final Showdown (Spree modal sorcery — temporary), Humility (permanent enchantment). Humility is the canonical permanent version; Final Showdown is the one-shot wrath variant. Zero noise."
+      }
+    },
+    "tax_on_opponent_action": {
+      "intent": "Permanents that tax opponents whenever they take a triggering action (drawing a card, casting a spell) — the Rhystic Study / Smothering Tithe family that converts opponent activity into resources for the controller. Two parallel queries cover the cast-trigger ('unless that player pays') and draw-trigger ('opponent draws a card' + 'may pay') idioms — Smothering Tithe's 'may pay' wording is structurally distinct from the rest and needs its own query.",
+      "queries": [
+        "f:commander o:\"unless that player pays\"",
+        "f:commander o:\"opponent draws a card\" o:\"may pay\""
+      ],
+      "canon_recall": {
+        "expected": ["Rhystic Study", "Smothering Tithe"],
+        "surfaced_by_query_A": ["Rhystic Study"],
+        "surfaced_by_query_B": ["Smothering Tithe"],
+        "union_count": "2/2",
+        "note": "Query A 13 results: Rhystic Study, Esper Sentinel, Mystic Remora, Nazgûl Battle-Mace, Sivriss Nightmare Speaker, Chancellor of the Annex, Nether Void, Parnesse the Subtle Brush, In the Eye of Chaos, Seizures, Erosion, Cephalid Shrine, Cut the Tethers. Top 3 are the canonical UWB tax-on-cast cluster (Rhystic, Esper Sentinel, Mystic Remora). Query B 3 results: Smothering Tithe, Baleful Mastery, Mind's Eye. Smothering Tithe is the canonical draw-tax. Two queries kept separate because the structural phrasings don't overlap — combining them would miss Smothering Tithe."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches stax-flavored permanents whose oracle text doesn't match the precise sub-recipes above (e.g., Stasis's 'tap step' wording, Leyline of the Void's 'put into a graveyard' wording, Grand Arbiter Augustin IV's cost-reducer-and-tax combo). High noise, run sparingly.",
+      "queries": [
+        "f:commander t:enchantment o:opponents o:\"can't\""
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface novel stax payoffs the precise queries miss, particularly enchantment-based opponent-restriction effects."
+      }
+    }
+  },
+  "excludes": {
+    "symmetric_punishers": "-o:\"each player loses\" -o:\"each player sacrifices a creature\"",
+    "_note": "Spliced into every sub-recipe query at runtime for decks tagged asymmetric_only:true. Stax recipes are particularly sensitive to symmetry — many stax pieces (Smokestack, Tangle Wire, Winter Orb, Sphere of Resistance) ARE symmetric on paper but become asymmetric in practice because the controller's deck is built to play around the tax (low curve, fast mana, untap effects). Do NOT splice this exclude for stax decks by default; only apply when the deck's strategy explicitly prefers opponent-only punishers (e.g., a Hokori or Derevi build that runs untap effects on a small set of pieces). The default leaves symmetric stax in the candidate pool."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50,
+    "color_identity_note": "Stax pieces cluster heavily in W (pillowfort, attack taxes, ETB-tapped, ability denial — Stony Silence, Linvala, Authority, Ghostly Prison, Rule of Law, Drannith Magistrate, Humility, Smothering Tithe), with U providing tax-on-cast (Rhystic Study, Propaganda, Mystic Remora), G providing artifact ability denial (Collector Ouphe, Manglehorn), and colorless providing the artifact stax backbone (Sphere of Resistance, Trinisphere, Winter Orb, Smokestack, Tangle Wire, Cursed Totem, Null Rod, Grafdigger's Cage, Trinisphere). Mono-R and mono-B stax shells are thin — those colors lean on group-slug (R) or sac-stax/edict effects (B) which overlap but aren't pure stax-control. Expect the recipe to surface heavily in W/U/colorless and produce minimal results in mono-R or mono-B decks."
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14",
+    "validation_method": "Each sub-recipe query was run live against api.scryfall.com (order=edhrec). Canon recall = (canon cards surfaced by at least one query in any sub-recipe) / total canon.",
+    "noise_sample": {
+      "etb_tapped_pillowfort": "Top 15 of 16 results: Authority of the Consuls, Blind Obedience, Thalia Heretic Cathar, Urabrask the Hidden, Manglehorn, Archon of Emeria, Kinjalli's Sunwing, Dauntless Dismantler, Thalia and The Gitrog Monster, Reidane God of the Worthy, Cone of Cold (modal — temporary effect), Spider-Woman Stunning Savior, Frozen Aether, Kismet, Imposing Sovereign. All on-theme — every result forces opponents' permanents to enter tapped. Cone of Cold is the only edge case (sorcery, not a permanent) — legitimate as a stax-flavored interaction spell.",
+      "attack_taxes": "Full 7 results: Propaganda, Ghostly Prison, Windborn Muse, Summon: Yojimbo, Collective Restraint, Elephant Grass, Koskun Falls. Zero false positives. Tight precision query.",
+      "spell_cost_taxes": "Query A (noncreature) 5 results: Thalia, Thorn of Amethyst, Charitable Levy, Vryn Wingmare, Glowrider. All canonical hate-bears. Query B (general) 8 results: Lodestone Golem, Sphere of Resistance, Chill, Feroz's Ban, High Seas, Gloom, Squeeze, Irini Sengir. Most are color-/type-specific taxes from old sets (limited modern relevance); Sphere and Lodestone are the only universal cards. Query C (Trinisphere) 1 result: Trinisphere. Zero noise across all three.",
+      "untap_denial": "9 results: Winter Moon, Winter Orb, Static Orb, Smoke, Dovin Baan (planeswalker emblem only), Stoic Angel, Imi Statue, Damping Field, Mungha Wurm. Mungha Wurm is self-restrictive (you can't untap more than one land) — false positive for opponent stax. Dovin Baan emits an emblem on −7, so it's a slow stax piece. All other 7 are clean stax pieces.",
+      "upkeep_stax": "Query A: Smokestack only (1 result). Query B: Tangle Wire only (1 result). Two singletons; the broader 'each player's upkeep' + 'sacrifice' family includes Braids Cabal Minion and Pox effects but they use different oracle phrasings ('sacrifices a creature' vs 'sacrifices a permanent'). Tight precision queries — zero noise.",
+      "activated_ability_denial": "Top 20 of 60 results: Koma Cosmos Serpent, Drana and Linvala, Karn the Great Creator, Collector Ouphe, Cursed Totem, Linvala Keeper of Silence, Phyrexian Revoker, Stony Silence, Planar Disruption, Pithing Needle, Trickbind, Clarion Conqueror, Linvala Shield of Sea Gate, Disruptor Flute, Petrify, Null Rod, Arrest, Stuck in Summoner's Sanctum, Scheming Fence, Braided Net. ~70% are global stax pieces (Cursed Totem, Stony Silence, Null Rod, Linvala, Collector Ouphe, Karn, Pithing Needle, Phyrexian Revoker, Disruptor Flute). ~30% are single-target Auras (Petrify, Arrest, Planar Disruption, Stuck in Summoner's Sanctum) — stax-adjacent removal, legitimate inclusion candidates for control shells. Largest cluster in the recipe; apply manual triage to filter Aura targeted-removal from true stax effects.",
+      "graveyard_hate": "Query A (exile wipes + Rest in Peace) 13 results: Farewell, Scavenger Grounds, Abstergo Entertainment, Rest in Peace, Final Act, Relic of Progenitus, Valki/Tibalt, Calamity's Wake, Hidetsugu Consumes All, Sentinel Totem. Mix of one-shot wipes and the static lock (Rest in Peace). Query B (static GY/library locks) 10 results: Grafdigger's Cage, Soulless Jailer, Weathered Runestone, Ashes of the Abhorrent, Kunoros Hound of Athreos, Ground Seal, Tomik Distinguished Advokist, Dennick, Silent Gravestone, Underworld Cerberus. Strong cluster — every result is a graveyard-axis stax piece. Leyline of the Void is missed by both (its oracle uses 'in a graveyard would be exiled') — known gap; the wildcard sweep can recover it.",
+      "one_spell_per_turn": "Top 10 of 10: Archon of Emeria, Eidolon of Rhetoric, Rule of Law, High Noon, Curse of Exhaustion, Arcane Laboratory, Moderation, Hedonist's Trove, Colfenor's Plans, Yawgmoth's Agenda. Top 6 are clean stax pieces. Bottom 4 are self-restrictive payoffs (Moderation, Hedonist's Trove, Colfenor's Plans, Yawgmoth's Agenda) where the controller restricts themselves and gets a bonus — NOT stax in the asymmetric sense. Apply manual triage to exclude self-restrictive payoffs.",
+      "cast_zone_restriction": "2 results: Drannith Magistrate, Avatar's Wrath. Drannith is the static lock; Avatar's Wrath is a one-shot wrath that grants the effect until your next turn. Zero noise — both are legitimate stax-flavored cast restrictions.",
+      "creatures_lose_abilities": "2 results: Final Showdown (Spree modal — temporary), Humility (permanent enchantment). Final Showdown is a one-shot effect; Humility is the canonical permanent lock. Zero noise — both legitimate stax-axis cards.",
+      "tax_on_opponent_action": "Query A (cast trigger) 13 results: Rhystic Study, Esper Sentinel, Mystic Remora, Nazgûl Battle-Mace, Sivriss Nightmare Speaker, Chancellor of the Annex, Nether Void, Parnesse the Subtle Brush, In the Eye of Chaos, Seizures, Erosion, Cephalid Shrine, Cut the Tethers. Top 3 (Rhystic, Esper Sentinel, Mystic Remora) are the canonical WUB tax-on-cast cluster — all premium stax-control card-draw engines. Bottom 10 are weaker or color-specific. Query B (draw trigger) 3 results: Smothering Tithe, Baleful Mastery, Mind's Eye. Smothering Tithe is the canonical tax; Mind's Eye is the controller-pays-to-draw variant (legitimate stax adjacent); Baleful Mastery is a removal spell with a 'opponent draws' clause (not stax). Zero noise on Smothering Tithe; minor noise on Baleful Mastery.",
+      "wildcard": "Broad sweep across enchantments with 'opponents' + 'can't' clauses. Surfaces stax-flavored enchantments the precise queries miss — Aura of Silence, Glowrider, Cursed Land enchantments, Leyline of the Void family, World Enchantment locks (In the Eye of Chaos, Nether Void). Used as a fallback to catch novel stax printings and the Leyline of the Void family that the precise queries miss due to oracle-phrasing drift."
+    }
+  },
+  "shared_refs": null
+}
