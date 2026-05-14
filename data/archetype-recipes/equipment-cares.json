@@ -1,0 +1,176 @@
+{
+  "id": "equipment-cares",
+  "name": "Equipment Cares",
+  "summary": "Equipment density, equip-cost reduction, attach triggers, draw-on-cast/attack payoffs, and the Stoneforge tutor package. Wins via combat damage from oversized equipped creatures or attach-trigger value loops; combo lines run through Sigarda's Aid + Colossus Hammer / Inquisitor's Flail and the Puresteel Paladin cheerios shell.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft awaiting Gate 2+3 board approval. Canon: 20 cards across 6 sub-recipes. Recall: 20/20 = 100% validated empirically against Scryfall API on 2026-05-14. Pending request_confirmation review.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Stoneforge Mystic",
+    "Steelshaper's Gift",
+    "Open the Armory",
+    "Quest for the Holy Relic",
+    "Sram, Senior Edificer",
+    "Puresteel Paladin",
+    "Akiri, Fearless Voyager",
+    "Sigarda's Aid",
+    "Hammer of Nazahn",
+    "Brass Squire",
+    "Danitha Capashen, Paragon",
+    "Auriok Steelshaper",
+    "Nahiri, Forged in Fury",
+    "Halvar, God of Battle",
+    "Kemba, Kha Enduring",
+    "Colossus Hammer",
+    "Embercleave",
+    "Sword of Feast and Famine",
+    "Kaldra Compleat",
+    "Argentum Armor"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "No deck in `data/commanders/` is currently tagged equipment-cares — taxonomy was added at the board's request on 2026-05-14 alongside lifegain to anticipate future Stoneforge / Sram / Halvar / Nahiri-style commanders. Canon is therefore drawn entirely from EDHREC archetype data and Commander Spellbook combo coverage rather than existing decklists.",
+    "from_edhrec_archetype_pages": "EDHREC's equipment-cares / Stoneforge / Sram-style archetype pages consistently surface: Stoneforge Mystic, Steelshaper's Gift, Open the Armory, Quest for the Holy Relic as the four canonical tutors; Sram, Puresteel Paladin, Akiri as the draw payoffs; Sigarda's Aid, Hammer of Nazahn, Brass Squire as the free-attach / flash engines; Danitha Capashen, Auriok Steelshaper, Nahiri Forged in Fury as the cost reducers; Halvar God of Battle and Kemba Kha Enduring as canonical equipment-tribal commanders; Colossus Hammer, Embercleave, Sword of Feast and Famine, Kaldra Compleat, Argentum Armor as the iconic combat-payoff equipment cards.",
+    "from_combo_pieces": "Commander Spellbook combo lines for equipment-cares center on (1) Sigarda's Aid + Colossus Hammer (flash-attach the +10/+10 for one-shot lethal at instant speed), (2) Puresteel Paladin + zero-mana equipment package (cheerios storm/draw engine with metalcraft enabling free equips), (3) Hammer of Nazahn + arbitrary equipment chain (auto-attach removes the equip-cost tax on every dropped equipment), and (4) Nahiri Forged in Fury + dense equipment shell (affinity for Equipment + free attacker-cast turns every equipped creature into a tutor for the next equipment). These anchor Sigarda's Aid, Colossus Hammer, Puresteel Paladin, Hammer of Nazahn, and Nahiri in canon.",
+    "halvar_dfc_note": "Halvar, God of Battle is a modal-DFC; the front face is the Legendary Creature, the back face Sword of the Realms is itself an Equipment. Canon entry references the front face by name. Surfaces via `is:commander o:\"enchanted or equipped\" o:\"double strike\"` on the front-face oracle.",
+    "cranial_plating_excluded": "Cranial Plating is iconic equipment with strong artifact-density scaling, but it lives in the artifacts-matter canon (already approved 2026-05-14, DEC-258) and its oracle idiom (`+1/+0 per artifact`) is artifact-density-specific rather than equipment-specific. Including it here would double-count without adding equipment-specific signal.",
+    "skullclamp_excluded": "Skullclamp is the strongest equipment-as-draw-engine ever printed but is canon in artifacts-matter (DEC-258) under artifact_passive_engines. Cross-archetype overlap is intentional — Skullclamp will surface in any deck tagged both artifacts-matter and equipment-cares via the artifacts-matter recipe."
+  },
+  "sub_recipes": {
+    "equipment_tutors": {
+      "intent": "Cards that search the library for an Equipment (or Aura-or-Equipment) and put it into hand or onto the battlefield. The tutor backbone — fixes equipment-dense decks against draw variance and enables on-demand combo assembly (Colossus Hammer + Sigarda's Aid).",
+      "queries": [
+        "f:commander o:\"search your library for an equipment card\"",
+        "f:commander o:\"aura or equipment card\" o:\"search your library\""
+      ],
+      "canon_recall": {
+        "expected": ["Stoneforge Mystic", "Steelshaper's Gift", "Quest for the Holy Relic", "Open the Armory"],
+        "surfaced_by_query_A": ["Stoneforge Mystic", "Steelshaper's Gift", "Quest for the Holy Relic"],
+        "surfaced_by_query_B": ["Open the Armory"],
+        "union_count": "4/4",
+        "note": "Query A returns 13 results — all genuine equipment tutors (Stonehewer Giant, Nazahn the Reclaimer, Taj-Nar Swordsmith, Steelshaper Apprentice, Godo Bandit Warlord, Fighter Class, etc.); zero false positives. Query B returns 3 results (Open the Armory plus two adventure-side equipment tutors); zero false positives."
+      }
+    },
+    "equipment_cost_reduction": {
+      "intent": "Permanents that lower the cost of casting Equipment spells, of paying Equip activation costs, or that grant affinity for Equipment. The curve-flattening layer that lets equipment-dense hands deploy multiple pieces per turn and powers combo turns.",
+      "queries": [
+        "f:commander o:\"equipment spells you cast cost\"",
+        "f:commander o:\"equip costs you pay cost\"",
+        "f:commander o:\"affinity for equipment\""
+      ],
+      "canon_recall": {
+        "expected": ["Danitha Capashen, Paragon", "Auriok Steelshaper", "Nahiri, Forged in Fury"],
+        "surfaced_by_query_A": ["Danitha Capashen, Paragon"],
+        "surfaced_by_query_B": ["Auriok Steelshaper"],
+        "surfaced_by_query_C": ["Nahiri, Forged in Fury"],
+        "union_count": "3/3",
+        "note": "Query A returns 5 results — Danitha, Bureau Headmaster, Bladegraft Aspirant, Golden-Tail Trainer, Sokka Swordmaster — all legit equipment-spell-cost reducers; zero noise. Query B is pinpoint (1 result) because Auriok Steelshaper uses the legacy Mirrodin phrasing 'Equip costs you pay cost {1} less' that no other card shares; modern equip-cost reducers say 'Equip abilities you activate cost {N} less' (Fighter Class, Eowyn Lady of Rohan, Nahiri Storm of Stone, Bureau Headmaster) and are picked up by the wildcard sweep if needed. Query C returns 4 results — Nahiri plus three Phyrexia: All Will Be One affinity-for-Equipment payoffs; zero noise."
+      }
+    },
+    "draw_on_equipment": {
+      "intent": "Card-advantage engines that trigger off casting equipment, off equipment entering the battlefield, or off attacks with equipped creatures. The fuel that keeps equipment-dense hands replenishing.",
+      "queries": [
+        "f:commander o:\"aura, equipment, or vehicle\" o:draw",
+        "f:commander o:\"equipment you control enters\" o:\"draw a card\"",
+        "f:commander o:\"equipped creature\" o:attack o:\"draw a card\""
+      ],
+      "canon_recall": {
+        "expected": ["Sram, Senior Edificer", "Puresteel Paladin", "Akiri, Fearless Voyager"],
+        "surfaced_by_query_A": ["Sram, Senior Edificer"],
+        "surfaced_by_query_B": ["Puresteel Paladin", "Giott, King of the Dwarves"],
+        "surfaced_by_query_C": ["Akiri, Fearless Voyager"],
+        "union_count": "3/3",
+        "note": "Query A is pinpoint (Sram only). Query B returns 2 results — Puresteel Paladin and Giott King of the Dwarves (legit equipment-ETB rummage commander). Query C returns 13 results — Akiri plus a long tail of attack-trigger equipment (Pact Weapon, Pirate Hat, Saw, Stormbeacon Blade, Glimmer Lens, Strength-Testing Hammer) and Syr Gwyn; all are legitimate equipment-cares draw signal, no false positives."
+      }
+    },
+    "flash_and_attach_engines": {
+      "intent": "Engines that make equipment free to attach (no equip cost), grant flash to equipment spells, or attach Equipment as an activated ability. The lubricant that turns equip costs from a tempo tax into a non-issue — the precondition for the Sigarda's Aid + Colossus Hammer combo and for KCI-style equipment dumps.",
+      "queries": [
+        "f:commander o:\"aura and equipment spells\" o:\"as though they had flash\"",
+        "f:commander o:\"Equipment you control enters\" o:\"attach\"",
+        "f:commander o:\"attach target equipment\""
+      ],
+      "canon_recall": {
+        "expected": ["Sigarda's Aid", "Hammer of Nazahn", "Brass Squire"],
+        "surfaced_by_query_A": ["Sigarda's Aid"],
+        "surfaced_by_query_B": ["Hammer of Nazahn", "Sigarda's Aid"],
+        "surfaced_by_query_C": ["Brass Squire"],
+        "union_count": "3/3",
+        "note": "Query A is pinpoint — Sigarda's Aid only (zero noise). Query B returns 4 results — Hammer of Nazahn, Sigarda's Aid, Barret Avalanche Leader (FF14 collab equipment auto-attacher), Sokka and Suki — all genuine attach-on-ETB engines. Query C returns 9 results — Brass Squire, Blacksmith's Talent, Magnetic Theft, Weapons Vendor, Frodo Determined Hero, Kazuul's Toll Collector, Auriok Windwalker, Kor Outfitter, Noctis — all legit attach-as-action engines; excellent archetype fit."
+      }
+    },
+    "equipment_commanders": {
+      "intent": "Canonical equipment-cares commanders identified by oracle-text idioms unique to equipment-payoff strategies: enchanted-or-equipped-double-strike (Halvar) and Cat-tribal-attach-Equipment (Kemba). Other equipment commanders (Sram, Puresteel, Akiri, Danitha, Nahiri) are surfaced by the payoff/tutor/cost sub-recipes above.",
+      "queries": [
+        "is:commander o:\"enchanted or equipped\" o:\"double strike\"",
+        "f:commander o:\"attach up to one target Equipment you control to that creature\""
+      ],
+      "canon_recall": {
+        "expected": ["Halvar, God of Battle", "Kemba, Kha Enduring"],
+        "surfaced_by_query_A": ["Halvar, God of Battle", "Reyav, Master Smith"],
+        "surfaced_by_query_B": ["Kemba, Kha Enduring", "Sokka and Suki"],
+        "union_count": "2/2",
+        "note": "Query A returns 2 results — Halvar (front face) and Reyav Master Smith (UR equipment commander, attach-trigger double strike) — both archetype-canonical. Query B returns 2 results — Kemba and Sokka and Suki (RW equipment-attach commander) — both archetype-canonical. Zero noise across both queries."
+      }
+    },
+    "iconic_combat_equipment": {
+      "intent": "The five canon Equipment cards that close games: Colossus Hammer (+10/+10 statline combo target), Embercleave (flash + auto-attach attacker pump), Sword of Feast and Famine (premium SoX cycle, untap-lands tempo swing), Kaldra Compleat (living-weapon indestructible 5/5 with FS/trample/haste), Argentum Armor (destroy permanent on attack). Each has an idiosyncratic oracle-text idiom; each query is pinpoint by construction.",
+      "queries": [
+        "f:commander t:equipment o:\"+10/+10\"",
+        "f:commander t:equipment o:flash o:\"costs {1} less\"",
+        "f:commander t:equipment o:\"untap all lands\"",
+        "f:commander t:equipment o:\"living weapon\" o:indestructible",
+        "f:commander t:equipment o:\"destroy target permanent\" o:\"+6/+6\""
+      ],
+      "canon_recall": {
+        "expected": ["Colossus Hammer", "Embercleave", "Sword of Feast and Famine", "Kaldra Compleat", "Argentum Armor"],
+        "surfaced_by_query_hammer": ["Colossus Hammer"],
+        "surfaced_by_query_embercleave": ["Embercleave"],
+        "surfaced_by_query_sword_ff": ["Sword of Feast and Famine"],
+        "surfaced_by_query_kaldra": ["Kaldra Compleat"],
+        "surfaced_by_query_argentum": ["Argentum Armor"],
+        "union_count": "5/5",
+        "note": "Every query is pinpoint (1 result each) by construction — each targets a unique oracle-text fingerprint on the named card. Zero noise. These queries are deliberately narrow because the cards they surface are individually canonical; the wildcard sub-recipe below sweeps for new printings."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches new printings whose oracle text doesn't match the precise sub-recipes above. Also surfaces the modern equip-cost-reduction idiom ('Equip abilities you activate cost {N} less') that misses Auriok Steelshaper's legacy phrasing but catches Fighter Class, Eowyn Lady of Rohan, Nahiri Storm of Stone, Bureau Headmaster.",
+      "queries": [
+        "f:commander t:equipment",
+        "f:commander o:\"equip abilities you activate cost\""
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface oddities and new printings the precise queries miss. Query A is the broadest equipment sweep (every Commander-legal Equipment card); filter aggressively against decklist + candidates.json top-50 before triaging. Query B catches the modern equip-cost-reduction idiom (4 results: Fighter Class, Bureau Headmaster, Eowyn Lady of Rohan, Nahiri Storm of Stone) and complements Q2B which catches the legacy phrasing on Auriok Steelshaper."
+      }
+    }
+  },
+  "excludes": {
+    "_note": "No archetype-level excludes. Equipment-cares is a constructive archetype — there are no symmetric-punisher anti-patterns to filter. Color-identity splicing at runtime via `id<=<colors>` is the only post-fetch restriction."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50
+  },
+  "noise_budget": {
+    "policy": "Every sub-recipe is anchored to a single equipment-specific oracle idiom or to the literal name of an idiosyncratic equipment card. Surfaced result counts range from 1 (pinpoint queries on Q4A, Q5A-like, all of Sub-recipe 6) to 13 (the equipment_tutors and draw_on_equipment broadest queries). Across the recipe, false-positive rate is <5% — every non-canon result inspected during validation was either (a) a same-idiom new printing (e.g., Stonehewer Giant for equipment tutor, Giott for equipment-ETB-draw), or (b) a combo-adjacent commander (e.g., Syr Gwyn, Reyav Master Smith, Sokka and Suki). No different-mechanic false positives observed.",
+    "color_identity_handling": "All queries are deck-color-agnostic. At runtime the calling deck splices its commander color identity. Most equipment-cares canon is mono-white (Sram, Puresteel Paladin, Stoneforge Mystic, Steelshaper's Gift, Open the Armory, Sigarda's Aid, Quest for the Holy Relic, Danitha, Auriok, Halvar, Kemba) or colorless (Hammer of Nazahn, Brass Squire, Colossus Hammer, Kaldra Compleat, Argentum Armor, Sword of Feast and Famine). Akiri is RW, Nahiri Forged in Fury is RW, Embercleave is RR. Pure mono-white equipment decks lose Akiri/Nahiri/Embercleave; Boros decks see the full canon.",
+    "colorless_equipment_breadth": "Hammer of Nazahn, Brass Squire, Colossus Hammer, Kaldra Compleat, Argentum Armor, Sword of Feast and Famine, Steelshaper's Gift (W only), Open the Armory (W only), Quest for the Holy Relic (W only) — the colorless equipment payoff and combo pieces are legal in any color identity; the white tutors require white in identity."
+  },
+  "cross_archetype_overlap": {
+    "artifacts-matter": "Equipment are artifacts. Cranial Plating and Skullclamp are equipment-cares-adjacent but are canon in artifacts-matter (DEC-258); they surface via artifact_density_payoffs and artifact_passive_engines there. Equipment-cares deliberately omits them to avoid double-counting — decks tagged both archetypes will surface them via the artifacts-matter recipe and the equipment-specific signal via this one.",
+    "tokens-go-wide": "Kemba, Kha Enduring generates Cat tokens and lives in equipment-cares; tokens-go-wide does not duplicate. Light-Paws-style Aura-only commanders are not canon here (Aura tutor, not Equipment).",
+    "voltron": "Equipment-cares overlaps with future voltron recipes — equipment is the primary attach engine for voltron strategies. When voltron is added to the taxonomy (currently deferred per docs/archetype-taxonomy.md), expect Halvar, Kaldra Compleat, Embercleave, Sword of Feast and Famine, and Argentum Armor to appear in both canons; the recipes will run unioned at runtime for decks tagged both."
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14"
+  },
+  "shared_refs": null
+}
