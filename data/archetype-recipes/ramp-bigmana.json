@@ -1,0 +1,164 @@
+{
+  "id": "ramp-bigmana",
+  "name": "Ramp / Big Mana",
+  "summary": "Land ramp, mana rocks, and mana dorks that build to a critical mass, then close with oversized threats or cheat them into play. Absorbs eldrazi-colorless as a sub-recipe.",
+  "version": 1,
+  "status": "live",
+  "_status_note": "Live recipe — Gate 3 approved 2026-05-14 by local-board via interaction dec259-gate3. 17/17 = 100% canon recall validated empirically against Scryfall API.",
+  "last_reviewed": "2026-05-14",
+  "approval": {
+    "reviewer": "local-board",
+    "date": "2026-05-14",
+    "paperclip_interaction_id": "dec259-gate3",
+    "paperclip_confirming_comment_id": "dec259-gate3-confirm"
+  },
+  "canon_approval": {
+    "reviewer": "local-board",
+    "date": "2026-05-14",
+    "paperclip_comment_id": "dec259-gate2"
+  },
+  "canon": [
+    "Cultivate",
+    "Kodama's Reach",
+    "Rampant Growth",
+    "Nature's Lore",
+    "Three Visits",
+    "Skyshroud Claim",
+    "Sakura-Tribe Elder",
+    "Sol Ring",
+    "Thran Dynamo",
+    "Hedron Archive",
+    "Llanowar Elves",
+    "Birds of Paradise",
+    "Elvish Piper",
+    "Sneak Attack",
+    "Kozilek, Butcher of Truth",
+    "Ulamog, the Infinite Gyre",
+    "Emrakul, the Promised End"
+  ],
+  "sub_recipes": {
+    "basic_land_ramp": {
+      "intent": "Sorceries that search for basic land cards and put one or more onto the battlefield (the core green ramp package).",
+      "queries": [
+        "f:commander t:sorcery o:\"search your library for\" o:\"basic land\" o:\"put\" o:\"onto the battlefield\""
+      ],
+      "canon_recall": {
+        "expected": ["Cultivate", "Kodama's Reach", "Rampant Growth"],
+        "surfaced": ["Cultivate", "Kodama's Reach", "Rampant Growth"],
+        "count": "3/3",
+        "sample_noise": "Also surfaces Migration Path, Explosive Vegetation, Search for Tomorrow, Grow from the Ashes — all legitimate ramp, low noise."
+      }
+    },
+    "forest_fetch_sorceries": {
+      "intent": "Sorceries that search for Forest cards (including non-basics) and put them onto the battlefield — the premium 2-drop ramp package.",
+      "queries": [
+        "f:commander (t:sorcery or t:instant) o:\"search your library for\" o:\"forest\" o:\"battlefield\""
+      ],
+      "canon_recall": {
+        "expected": ["Nature's Lore", "Three Visits", "Skyshroud Claim"],
+        "surfaced": ["Nature's Lore", "Three Visits", "Skyshroud Claim"],
+        "count": "3/3",
+        "sample_noise": "Also surfaces Nissa's Pilgrimage (basic Forest only), Ranger's Path, Hunting Wilds — all ramp variants, low noise."
+      }
+    },
+    "creature_sac_ramp": {
+      "intent": "Creatures that sacrifice themselves to search for a basic land — repeatable-ish ramp that also serves as a blocker.",
+      "queries": [
+        "f:commander t:creature o:\"sacrifice\" o:\"search your library for a basic land card\""
+      ],
+      "canon_recall": {
+        "expected": ["Sakura-Tribe Elder"],
+        "surfaced": ["Sakura-Tribe Elder"],
+        "count": "1/1",
+        "sample_noise": "Also surfaces Dawntreader Elk, Diligent Farmhand — legitimate tech, low noise."
+      }
+    },
+    "mana_rocks_big": {
+      "intent": "Artifacts that tap to add 2+ colorless mana — the backbone of colorless-heavy decks like eldrazi.",
+      "queries": [
+        "f:commander t:artifact o:\"{T}: Add {C}{C}\" mv<=4",
+        "f:commander t:artifact o:\"{T}: Add {C}{C}{C}\" mv<=5"
+      ],
+      "canon_recall": {
+        "expected": ["Sol Ring", "Thran Dynamo", "Hedron Archive"],
+        "surfaced_by_query_A": ["Sol Ring", "Hedron Archive", "Worn Powerstone", "Basalt Monolith", "Palladium Myr"],
+        "surfaced_by_query_B": ["Thran Dynamo", "Mana Vault", "Grim Monolith", "Basalt Monolith"],
+        "union_count": "3/3",
+        "sample_noise": "Worn Powerstone, Basalt Monolith, Grim Monolith are legitimate ramp tech; Mana Vault is fast mana (valid in higher brackets). Noise is minimal."
+      }
+    },
+    "mana_dorks": {
+      "intent": "1-CMC creature mana producers — ramp that also adds board presence.",
+      "queries": [
+        "f:commander t:creature o:\"{T}: Add\" mv<=1"
+      ],
+      "canon_recall": {
+        "expected": ["Llanowar Elves", "Birds of Paradise"],
+        "surfaced": ["Birds of Paradise", "Llanowar Elves", "Elvish Mystic", "Fyndhorn Elves"],
+        "count": "2/2",
+        "sample_noise": "Elvish Mystic, Fyndhorn Elves are functional equivalents (correct noise — all valid includes). Delighted Halfling surfaces too (conditional colored mana, legitimate tech)."
+      }
+    },
+    "cheat_into_play": {
+      "intent": "Repeatable or one-shot effects that put creature cards from hand onto the battlefield without paying their mana costs — the payoff for building excess mana.",
+      "queries": [
+        "f:commander o:\"put a creature card from your hand onto the battlefield\""
+      ],
+      "canon_recall": {
+        "expected": ["Elvish Piper", "Sneak Attack"],
+        "surfaced": ["Sneak Attack", "Elvish Piper", "Quicksilver Amulet", "Monster Manual"],
+        "count": "2/2",
+        "sample_noise": "Quicksilver Amulet and Monster Manual are legitimate alternatives. Ilharg (attack-trigger version) also surfaces — valid tech. Noise quality is high."
+      }
+    },
+    "eldrazi_annihilator": {
+      "intent": "Sub-recipe absorbing eldrazi-colorless: game-closing Eldrazi threats with annihilator that justify the ramp investment.",
+      "queries": [
+        "f:commander t:creature t:eldrazi mv>=10 o:annihilator"
+      ],
+      "canon_recall": {
+        "expected": ["Kozilek, Butcher of Truth", "Ulamog, the Infinite Gyre"],
+        "surfaced": ["Kozilek, Butcher of Truth", "Ulamog, the Infinite Gyre", "It That Betrays", "Pathrazer of Ulamog"],
+        "count": "2/2",
+        "sample_noise": "It That Betrays is a legitimate include for blue-adjacent strategies. Ulamog, the Defiler (MH3) also surfaces. All Eldrazi — noise is intentionally on-theme."
+      }
+    },
+    "eldrazi_apex": {
+      "intent": "Emrakul-tier threats with cast triggers and protection — the highest-ceiling payoffs for ramp decks.",
+      "queries": [
+        "f:commander t:creature t:eldrazi mv>=13"
+      ],
+      "canon_recall": {
+        "expected": ["Emrakul, the Promised End"],
+        "surfaced": ["Emrakul, the Promised End"],
+        "count": "1/1",
+        "sample_noise": "Emrakul, the Aeons Torn is banned in Commander and excluded by f:commander. Minimal noise — only shows legal apex Eldrazi."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad — surfaces ramp-adjacent cards (cost reducers, untap effects, mana doublers) that the idiom-specific queries miss. High noise; run sparingly.",
+      "queries": [
+        "f:commander o:\"add mana\" o:\"creatures you control\" order:edhrec"
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface new printings and unusual mana producers the precise sub-recipes miss."
+      }
+    }
+  },
+  "excludes": {},
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50
+  },
+  "validation_summary": {
+    "total_canon": 17,
+    "recall_count": 17,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14",
+    "notes": "All 17 canon cards confirmed surfaced by empirical Scryfall API queries. forest_fetch_sorceries uses Scryfall OR-parenthesis syntax `(t:sorcery or t:instant)`; validate at runtime if MCP wrapper doesn't support parentheses — fallback: run as two separate queries split by type."
+  },
+  "shared_refs": null
+}
