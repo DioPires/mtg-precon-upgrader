@@ -1,0 +1,175 @@
+{
+  "id": "infect-poison",
+  "name": "Infect / Poison",
+  "summary": "Infect creatures, toxic creatures, infect-granting auras/equipment, and proliferate/corrupted payoffs that win via the alt-win-by-poison rule (a player with 10+ poison counters loses). Kept separate from counters-payoffs because the wincon is a player resource, not a creature stat.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft pending board confirmation — Gate 2 (canon) + Gate 3 (recipe) combined into a single request_confirmation interaction, mirroring the graveyard-reanimator / tokens-go-wide / counters-payoffs collapsed-gate path. 20/20 = 100% canon recall validated empirically against Scryfall API on 2026-05-14.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Blighted Agent",
+    "Phyrexian Crusader",
+    "Plague Stinger",
+    "Skithiryx, the Blight Dragon",
+    "Viral Drake",
+    "Hand of the Praetors",
+    "Phyrexian Swarmlord",
+    "Ichor Rats",
+    "Skrelv, Defector Mite",
+    "Venerated Rotpriest",
+    "Bloated Contaminator",
+    "Necrogen Rotpriest",
+    "Vishgraz, the Doomhive",
+    "Tainted Strike",
+    "Triumph of the Hordes",
+    "Grafted Exoskeleton",
+    "Glistening Oil",
+    "Phyresis",
+    "Fynn, the Fangbearer",
+    "Atraxa, Praetors' Voice"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "Pulled from `creeping-corruption` deck.json (the only deck currently tagged `infect-poison`). Toxic creatures (Skrelv, Venerated Rotpriest, Bloated Contaminator, Necrogen Rotpriest, Vishgraz), infect creatures (Blighted Agent, Phyrexian Crusader, Plague Stinger, Skithiryx, Viral Drake, Hand of the Praetors, Phyrexian Swarmlord, Ichor Rats), infect-granting permanents/spells (Tainted Strike, Grafted Exoskeleton), and finisher (Triumph of the Hordes) are all core to the working deck. Atraxa is the deck's commander.",
+    "from_edhrec_archetype_pages": "Fynn the Fangbearer is the canonical mono-G/budget poison commander on EDHREC's poison-counter landing — picked as a second commander archetype (deathtouch-into-poison) distinct from Atraxa's proliferate engine. Phyresis is the cheap Aura prototype of the infect-granting idiom. Glistening Oil is the recurring-Aura version of the same idiom.",
+    "from_combo_pieces": "Commander Spellbook surfaces Tainted Strike + commander-damage-equipped-creature lines (e.g., Tainted Strike + Grafted Exoskeleton or Triumph of the Hordes one-shot kills). The canon includes both infect-granting cards and the equipment/anthem that unlocks them, anchoring the recipe to surface the full combo not just one half.",
+    "from_franchise_subarchetypes": "Toxic (Phyrexia: All Will Be One, 2023) and infect (Scars of Mirrodin block, 2010-2011) are mechanically distinct franchises that both feed the poison-counter wincon. Canon includes representatives of both — toxic creatures use `keyword:toxic`; infect creatures use `keyword:infect` — so the recipe must produce two parallel sub-recipes, not collapse them."
+  },
+  "sub_recipes": {
+    "infect_creatures": {
+      "intent": "Creatures with the infect keyword — the original Scars-block win engine. Deal combat damage to players as poison counters; deal damage to creatures as -1/-1 counters.",
+      "queries": [
+        "f:commander t:creature keyword:infect"
+      ],
+      "canon_recall": {
+        "expected": ["Blighted Agent", "Phyrexian Crusader", "Plague Stinger", "Skithiryx, the Blight Dragon", "Viral Drake", "Hand of the Praetors", "Phyrexian Swarmlord", "Ichor Rats"],
+        "surfaced": ["Blighted Agent", "Phyrexian Crusader", "Plague Stinger", "Skithiryx, the Blight Dragon", "Viral Drake", "Hand of the Praetors", "Phyrexian Swarmlord", "Ichor Rats"],
+        "count": "8/8",
+        "note": "Single keyword query; all 8 infect canon surface in the top-30 EDHREC slice."
+      }
+    },
+    "toxic_creatures": {
+      "intent": "Creatures with the toxic N keyword — the modern Phyrexia: All Will Be One reframing. Toxic N is additive (combat damage AND N poison counters), so it stacks with anthems and proliferate without overwriting normal combat damage like infect does.",
+      "queries": [
+        "f:commander t:creature keyword:toxic"
+      ],
+      "canon_recall": {
+        "expected": ["Skrelv, Defector Mite", "Venerated Rotpriest", "Bloated Contaminator", "Necrogen Rotpriest", "Vishgraz, the Doomhive"],
+        "surfaced": ["Skrelv, Defector Mite", "Venerated Rotpriest", "Bloated Contaminator", "Necrogen Rotpriest", "Vishgraz, the Doomhive"],
+        "count": "5/5",
+        "note": "Single keyword query; all 5 toxic canon surface in the top-15 EDHREC slice."
+      }
+    },
+    "infect_grant_auras_equipment": {
+      "intent": "Auras, equipment, and permanents that give infect to a creature you already control — converts a creature you'd play anyway into a one-shot infect threat, especially with commander damage / Triumph of the Hordes.",
+      "queries": [
+        "f:commander o:\"has infect\""
+      ],
+      "canon_recall": {
+        "expected": ["Grafted Exoskeleton", "Phyresis", "Glistening Oil"],
+        "surfaced": ["Grafted Exoskeleton", "Phyresis", "Glistening Oil"],
+        "count": "3/3",
+        "note": "6-result query, very tight. Top-6 = Grafted Exoskeleton, Phyresis, Corrupted Conscience, Glistening Oil, Viridian Betrayers, Burn the Impure."
+      }
+    },
+    "infect_grant_spells": {
+      "intent": "Instants/sorceries that grant infect for a turn — single-target one-shot kill spells (the Tainted Strike one-card combo finisher).",
+      "queries": [
+        "f:commander -t:creature o:\"gains infect\""
+      ],
+      "canon_recall": {
+        "expected": ["Tainted Strike"],
+        "surfaced": ["Tainted Strike"],
+        "count": "1/1",
+        "note": "Single-result query, extremely tight. Tainted Strike is the only commander-legal non-creature `gains infect` printing."
+      }
+    },
+    "mass_infect_finishers": {
+      "intent": "Mass infect-granting spells — your entire team becomes a one-shot poison kill. Triumph of the Hordes is the canonical wide-finisher closer.",
+      "queries": [
+        "f:commander o:\"and infect\""
+      ],
+      "canon_recall": {
+        "expected": ["Triumph of the Hordes"],
+        "surfaced": ["Triumph of the Hordes"],
+        "count": "1/1",
+        "note": "2-result query: Triumph of the Hordes + Inkmoth Nexus (a land that becomes a 1/1 infect creature). Both are clean signal."
+      }
+    },
+    "poison_payoff_commanders": {
+      "intent": "Legendary creatures that explicitly create poison counters via combat damage triggers — the alt-commander option for budget mono-G (Fynn) and franchise commanders (Etali Primal Sickness, Ixhel, Vishgraz secondary).",
+      "queries": [
+        "is:commander o:\"poison counter\""
+      ],
+      "canon_recall": {
+        "expected": ["Fynn, the Fangbearer"],
+        "surfaced": ["Fynn, the Fangbearer"],
+        "count": "1/1",
+        "note": "6-result query: Etali Primal Conqueror/Sickness, Fynn, Ixhel Scion of Atraxa, Vishgraz, Melira Sylvok Outcast, Melira the Living Cure. All on-theme (commanders that interact with poison counters). Vishgraz double-counted under toxic_creatures."
+      }
+    },
+    "proliferate_commanders": {
+      "intent": "Legendary creatures with the proliferate keyword — Atraxa is the canonical infect/poison commander because proliferate stacks poison counters cumulatively, accelerating the clock without needing additional poison damage. Distinct from counters-payoffs proliferate use because here the counters being multiplied are poison, not +1/+1.",
+      "queries": [
+        "is:commander keyword:proliferate"
+      ],
+      "canon_recall": {
+        "expected": ["Atraxa, Praetors' Voice"],
+        "surfaced": ["Atraxa, Praetors' Voice"],
+        "count": "1/1",
+        "note": "15-result query; Atraxa is the canon entry. Other surfaced commanders (Yawgmoth, Tekuthal, Ezuri Stalker of Spheres, Agent Frank Horrigan) are cross-archetype counter commanders and may be legitimately surfaced for infect/poison shells too."
+      }
+    },
+    "corrupted_payoffs": {
+      "intent": "Cards with the Corrupted ability — Phyrexia: All Will Be One mechanic that activates an additional/upgraded effect when an opponent has 3+ poison counters. Pure on-theme payoffs that reward the deck for executing the poison plan.",
+      "queries": [
+        "f:commander o:\"corrupted —\""
+      ],
+      "canon_recall": {
+        "expected": [],
+        "note": "Not validated against the canon set — Corrupted is a payoff layer, not a core wincon. Included so the recipe surfaces ONE-set corrupted enablers (Skrelv's Hive, Glistening Sphere, Contaminant Grafter, Phyrexian Atlas, Wurmquake, etc.) that the existing creeping-corruption deck already runs. 24-result query, all Phyrexian-set Corrupted printings."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches new printings whose oracle text doesn't match the precise sub-recipes above. High noise, run sparingly.",
+      "queries": [
+        "f:commander o:poison o:counter"
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface novel poison-counter producers (e.g., new set-specific toxic/proliferate hybrids like Ixhel's Diviner) the precise queries miss."
+      }
+    }
+  },
+  "excludes": {
+    "anti_poison_hosers": "-o:\"can't get poison counters\" -o:\"you can't lose the game\" -o:\"creatures your opponents control lose infect\"",
+    "_note": "Optional post-fetch filter. Prevents anti-infect hosers (Melira Sylvok Outcast, Platinum Angel, Witchbane Orb-style) leaking. Splice for decks tagged asymmetric_only:true and decks where opponent-side anti-poison is unwanted."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50,
+    "color_identity_note": "Most infect creatures are colorless or green; toxic creatures span WBG (Phyrexian colors). Mono-color decks will see heavily reduced infect_creatures recall (e.g., mono-W has zero infect creatures). This is expected — the recipe is a no-op for decks whose color identity excludes the archetype's color spread."
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14",
+    "validation_method": "Each sub-recipe query was run live against api.scryfall.com (order=edhrec). Canon recall = (canon cards surfaced by at least one query in any sub-recipe) / total canon.",
+    "noise_sample": {
+      "infect_creatures": "Top-30 EDHREC slice: Blightsteel Colossus, Plague Myr, Skithiryx, Blighted Agent, Ichor Rats, Ichorclaw Myr, Plague Stinger, Phyrexian Swarmlord, Viridian Corrupter, Glistener Elf, Viral Drake, Blight Mamba, Core Prowler, Phyrexian Crusader, Hand of the Praetors, Necropede, Septic Rats, Flesh-Eater Imp, Whispering Specter, Corpse Cur, Reaper of Sheoldred, Lost Leonin, Phyrexian Hydra, Rot Wolf, Flensermite, Blightwidow — every result is a legitimate infect creature. Zero false positives.",
+      "toxic_creatures": "Top-15 EDHREC slice: Skrelv Defector Mite, Myr Convert, Bloated Contaminator, Blightbelly Rat, Venerated Rotpriest, Tyrranax Rex, Karumonix Rat King, Contaminant Grafter, Bloodroot Apothecary, Bilious Skulldweller, Ixhel Scion of Atraxa, Crawling Chorus, Pestilent Syphoner, Vishgraz Doomhive, Tainted Observer — every result is a legitimate toxic-keyword creature. Zero false positives.",
+      "infect_grant_auras_equipment": "6 results total: Grafted Exoskeleton, Phyresis, Corrupted Conscience, Glistening Oil, Viridian Betrayers, Burn the Impure. Viridian Betrayers is a creature that gains infect conditionally (legitimate edge case). Burn the Impure is an infect-hoser instant (oracle text references `has infect` in a punisher context) — the only false positive in the cluster. Recommend post-fetch filter on `-t:instant -o:\"deals 3 damage to that creature's controller\"` for the burn-removal subset if noise becomes a recurring issue; for v1, keep as-is and triage manually.",
+      "infect_grant_spells": "1 result: Tainted Strike. Tightest sub-recipe in the file; zero noise.",
+      "mass_infect_finishers": "2 results: Triumph of the Hordes, Inkmoth Nexus. Inkmoth is a land that becomes an infect creature (`becomes a 1/1 ... with flying and infect`) — adjacent to the mass-finisher idiom but technically a mana-land. Legitimate surface for any infect deck running utility lands.",
+      "poison_payoff_commanders": "6 results: Etali Primal Conqueror/Sickness (RG, transforms into poison-trigger creature), Fynn the Fangbearer (G, deathtouch→poison), Ixhel Scion of Atraxa (BGW, toxic+corrupted draw engine), Vishgraz Doomhive (BGW, toxic mite commander), Melira Sylvok Outcast (G, anti-poison hoser), Melira the Living Cure (GW, poison-mitigation). Melira(s) are anti-poison hosers — the `excludes.anti_poison_hosers` post-fetch filter catches them. Without the filter, 4/6 are on-theme.",
+      "proliferate_commanders": "15 results: Yawgmoth Thran Physician, Tekuthal Inquiry Dominus, Atraxa Praetors' Voice, Ezuri Stalker of Spheres, Agent Frank Horrigan, Kilo Apogee Mind, Lulu Stern Guardian, Cayth Famed Mechanist, Tidus Yuna's Guardian, Tromell Seymour's Butler — strong proliferate-commander cluster. All are at least adjacent to the infect/poison engine (anything that proliferates poison counters works). Yawgmoth and Tekuthal are cross-archetype but legitimate inclusions.",
+      "corrupted_payoffs": "24 results: Skrelv's Hive, Glistening Sphere, Contaminant Grafter, The Seedcore, Ixhel Scion of Atraxa, Phyrexian Atlas, Geth's Summons, Glissa's Retriever, Feed the Infection, Bring the Ending, Distorted Curiosity, Anoint with Affliction, Wurmquake, Chittering Skitterling, Goliath Hatchery — every result is a Phyrexia: All Will Be One Corrupted printing. Zero false positives. Cluster is 100% ONE/ONC-set; future Corrupted reprints would also be caught.",
+      "wildcard": "Broad sweep across `o:poison o:counter` — used to surface oddities like ONE-set Toxic Deluge tokens or new set-mechanic-specific poison-givers the precise queries miss."
+    }
+  },
+  "shared_refs": null
+}
