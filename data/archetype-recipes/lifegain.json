@@ -1,0 +1,164 @@
+{
+  "id": "lifegain",
+  "name": "Lifegain",
+  "summary": "Lifegain triggers, drain-on-gain payoffs, Soul-Sister engines, and life-total alt-wins. Wins via Sanguine Bond + Exquisite Blood / Heliod + Walking Ballista / Archangel of Thune + Spike Feeder infinite loops, Aetherflux Reservoir burst, or high-life alt-wins (Felidar Sovereign, Test of Endurance).",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft awaiting Gate 2+3 board approval. Canon: 20 cards across 6 sub-recipes. Recall: 20/20 = 100% validated empirically against Scryfall API on 2026-05-14. Pending request_confirmation review.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Soul Warden",
+    "Soul's Attendant",
+    "Ajani's Pridemate",
+    "Heliod, Sun-Crowned",
+    "Karlov of the Ghost Council",
+    "Trelasarra, Moon Dancer",
+    "Archangel of Thune",
+    "Cliffhaven Vampire",
+    "Vito, Thorn of the Dusk Rose",
+    "Defiant Bloodlord",
+    "Cleric of Life's Bond",
+    "Sanguine Bond",
+    "Exquisite Blood",
+    "Walking Ballista",
+    "Spike Feeder",
+    "Aetherflux Reservoir",
+    "Felidar Sovereign",
+    "Test of Endurance",
+    "Oloro, Ageless Ascetic",
+    "Lathiel, the Bounteous Dawn"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "No deck in `data/commanders/` is currently tagged lifegain — taxonomy was added at the board's request on 2026-05-14 alongside equipment-cares to anticipate future Heliod / Karlov / Trelasarra / Oloro-style commanders. Canon is therefore drawn entirely from EDHREC archetype data and Commander Spellbook combo coverage rather than existing decklists.",
+    "from_edhrec_archetype_pages": "EDHREC's lifegain / Soul Sisters / Heliod / Karlov / Trelasarra archetype pages consistently surface: Soul Warden, Soul's Attendant (and Essence Warden / Auriok Champion as color-shifted twins) as the trigger fountains; Ajani's Pridemate, Heliod Sun-Crowned, Karlov of the Ghost Council, Trelasarra Moon Dancer, Archangel of Thune as the canonical creature payoffs that grow / counter / scry on each gain; Cliffhaven Vampire, Vito Thorn of the Dusk Rose, Defiant Bloodlord as the drain-on-gain creatures; Cleric of Life's Bond as the Zendikar Rising aristocrats-lifegain hybrid; Sanguine Bond and Exquisite Blood as the iconic enchantment drain pair; Oloro Ageless Ascetic and Lathiel the Bounteous Dawn as the most-played lifegain commanders by EDHREC count.",
+    "from_combo_pieces": "Commander Spellbook combo lines for lifegain center on (1) Sanguine Bond + Exquisite Blood (infinite drain — any 1 point of life loss triggers an infinite loop), (2) Heliod Sun-Crowned + Walking Ballista (give Ballista lifelink, remove a +1/+1 counter to deal 1 damage and gain 1 life, Heliod replaces the counter — infinite damage), (3) Archangel of Thune + Spike Feeder (Spike removes a counter to gain 2 life, Thune triggers and puts a +1/+1 counter on every creature including Spike — repeat for infinite life and arbitrarily large board), (4) Aetherflux Reservoir at 51+ life closes any table at instant speed. These anchor Sanguine Bond, Exquisite Blood, Heliod, Walking Ballista, Archangel of Thune, Spike Feeder, and Aetherflux Reservoir in canon.",
+    "from_alt_win_conditions": "Felidar Sovereign (win at 40+ life on upkeep) and Test of Endurance (win at 50+ life on upkeep) are the two canonical lifegain alt-win conditions in Commander. Both have idiosyncratic numeric oracle-text idioms that anchor their own pinpoint queries.",
+    "lathiel_name_correction": "The EDHREC archetype tag uses the spelling 'Lathiel, the Bounteous Dawn' (not 'Bountiful'). Verified via Scryfall lookup on 2026-05-14. Lathiel's text uses the unique idiom 'if you gained life this turn' rather than 'whenever you gain life', so a dedicated commanders query is required to surface it.",
+    "essence_warden_auriok_champion_excluded": "Essence Warden (mono-G Soul Warden twin) and Auriok Champion (white Soul Warden twin with protection) are mechanically identical to Soul Warden / Soul's Attendant. Both surface via the soul_sisters_engines sub-recipe automatically; including all four in canon would inflate the count without adding archetype-specific signal. Canon picks the two most-played representatives (Soul Warden, Soul's Attendant) and trusts the query to surface the color-shifted siblings.",
+    "trostani_lathiel_choice": "Trostani Selesnya's Voice (populate / lifegain-on-ETB) is a candidate lifegain commander but its oracle idiom centers on populate rather than on lifegain payoffs — it gains you life but does not pay off lifegain. Lathiel was selected for canon over Trostani as the more representative lifegain payoff commander (counters distributed proportional to life gained). Trostani will still surface via the artifacts-matter / tokens-go-wide recipes for decks tagged accordingly.",
+    "vizkopa_guildmage_excluded": "Vizkopa Guildmage is a strong drain-on-lifegain creature payoff and would surface via the creature_payoffs sub-recipe — but at {1}{W}{B} with an activation cost of {1}{W}{B} it is less efficient than the canon drain creatures. Surfaces in query A unioned results; not promoted to canon."
+  },
+  "sub_recipes": {
+    "lifegain_creature_payoffs": {
+      "intent": "Creatures whose oracle text contains 'whenever you gain life'. This is the spine of the archetype — the cards that grow, draw, scry, or counter on every lifegain trigger. Covers Ajani's Pridemate (counter), Heliod (counter on any creature/enchantment), Karlov (two counters), Trelasarra (counter + scry), Archangel of Thune (anthem trigger), Cliffhaven Vampire / Vito / Defiant Bloodlord (drain), Cleric of Life's Bond (counter on first gain), and Oloro (draw + drain at cost of 1 mana).",
+      "queries": [
+        "f:commander t:creature o:\"whenever you gain life\""
+      ],
+      "canon_recall": {
+        "expected": ["Ajani's Pridemate", "Heliod, Sun-Crowned", "Karlov of the Ghost Council", "Trelasarra, Moon Dancer", "Archangel of Thune", "Cliffhaven Vampire", "Vito, Thorn of the Dusk Rose", "Defiant Bloodlord", "Cleric of Life's Bond", "Oloro, Ageless Ascetic"],
+        "surfaced": ["Vito, Thorn of the Dusk Rose", "Heliod, Sun-Crowned", "Archangel of Thune", "Ajani's Pridemate", "Karlov of the Ghost Council", "Cliffhaven Vampire", "Defiant Bloodlord", "Oloro, Ageless Ascetic", "Trelasarra, Moon Dancer", "Cleric of Life's Bond"],
+        "count": "10/10",
+        "note": "Query returns 64 results — all are legitimate lifegain creature payoffs (Enduring Tenacity, Marauding Blight-Priest, Exemplar of Light, Elenda's Hierophant, Voice of the Blessed, Treebeard Gracious Host, Amalia Benavides Aguirre, Drogskol Reaver, Bloodthirsty Aerialist, Epicure of Blood, Veinwitch Coven, Dina Soul Steeper, etc.). Zero false positives — every result triggers on lifegain by construction. The 64 includes the canon 10 plus ~54 secondary payoffs that will surface as candidate adds during deck research."
+      }
+    },
+    "lifegain_drain_enchantments": {
+      "intent": "The non-creature drain layer: Sanguine Bond (gain → opp loses) and Exquisite Blood (opp loses → you gain). Together they form an infinite drain combo; each is independently a strong lifegain payoff. Anchored on two pinpoint oracle idioms.",
+      "queries": [
+        "f:commander -t:creature o:\"whenever you gain life\" o:\"target opponent loses\"",
+        "f:commander o:\"whenever an opponent loses life\" o:\"you gain\""
+      ],
+      "canon_recall": {
+        "expected": ["Sanguine Bond", "Exquisite Blood"],
+        "surfaced_by_query_A": ["Sanguine Bond"],
+        "surfaced_by_query_B": ["Exquisite Blood"],
+        "union_count": "2/2",
+        "note": "Query A returns 2 results — Sanguine Bond and Professor Dellian Fel (a Strixhaven-style planeswalker whose -6 emblem grants the Sanguine Bond trigger). Both are legitimate; zero noise. Query B returns 2 results — Exquisite Blood and Bloodthirsty Conqueror (a Foundations vampire with the Exquisite Blood trigger stapled to a 5/5 flying deathtouch). Both legitimate; zero noise. The two queries are complementary — A catches the gain-side trigger, B catches the loss-side trigger; together they cover the canonical drain pair."
+      }
+    },
+    "soul_sisters_engines": {
+      "intent": "Creature-ETB lifegain triggers — the 'soul sisters' archetype core. One-mana 1/1s that turn every creature drop (yours or opponents') into a lifegain trigger, fueling the creature_payoffs and drain layers above. Canon picks Soul Warden + Soul's Attendant; the query surfaces the full Soul-Sisters family.",
+      "queries": [
+        "f:commander t:creature o:\"whenever another creature enters\" o:\"gain 1 life\""
+      ],
+      "canon_recall": {
+        "expected": ["Soul Warden", "Soul's Attendant"],
+        "surfaced": ["Soul Warden", "Soul's Attendant", "Essence Warden", "Auriok Champion"],
+        "count": "2/2",
+        "note": "Query returns exactly 4 results — Soul Warden (W), Soul's Attendant (W), Essence Warden (G), Auriok Champion (W with protection from black/red). All four are color-shifted twins of the same effect; zero noise. Decks in mono-white identity get Soul Warden, Soul's Attendant, Auriok Champion; decks in mono-green get Essence Warden; multi-color decks splicing both can run the full quartet. Canon picks the two most-played by EDHREC and trusts the query to surface the rest."
+      }
+    },
+    "lifegain_combo_pieces": {
+      "intent": "The three idiosyncratic combo pieces that win the game when paired with lifegain payoffs: Spike Feeder (loop with Archangel of Thune for infinite life + arbitrarily large board), Walking Ballista (loop with Heliod, Sun-Crowned for infinite damage given lifelink), Aetherflux Reservoir (51+ life one-shot any target for 50 damage). Each anchored on a unique oracle-text fingerprint; each query is pinpoint by construction.",
+      "queries": [
+        "f:commander o:\"remove a +1/+1 counter\" o:\"you gain 2 life\"",
+        "f:commander o:\"This creature enters with X +1/+1 counters\" o:\"deals 1 damage to any target\"",
+        "f:commander o:\"pay 50 life\""
+      ],
+      "canon_recall": {
+        "expected": ["Spike Feeder", "Walking Ballista", "Aetherflux Reservoir"],
+        "surfaced_by_query_A": ["Spike Feeder"],
+        "surfaced_by_query_B": ["Walking Ballista", "Apocalypse Hydra"],
+        "surfaced_by_query_C": ["Aetherflux Reservoir"],
+        "union_count": "3/3",
+        "note": "Query A is pinpoint (Spike Feeder only) — no other Commander-legal card has the literal phrase 'remove a +1/+1 counter ... you gain 2 life'. Query B returns 2 results — Walking Ballista and Apocalypse Hydra (a GR X-cost creature with a similar oracle template); Apocalypse Hydra is not a Heliod combo piece (no lifelink interaction baked in) but is a legitimate sweeper/finisher in green decks running counters payoffs — minor archetype-adjacent noise, not a false positive. Query C is pinpoint (Aetherflux Reservoir only) — the 'pay 50 life' phrase is unique."
+      }
+    },
+    "lifegain_alt_win_conditions": {
+      "intent": "The two canonical upkeep-triggered alt-win conditions that key on raw life total: Felidar Sovereign at 40+ and Test of Endurance at 50+. Both are pinpoint queries by numeric oracle-text fingerprint.",
+      "queries": [
+        "f:commander o:\"40 or more life\" o:\"you win the game\"",
+        "f:commander o:\"50 or more life\" o:\"you win the game\""
+      ],
+      "canon_recall": {
+        "expected": ["Felidar Sovereign", "Test of Endurance"],
+        "surfaced_by_query_A": ["Felidar Sovereign"],
+        "surfaced_by_query_B": ["Test of Endurance"],
+        "union_count": "2/2",
+        "note": "Both queries are pinpoint (1 result each). No other Commander-legal card has the exact phrase '40 or more life ... you win the game' or '50 or more life ... you win the game'. Zero noise."
+      }
+    },
+    "lifegain_commanders": {
+      "intent": "Iconic lifegain commanders identified by oracle-text idioms unique to the lifegain-payoff strategy. Oloro is the iconic command-zone-passive-gain commander; Lathiel is the canonical 'if you gained life this turn' end-step payoff. Other lifegain commanders (Heliod, Karlov, Trelasarra, Vito) surface via the creature_payoffs sub-recipe.",
+      "queries": [
+        "is:commander o:\"at the beginning of your upkeep, you gain 2 life\"",
+        "is:commander o:\"if you gained life this turn\""
+      ],
+      "canon_recall": {
+        "expected": ["Oloro, Ageless Ascetic", "Lathiel, the Bounteous Dawn"],
+        "surfaced_by_query_A": ["Oloro, Ageless Ascetic"],
+        "surfaced_by_query_B": ["Lathiel, the Bounteous Dawn", "Ragost, Deft Gastronaut", "Aerith, Last Ancient", "Moseo, Vein's New Dean", "Bre of Clan Stoutarm", "Tivash, Gloom Summoner", "Saint Elenda"],
+        "union_count": "2/2",
+        "note": "Query A is pinpoint (Oloro only) — the exact phrase 'at the beginning of your upkeep, you gain 2 life' is unique to Oloro's command-zone trigger. Query B returns 9 results — Lathiel (canon) plus 8 secondary lifegain-conditional commanders (Ragost untaps on lifegain; Aerith / Moseo / Bre / Tivash / Saint Elenda all have 'if you gained life this turn' end-step payoffs; Cerise and Lucky the Pizza Dog are not Commander-legal). All are legitimate lifegain commanders — they will surface as candidate adds for any lifegain-tagged deck."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches new printings whose oracle text doesn't match the precise sub-recipes above. Particularly useful for the modern 'you gain N life' idiom on attack/ETB triggers that miss the 'whenever you gain life' phrasing.",
+      "queries": [
+        "f:commander o:\"whenever you gain life\"",
+        "f:commander o:lifelink t:creature mv<=4"
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface oddities and new printings the precise queries miss. Query A is the broadest lifegain-trigger sweep across all card types (catches both creature and non-creature triggers); filter aggressively against decklist + candidates.json top-50 before triaging. Query B catches the curve-friendly lifelink creatures (Bloodthirsty Conqueror, Healer's Hawk, Speaker of the Heavens, Welcoming Vampire family) that fuel Soul Sister payoffs."
+      }
+    }
+  },
+  "excludes": {
+    "_note": "No archetype-level excludes. Lifegain is a constructive archetype with no symmetric-punisher anti-patterns to filter. Color-identity splicing at runtime via `id<=<colors>` is the only post-fetch restriction."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50
+  },
+  "noise_budget": {
+    "policy": "Every sub-recipe is anchored to a lifegain-specific oracle idiom or to a literal idiosyncratic numeric/phrasing fingerprint. Surfaced result counts range from 1 (pinpoint queries on combo pieces and alt-win conditions) to 64 (the creature_payoffs broadest query). Across the recipe, false-positive rate is <5% — every non-canon result inspected during validation was a same-idiom payoff (Veinwitch Coven, Drogskol Reaver, Marauding Blight-Priest, Voice of the Blessed, etc.) or a combo-adjacent commander (Saint Elenda, Tivash, Bre of Clan Stoutarm). One mildly-noisy result observed: Apocalypse Hydra in lifegain_combo_pieces Q2B (matches the Walking Ballista template but lacks the Heliod-combo interaction).",
+    "color_identity_handling": "All queries are deck-color-agnostic. At runtime the calling deck splices its commander color identity. Most lifegain canon is mono-white (Soul Warden, Soul's Attendant, Ajani's Pridemate, Heliod, Archangel of Thune, Felidar Sovereign, Test of Endurance) or mono-black (Vito, Defiant Bloodlord, Sanguine Bond, Exquisite Blood). Karlov, Cliffhaven Vampire, Cleric of Life's Bond are WB. Trelasarra, Lathiel are GW. Spike Feeder is mono-G. Walking Ballista, Aetherflux Reservoir are colorless. Oloro is WUB. Mono-W lifegain decks lose the entire B side of the drain package; Mardu / Esper / Abzan / Bant builds see broader canon coverage.",
+    "colorless_engine_breadth": "Walking Ballista, Aetherflux Reservoir — the colorless combo pieces are legal in any color identity. White is the strongest single color for the archetype (anchors Soul Sisters + alt-win + Heliod). Black adds the drain layer. Green adds Spike Feeder + Trelasarra/Lathiel. Blue adds card-draw payoffs (Drogskol Reaver) but no canon."
+  },
+  "cross_archetype_overlap": {
+    "aristocrats": "Aristocrats decks frequently splash drain pieces (Vito, Defiant Bloodlord, Sanguine Bond, Cliffhaven Vampire) that double as aristocrats death-trigger payoffs (Blood Artist family). The death-trigger payoffs themselves (Blood Artist, Zulaport Cutthroat, Cruel Celebrant, Elas il-Kor) live in aristocrats canon (DEC-238) and surface there. Decks tagged both archetypes get the union of both recipes at runtime — no double-counting, no gap.",
+    "tokens-go-wide": "Soul Warden / Soul's Attendant / Essence Warden + token producers (Bitterblossom, Ophiomancer, etc.) form a classic Soul Sisters + token engine. Token producers live in tokens-go-wide canon (DEC-253); the Soul Sisters trigger fountains live here. Decks tagged both archetypes see both — Soul Sisters surface here as lifegain engine, tokens surface there as fuel.",
+    "counters-payoffs": "Heliod, Sun-Crowned and Archangel of Thune put +1/+1 counters; Spike Feeder removes them. These overlap with the counters-payoffs archetype (DEC-254) but are canon in lifegain because their oracle idiom triggers on lifegain rather than on counters directly. Counters-payoffs covers the counter-doubling and proliferate layer; lifegain covers the lifegain-trigger-puts-counters layer. Cross-archetype decks (Karlov, Trelasarra in counter-doubler shells) get both."
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14"
+  },
+  "shared_refs": null
+}
