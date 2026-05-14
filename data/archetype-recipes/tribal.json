@@ -1,0 +1,158 @@
+{
+  "id": "tribal",
+  "name": "Tribal / Kindred",
+  "summary": "Creature-type-matters: lords that buff the tribe, mana engines that scale with tribe density, universal tribal-support artifacts/enchantments, and tribe-specific utility. First instance parameterized on Elf; query idioms apply to any tribe via color-identity splice at runtime.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft — Gate 2 (canon) + Gate 3 (recipe) pending board approval via DEC-260.",
+  "last_reviewed": "2026-05-14",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "Elvish Archdruid",
+    "Imperious Perfect",
+    "Leaf-Crowned Visionary",
+    "Dwynen, Gilt-Leaf Daen",
+    "Elvish Clancaller",
+    "Priest of Titania",
+    "Heritage Druid",
+    "Marwyn, the Nurturer",
+    "Herald's Horn",
+    "Vanquisher's Banner",
+    "Door of Destinies",
+    "Kindred Discovery",
+    "Wirewood Symbiote",
+    "Ezuri, Renegade Leader",
+    "Allosaurus Shepherd",
+    "Coat of Arms",
+    "Lathril, Blade of the Elves",
+    "Freyalise, Llanowar's Fury"
+  ],
+  "sub_recipes": {
+    "elf_lords": {
+      "intent": "Creatures that pump other Elves +1/+1 — the core lord effect that scales linearly with board presence. Two oracle phrasings exist ('Elf creatures' vs 'Elves').",
+      "queries": [
+        "f:commander t:creature o:\"other elf creatures you control get +1/+1\"",
+        "f:commander t:creature o:\"other elves you control get +1/+1\""
+      ],
+      "canon_recall": {
+        "expected": ["Elvish Archdruid", "Dwynen, Gilt-Leaf Daen", "Imperious Perfect", "Leaf-Crowned Visionary", "Elvish Clancaller"],
+        "surfaced_by_query_A": ["Elvish Archdruid", "Dwynen, Gilt-Leaf Daen"],
+        "surfaced_by_query_B": ["Imperious Perfect", "Leaf-Crowned Visionary", "Elvish Clancaller"],
+        "union_count": "5/5",
+        "noise_notes": "Query A also surfaces Joraga Warcaller (counter-based lord — relevant). Query B surfaces Canopy Tactician (lord + {G}{G}{G} tap — relevant), Galadhrim Brigade (Squad lord — relevant), Morcant's Loyalist (BG, on-death recursion — multi-color noise). All noise is genuine elf tribal support."
+      }
+    },
+    "elf_mana_engines": {
+      "intent": "Elves that produce mana scaled by elf count or elf density — the engine layer that makes elfball explosive.",
+      "queries": [
+        "f:commander t:elf o:\"each elf\" o:\"{G}\"",
+        "f:commander t:elf o:\"untapped elves you control\" o:\"add\"",
+        "f:commander t:elf o:\"another elf you control enters\" o:\"+1/+1 counter\""
+      ],
+      "canon_recall": {
+        "expected": ["Priest of Titania", "Heritage Druid", "Marwyn, the Nurturer"],
+        "surfaced_by_query_A": ["Priest of Titania", "Elvish Archdruid"],
+        "surfaced_by_query_B": ["Heritage Druid"],
+        "surfaced_by_query_C": ["Marwyn, the Nurturer"],
+        "union_count": "3/3",
+        "noise_notes": "Query A also catches Allosaurus Shepherd ('{4}{G}{G}: each Elf...' matches oracle; noise here but canon in elf_utility). Query B catches Birchlore Rangers (two-untapped variant — relevant). Query C is uniquely precise: only Marwyn."
+      }
+    },
+    "tribal_support_artifacts": {
+      "intent": "Universal 'choose a creature type' artifacts that provide anthem, cost reduction, or draw for any tribe. Color-identity agnostic — strong in any tribal shell.",
+      "queries": [
+        "f:commander o:\"as this artifact enters, choose a creature type\""
+      ],
+      "canon_recall": {
+        "expected": ["Herald's Horn", "Vanquisher's Banner", "Door of Destinies"],
+        "surfaced": ["Herald's Horn", "Vanquisher's Banner", "Door of Destinies"],
+        "count": "3/3",
+        "noise_notes": "Query returns 17 total. Other top-EDHREC results include Urza's Incubator (cost -2, all-tribe staple — high signal), Patchwork Banner (anthem + mana, in verdant-tide), Icon of Ancestry (anthem + sift — relevant), Banner of Kinship (ETB-scaled anthem — relevant). Noise is almost entirely genuine tribal support."
+      }
+    },
+    "tribal_draw_enchantments": {
+      "intent": "Universal 'choose a creature type' enchantments that draw cards whenever the chosen tribe enters or attacks — the strongest recurring draw engine for tribal.",
+      "queries": [
+        "f:commander o:\"as this enchantment enters, choose a creature type\" o:\"draw a card\""
+      ],
+      "canon_recall": {
+        "expected": ["Kindred Discovery"],
+        "surfaced": ["Kindred Discovery"],
+        "count": "1/1",
+        "noise_notes": "Broader query without 'draw a card' returns 20 results including Reflections of Littjara (copy tribal spells — high signal), Arcane Adaptation (type-grant enabler), Cover of Darkness (fear, black-only), Etchings of the Chosen (WB indestructible). Narrow query surfaces only Kindred Discovery. Board may consider adding the broader query as a second query in this sub-recipe for coverage."
+      }
+    },
+    "elf_utility": {
+      "intent": "High-impact elf-specific utility pieces: bounce-untap (Wirewood Symbiote), repeatable overrun (Ezuri), and counterspell protection (Allosaurus Shepherd). Each has a unique oracle idiom.",
+      "queries": [
+        "f:commander o:\"return an elf you control\" o:\"untap\"",
+        "f:commander t:elf o:\"elf creatures you control get +3/+3\"",
+        "f:commander t:elf o:\"green spells you control can't be countered\""
+      ],
+      "canon_recall": {
+        "expected": ["Wirewood Symbiote", "Ezuri, Renegade Leader", "Allosaurus Shepherd"],
+        "surfaced_by_query_A": ["Wirewood Symbiote"],
+        "surfaced_by_query_B": ["Ezuri, Renegade Leader"],
+        "surfaced_by_query_C": ["Allosaurus Shepherd"],
+        "union_count": "3/3",
+        "noise_notes": "All three queries are uniquely precise — 1 result each. Zero noise."
+      }
+    },
+    "tribal_anthem_global": {
+      "intent": "Global anthems that scale with shared creature types rather than a chosen type — rewards uniform tribal composition.",
+      "queries": [
+        "f:commander o:\"shares at least one creature type with it\" o:\"+1/+1\""
+      ],
+      "canon_recall": {
+        "expected": ["Coat of Arms"],
+        "surfaced": ["Coat of Arms"],
+        "count": "1/1",
+        "noise_notes": "Uniquely precise — 1 result. Zero noise."
+      }
+    },
+    "tribal_commanders": {
+      "intent": "Canonical elf tribal commanders that incentivize stacking elves — drain payoff (Lathril) and token-mana engine (Freyalise).",
+      "queries": [
+        "is:commander t:elf o:\"untapped elves you control\"",
+        "is:commander t:elf o:\"elf druid creature token\""
+      ],
+      "canon_recall": {
+        "expected": ["Lathril, Blade of the Elves", "Freyalise, Llanowar's Fury"],
+        "surfaced_by_query_A": ["Lathril, Blade of the Elves"],
+        "surfaced_by_query_B": ["Freyalise, Llanowar's Fury"],
+        "union_count": "2/2",
+        "noise_notes": "Query A also catches other elf commanders with 'untapped elves' drain lines (high signal). Query B is precise to Freyalise's +2 create elf Druid token text; may also surface Llanowar Tribe or similar — review top-EDHREC results."
+      }
+    },
+    "wildcard": {
+      "intent": "Broad elf-matters sweep — catches new printings with non-standard phrasing. High noise, run last, review top-10 only.",
+      "queries": [
+        "f:commander t:elf o:\"whenever\" o:\"elf\" o:\"enters\" order:edhrec"
+      ],
+      "canon_recall": {
+        "note": "Wildcard sub-recipe not validated against canon — exists to surface printings the precise queries miss. Expected high noise."
+      }
+    }
+  },
+  "excludes": {
+    "_note": "No global excludes defined for tribal. Tribal decks rarely include symmetric punishers; apply exclude clauses per-deck as needed."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime. Critical for tribal — many cross-tribe staples (Herald's Horn, Coat of Arms) are colorless and will survive the splice regardless of deck color. Elf-specific queries are already mono-green, so splice has minimal effect on them.",
+    "tribe_parameterization": "The elf_lords, elf_mana_engines, elf_utility, and tribal_commanders sub-recipes are parameterized on Elf. When using this recipe for a non-elf tribal deck, substitute the target tribe name in those queries. The tribal_support_artifacts, tribal_draw_enchantments, and tribal_anthem_global sub-recipes are tribe-agnostic and require no substitution.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50
+  },
+  "validation_summary": {
+    "total_canon": 18,
+    "recall_count": 18,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14",
+    "missed_canon": [],
+    "missed_reason": null
+  },
+  "shared_refs": null
+}
