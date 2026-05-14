@@ -1,0 +1,184 @@
+{
+  "id": "counters-payoffs",
+  "name": "Counters Payoffs",
+  "summary": "+1/+1 counter producers, counter doublers, proliferate engines, counter-as-resource payoffs, and counter-themed commanders. Renamed from `plus-one-counters` to anticipate -1/-1 and other counter axes per the approved taxonomy.",
+  "version": 1,
+  "status": "draft",
+  "_status_note": "Draft recipe — Gate 2 + Gate 3 awaiting combined board confirmation. 20/20 = 100% canon recall validated empirically against Scryfall API on 2026-05-14.",
+  "last_reviewed": "2026-05-14",
+  "approval": {
+    "reviewer": null,
+    "date": null,
+    "paperclip_interaction_id": null,
+    "_note": "Populated on Gate 3 approval."
+  },
+  "canon_approval": {
+    "reviewer": null,
+    "date": null,
+    "paperclip_interaction_id": null,
+    "_note": "Populated on Gate 2 approval (combined with Gate 3 per the graveyard-reanimator / tokens-go-wide pattern)."
+  },
+  "canon": [
+    "Doubling Season",
+    "Hardened Scales",
+    "Branching Evolution",
+    "Innkeeper's Talent",
+    "Ozolith, the Shattered Spire",
+    "Vorinclex, Monstrous Raider",
+    "Conclave Mentor",
+    "Pir, Imaginative Rascal",
+    "Cathars' Crusade",
+    "Master Biomancer",
+    "Hangarback Walker",
+    "Walking Ballista",
+    "Inspiring Call",
+    "Andúril, Narsil Reforged",
+    "Evolution Sage",
+    "Flux Channeler",
+    "Contagion Engine",
+    "Inexorable Tide",
+    "Tezzeret's Gambit",
+    "Ghave, Guru of Spores"
+  ],
+  "canon_provenance": {
+    "from_existing_decks": "Pulled from `mutant-multiplication` (Hardened Scales, Ozolith the Shattered Spire, Cathars' Crusade, Inspiring Call, Doubling Season) and `creeping-corruption` (Evolution Sage, Flux Channeler, Contagion Engine, Inexorable Tide, Tezzeret's Gambit, Vorinclex Monstrous Raider) — the two existing decks tagged with this archetype (formerly `plus-one-counters`).",
+    "from_edhrec_archetype_pages": "Branching Evolution, Innkeeper's Talent, Conclave Mentor, Master Biomancer, Hangarback Walker, Walking Ballista, Pir Imaginative Rascal — universal counters-archetype staples ranking in top-30 across Ghave/Pir-Toothy/Hardened-Scales-Modern landing pages and the EDHREC `counters` / `+1+1 counters` archetype landings.",
+    "from_combo_pieces": "Walking Ballista + Heliod, Sun-Crowned, Hangarback Walker + sacrifice loops, Animation Module + Cathars' Crusade chains, Devoted Druid + Vizier of Remedies (counter-removal engine) — these canon picks anchor the well-known counter combos surfaced on Commander Spellbook for the archetype.",
+    "from_franchise_subarchetypes": "Andúril, Narsil Reforged anchors the equipment-into-counter-anthem idiom (LOTR-set entry to a long-running cycle of attack-trigger counter equipment). Ghave Guru of Spores is the canonical counter-aristocrat commander spanning sac-fodder and counter-distribution."
+  },
+  "sub_recipes": {
+    "counter_doublers_multiplicative": {
+      "intent": "Replacement effects that multiply counters being put on permanents — the highest-leverage engine in any counters deck.",
+      "queries": [
+        "f:commander o:\"twice that many\" o:counters"
+      ],
+      "canon_recall": {
+        "expected": ["Doubling Season", "Branching Evolution", "Innkeeper's Talent", "Vorinclex, Monstrous Raider"],
+        "surfaced": ["Doubling Season", "Branching Evolution", "Innkeeper's Talent", "Vorinclex, Monstrous Raider"],
+        "count": "4/4"
+      }
+    },
+    "counter_doublers_additive_plus_one": {
+      "intent": "Replacement effects that add one more +1/+1 counter — the budget/cheap-cost variants of the doubler engine (Hardened-Scales archetype).",
+      "queries": [
+        "f:commander o:\"plus one +1/+1 counters\"",
+        "f:commander o:\"plus one of each of those kinds of counters\""
+      ],
+      "canon_recall": {
+        "expected": ["Hardened Scales", "Ozolith, the Shattered Spire", "Conclave Mentor", "Pir, Imaginative Rascal"],
+        "surfaced_by_query_A": ["Hardened Scales", "Ozolith, the Shattered Spire", "Conclave Mentor"],
+        "surfaced_by_query_B": ["Pir, Imaginative Rascal"],
+        "union_count": "4/4"
+      }
+    },
+    "etb_counter_anthems": {
+      "intent": "Triggered/replacement effects that drop +1/+1 counters on the whole board as creatures ETB — Cathars'-Crusade-style snowball engines.",
+      "queries": [
+        "f:commander o:\"creature you control enters\" o:\"+1/+1 counter on each creature\"",
+        "f:commander o:\"enters with a number of additional +1/+1 counters\""
+      ],
+      "canon_recall": {
+        "expected": ["Cathars' Crusade", "Master Biomancer"],
+        "surfaced_by_query_A": ["Cathars' Crusade"],
+        "surfaced_by_query_B": ["Master Biomancer"],
+        "union_count": "2/2"
+      }
+    },
+    "modular_x_counter_artifacts": {
+      "intent": "Creatures that enter with X +1/+1 counters (Hangarback/Ballista/Hydra cycle) — flexible curve-fillers and counter-finisher hybrids.",
+      "queries": [
+        "f:commander t:creature o:\"enters with x +1/+1 counters\""
+      ],
+      "canon_recall": {
+        "expected": ["Hangarback Walker", "Walking Ballista"],
+        "surfaced": ["Hangarback Walker", "Walking Ballista"],
+        "count": "2/2"
+      }
+    },
+    "counter_card_draw_payoffs": {
+      "intent": "Draw effects that scale with creatures-with-counters — the primary card-advantage engine for counters decks (Inspiring Call / Armorcraft Judge / Return of the Wildspeaker).",
+      "queries": [
+        "f:commander o:\"draw a card for each\" o:\"+1/+1 counter\""
+      ],
+      "canon_recall": {
+        "expected": ["Inspiring Call"],
+        "surfaced": ["Inspiring Call"],
+        "count": "1/1"
+      }
+    },
+    "equipment_counter_anthems": {
+      "intent": "Equipment that distributes +1/+1 counters on attack/equip triggers — Andúril and its peers; the equipment-cares ↔ counters-payoffs bridge.",
+      "queries": [
+        "f:commander t:equipment o:\"+1/+1 counter on each creature\""
+      ],
+      "canon_recall": {
+        "expected": ["Andúril, Narsil Reforged"],
+        "surfaced": ["Andúril, Narsil Reforged"],
+        "count": "1/1"
+      }
+    },
+    "proliferate_engines": {
+      "intent": "Proliferate keyword across all sources — repeated counter triggers (creature, spell, land, activated) plus the Tekuthal-style doubler. Catches every infect/poison + +1/+1 + planeswalker overlap.",
+      "queries": [
+        "f:commander keyword:proliferate"
+      ],
+      "canon_recall": {
+        "expected": ["Evolution Sage", "Flux Channeler", "Contagion Engine", "Inexorable Tide", "Tezzeret's Gambit"],
+        "surfaced": ["Evolution Sage", "Flux Channeler", "Contagion Engine", "Inexorable Tide", "Tezzeret's Gambit"],
+        "count": "5/5",
+        "note": "95-result keyword query; all 5 canon proliferate sources rank within the top-50 EDHREC slice (cap applied at runtime)."
+      }
+    },
+    "counters_commanders": {
+      "intent": "Counter-themed commanders that fuse the counter engine with another mechanic (sacrifice, partner doubler). Anchors counter-aristocrat and counter-partner archetypes at the commander slot.",
+      "queries": [
+        "is:commander o:\"put a +1/+1 counter on target creature\" o:\"sacrifice a creature\""
+      ],
+      "canon_recall": {
+        "expected": ["Ghave, Guru of Spores"],
+        "surfaced": ["Ghave, Guru of Spores"],
+        "count": "1/1",
+        "note": "Pir, Imaginative Rascal and Vorinclex Monstrous Raider also serve as counter-themed commanders but surface via the counter_doublers sub-recipes; they are not double-counted here."
+      }
+    },
+    "wildcard": {
+      "intent": "Intentionally broad sweep — catches new printings whose oracle text doesn't match the precise sub-recipes above. High noise, run sparingly.",
+      "queries": [
+        "f:commander o:\"+1/+1 counter\" o:\"whenever\""
+      ],
+      "canon_recall": {
+        "note": "Wildcard is not validated against canon — it exists to surface novel counter payoffs (e.g., new set-specific counter triggers like Bargain, Mobilize, Cloak) the precise queries miss."
+      }
+    }
+  },
+  "excludes": {
+    "minus_one_counter_punishers": "-o:\"-1/-1 counter on each creature\" -o:\"-1/-1 counter on creatures you don't control\"",
+    "_note": "Optional post-fetch filter. Prevents symmetric -1/-1 mass effects (Black Sun's Zenith-style) leaking when the deck is +1/+1-centric. Splice for decks that aren't running a -1/-1 sub-plan. Infect/poison decks (which want -1/-1 wraths) should NOT splice this exclude."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
+    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "ordering": "All sub-recipe queries use order=edhrec.",
+    "cap_per_subquery": 50,
+    "counter_type_parameterization": "Sub-recipes are written for +1/+1 counters and proliferate (the dominant counter axes in EDH). For a hypothetical -1/-1 deck, the recipe still applies: proliferate_engines covers it directly, and counter_doublers_multiplicative (`twice that many`) covers Vorinclex / Doubling Season which work for any counter type. -1/-1-specific payoffs would warrant a future sub-recipe addition (Hapatra-tribe queries) — out of scope for v1."
+  },
+  "validation_summary": {
+    "total_canon": 20,
+    "recall_count": 20,
+    "recall_pct": "100%",
+    "threshold": "≥90% required for approval",
+    "validation_date": "2026-05-14",
+    "validation_method": "Each sub-recipe query was run live against api.scryfall.com (order=edhrec). Canon recall = (canon cards surfaced by at least one query in any sub-recipe) / total canon.",
+    "noise_sample": {
+      "counter_doublers_multiplicative": "Doubling Season, Branching Evolution, Innkeeper's Talent, The Earth Crystal, Primal Vigor, Vorinclex Monstrous Raider, Corpsejack Menace, Loading Zone, Galloping Lizrog, Tainted Adversary, Devouring Hellion — top-10 are all counter/token doublers or counter-multiplying ETBs. Primal Vigor is a symmetric doubler (also doubles opponents' tokens) — flag for asymmetric decks. Tainted Adversary is a one-shot Zombie ETB with embedded doubling, edge case.",
+      "counter_doublers_additive_plus_one": "Plus-one-+1/+1 query: Hardened Scales, Kami of Whispered Hopes, Ozolith the Shattered Spire, Conclave Mentor, Benevolent Hydra, Mauhúr Uruk-hai Captain, Michelangelo Weirdness to 11, Solid Ground, High Score, Mowu Loyal Companion, Zabaz the Glimmerwasp, Caradora Heart of Alacria, Prairie Dog — tight cluster of Hardened-Scales-style +1 effects. Plus-one-each-kind query: Lae'zel Vlaakith's Champion, Winding Constrictor, Pir Imaginative Rascal — 3 results, all canonical generalized-counter accumulators.",
+      "etb_counter_anthems": "Cathars' Crusade, Galadriel Light of Valinor, Kellan Joins Up, Durable Handicraft — 4 results, all genuine ETB-counter anthems. Master-Biomancer query: Opal Palace (commander-only land, edge case), Arwen Weaver of Hope, Master Biomancer — 3 results, very tight.",
+      "modular_x_counter_artifacts": "Walking Ballista, Goldvein Hydra, Hydroid Krasis, Stonecoil Serpent, Hangarback Walker — top-5 are all canonical X-counter ETB threats. Hydroid Krasis ranges from value-creature to wincon depending on shell.",
+      "counter_card_draw_payoffs": "Inspiring Call, Armorcraft Judge, Marketback Walker, Toothy Imaginary Friend, Voja Jaws of the Conclave — top-5 all draw-on-counter payoffs. Voja is an attack-trigger anthem hybrid (good cross-archetype catch).",
+      "equipment_counter_anthems": "Andúril Narsil Reforged only — 1 result, extremely tight. The narrow oracle pattern keeps this clean; new printings in this idiom will need oracle-text scan in audits.",
+      "proliferate_engines": "95-result keyword cluster. Top-15 includes Karn's Bastion (land), Evolution Sage, Cankerbloom, Yawgmoth Thran Physician, Thrummingbird, Tezzeret's Gambit, Ripples of Potential, Inexorable Tide, Dreamtide Whale, Tekuthal Inquiry Dominus, Flux Channeler, Experimental Augury, Staff of Compleation, Vraska Betrayal's Sting, Contagion Clasp. Strong signal across creature/spell/land/artifact/planeswalker variants. Cap-50 at runtime; Contagion Engine sits in the mid-range of the cluster.",
+      "counters_commanders": "Jason Bright Glowing Prophet, Ghave Guru of Spores — 2 results, very tight. Jason Bright is a Fallout-set Zombie/Mutant counter commander; legitimate inclusion."
+    }
+  },
+  "shared_refs": null
+}
