@@ -1,6 +1,13 @@
-# Archetype Recipe Taxonomy — Proposal (Gate 1)
+# Archetype Recipe Taxonomy — Final
 
-Status: **draft, pending board approval** (DEC-238 Gate 1).
+Status: **approved 2026-05-14** by local-board via DEC-238 comment 9ef21358-dd22-4b6b-913c-6e93345adeaa.
+
+Board directives applied to the original proposal:
+1. Keep group-slug, lands-matter, and etb-flicker (no cuts).
+2. Absorbed sub-recipes (amass → tokens-go-wide; eldrazi-colorless → ramp-bigmana; elf-tribal → tribal) confirmed correct.
+3. Add **lifegain** and **equipment-cares** to the taxonomy.
+
+Final count: **15 archetypes**.
 
 ## Method
 
@@ -31,11 +38,7 @@ Then cross-referenced against standard EDH archetype conventions (Command Zone v
 
 **Playbook entries currently unused on any deck:** `voltron`, `lands-matter`
 
-## Proposed recipe taxonomy — 13 archetypes
-
-I overshot the "10-12" target by one. Rationale below; cuts are board-adjudicable.
-
-### Core 10 (high-confidence keepers)
+## Final recipe taxonomy — 15 archetypes
 
 1. **aristocrats** — Sac outlets, death-trigger payoffs, drains, recursion. _Used by 3 decks._
 2. **graveyard-reanimator** — Self-mill, reanimation, recursion engines. _Used by 2 decks._
@@ -47,12 +50,11 @@ I overshot the "10-12" target by one. Rationale below; cuts are board-adjudicabl
 8. **artifacts-matter** — Artifact density, cost reduction, ETB/recursion engines on artifacts. _Used by 3 decks._
 9. **ramp-bigmana** — Fast mana + cheat into oversized threats. **Absorbs** `eldrazi-colorless` as a sub-recipe (Eldrazi is one threat type; ramp is the engine). _Used by 2 decks (counting Eldrazi)._
 10. **tribal** — Creature-type-cares, parameterized on tribe. **Absorbs** `elf-tribal` as one instance. _Used by 1 deck (elf)._
-
-### Adjudicable 3 (board to confirm or cut)
-
-11. **group-slug** — Pinger/punisher damage, opponent-action triggers. **Could** be absorbed into `stax-control` (both are opponent-hurt), but oracle idioms are distinct (pinger triggers vs. tax restrictions). _Used by 1 deck (Eternal Agony)._
-12. **lands-matter** — Landfall, lands recursion, ETB-tapped synergies. _Unused today._ Worth keeping for future Omnath/Windgrace decks; archetype is canonical in EDH. Risk: low priority since no current deck needs it.
-13. **etb-flicker** — ETB-trigger loops + flicker/blink/bounce. _Used by 1 deck (White Forge)._ Could be absorbed into `artifacts-matter` (most flicker is artifact-adjacent) but the idiom is creature-ETB-focused.
+11. **group-slug** — Pinger/punisher damage, opponent-action triggers. _Used by 1 deck (Eternal Agony)._
+12. **lands-matter** — Landfall, lands recursion, ETB-tapped synergies. _Unused today; reserved for future Omnath/Windgrace decks._
+13. **etb-flicker** — ETB-trigger loops + flicker/blink/bounce. _Used by 1 deck (White Forge)._
+14. **lifegain** — Lifegain triggers, payoff-on-gain, lifegain-as-resource. _Unused today; added at board's request 2026-05-14._
+15. **equipment-cares** — Equipment density, equip cost reduction, attach triggers, Stoneforge package. _Unused today; added at board's request 2026-05-14._
 
 ### Explicitly deferred
 
@@ -92,12 +94,6 @@ The regex playbook will need to align — same archetype IDs, same `name`. Migra
 
 This is a follow-up DEC- issue, blocked on this taxonomy's approval.
 
-## What I need from the board
+## Next step
 
-Approve, decline, or amend this 13-archetype list. Specifically:
-
-1. Do you want me to cut `group-slug` (merge into `stax-control`), `lands-matter` (defer), or `etb-flicker` (merge into `artifacts-matter`)? Any one of those gets us to 12. None is required; 13 is workable if you'd rather keep them all.
-2. Are the absorbed sub-recipes (amass, eldrazi, elf-tribal under tribal) the right choice, or do you want them kept as top-level archetypes?
-3. Any archetype missing that you anticipate building toward (e.g., enchantress, lifegain, mill, equipment-cares, discard-madness)?
-
-Once approved, Gate 2 (canon set) work begins for the first archetype — I'd suggest **aristocrats** as the pilot since three existing decks use it, giving us the broadest validation surface.
+Gate 2 (canon set) work begins for the first archetype — **aristocrats** as the pilot since three existing decks use it, giving the broadest validation surface. Canon set proposal will live alongside the recipe at `data/archetype-recipes/aristocrats.json`.
