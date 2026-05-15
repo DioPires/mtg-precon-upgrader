@@ -33,7 +33,10 @@ import type {
 // Oracle, Witherbloom landbase); some tiles rendered "—" mana cost waiting on
 // the live-Scryfall fallback. Bump invalidates the persisted card-metadata
 // envelope so returning users pick up the fresh data immediately.
-const STORAGE_PREFIX = 'gv1-deck-data-v8:';
+// v8 -> v9 (DEC-271): added zada-hedron-grinder deck (Hedron Storm); index
+// reorder placed it before Genesis Protocol. Bump invalidates cached deck
+// index so returning users see the new deck without manual cache clear.
+const STORAGE_PREFIX = 'gv1-deck-data-v9:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
