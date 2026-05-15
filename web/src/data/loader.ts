@@ -39,7 +39,9 @@ import type {
 // v9 -> v10 (DEC-271): swapped Magmatic Hellkite → Spinerock Tyrant
 // (board-approved); bump invalidates cached Zada decklist so returning
 // users pick up the new card immediately.
-const STORAGE_PREFIX = 'gv1-deck-data-v10:';
+// v10 -> v11 (DEC-275): swapped Sword of the Animist → Selfless Safewright
+// in Verdant Tide; bump invalidates cached decklist.
+const STORAGE_PREFIX = 'gv1-deck-data-v11:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
