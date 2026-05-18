@@ -33,6 +33,7 @@ import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
 import mana_simulation_silverquill_the_disputant as sim_silverquill
+import mana_simulation_pyre_and_panic as sim_mono_red
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -167,6 +168,14 @@ KEY_COMBOS = {
             "pieces": ["Vorinclex, Monstrous Raider", "Vraska, Betrayal's Sting"],
             "requiresCommander": False,
             "description": "Vraska enters with doubled loyalty, -9 deals doubled poison for instant kill.",
+        }
+    ],
+    "pyre-and-panic": [
+        {
+            "name": "Norin Drain Stack",
+            "pieces": ["Impact Tremors", "Purphoros, God of the Forge", "Panharmonicon"],
+            "requiresCommander": True,
+            "description": "Norin's repeating self-flicker triggers Impact Tremors + Purphoros twice each per cycle under Panharmonicon — 6 dmg/opp baseline, scales with Torbran/Fiery Emancipation.",
         }
     ],
 }
@@ -2282,6 +2291,50 @@ def export_mono_white(metadata: dict) -> dict:
     )
 
 
+def export_mono_red(metadata: dict) -> dict:
+    """Export Pyre & Panic (mono-red Norin the Wary) simulation."""
+    result = _export_colored(
+        sim_module=sim_mono_red,
+        deck_id="pyre-and-panic",
+        deck_name="Pyre & Panic",
+        commander_name="Norin the Wary",
+        commander_cmc=1,
+        colors=["R"],
+        metadata=metadata,
+    )
+
+    # Add Norin-specific special metrics: engine readiness + flicker triggers
+    deck_file = PROJECT_ROOT / "data" / "commanders" / "pyre-and-panic" / "deck.json"
+    with open(deck_file) as f:
+        deck_data = json.load(f)
+    decklist = sim_mono_red.build_decklist(deck_data)
+
+    print(f"  Running {NUM_GAMES:,} games for Norin-specific metrics...")
+    stats = run_parallel(sim_mono_red._run_chunk, sim_mono_red.merge_stats,
+                         decklist, metadata, NUM_GAMES)
+    total = NUM_GAMES
+
+    engine_ready = {}
+    for t in range(1, NUM_TURNS + 1):
+        engine_ready[str(t)] = pct(stats["engine_ready_by_turn"][t], total)
+
+    flicker_data = stats["flicker_triggers_per_game"]
+    flicker_mean = r1(statistics.mean(flicker_data)) if flicker_data else 0.0
+    flicker_median = r1(statistics.median(flicker_data)) if flicker_data else 0.0
+
+    result["specialMetrics"]["engineReadiness"] = {
+        "description": "Probability 3+ ETB-damage payoffs (Impact Tremors / Purphoros / Witty Roastmaster / etc.) on battlefield",
+        "byTurn": engine_ready,
+    }
+    result["specialMetrics"]["flickerTriggers"] = {
+        "description": "Average Norin self-flicker triggers per game (one per combat post-cast through T10)",
+        "mean": flicker_mean,
+        "median": flicker_median,
+    }
+
+    return result
+
+
 def export_orzhov(metadata: dict) -> dict:
     """Export Quill of Casualties (Orzhov Silverquill aristocrats) simulation."""
     return _export_colored(
@@ -2357,6 +2410,7 @@ DECKS = [
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
     ("creeping-corruption", "Creeping Corruption", export_wubg_poison),
     ("silverquill-the-disputant", "Quill of Casualties", export_orzhov),
+    ("pyre-and-panic", "Pyre & Panic", export_mono_red),
 ]
 
 
