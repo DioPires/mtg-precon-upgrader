@@ -52,9 +52,9 @@ import type {
 // Protection); bracket 3 → 4 (4 GCs now).
 // v14 -> v15 (DEC-281 follow-up): swap Teferi's Protection → Clever
 // Concealment (instant convoke phase-out); non-GC so bracket reverts 4 → 3.
-// v18 -> v19 (DEC-285 Tier 2 swaps 2026-05-19): force-invalidate after
-// Quill of Casualties additional swap (Blot Out the Sky / Elspeth, Storm Slayer).
-const STORAGE_PREFIX = 'gv1-deck-data-v19:';
+// v19 -> v20 (DEC-287 Verdant Tide swaps 2026-05-19): force-invalidate after
+// Hunter's Talent/Fierce Empath -> Beastmaster Ascension/Unnatural Growth swap.
+const STORAGE_PREFIX = 'gv1-deck-data-v20:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
