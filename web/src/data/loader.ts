@@ -43,7 +43,10 @@ import type {
 // in Verdant Tide; bump invalidates cached decklist.
 // v11 -> v12 (DEC-271): swapped Swiftfoot Boots → Hexing Squelcher in Zada
 // (board-approved); bump invalidates cached decklist.
-const STORAGE_PREFIX = 'gv1-deck-data-v12:';
+// v12 -> v13 (DEC-280): four Witherbloom Balance swaps (Hidden Stockpile →
+// Yawgmoth; Emeritus → Parallel Lives; Reclamation Sage → Bastion of
+// Remembrance; Foulmire Knight → Reassembling Skeleton).
+const STORAGE_PREFIX = 'gv1-deck-data-v13:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
