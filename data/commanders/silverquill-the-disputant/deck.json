@@ -28,7 +28,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Silverquill, the Disputant grants every instant or sorcery you cast Casualty 1 — sacrifice any creature with power 1 or greater to copy the spell with new targets. The deck pairs this engine with a token-aristocrats backbone: token generators (Bitterblossom, Ophiomancer, Hidden Stockpile, Bastion of Remembrance, Pawn of Ulamog, Pitiless Plunderer) and a deep recursion package (Bloodghast, Reassembling Skeleton, Nether Traitor, Forsaken Miner, Infestation Sage, Bloodsoaked Champion, Timeline Culler) keep an endless supply of 1- to 2-power bodies for casualty fodder. Sacrifices feed stacked drain payoffs — Blood Artist, Zulaport Cutthroat, Marionette Apprentice, Elas il-Kor, Bastion of Remembrance, and Grave Venerations — and Teysa Karlov doubles each death trigger for 12-20 incremental drains per turn cycle once the engine is online. Casualty doubles every removal spell, every tutor, every reanimation sorcery (Reanimate, Living Death), and most importantly every X-drain finisher (Exsanguinate, Debt to the Deathless). Bloodletter of Aclazotz doubles all opponent life loss on your turn, so an X=8 Exsanguinate copied via casualty becomes 32 life lost per opponent. Backup wins: emergent Pitiless Plunderer + Reassembling Skeleton + Ashnod's Altar + drain infinite, Westvale Abbey transforming into Ormendahl, and 4/4 flying-vigilance commander combat. No dedicated combo line — combos emerge from synergistic aristocrats cards."
+    "strategyOverview": "Silverquill, the Disputant grants every instant or sorcery you cast Casualty 1 — sacrifice any creature with power 1 or greater to copy the spell with new targets. The deck pairs this engine with a token-aristocrats backbone: token generators (Bitterblossom, Ophiomancer, Hidden Stockpile, Bastion of Remembrance, Pawn of Ulamog, Pitiless Plunderer, Sedgemoor Witch) and a deep recursion package (Bloodghast, Reassembling Skeleton, Nether Traitor, Forsaken Miner, Infestation Sage, Timeline Culler) keep an endless supply of 1- to 2-power bodies for casualty fodder. Sedgemoor Witch's magecraft makes a 1/1 Pest on every cast AND every casualty-copy — two Pests per casualty spell, guaranteed. Sacrifices feed stacked drain payoffs — Blood Artist, Zulaport Cutthroat, Marionette Apprentice, Elas il-Kor, Bastion of Remembrance, Grave Venerations, and Kambal (Profiteering Mayor) — and Teysa Karlov doubles each death trigger for 12-20 incremental drains per turn cycle once the engine is online. Kambal layers a token-ETB drain on top of the death-trigger drains, so every token enters → drain 1, then sacs → drain 1 again. Casualty doubles every removal spell, every tutor, every reanimation sorcery (Reanimate, Living Death), and most importantly every X-drain finisher (Exsanguinate, Debt to the Deathless). Bloodletter of Aclazotz doubles all opponent life loss on your turn, so an X=8 Exsanguinate copied via casualty becomes 32 life lost per opponent. Grand Crescendo (instant: X tokens + indestructible to your creatures) gives the engine a wrath-proof window. Backup wins: emergent Pitiless Plunderer + Reassembling Skeleton + Ashnod's Altar + drain infinite, Westvale Abbey transforming into Ormendahl, and 4/4 flying-vigilance commander combat. No dedicated combo line — combos emerge from synergistic aristocrats cards."
   },
   "categories": [
     {
@@ -39,7 +39,6 @@
         "Nether Traitor",
         "Forsaken Miner",
         "Infestation Sage",
-        "Bloodsoaked Champion",
         "Timeline Culler"
       ]
     },
@@ -56,6 +55,7 @@
         "Elas il-Kor, Sadistic Pilgrim",
         "Bastion of Remembrance",
         "Grave Venerations",
+        "Kambal, Profiteering Mayor",
         "Teysa Karlov"
       ]
     },
@@ -67,6 +67,7 @@
         "Hidden Stockpile",
         "Pawn of Ulamog",
         "Pitiless Plunderer",
+        "Sedgemoor Witch",
         "Castle Ardenvale"
       ]
     },
@@ -77,7 +78,6 @@
         "Animate Dead",
         "Necromancy",
         "Phyrexian Reclamation",
-        "Tortured Existence",
         "Reanimate",
         "Living Death",
         "Fix What's Broken"
@@ -104,13 +104,12 @@
         "Anguished Unmaking",
         "Mortify",
         "Vindicate",
-        "Sheoldred's Edict",
-        "Plaguecrafter"
+        "Sheoldred's Edict"
       ]
     },
     {
       "name": "Protection",
-      "cards": ["Clever Concealment"]
+      "cards": ["Clever Concealment", "Grand Crescendo"]
     },
     {
       "name": "Sweepers",
@@ -234,10 +233,9 @@
         "Nether Traitor",
         "Forsaken Miner",
         "Infestation Sage",
-        "Bloodsoaked Champion",
         "Timeline Culler"
       ],
-      "description": "Seven 1- to 2-power black creatures that recur from the graveyard via different triggers — landfall, mana payment, creature-death, crime, blitz/warp, raid, ETB token. Sacrificing them for casualty + sac outlets + drain payoffs is essentially free; the bodies return next turn.",
+      "description": "Six 1- to 2-power black creatures that recur from the graveyard via different triggers — landfall, mana payment, creature-death, crime, ETB-token, and warp. Sacrificing them for casualty + sac outlets + drain payoffs is essentially free; the bodies return next turn.",
       "sources": [
         { "type": "ai-inferred", "name": "DEC-227 strategic analysis" }
       ]
@@ -286,18 +284,46 @@
       ]
     },
     {
-      "title": "Tortured Existence + recursion fodder",
+      "title": "Sedgemoor Witch + Casualty engine",
       "cards": [
-        "Tortured Existence",
-        "Bloodghast",
-        "Reassembling Skeleton",
-        "Nether Traitor",
-        "Phyrexian Reclamation"
+        "Sedgemoor Witch",
+        "Silverquill, the Disputant"
       ],
-      "description": "Tortured Existence costs {B} + discard-a-creature-card. Pair with Bloodghast (lands trigger recur, ignore the discard cost) or Reassembling Skeleton (discard, then 1B from GY back to battlefield). Phyrexian Reclamation is the parallel engine at 1B + 2 life.",
+      "description": "Sedgemoor Witch's Magecraft triggers 'whenever you cast or copy an instant or sorcery'. Every Silverquill-cast spell triggers Magecraft once on cast and again on the casualty copy — two 1/1 B/G Pest tokens per casualty spell, guaranteed. Each Pest has 'when this token dies, you gain 1 life'. Pests are perfect casualty fodder (1 power), feed every drain payoff on death, and stack with Teysa Karlov's death-trigger doubling. 3/2 menace body with Ward 3 life makes the engine sticky against pinpoint removal.",
       "sources": [
-        { "type": "scryfall", "name": "Tortured Existence oracle" },
-        { "type": "ai-inferred", "name": "DEC-227 strategic analysis" }
+        { "type": "scryfall", "name": "Sedgemoor Witch oracle" },
+        { "type": "ai-inferred", "name": "DEC-285 swap analysis" }
+      ]
+    },
+    {
+      "title": "Kambal drains token entries (stacks with death drains)",
+      "cards": [
+        "Kambal, Profiteering Mayor",
+        "Bitterblossom",
+        "Ophiomancer",
+        "Pitiless Plunderer",
+        "Sedgemoor Witch",
+        "Hidden Stockpile",
+        "Pawn of Ulamog",
+        "Bastion of Remembrance",
+        "Teysa Karlov"
+      ],
+      "description": "Kambal triggers when one or more of your tokens enter — each opponent loses 1, you gain 1. Bitterblossom faeries (upkeep), Ophiomancer snakes (upkeep), Plunderer treasures (creature deaths), Stockpile Servos (turn), Bastion humans (ETB), Pawn of Ulamog spawns (creature deaths), and Sedgemoor Pests (per cast and copy) all trigger Kambal once per turn. Token enters (Kambal: drain 1) → sac → Blood Artist/Zulaport/etc (drain 1 again). Teysa doesn't double Kambal (not a 'dies' trigger) but Kambal is a new drain layer on a 2/4 body. Second mode: when an opponent's token enters, make a tapped copy under your control — token-deck neutralizer.",
+      "sources": [
+        { "type": "scryfall", "name": "Kambal, Profiteering Mayor oracle" },
+        { "type": "ai-inferred", "name": "DEC-285 swap analysis" }
+      ]
+    },
+    {
+      "title": "Grand Crescendo — protection + token burst",
+      "cards": [
+        "Grand Crescendo",
+        "Clever Concealment"
+      ],
+      "description": "Grand Crescendo: {X}{W}{W} instant — create X 1/1 G/W Citizen tokens, all your creatures gain indestructible EOT. Fills the deck's only metric-flagged role gap (protection 1.0/2). Complementary protection mode to Clever Concealment: phasing (Concealment) dodges exile and sac, indestructible (Crescendo) dodges wraths at minimum {W}{W} on a hard cast (X=0). At X≥3 the spell also pumps the board with casualty fodder and casualty doubles X. Cast pre-wrath EOT for free indestructibility on the whole engine.",
+      "sources": [
+        { "type": "scryfall", "name": "Grand Crescendo oracle" },
+        { "type": "ai-inferred", "name": "DEC-285 swap analysis" }
       ]
     },
     {
@@ -436,8 +462,9 @@
     { "name": "Nether Traitor", "type": "Creature — Spirit", "primary_role": "recursion", "secondary_role": "utility" },
     { "name": "Forsaken Miner", "type": "Creature — Skeleton Rogue", "primary_role": "recursion", "secondary_role": "utility" },
     { "name": "Infestation Sage", "type": "Creature — Elf Warlock", "primary_role": "recursion", "secondary_role": "payoff" },
-    { "name": "Bloodsoaked Champion", "type": "Creature — Human Warrior", "primary_role": "recursion", "secondary_role": "utility" },
     { "name": "Timeline Culler", "type": "Creature — Drix Warlock", "primary_role": "recursion", "secondary_role": "utility" },
+    { "name": "Sedgemoor Witch", "type": "Creature — Human Warlock", "primary_role": "payoff", "secondary_role": "engine" },
+    { "name": "Kambal, Profiteering Mayor", "type": "Legendary Creature — Human Advisor", "primary_role": "payoff", "secondary_role": "engine" },
     { "name": "Viscera Seer", "type": "Creature — Vampire Wizard", "primary_role": "utility" },
     { "name": "Carrion Feeder", "type": "Creature — Zombie", "primary_role": "utility" },
     { "name": "Yawgmoth, Thran Physician", "type": "Legendary Creature — Phyrexian Praetor", "primary_role": "utility", "secondary_role": "card-draw" },
@@ -452,7 +479,6 @@
     { "name": "Teysa Karlov", "type": "Legendary Creature — Human Advisor", "primary_role": "engine", "secondary_role": "payoff" },
     { "name": "Sun Titan", "type": "Creature — Giant", "primary_role": "recursion", "secondary_role": "threat" },
     { "name": "Bloodletter of Aclazotz", "type": "Creature — Vampire Demon", "primary_role": "payoff", "secondary_role": "wincon", "wincon_style": "drain" },
-    { "name": "Plaguecrafter", "type": "Creature — Human Shaman", "primary_role": "removal-spot" },
     { "name": "Sol Ring", "type": "Artifact", "primary_role": "ramp" },
     { "name": "Arcane Signet", "type": "Artifact", "primary_role": "ramp" },
     { "name": "Talisman of Hierarchy", "type": "Artifact — Talisman", "primary_role": "ramp" },
@@ -470,12 +496,12 @@
     { "name": "Necromancy", "type": "Enchantment — Aura", "primary_role": "recursion" },
     { "name": "Phyrexian Reclamation", "type": "Enchantment", "primary_role": "recursion" },
     { "name": "Black Market Connections", "type": "Enchantment", "primary_role": "engine" },
-    { "name": "Tortured Existence", "type": "Enchantment", "primary_role": "recursion" },
     { "name": "Grave Venerations", "type": "Enchantment", "primary_role": "payoff", "secondary_role": "recursion" },
     { "name": "Swords to Plowshares", "type": "Instant", "primary_role": "removal-spot" },
     { "name": "Path to Exile", "type": "Instant", "primary_role": "removal-spot" },
     { "name": "Anguished Unmaking", "type": "Instant", "primary_role": "removal-spot" },
     { "name": "Clever Concealment", "type": "Instant", "primary_role": "protection" },
+    { "name": "Grand Crescendo", "type": "Instant", "primary_role": "protection", "secondary_role": "payoff" },
     { "name": "Mortify", "type": "Instant", "primary_role": "removal-spot" },
     { "name": "Vindicate", "type": "Sorcery", "primary_role": "removal-spot" },
     { "name": "Sheoldred's Edict", "type": "Instant", "primary_role": "removal-spot" },

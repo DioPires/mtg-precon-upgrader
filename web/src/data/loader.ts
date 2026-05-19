@@ -52,9 +52,9 @@ import type {
 // Protection); bracket 3 → 4 (4 GCs now).
 // v14 -> v15 (DEC-281 follow-up): swap Teferi's Protection → Clever
 // Concealment (instant convoke phase-out); non-GC so bracket reverts 4 → 3.
-// v16 -> v17 (DEC-282 board request 2026-05-19): force-invalidate after
-// Zada Hedron Storm 7-card swap so returning users see the new build.
-const STORAGE_PREFIX = 'gv1-deck-data-v17:';
+// v17 -> v18 (DEC-285 board request 2026-05-19): force-invalidate after
+// Quill of Casualties 3-card swap (Sedgemoor Witch / Kambal / Grand Crescendo).
+const STORAGE_PREFIX = 'gv1-deck-data-v18:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
