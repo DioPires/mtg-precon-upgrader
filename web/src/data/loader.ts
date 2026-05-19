@@ -46,7 +46,11 @@ import type {
 // v12 -> v13 (DEC-280): four Witherbloom Balance swaps (Hidden Stockpile →
 // Yawgmoth; Emeritus → Parallel Lives; Reclamation Sage → Bastion of
 // Remembrance; Foulmire Knight → Reassembling Skeleton).
-const STORAGE_PREFIX = 'gv1-deck-data-v13:';
+// v13 -> v14 (DEC-281): five Quill of Casualties swaps (Karmic Guide →
+// Teysa Karlov; Fellwar Stone → Deadly Dispute; Cruel Celebrant → Dark
+// Prophecy; Grim Tutor → Plumb the Forbidden; Generous Gift → Teferi's
+// Protection); bracket 3 → 4 (4 GCs now).
+const STORAGE_PREFIX = 'gv1-deck-data-v14:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

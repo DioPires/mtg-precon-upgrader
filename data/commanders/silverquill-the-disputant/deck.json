@@ -5,8 +5,8 @@
   "subtitle": "Twin-Cast Aristocrats",
   "commander": "Silverquill, the Disputant",
   "cost": "€500-800",
-  "bracket": "3",
-  "gameChangers": 3,
+  "bracket": "4",
+  "gameChangers": 4,
   "lastUpdatedSet": "Tarkir: Dragonstorm",
   "archetypes": ["aristocrats", "graveyard-reanimator", "spellslinger"],
   "commanderRoles": { "primary": "engine", "secondary": "threat" },
@@ -20,10 +20,15 @@
       "type": "ai-inferred",
       "name": "Claude DEC-227 analysis",
       "detail": "Token Aristocrats Drain, recursion-heavy, B3 Focused Fair open-budget polish. 8 plan revisions, board-approved 2026-05-13. Emergent Plunderer + Reassembling Skeleton + Ashnod's Altar + drain combo line."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-281 Scryfall+EDHREC re-audit",
+      "detail": "2026-05-19 board-approved 5 swaps: Karmic Guide→Teysa Karlov (death-trigger doubler), Fellwar Stone→Deadly Dispute (casualty instant draw+treasure), Cruel Celebrant→Dark Prophecy (passive draw on death), Grim Tutor→Plumb the Forbidden (mass-sac draw), Generous Gift→Teferi's Protection (4th GC, forces bracket→4)."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Silverquill, the Disputant grants every instant or sorcery you cast Casualty 1 — sacrifice any creature with power 1 or greater to copy the spell with new targets. The deck pairs this engine with a token-aristocrats backbone: token generators (Bitterblossom, Ophiomancer, Hidden Stockpile, Bastion of Remembrance, Pawn of Ulamog, Pitiless Plunderer) and a deep recursion package (Bloodghast, Reassembling Skeleton, Nether Traitor, Forsaken Miner, Infestation Sage, Bloodsoaked Champion, Timeline Culler) keep an endless supply of 1- to 2-power bodies for casualty fodder. Sacrifices feed stacked drain payoffs — Blood Artist, Cruel Celebrant, Zulaport Cutthroat, Marionette Apprentice, Elas il-Kor, Bastion of Remembrance, and Grave Venerations — for 6-10 incremental drain triggers per turn cycle once the engine is online. Casualty doubles every removal spell, every tutor, every reanimation sorcery (Reanimate, Living Death), and most importantly every X-drain finisher (Exsanguinate, Debt to the Deathless). Bloodletter of Aclazotz doubles all opponent life loss on your turn, so an X=8 Exsanguinate copied via casualty becomes 32 life lost per opponent. Backup wins: emergent Pitiless Plunderer + Reassembling Skeleton + Ashnod's Altar + drain infinite, Westvale Abbey transforming into Ormendahl, and 4/4 flying-vigilance commander combat. No dedicated combo line — combos emerge from synergistic aristocrats cards."
+    "strategyOverview": "Silverquill, the Disputant grants every instant or sorcery you cast Casualty 1 — sacrifice any creature with power 1 or greater to copy the spell with new targets. The deck pairs this engine with a token-aristocrats backbone: token generators (Bitterblossom, Ophiomancer, Hidden Stockpile, Bastion of Remembrance, Pawn of Ulamog, Pitiless Plunderer) and a deep recursion package (Bloodghast, Reassembling Skeleton, Nether Traitor, Forsaken Miner, Infestation Sage, Bloodsoaked Champion, Timeline Culler) keep an endless supply of 1- to 2-power bodies for casualty fodder. Sacrifices feed stacked drain payoffs — Blood Artist, Zulaport Cutthroat, Marionette Apprentice, Elas il-Kor, Bastion of Remembrance, and Grave Venerations — and Teysa Karlov doubles each death trigger for 12-20 incremental drains per turn cycle once the engine is online. Casualty doubles every removal spell, every tutor, every reanimation sorcery (Reanimate, Living Death), and most importantly every X-drain finisher (Exsanguinate, Debt to the Deathless). Bloodletter of Aclazotz doubles all opponent life loss on your turn, so an X=8 Exsanguinate copied via casualty becomes 32 life lost per opponent. Backup wins: emergent Pitiless Plunderer + Reassembling Skeleton + Ashnod's Altar + drain infinite, Westvale Abbey transforming into Ormendahl, and 4/4 flying-vigilance commander combat. No dedicated combo line — combos emerge from synergistic aristocrats cards."
   },
   "categories": [
     {
@@ -46,12 +51,12 @@
       "name": "Drain Payoffs",
       "cards": [
         "Blood Artist",
-        "Cruel Celebrant",
         "Zulaport Cutthroat",
         "Marionette Apprentice",
         "Elas il-Kor, Sadistic Pilgrim",
         "Bastion of Remembrance",
-        "Grave Venerations"
+        "Grave Venerations",
+        "Teysa Karlov"
       ]
     },
     {
@@ -68,7 +73,6 @@
     {
       "name": "Recursion Engines (creatures, enchantments, spells)",
       "cards": [
-        "Karmic Guide",
         "Sun Titan",
         "Animate Dead",
         "Necromancy",
@@ -86,7 +90,10 @@
         "Phyrexian Arena",
         "Skullclamp",
         "Black Market Connections",
-        "Grave Venerations"
+        "Grave Venerations",
+        "Dark Prophecy",
+        "Deadly Dispute",
+        "Plumb the Forbidden"
       ]
     },
     {
@@ -95,12 +102,15 @@
         "Swords to Plowshares",
         "Path to Exile",
         "Anguished Unmaking",
-        "Generous Gift",
         "Mortify",
         "Vindicate",
         "Sheoldred's Edict",
         "Plaguecrafter"
       ]
+    },
+    {
+      "name": "Protection",
+      "cards": ["Teferi's Protection"]
     },
     {
       "name": "Sweepers",
@@ -111,7 +121,6 @@
       "cards": [
         "Diabolic Intent",
         "Beseech the Mirror",
-        "Grim Tutor",
         "Buried Alive",
         "Enlightened Tutor"
       ]
@@ -123,7 +132,6 @@
         "Arcane Signet",
         "Talisman of Hierarchy",
         "Orzhov Signet",
-        "Fellwar Stone",
         "Smothering Tithe"
       ]
     },
@@ -156,26 +164,27 @@
       "kind": "combo",
       "pieces": ["Pitiless Plunderer", "Reassembling Skeleton", "Ashnod's Altar", "Blood Artist"],
       "cards": ["Pitiless Plunderer", "Reassembling Skeleton", "Ashnod's Altar", "Blood Artist"],
-      "description": "Emergent 3-card mana loop + drain trigger. Sacrifice Reassembling Skeleton on Ashnod's Altar (+CC); Pitiless Plunderer triggers and makes a Treasure (1 mana of any color); pay {1}{B} (1 from Altar + B from Treasure) to recur Reassembling Skeleton from graveyard. Net +1 mana per loop and a drain trigger fires per Blood Artist / Cruel Celebrant / Zulaport Cutthroat / Bastion of Remembrance / Marionette Apprentice / Grave Venerations / Elas il-Kor on board. Infinite drain. None of the pieces is dedicated combo glue — Plunderer / Skeleton / Altar each have standalone value. Tutorable via Enlightened Tutor (Altar), Beseech the Mirror (≤4 cmc free-cast — Plunderer is 4 cmc, Skeleton is 2 cmc), Diabolic Intent, Buried Alive (Skeleton).",
+      "description": "Emergent 3-card mana loop + drain trigger. Sacrifice Reassembling Skeleton on Ashnod's Altar (+CC); Pitiless Plunderer triggers and makes a Treasure (1 mana of any color); pay {1}{B} (1 from Altar + B from Treasure) to recur Reassembling Skeleton from graveyard. Net +1 mana per loop and a drain trigger fires per Blood Artist / Zulaport Cutthroat / Bastion of Remembrance / Marionette Apprentice / Grave Venerations / Elas il-Kor on board (Teysa Karlov doubles each). Infinite drain. None of the pieces is dedicated combo glue — Plunderer / Skeleton / Altar each have standalone value. Tutorable via Enlightened Tutor (Altar), Beseech the Mirror (≤4 cmc free-cast — Plunderer is 4 cmc, Skeleton is 2 cmc), Diabolic Intent, Buried Alive (Skeleton).",
       "sources": [
         { "type": "ai-inferred", "name": "DEC-227 board-approved emergent combo" }
       ]
     },
     {
-      "title": "Incremental Aristocrat Drain",
+      "title": "Incremental Aristocrat Drain (Teysa-doubled)",
       "kind": "value",
       "cards": [
         "Blood Artist",
-        "Cruel Celebrant",
         "Zulaport Cutthroat",
         "Marionette Apprentice",
         "Elas il-Kor, Sadistic Pilgrim",
         "Bastion of Remembrance",
-        "Grave Venerations"
+        "Grave Venerations",
+        "Teysa Karlov"
       ],
-      "description": "7 stacked drain triggers fire off 4-6 creature deaths/turn from token generators + recursion creatures. Each death drains 4-6 life across each opponent (depending on how many drain payoffs survived). Grindy attrition win in ~6-8 turns. Resilient: drain triggers are spread across creatures and enchantments, hard to remove all at once.",
+      "description": "6 stacked drain triggers fire off 4-6 creature deaths/turn from token generators + recursion creatures, each doubled by Teysa Karlov when active. Effective drain per death = 8-12 life across each opponent depending on surviving payoffs. Grindy attrition win in ~5-7 turns with Teysa, ~6-8 turns without. Resilient: drain triggers spread across creatures and enchantments, hard to remove all at once.",
       "sources": [
-        { "type": "ai-inferred", "name": "DEC-227 analysis" }
+        { "type": "scryfall", "name": "Teysa Karlov oracle" },
+        { "type": "ai-inferred", "name": "DEC-281 swap analysis" }
       ]
     },
     {
@@ -251,19 +260,20 @@
       ]
     },
     {
-      "title": "Stacked drain payoff redundancy",
+      "title": "Stacked drain payoff redundancy (Teysa-doubled)",
       "cards": [
         "Blood Artist",
-        "Cruel Celebrant",
         "Zulaport Cutthroat",
         "Marionette Apprentice",
         "Elas il-Kor, Sadistic Pilgrim",
         "Bastion of Remembrance",
-        "Grave Venerations"
+        "Grave Venerations",
+        "Teysa Karlov"
       ],
-      "description": "7 different cards trigger 'when a creature you control dies, opp loses life'. Even if 2-3 are removed across a game, the drain engine remains online. Marionette Apprentice extends the trigger to artifact deaths (Treasures, Servos), and Grave Venerations adds it to a monarch+recursion enchantment shell.",
+      "description": "6 stacked drain payoffs trigger 'when a creature you control dies, opp loses life'. Teysa Karlov makes each one trigger an additional time, effectively doubling output to 12 drains per board state. Even if 2-3 payoffs are removed across a game, the engine stays online. Marionette Apprentice extends the trigger to artifact deaths (Treasures, Servos); Grave Venerations layers monarch + recursion + drain.",
       "sources": [
-        { "type": "ai-inferred", "name": "DEC-227 strategic analysis" }
+        { "type": "scryfall", "name": "Teysa Karlov oracle" },
+        { "type": "ai-inferred", "name": "DEC-281 swap analysis" }
       ]
     },
     {
@@ -432,14 +442,14 @@
     { "name": "Carrion Feeder", "type": "Creature — Zombie", "primary_role": "utility" },
     { "name": "Yawgmoth, Thran Physician", "type": "Legendary Creature — Phyrexian Praetor", "primary_role": "utility", "secondary_role": "card-draw" },
     { "name": "Blood Artist", "type": "Creature — Vampire", "primary_role": "payoff" },
-    { "name": "Cruel Celebrant", "type": "Creature — Vampire", "primary_role": "payoff" },
+    { "name": "Dark Prophecy", "type": "Enchantment", "primary_role": "card-draw" },
     { "name": "Zulaport Cutthroat", "type": "Creature — Human Rogue Ally", "primary_role": "payoff" },
     { "name": "Marionette Apprentice", "type": "Creature — Human Artificer", "primary_role": "payoff" },
     { "name": "Elas il-Kor, Sadistic Pilgrim", "type": "Legendary Creature — Phyrexian Kor Cleric", "primary_role": "payoff" },
     { "name": "Ophiomancer", "type": "Creature — Human Shaman", "primary_role": "payoff", "secondary_role": "utility" },
     { "name": "Pawn of Ulamog", "type": "Creature — Vampire Shaman", "primary_role": "payoff", "secondary_role": "ramp" },
     { "name": "Pitiless Plunderer", "type": "Creature — Human Pirate", "primary_role": "engine", "secondary_role": "ramp" },
-    { "name": "Karmic Guide", "type": "Creature — Angel Spirit", "primary_role": "recursion", "secondary_role": "threat" },
+    { "name": "Teysa Karlov", "type": "Legendary Creature — Human Advisor", "primary_role": "engine", "secondary_role": "payoff" },
     { "name": "Sun Titan", "type": "Creature — Giant", "primary_role": "recursion", "secondary_role": "threat" },
     { "name": "Bloodletter of Aclazotz", "type": "Creature — Vampire Demon", "primary_role": "payoff", "secondary_role": "wincon", "wincon_style": "drain" },
     { "name": "Plaguecrafter", "type": "Creature — Human Shaman", "primary_role": "removal-spot" },
@@ -447,7 +457,7 @@
     { "name": "Arcane Signet", "type": "Artifact", "primary_role": "ramp" },
     { "name": "Talisman of Hierarchy", "type": "Artifact — Talisman", "primary_role": "ramp" },
     { "name": "Orzhov Signet", "type": "Artifact", "primary_role": "ramp" },
-    { "name": "Fellwar Stone", "type": "Artifact", "primary_role": "ramp" },
+    { "name": "Deadly Dispute", "type": "Instant", "primary_role": "card-draw", "secondary_role": "ramp" },
     { "name": "Skullclamp", "type": "Artifact — Equipment", "primary_role": "card-draw" },
     { "name": "Ashnod's Altar", "type": "Artifact", "primary_role": "utility", "secondary_role": "ramp" },
     { "name": "Bitterblossom", "type": "Enchantment — Tribal Enchantment — Faerie", "primary_role": "payoff", "secondary_role": "engine" },
@@ -465,7 +475,7 @@
     { "name": "Swords to Plowshares", "type": "Instant", "primary_role": "removal-spot" },
     { "name": "Path to Exile", "type": "Instant", "primary_role": "removal-spot" },
     { "name": "Anguished Unmaking", "type": "Instant", "primary_role": "removal-spot" },
-    { "name": "Generous Gift", "type": "Instant", "primary_role": "removal-spot" },
+    { "name": "Teferi's Protection", "type": "Instant", "primary_role": "protection" },
     { "name": "Mortify", "type": "Instant", "primary_role": "removal-spot" },
     { "name": "Vindicate", "type": "Sorcery", "primary_role": "removal-spot" },
     { "name": "Sheoldred's Edict", "type": "Instant", "primary_role": "removal-spot" },
@@ -473,7 +483,7 @@
     { "name": "Farewell", "type": "Sorcery", "primary_role": "removal-board" },
     { "name": "Diabolic Intent", "type": "Sorcery", "primary_role": "tutor" },
     { "name": "Beseech the Mirror", "type": "Sorcery", "primary_role": "tutor" },
-    { "name": "Grim Tutor", "type": "Sorcery", "primary_role": "tutor" },
+    { "name": "Plumb the Forbidden", "type": "Instant", "primary_role": "card-draw" },
     { "name": "Buried Alive", "type": "Sorcery", "primary_role": "tutor" },
     { "name": "Enlightened Tutor", "type": "Instant", "primary_role": "tutor" },
     { "name": "Reanimate", "type": "Sorcery", "primary_role": "recursion" },
