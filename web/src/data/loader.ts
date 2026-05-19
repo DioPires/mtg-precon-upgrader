@@ -54,7 +54,9 @@ import type {
 // Concealment (instant convoke phase-out); non-GC so bracket reverts 4 → 3.
 // v19 -> v20 (DEC-287 Verdant Tide swaps 2026-05-19): force-invalidate after
 // Hunter's Talent/Fierce Empath -> Beastmaster Ascension/Unnatural Growth swap.
-const STORAGE_PREFIX = 'gv1-deck-data-v20:';
+// v20 -> v21 (DEC-287 follow-up 2026-05-19): reverse Beastmaster Ascension
+// (deck not combat-attack-heavy) -> Llanowar Tribe (sustained GGG + 3/3 body).
+const STORAGE_PREFIX = 'gv1-deck-data-v21:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
