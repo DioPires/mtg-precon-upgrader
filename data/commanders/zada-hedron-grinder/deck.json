@@ -42,6 +42,11 @@
       "type": "other",
       "name": "Goblin Smash precon",
       "detail": "Wizards of the Coast — base list provided by board"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-282 missed-card scan",
+      "detail": "Re-ran Scryfall + EDHREC + candidates.json; 7 board-approved swaps executed (Harmonic Prodigy, Young Pyromancer, Reverberate, Goblin Engineer, Krenko Tin Street Kingpin, Reiterate, Fable of the Mirror-Breaker)"
     }
   ],
   "guideContent": {
@@ -52,17 +57,17 @@
       "name": "Goblin Tribal Core",
       "cards": [
         "Krenko, Mob Boss",
+        "Krenko, Tin Street Kingpin",
         "Pashalik Mons",
         "Goblin Chieftain",
         "Goblin Warchief",
         "Rundvelt Hordemaster",
         "General Kreat, the Boltbringer",
         "Siege-Gang Commander",
-        "Siege-Gang Lieutenant",
         "Goblin Matron",
         "Goblin Recruiter",
+        "Goblin Engineer",
         "Goblin Lackey",
-        "Mogg War Marshal",
         "Searslicer Goblin"
       ]
     },
@@ -71,11 +76,33 @@
       "cards": [
         "Expedite",
         "Crimson Wisps",
-        "Renegade Tactics",
         "Fists of Flame",
         "Ancestral Anger",
-        "Wild Ride",
-        "Ancestors' Aid"
+        "Ancestors' Aid",
+        "Witch's Mark",
+        "Great Train Heist"
+      ]
+    },
+    {
+      "name": "Spell Payoffs (Magecraft / per-spell)",
+      "cards": [
+        "Harmonic Prodigy",
+        "Young Pyromancer",
+        "Storm-Kiln Artist",
+        "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+        "Vivi's Persistence",
+        "Spinerock Tyrant"
+      ]
+    },
+    {
+      "name": "Copy Effects",
+      "cards": [
+        "Reverberate",
+        "Reiterate",
+        "Bonus Round",
+        "Spinerock Tyrant",
+        "Roaming Throne",
+        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
       ]
     },
     {
@@ -102,7 +129,6 @@
         "Underworld Breach",
         "Flashback",
         "Faithless Looting",
-        "Bedlam Reveler",
         "Naktamun Lorespinner // Wheel of Fortune"
       ]
     },
@@ -111,6 +137,7 @@
       "cards": [
         "Conspicuous Snoop",
         "Kiki-Jiki, Mirror Breaker",
+        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
         "Goblin Recruiter",
         "Goblin Bombardment",
         "Impact Tremors",
@@ -125,6 +152,7 @@
         "Impact Tremors",
         "Vivi's Persistence",
         "Storm-Kiln Artist",
+        "Harmonic Prodigy",
         "General Kreat, the Boltbringer",
         "Pashalik Mons"
       ]
@@ -134,7 +162,7 @@
       "cards": [
         "Grapeshot",
         "Empty the Warrens",
-        "Haze of Rage",
+        "Reiterate",
         "Bonus Round",
         "Spinerock Tyrant"
       ]
@@ -147,7 +175,7 @@
         "Faithless Looting",
         "Witch's Mark",
         "Naktamun Lorespinner // Wheel of Fortune",
-        "Bedlam Reveler",
+        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
         "Jeska's Will"
       ]
     },
@@ -159,7 +187,6 @@
         "Bolt Bend",
         "Deflecting Swat",
         "Red Elemental Blast",
-        "Flaring Pain",
         "Hexing Squelcher",
         "Roaming Throne"
       ]
@@ -169,7 +196,8 @@
       "cards": [
         "Gamble",
         "Goblin Matron",
-        "Goblin Recruiter"
+        "Goblin Recruiter",
+        "Goblin Engineer"
       ]
     }
   ],
@@ -336,18 +364,6 @@
       ]
     },
     {
-      "name": "Bedlam Reveler",
-      "price": "€1-3",
-      "isGameChanger": false,
-      "reason": "{6RR} base, -1 per I/S in yard. Often costs {2R} in mid-game, ETB draws 3. Refills hand mid-storm-chain and is itself a 3/4 prowess body.",
-      "sources": [
-        {
-          "type": "scryfall",
-          "name": "Scryfall"
-        }
-      ]
-    },
-    {
       "name": "Spinerock Tyrant",
       "price": "€3-5",
       "isGameChanger": false,
@@ -381,6 +397,125 @@
         {
           "type": "scryfall",
           "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Harmonic Prodigy",
+      "price": "€0 (owned)",
+      "isGameChanger": false,
+      "reason": "{1}{R} Human Wizard with Prowess. Oracle: 'If a triggered ability of a Shaman or another Wizard you control triggers, that ability triggers an additional time.' Doubles Storm-Kiln Artist (Dwarf Shaman) Magecraft → 4 Treasures per spell+copy with Bonus Round active. Doubles Vivi's Persistence Wizard token's noncreature-spell drain trigger. Doubles Young Pyromancer (Human Shaman) Elemental token output → 2 tokens per I/S.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall",
+          "url": "https://scryfall.com/card/soc/123/harmonic-prodigy"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 missed-card scan"
+        }
+      ]
+    },
+    {
+      "name": "Young Pyromancer",
+      "price": "€1-3",
+      "isGameChanger": false,
+      "reason": "{1}{R} Human Shaman. Oracle: 'Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.' Every I/S in storm chain prints a body — each body is another Zada-copy target, so the next cantrip copies one more time. Tokens also feed Skullclamp draws and Goblin Bombardment sacs. Pyromancer itself is a Shaman → Harmonic Prodigy doubles its trigger to 2 tokens per spell.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall",
+          "url": "https://scryfall.com/card/tdc/95/young-pyromancer"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 missed-card scan"
+        }
+      ]
+    },
+    {
+      "name": "Reverberate",
+      "price": "€1-3",
+      "isGameChanger": false,
+      "reason": "{R}{R} instant. 'Copy target instant or sorcery spell. You may choose new targets for the copy.' Two-mana hard copy — copy Bonus Round / Past in Flames / Mana Geyser / Grapeshot, or copy your own Zada-targeted cantrip post-resolution for a second N-copy fan-out.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall",
+          "url": "https://scryfall.com/card/m13/145/reverberate"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 missed-card scan"
+        }
+      ]
+    },
+    {
+      "name": "Goblin Engineer",
+      "price": "€3-6",
+      "isGameChanger": false,
+      "reason": "{1}{R} Goblin Artificer. ETB tutors any artifact card to your graveyard. Then {R}, {T}, sacrifice an artifact: return target artifact with mana value 3 or less from your graveyard to the battlefield. Tutors Skullclamp / Sol Ring / Ruby Medallion / Goblin Bombardment / Roaming Throne; recurs key artifacts after Vandalblast / Chaos Warp metas. Rare mono-R artifact tutor.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall",
+          "url": "https://scryfall.com/card/mh1/128/goblin-engineer"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 missed-card scan"
+        }
+      ]
+    },
+    {
+      "name": "Krenko, Tin Street Kingpin",
+      "price": "€1-3",
+      "isGameChanger": false,
+      "reason": "{2}{R} Legendary Goblin. Oracle: 'Whenever Krenko attacks, put a +1/+1 counter on it, then create a number of 1/1 red Goblin creature tokens equal to Krenko's power.' Exponential attack-based scaling: T4 attack → 1 counter → 1 token, T5 → 2 counters → 2 tokens, T6 → 3 → 3. Castable T3, one turn earlier than Krenko Mob Boss. Each token feeds the Snoop/Kiki sac loop and Empty the Warrens setup.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall",
+          "url": "https://scryfall.com/card/moc/287/krenko-tin-street-kingpin"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 missed-card scan"
+        }
+      ]
+    },
+    {
+      "name": "Reiterate",
+      "price": "€3-5",
+      "isGameChanger": false,
+      "reason": "{1}{R}{R} instant with Buyback {3}: 'Copy target instant or sorcery spell. You may choose new targets for the copy.' Win-the-game button under infinite ritual mana — Birgi + Storm-Kiln Artist + buyback-Reiterate on Seething Song / Mana Geyser → unbounded mana → Reiterate-Grapeshot for table kill. Even without infinite loop, copies Bonus Round / Past in Flames / Underworld Breach at instant speed.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall",
+          "url": "https://scryfall.com/card/tsr/182/reiterate"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 missed-card scan"
+        }
+      ]
+    },
+    {
+      "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+      "price": "€8-15",
+      "isGameChanger": false,
+      "reason": "{2}{R} Saga (3 chapters) → flips into Reflection of Kiki-Jiki. Chapter I: 2/2 Goblin Shaman token that makes Treasure on attack (ramp). Chapter II: discard up to 2, draw that many (yard fuel for Past in Flames / Underworld Breach). Chapter III: flip into Reflection — 'Enchantment Creature — Goblin Shaman. {1}, {T}: create a token that's a copy of another target nonlegendary creature you control, except it has haste. Sacrifice it at next end step.' Reflection is non-legendary → Snoop+Reflection assembles the same infinite-haste-copy line as Snoop+Kiki, with no legend-rule conflict. Backup combo enabler.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall",
+          "url": "https://scryfall.com/card/neo/141/fable-of-the-mirror-breaker-reflection-of-kiki-jiki"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 missed-card scan"
         }
       ]
     }
@@ -429,6 +564,22 @@
       ]
     },
     {
+      "title": "Snoop+Reflection of Kiki-Jiki+Impact Tremors (backup combo)",
+      "cards": [
+        "Conspicuous Snoop",
+        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+        "Goblin Recruiter",
+        "Impact Tremors"
+      ],
+      "description": "Backup line: Reflection of Kiki-Jiki (back-face of Fable) is a non-legendary Goblin Shaman with `{1}, {T}: create a haste-copy of nonlegendary creature you control, sac at next EOS`. Snoop inherits this ability when Reflection is on top of library (via Goblin Recruiter stacking). Infinite token Snoops trigger Impact Tremors. Functions even if Kiki-Jiki is exiled — Fable Chapter III flip is the redundancy lane.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 analysis"
+        }
+      ]
+    },
+    {
       "title": "Snoop+Kiki+Impact Tremors (infinite damage)",
       "cards": [
         "Conspicuous Snoop",
@@ -466,6 +617,24 @@
       ]
     },
     {
+      "title": "Reiterate Buyback Infinite Mana → Grapeshot",
+      "cards": [
+        "Reiterate",
+        "Seething Song",
+        "Mana Geyser",
+        "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+        "Storm-Kiln Artist",
+        "Grapeshot"
+      ],
+      "description": "Win the game under any of these conditions: (a) Birgi in play + cast Reiterate {1}{R}{R} with buyback {3} = net 5R; (b) Storm-Kiln Artist in play converting Magecraft into Treasures; (c) Underworld Breach + 3 yard cards to escape the loop fuel. Target Seething Song or Mana Geyser, copy with Reiterate, buyback Reiterate, repeat indefinitely. Cast Grapeshot at storm 30+ for table kill.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 analysis"
+        }
+      ]
+    },
+    {
       "title": "Drain Trigger Chip (multi-source)",
       "cards": [
         "Pashalik Mons",
@@ -485,6 +654,27 @@
     }
   ],
   "synergies": [
+    {
+      "title": "Harmonic Prodigy + Storm-Kiln + Young Pyromancer (per-spell stack)",
+      "cards": [
+        "Harmonic Prodigy",
+        "Storm-Kiln Artist",
+        "Young Pyromancer",
+        "Vivi's Persistence"
+      ],
+      "description": "Harmonic Prodigy oracle: 'If a triggered ability of a Shaman or another Wizard you control triggers, that ability triggers an additional time.' Stacks on three creature types this deck cares about: Storm-Kiln Artist (Dwarf Shaman, Magecraft) → 2 Treasures per spell. Young Pyromancer (Human Shaman, cast trigger) → 2 Elemental tokens per spell. Vivi's Persistence Wizard token (noncreature-spell drain) → 2 dmg per opp per spell. A 6-spell turn now yields 12 Treasures, 12 tokens, 12 dmg per opp — before any Bonus Round multiplier.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall — Harmonic Prodigy oracle",
+          "url": "https://scryfall.com/card/soc/123/harmonic-prodigy"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-282 analysis"
+        }
+      ]
+    },
     {
       "title": "Zada + Roaming Throne (trigger doubling)",
       "cards": [
@@ -632,10 +822,10 @@
       "secondary_role": "engine"
     },
     {
-      "name": "Mogg War Marshal",
-      "type": "Creature — Goblin Warrior",
-      "primary_role": "payoff",
-      "secondary_role": "utility"
+      "name": "Goblin Engineer",
+      "type": "Creature — Goblin Artificer",
+      "primary_role": "tutor",
+      "secondary_role": "recursion"
     },
     {
       "name": "Goblin Matron",
@@ -687,10 +877,11 @@
       "wincon_style": "combat"
     },
     {
-      "name": "Siege-Gang Lieutenant",
-      "type": "Creature — Goblin",
-      "primary_role": "payoff",
-      "secondary_role": "utility"
+      "name": "Krenko, Tin Street Kingpin",
+      "type": "Legendary Creature — Goblin",
+      "primary_role": "engine",
+      "secondary_role": "wincon",
+      "wincon_style": "combat"
     },
     {
       "name": "Searslicer Goblin",
@@ -729,10 +920,11 @@
       "secondary_role": "ramp"
     },
     {
-      "name": "Bedlam Reveler",
-      "type": "Creature — Devil Horror",
-      "primary_role": "card-draw",
-      "secondary_role": "threat"
+      "name": "Reiterate",
+      "type": "Instant",
+      "primary_role": "engine",
+      "secondary_role": "wincon",
+      "wincon_style": "combo"
     },
     {
       "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
@@ -753,10 +945,10 @@
       "secondary_role": "utility"
     },
     {
-      "name": "Renegade Tactics",
-      "type": "Sorcery",
-      "primary_role": "card-draw",
-      "secondary_role": "utility"
+      "name": "Harmonic Prodigy",
+      "type": "Creature — Human Wizard",
+      "primary_role": "engine",
+      "secondary_role": "payoff"
     },
     {
       "name": "Fists of Flame",
@@ -771,10 +963,10 @@
       "secondary_role": "utility"
     },
     {
-      "name": "Wild Ride",
-      "type": "Sorcery",
-      "primary_role": "utility",
-      "secondary_role": "recursion"
+      "name": "Young Pyromancer",
+      "type": "Creature — Human Shaman",
+      "primary_role": "engine",
+      "secondary_role": "payoff"
     },
     {
       "name": "Ancestors' Aid",
@@ -863,11 +1055,11 @@
       "secondary_role": "payoff"
     },
     {
-      "name": "Haze of Rage",
-      "type": "Sorcery",
-      "primary_role": "payoff",
+      "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+      "type": "Enchantment — Saga // Enchantment Creature — Goblin Shaman",
+      "primary_role": "engine",
       "secondary_role": "wincon",
-      "wincon_style": "combat"
+      "wincon_style": "combo"
     },
     {
       "name": "Past in Flames",
@@ -983,10 +1175,11 @@
       "secondary_role": "counterspell"
     },
     {
-      "name": "Flaring Pain",
+      "name": "Reverberate",
       "type": "Instant",
-      "primary_role": "utility",
-      "secondary_role": "recursion"
+      "primary_role": "engine",
+      "secondary_role": "wincon",
+      "wincon_style": "combo"
     },
     {
       "name": "Hexing Squelcher",
