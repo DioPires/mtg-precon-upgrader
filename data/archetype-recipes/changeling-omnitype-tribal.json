@@ -1,0 +1,168 @@
+{
+  "id": "changeling-omnitype-tribal",
+  "name": "Changeling Omnitype Tribal",
+  "summary": "Every changeling is every creature type, triggering Sliver / Elemental / Dragon / Elf / Wolf / Goblin / Dalek payoffs simultaneously from a single body. Built around tribal commanders with creature-type-payoff effects — especially The Ur-Dragon (Eminence reduces other Dragon spells by {1}, every changeling is a Dragon).",
+  "version": 1,
+  "status": "pending-approval",
+  "_status_note": "Recipe drafted alongside Hidden Legion deck build (DEC-290 Gate 3, 2026-05-20). Recipe queries are unvalidated against canon. Recipe-approval flow not yet run — to be addressed as a follow-up issue. Decks using this archetype tag will produce candidate pools via existing scoring, but recipe-driven sub-recipe surfacing is not yet active until Gate 2/3 approval.",
+  "last_reviewed": "2026-05-20",
+  "approval": null,
+  "canon_approval": null,
+  "canon": [
+    "The Ur-Dragon",
+    "Universal Automaton",
+    "Morophon, the Boundless",
+    "Changeling Outcast",
+    "Maskwood Nexus",
+    "Realmwalker",
+    "Cavern of Souls",
+    "Path of Ancestry",
+    "Vanquisher's Banner",
+    "Manaweft Sliver",
+    "Sliver Legion",
+    "Sliver Overlord",
+    "Dragon Tempest",
+    "Lathliss, Dragon Queen",
+    "Mirror Entity",
+    "Springleaf Parade",
+    "Firdoch Core",
+    "Mutable Explorer",
+    "Chomping Changeling",
+    "Patriarch's Bidding"
+  ],
+  "excludes": {
+    "_note": "No global excludes. Apply per-deck."
+  },
+  "runtime_semantics": {
+    "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime. Most changelings are mono-color or colorless and survive any splice; the every-type-payoff cards (Sliver/Dragon/Elemental lords) are constrained by color so splice matters there.",
+    "tribe_parameterization": "The sub-recipes for type-specific payoffs (sliver_payoffs, dragon_payoffs, elemental_payoffs) are parameterized on a single tribe. For decks targeting a non-Dragon tribal commander, substitute the tribe name in the relevant queries. The changeling_creatures and changeling_enablers sub-recipes are tribe-agnostic."
+  },
+  "sub_recipes": {
+    "changeling_creatures": {
+      "intent": "All creatures with the Changeling keyword — they ARE every creature type and trigger every tribal payoff in the deck simultaneously.",
+      "queries": [
+        "f:commander keyword:changeling -t:land"
+      ],
+      "canon_recall": {
+        "expected": [
+          "Universal Automaton",
+          "Changeling Outcast",
+          "Morophon, the Boundless",
+          "Mirror Entity",
+          "Realmwalker",
+          "Mutable Explorer",
+          "Chomping Changeling"
+        ],
+        "_note": "Canon recall not validated yet — pending Gate 2 approval."
+      }
+    },
+    "every_type_enablers": {
+      "intent": "Non-changeling permanents that grant every-creature-type to your board (Maskwood Nexus) or produce changeling tokens (Springleaf Parade, Birthing Boughs). Multiply the effective tribal density.",
+      "queries": [
+        "f:commander (o:\"every creature type\" or o:\"shapeshifter creature token with changeling\") -t:creature"
+      ],
+      "canon_recall": {
+        "expected": [
+          "Maskwood Nexus",
+          "Springleaf Parade",
+          "Birthing Boughs"
+        ]
+      }
+    },
+    "sliver_payoffs": {
+      "intent": "Slivers that pump or grant abilities to all Slivers — every changeling is a Sliver, so these effects extend to every changeling.",
+      "queries": [
+        "f:commander t:sliver (o:\"sliver creatures you control\" or o:\"slivers you control\" or o:\"all sliver\")"
+      ],
+      "canon_recall": {
+        "expected": [
+          "Manaweft Sliver",
+          "Cloudshredder Sliver",
+          "Sliver Legion",
+          "Sliver Hivelord",
+          "Sliver Overlord",
+          "Sinew Sliver",
+          "Predatory Sliver"
+        ]
+      }
+    },
+    "dragon_payoffs": {
+      "intent": "Dragon tribal payoffs — anthem, scaling burn, attack triggers. Apply to every changeling via every-type.",
+      "queries": [
+        "f:commander id<=wubrg (o:\"dragon you control\" or o:\"dragons you control\" or o:\"another dragon\")"
+      ],
+      "canon_recall": {
+        "expected": [
+          "Dragon Tempest",
+          "Lathliss, Dragon Queen",
+          "Scourge of Valkas",
+          "Dragonlord's Servant",
+          "Sylvia Brightspear",
+          "Atarka, World Render"
+        ]
+      }
+    },
+    "elemental_payoffs": {
+      "intent": "Elemental ETB / cast triggers — every changeling is an Elemental.",
+      "queries": [
+        "f:commander id<=wubrg (o:\"another elemental\" or o:\"whenever an elemental\" or o:\"elemental enters\")"
+      ],
+      "canon_recall": {
+        "expected": [
+          "Risen Reef",
+          "Champion of the Path",
+          "Omnath, Locus of Creation"
+        ]
+      }
+    },
+    "elf_mana_payoffs": {
+      "intent": "Elf-count mana dorks — every changeling is an Elf, so these dorks scale with the entire creature board.",
+      "queries": [
+        "f:commander t:creature t:elf (o:\"each elf\" or o:\"for each elf\" or o:\"elves you control\")"
+      ],
+      "canon_recall": {
+        "expected": [
+          "Priest of Titania",
+          "Elvish Archdruid",
+          "Wirewood Channeler",
+          "Marwyn, the Nurturer"
+        ]
+      }
+    },
+    "tribal_anthems_global": {
+      "intent": "Universal tribal anthems / draw engines that name a creature type — name Dragon (or Shapeshifter) to apply to every changeling + every real Dragon.",
+      "queries": [
+        "f:commander t:artifact (o:\"chosen type\" or o:\"creatures you control of the chosen type\")",
+        "f:commander t:enchantment (o:\"chosen creature type\" or o:\"creatures you control of the chosen type\")"
+      ],
+      "canon_recall": {
+        "expected": [
+          "Vanquisher's Banner",
+          "Door of Destinies",
+          "Herald's Horn",
+          "Coat of Arms",
+          "Kindred Discovery",
+          "Reflections of Littjara"
+        ]
+      }
+    },
+    "ur_dragon_combo": {
+      "intent": "Specific cards enabling the Snoop+Kiki+Tremors back-door combo line and Patriarch's Bidding recursion.",
+      "queries": [
+        "name:\"Conspicuous Snoop\" or name:\"Kiki-Jiki, Mirror Breaker\" or name:\"Impact Tremors\" or name:\"Patriarch's Bidding\""
+      ],
+      "canon_recall": {
+        "expected": [
+          "Conspicuous Snoop",
+          "Kiki-Jiki, Mirror Breaker",
+          "Impact Tremors",
+          "Patriarch's Bidding"
+        ]
+      }
+    }
+  },
+  "validation_summary": {
+    "_note": "Recipe is in pending-approval status. Canon recall not yet validated against Scryfall. Use for archetype tagging on Hidden Legion deck only; recipe-driven sub-recipe surfacing requires Gate 2/3 approval before activation."
+  },
+  "shared_refs": {}
+}
