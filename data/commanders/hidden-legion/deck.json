@@ -75,7 +75,9 @@
         "Predatory Sliver",
         "Sliver Hivelord",
         "Sliver Legion",
-        "Sliver Overlord"
+        "Sliver Overlord",
+        "Hatchery Sliver",
+        "Thrumming Hivepool"
       ]
     },
     {
@@ -84,7 +86,6 @@
         "Dragonlord's Servant",
         "Dragon Tempest",
         "Sylvia Brightspear",
-        "Scourge of Valkas",
         "Lathliss, Dragon Queen",
         "Atarka, World Render",
         "Vanquisher's Banner"
@@ -152,8 +153,7 @@
       "name": "Protection",
       "cards": [
         "Heroic Intervention",
-        "Clever Concealment",
-        "Boros Charm"
+        "Clever Concealment"
       ]
     },
     {
@@ -362,7 +362,6 @@
       "kind": "drain",
       "cards": [
         "Dragon Tempest",
-        "Scourge of Valkas",
         "Lathliss, Dragon Queen",
         "Maskwood Nexus",
         "Springleaf Parade"
@@ -546,8 +545,7 @@
         "Morophon, the Boundless",
         "Universal Automaton",
         "Lathliss, Dragon Queen",
-        "Atarka, World Render",
-        "Scourge of Valkas"
+        "Atarka, World Render"
       ],
       "description": "Naming Dragon at Cavern's ETB makes mana spent from it produce uncounterable Dragon spells. Covers commander (Dragon Avatar) + 4 real dragons + 13 changelings (every-type) + Morophon. Single name → ~24 of 33 creatures protected.",
       "sources": [
@@ -583,6 +581,53 @@
         {
           "type": "ai-inferred",
           "name": "DEC-290 audit r6"
+        }
+      ]
+    },
+    {
+      "title": "Hatchery Sliver replicates every changeling spell",
+      "cards": [
+        "Hatchery Sliver",
+        "Universal Automaton",
+        "Changeling Outcast",
+        "Nameless Inversion",
+        "Mirror Entity",
+        "Mutable Explorer",
+        "Realmwalker",
+        "Taurean Mauler",
+        "Chomping Changeling",
+        "Irregular Cohort",
+        "Manaweft Sliver",
+        "Cloudshredder Sliver",
+        "Sinew Sliver",
+        "Predatory Sliver"
+      ],
+      "description": "Hatchery Sliver static: 'Each Sliver spell you cast has replicate. Replicate cost = its mana cost.' Every changeling spell is a Sliver spell (every-type via Changeling), so every changeling we cast can be copied for an additional cost. Pay the replicate to duplicate ETB triggers — Risen Reef fires twice, Dragon Tempest fires twice, Lathliss makes 2 tokens, Vanquisher's Banner draws twice. Legendary spells (Sliver Legion/Hivelord/Overlord/Morophon) hit the legend rule on copies — skip replicate on those.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-290 r10 analysis"
+        }
+      ]
+    },
+    {
+      "title": "Thrumming Hivepool Affinity + Sliver static buffs",
+      "cards": [
+        "Thrumming Hivepool",
+        "Manaweft Sliver",
+        "Cloudshredder Sliver",
+        "Sinew Sliver",
+        "Predatory Sliver",
+        "Sliver Hivelord",
+        "Sliver Legion",
+        "Sliver Overlord",
+        "Hatchery Sliver"
+      ],
+      "description": "Thrumming Hivepool's Affinity for Slivers reduces its cost by {1} per Sliver controlled (counting every changeling as a Sliver). With ~6+ Slivers on board, Hivepool is effectively free. Static grants double strike + haste to all Slivers (covers real Slivers that Sylvia's Dragon-only double-strike misses). 2 free 1/1 Sliver tokens per upkeep stack with Sliver Legion pump.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-290 r10 analysis"
         }
       ]
     }
@@ -911,10 +956,10 @@
       "primary_role": "protection"
     },
     {
-      "name": "Boros Charm",
-      "type": "Instant",
-      "primary_role": "protection",
-      "secondary_role": "utility"
+      "name": "Hatchery Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "engine",
+      "secondary_role": "payoff"
     },
     {
       "name": "Smothering Tithe",
@@ -1022,11 +1067,10 @@
       "secondary_role": "threat"
     },
     {
-      "name": "Scourge of Valkas",
-      "type": "Creature — Dragon",
-      "primary_role": "engine",
-      "secondary_role": "threat",
-      "wincon_style": "drain"
+      "name": "Thrumming Hivepool",
+      "type": "Artifact",
+      "primary_role": "payoff",
+      "secondary_role": "engine"
     },
     {
       "name": "Lathliss, Dragon Queen",
