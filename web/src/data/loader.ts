@@ -56,7 +56,9 @@ import type {
 // Hunter's Talent/Fierce Empath -> Beastmaster Ascension/Unnatural Growth swap.
 // v20 -> v21 (DEC-287 follow-up 2026-05-19): reverse Beastmaster Ascension
 // (deck not combat-attack-heavy) -> Llanowar Tribe (sustained GGG + 3/3 body).
-const STORAGE_PREFIX = 'gv1-deck-data-v21:';
+// v21 -> v22 (DEC-290 2026-05-21): Hidden Legion deck added (slot 12); r7-r10
+// swaps incl. Hatchery Sliver + Thrumming Hivepool + Stinging Study + Patriarch's Bidding.
+const STORAGE_PREFIX = 'gv1-deck-data-v22:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
