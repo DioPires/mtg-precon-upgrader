@@ -60,7 +60,8 @@ import type {
 // swaps incl. Hatchery Sliver + Thrumming Hivepool + Stinging Study + Patriarch's Bidding.
 // v22 -> v23 (DEC-293 2026-05-24): Superfriends Esika deck added; Genesis Protocol removed.
 // v23 -> v24 (DEC-293 follow-up 2026-05-24): Superfriends Esika swap Vraska Relic Seeker -> Leyline of the Guildpact.
-const STORAGE_PREFIX = 'gv1-deck-data-v24:';
+// v24 -> v25 (DEC-293 follow-up 2026-05-24): walker protection swap (Magistrate's Scepter + Innkeeper's Talent -> Sphere of Safety + Heroic Intervention).
+const STORAGE_PREFIX = 'gv1-deck-data-v25:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
