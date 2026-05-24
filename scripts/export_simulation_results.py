@@ -28,7 +28,6 @@ import mana_simulation_eternal_agony as sim_rakdos
 import mana_simulation_dark_dominion as sim_grixis
 import mana_simulation_eternal_harvest as sim_golgari
 import mana_simulation_mutant_multiplication as sim_wubrg
-import mana_simulation_genesis_protocol as sim_azorius
 import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
@@ -137,14 +136,6 @@ KEY_COMBOS = {
             "pieces": ["Heliod, Sun-Crowned", "Walking Ballista"],
             "requiresCommander": False,
             "description": "Infinite damage via lifelink counter loop.",
-        }
-    ],
-    "genesis-protocol": [
-        {
-            "name": "Narset Wheel Lock",
-            "pieces": ["Narset, Parter of Veils", "Windfall"],
-            "requiresCommander": False,
-            "description": "Hand denial package.",
         }
     ],
     "mutant-multiplication": [
@@ -2242,51 +2233,6 @@ def export_wubrg(metadata: dict) -> dict:
     )
 
 
-def export_azorius(metadata: dict) -> dict:
-    """Export Genesis Protocol (Azorius Shorikai) simulation."""
-    result = _export_colored(
-        sim_module=sim_azorius,
-        deck_id="genesis-protocol",
-        deck_name="Genesis Protocol",
-        commander_name="Shorikai, Genesis Engine",
-        commander_cmc=4,
-        colors=["W", "U"],
-        metadata=metadata,
-    )
-
-    # Re-run to get Shorikai-specific stats (crew readiness, isochron threshold)
-    # The _export_colored call already ran the sim; re-extract special metrics.
-    deck_file = PROJECT_ROOT / "data" / "commanders" / "genesis-protocol" / "deck.json"
-    with open(deck_file) as f:
-        deck_data = json.load(f)
-    decklist = sim_azorius.build_decklist(deck_data)
-
-    print(f"  Running {NUM_GAMES:,} games for Genesis Protocol (Shorikai-specific metrics)...")
-    stats = run_parallel(sim_azorius._run_chunk, sim_azorius.merge_stats,
-                         decklist, metadata, NUM_GAMES)
-    total = NUM_GAMES
-
-    # Add Shorikai-specific special metrics
-    crew_by_turn = {}
-    for t in range(1, NUM_TURNS + 1):
-        crew_by_turn[str(t)] = pct(stats["crew_ready_by_turn"][t], total)
-
-    isochron_by_turn = {}
-    for t in range(1, NUM_TURNS + 1):
-        isochron_by_turn[str(t)] = pct(stats["isochron_ready_by_turn"][t], total)
-
-    result["specialMetrics"]["crewReadiness"] = {
-        "description": "3+ cumulative Shorikai activations (enough Pilots to crew)",
-        "byTurn": crew_by_turn,
-    }
-    result["specialMetrics"]["isochronComboThreshold"] = {
-        "description": "3+ mana from nonland permanents (Isochron + Dramatic Reversal goes infinite)",
-        "byTurn": isochron_by_turn,
-    }
-
-    return result
-
-
 def export_mono_white(metadata: dict) -> dict:
     """Export The White Forge (mono-white Gandalf) simulation."""
     return _export_colored(
@@ -2470,7 +2416,6 @@ DECKS = [
     ("dark-dominion", "Dark Dominion", export_grixis),
     ("eternal-harvest", "Eternal Harvest", export_golgari),
     ("mutant-multiplication", "Mutant Multiplication", export_wubrg),
-    ("genesis-protocol", "Genesis Protocol", export_azorius),
     ("the-white-forge", "The White Forge", export_mono_white),
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
     ("creeping-corruption", "Creeping Corruption", export_wubg_poison),

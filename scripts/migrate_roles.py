@@ -79,10 +79,6 @@ DECK_META = {
         "wincon_style": "value-incremental",
         "commanderRoles": {"primary": "engine", "secondary": "recursion"},
     },
-    "genesis-protocol": {
-        "wincon_style": "value-incremental",
-        "commanderRoles": {"primary": "engine", "secondary": "card-draw"},
-    },
     "mutant-multiplication": {
         "wincon_style": "value-incremental",
         "commanderRoles": {"primary": "engine", "secondary": "payoff"},

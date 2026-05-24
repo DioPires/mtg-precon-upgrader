@@ -164,7 +164,6 @@ KNOWN_ARCHIDEKT_IDS: dict[str, int] = {
     "eternal-agony": 20759936,
     "dark-dominion": 20760109,
     "mutant-multiplication": 20786495,
-    "genesis-protocol": 20946250,
     "eternal-harvest": 20946261,
 }
 

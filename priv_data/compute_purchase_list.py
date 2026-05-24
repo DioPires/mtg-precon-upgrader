@@ -5,7 +5,7 @@ Usage:
   python compute_purchase_list.py --owned Owned.csv --shop deck1 deck2 [--built deck3 deck4]
 
 Example:
-  python compute_purchase_list.py --owned Owned.csv --shop genesis-protocol \
+  python compute_purchase_list.py --owned Owned.csv --shop superfriends-esika \
     --built dark-dominion titan-convergence eternal-agony eternal-harvest \
            the-white-forge verdant-tide mutant-multiplication creeping-corruption
 """
