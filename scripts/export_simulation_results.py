@@ -34,6 +34,7 @@ import mana_simulation_creeping_corruption as sim_wubg_poison
 import mana_simulation_silverquill_the_disputant as sim_silverquill
 import mana_simulation_pyre_and_panic as sim_mono_red
 import mana_simulation_hidden_legion as sim_hidden_legion
+import mana_simulation_superfriends_esika as sim_superfriends_esika
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -2346,6 +2347,62 @@ def export_hidden_legion(metadata: dict) -> dict:
     return result
 
 
+def export_superfriends_esika(metadata: dict) -> dict:
+    """Export Esika's Council (5C Superfriends) simulation."""
+    result = _export_colored(
+        sim_module=sim_superfriends_esika,
+        deck_id="superfriends-esika",
+        deck_name="Esika's Council",
+        commander_name="Esika, God of the Tree",
+        commander_cmc=6,
+        colors=["W", "U", "B", "R", "G"],
+        metadata=metadata,
+    )
+
+    # Esika-specific metrics: engine readiness, doublers curve, Esika castability
+    deck_file = PROJECT_ROOT / "data" / "commanders" / "superfriends-esika" / "deck.json"
+    with open(deck_file) as f:
+        deck_data = json.load(f)
+    decklist = sim_superfriends_esika.build_decklist(deck_data)
+
+    print(f"  Running {NUM_GAMES:,} games for Esika engine metrics...")
+    stats = run_parallel(sim_superfriends_esika._run_chunk, sim_superfriends_esika.merge_stats,
+                         decklist, metadata, NUM_GAMES)
+    total = NUM_GAMES
+
+    engine_ready = {}
+    for t in range(1, NUM_TURNS + 1):
+        engine_ready[str(t)] = pct(stats["engine_ready_by_turn"][t], total)
+
+    esika_castable = {}
+    for t in range(1, NUM_TURNS + 1):
+        esika_castable[str(t)] = pct(stats["esika_castable_by_turn"][t], total)
+
+    doublers_curve = {}
+    for t in range(1, NUM_TURNS + 1):
+        doublers_curve[str(t)] = mana_stats(stats["counter_doublers_by_turn"][t])
+
+    result["specialMetrics"]["engineReadiness"] = {
+        "description": (
+            "Probability Esika has been cast AND at least one counter-doubler "
+            "(Doubling Season, Parallel Lives, Vorinclex, Deepglow Skate, "
+            "Innkeeper's Talent) is in play. Core engine state — Bridge active "
+            "with a doubler accelerates every walker ETB into ult range."
+        ),
+        "byTurn": engine_ready,
+    }
+    result["specialMetrics"]["esikaCastable"] = {
+        "description": "Esika back-side (Prismatic Bridge, 6 CMC, {1}{W}{U}{B}{R}{G}) castable by turn",
+        "byTurn": esika_castable,
+    }
+    result["specialMetrics"]["counterDoublersInPlay"] = {
+        "description": "Counter-doublers / proliferate enablers in play per turn (median/mean). Combo-readiness scaffolding.",
+        "byTurn": doublers_curve,
+    }
+
+    return result
+
+
 def export_orzhov(metadata: dict) -> dict:
     """Export Quill of Casualties (Orzhov Silverquill aristocrats) simulation."""
     return _export_colored(
@@ -2422,6 +2479,7 @@ DECKS = [
     ("silverquill-the-disputant", "Quill of Casualties", export_orzhov),
     ("pyre-and-panic", "Pyre & Panic", export_mono_red),
     ("hidden-legion", "Hidden Legion", export_hidden_legion),
+    ("superfriends-esika", "Esika's Council", export_superfriends_esika),
 ]
 
 

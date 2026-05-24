@@ -10,6 +10,7 @@ EXPORT_CASES = [
     ("scripts.mana_simulation_eternal_harvest", "export_golgari", "eternal-harvest"),
     ("scripts.mana_simulation_mutant_multiplication", "export_wubrg", "mutant-multiplication"),
     ("scripts.mana_simulation_titan_convergence", "export_titan", "titan-convergence"),
+    ("scripts.mana_simulation_superfriends_esika", "export_superfriends_esika", "superfriends-esika"),
 ]
 
 
