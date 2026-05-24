@@ -58,7 +58,8 @@ import type {
 // (deck not combat-attack-heavy) -> Llanowar Tribe (sustained GGG + 3/3 body).
 // v21 -> v22 (DEC-290 2026-05-21): Hidden Legion deck added (slot 12); r7-r10
 // swaps incl. Hatchery Sliver + Thrumming Hivepool + Stinging Study + Patriarch's Bidding.
-const STORAGE_PREFIX = 'gv1-deck-data-v22:';
+// v22 -> v23 (DEC-293 2026-05-24): Superfriends Esika deck added; Genesis Protocol removed.
+const STORAGE_PREFIX = 'gv1-deck-data-v23:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
