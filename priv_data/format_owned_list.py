@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
+import time
 from pathlib import Path
 from urllib import error, request
 
@@ -12,6 +13,9 @@ OWNED_CSV = SCRIPT_DIR / "Owned.csv"
 FORMATTED_CSV = SCRIPT_DIR / "owned_formatted.csv"
 SCRYFALL_COLLECTION_URL = "https://api.scryfall.com/cards/collection"
 SCRYFALL_BATCH_SIZE = 75
+SCRYFALL_RATE_LIMIT_S = 0.1
+SCRYFALL_BACKOFF_DELAYS_S = (1, 2, 4)
+SCRYFALL_REQUEST_TIMEOUT_S = 30
 FORMATTED_FIELDNAMES = [
     "name",
     "quantity",
@@ -126,8 +130,18 @@ def post_scryfall_collection(identifiers: list[dict[str, str]]) -> dict:
             "User-Agent": "mtg-precon-upgrader/1.0",
         },
     )
-    with request.urlopen(req) as response:
-        return json.load(response)
+
+    for attempt in range(1 + len(SCRYFALL_BACKOFF_DELAYS_S)):
+        try:
+            with request.urlopen(req, timeout=SCRYFALL_REQUEST_TIMEOUT_S) as response:
+                return json.load(response)
+        except error.HTTPError as exc:
+            if exc.code == 429 and attempt < len(SCRYFALL_BACKOFF_DELAYS_S):
+                time.sleep(SCRYFALL_BACKOFF_DELAYS_S[attempt])
+                continue
+            raise
+
+    raise RuntimeError("Scryfall retry loop exited without returning")
 
 
 def fetch_missing_metadata(cards_to_fetch: list[dict[str, str | int]]) -> tuple[dict[str, dict[str, str]], list[str]]:
@@ -172,6 +186,9 @@ def fetch_missing_metadata(cards_to_fetch: list[dict[str, str | int]]) -> tuple[
                 missing_names.append(name)
                 continue
             fetched[name] = normalize_scryfall_card(match)
+
+        if index + SCRYFALL_BATCH_SIZE < len(cards_to_fetch):
+            time.sleep(SCRYFALL_RATE_LIMIT_S)
 
     return fetched, missing_names
 
