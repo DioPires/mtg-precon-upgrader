@@ -19,6 +19,7 @@ function makeDeck(over: Partial<DeckFull>): DeckFull {
     type: 'Commander · Theme',
     colors: '🔴',
     bracket: 'IV',
+    status: 'physical',
     pt: '—',
     price: '$200-300',
     winTurn: '—',

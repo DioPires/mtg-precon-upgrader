@@ -365,6 +365,39 @@ em { font-style: italic; color: var(--gv1-gold); }
   background: rgba(124, 200, 146, 0.08);
 }
 
+/* DEC-297 — brewing group divider in the deck-selector rail. Vertical bar
+   with sub-label that visually separates physical decks from brewing decks. */
+.gv1-sel-group-marker {
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
+  padding: 0 12px;
+  margin: 0 4px;
+  border-left: 1px dashed var(--gv1-line);
+}
+.gv1-sel-group-label {
+  letter-spacing: 0.18em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.gv1-sel-pill-brewing { border-style: dashed; }
+
+/* DEC-297 — brewing-deck marker. Used wherever a deck identity is shown to
+   flag virtual builds excluded from card-usage analysis. */
+.gv1-brewing-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  margin-left: 8px;
+  letter-spacing: 0.06em;
+  color: #d8a64a;
+  border: 1px solid rgba(216, 166, 74, 0.45);
+  border-radius: 2px;
+  background: rgba(216, 166, 74, 0.08);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 /* Mana pips — proper circle with letter */
 .gv1-pips { display: inline-flex; gap: 3px; }
 .gv1-pip {

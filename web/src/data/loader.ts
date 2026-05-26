@@ -62,7 +62,8 @@ import type {
 // v23 -> v24 (DEC-293 follow-up 2026-05-24): Superfriends Esika swap Vraska Relic Seeker -> Leyline of the Guildpact.
 // v24 -> v25 (DEC-293 follow-up 2026-05-24): walker protection swap (Magistrate's Scepter + Innkeeper's Talent -> Sphere of Safety + Heroic Intervention).
 // v25 -> v26 (DEC-293 follow-up 2026-05-24): force-invalidate so deployed UI picks up the latest superfriends-esika deck.json + simulation.json immediately.
-const STORAGE_PREFIX = 'gv1-deck-data-v26:';
+// v26 -> v27 (DEC-297 2026-05-26): "brewing" deck status added; superfriends-esika flipped to brewing.
+const STORAGE_PREFIX = 'gv1-deck-data-v27:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

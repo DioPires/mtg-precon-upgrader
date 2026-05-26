@@ -68,7 +68,9 @@ export function buildCardAtlasIndex(decks: DeckFull[]): CardAtlasIndex {
     if (!displayByKey.has(key)) displayByKey.set(key, front);
   };
 
-  decks.forEach((d) => {
+  // Brewing decks are not physical and must not contribute to card-usage analysis.
+  const physical = decks.filter((d) => d.status !== 'brewing');
+  physical.forEach((d) => {
     if (d.commander) {
       push(d.commander, {
         deckSlug: d.slug,

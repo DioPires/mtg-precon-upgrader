@@ -27,6 +27,14 @@ export function Commander({ deck }: CommanderProps) {
             </span>
             <span className="gv1-mono-xs gv1-dim">· NOW SCRYING ·</span>
             <span className="gv1-mono-xs gv1-dim">BRACKET {deck.bracket}</span>
+            {deck.status === 'brewing' && (
+              <span
+                className="gv1-mono-xs gv1-brewing-pill"
+                title="Brewing — not physically built; excluded from card-usage analysis"
+              >
+                · BREWING
+              </span>
+            )}
           </div>
 
           <h1 className="gv1-cmd-deckname">{deck.deckName}</h1>

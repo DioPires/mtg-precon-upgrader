@@ -142,6 +142,26 @@ describe('normalizeDeck', () => {
     expect(out.flavor).toBe('Cascade.');
   });
 
+  it('defaults status to "physical" and respects "brewing" override (DEC-297)', () => {
+    expect(normalizeDeck(makeBundle(), 1).status).toBe('physical');
+
+    const brewing = makeBundle();
+    brewing.deck.status = 'brewing';
+    expect(normalizeDeck(brewing, 1).status).toBe('brewing');
+  });
+
+  it('propagates status onto DeckStub entries (DEC-297)', () => {
+    const phys = normalizeDeck(makeBundle(), 1);
+    const brewBundle = makeBundle();
+    brewBundle.deck.status = 'brewing';
+    brewBundle.id = 'brew';
+    brewBundle.deck.id = 'brew';
+    brewBundle.index.id = 'brew';
+    const brew = normalizeDeck(brewBundle, 2);
+    const stubs = buildDeckStubs([phys, brew]);
+    expect(stubs.map((s) => s.status)).toEqual(['physical', 'brewing']);
+  });
+
   it('builds engine sections from non-empty categories only', () => {
     const out = normalizeDeck(makeBundle(), 1);
     expect(out.engine.map((e) => e.title)).toEqual(['Game Changers', 'Eldrazi Titans']);

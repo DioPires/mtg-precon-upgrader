@@ -66,6 +66,8 @@ export interface RawCategory {
   cards: string[];
 }
 
+export type DeckStatus = 'physical' | 'brewing';
+
 export interface RawDeckIndexEntry {
   id: string;
   name: string;
@@ -75,6 +77,8 @@ export interface RawDeckIndexEntry {
   theme: string;
   bracket: string;
   lastUpdatedSet?: string;
+  /** Build status. Omitted = "physical" for backwards compat. */
+  status?: DeckStatus;
 }
 
 export interface RawDeckIndex {
@@ -107,6 +111,8 @@ export interface RawDeck {
   partner?: string;
   cost?: string;
   bracket: string;
+  /** Build status. Omitted = "physical" for backwards compat. */
+  status?: DeckStatus;
   gameChangers?: number;
   lastUpdatedSet?: string;
   archetypes?: string[];
@@ -359,6 +365,8 @@ export interface DeckFull {
   colors: string;
   /** Roman bracket (e.g. "IV"). */
   bracket: string;
+  /** Build status. Always present after normalization (defaults "physical"). */
+  status: DeckStatus;
   pt: string;
   price: string;
   winTurn: string;
@@ -403,4 +411,6 @@ export interface DeckStub {
   bracket: string;
   price: string;
   hasDetail: boolean;
+  /** Build status (defaults "physical" when omitted in source). */
+  status: DeckStatus;
 }

@@ -19,6 +19,7 @@ function makeDeck(over: Partial<DeckFull>): DeckFull {
     type: 'Commander · Theme',
     colors: '🔴',
     bracket: 'IV',
+    status: 'physical',
     pt: '—',
     price: '$200-300',
     winTurn: '—',
@@ -113,6 +114,37 @@ describe('buildCardAtlasIndex', () => {
     ];
     const idx = buildCardAtlasIndex(decks);
     expect(idx.byName.get('forest')?.[0].qty).toBe(8);
+  });
+
+  it('excludes brewing decks from the index (DEC-297)', () => {
+    const decks: DeckFull[] = [
+      makeDeck({
+        slug: 'physical-deck',
+        commander: 'Atraxa, Praetors\' Voice',
+        status: 'physical',
+        rawDecklist: [{ name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' }],
+      }),
+      makeDeck({
+        slug: 'brewing-deck',
+        commander: 'Esika, God of the Tree',
+        status: 'brewing',
+        rawDecklist: [
+          { name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' },
+          { name: 'Teferi, Hero of Dominaria', type: 'Planeswalker', primary_role: 'engine' },
+        ],
+      }),
+    ];
+
+    const idx = buildCardAtlasIndex(decks);
+
+    // Brewing deck contributes nothing — Sol Ring appears once (from physical only).
+    expect(idx.byName.get('sol ring')).toHaveLength(1);
+    expect(idx.byName.get('sol ring')?.[0].deckSlug).toBe('physical-deck');
+
+    // Cards only present in the brewing deck are absent.
+    expect(idx.byName.has('teferi, hero of dominaria')).toBe(false);
+    expect(idx.byName.has('esika, god of the tree')).toBe(false);
+    expect(idx.names).not.toContain('Teferi, Hero of Dominaria');
   });
 });
 

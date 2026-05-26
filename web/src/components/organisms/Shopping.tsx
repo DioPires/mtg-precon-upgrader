@@ -329,7 +329,13 @@ export interface ShoppingProps {
   decks: DeckFull[];
 }
 
-export function Shopping({ decks }: ShoppingProps) {
+export function Shopping({ decks: allDecksProp }: ShoppingProps) {
+  // Brewing decks (e.g., builds the user is exploring but not physically
+  // assembling) must not contribute to cards-to-buy aggregation.
+  const decks = useMemo(
+    () => allDecksProp.filter((d) => d.status !== 'brewing'),
+    [allDecksProp],
+  );
   const [selected, setSelected] = useState<Set<string>>(() =>
     new Set(decks.length ? [decks[0].slug] : []),
   );

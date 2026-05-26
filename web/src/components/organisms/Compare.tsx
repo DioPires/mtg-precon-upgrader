@@ -261,6 +261,14 @@ export function Compare({ decks }: CompareProps) {
                         aria-label={`Open ${d.deckName} guide`}
                       >
                         <span className="gv1-serif-md">{d.deckName}</span>
+                        {d.status === 'brewing' && (
+                          <span
+                            className="gv1-mono-xs gv1-brewing-pill"
+                            title="Brewing — not physically built; excluded from card-usage analysis"
+                          >
+                            BREWING
+                          </span>
+                        )}
                         <span className="gv1-mono-xs gv1-dim gv1-cmp-open" aria-hidden="true">
                           ↗
                         </span>
