@@ -1065,6 +1065,14 @@ export function Scrying({ deck, allDecks }: ScryingProps) {
             {deck.partner ? ` + ${deck.partner}` : ''}
             {sim?.metadata?.numGames ? ` · ${sim.metadata.numGames.toLocaleString()} simulations` : ''}
           </span>
+          {deck.status === 'brewing' && (
+            <span
+              className="gv1-mono-xs gv1-brewing-pill"
+              title="Brewing — not physically built; excluded from card-usage analysis"
+            >
+              BREWING
+            </span>
+          )}
         </div>
         <p className="gv1-scry-lede">
           Two interactive instruments, one passive baseline. The <em>Hand Simulator</em> deals from

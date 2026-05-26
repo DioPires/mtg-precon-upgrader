@@ -202,7 +202,17 @@ function CodexCard({ deck, rank, onOpen }: CodexCardProps) {
         </div>
         <GV1ManaPips colors={deck.colors} />
       </div>
-      <h3 className="gv1-codex-card-title">{deck.deckName}</h3>
+      <h3 className="gv1-codex-card-title">
+        {deck.deckName}
+        {deck.status === 'brewing' && (
+          <span
+            className="gv1-mono-xs gv1-brewing-pill"
+            title="Brewing — not physically built; excluded from card-usage analysis"
+          >
+            BREWING
+          </span>
+        )}
+      </h3>
       <div className="gv1-codex-card-cmd">
         <span data-card-name={deck.commander}>{deck.commander}</span>
         {deck.partner && (
