@@ -67,7 +67,8 @@ import type {
 // v28 -> v29 (DEC-299 2026-05-27): Aziza, Mage Tower Captain (Mage Tower Brigade) deck added at slot 13 (right before first brewing entry per catalog convention); ships with simulation.json + metrics.
 // v29 -> v30 (DEC-299 follow-up 2026-05-27): Aziza simulation.json regenerated via export_simulation_results.py with proper schema (deckHealthScore, goldfish, reliabilityMetrics) so Compare tab populates.
 // v30 -> v31 (DEC-299 follow-up 2026-05-27): Zada (Hedron Storm) simulation.json finally written — new mana_simulation_zada_hedron_grinder.py + export_zada() wired into the pipeline; Compare row populates now.
-const STORAGE_PREFIX = 'gv1-deck-data-v31:';
+// v31 -> v32 (DEC-299 v8 2026-05-27): Aziza Roaming Throne -> Wedding Announcement (board feedback: €33 narrow swap to €3-5 saga with anthem+draw+tokens); sim regenerated.
+const STORAGE_PREFIX = 'gv1-deck-data-v32:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
