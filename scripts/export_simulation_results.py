@@ -35,6 +35,7 @@ import mana_simulation_silverquill_the_disputant as sim_silverquill
 import mana_simulation_pyre_and_panic as sim_mono_red
 import mana_simulation_hidden_legion as sim_hidden_legion
 import mana_simulation_superfriends_esika as sim_superfriends_esika
+import mana_simulation_aziza_mage_tower_captain as sim_boros
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -2403,6 +2404,19 @@ def export_superfriends_esika(metadata: dict) -> dict:
     return result
 
 
+def export_boros(metadata: dict) -> dict:
+    """Export Mage Tower Brigade (Boros — Aziza, Mage Tower Captain) simulation."""
+    return _export_colored(
+        sim_module=sim_boros,
+        deck_id="aziza-mage-tower-captain",
+        deck_name="Mage Tower Brigade",
+        commander_name="Aziza, Mage Tower Captain",
+        commander_cmc=2,
+        colors=["R", "W"],
+        metadata=metadata,
+    )
+
+
 def export_orzhov(metadata: dict) -> dict:
     """Export Quill of Casualties (Orzhov Silverquill aristocrats) simulation."""
     return _export_colored(
@@ -2480,6 +2494,7 @@ DECKS = [
     ("pyre-and-panic", "Pyre & Panic", export_mono_red),
     ("hidden-legion", "Hidden Legion", export_hidden_legion),
     ("superfriends-esika", "Esika's Council", export_superfriends_esika),
+    ("aziza-mage-tower-captain", "Mage Tower Brigade", export_boros),
 ]
 
 
