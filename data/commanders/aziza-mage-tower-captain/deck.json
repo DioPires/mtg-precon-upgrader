@@ -34,6 +34,11 @@
       "detail": "Board-approved Gate A: tokens-fuel-spellcopy, Bracket 3+/4-, 1 tutor (Enlightened Tutor), 2 two-card combos (Heliod+Walking Ballista, Kiki-Jiki+Felidar Guardian)."
     },
     {
+      "type": "ai-inferred",
+      "name": "DEC-299 v2 swaps",
+      "detail": "Board-requested v2 (2026-05-27): cut Generous Gift→Fateful Absence; Wing Shards→Clever Concealment; Wheel of Misfortune→Magus of the Wheel; Heraldic Banner→Voice of Victory; Hanweir Garrison→Elspeth, Storm Slayer; Faithless Looting→Enduring Innocence; Light Up the Stage→Caretaker's Talent. Net: stronger token-ETB draw engines + permanent-phase-out protection + opp-no-spells-on-my-turn silence."
+    },
+    {
       "type": "other",
       "name": "Board exclusions (DEC-299)",
       "detail": "No Force of Will, Mana Vault, Ancient Tomb, Grim Monolith, The One Ring, Demonic/Vampiric Tutor."
@@ -50,7 +55,8 @@
         "Anim Pakal, Thousandth Moon",
         "Brimaz, King of Oreskos",
         "Adeline, Resplendent Cathar",
-        "Hanweir Garrison",
+        "Voice of Victory",
+        "Elspeth, Storm Slayer",
         "Krenko's Command",
         "Hordeling Outburst",
         "Servo Exhibition",
@@ -81,20 +87,19 @@
         "Mondrak, Glory Dominus",
         "Cathars' Crusade",
         "Intangible Virtue",
-        "Heraldic Banner",
         "Purphoros, God of the Forge"
       ]
     },
     {
       "name": "Card Advantage",
       "cards": [
-        "Faithless Looting",
+        "Caretaker's Talent",
+        "Enduring Innocence",
         "Reckless Impulse",
         "Wrenn's Resolve",
-        "Light Up the Stage",
         "Big Score",
         "Unexpected Windfall",
-        "Wheel of Misfortune",
+        "Magus of the Wheel",
         "Reforge the Soul",
         "Skullclamp"
       ]
@@ -104,7 +109,7 @@
       "cards": [
         "Swords to Plowshares",
         "Path to Exile",
-        "Generous Gift",
+        "Fateful Absence",
         "Chaos Warp",
         "Lightning Bolt",
         "Lightning Helix",
@@ -114,7 +119,7 @@
         "Settle the Wreckage",
         "Akroma's Will",
         "Boros Charm",
-        "Wing Shards"
+        "Clever Concealment"
       ]
     },
     {
@@ -216,6 +221,41 @@
       "sources": [
         {"type": "ai-inferred", "name": "Tokens-deck staple"}
       ]
+    },
+    {
+      "name": "Voice of Victory",
+      "reason": "v2 add. {1}{W} 3/3 with mobilize 2 (2 attacking warrior tokens on attack) AND 'Your opponents can't cast spells during your turn' — perfect silence on Aziza spellslinger turns. Lets you resolve copy chains uncontested.",
+      "sources": [
+        {"type": "other", "name": "Board request (DEC-299 v2)"}
+      ]
+    },
+    {
+      "name": "Elspeth, Storm Slayer",
+      "reason": "v2 add. 3rd token doubler in the deck (stacks with Anointed Procession + Mondrak = 8x tokens). +1 makes a Soldier, 0 puts +1/+1 counter on each creature with flying, -3 hits MV≥3 threats. Surviving Elspeth wins games.",
+      "sources": [
+        {"type": "other", "name": "Board request (DEC-299 v2)"}
+      ]
+    },
+    {
+      "name": "Caretaker's Talent",
+      "reason": "v2 add. Class enchantment: lvl 1 draws when tokens enter (once/turn). Lvl 2 ({W}) creates a copy of one of your tokens. Lvl 3 ({3}{W}) gives all your tokens +2/+2. Three-mode token engine that scales with the deck.",
+      "sources": [
+        {"type": "other", "name": "Board request (DEC-299 v2)"}
+      ]
+    },
+    {
+      "name": "Enduring Innocence",
+      "reason": "v2 add. {1}{W}{W} 1/3 lifelink. Power 2-or-less ETB → draw 1/turn (which is nearly every creature/token in this deck). Dies → returns as enchantment + creates a 1/1 token. Lifelink also enables Heliod's +1/+1 trigger.",
+      "sources": [
+        {"type": "other", "name": "Board request (DEC-299 v2)"}
+      ]
+    },
+    {
+      "name": "Clever Concealment",
+      "reason": "v2 add. {2}{W}{W} convoke instant: phase out ANY number of your nonland permanents. Survives every sweeper, removal spell, and counterspell — your board comes back untapped on your next turn. Convoke means it's often 1-2 mana real cost.",
+      "sources": [
+        {"type": "other", "name": "Board request (DEC-299 v2)"}
+      ]
     }
   ],
   "synergies": [
@@ -265,6 +305,31 @@
       "sources": [{"type": "ai-inferred", "name": "Spellslinger payoff base"}]
     },
     {
+      "cards": ["Aziza, Mage Tower Captain", "Voice of Victory"],
+      "description": "Voice of Victory's static ability says 'Your opponents can't cast spells during your turn.' On Aziza's spellslinger turns where you cast multiple I/S and copy each, this prevents any reactive counter/removal — copy chains resolve uncontested.",
+      "sources": [{"type": "ai-inferred", "name": "Protection layer for spellslinger turns"}]
+    },
+    {
+      "cards": ["Elspeth, Storm Slayer", "Anointed Procession", "Mondrak, Glory Dominus"],
+      "description": "All three are token doublers. They stack multiplicatively: one source making one token becomes 2 with one doubler, 4 with two, 8 with three. Krenko's Command (2 tokens) becomes 16 tokens.",
+      "sources": [{"type": "ai-inferred", "name": "Token doubler stacking"}]
+    },
+    {
+      "cards": ["Caretaker's Talent", "Enduring Innocence", "Krenko's Command"],
+      "description": "A 3-token spell triggers Caretaker's Talent (draw 1, once/turn) AND Enduring Innocence (draw 1, once/turn) AND adds 6 1/1s to the board (with Anointed Procession). Two repeatable draw triggers off every token spell.",
+      "sources": [{"type": "ai-inferred", "name": "Token-ETB draw stack"}]
+    },
+    {
+      "cards": ["Enduring Innocence", "Heliod, Sun-Crowned"],
+      "description": "Enduring Innocence has lifelink. Any combat damage gains life, triggering Heliod's +1/+1 counter ability. Combined with Walking Ballista already having lifelink via Heliod, multiple lifelink sources accelerate counter accumulation.",
+      "sources": [{"type": "ai-inferred", "name": "Lifelink/Heliod synergy"}]
+    },
+    {
+      "cards": ["Clever Concealment", "Hour of Reckoning"],
+      "description": "If a board wipe is incoming, phase out your team with Clever Concealment (convoke pays the cost using the very creatures being phased). Survives any non-exile wrath; permanents return on your next untap.",
+      "sources": [{"type": "ai-inferred", "name": "Sweeper protection layer"}]
+    },
+    {
       "cards": ["Skullclamp", "Ajani, Nacatl Pariah"],
       "description": "Clamp a 1/1 cat token from Ajani (or any 1-toughness token) — equipped creature gets +1/-1, dies, draw 2. Repeatable card advantage from spare tokens.",
       "sources": [{"type": "edhrec", "name": "Skullclamp + 1-toughness tokens classic combo"}]
@@ -275,7 +340,8 @@
     {"name": "Anim Pakal, Thousandth Moon", "type": "Legendary Creature — Human Soldier", "primary_role": "engine", "secondary_role": "wincon", "wincon_style": "combat"},
     {"name": "Brimaz, King of Oreskos", "type": "Legendary Creature — Cat Soldier", "primary_role": "engine", "secondary_role": "threat"},
     {"name": "Adeline, Resplendent Cathar", "type": "Legendary Creature — Human Knight", "primary_role": "engine", "secondary_role": "wincon", "wincon_style": "combat"},
-    {"name": "Hanweir Garrison", "type": "Creature — Human Soldier", "primary_role": "engine"},
+    {"name": "Voice of Victory", "type": "Creature — Human Bard", "primary_role": "engine", "secondary_role": "protection"},
+    {"name": "Elspeth, Storm Slayer", "type": "Legendary Planeswalker — Elspeth", "primary_role": "payoff", "secondary_role": "engine"},
     {"name": "Young Pyromancer", "type": "Creature — Human Shaman", "primary_role": "engine", "secondary_role": "payoff"},
     {"name": "Monastery Mentor", "type": "Creature — Human Monk", "primary_role": "engine", "secondary_role": "payoff"},
     {"name": "Birgi, God of Storytelling", "type": "Legendary Creature — God", "primary_role": "ramp", "secondary_role": "payoff"},
@@ -301,19 +367,18 @@
     {"name": "Anointed Procession", "type": "Enchantment", "primary_role": "payoff"},
     {"name": "Cathars' Crusade", "type": "Enchantment", "primary_role": "payoff"},
     {"name": "Intangible Virtue", "type": "Enchantment", "primary_role": "payoff"},
-    {"name": "Heraldic Banner", "type": "Artifact", "primary_role": "payoff", "secondary_role": "ramp"},
-    {"name": "Faithless Looting", "type": "Sorcery", "primary_role": "card-draw", "secondary_role": "recursion"},
+    {"name": "Caretaker's Talent", "type": "Enchantment — Class", "primary_role": "card-draw", "secondary_role": "payoff"},
+    {"name": "Enduring Innocence", "type": "Enchantment Creature — Sheep Glimmer", "primary_role": "card-draw", "secondary_role": "engine"},
     {"name": "Reckless Impulse", "type": "Sorcery", "primary_role": "card-draw"},
     {"name": "Wrenn's Resolve", "type": "Sorcery", "primary_role": "card-draw"},
-    {"name": "Light Up the Stage", "type": "Sorcery", "primary_role": "card-draw"},
     {"name": "Big Score", "type": "Sorcery", "primary_role": "card-draw", "secondary_role": "ramp"},
     {"name": "Unexpected Windfall", "type": "Sorcery", "primary_role": "card-draw", "secondary_role": "ramp"},
-    {"name": "Wheel of Misfortune", "type": "Sorcery", "primary_role": "card-draw"},
+    {"name": "Magus of the Wheel", "type": "Creature — Human Wizard", "primary_role": "card-draw"},
     {"name": "Reforge the Soul", "type": "Sorcery", "primary_role": "card-draw"},
     {"name": "Skullclamp", "type": "Artifact — Equipment", "primary_role": "card-draw"},
     {"name": "Swords to Plowshares", "type": "Instant", "primary_role": "removal-spot"},
     {"name": "Path to Exile", "type": "Instant", "primary_role": "removal-spot"},
-    {"name": "Generous Gift", "type": "Instant", "primary_role": "removal-spot"},
+    {"name": "Fateful Absence", "type": "Instant", "primary_role": "removal-spot"},
     {"name": "Chaos Warp", "type": "Instant", "primary_role": "removal-spot"},
     {"name": "Lightning Bolt", "type": "Instant", "primary_role": "removal-spot"},
     {"name": "Lightning Helix", "type": "Instant", "primary_role": "removal-spot"},
@@ -323,7 +388,7 @@
     {"name": "Settle the Wreckage", "type": "Instant", "primary_role": "removal-board", "secondary_role": "protection"},
     {"name": "Akroma's Will", "type": "Instant", "primary_role": "protection", "secondary_role": "wincon", "wincon_style": "combat"},
     {"name": "Boros Charm", "type": "Instant", "primary_role": "protection", "secondary_role": "removal-spot"},
-    {"name": "Wing Shards", "type": "Instant", "primary_role": "removal-spot"},
+    {"name": "Clever Concealment", "type": "Instant", "primary_role": "protection"},
     {"name": "Enlightened Tutor", "type": "Instant", "primary_role": "tutor"},
     {"name": "Sol Ring", "type": "Artifact", "primary_role": "ramp"},
     {"name": "Arcane Signet", "type": "Artifact", "primary_role": "ramp"},
