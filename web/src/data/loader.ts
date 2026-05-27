@@ -64,7 +64,8 @@ import type {
 // v25 -> v26 (DEC-293 follow-up 2026-05-24): force-invalidate so deployed UI picks up the latest superfriends-esika deck.json + simulation.json immediately.
 // v26 -> v27 (DEC-297 2026-05-26): "brewing" deck status added; superfriends-esika flipped to brewing.
 // v27 -> v28 (DEC-297 follow-up 2026-05-26): brewing badge added to Codex + Scrying surfaces.
-const STORAGE_PREFIX = 'gv1-deck-data-v28:';
+// v28 -> v29 (DEC-299 2026-05-27): Aziza, Mage Tower Captain (Mage Tower Brigade) deck added at slot 13 (right before first brewing entry per catalog convention); ships with simulation.json + metrics.
+const STORAGE_PREFIX = 'gv1-deck-data-v29:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
