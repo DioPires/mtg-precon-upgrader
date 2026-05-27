@@ -36,6 +36,7 @@ import mana_simulation_pyre_and_panic as sim_mono_red
 import mana_simulation_hidden_legion as sim_hidden_legion
 import mana_simulation_superfriends_esika as sim_superfriends_esika
 import mana_simulation_aziza_mage_tower_captain as sim_boros
+import mana_simulation_zada_hedron_grinder as sim_zada
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -2417,6 +2418,19 @@ def export_boros(metadata: dict) -> dict:
     )
 
 
+def export_zada(metadata: dict) -> dict:
+    """Export Hedron Storm (mono-R — Zada, Hedron Grinder) simulation."""
+    return _export_colored(
+        sim_module=sim_zada,
+        deck_id="zada-hedron-grinder",
+        deck_name="Hedron Storm",
+        commander_name="Zada, Hedron Grinder",
+        commander_cmc=4,
+        colors=["R"],
+        metadata=metadata,
+    )
+
+
 def export_orzhov(metadata: dict) -> dict:
     """Export Quill of Casualties (Orzhov Silverquill aristocrats) simulation."""
     return _export_colored(
@@ -2495,6 +2509,7 @@ DECKS = [
     ("hidden-legion", "Hidden Legion", export_hidden_legion),
     ("superfriends-esika", "Esika's Council", export_superfriends_esika),
     ("aziza-mage-tower-captain", "Mage Tower Brigade", export_boros),
+    ("zada-hedron-grinder", "Hedron Storm", export_zada),
 ]
 
 
