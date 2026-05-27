@@ -2,9 +2,9 @@
   "id": "tokens-go-wide",
   "name": "Tokens / Go Wide",
   "summary": "Token producers, doublers, anthems, and wide finishers that close the game through a swarm of creatures. Absorbs the amass-orcs and amass-armies idioms (same mechanic, different franchise).",
-  "version": 1,
+  "version": 2,
   "status": "live",
-  "_status_note": "Live recipe — Gate 2 + Gate 3 approved 2026-05-14 by local-board via combined confirmation interaction 484154d5. 20/20 = 100% canon recall validated empirically against Scryfall API.",
+  "_status_note": "Live recipe \u2014 Gate 2 + Gate 3 approved 2026-05-14 by local-board via combined confirmation interaction 484154d5. 20/20 = 100% canon recall validated empirically against Scryfall API.",
   "last_reviewed": "2026-05-14",
   "approval": {
     "reviewer": "local-board",
@@ -36,37 +36,60 @@
     "Pathbreaker Ibex",
     "Triumph of the Hordes",
     "Krenko, Mob Boss",
-    "Grishnákh, Brash Instigator",
+    "Grishn\u00e1kh, Brash Instigator",
     "Gothmog, Morgul Lieutenant"
   ],
   "canon_provenance": {
-    "from_existing_decks": "Pulled from `mutant-multiplication`, `witherbloom-the-balancer`, and `dark-dominion` deck.json (the three decks tagged `tokens-go-wide`). Shared staples: Anointed Procession, Parallel Lives, Doubling Season, Mondrak, Cathars' Crusade, Bitterblossom, Ophiomancer, Tendershoot Dryad, Mycoloth, Avenger of Zendikar, Adeline (mutant); Bitterblossom, Ophiomancer, Mycoloth, Tendershoot, Avenger, Pawn of Ulamog (witherbloom); Grishnákh, Gothmog (dark-dominion amass).",
-    "from_edhrec_archetype_pages": "Intangible Virtue, Triumph of the Hordes, Pathbreaker Ibex, Scute Swarm, Krenko Mob Boss, Academy Manufactor, Ojer Taq — universal EDH tokens staples ranking in top-30 across Adeline/Krenko/Rhys/Ghave/Marrow-Gnawer pages and the EDHREC `tokens` archetype landing.",
-    "from_franchise_subarchetypes": "Grishnákh (amass orcs) and Gothmog (amass armies) anchor the absorbed amass sub-recipes per `docs/archetype-taxonomy.md` board directive — same mechanic, two LOTR-set franchise variants.",
+    "from_existing_decks": "Pulled from `mutant-multiplication`, `witherbloom-the-balancer`, and `dark-dominion` deck.json (the three decks tagged `tokens-go-wide`). Shared staples: Anointed Procession, Parallel Lives, Doubling Season, Mondrak, Cathars' Crusade, Bitterblossom, Ophiomancer, Tendershoot Dryad, Mycoloth, Avenger of Zendikar, Adeline (mutant); Bitterblossom, Ophiomancer, Mycoloth, Tendershoot, Avenger, Pawn of Ulamog (witherbloom); Grishn\u00e1kh, Gothmog (dark-dominion amass).",
+    "from_edhrec_archetype_pages": "Intangible Virtue, Triumph of the Hordes, Pathbreaker Ibex, Scute Swarm, Krenko Mob Boss, Academy Manufactor, Ojer Taq \u2014 universal EDH tokens staples ranking in top-30 across Adeline/Krenko/Rhys/Ghave/Marrow-Gnawer pages and the EDHREC `tokens` archetype landing.",
+    "from_franchise_subarchetypes": "Grishn\u00e1kh (amass orcs) and Gothmog (amass armies) anchor the absorbed amass sub-recipes per `docs/archetype-taxonomy.md` board directive \u2014 same mechanic, two LOTR-set franchise variants.",
     "from_combo_pieces": "Mondrak + sacrifice loops, Doubling Season + planeswalker ultimates, Bitterblossom + Contamination, and Scute Swarm + Fabled Passage lines all show up on Commander Spellbook for tokens combos; these canon picks anchor the well-known engines."
   },
   "sub_recipes": {
     "token_doublers": {
-      "intent": "Replacement effects that double or triple the number of tokens created under your control — the multiplicative engine of every serious tokens deck.",
+      "intent": "Replacement effects that double or triple the number of tokens created under your control \u2014 the multiplicative engine of every serious tokens deck.",
       "queries": [
         "f:commander o:\"twice that many\"",
         "f:commander o:\"three times that many\""
       ],
       "canon_recall": {
-        "expected": ["Anointed Procession", "Parallel Lives", "Doubling Season", "Mondrak, Glory Dominus", "Ojer Taq, Deepest Foundation"],
-        "surfaced_by_query_A": ["Doubling Season", "Anointed Procession", "Parallel Lives", "Mondrak, Glory Dominus"],
-        "surfaced_by_query_B": ["Ojer Taq, Deepest Foundation"],
+        "expected": [
+          "Anointed Procession",
+          "Parallel Lives",
+          "Doubling Season",
+          "Mondrak, Glory Dominus",
+          "Ojer Taq, Deepest Foundation"
+        ],
+        "surfaced_by_query_A": [
+          "Doubling Season",
+          "Anointed Procession",
+          "Parallel Lives",
+          "Mondrak, Glory Dominus"
+        ],
+        "surfaced_by_query_B": [
+          "Ojer Taq, Deepest Foundation"
+        ],
         "union_count": "5/5"
       }
     },
     "recurring_upkeep_token_engines": {
-      "intent": "Permanents that drip out creature tokens at each upkeep — passive fodder/army builders that scale with turns.",
+      "intent": "Permanents that drip out creature tokens at each upkeep \u2014 passive fodder/army builders that scale with turns.",
       "queries": [
         "f:commander o:\"beginning of\" o:upkeep o:create o:\"creature token\""
       ],
       "canon_recall": {
-        "expected": ["Bitterblossom", "Ophiomancer", "Tendershoot Dryad", "Mycoloth"],
-        "surfaced": ["Bitterblossom", "Ophiomancer", "Tendershoot Dryad", "Mycoloth"],
+        "expected": [
+          "Bitterblossom",
+          "Ophiomancer",
+          "Tendershoot Dryad",
+          "Mycoloth"
+        ],
+        "surfaced": [
+          "Bitterblossom",
+          "Ophiomancer",
+          "Tendershoot Dryad",
+          "Mycoloth"
+        ],
         "count": "4/4"
       }
     },
@@ -76,19 +99,27 @@
         "f:commander t:creature o:enters o:create o:\"creature token\" o:\"for each\""
       ],
       "canon_recall": {
-        "expected": ["Avenger of Zendikar"],
-        "surfaced": ["Avenger of Zendikar"],
+        "expected": [
+          "Avenger of Zendikar"
+        ],
+        "surfaced": [
+          "Avenger of Zendikar"
+        ],
         "count": "1/1"
       }
     },
     "landfall_token_producers": {
-      "intent": "Landfall-triggered token engines — pair naturally with fetch and Fabled Passage ramp.",
+      "intent": "Landfall-triggered token engines \u2014 pair naturally with fetch and Fabled Passage ramp.",
       "queries": [
         "f:commander o:landfall o:create o:\"creature token\""
       ],
       "canon_recall": {
-        "expected": ["Scute Swarm"],
-        "surfaced": ["Scute Swarm"],
+        "expected": [
+          "Scute Swarm"
+        ],
+        "surfaced": [
+          "Scute Swarm"
+        ],
         "count": "1/1"
       }
     },
@@ -99,22 +130,37 @@
         "f:commander o:\"creature you control enters\" o:\"+1/+1 counter\""
       ],
       "canon_recall": {
-        "expected": ["Intangible Virtue", "Cathars' Crusade"],
-        "surfaced_by_query_A": ["Intangible Virtue"],
-        "surfaced_by_query_B": ["Cathars' Crusade"],
+        "expected": [
+          "Intangible Virtue",
+          "Cathars' Crusade"
+        ],
+        "surfaced_by_query_A": [
+          "Intangible Virtue"
+        ],
+        "surfaced_by_query_B": [
+          "Cathars' Crusade"
+        ],
         "union_count": "2/2"
       }
     },
     "wide_finishers": {
-      "intent": "Global pumps that convert a board of small creatures into a kill — trample/infect/scaling power. The reason go-wide closes games rather than stalling.",
+      "intent": "Global pumps that convert a board of small creatures into a kill \u2014 trample/infect/scaling power. The reason go-wide closes games rather than stalling.",
       "queries": [
         "f:commander o:\"creatures you control get +1/+1\" o:infect",
         "f:commander o:\"creatures you control gain trample\" o:\"greatest power\""
       ],
       "canon_recall": {
-        "expected": ["Triumph of the Hordes", "Pathbreaker Ibex"],
-        "surfaced_by_query_A": ["Triumph of the Hordes"],
-        "surfaced_by_query_B": ["Overwhelming Stampede", "Pathbreaker Ibex"],
+        "expected": [
+          "Triumph of the Hordes",
+          "Pathbreaker Ibex"
+        ],
+        "surfaced_by_query_A": [
+          "Triumph of the Hordes"
+        ],
+        "surfaced_by_query_B": [
+          "Overwhelming Stampede",
+          "Pathbreaker Ibex"
+        ],
         "union_count": "2/2"
       }
     },
@@ -124,52 +170,111 @@
         "f:commander o:amass"
       ],
       "canon_recall": {
-        "expected": ["Grishnákh, Brash Instigator", "Gothmog, Morgul Lieutenant"],
-        "surfaced": ["Grishnákh, Brash Instigator", "Gothmog, Morgul Lieutenant"],
+        "expected": [
+          "Grishn\u00e1kh, Brash Instigator",
+          "Gothmog, Morgul Lieutenant"
+        ],
+        "surfaced": [
+          "Grishn\u00e1kh, Brash Instigator",
+          "Gothmog, Morgul Lieutenant"
+        ],
         "count": "2/2"
       }
     },
     "token_utility_engines": {
-      "intent": "Replacement effects on non-creature token creation (treasure/clue/food) that bend the token economy — Academy Manufactor and its kin.",
+      "intent": "Replacement effects on non-creature token creation (treasure/clue/food) that bend the token economy \u2014 Academy Manufactor and its kin.",
       "queries": [
         "f:commander o:\"if you would create\" o:treasure o:clue"
       ],
       "canon_recall": {
-        "expected": ["Academy Manufactor"],
-        "surfaced": ["Academy Manufactor"],
+        "expected": [
+          "Academy Manufactor"
+        ],
+        "surfaced": [
+          "Academy Manufactor"
+        ],
         "count": "1/1"
       }
     },
     "per_opponent_token_producers": {
-      "intent": "Token creation scaled per-opponent — pod-format multiplier that ignores in 1v1 but explodes in 4-player commander.",
+      "intent": "Token creation scaled per-opponent \u2014 pod-format multiplier that ignores in 1v1 but explodes in 4-player commander.",
       "queries": [
         "f:commander o:\"for each opponent\" o:create o:\"creature token\""
       ],
       "canon_recall": {
-        "expected": ["Adeline, Resplendent Cathar"],
-        "surfaced": ["Adeline, Resplendent Cathar"],
+        "expected": [
+          "Adeline, Resplendent Cathar"
+        ],
+        "surfaced": [
+          "Adeline, Resplendent Cathar"
+        ],
         "count": "1/1"
       }
     },
     "tokens_commanders": {
-      "intent": "Tribal-token commanders — the activated/triggered engines that anchor mono-color go-wide decks (Krenko being the canonical Goblin example, but the query parameterizes on tribe at runtime).",
+      "intent": "Tribal-token commanders \u2014 the activated/triggered engines that anchor mono-color go-wide decks (Krenko being the canonical Goblin example, but the query parameterizes on tribe at runtime).",
       "queries": [
         "is:commander t:goblin o:create o:goblin o:\"creature token\""
       ],
       "canon_recall": {
-        "expected": ["Krenko, Mob Boss"],
-        "surfaced": ["Krenko, Mob Boss"],
+        "expected": [
+          "Krenko, Mob Boss"
+        ],
+        "surfaced": [
+          "Krenko, Mob Boss"
+        ],
         "count": "1/1",
-        "note": "Tribe is parameterized — swap `t:goblin` / `o:goblin` for `t:elf` / `o:elf` etc. at runtime when the deck's `tribe` field is set. Tribal recipes are out of scope here; this query is the goblin instance because Krenko anchors canon."
+        "note": "Tribe is parameterized \u2014 swap `t:goblin` / `o:goblin` for `t:elf` / `o:elf` etc. at runtime when the deck's `tribe` field is set. Tribal recipes are out of scope here; this query is the goblin instance because Krenko anchors canon."
+      }
+    },
+    "x_spell_token_makers": {
+      "intent": "Instant/sorcery spells with {X} in their mana cost that create X creature tokens. Uniquely powerful in tokens decks because they scale with available mana, get copied at the same X by 'copy that spell' effects (Aziza, Reverberate, Bonus Round) per CR 707.4, and convert late-game excess mana into board state.",
+      "queries": [
+        "f:commander (t:instant OR t:sorcery) o:\"create x\" o:\"creature token\""
+      ],
+      "canon_recall": {
+        "expected": [
+          "Secure the Wastes",
+          "Martial Coup",
+          "Grand Crescendo",
+          "Forth Eorlingas!",
+          "Entreat the Angels",
+          "Storm Herd",
+          "White Sun's Zenith",
+          "Finale of Glory"
+        ],
+        "surfaced_by_query_A": [
+          "Secure the Wastes",
+          "Martial Coup",
+          "Grand Crescendo",
+          "Forth Eorlingas!",
+          "Entreat the Angels",
+          "Storm Herd",
+          "White Sun's Zenith",
+          "White Sun's Twilight",
+          "Song of Totentanz",
+          "Tempt with Vengeance",
+          "Finale of Glory",
+          "March of the Multitudes",
+          "Awaken the Woods"
+        ],
+        "noise_examples": [
+          "Arachnogenesis (X-from-game-state, not X-cost)",
+          "Entrapment Maneuver (X-from-toughness)",
+          "Access Denied (X-from-countered-spell)",
+          "Artifact Mutation / Aura Mutation (X-from-mana-value rider on removal)"
+        ],
+        "union_count": "8/8 expected canon surfaced",
+        "_note": "Conqueror's Pledge and Decree of Justice use kicker/cycling X-scaling rather than X-in-base-cost; they don't match this query. Wildcard or a dedicated kicker/cycling sub-recipe would catch them."
       }
     },
     "wildcard": {
-      "intent": "Intentionally broad sweep — catches new printings whose oracle text doesn't match the precise sub-recipes above. High noise, run sparingly.",
+      "intent": "Intentionally broad sweep \u2014 catches new printings whose oracle text doesn't match the precise sub-recipes above. High noise, run sparingly.",
       "queries": [
         "f:commander o:create o:\"creature tokens\""
       ],
       "canon_recall": {
-        "note": "Wildcard is not validated against canon — it exists to surface novel token producers the precise queries miss (e.g., set-mechanic-specific tokens like Saproling/Treefolk/Thopter waves)."
+        "note": "Wildcard is not validated against canon \u2014 it exists to surface novel token producers the precise queries miss (e.g., set-mechanic-specific tokens like Saproling/Treefolk/Thopter waves)."
       }
     }
   },
@@ -179,7 +284,7 @@
   },
   "runtime_semantics": {
     "color_identity_splice": "Append `id<=<deck color identity>` per query at runtime.",
-    "decklist_exclusion": "Post-fetch — filter out any name already in decklist or candidates.json top-50.",
+    "decklist_exclusion": "Post-fetch \u2014 filter out any name already in decklist or candidates.json top-50.",
     "ordering": "All sub-recipe queries use order=edhrec.",
     "cap_per_subquery": 50,
     "tribe_parameterization": "For the `tokens_commanders` sub-recipe, substitute the deck's tribal tag at runtime when present. Otherwise default to goblin (highest-recall tribal instance for tokens-go-wide)."
@@ -188,22 +293,23 @@
     "total_canon": 20,
     "recall_count": 20,
     "recall_pct": "100%",
-    "threshold": "≥90% required for approval",
+    "threshold": "\u226590% required for approval",
     "validation_date": "2026-05-14",
     "validation_method": "Each sub-recipe query was run live against api.scryfall.com (order=edhrec). Canon recall = (canon cards surfaced by at least one query in any sub-recipe) / total canon.",
     "noise_sample": {
-      "token_doublers": "Doubling Season, Anointed Procession, Branching Evolution, Parallel Lives, Mondrak, Innkeeper's Talent, Elspeth Storm Slayer, Primal Vigor — top-10 are all token/counter doublers. Branching Evolution is a counter-doubler (adjacent archetype), clean otherwise. Tripler query is tight: Ojer Taq only.",
-      "recurring_upkeep_token_engines": "Bitterblossom, Ophiomancer, Thopter Spy Network, Bonehoard Dracosaur, Koma Cosmos Serpent, Tendershoot Dryad, Dragonmaster Outcast, Windcrag Siege, Awakening Zone, Beledros Witherbloom, Court of Grace, Skrelv's Hive, Assemble the Legion, Mycoloth, Endless Ranks of the Dead — strong upkeep-token signal across artifact/enchantment/creature variants.",
-      "mass_etb_token_producers": "Avenger of Zendikar, Urza Lord High Artificer, Terastodon, Hangarback Walker, Diregraf Colossus, Hooded Hydra, Izoni Thousand-Eyed, Phylath World Sculptor — all mass-token ETB creatures, no false positives in top-10.",
-      "landfall_token_producers": "Scute Swarm, Avenger of Zendikar, Rampaging Baloths, Felidar Retreat, Springheart Nantuko, Omnath Locus of Rage, Zendikar's Roil, Emeria Angel — clean landfall-tokens cluster.",
-      "token_anthems": "Anthem query: Intangible Virtue, Caretaker's Talent, Inspiring Leader, Invasion of Tolvada, Dramatic Finale — Caretaker's Talent is `+1/+1 to attacking tokens` (legitimate tokens anthem). Crusade query: The Great Henge, Champion of Lambholt, Cathars' Crusade, Tribute to the World Tree, Guide of Souls — first few are counter-pile-on triggers; Cathars' Crusade is canonical.",
-      "wide_finishers": "Infect query: Triumph of the Hordes (1 result — tight). Trample/greatest-power query: Overwhelming Stampede, Pathbreaker Ibex (2 results — tight cluster, both wide-pump staples).",
-      "amass_payoffs": "Orcish Bowmasters, Dreadhorde Invasion, Barad-dûr, Lazotep Plating, Gleaming Overseer, Sauron the Dark Lord, Saruman the White Hand, Gothmog Morgul Lieutenant, Grishnákh Brash Instigator — clean amass franchise. Includes both 'amass Orcs' and 'amass Armies' variants.",
-      "token_utility_engines": "Academy Manufactor only — extremely tight, no false positives.",
-      "per_opponent_token_producers": "Adeline Resplendent Cathar, Tempt with Bunnies, Aclazotz Deepest Betrayal, Ainok Strike Leader, Tempt with Vengeance, In the Darkness Bind Them, Welcome to Jurassic Park — strong per-opponent token signal with some adjacent token-givers.",
-      "tokens_commanders": "Krenko Tin Street Kingpin, Krenko Mob Boss, General Kreat the Boltbringer, Pashalik Mons, Squee Dubious Monarch, Krenko Baron of Tin Street, Ardoz Cobbler of War, Ib Halfheart Goblin Tactician, Wort the Raidmother — all canonical goblin-token commanders.",
-      "wildcard": "Broad sweep — used to surface unusual token producers like Welcoming Vampire, Springheart Nantuko, Anim Pakal Thousandth Moon, Faerie Slumber Party that the precise queries miss."
+      "token_doublers": "Doubling Season, Anointed Procession, Branching Evolution, Parallel Lives, Mondrak, Innkeeper's Talent, Elspeth Storm Slayer, Primal Vigor \u2014 top-10 are all token/counter doublers. Branching Evolution is a counter-doubler (adjacent archetype), clean otherwise. Tripler query is tight: Ojer Taq only.",
+      "recurring_upkeep_token_engines": "Bitterblossom, Ophiomancer, Thopter Spy Network, Bonehoard Dracosaur, Koma Cosmos Serpent, Tendershoot Dryad, Dragonmaster Outcast, Windcrag Siege, Awakening Zone, Beledros Witherbloom, Court of Grace, Skrelv's Hive, Assemble the Legion, Mycoloth, Endless Ranks of the Dead \u2014 strong upkeep-token signal across artifact/enchantment/creature variants.",
+      "mass_etb_token_producers": "Avenger of Zendikar, Urza Lord High Artificer, Terastodon, Hangarback Walker, Diregraf Colossus, Hooded Hydra, Izoni Thousand-Eyed, Phylath World Sculptor \u2014 all mass-token ETB creatures, no false positives in top-10.",
+      "landfall_token_producers": "Scute Swarm, Avenger of Zendikar, Rampaging Baloths, Felidar Retreat, Springheart Nantuko, Omnath Locus of Rage, Zendikar's Roil, Emeria Angel \u2014 clean landfall-tokens cluster.",
+      "token_anthems": "Anthem query: Intangible Virtue, Caretaker's Talent, Inspiring Leader, Invasion of Tolvada, Dramatic Finale \u2014 Caretaker's Talent is `+1/+1 to attacking tokens` (legitimate tokens anthem). Crusade query: The Great Henge, Champion of Lambholt, Cathars' Crusade, Tribute to the World Tree, Guide of Souls \u2014 first few are counter-pile-on triggers; Cathars' Crusade is canonical.",
+      "wide_finishers": "Infect query: Triumph of the Hordes (1 result \u2014 tight). Trample/greatest-power query: Overwhelming Stampede, Pathbreaker Ibex (2 results \u2014 tight cluster, both wide-pump staples).",
+      "amass_payoffs": "Orcish Bowmasters, Dreadhorde Invasion, Barad-d\u00fbr, Lazotep Plating, Gleaming Overseer, Sauron the Dark Lord, Saruman the White Hand, Gothmog Morgul Lieutenant, Grishn\u00e1kh Brash Instigator \u2014 clean amass franchise. Includes both 'amass Orcs' and 'amass Armies' variants.",
+      "token_utility_engines": "Academy Manufactor only \u2014 extremely tight, no false positives.",
+      "per_opponent_token_producers": "Adeline Resplendent Cathar, Tempt with Bunnies, Aclazotz Deepest Betrayal, Ainok Strike Leader, Tempt with Vengeance, In the Darkness Bind Them, Welcome to Jurassic Park \u2014 strong per-opponent token signal with some adjacent token-givers.",
+      "tokens_commanders": "Krenko Tin Street Kingpin, Krenko Mob Boss, General Kreat the Boltbringer, Pashalik Mons, Squee Dubious Monarch, Krenko Baron of Tin Street, Ardoz Cobbler of War, Ib Halfheart Goblin Tactician, Wort the Raidmother \u2014 all canonical goblin-token commanders.",
+      "wildcard": "Broad sweep \u2014 used to surface unusual token producers like Welcoming Vampire, Springheart Nantuko, Anim Pakal Thousandth Moon, Faerie Slumber Party that the precise queries miss."
     }
   },
-  "shared_refs": null
+  "shared_refs": null,
+  "_dec_299_note": "v2 (2026-05-27, DEC-299): Added x_spell_token_makers sub-recipe to surface X-cost instant/sorcery token spells (Secure the Wastes, Martial Coup, Grand Crescendo, Forth Eorlingas!, etc.) \u2014 uniquely powerful in tokens decks via mana-scaling + spell-copy interaction. Identified as a structural gap during Aziza DEC-299 build where v1 shipped with zero X-spell token-makers."
 }
