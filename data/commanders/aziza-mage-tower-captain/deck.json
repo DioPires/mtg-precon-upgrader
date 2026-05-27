@@ -8,9 +8,9 @@
     "primary": "engine",
     "secondary": "payoff"
   },
-  "cost": "$280-380",
+  "cost": "€220-320",
   "bracket": "3",
-  "gameChangers": 2,
+  "gameChangers": 3,
   "archetypes": [
     "spellslinger",
     "tokens-go-wide"
@@ -60,13 +60,18 @@
       "detail": "Board-approved v8 (2026-05-27): cut Roaming Throne (€33, narrow — only doubles 7 Human-typed triggers); add Wedding Announcement (€3-5, 3-CMC saga: 1/1 Human tokens + attack-2-draw + transforms into permanent +1/+1 anthem). Net: cheaper, lower curve, permanent anthem the deck didn't have."
     },
     {
+      "type": "ai-inferred",
+      "name": "DEC-303 v9 aggression swaps",
+      "detail": "Board-approved v9 (2026-05-27, 7 swaps from aggression audit): Reforge the Soul→Imperial Recruiter (combo tutor for Kiki/Felidar/Walking Ballista/Young Pyromancer/Mother of Runes); Idol of Oblivion→Ranger-Captain of Eos (silence sac for combo turn + MV≤1 tutor for Walking Ballista/Mother of Runes); Mentor of the Meek→Mother of Runes (1-MV body, instant-speed targeted protection for Aziza/Kiki/Heliod); Increasing Devotion→Empty the Warrens (storm bomb, scales with multiplier stack to 32-192 tokens); Hour of Reckoning→Intangible Virtue (re-adds the v2 cut — solves the vigilance bottleneck so the deck can attack AND tap-3 for Aziza on the same turn); Big Score→Guttersnipe (passive 2-dmg/opp per I/S hardcast — drain layer that fires on every spell turn); Wrenn's Resolve→Jeska's Will (GC#3 — both modes active with commander on field: opponent-hand mana surge + 3 impulses, Aziza-copyable for a second round on another opp). Also added winConditions[] block to expose 5 win lines to the simulator (was reporting 0% combo lethal). Rewrote strategyOverview to drop 20 stale card references from prior versions (v2/v5/v6/v8 cuts: Hordeling Outburst, Servo Exhibition, Captain's Call, Battle Screech, Hanweir Garrison, Birgi, Roaming Throne, Light Up the Stage, Faithless Looting, Twinflame, Bonus Round, Heraldic Banner, Heroic Reinforcements, Wheel of Misfortune, Generous Gift, Lightning Bolt, Lightning Helix, Vandalblast, Wear // Tear, the dangling Intangible Virtue ref). Net: curve avg 2.82→~2.67, vigilance solved, combo tutors 1→3, GC 2→3."
+    },
+    {
       "type": "other",
-      "name": "Board exclusions (DEC-299)",
-      "detail": "No Force of Will, Mana Vault, Ancient Tomb, Grim Monolith, The One Ring, Demonic/Vampiric Tutor."
+      "name": "Board exclusions (DEC-299 + DEC-303)",
+      "detail": "No Force of Will, Mana Vault, Ancient Tomb, Grim Monolith, The One Ring, Demonic/Vampiric Tutor, Mana Crypt. EU-budget exclusions (DEC-303): Mox Amber (€50+), Esper Sentinel (€50+)."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Aziza, Mage Tower Captain is a {R}{W} 2/2 Djinn Sorcerer whose trigger reads: 'Whenever you cast an instant or sorcery spell, you may tap three untapped creatures you control. If you do, copy that spell. You may choose new targets for the copy.' The build is a Boros tokens-fuel-spellcopy deck that exploits both halves of Aziza's text — wide creature presence becomes the tap-3 fuel, and the payoff is a copied instant/sorcery each turn.\n\nThe token engine is built on cheap, high-rate token producers (Krenko's Command, Hordeling Outburst, Servo Exhibition, Captain's Call, Increasing Devotion, Battle Screech with flashback that costs 'tap three untapped white creatures' — a free reload), plus attack-trigger token engines (Brimaz King of Oreskos, Adeline Resplendent Cathar, Hanweir Garrison, Anim Pakal Thousandth Moon). Ajani Nacatl Pariah enters as a 1/2 with a 2/1 cat token and flips into a +1/+1 anthem walker when any cat dies — fuels Aziza twice (ETB + flip pump) and is excellent against sweepers.\n\nThe spellslinger payoff layer turns every spell cast into board pressure: Young Pyromancer (1/1 elemental per I/S), Monastery Mentor (prowess + 1/1 monk per noncreature), Storm-Kiln Artist (Treasure per noncreature, including Aziza copies via Magecraft), Birgi God of Storytelling (free Red per spell), and Roaming Throne (name Djinn or Sorcerer to double Aziza's trigger — each cast copies twice via the additional trigger).\n\nThe card-advantage suite is six impulse/draw spells that each get DOUBLED by Aziza (Reckless Impulse, Wrenn's Resolve, Light Up the Stage, Faithless Looting, Big Score, Unexpected Windfall) plus three pure copy effects (Reverberate, Increasing Vengeance with flashback double-copy, Twinflame for combo lines). Bonus Round turns the entire post-cast turn into a free Aziza-mirror for every player — but Aziza only fires for *your* casts, while the copies you get are extra payoffs.\n\nAnthems and doublers compound the swarm: Anointed Procession + Mondrak Glory Dominus stack to 4x tokens per source; Cathars' Crusade puts +1/+1 counters on every creature you control whenever ANY creature enters — so a Hordeling Outburst becomes +6/+6 across the team; Intangible Virtue gives all tokens vigilance + anthem; Heraldic Banner names a color for +1/+0 and color-fixing; Purphoros God of the Forge converts every creature ETB into 2 damage to each opponent (the slow drain wincon and the Kiki+Felidar combo amplifier).\n\nThree win lines: (1) **Combat go-wide** — turn 5-7 swing for lethal with a doubled board buffed by Cathars' Crusade and Heroic Reinforcements; (2) **Heliod Sun-Crowned + Walking Ballista** — Heliod's {1}{W} grants Ballista lifelink, then Ballista pings for 1 → gains 1 life → +1/+1 counter trigger → infinite damage (needs Ballista to enter with X≥1 or have a counter source like Cathars' Crusade); (3) **Kiki-Jiki Mirror Breaker + Felidar Guardian** — Kiki copies Felidar, copy's ETB blinks Kiki, Kiki returns with haste from the copy chain → infinite hasted 3/4 attackers same turn (Purphoros also closes by pinging 2 per ETB).\n\nInteraction is 8 instant-speed spot-removal slots (Swords to Plowshares, Path to Exile, Generous Gift, Chaos Warp, Lightning Bolt, Lightning Helix, Vandalblast for artifact wipes, Wear // Tear for mixed hate) plus 3 sweepers — Hour of Reckoning convokes to wipe non-token creatures, Settle the Wreckage one-sided-wipes attackers, Akroma's Will gives the whole team double strike + indestructible + protection. Two wheels (Wheel of Misfortune, Reforge the Soul) refill empty hands in long games. One tutor slot — Enlightened Tutor — finds the combo piece, key anthem, or interaction the situation needs.\n\nBracket 3+/4- aggressive: 2 Game Changers (Enlightened Tutor, Smothering Tithe). Honors the user's board exclusions (no Force of Will, Mana Vault, Ancient Tomb, Grim Monolith, The One Ring, Demonic/Vampiric Tutor). Considers Ajani Nacatl Pariah and Anim Pakal Thousandth Moon as board-requested staples (both included). Halana and Alena Partners is R/G — color identity violation in Boros — excluded with rationale captured in DEC-299 plan."
+    "strategyOverview": "Aziza, Mage Tower Captain is a {R}{W} 2/2 Djinn Sorcerer whose trigger reads: 'Whenever you cast an instant or sorcery spell, you may tap three untapped creatures you control. If you do, copy that spell. You may choose new targets for the copy.' This Boros tokens-fuel-spellcopy build exploits both halves: token bodies become the tap-3 fuel; every instant/sorcery becomes a payoff that doubles for free. **Vigilance is the central enabler** — Intangible Virtue gives every token vigilance, which is what lets the deck attack AND tap three creatures for Aziza on the same turn.\n\nThe token engine runs cheap, high-rate token producers (Krenko's Command, Antiquities on the Loose, Secure the Wastes, Grand Crescendo, Forth Eorlingas!, Empty the Warrens with storm, The Last Ronin's Technique) plus attack-trigger engines (Brimaz King of Oreskos, Adeline Resplendent Cathar, Voice of Victory, Anim Pakal Thousandth Moon). Ajani Nacatl Pariah enters as a 1/2 with a 2/1 cat token and flips into a +1/+1 anthem walker when any cat dies — Aziza fuel twice (ETB + flip pump). Wedding Announcement makes a 1/1 Human end-step token (or draws if you swung wide) and transforms into a permanent +1/+1 anthem after 3 turns.\n\nThe spellslinger payoff layer converts every spell cast into damage and bodies: Young Pyromancer (1/1 elemental per I/S cast), Monastery Mentor (prowess + 1/1 monk per noncreature), Storm-Kiln Artist (Treasure per cast OR Aziza copy via Magecraft), Guttersnipe (2 damage to each opponent per I/S cast). Magecraft is the key text — Storm-Kiln Artist fires on copies AND casts, so Aziza's spell-copy generates a Treasure each fire. Pyromancer, Mentor, and Guttersnipe fire only on casts (CR 707.10 — Aziza copies are not cast), but every hardcast turn triggers all four simultaneously.\n\nCard advantage is split between draw layers and impulse engines: Caretaker's Talent and Enduring Innocence both draw once per turn on token/power-2 ETB; Wedding Announcement draws on wide attacks; Staff of the Storyteller charges story counters per token creation; Haliya Guided by Light draws when you gain 3+ life; Skullclamp turns 1-toughness tokens into 2 cards. Unexpected Windfall and Magus of the Wheel reload empty hands. **Jeska's Will** (with commander on the field) doubles down — both modes resolve: +R per card in target opponent's hand AND exile-and-play 3 cards. Aziza copies it for a second round on another opponent.\n\nAnthems and doublers compound the swarm: Anointed Procession + Mondrak Glory Dominus + Elspeth Storm Slayer (3 doublers) stack to 8x tokens per creation event; add Ojer Taq Deepest Foundation (tripler) for a 24x stack. Cathars' Crusade puts +1/+1 counters on the entire board every time ANY creature enters — a 4-goblin Krenko's Command becomes +4/+4 across the team. Intangible Virtue gives every token vigilance + anthem. Purphoros God of the Forge converts ETBs into 2 damage to each opponent; Impact Tremors and Warleader's Call stack additional 1-damage drains per ETB (Warleader's Call also pumps every creature +1/+1).\n\nThree win lines: (1) **Combat go-wide** — turn 6-8 swing with a doubled board buffed by Cathars' Crusade and triggered drains. The Last Ronin's Technique sneak'd via an unblocked attacker creates 3 attacking tokens; with multipliers and Impact Tremors + Purphoros + Warleader's Call stacked, it's a one-card lethal. (2) **Heliod Sun-Crowned + Walking Ballista** — Heliod's {1}{W} grants Ballista lifelink, then Ballista (with ≥1 counter from cast X≥1 or Cathars' Crusade) pings for 1 → gains 1 life → +1/+1 counter trigger → infinite damage. (3) **Kiki-Jiki Mirror Breaker + Felidar Guardian / Restoration Angel** — Kiki copies the creature with haste, the copy's ETB blinks Kiki, Kiki returns and copies again. Infinite hasted attackers same turn; Impact Tremors / Purphoros / Warleader's Call close on infinite ETBs. Goblin Bombardment converts each hasted Kiki copy into 1 damage to any target before the EOT sacrifice trigger — alternate burn line.\n\nCombo consistency: three tutor effects find the pieces. **Enlightened Tutor** for any artifact/enchantment (Cathars' Crusade, Anointed Procession, Heliod, Goblin Bombardment). **Imperial Recruiter** for power-2-or-less creatures — hits Kiki-Jiki (2/2), Felidar Guardian (1/4), Walking Ballista (printed 0 power), Young Pyromancer, Mother of Runes, Voice of Victory, Storm-Kiln Artist. **Ranger-Captain of Eos** for MV-1-or-less creatures (Walking Ballista, Mother of Runes); the sac ability silences opponents' noncreature spells for the combo turn.\n\nInteraction is 5 instant-speed spot-removal slots (Swords to Plowshares, Path to Exile, Fateful Absence, Chaos Warp, Boros Charm) plus 1 asymmetric sweeper (Settle the Wreckage — exiles attackers and ramps the victim) and the team-protection layer Akroma's Will (whole team gets double strike + indestructible + protection). Sweeper insurance via Clever Concealment (instant-speed convoke phase-out — often 1-2 mana real cost with a wide board) and Flawless Maneuver (free indestructible with commander on the field). Mother of Runes adds targeted protection-from-color on Aziza, Kiki, Heliod, or Walking Ballista as needed. Voice of Victory's static ability ('Your opponents can't cast spells during your turn') lets Aziza copy chains resolve uncontested.\n\nBracket 3+/4-: 3 Game Changers (Enlightened Tutor, Smothering Tithe, Jeska's Will). Honors board exclusions: no Force of Will, Mana Vault, Ancient Tomb, Grim Monolith, The One Ring, Demonic/Vampiric Tutor, Mana Crypt. EU-budget exclusions: Mox Amber (€50+), Esper Sentinel (€50+). v9 swaps prioritized vigilance fix + curve compression + combo tutors + 3rd GC over slow value engines (Reforge the Soul, Idol of Oblivion, Mentor of the Meek, Increasing Devotion, Hour of Reckoning, Big Score, Wrenn's Resolve)."
   },
   "categories": [
     {
@@ -80,11 +85,11 @@
         "Elspeth, Storm Slayer",
         "Krenko's Command",
         "Antiquities on the Loose",
-        "Increasing Devotion",
         "Secure the Wastes",
         "Grand Crescendo",
         "Forth Eorlingas!",
-        "The Last Ronin's Technique"
+        "The Last Ronin's Technique",
+        "Empty the Warrens"
       ]
     },
     {
@@ -93,6 +98,7 @@
         "Young Pyromancer",
         "Monastery Mentor",
         "Storm-Kiln Artist",
+        "Guttersnipe",
         "Wedding Announcement",
         "Reverberate",
         "Increasing Vengeance"
@@ -105,6 +111,7 @@
         "Mondrak, Glory Dominus",
         "Ojer Taq, Deepest Foundation",
         "Cathars' Crusade",
+        "Intangible Virtue",
         "Purphoros, God of the Forge",
         "Impact Tremors",
         "Warleader's Call"
@@ -115,26 +122,22 @@
       "cards": [
         "Caretaker's Talent",
         "Enduring Innocence",
-        "Mentor of the Meek",
         "Haliya, Guided by Light",
-        "Idol of Oblivion",
         "Staff of the Storyteller",
-        "Wrenn's Resolve",
-        "Big Score",
+        "Jeska's Will",
         "Unexpected Windfall",
         "Magus of the Wheel",
-        "Reforge the Soul",
         "Skullclamp"
       ]
     },
     {
-      "name": "Interaction",
+      "name": "Interaction & Protection",
       "cards": [
         "Swords to Plowshares",
         "Path to Exile",
         "Fateful Absence",
         "Chaos Warp",
-        "Hour of Reckoning",
+        "Mother of Runes",
         "Settle the Wreckage",
         "Akroma's Will",
         "Boros Charm",
@@ -154,9 +157,11 @@
       ]
     },
     {
-      "name": "Tutor",
+      "name": "Tutors",
       "cards": [
-        "Enlightened Tutor"
+        "Enlightened Tutor",
+        "Imperial Recruiter",
+        "Ranger-Captain of Eos"
       ]
     },
     {
@@ -230,10 +235,52 @@
       ]
     },
     {
-      "name": "Hour of Reckoning",
-      "reason": "Convoke-wipe that spares tokens. Tap your tokens to pay {4}{W}{W}{W}, destroy all non-token creatures — perfect asymmetric reset for go-wide decks.",
+      "name": "Intangible Virtue",
+      "reason": "v9 re-add (was v2 cut). {1}{W} enchantment: creature tokens get +1/+1 AND vigilance. **The vigilance bottleneck fix** — tokens can attack and still tap for Aziza's 'tap 3 creatures to copy a spell' cost on the same turn. Anthem stacks with Cathars' Crusade, Wedding Festivity, Warleader's Call.",
       "sources": [
-        {"type": "ai-inferred", "name": "Tokens-deck staple"}
+        {"type": "ai-inferred", "name": "DEC-303 v9 vigilance bottleneck fix"}
+      ]
+    },
+    {
+      "name": "Imperial Recruiter",
+      "reason": "v9 add (~€10). 3-MV ETB: tutor any power-2-or-less creature. In this deck that's 11 hits including BOTH combo pieces: Kiki-Jiki (2/2), Felidar Guardian (1/4), Walking Ballista (0 printed power), plus Young Pyromancer, Mother of Runes, Voice of Victory, Storm-Kiln Artist, Ajani, Anim Pakal, Haliya, Monastery Mentor. Combo consistency upgrade — Kiki line now setups in T6-7 routinely.",
+      "sources": [
+        {"type": "ai-inferred", "name": "DEC-303 v9 combo tutor"}
+      ]
+    },
+    {
+      "name": "Ranger-Captain of Eos",
+      "reason": "v9 add. 3-MV 3/3 ETB: tutor any MV-1-or-less creature (Walking Ballista, Mother of Runes). Sac ability is the real value: opponents can't cast noncreature spells this turn — silences the table on your combo turn or alpha strike, resolving copy chains uncontested.",
+      "sources": [
+        {"type": "ai-inferred", "name": "DEC-303 v9 silence enabler"}
+      ]
+    },
+    {
+      "name": "Mother of Runes",
+      "reason": "v9 add. 1-MV 1/1 cleric: tap to give a creature you control protection-from-color until EOT. Single-handedly defeats targeted removal on Aziza, Kiki-Jiki, Heliod, Walking Ballista, or any threat. Cheap body + free repeatable protection.",
+      "sources": [
+        {"type": "ai-inferred", "name": "DEC-303 v9 combo protection"}
+      ]
+    },
+    {
+      "name": "Empty the Warrens",
+      "reason": "v9 add. 4-MV sorcery: create 2 1/1 Goblin tokens + **storm** (copy for each spell cast before it this turn). Cast as 3rd spell of turn → 1 original + 2 storm copies + 1 Aziza copy = 4 instances of 'create 2 goblins' = 8 goblins base. With Mondrak + Procession (4x) = 32 goblins; full 4-multiplier stack = 192. Storm count plus Aziza-copy plus multiplier stack = one-card alpha strike.",
+      "sources": [
+        {"type": "ai-inferred", "name": "DEC-303 v9 storm bomb"}
+      ]
+    },
+    {
+      "name": "Guttersnipe",
+      "reason": "v9 add. 3-MV 2/2 goblin shaman: 2 damage to each opponent per I/S **cast**. Aziza copies don't trigger (copies aren't cast — CR 707.10), but every hardcast does. With 6-8 hardcasts per game = 12-16 damage per opponent of passive drain, fires on every removal spell, every protection spell, every wheel. Pairs with Impact Tremors / Warleader's Call / Purphoros for 4 stackable drain layers.",
+      "sources": [
+        {"type": "ai-inferred", "name": "DEC-303 v9 drain layer"}
+      ]
+    },
+    {
+      "name": "Jeska's Will",
+      "reason": "v9 add (Game Changer #3, ~€20). {2}{R} sorcery: choose one — OR **both** if you control a commander (Aziza is always there). Mode 1: Add {R} for each card in target opponent's hand (typically +4R to +7R = absurd mana surge). Mode 2: Exile top 3 cards, may play them this turn. Aziza copies for a second round targeting another opponent. Single highest aggression unlock in Boros for this deck.",
+      "sources": [
+        {"type": "ai-inferred", "name": "DEC-303 v9 GC#3"}
       ]
     },
     {
@@ -281,13 +328,6 @@
     {
       "name": "Impact Tremors",
       "reason": "v5 add. {1}{R} enchantment: every creature ETB deals 1 damage to each opponent. **3rd Kiki-combo enabler** — at 2 mana setup cost vs Purphoros's 4. Also drains opponents across regular token-spam turns: a Hordeling Outburst with doublers becomes 6-24 damage to each opp.",
-      "sources": [
-        {"type": "other", "name": "BMK Aziza list comparison"}
-      ]
-    },
-    {
-      "name": "Idol of Oblivion",
-      "reason": "v5 add. {2} artifact: {3}, {T} draw a card if you made a token this turn; OR {8}{T}, sac for a 10/10 Eldrazi token. 4th repeatable token-ETB draw layer + sneaky late-game alt finisher.",
       "sources": [
         {"type": "other", "name": "BMK Aziza list comparison"}
       ]
@@ -436,8 +476,8 @@
       "sources": [{"type": "ai-inferred", "name": "Free-with-commander protection"}]
     },
     {
-      "cards": ["Idol of Oblivion", "Staff of the Storyteller"],
-      "description": "Two artifact-based token-draw engines that don't compete for triggers. Idol of Oblivion pays {3}{T} for a draw if a token entered this turn (no cap); Staff of the Storyteller charges a counter per token-creation event then pays {W}{T} to convert it to a draw. Combined with Caretaker's Talent + Enduring Innocence + Mentor of the Meek + Haliya = 6 distinct token-draw layers.",
+      "cards": ["Caretaker's Talent", "Enduring Innocence", "Staff of the Storyteller", "Haliya, Guided by Light", "Wedding Announcement"],
+      "description": "Five token-keyed draw layers fire independently each turn — Caretaker's Talent (token ETB, once/turn), Enduring Innocence (power-2 ETB, once/turn), Staff of the Storyteller (token-creation event → story counter → {W}{T} draw), Haliya (3+ life gained → draw), Wedding Announcement (attack with 2+ → draw). With Skullclamp + Unexpected Windfall + Magus of the Wheel + Smothering Tithe + Jeska's Will rounding out hand refills, the deck almost never runs out of cards.",
       "sources": [{"type": "ai-inferred", "name": "Token-draw saturation"}]
     },
     {
@@ -471,14 +511,121 @@
       "sources": [{"type": "ai-inferred", "name": "Lifelink/Heliod synergy"}]
     },
     {
-      "cards": ["Clever Concealment", "Hour of Reckoning"],
-      "description": "If a board wipe is incoming, phase out your team with Clever Concealment (convoke pays the cost using the very creatures being phased). Survives any non-exile wrath; permanents return on your next untap.",
+      "cards": ["Clever Concealment", "Settle the Wreckage"],
+      "description": "Sweeper insurance layer. Clever Concealment (instant convoke) phases your entire team out — survives any non-exile wrath, permanents return untapped on your next untap step. Settle the Wreckage exiles attackers, deterring opponents from threatening you in the first place. Together they cover both proactive and reactive board protection.",
       "sources": [{"type": "ai-inferred", "name": "Sweeper protection layer"}]
     },
     {
       "cards": ["Skullclamp", "Ajani, Nacatl Pariah"],
       "description": "Clamp a 1/1 cat token from Ajani (or any 1-toughness token) — equipped creature gets +1/-1, dies, draw 2. Repeatable card advantage from spare tokens.",
       "sources": [{"type": "edhrec", "name": "Skullclamp + 1-toughness tokens classic combo"}]
+    },
+    {
+      "cards": ["Intangible Virtue", "Aziza, Mage Tower Captain", "Anim Pakal, Thousandth Moon"],
+      "description": "**Vigilance bottleneck fix.** Intangible Virtue gives all tokens vigilance. Anim Pakal attacks each turn (snowballing tapped+attacking Gnome tokens scaled by counter count) while remaining untapped — she is now perfect Aziza tap-3 fuel on the same turn she swings. Pre-v9, attacking emptied your untapped pool and locked Aziza out of copy-mode that turn. Now combat + copy chains co-exist.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 vigilance unlock"}]
+    },
+    {
+      "cards": ["Intangible Virtue", "Cathars' Crusade", "Krenko's Command"],
+      "description": "Token spell with Intangible Virtue + Cathars' Crusade out: Krenko's Command makes 2 1/1s → Crusade triggers twice (+2/+2 to every creature including the new tokens) → Intangible Virtue anthem stacks +1/+1 base on the tokens = the two Krenko goblins enter as 4/4s with vigilance, and every other creature on your board grows by +2/+2. Aziza copy doubles the whole sequence.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 token anthem stack"}]
+    },
+    {
+      "cards": ["Imperial Recruiter", "Kiki-Jiki, Mirror Breaker", "Felidar Guardian"],
+      "description": "Imperial Recruiter's ETB tutors any power-2-or-less creature. Both Kiki-Jiki (2/2) and Felidar Guardian (1/4) qualify, plus Walking Ballista (printed 0 power). One 3-MV body fetches both halves of the Kiki line (one piece per cast). Lowers combo assembly variance dramatically.",
+      "sources": [{"type": "commanderspellbook", "name": "Recruiter → combo piece chain"}]
+    },
+    {
+      "cards": ["Imperial Recruiter", "Heliod, Sun-Crowned", "Walking Ballista"],
+      "description": "Imperial Recruiter tutors Walking Ballista (printed power 0). Heliod is 5/5 — too big for Imperial's filter, but Enlightened Tutor finds the artifact (Heliod is also a creature-enchantment but Enlightened only finds Heliod via the artifact slot — actually Heliod isn't an artifact, so Enlightened only finds him as an enchantment). Net: Imperial Recruiter is the only tutor for Walking Ballista; Enlightened Tutor is the only tutor for Heliod. Together they assemble the Heliod combo in 2-3 turns.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 combo tutor pathing"}]
+    },
+    {
+      "cards": ["Ranger-Captain of Eos", "Kiki-Jiki, Mirror Breaker", "Felidar Guardian"],
+      "description": "On the turn you assemble Kiki + Felidar, sacrifice Ranger-Captain → opponents can't cast noncreature spells this turn (no counterspells, no removal, no Cyclonic Rift). Combo resolves uncontested. Even better: Ranger-Captain's own ETB can tutor Mother of Runes to protect Kiki from creature removal first, then sac for the silence — two-layer combo protection from one card.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 silence on combo turn"}]
+    },
+    {
+      "cards": ["Mother of Runes", "Aziza, Mage Tower Captain"],
+      "description": "Mother of Runes taps to give Aziza protection from the most relevant color (typically blue for counterspells, black/red for removal). Keeps the commander on the field through removal so spell-copy chains continue. Free, repeatable protection at 1 MV.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 commander protection"}]
+    },
+    {
+      "cards": ["Empty the Warrens", "Anointed Procession", "Mondrak, Glory Dominus", "Aziza, Mage Tower Captain"],
+      "description": "Cast Empty the Warrens as the 3rd spell of your turn → 1 original + 2 storm copies + 1 Aziza copy = 4 spell events, each creating 2 1/1 goblins. With Anointed Procession + Mondrak (4x multiplier): 4 × 8 = 32 goblins. With +Elspeth (8x): 64. With +Ojer Taq (24x): 192. Storm copies are not cast (so Aziza doesn't re-copy them) but each storm copy is multiplied independently.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 storm + multiplier stack"}]
+    },
+    {
+      "cards": ["Guttersnipe", "Aziza, Mage Tower Captain"],
+      "description": "Guttersnipe triggers on every I/S **cast** (CR 707.10: Aziza copies are not cast, so the copy does not re-trigger Guttersnipe — but the original cast does). A turn where you cast 3 I/S spells: 3 × 2 = 6 damage to each opponent passively, on top of whatever the spells do AND whatever Aziza copies of those spells do. Pairs with Impact Tremors + Warleader's Call + Purphoros: 4 stackable damage triggers on creature ETB OR spell cast.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 drain layer"}]
+    },
+    {
+      "cards": ["Jeska's Will", "Aziza, Mage Tower Captain"],
+      "description": "Cast Jeska's Will for {2}{R} with Aziza in command zone or on field → 'you control a commander as you cast' → choose **both** modes. Mode 1 adds R per card in target opp's hand (often +4R to +7R). Mode 2 exiles top 3, play this turn. Aziza copies the spell → copy resolves with both modes, target a different opponent for Mode 1 (more red mana) and exile 3 more from top of library. Net for {2}{R}: typically +8R to +14R generated AND 6 cards impulsed. Often resolves into a 1-card lethal sequence.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 GC#3 unlock"}]
+    },
+    {
+      "cards": ["Imperial Recruiter", "Mother of Runes", "Aziza, Mage Tower Captain"],
+      "description": "Imperial Recruiter's ETB tutors Mother of Runes (1/1). Mother of Runes then protects Aziza or your combo piece each turn with free protection-from-color. Two 3-MV plays = a defensive lock that keeps the copy engine alive against targeted removal.",
+      "sources": [{"type": "ai-inferred", "name": "DEC-303 v9 defensive chain"}]
+    }
+  ],
+  "winConditions": [
+    {
+      "title": "Heliod + Walking Ballista",
+      "kind": "combo",
+      "pieces": ["Heliod, Sun-Crowned", "Walking Ballista"],
+      "cards": ["Heliod, Sun-Crowned", "Walking Ballista"],
+      "mana_cost": 8,
+      "description": "Heliod's {1}{W} activated ability grants Walking Ballista lifelink. Walking Ballista (with ≥1 +1/+1 counter, achievable by casting with X≥1 or by Cathars' Crusade) pings for 1 → 1 life gained → Heliod's lifegain trigger places a +1/+1 counter on Ballista → repeat. Infinite damage; each opponent dies to direct damage.",
+      "sources": [
+        {"type": "commanderspellbook", "name": "Commander Spellbook — Heliod + Walking Ballista (Standard cEDH 2-card combo)"}
+      ]
+    },
+    {
+      "title": "Kiki-Jiki + Felidar Guardian",
+      "kind": "combo",
+      "pieces": ["Kiki-Jiki, Mirror Breaker", "Felidar Guardian"],
+      "cards": ["Kiki-Jiki, Mirror Breaker", "Felidar Guardian"],
+      "mana_cost": 9,
+      "description": "Kiki-Jiki taps to create a hasted copy of Felidar Guardian. The Felidar copy's ETB triggers, exiling Kiki and returning it (untapped, no summoning sickness due to haste from the previous copy). Kiki taps again to copy Felidar. Loop: infinite hasted 1/4 attackers. Closes via combat damage; with Impact Tremors / Purphoros / Warleader's Call also closes by infinite damage to each opponent.",
+      "sources": [
+        {"type": "commanderspellbook", "name": "Commander Spellbook — Kiki-Jiki + Felidar Guardian"}
+      ]
+    },
+    {
+      "title": "Kiki-Jiki + Restoration Angel",
+      "kind": "combo",
+      "pieces": ["Kiki-Jiki, Mirror Breaker", "Restoration Angel"],
+      "cards": ["Kiki-Jiki, Mirror Breaker", "Restoration Angel"],
+      "mana_cost": 9,
+      "description": "Kiki-Jiki taps to create a hasted copy of Restoration Angel. The Angel copy's ETB triggers, exiling Kiki (non-Angel target) and returning it. Kiki taps to copy Angel again. Loop: infinite hasted 3/4 flying attackers. Same closer as the Felidar line. Provides a 5th combo piece, materially raising combo assembly probability.",
+      "sources": [
+        {"type": "commanderspellbook", "name": "Commander Spellbook — Kiki-Jiki + Restoration Angel"}
+      ]
+    },
+    {
+      "title": "Kiki-Jiki + Felidar Guardian + Goblin Bombardment",
+      "kind": "combo",
+      "pieces": ["Kiki-Jiki, Mirror Breaker", "Felidar Guardian", "Goblin Bombardment"],
+      "cards": ["Kiki-Jiki, Mirror Breaker", "Felidar Guardian", "Goblin Bombardment"],
+      "mana_cost": 11,
+      "description": "Alternate Kiki line via Goblin Bombardment. With Bombardment on the field, sacrifice each hasted Felidar copy for 1 damage to any target before the EOT exile trigger. Infinite damage to any single target — directly kills opponents or removes their boards through indestructible creatures.",
+      "sources": [
+        {"type": "commanderspellbook", "name": "Commander Spellbook — Kiki+Felidar+Goblin Bombardment"}
+      ]
+    },
+    {
+      "title": "Combat go-wide (Crusade + Multipliers)",
+      "kind": "combat",
+      "pieces": ["Cathars' Crusade", "Anointed Procession"],
+      "cards": ["Cathars' Crusade", "Anointed Procession", "Aziza, Mage Tower Captain"],
+      "mana_cost": 9,
+      "description": "Turn 5-6: with Cathars' Crusade + at least one multiplier (Anointed Procession, Mondrak, Elspeth, or Ojer Taq) on the field, a token spell creates N tokens (multiplied), each ETB stacks +N/+N counters on every creature you control via Crusade. Aziza copies the token spell for double output. With Intangible Virtue providing vigilance, swing for lethal on the same turn. Routinely 40+ damage across the table with Impact Tremors / Warleader's Call drains stacked.",
+      "sources": [
+        {"type": "ai-inferred", "name": "DEC-303 v9 combat lethal pathway"}
+      ]
     }
   ],
   "decklist": [
@@ -501,10 +648,10 @@
     {"name": "Felidar Guardian", "type": "Creature — Cat Beast", "primary_role": "wincon", "wincon_style": "combo"},
     {"name": "Krenko's Command", "type": "Sorcery", "primary_role": "payoff"},
     {"name": "Antiquities on the Loose", "type": "Sorcery", "primary_role": "payoff", "secondary_role": "recursion"},
-    {"name": "Mentor of the Meek", "type": "Creature — Human Soldier", "primary_role": "card-draw"},
+    {"name": "Mother of Runes", "type": "Creature — Human Cleric", "primary_role": "protection"},
     {"name": "Ojer Taq, Deepest Foundation", "type": "Legendary Creature — God", "primary_role": "payoff"},
     {"name": "The Last Ronin's Technique", "type": "Instant", "primary_role": "wincon", "secondary_role": "payoff", "wincon_style": "combat"},
-    {"name": "Increasing Devotion", "type": "Sorcery", "primary_role": "payoff", "secondary_role": "recursion"},
+    {"name": "Empty the Warrens", "type": "Sorcery", "primary_role": "payoff", "secondary_role": "wincon", "wincon_style": "combat"},
     {"name": "Grand Crescendo", "type": "Instant", "primary_role": "payoff", "secondary_role": "protection"},
     {"name": "Reverberate", "type": "Instant", "primary_role": "payoff"},
     {"name": "Increasing Vengeance", "type": "Instant", "primary_role": "payoff", "secondary_role": "recursion"},
@@ -516,11 +663,11 @@
     {"name": "Caretaker's Talent", "type": "Enchantment — Class", "primary_role": "card-draw", "secondary_role": "payoff"},
     {"name": "Enduring Innocence", "type": "Enchantment Creature — Sheep Glimmer", "primary_role": "card-draw", "secondary_role": "engine"},
     {"name": "Flawless Maneuver", "type": "Instant", "primary_role": "protection"},
-    {"name": "Wrenn's Resolve", "type": "Sorcery", "primary_role": "card-draw"},
-    {"name": "Big Score", "type": "Sorcery", "primary_role": "card-draw", "secondary_role": "ramp"},
+    {"name": "Jeska's Will", "type": "Sorcery", "primary_role": "ramp", "secondary_role": "card-draw"},
+    {"name": "Guttersnipe", "type": "Creature — Goblin Shaman", "primary_role": "payoff", "secondary_role": "wincon", "wincon_style": "drain"},
     {"name": "Unexpected Windfall", "type": "Sorcery", "primary_role": "card-draw", "secondary_role": "ramp"},
     {"name": "Magus of the Wheel", "type": "Creature — Human Wizard", "primary_role": "card-draw"},
-    {"name": "Reforge the Soul", "type": "Sorcery", "primary_role": "card-draw"},
+    {"name": "Imperial Recruiter", "type": "Creature — Human Advisor", "primary_role": "tutor"},
     {"name": "Skullclamp", "type": "Artifact — Equipment", "primary_role": "card-draw"},
     {"name": "Swords to Plowshares", "type": "Instant", "primary_role": "removal-spot"},
     {"name": "Path to Exile", "type": "Instant", "primary_role": "removal-spot"},
@@ -530,7 +677,7 @@
     {"name": "Impact Tremors", "type": "Enchantment", "primary_role": "wincon", "secondary_role": "payoff", "wincon_style": "drain"},
     {"name": "Warleader's Call", "type": "Enchantment", "primary_role": "payoff", "secondary_role": "wincon", "wincon_style": "drain"},
     {"name": "Staff of the Storyteller", "type": "Artifact", "primary_role": "card-draw", "secondary_role": "engine"},
-    {"name": "Hour of Reckoning", "type": "Sorcery", "primary_role": "removal-board"},
+    {"name": "Intangible Virtue", "type": "Enchantment", "primary_role": "payoff"},
     {"name": "Settle the Wreckage", "type": "Instant", "primary_role": "removal-board", "secondary_role": "protection"},
     {"name": "Akroma's Will", "type": "Instant", "primary_role": "protection", "secondary_role": "wincon", "wincon_style": "combat"},
     {"name": "Boros Charm", "type": "Instant", "primary_role": "protection", "secondary_role": "removal-spot"},
@@ -543,7 +690,7 @@
     {"name": "Mind Stone", "type": "Artifact", "primary_role": "ramp", "secondary_role": "card-draw"},
     {"name": "Fellwar Stone", "type": "Artifact", "primary_role": "ramp"},
     {"name": "Smothering Tithe", "type": "Enchantment", "primary_role": "ramp", "secondary_role": "card-draw"},
-    {"name": "Idol of Oblivion", "type": "Artifact", "primary_role": "card-draw", "secondary_role": "wincon", "wincon_style": "combat"},
+    {"name": "Ranger-Captain of Eos", "type": "Creature — Human Soldier Ranger", "primary_role": "tutor", "secondary_role": "protection"},
     {"name": "Sacred Foundry", "type": "Land — Mountain Plains", "primary_role": "land"},
     {"name": "Battlefield Forge", "type": "Land", "primary_role": "land"},
     {"name": "Inspiring Vantage", "type": "Land", "primary_role": "land"},

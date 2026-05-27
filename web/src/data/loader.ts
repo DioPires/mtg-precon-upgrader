@@ -68,7 +68,8 @@ import type {
 // v29 -> v30 (DEC-299 follow-up 2026-05-27): Aziza simulation.json regenerated via export_simulation_results.py with proper schema (deckHealthScore, goldfish, reliabilityMetrics) so Compare tab populates.
 // v30 -> v31 (DEC-299 follow-up 2026-05-27): Zada (Hedron Storm) simulation.json finally written — new mana_simulation_zada_hedron_grinder.py + export_zada() wired into the pipeline; Compare row populates now.
 // v31 -> v32 (DEC-299 v8 2026-05-27): Aziza Roaming Throne -> Wedding Announcement (board feedback: €33 narrow swap to €3-5 saga with anthem+draw+tokens); sim regenerated.
-const STORAGE_PREFIX = 'gv1-deck-data-v32:';
+// v32 -> v33 (DEC-303 v9 2026-05-27): Aziza aggression pass — 7 swaps (Reforge→Imperial Recruiter, Idol→Ranger-Captain, Mentor of the Meek→Mother of Runes, Increasing Devotion→Empty the Warrens, Hour of Reckoning→Intangible Virtue, Big Score→Guttersnipe, Wrenn's Resolve→Jeska's Will), winConditions[] block added (unlocks combo lethal in sim — was reporting 0%, now 23.6% by T6 / 28.9% by T7), strategyOverview rewritten to drop 20 stale card refs. GC count 2→3, curve 2.9→2.5.
+const STORAGE_PREFIX = 'gv1-deck-data-v33:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
