@@ -1,17 +1,27 @@
 {
-  "version": 1,
-  "methodology": "deck-metrics-v1",
+  "version": 2,
+  "methodology": "deck-metrics-v2",
   "deck_id": "creeping-corruption",
   "commander": "Atraxa, Praetors' Voice",
   "bracket": "3",
+  "bracket_effective": 3,
   "color_identity": [
     "B",
     "G",
     "U",
     "W"
   ],
-  "generated_at": "2026-05-24T11:12:32+00:00",
-  "scryfall_mirror_updated_at": "2026-05-24T09:03:15.152+00:00",
+  "generated_at": "2026-05-29T09:22:18+00:00",
+  "scryfall_mirror_updated_at": "2026-05-28T09:03:46.321+00:00",
+  "weight_option": "A",
+  "weights": {
+    "manabase": 0.25,
+    "role": 0.25,
+    "curve": 0.15,
+    "interaction": 0.15,
+    "cohesion": 0.1,
+    "resilience": 0.1
+  },
   "metrics": {
     "manabase_health": {
       "score": 82,
@@ -28,20 +38,20 @@
         "avg_nonland_cmc": 2.81,
         "target_lands": 39.2,
         "color_sources": {
+          "U": 22.0,
           "W": 21.0,
-          "B": 23.0,
           "G": 25.0,
-          "U": 22.0
+          "B": 23.0
         },
         "color_requirements": {
+          "U": {
+            "required": 18,
+            "actual": 22.0,
+            "ratio": 1.0
+          },
           "W": {
             "required": 14,
             "actual": 21.0,
-            "ratio": 1.0
-          },
-          "B": {
-            "required": 16,
-            "actual": 23.0,
             "ratio": 1.0
           },
           "G": {
@@ -49,9 +59,9 @@
             "actual": 25.0,
             "ratio": 1.0
           },
-          "U": {
-            "required": 18,
-            "actual": 22.0,
+          "B": {
+            "required": 16,
+            "actual": 23.0,
             "ratio": 1.0
           }
         }
@@ -154,15 +164,56 @@
       "has_wincon": true,
       "tutor_count": 0.0,
       "penalty": 0.0
+    },
+    "resilience_health": {
+      "score": 70,
+      "components": {
+        "recursion": {
+          "score": 0.0,
+          "actual": 0.0,
+          "target": 3,
+          "max": 30
+        },
+        "redundancy": {
+          "score": 25.0,
+          "lines": 5,
+          "floor": 1,
+          "max": 25
+        },
+        "protection": {
+          "score": 25.0,
+          "actual": 4.5,
+          "target": 2,
+          "max": 25
+        },
+        "gy_second_hand": {
+          "score": 20.0,
+          "actual": 15.0,
+          "target": 6,
+          "max": 20
+        }
+      },
+      "inputs": {
+        "wincon_style": "value-incremental",
+        "bracket_effective": 3
+      }
     }
   },
-  "global_health": 89,
+  "global_health": 88,
   "gaps": [
     {
       "role": "tutor",
       "actual": 0.0,
       "target": 2,
       "score": 0
+    },
+    {
+      "resilience_component": "recursion",
+      "score_pct": 0,
+      "max": 30,
+      "actual": 0.0,
+      "target": 3,
+      "wincon_style": "value-incremental"
     }
   ]
 }

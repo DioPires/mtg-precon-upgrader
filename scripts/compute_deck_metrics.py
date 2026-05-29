@@ -24,7 +24,18 @@ DECKS_DIR = PROJECT_ROOT / "data" / "commanders"
 MIRROR_FILE = PROJECT_ROOT / "priv_data" / "scryfall-oracle.json"
 MIRROR_META = PROJECT_ROOT / "priv_data" / "scryfall-oracle.meta.json"
 
-METHODOLOGY_VERSION = "deck-metrics-v1"
+METHODOLOGY_VERSION = "deck-metrics-v2"
+
+# DEC-308 — global_health weight options. Each tuple weights are
+# (manabase, role, curve, interaction, cohesion, resilience). Sum = 1.0.
+# The chosen option is committed below in DEFAULT_WEIGHT_OPTION after
+# calibration; the rest stay available for `--calibrate` runs.
+GLOBAL_WEIGHT_OPTIONS: dict[str, tuple[float, float, float, float, float, float]] = {
+    "A": (0.25, 0.25, 0.15, 0.15, 0.10, 0.10),
+    "B": (0.28, 0.28, 0.14, 0.14, 0.08, 0.08),
+    "C": (0.30, 0.25, 0.15, 0.12, 0.08, 0.10),
+}
+DEFAULT_WEIGHT_OPTION = "A"
 
 VALID_ROLES = {
     "land", "ramp", "mana-fixing", "card-draw", "tutor",
@@ -73,6 +84,30 @@ CURVE_TARGETS = {
 DEFAULT_CURVE_TARGET = 3.2
 
 COHESION_BASE_ROLES = {"payoff", "engine", "wincon", "threat"}
+
+# DEC-308 — resilience_health targets keyed by deck-level `wincon_style`.
+# Rationale lives in docs/deck-metrics.md §resilience_health.
+RESILIENCE_RECURSION_TARGETS: dict[str | None, dict[int, int]] = {
+    "combo":             {3: 1, 4: 2, 5: 2},
+    "value-incremental": {3: 3, 4: 4, 5: 5},
+    "discrete-threats":  {3: 2, 4: 3, 5: 3},
+    "combat":            {3: 2, 4: 3, 5: 4},
+    "drain":             {3: 2, 4: 3, 5: 4},
+    "drain-x":           {3: 2, 4: 3, 5: 4},
+    None:                {3: 2, 4: 3, 5: 4},
+}
+RESILIENCE_WINCON_LINE_FLOOR: dict[str | None, int] = {
+    "combo": 1,
+    "value-incremental": 1,
+    "discrete-threats": 2,
+    "combat": 1,
+    "drain": 1,
+    "drain-x": 1,
+    None: 1,
+}
+RESILIENCE_PROTECTION_TARGETS = {3: 2, 4: 4, 5: 5}
+RESILIENCE_GY_TARGET = 6
+RESILIENCE_GY_ROLES = {"recursion", "engine"}
 
 ARCHETYPE_COHESION_EXT = {
     "graveyard-reanimator": {"recursion"},
@@ -616,6 +651,117 @@ def gameplan_cohesion(deck: dict, mirror: dict[str, dict], bracket: int) -> dict
     }
 
 
+# ---- Resilience health (DEC-308) -------------------------------------------
+
+def _role_count_weighted(deck: dict, role: str) -> float:
+    """Sum of role weight (primary 1.0, secondary 0.5) including commander."""
+    total = 0.0
+    for entry in deck.get("decklist", []):
+        qty = card_quantity(entry)
+        if entry.get("primary_role") == role:
+            total += 1.0 * qty
+        if entry.get("secondary_role") == role:
+            total += 0.5 * qty
+    cr = deck.get("commanderRoles") or {}
+    if cr.get("primary") == role:
+        total += 1.0
+    if cr.get("secondary") == role:
+        total += 0.5
+    return total
+
+
+def _gy_second_hand_count(deck: dict) -> float:
+    """Count of cards whose primary or secondary role is in {recursion, engine}.
+
+    Per DEC-308: we deliberately do NOT re-derive from oracle text — that
+    produces false positives (every reanimate spell also flags), and the
+    recursion role tag already captures the intent. Counting the union of
+    recursion+engine surfaces grindy yard-rebuild engines (Deep Analysis,
+    Snapcaster, Bone Shards on engine creatures, …) without re-counting any
+    single card more than once across this component.
+    """
+    total = 0.0
+    for entry in deck.get("decklist", []):
+        primary = entry.get("primary_role")
+        secondary = entry.get("secondary_role")
+        if primary in RESILIENCE_GY_ROLES or secondary in RESILIENCE_GY_ROLES:
+            total += card_quantity(entry)
+    cr = deck.get("commanderRoles") or {}
+    if cr.get("primary") in RESILIENCE_GY_ROLES or cr.get("secondary") in RESILIENCE_GY_ROLES:
+        total += 1.0
+    return total
+
+
+def resilience_health(deck: dict, bracket: int) -> tuple[dict, list[dict]]:
+    wincon_style = deck.get("wincon_style")
+    recursion_target = (
+        RESILIENCE_RECURSION_TARGETS.get(wincon_style)
+        or RESILIENCE_RECURSION_TARGETS[None]
+    ).get(bracket, RESILIENCE_RECURSION_TARGETS[None][4])
+    wincon_floor = RESILIENCE_WINCON_LINE_FLOOR.get(
+        wincon_style, RESILIENCE_WINCON_LINE_FLOOR[None]
+    )
+    protection_target = RESILIENCE_PROTECTION_TARGETS.get(
+        bracket, RESILIENCE_PROTECTION_TARGETS[4]
+    )
+
+    recursion_count = _role_count_weighted(deck, "recursion")
+    protection_count = _role_count_weighted(deck, "protection")
+    wincon_lines = len(deck.get("winConditions") or [])
+    gy_count = _gy_second_hand_count(deck)
+
+    recursion_ratio = (recursion_count / recursion_target) if recursion_target else 1.0
+    recursion_score = round(min(recursion_ratio, 1.2) * 30, 1)
+
+    redundancy_extra = max(0.0, wincon_lines - wincon_floor)
+    redundancy_ratio = min(redundancy_extra / 2.0, 1.0)
+    redundancy_score = round(redundancy_ratio * 25, 1)
+
+    protection_ratio = min(protection_count / protection_target, 1.0) if protection_target else 1.0
+    protection_score = round(protection_ratio * 25, 1)
+
+    gy_ratio = min(gy_count / RESILIENCE_GY_TARGET, 1.0)
+    gy_score = round(gy_ratio * 20, 1)
+
+    total = recursion_score + redundancy_score + protection_score + gy_score
+    score = round(total)
+
+    components = {
+        "recursion":      {"score": recursion_score, "actual": round(recursion_count, 1), "target": recursion_target, "max": 30},
+        "redundancy":     {"score": redundancy_score, "lines": wincon_lines, "floor": wincon_floor, "max": 25},
+        "protection":     {"score": protection_score, "actual": round(protection_count, 1), "target": protection_target, "max": 25},
+        "gy_second_hand": {"score": gy_score, "actual": round(gy_count, 1), "target": RESILIENCE_GY_TARGET, "max": 20},
+    }
+
+    # Per-component gap: surface to gaps[] when the component's % of its max is < 70.
+    gaps: list[dict] = []
+    for name, comp in components.items():
+        pct = round((comp["score"] / comp["max"]) * 100)
+        if pct < 70:
+            gap_entry = {"resilience_component": name, "score_pct": pct, "max": comp["max"]}
+            if name == "recursion":
+                gap_entry.update({"actual": comp["actual"], "target": comp["target"], "wincon_style": wincon_style})
+            elif name == "redundancy":
+                gap_entry.update({"lines": comp["lines"], "floor": comp["floor"], "wincon_style": wincon_style})
+            elif name == "protection":
+                gap_entry.update({"actual": comp["actual"], "target": comp["target"]})
+            elif name == "gy_second_hand":
+                gap_entry.update({"actual": comp["actual"], "target": comp["target"]})
+            gaps.append(gap_entry)
+
+    return (
+        {
+            "score": score,
+            "components": components,
+            "inputs": {
+                "wincon_style": wincon_style,
+                "bracket_effective": bracket,
+            },
+        },
+        gaps,
+    )
+
+
 # ---- Top-level orchestration ------------------------------------------------
 
 def commander_color_identity(deck: dict, mirror: dict[str, dict]) -> set[str]:
@@ -627,13 +773,15 @@ def commander_color_identity(deck: dict, mirror: dict[str, dict]) -> set[str]:
 
 
 def parse_bracket(deck: dict) -> int:
-    raw = deck.get("bracket", 4)
+    # Canonical mapping: "3+" → 3, "4+" → 4 (DEC-308). The "+" suffix is a
+    # display flourish meaning "slightly above" — target tables collapse it to
+    # the base bracket. See docs/deck-metrics.md §bracket-mapping.
+    raw = str(deck.get("bracket", 4)).strip().rstrip("+")
     try:
-        b = int(str(raw).strip())
+        b = int(raw)
     except (TypeError, ValueError):
         return 4
     if b not in (3, 4, 5):
-        # B1/B2 not modeled; clamp to closest tabled bracket
         if b < 3:
             return 3
         return 5
@@ -655,7 +803,23 @@ def validate_roles(deck: dict, deck_id: str) -> list[str]:
     return errs
 
 
-def compute(deck: dict, deck_id: str, mirror: dict[str, dict], mirror_updated_at: str) -> dict:
+def blend_global_health(
+    manabase: int, role: int, curve: int, interaction: int, cohesion: int, resilience: int,
+    weights: tuple[float, float, float, float, float, float],
+) -> int:
+    wm, wr, wc, wi, wco, wre = weights
+    return round(
+        wm * manabase + wr * role + wc * curve + wi * interaction + wco * cohesion + wre * resilience
+    )
+
+
+def compute(
+    deck: dict,
+    deck_id: str,
+    mirror: dict[str, dict],
+    mirror_updated_at: str,
+    weight_option: str = DEFAULT_WEIGHT_OPTION,
+) -> dict:
     errs = validate_roles(deck, deck_id)
     if errs:
         for e in errs:
@@ -669,33 +833,44 @@ def compute(deck: dict, deck_id: str, mirror: dict[str, dict], mirror_updated_at
     curve = curve_health(deck, mirror)
     interaction = interaction_density(deck, bracket)
     cohesion = gameplan_cohesion(deck, mirror, bracket)
+    resilience, resilience_gaps = resilience_health(deck, bracket)
 
-    global_health = round(
-        0.30 * manabase["score"]
-        + 0.30 * role_cov["score"]
-        + 0.15 * curve["score"]
-        + 0.15 * interaction["score"]
-        + 0.10 * cohesion["score"]
+    weights = GLOBAL_WEIGHT_OPTIONS[weight_option]
+    global_health = blend_global_health(
+        manabase["score"], role_cov["score"], curve["score"],
+        interaction["score"], cohesion["score"], resilience["score"],
+        weights,
     )
 
     return {
-        "version": 1,
+        "version": 2,
         "methodology": METHODOLOGY_VERSION,
         "deck_id": deck_id,
         "commander": deck.get("commander", ""),
         "bracket": str(deck.get("bracket", bracket)),
+        "bracket_effective": bracket,
         "color_identity": sorted(deck_ci),
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "scryfall_mirror_updated_at": mirror_updated_at,
+        "weight_option": weight_option,
+        "weights": {
+            "manabase":    weights[0],
+            "role":        weights[1],
+            "curve":       weights[2],
+            "interaction": weights[3],
+            "cohesion":    weights[4],
+            "resilience":  weights[5],
+        },
         "metrics": {
             "manabase_health": manabase,
             "role_coverage_health": role_cov,
             "curve_health": curve,
             "interaction_density": interaction,
             "gameplan_cohesion": cohesion,
+            "resilience_health": resilience,
         },
         "global_health": global_health,
-        "gaps": role_gaps,
+        "gaps": role_gaps + resilience_gaps,
     }
 
 
@@ -718,11 +893,75 @@ def write_metrics(deck_id: str, payload: dict) -> bool:
     return True
 
 
+def _grade(g: int) -> str:
+    if g >= 90:
+        return "A"
+    if g >= 80:
+        return "B"
+    if g >= 70:
+        return "C"
+    if g >= 60:
+        return "D"
+    return "F"
+
+
+def run_calibration(paths: list[Path], mirror: dict[str, dict], mirror_updated_at: str) -> int:
+    """DEC-308 — compute components once, then project global_health under each
+    weight option. Prints a markdown-ready table; writes nothing.
+    """
+    rows = []
+    for p in paths:
+        if not p.exists():
+            print(f"missing: {p}", file=sys.stderr)
+            continue
+        deck_id = p.parent.name
+        deck = json.loads(p.read_text())
+        # Compute once under option A; the component sub-scores are
+        # weight-option-independent, so we can reuse them.
+        payload = compute(deck, deck_id, mirror, mirror_updated_at, weight_option="A")
+        m = payload["metrics"]
+        comps = (
+            m["manabase_health"]["score"], m["role_coverage_health"]["score"],
+            m["curve_health"]["score"], m["interaction_density"]["score"],
+            m["gameplan_cohesion"]["score"], m["resilience_health"]["score"],
+        )
+        per_option = {opt: blend_global_health(*comps, GLOBAL_WEIGHT_OPTIONS[opt])
+                      for opt in GLOBAL_WEIGHT_OPTIONS}
+        rows.append((deck_id, comps, per_option))
+
+    rows.sort(key=lambda r: r[2]["A"], reverse=True)
+
+    header = (
+        "| Deck | mana | role | curve | int | cohesion | resilience "
+        "| A (25/25/15/15/10/10) | B (28/28/14/14/8/8) | C (30/25/15/12/8/10) "
+        "| A grade | B grade | C grade |"
+    )
+    sep = "|" + "|".join(["---"] * 13) + "|"
+    print(header)
+    print(sep)
+    for deck_id, comps, per_option in rows:
+        ma, ro, cu, intr, co, re = comps
+        a, b, c = per_option["A"], per_option["B"], per_option["C"]
+        print(
+            f"| {deck_id} | {ma} | {ro} | {cu} | {intr} | {co} | {re} "
+            f"| {a} | {b} | {c} | {_grade(a)} | {_grade(b)} | {_grade(c)} |"
+        )
+    return 0
+
+
 def main(argv: list[str]) -> int:
-    parser = argparse.ArgumentParser(description="Compute deck metrics (DEC-119)")
+    parser = argparse.ArgumentParser(description="Compute deck metrics (DEC-119, DEC-308)")
     target = parser.add_mutually_exclusive_group()
     target.add_argument("--deck", help="Single deck id")
     target.add_argument("--all", action="store_true", help="All decks")
+    parser.add_argument(
+        "--weights", choices=sorted(GLOBAL_WEIGHT_OPTIONS), default=DEFAULT_WEIGHT_OPTION,
+        help="Which global_health weight option to use when writing metrics.json",
+    )
+    parser.add_argument(
+        "--calibrate", action="store_true",
+        help="Print A/B/C global_health projection table for all decks; do not write metrics.json",
+    )
     args = parser.parse_args(argv)
 
     if not args.deck and not args.all:
@@ -735,6 +974,9 @@ def main(argv: list[str]) -> int:
 
     mirror, mirror_updated_at = load_mirror()
 
+    if args.calibrate:
+        return run_calibration(paths, mirror, mirror_updated_at)
+
     written = 0
     for p in paths:
         if not p.exists():
@@ -742,7 +984,7 @@ def main(argv: list[str]) -> int:
             continue
         deck_id = p.parent.name
         deck = json.loads(p.read_text())
-        payload = compute(deck, deck_id, mirror, mirror_updated_at)
+        payload = compute(deck, deck_id, mirror, mirror_updated_at, weight_option=args.weights)
         changed = write_metrics(deck_id, payload)
         m = payload["metrics"]
         print(
@@ -752,6 +994,7 @@ def main(argv: list[str]) -> int:
             f"curve={m['curve_health']['score']}  "
             f"interaction={m['interaction_density']['score']}  "
             f"cohesion={m['gameplan_cohesion']['score']}  "
+            f"resilience={m['resilience_health']['score']}  "
             f"gaps={len(payload['gaps'])}"
             f"{'' if changed else '  (unchanged)'}",
             file=sys.stderr,
@@ -759,7 +1002,7 @@ def main(argv: list[str]) -> int:
         if changed:
             written += 1
 
-    print(f"\nWrote {written} metrics file(s).", file=sys.stderr)
+    print(f"\nWrote {written} metrics file(s) (weights={args.weights}).", file=sys.stderr)
     return 0
 
 

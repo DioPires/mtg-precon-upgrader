@@ -1,9 +1,10 @@
 {
-  "version": 1,
-  "methodology": "deck-metrics-v1",
+  "version": 2,
+  "methodology": "deck-metrics-v2",
   "deck_id": "mutant-multiplication",
   "commander": "Leonardo, the Balance",
   "bracket": "4",
+  "bracket_effective": 4,
   "color_identity": [
     "B",
     "G",
@@ -11,8 +12,17 @@
     "U",
     "W"
   ],
-  "generated_at": "2026-05-24T11:12:32+00:00",
-  "scryfall_mirror_updated_at": "2026-05-24T09:03:15.152+00:00",
+  "generated_at": "2026-05-29T09:22:18+00:00",
+  "scryfall_mirror_updated_at": "2026-05-28T09:03:46.321+00:00",
+  "weight_option": "A",
+  "weights": {
+    "manabase": 0.25,
+    "role": 0.25,
+    "curve": 0.15,
+    "interaction": 0.15,
+    "cohesion": 0.1,
+    "resilience": 0.1
+  },
   "metrics": {
     "manabase_health": {
       "score": 86,
@@ -29,13 +39,18 @@
         "avg_nonland_cmc": 2.92,
         "target_lands": 39.4,
         "color_sources": {
+          "R": 10.0,
+          "U": 21.0,
           "W": 25.0,
           "B": 10.0,
-          "G": 26.0,
-          "U": 21.0,
-          "R": 10.0
+          "G": 26.0
         },
         "color_requirements": {
+          "U": {
+            "required": 18,
+            "actual": 21.0,
+            "ratio": 1.0
+          },
           "W": {
             "required": 16,
             "actual": 25.0,
@@ -44,11 +59,6 @@
           "G": {
             "required": 18,
             "actual": 26.0,
-            "ratio": 1.0
-          },
-          "U": {
-            "required": 18,
-            "actual": 21.0,
             "ratio": 1.0
           }
         }
@@ -151,9 +161,42 @@
       "has_wincon": true,
       "tutor_count": 4.0,
       "penalty": 0.0
+    },
+    "resilience_health": {
+      "score": 64,
+      "components": {
+        "recursion": {
+          "score": 0.0,
+          "actual": 0.0,
+          "target": 4,
+          "max": 30
+        },
+        "redundancy": {
+          "score": 25.0,
+          "lines": 6,
+          "floor": 1,
+          "max": 25
+        },
+        "protection": {
+          "score": 18.8,
+          "actual": 3.0,
+          "target": 4,
+          "max": 25
+        },
+        "gy_second_hand": {
+          "score": 20.0,
+          "actual": 27.0,
+          "target": 6,
+          "max": 20
+        }
+      },
+      "inputs": {
+        "wincon_style": "value-incremental",
+        "bracket_effective": 4
+      }
     }
   },
-  "global_health": 80,
+  "global_health": 79,
   "gaps": [
     {
       "role": "ramp",
@@ -178,6 +221,14 @@
       "actual": 2.0,
       "target": 6,
       "score": 33
+    },
+    {
+      "resilience_component": "recursion",
+      "score_pct": 0,
+      "max": 30,
+      "actual": 0.0,
+      "target": 4,
+      "wincon_style": "value-incremental"
     }
   ]
 }

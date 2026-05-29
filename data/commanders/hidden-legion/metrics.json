@@ -1,9 +1,10 @@
 {
-  "version": 1,
-  "methodology": "deck-metrics-v1",
+  "version": 2,
+  "methodology": "deck-metrics-v2",
   "deck_id": "hidden-legion",
   "commander": "The Ur-Dragon",
   "bracket": "3",
+  "bracket_effective": 3,
   "color_identity": [
     "B",
     "G",
@@ -11,8 +12,17 @@
     "U",
     "W"
   ],
-  "generated_at": "2026-05-24T11:12:32+00:00",
-  "scryfall_mirror_updated_at": "2026-05-24T09:03:15.152+00:00",
+  "generated_at": "2026-05-29T09:22:18+00:00",
+  "scryfall_mirror_updated_at": "2026-05-28T09:03:46.321+00:00",
+  "weight_option": "A",
+  "weights": {
+    "manabase": 0.25,
+    "role": 0.25,
+    "curve": 0.15,
+    "interaction": 0.15,
+    "cohesion": 0.1,
+    "resilience": 0.1
+  },
   "metrics": {
     "manabase_health": {
       "score": 64,
@@ -29,13 +39,23 @@
         "avg_nonland_cmc": 3.0,
         "target_lands": 39.5,
         "color_sources": {
+          "R": 17.0,
+          "U": 16.0,
           "W": 17.0,
           "B": 16.0,
-          "G": 19.0,
-          "U": 16.0,
-          "R": 17.0
+          "G": 19.0
         },
         "color_requirements": {
+          "R": {
+            "required": 18,
+            "actual": 17.0,
+            "ratio": 0.94
+          },
+          "U": {
+            "required": 18,
+            "actual": 16.0,
+            "ratio": 0.89
+          },
           "W": {
             "required": 14,
             "actual": 17.0,
@@ -50,16 +70,6 @@
             "required": 18,
             "actual": 19.0,
             "ratio": 1.0
-          },
-          "U": {
-            "required": 18,
-            "actual": 16.0,
-            "ratio": 0.89
-          },
-          "R": {
-            "required": 18,
-            "actual": 17.0,
-            "ratio": 0.94
           }
         }
       }
@@ -159,6 +169,39 @@
       "has_wincon": true,
       "tutor_count": 3.0,
       "penalty": 15.0
+    },
+    "resilience_health": {
+      "score": 85,
+      "components": {
+        "recursion": {
+          "score": 15.0,
+          "actual": 1.0,
+          "target": 2,
+          "max": 30
+        },
+        "redundancy": {
+          "score": 25.0,
+          "lines": 5,
+          "floor": 1,
+          "max": 25
+        },
+        "protection": {
+          "score": 25.0,
+          "actual": 3.5,
+          "target": 2,
+          "max": 25
+        },
+        "gy_second_hand": {
+          "score": 20.0,
+          "actual": 14.0,
+          "target": 6,
+          "max": 20
+        }
+      },
+      "inputs": {
+        "wincon_style": "combat",
+        "bracket_effective": 3
+      }
     }
   },
   "global_health": 85,
@@ -168,6 +211,14 @@
       "actual": 1.0,
       "target": 4,
       "score": 25
+    },
+    {
+      "resilience_component": "recursion",
+      "score_pct": 50,
+      "max": 30,
+      "actual": 1.0,
+      "target": 2,
+      "wincon_style": "combat"
     }
   ]
 }

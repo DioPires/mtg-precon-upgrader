@@ -1,16 +1,26 @@
 {
-  "version": 1,
-  "methodology": "deck-metrics-v1",
+  "version": 2,
+  "methodology": "deck-metrics-v2",
   "deck_id": "dark-dominion",
   "commander": "Sauron, the Dark Lord",
   "bracket": "4+",
+  "bracket_effective": 4,
   "color_identity": [
     "B",
     "R",
     "U"
   ],
-  "generated_at": "2026-05-24T11:12:32+00:00",
-  "scryfall_mirror_updated_at": "2026-05-24T09:03:15.152+00:00",
+  "generated_at": "2026-05-29T09:22:18+00:00",
+  "scryfall_mirror_updated_at": "2026-05-28T09:03:46.321+00:00",
+  "weight_option": "A",
+  "weights": {
+    "manabase": 0.25,
+    "role": 0.25,
+    "curve": 0.15,
+    "interaction": 0.15,
+    "cohesion": 0.1,
+    "resilience": 0.1
+  },
   "metrics": {
     "manabase_health": {
       "score": 82,
@@ -28,8 +38,8 @@
         "target_lands": 38.9,
         "color_sources": {
           "R": 19.0,
-          "B": 25.0,
-          "U": 24.0
+          "U": 24.0,
+          "B": 25.0
         },
         "color_requirements": {
           "R": {
@@ -37,14 +47,14 @@
             "actual": 19.0,
             "ratio": 1.0
           },
-          "B": {
-            "required": 18,
-            "actual": 25.0,
-            "ratio": 1.0
-          },
           "U": {
             "required": 18,
             "actual": 24.0,
+            "ratio": 1.0
+          },
+          "B": {
+            "required": 18,
+            "actual": 25.0,
             "ratio": 1.0
           }
         }
@@ -148,6 +158,39 @@
       "has_wincon": true,
       "tutor_count": 8.0,
       "penalty": 10.0
+    },
+    "resilience_health": {
+      "score": 88,
+      "components": {
+        "recursion": {
+          "score": 30.0,
+          "actual": 4.0,
+          "target": 4,
+          "max": 30
+        },
+        "redundancy": {
+          "score": 25.0,
+          "lines": 9,
+          "floor": 1,
+          "max": 25
+        },
+        "protection": {
+          "score": 12.5,
+          "actual": 2.0,
+          "target": 4,
+          "max": 25
+        },
+        "gy_second_hand": {
+          "score": 20.0,
+          "actual": 14.0,
+          "target": 6,
+          "max": 20
+        }
+      },
+      "inputs": {
+        "wincon_style": "value-incremental",
+        "bracket_effective": 4
+      }
     }
   },
   "global_health": 85,
@@ -169,6 +212,13 @@
       "actual": 2.0,
       "target": 4,
       "score": 50
+    },
+    {
+      "resilience_component": "protection",
+      "score_pct": 50,
+      "max": 25,
+      "actual": 2.0,
+      "target": 4
     }
   ]
 }

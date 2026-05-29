@@ -1,14 +1,24 @@
 {
-  "version": 1,
-  "methodology": "deck-metrics-v1",
+  "version": 2,
+  "methodology": "deck-metrics-v2",
   "deck_id": "verdant-tide",
   "commander": "Eladamri, Korvecdal",
   "bracket": "3",
+  "bracket_effective": 3,
   "color_identity": [
     "G"
   ],
-  "generated_at": "2026-05-24T11:12:32+00:00",
-  "scryfall_mirror_updated_at": "2026-05-24T09:03:15.152+00:00",
+  "generated_at": "2026-05-29T09:22:18+00:00",
+  "scryfall_mirror_updated_at": "2026-05-28T09:03:46.321+00:00",
+  "weight_option": "A",
+  "weights": {
+    "manabase": 0.25,
+    "role": 0.25,
+    "curve": 0.15,
+    "interaction": 0.15,
+    "cohesion": 0.1,
+    "resilience": 0.1
+  },
   "metrics": {
     "manabase_health": {
       "score": 71,
@@ -125,15 +135,56 @@
       "has_wincon": true,
       "tutor_count": 4.0,
       "penalty": 0.0
+    },
+    "resilience_health": {
+      "score": 70,
+      "components": {
+        "recursion": {
+          "score": 0.0,
+          "actual": 0.0,
+          "target": 2,
+          "max": 30
+        },
+        "redundancy": {
+          "score": 25.0,
+          "lines": 7,
+          "floor": 2,
+          "max": 25
+        },
+        "protection": {
+          "score": 25.0,
+          "actual": 3.0,
+          "target": 2,
+          "max": 25
+        },
+        "gy_second_hand": {
+          "score": 20.0,
+          "actual": 9.0,
+          "target": 6,
+          "max": 20
+        }
+      },
+      "inputs": {
+        "wincon_style": "discrete-threats",
+        "bracket_effective": 3
+      }
     }
   },
-  "global_health": 77,
+  "global_health": 76,
   "gaps": [
     {
       "role": "removal-board",
       "actual": 0.0,
       "target": 2,
       "score": 0
+    },
+    {
+      "resilience_component": "recursion",
+      "score_pct": 0,
+      "max": 30,
+      "actual": 0.0,
+      "target": 2,
+      "wincon_style": "discrete-threats"
     }
   ]
 }

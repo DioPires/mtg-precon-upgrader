@@ -1,15 +1,25 @@
 {
-  "version": 1,
-  "methodology": "deck-metrics-v1",
+  "version": 2,
+  "methodology": "deck-metrics-v2",
   "deck_id": "witherbloom-the-balancer",
   "commander": "Witherbloom, the Balancer",
   "bracket": "3",
+  "bracket_effective": 3,
   "color_identity": [
     "B",
     "G"
   ],
-  "generated_at": "2026-05-24T11:12:32+00:00",
-  "scryfall_mirror_updated_at": "2026-05-24T09:03:15.152+00:00",
+  "generated_at": "2026-05-29T09:22:18+00:00",
+  "scryfall_mirror_updated_at": "2026-05-28T09:03:46.321+00:00",
+  "weight_option": "A",
+  "weights": {
+    "manabase": 0.25,
+    "role": 0.25,
+    "curve": 0.15,
+    "interaction": 0.15,
+    "cohesion": 0.1,
+    "resilience": 0.1
+  },
   "metrics": {
     "manabase_health": {
       "score": 71,
@@ -23,21 +33,21 @@
         "total_lands": 36.5,
         "untapped_lands": 29.0,
         "fetch_lands": 3.0,
-        "avg_nonland_cmc": 2.97,
-        "target_lands": 39.5,
+        "avg_nonland_cmc": 2.89,
+        "target_lands": 39.3,
         "color_sources": {
-          "B": 29.5,
-          "G": 19.0
+          "G": 19.0,
+          "B": 29.5
         },
         "color_requirements": {
-          "B": {
-            "required": 20,
-            "actual": 29.5,
-            "ratio": 1.0
-          },
           "G": {
             "required": 18,
             "actual": 19.0,
+            "ratio": 1.0
+          },
+          "B": {
+            "required": 20,
+            "actual": 29.5,
             "ratio": 1.0
           }
         }
@@ -93,25 +103,25 @@
       }
     },
     "curve_health": {
-      "score": 98,
-      "actual_avg_cmc": 2.96,
+      "score": 100,
+      "actual_avg_cmc": 2.88,
       "target_avg_cmc": 2.87,
       "matched_archetype_targets": [
         "aristocrats",
         "tokens-go-wide",
         "spellslinger"
       ],
-      "high_curve_count": 6.0,
+      "high_curve_count": 5.0,
       "topcurve_penalty": 0.0,
       "cmc_distribution": {
         "0": 0.0,
         "1": 8.0,
-        "2": 26.0,
+        "2": 27.0,
         "3": 13.0,
         "4": 5.5,
         "5": 4.0,
         "6": 2.0,
-        "7": 4.0
+        "7": 3.0
       }
     },
     "interaction_density": {
@@ -137,8 +147,50 @@
       "has_wincon": true,
       "tutor_count": 3.0,
       "penalty": 0.0
+    },
+    "resilience_health": {
+      "score": 94,
+      "components": {
+        "recursion": {
+          "score": 36.0,
+          "actual": 6.5,
+          "target": 2,
+          "max": 30
+        },
+        "redundancy": {
+          "score": 12.5,
+          "lines": 2,
+          "floor": 1,
+          "max": 25
+        },
+        "protection": {
+          "score": 25.0,
+          "actual": 2.0,
+          "target": 2,
+          "max": 25
+        },
+        "gy_second_hand": {
+          "score": 20.0,
+          "actual": 33.0,
+          "target": 6,
+          "max": 20
+        }
+      },
+      "inputs": {
+        "wincon_style": "drain-x",
+        "bracket_effective": 3
+      }
     }
   },
   "global_health": 92,
-  "gaps": []
+  "gaps": [
+    {
+      "resilience_component": "redundancy",
+      "score_pct": 50,
+      "max": 25,
+      "lines": 2,
+      "floor": 1,
+      "wincon_style": "drain-x"
+    }
+  ]
 }

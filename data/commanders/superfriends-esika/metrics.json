@@ -1,9 +1,10 @@
 {
-  "version": 1,
-  "methodology": "deck-metrics-v1",
+  "version": 2,
+  "methodology": "deck-metrics-v2",
   "deck_id": "superfriends-esika",
   "commander": "Esika, God of the Tree",
   "bracket": "3+",
+  "bracket_effective": 3,
   "color_identity": [
     "B",
     "G",
@@ -11,8 +12,17 @@
     "U",
     "W"
   ],
-  "generated_at": "2026-05-24T16:47:12+00:00",
-  "scryfall_mirror_updated_at": "2026-05-24T09:03:15.152+00:00",
+  "generated_at": "2026-05-29T09:22:18+00:00",
+  "scryfall_mirror_updated_at": "2026-05-28T09:03:46.321+00:00",
+  "weight_option": "A",
+  "weights": {
+    "manabase": 0.25,
+    "role": 0.25,
+    "curve": 0.15,
+    "interaction": 0.15,
+    "cohesion": 0.1,
+    "resilience": 0.1
+  },
   "metrics": {
     "manabase_health": {
       "score": 62,
@@ -29,16 +39,16 @@
         "avg_nonland_cmc": 3.71,
         "target_lands": 40.6,
         "color_sources": {
-          "B": 17.0,
+          "R": 16.0,
           "U": 18.0,
           "W": 17.0,
-          "R": 16.0,
+          "B": 17.0,
           "G": 19.0
         },
         "color_requirements": {
-          "B": {
-            "required": 12,
-            "actual": 17.0,
+          "R": {
+            "required": 10,
+            "actual": 16.0,
             "ratio": 1.0
           },
           "U": {
@@ -51,9 +61,9 @@
             "actual": 17.0,
             "ratio": 1.0
           },
-          "R": {
-            "required": 10,
-            "actual": 16.0,
+          "B": {
+            "required": 12,
+            "actual": 17.0,
             "ratio": 1.0
           },
           "G": {
@@ -65,16 +75,16 @@
       }
     },
     "role_coverage_health": {
-      "score": 95,
+      "score": 107,
       "by_role": {
         "ramp": 120,
-        "card-draw": 85,
-        "removal-spot": 56,
+        "card-draw": 106,
+        "removal-spot": 75,
         "removal-board": 120,
         "protection": 120,
-        "tutor": 88,
+        "tutor": 120,
         "wincon": 120,
-        "counterspell": 50
+        "counterspell": 75
       },
       "details": {
         "ramp": {
@@ -84,28 +94,28 @@
         },
         "card-draw": {
           "actual": 8.5,
-          "target": 10,
-          "score": 85
+          "target": 8,
+          "score": 106
         },
         "removal-spot": {
           "actual": 4.5,
-          "target": 8,
-          "score": 56
+          "target": 6,
+          "score": 75
         },
         "removal-board": {
           "actual": 4.5,
-          "target": 3,
+          "target": 2,
           "score": 120
         },
         "protection": {
           "actual": 9.5,
-          "target": 4,
+          "target": 2,
           "score": 120
         },
         "tutor": {
           "actual": 3.5,
-          "target": 4,
-          "score": 88
+          "target": 2,
+          "score": 120
         },
         "wincon": {
           "actual": 7.0,
@@ -114,8 +124,8 @@
         },
         "counterspell": {
           "actual": 3.0,
-          "target": 6,
-          "score": 50
+          "target": 4,
+          "score": 75
         }
       }
     },
@@ -140,7 +150,7 @@
     "interaction_density": {
       "score": 120,
       "weighted": 27.5,
-      "target": 14,
+      "target": 10,
       "components": {
         "removal_spot": 4.5,
         "removal_board": 4.5,
@@ -159,21 +169,50 @@
       "has_wincon": true,
       "tutor_count": 3.0,
       "penalty": 0.0
+    },
+    "resilience_health": {
+      "score": 80,
+      "components": {
+        "recursion": {
+          "score": 10.0,
+          "actual": 1.0,
+          "target": 3,
+          "max": 30
+        },
+        "redundancy": {
+          "score": 25.0,
+          "lines": 5,
+          "floor": 1,
+          "max": 25
+        },
+        "protection": {
+          "score": 25.0,
+          "actual": 9.5,
+          "target": 2,
+          "max": 25
+        },
+        "gy_second_hand": {
+          "score": 20.0,
+          "actual": 14.0,
+          "target": 6,
+          "max": 20
+        }
+      },
+      "inputs": {
+        "wincon_style": "value-incremental",
+        "bracket_effective": 3
+      }
     }
   },
-  "global_health": 81,
+  "global_health": 84,
   "gaps": [
     {
-      "role": "removal-spot",
-      "actual": 4.5,
-      "target": 8,
-      "score": 56
-    },
-    {
-      "role": "counterspell",
-      "actual": 3.0,
-      "target": 6,
-      "score": 50
+      "resilience_component": "recursion",
+      "score_pct": 33,
+      "max": 30,
+      "actual": 1.0,
+      "target": 3,
+      "wincon_style": "value-incremental"
     }
   ]
 }

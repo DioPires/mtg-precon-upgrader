@@ -1,15 +1,25 @@
 {
-  "version": 1,
-  "methodology": "deck-metrics-v1",
+  "version": 2,
+  "methodology": "deck-metrics-v2",
   "deck_id": "eternal-harvest",
   "commander": "Meren of Clan Nel Toth",
   "bracket": "4",
+  "bracket_effective": 4,
   "color_identity": [
     "B",
     "G"
   ],
-  "generated_at": "2026-05-24T11:12:32+00:00",
-  "scryfall_mirror_updated_at": "2026-05-24T09:03:15.152+00:00",
+  "generated_at": "2026-05-29T09:22:18+00:00",
+  "scryfall_mirror_updated_at": "2026-05-28T09:03:46.321+00:00",
+  "weight_option": "A",
+  "weights": {
+    "manabase": 0.25,
+    "role": 0.25,
+    "curve": 0.15,
+    "interaction": 0.15,
+    "cohesion": 0.1,
+    "resilience": 0.1
+  },
   "metrics": {
     "manabase_health": {
       "score": 69,
@@ -26,18 +36,18 @@
         "avg_nonland_cmc": 2.89,
         "target_lands": 39.3,
         "color_sources": {
-          "B": 27.5,
-          "G": 22.0
+          "G": 22.0,
+          "B": 27.5
         },
         "color_requirements": {
-          "B": {
-            "required": 18,
-            "actual": 27.5,
-            "ratio": 1.0
-          },
           "G": {
             "required": 16,
             "actual": 22.0,
+            "ratio": 1.0
+          },
+          "B": {
+            "required": 18,
+            "actual": 27.5,
             "ratio": 1.0
           }
         }
@@ -136,9 +146,42 @@
       "has_wincon": false,
       "tutor_count": 6.0,
       "penalty": 0.0
+    },
+    "resilience_health": {
+      "score": 81,
+      "components": {
+        "recursion": {
+          "score": 36.0,
+          "actual": 6.5,
+          "target": 4,
+          "max": 30
+        },
+        "redundancy": {
+          "score": 25.0,
+          "lines": 10,
+          "floor": 1,
+          "max": 25
+        },
+        "protection": {
+          "score": 0.0,
+          "actual": 0.0,
+          "target": 4,
+          "max": 25
+        },
+        "gy_second_hand": {
+          "score": 20.0,
+          "actual": 19.0,
+          "target": 6,
+          "max": 20
+        }
+      },
+      "inputs": {
+        "wincon_style": "value-incremental",
+        "bracket_effective": 4
+      }
     }
   },
-  "global_health": 80,
+  "global_health": 81,
   "gaps": [
     {
       "role": "ramp",
@@ -151,6 +194,13 @@
       "actual": 0.0,
       "target": 4,
       "score": 0
+    },
+    {
+      "resilience_component": "protection",
+      "score_pct": 0,
+      "max": 25,
+      "actual": 0.0,
+      "target": 4
     }
   ]
 }

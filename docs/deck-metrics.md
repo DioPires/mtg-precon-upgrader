@@ -6,7 +6,23 @@ Why deterministic: metrics drive **gaps[]** (P7.6, DEC-120) which then drive **c
 
 Roles below refer to the closed set in [`role-taxonomy.md`](role-taxonomy.md).
 
-## The 5 metrics
+## The 6 metrics
+
+The original five (`manabase_health`, `role_coverage_health`, `curve_health`, `interaction_density`, `gameplan_cohesion`) are unchanged. DEC-308 adds `resilience_health` as the sixth and reweights `global_health`. Methodology bumped to `deck-metrics-v2`.
+
+## Bracket mapping
+
+Decks may declare `bracket: "3+"` or `bracket: "4+"`. The `+` suffix is a display flourish ("slightly above") — target-table lookups collapse it to the base bracket. The canonical mapping is:
+
+| Declared | Effective bracket for target lookups |
+|---|---|
+| `"3"`, `"3+"` | 3 |
+| `"4"`, `"4+"` | 4 |
+| `"5"`, `"5+"` | 5 |
+| `"1"`, `"2"` (not modeled) | clamped to 3 |
+
+Every `metrics.json` carries the resolved `bracket_effective` alongside the declared `bracket` so the math is reproducible.
+
 
 ### 1. `manabase_health` (0–100)
 
@@ -137,36 +153,86 @@ Wincon penalty:
 - ≥2 `combo` wincons in **B4** deck: −10
 - No `wincon` at all: clamp result to ≤50 (a deck with no closer is incoherent regardless)
 
+### 6. `resilience_health` (0–100) — DEC-308
+
+Inputs: `decklist[].primary_role` / `secondary_role` for `recursion` and `protection`; deck-root `wincon_style`; `winConditions[]` line count; cards tagged `recursion` or `engine` (for the rebuild-from-yard component); resolved `bracket_effective`.
+
+Why: a single board wipe should not be a guaranteed loss. CRISPI and similar power-scoring frameworks treat recovery capacity as a first-class signal, and the original five metrics don't measure it at all. This metric does.
+
+Components:
+
+| Component | Weight | Formula |
+|---|---|---|
+| `recursion` | 30 | `min(recursion_count / recursion_target(wincon_style, bracket), 1.2) × 30`. `recursion_count` = primary + 0.5 × secondary on the `recursion` role, plus commander. |
+| `redundancy` | 25 | `min((wincon_lines − floor(wincon_style)) / 2, 1.0) × 25`. Counts *extra* `winConditions[]` lines beyond the per-style floor — one redundant assembly is full credit. |
+| `protection` | 25 | `min(protection_count / protection_target(bracket), 1.0) × 25`. Whole-deck protection count (primary + 0.5 × secondary + commander); not piece-overlap. |
+| `gy_second_hand` | 20 | `min(gy_role_card_count / 6, 1.0) × 20`. `gy_role_card_count` = cards whose primary OR secondary role is in `{recursion, engine}`. Tag-only — no oracle-text re-derivation (see anti-double-counting below). |
+
+`resilience_health = recursion + redundancy + protection + gy_second_hand` (rounded).
+
+**Targets, branched on `wincon_style`:**
+
+| `wincon_style` | recursion target (B3 / B4 / B5) | wincon line floor |
+|---|---|---|
+| `combo` | 1 / 2 / 2 | 1 |
+| `value-incremental` | 3 / 4 / 5 | 1 |
+| `discrete-threats` | 2 / 3 / 3 | 2 |
+| `combat`, `drain`, `drain-x` | 2 / 3 / 4 | 1 |
+| (unset) | 2 / 3 / 4 | 1 |
+
+Protection target (bracket-only): B3 = 2, B4 = 4, B5 = 5.
+
+Rationale: a tuned `combo` deck closing on T6 doesn't need five recursion slots; punishing it for that double-counts the closed-doors archetype against itself. A `value-incremental` deck *does* need a deep recursion bench because it has to outlast multiple wipes. `discrete-threats` decks must threaten on at least two independent axes by definition, so their wincon floor is 2 — beyond which redundancy still scales.
+
+**Anti-double-counting:** `gy_second_hand` is constrained to cards already tagged `recursion` or `engine`. Oracle-text re-derivation is explicitly forbidden — every Animate Dead, every Reanimate would otherwise count three times (recursion role → recursion component, "from your graveyard" text → re-counted, and again as the engine half). The intent of this component is "the deck rebuilds its hand from the yard", which is the engine half of the recursion universe (Deep Analysis, Snapcaster, Bone Shards on engine creatures, …). Set overlap between the `recursion` and `gy_second_hand` populations is by design and is bounded by the hard `min(count/6, 1) × 20` cap.
+
+**`gaps[]` surfacing:** any component whose percentage-of-max is `< 70` is appended to `metrics.json`'s `gaps[]` as `{resilience_component, score_pct, max, ...}` (with component-specific fields — actual/target for recursion/protection/gy, lines/floor for redundancy, and `wincon_style` on recursion/redundancy entries). This rides the same `gaps[]` feed that role-coverage already uses, so candidate enrichment (P7.7) can prioritize cards that close a resilience gap just like it prioritizes role gaps.
+
 ### Global blend: `global_health` (0–100)
 
 ```
-global_health = 0.30 × manabase_health
-              + 0.30 × role_coverage_health
+global_health = 0.25 × manabase_health
+              + 0.25 × role_coverage_health
               + 0.15 × curve_health
               + 0.15 × interaction_density
               + 0.10 × gameplan_cohesion
+              + 0.10 × resilience_health
 ```
 
-Mana and roles dominate because they're the most actionable failure modes. Cohesion is intentionally low-weight — it's a directional signal, not a verdict.
+Mana and roles still co-dominate at 50% combined — they remain the most actionable failure modes. Cohesion and resilience share equal floor weight at 10% each: directional signals, not verdicts. See the [DEC-308 calibration subsection](#calibration-snapshot-2026-05-29-all-15-decks-resilience_health-added) below for the A/B/C comparison and the rationale for picking option A.
 
 ## Output schema (`data/commanders/{id}/metrics.json`)
 
 ```json
 {
   "deck_id": "dark-dominion",
-  "generated_at": "2026-05-04T12:00:00Z",
-  "bracket": "4",
+  "methodology": "deck-metrics-v2",
+  "generated_at": "2026-05-29T12:00:00Z",
+  "bracket": "4+",
+  "bracket_effective": 4,
+  "weight_option": "A",
+  "weights": { "manabase": 0.25, "role": 0.25, "curve": 0.15, "interaction": 0.15, "cohesion": 0.10, "resilience": 0.10 },
   "metrics": {
-    "manabase_health": { "score": 78, "components": { "karsten": 30.4, "untapped": 24.0, "fetch": 7.5, "land_count": 15.0 } },
-    "role_coverage_health": { "score": 82, "by_role": { "ramp": 100, "card-draw": 70, "removal-spot": 90, "removal-board": 66, "protection": 50, "tutor": 100, "wincon": 100, "counterspell": 83 } },
-    "curve_health": { "score": 88, "actual_avg_cmc": 2.9, "target_avg_cmc": 2.8 },
-    "interaction_density": { "score": 91, "weighted": 12.5, "target": 14 },
-    "gameplan_cohesion": { "score": 74, "in_set_pct": 0.76, "archetype_extensions": ["recursion"] }
+    "manabase_health":      { "score": 82, "components": { "karsten": 40.0, "untapped": 29.2, "fetch": 5.0, "land_count": 7.5 } },
+    "role_coverage_health": { "score": 86, "by_role": { "ramp": 100, "card-draw": 70, "removal-spot": 90, "removal-board": 66, "protection": 50, "tutor": 100, "wincon": 100, "counterspell": 83 } },
+    "curve_health":         { "score": 95, "actual_avg_cmc": 2.58, "target_avg_cmc": 2.8 },
+    "interaction_density":  { "score": 118, "weighted": 16.5, "target": 14 },
+    "gameplan_cohesion":    { "score": 24, "in_set_pct": 0.24, "archetype_extensions": ["recursion"] },
+    "resilience_health":    {
+      "score": 88,
+      "components": {
+        "recursion":      { "score": 30.0, "actual": 4.5, "target": 2, "max": 30 },
+        "redundancy":     { "score": 25.0, "lines": 9, "floor": 1, "max": 25 },
+        "protection":     { "score": 13.8, "actual": 2.0, "target": 4, "max": 25 },
+        "gy_second_hand": { "score": 20.0, "actual": 13.0, "target": 6, "max": 20 }
+      },
+      "inputs": { "wincon_style": "value-incremental", "bracket_effective": 4 }
+    }
   },
-  "global_health": 81,
+  "global_health": 85,
   "gaps": [
     { "role": "protection", "actual": 2, "target": 4, "score": 50 },
-    { "role": "removal-board", "actual": 2, "target": 3, "score": 66 }
+    { "resilience_component": "protection", "score_pct": 55, "max": 25, "actual": 2.0, "target": 4 }
   ]
 }
 ```
@@ -202,6 +268,37 @@ The Vitals card on each deck page renders `global_health` as a letter grade. Pro
 The spread is sane: tuned B4 builds cluster B (80–89), competent-but-incomplete builds land C (70–79), and a single outlier (titan-convergence, hit by curve=0 from avg CMC 5.58 + topcurve penalty) earns the F. No deck currently scores A — re-tune thresholds once a deck legitimately reaches 90+ on the global blend; if A becomes unreachable in practice, lower the bar to 88+ rather than handing out A grades to merit-B decks.
 
 The Vitals card sources this score and grade from `metrics.json` only.
+
+### Calibration snapshot (2026-05-29, all 15 decks, `resilience_health` added)
+
+Component scores (`mana`, `role`, `curve`, `int`, `cohesion`, `resilience`) are weight-option-independent. The three columns project `global_health` under DEC-308's three candidate weight tuples; the chosen option is **A** (committed as `DEFAULT_WEIGHT_OPTION` in `compute_deck_metrics.py`).
+
+| Deck | mana | role | curve | int | cohesion | resilience | A (25/25/15/15/10/10) | B (28/28/14/14/8/8) | C (30/25/15/12/8/10) | A grade |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|
+| silverquill-the-disputant | 85 | 100 | 93 | 120 | 54 | 106 | 94 | 94 | 94 | A |
+| witherbloom-the-balancer | 71 | 109 | 100 | 120 | 50 | 94 | 92 | 93 | 91 | A |
+| aziza-mage-tower-captain | 75 | 99 | 94 | 120 | 40 | 106 | 90 | 90 | 90 | A |
+| creeping-corruption | 82 | 94 | 92 | 120 | 47 | 70 | 88 | 88 | 87 | B |
+| the-white-forge | 69 | 103 | 87 | 120 | 19 | 106 | 87 | 87 | 86 | B |
+| zada-hedron-grinder | 69 | 104 | 88 | 102 | 38 | 106 | 86 | 87 | 86 | B |
+| dark-dominion | 82 | 86 | 95 | 118 | 24 | 88 | 85 | 86 | 85 | B |
+| hidden-legion | 64 | 100 | 95 | 120 | 32 | 85 | 85 | 85 | 84 | B |
+| eternal-agony | 75 | 86 | 100 | 120 | 45 | 66 | 84 | 85 | 84 | B |
+| superfriends-esika | 62 | 107 | 82 | 120 | 33 | 80 | 84 | 85 | 83 | B |
+| pyre-and-panic | 70 | 85 | 98 | 120 | 47 | 68 | 83 | 83 | 82 | B |
+| eternal-harvest | 69 | 79 | 100 | 104 | 50 | 81 | 81 | 80 | 80 | B |
+| mutant-multiplication | 86 | 72 | 97 | 89 | 52 | 64 | 79 | 80 | 80 | C |
+| verdant-tide | 71 | 91 | 80 | 80 | 44 | 70 | 76 | 77 | 76 | C |
+| titan-convergence | 69 | 75 | 0 | 93 | 44 | 71 | 61 | 63 | 61 | D |
+
+**Why option A was chosen** against the invariants from DEC-308:
+
+1. *No previously-B deck regresses to F*: confirmed for all three options.
+2. *Top-rank preservation across the prior-snapshot decks*: among the eight decks that existed in the [2026-05-04 snapshot](#calibration-snapshot-2026-05-04-all-9-built-decks), `creeping-corruption` and `the-white-forge` remain the top two under A. `mutant-multiplication` drops from prior-B to C (79 under A; 80 under B and C) — this is the metric working as intended: its resilience component (`64/100`) reflects an actual recovery gap, not a tuning artefact, and B/C only just barely save it. All three options agree on the direction; A is the cleanest reading.
+3. *titan-convergence remains the outlier*: lifts from F (58) to D (61 under A, 63 under B, 61 under C). The lift is driven by a legitimate `resilience_health = 71` — titan does have meaningful recursion + protection density. The deck remains the lowest-scoring build by a 15-point margin, so it stays the outlier in spirit even though it crosses the F/D boundary in letter. Option A and C share the smallest lift (+3). Picking A preserves spend-pattern intuition (mana + roles equally weighted at the top).
+4. The A↔B↔C spread is at most 2 points for any single deck — the choice is genuinely cosmetic at the margin, so the simplest defensible tuple wins.
+
+Three new entrants score A under all three options (silverquill, witherbloom, aziza) because their recursion + protection density is structurally strong for their bracket — they're the first decks in the project to legitimately clear the A bar. This validates DEC-308's premise: resilience was the missing axis that distinguished a "tuned" B4 build from an "A-grade" one.
 
 ## Why these formulas
 
