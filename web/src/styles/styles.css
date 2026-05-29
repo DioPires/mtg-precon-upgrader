@@ -937,16 +937,23 @@ em { font-style: italic; color: var(--gv1-gold); }
 
 /* Diagnosis vitals strip */
 .gv1-apo-vitals {
-  display: grid;
-  grid-template-columns: auto 1px 1fr auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 24px;
   padding: 22px 24px;
   background: var(--gv1-bg-2);
   border: 1px solid var(--gv1-line);
 }
-.gv1-apo-vitals-divider { width: 1px; height: 56px; background: var(--gv1-line); }
-.gv1-apo-grade-block { display: flex; align-items: center; gap: 18px; }
+.gv1-apo-vitals-divider { width: 1px; height: 56px; background: var(--gv1-line); flex: 0 0 auto; }
+.gv1-apo-grade-block { display: flex; align-items: center; gap: 18px; flex: 0 0 auto; }
+.gv1-apo-weakest, .gv1-apo-winturn { flex: 1 1 0; min-width: 140px; }
+/* DEC-311 — Best / Typical / Contested triple. */
+.gv1-apo-winturn { display: flex; flex-direction: column; gap: 6px; }
+.gv1-apo-winturn-row { display: flex; gap: 18px; }
+.gv1-apo-winturn-cell { display: flex; flex-direction: column; gap: 2px; min-width: 48px; }
+.gv1-apo-winturn-cell .gv1-serif-md { color: var(--gv1-ink); font-variant-numeric: tabular-nums; }
+.gv1-apo-details-btn { margin-left: auto; flex: 0 0 auto; }
 .gv1-apo-grade {
   width: 64px; height: 64px;
   display: flex; align-items: center; justify-content: center;
@@ -1149,8 +1156,9 @@ em { font-style: italic; color: var(--gv1-gold); }
 }
 
 @media (max-width: 1100px) {
-  .gv1-apo-vitals { grid-template-columns: 1fr; gap: 16px; }
+  .gv1-apo-vitals { flex-direction: column; align-items: stretch; gap: 16px; }
   .gv1-apo-vitals-divider { display: none; }
+  .gv1-apo-details-btn { align-self: flex-start; margin-left: 0; }
   .gv1-apo-remedies { grid-template-columns: 1fr; }
 }
 
@@ -3075,16 +3083,16 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-decklist-cols { grid-template-columns: 1fr; gap: 16px; }
   .gv1-dl-toolbar { gap: 10px; flex-wrap: wrap; }
 
-  /* Apothecary (DEC-183): vitals 4-col grid overflows at 360px; stack into
-     two rows so the grade block + weakest readout don't get sliced. Maladies
-     and remedies already wrap; just tighten gutters and tap targets. */
+  /* Apothecary (DEC-183/DEC-311): vitals strip stacks at phone widths so the
+     grade block, weakest readout, and win-turn triple each get a full row. */
   .gv1-apo-vitals {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 14px;
     padding: 18px 16px;
     align-items: stretch;
   }
   .gv1-apo-vitals-divider { display: none; }
+  .gv1-apo-winturn-row { gap: 14px; }
   .gv1-apo-grade-block { gap: 14px; }
   .gv1-apo-grade { width: 56px; height: 56px; font-size: 28px; }
   .gv1-apo-weakest { min-width: 0; word-break: break-word; }

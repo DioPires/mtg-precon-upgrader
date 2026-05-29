@@ -121,6 +121,75 @@ describe('Apothecary', () => {
     expect(screen.getByText('82')).toBeInTheDocument();
   });
 
+  it('renders the Best/Typical/Contested triple when winTurn is provided (DEC-311)', () => {
+    render(
+      <Apothecary
+        apothecary={makeApothecary({
+          diagnosis: {
+            score: 82,
+            confidenceMargin: 5,
+            methodology: 'deck-metrics-v2',
+            generatedAt: '2026-05-29T00:00:00Z',
+            mirrorUpdatedAt: '2026-05-29T00:00:00Z',
+            components: { manabase_health: { score: 80 } },
+            winTurn: {
+              best: 6,
+              typical: 8,
+              contested: 9,
+              source: 'lethalProxy',
+              bracket_drag: 1,
+              thresholds: { best: 15.0, typical: 50.0 },
+              window_last_turn: 10,
+            },
+          },
+        })}
+      />,
+    );
+
+    expect(screen.getByText('WIN TURN')).toBeInTheDocument();
+    expect(screen.getByText('BEST')).toBeInTheDocument();
+    expect(screen.getByText('TYPICAL')).toBeInTheDocument();
+    expect(screen.getByText('CONTESTED')).toBeInTheDocument();
+    expect(screen.getByText('T6')).toBeInTheDocument();
+    expect(screen.getByText('T8')).toBeInTheDocument();
+    expect(screen.getByText('T9')).toBeInTheDocument();
+  });
+
+  it('renders em-dash for typical/contested when threshold is not reached (DEC-311)', () => {
+    render(
+      <Apothecary
+        apothecary={makeApothecary({
+          diagnosis: {
+            score: 70,
+            methodology: 'deck-metrics-v2',
+            generatedAt: '2026-05-29T00:00:00Z',
+            mirrorUpdatedAt: '2026-05-29T00:00:00Z',
+            components: { manabase_health: { score: 70 } },
+            winTurn: {
+              best: 8,
+              typical: null,
+              contested: null,
+              source: 'max',
+              bracket_drag: 0,
+              thresholds: { best: 15.0, typical: 50.0 },
+              window_last_turn: 10,
+            },
+          },
+        })}
+      />,
+    );
+
+    expect(screen.getByText('WIN TURN')).toBeInTheDocument();
+    expect(screen.getByText('T8')).toBeInTheDocument();
+    const dashes = screen.getAllByText('—');
+    expect(dashes.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('suppresses the WIN TURN block entirely when winTurn is null (DEC-311)', () => {
+    render(<Apothecary apothecary={makeApothecary()} />);
+    expect(screen.queryByText('WIN TURN')).not.toBeInTheDocument();
+  });
+
   it('renders a single-letter grade with no banding (DEC-310)', () => {
     render(
       <Apothecary

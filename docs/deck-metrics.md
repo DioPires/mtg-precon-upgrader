@@ -215,6 +215,53 @@ The cap was lowered from `±25` to `±15` deliberately — a band that spans thr
 
 Implementation detail: `candidates.json` carries an internal `generated_at` timestamp (written by `scripts/generate_candidate_pool.py`); the margin reads that and falls back to file mtime only if the field is missing.
 
+### Win-turn triple: `win_turn` (DEC-311)
+
+`win_turn` is **derivation, not modelling** — it is a presentation layer over the existing per-turn lethality curves in `simulation.json.goldfish.byTurn["{T}"]`. Three numbers (`best`, `typical`, `contested`) summarise *when* the deck closes; the underlying curves are unchanged and still consulted by DEC-309's strategy-ceiling check.
+
+**Payoff curve** is picked by deck-level `wincon_style`. If the deck's card-level `wincon_style` tags also mix `combo` with any non-combo kind (`combat`, `drain`, `drain-x`, `discrete-threats`, `tokens`, `mill`, `alt`), the deck is treated as *multi-kind* and falls through to `max`. This matches the heuristic used in [`scripts/validate_strategy_ceiling.py`](../scripts/validate_strategy_ceiling.py) so the two metrics agree on what counts as mixed.
+
+| Deck-level `wincon_style` | Multi-kind? | `payoff_curve(T)` |
+|---|---|---|
+| `combo` | no | `byTurn["{T}"].comboLethal` |
+| `combat`, `drain`, `drain-x`, `discrete-threats` | no | `byTurn["{T}"].lethalProxy` |
+| `value-incremental` *or* unset *or* any multi-kind | — | `max(comboLethal, lethalProxy)` |
+
+**Thresholds:**
+
+| Name | Definition |
+|---|---|
+| `best` | lowest `T` where `payoff_curve(T) ≥ 15%` |
+| `typical` | lowest `T` where `payoff_curve(T) ≥ 50%` |
+| `contested` | `typical + interaction_drag(bracket)`, drag = `{B3: 0, B4: 1, B5: 2}` |
+
+The **`best` floor is locked to DEC-309's [`PAYOFF_FLOOR`](../scripts/validate_strategy_ceiling.py)** (`15.0`) — both consumers MUST read the same number, so the strategy-ceiling check and the Vitals readout never disagree on what "the payoff is real" means. If DEC-309 retunes its floor, retune the `WIN_TURN_BEST_THRESHOLD` constant in `scripts/compute_deck_metrics.py` to match in the same PR.
+
+**Suppression rules** — surface honest absences, never fabricate:
+
+- `simulation.json` missing → omit the entire `win_turn` block (`null`).
+- The selected payoff curve is flat at `0.0` across every simulated turn → omit the entire block. Surfacing three em-dashes is noise.
+- `typical` not reached inside the simulated window (`T1`…`window_last_turn`) → render `typical = null`. **Also suppress `contested`** — without an anchor, the offset is meaningless.
+- `best` is allowed to stand on its own when `typical` is `null`; this is the honest reading for combat decks whose 50% lethality lands past the simulated window.
+
+**Output shape** (top-level field on `metrics.json`):
+
+```json
+"win_turn": {
+  "best": 6,
+  "typical": 7,
+  "contested": 7,
+  "source": "lethalProxy",
+  "bracket_drag": 0,
+  "thresholds": { "best": 15.0, "typical": 50.0 },
+  "window_last_turn": 10
+}
+```
+
+`source` records which curve was consumed (`comboLethal` | `lethalProxy` | `max`); `bracket_drag` and `thresholds` are echoed back so the math is reproducible from the file alone.
+
+The Vitals card on the Apothecary surface renders this triple as `Best / Typical / Contested` alongside `global_health`. When the whole block is suppressed (sim missing or curve flat), the Vitals slot renders no win-turn row at all.
+
 ### Global blend: `global_health` (0–100)
 
 ```
@@ -258,6 +305,7 @@ Mana and roles still co-dominate at 50% combined — they remain the most action
   },
   "global_health": 85,
   "confidence_margin": 5,
+  "win_turn": { "best": 6, "typical": 7, "contested": 8, "source": "max", "bracket_drag": 1, "thresholds": { "best": 15.0, "typical": 50.0 }, "window_last_turn": 10 },
   "gaps": [
     { "role": "protection", "actual": 2, "target": 4, "score": 50 },
     { "resilience_component": "protection", "score_pct": 55, "max": 25, "actual": 2.0, "target": 4 }

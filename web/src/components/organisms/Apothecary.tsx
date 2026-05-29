@@ -66,6 +66,11 @@ function fmtMaladyCount(v: number | null | undefined): string {
   return Number.isInteger(v) ? String(v) : v.toFixed(1);
 }
 
+// DEC-311 — render T-prefixed numbers (`T6`) or em-dash when unreached.
+function fmtWinTurn(v: number | null | undefined): string {
+  return typeof v === 'number' ? `T${v}` : '—';
+}
+
 interface ScoreRingProps {
   score: number | null | undefined;
   max?: number;
@@ -123,6 +128,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
   const score = Math.round(diagnosis.score ?? 0);
   const grade = gradeForGlobalHealth(diagnosis.score);
   const margin = diagnosis.confidenceMargin;
+  const winTurn = diagnosis.winTurn ?? null;
 
   let weakKey: string | null = null;
   let weakScore = Infinity;
@@ -191,6 +197,28 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
             <div className="gv1-mono-xs gv1-dim">No clear weakness.</div>
           )}
         </div>
+        {winTurn && (
+          <>
+            <div className="gv1-apo-vitals-divider" aria-hidden="true" />
+            <div className="gv1-apo-winturn" aria-label="Win-turn estimate">
+              <div className="gv1-mono-xs gv1-dim">WIN TURN</div>
+              <div className="gv1-apo-winturn-row">
+                <div className="gv1-apo-winturn-cell">
+                  <div className="gv1-mono-xs gv1-dim">BEST</div>
+                  <div className="gv1-serif-md">{fmtWinTurn(winTurn.best)}</div>
+                </div>
+                <div className="gv1-apo-winturn-cell">
+                  <div className="gv1-mono-xs gv1-dim">TYPICAL</div>
+                  <div className="gv1-serif-md">{fmtWinTurn(winTurn.typical)}</div>
+                </div>
+                <div className="gv1-apo-winturn-cell">
+                  <div className="gv1-mono-xs gv1-dim">CONTESTED</div>
+                  <div className="gv1-serif-md">{fmtWinTurn(winTurn.contested)}</div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
         <button
           type="button"
           className="gv1-apo-details-btn"

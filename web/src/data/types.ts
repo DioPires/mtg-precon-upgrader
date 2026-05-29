@@ -214,6 +214,22 @@ export interface RawMetricsComponent {
   [key: string]: unknown;
 }
 
+/**
+ * DEC-311 — Best/Typical/Contested win-turn triple derived from goldfish
+ * `byTurn` lethality curves. Any number field may be null when the threshold
+ * is not reached inside the simulated window; the whole object is null/absent
+ * when `simulation.json` is missing or the chosen payoff curve is flat at zero.
+ */
+export interface RawMetricsWinTurn {
+  best: number | null;
+  typical: number | null;
+  contested: number | null;
+  source: 'comboLethal' | 'lethalProxy' | 'max';
+  bracket_drag: number;
+  thresholds: { best: number; typical: number };
+  window_last_turn: number;
+}
+
 export interface RawMetrics {
   deck_id: string;
   commander: string;
@@ -222,6 +238,8 @@ export interface RawMetrics {
   global_health: number;
   /** DEC-310 — ±N data-completeness band around `global_health`. Clamped [2, 15]. */
   confidence_margin?: number;
+  /** DEC-311 — derived win-turn triple. Null when sim missing or curve flat. */
+  win_turn?: RawMetricsWinTurn | null;
   metrics: Record<string, RawMetricsComponent>;
   gaps: RawMetricsGap[];
   methodology?: string;
@@ -331,6 +349,8 @@ export interface DeckApothecary {
     generatedAt?: string;
     mirrorUpdatedAt?: string;
     components: Record<string, RawMetricsComponent>;
+    /** DEC-311 — Best/Typical/Contested triple, null when suppressed. */
+    winTurn?: RawMetricsWinTurn | null;
   };
   maladies: RawMetricsGap[];
   remedies: RawCandidate[];

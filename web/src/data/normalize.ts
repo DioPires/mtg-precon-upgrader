@@ -224,6 +224,7 @@ function transformApothecary(bundle: RawDeckBundle): DeckApothecary | null {
       generatedAt: metrics.generated_at,
       mirrorUpdatedAt: candidates.scryfall_mirror_updated_at,
       components: metrics.metrics || {},
+      winTurn: metrics.win_turn ?? null,
     },
     maladies: metrics.gaps || [],
     remedies: candidates.candidates || [],

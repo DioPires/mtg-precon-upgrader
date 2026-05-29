@@ -109,6 +109,13 @@ RESILIENCE_PROTECTION_TARGETS = {3: 2, 4: 4, 5: 5}
 RESILIENCE_GY_TARGET = 6
 RESILIENCE_GY_ROLES = {"recursion", "engine"}
 
+# DEC-311 — win_turn triple thresholds. Best floor MUST match DEC-309's
+# PAYOFF_FLOOR (see scripts/validate_strategy_ceiling.py); both values are
+# documented in docs/deck-metrics.md and data/bracket-philosophy.md.
+WIN_TURN_BEST_THRESHOLD = 15.0
+WIN_TURN_TYPICAL_THRESHOLD = 50.0
+WIN_TURN_DRAG = {3: 0, 4: 1, 5: 2}
+
 ARCHETYPE_COHESION_EXT = {
     "graveyard-reanimator": {"recursion"},
     "aristocrats": {"recursion"},
@@ -762,6 +769,112 @@ def resilience_health(deck: dict, bracket: int) -> tuple[dict, list[dict]]:
     )
 
 
+# ---- Win-turn triple (DEC-311) ---------------------------------------------
+
+# Which simulated lethality curve drives the triple, branched on the deck-level
+# `wincon_style`. Multi-kind detection (combo cards + non-combo cards both
+# present) and unset/value-incremental decks fall back to `max(CL, LP)` so the
+# triple stays honest when the deck closes on more than one axis.
+_WIN_TURN_LP_STYLES = {"combat", "drain", "drain-x", "discrete-threats"}
+_WIN_TURN_COMBO_STYLES = {"combo"}
+
+
+def _is_multi_kind_wincon(deck: dict) -> bool:
+    """True if the decklist carries both combo and non-combo wincon styles.
+
+    Matches DEC-309's heuristic in scripts/validate_strategy_ceiling.py so the
+    two metrics agree on what counts as "mixed".
+    """
+    card_styles = {
+        c.get("wincon_style") for c in deck.get("decklist", []) if c.get("wincon_style")
+    }
+    non_combo = {"combat", "drain", "drain-x", "discrete-threats", "tokens", "mill", "alt"}
+    return "combo" in card_styles and bool(card_styles & non_combo)
+
+
+def _win_turn_source(deck: dict) -> str:
+    """Return 'comboLethal' | 'lethalProxy' | 'max' per DEC-311 branching."""
+    style = deck.get("wincon_style")
+    if _is_multi_kind_wincon(deck):
+        return "max"
+    if style in _WIN_TURN_COMBO_STYLES:
+        return "comboLethal"
+    if style in _WIN_TURN_LP_STYLES:
+        return "lethalProxy"
+    # value-incremental, unset, or any unknown style — fall through to max.
+    return "max"
+
+
+def _read_simulation(deck_id: str) -> dict | None:
+    sim_path = DECKS_DIR / deck_id / "simulation.json"
+    if not sim_path.exists():
+        return None
+    try:
+        return json.loads(sim_path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def win_turn_triple(deck: dict, deck_id: str, bracket: int) -> dict | None:
+    """Derive a Best/Typical/Contested win-turn triple from simulation.json.
+
+    Returns None when the triple should be entirely suppressed (no sim, or the
+    selected payoff curve is flat at zero). Otherwise returns a dict with
+    `best`, `typical`, `contested` (any may be None when the threshold is not
+    reached inside the simulated window), plus the curve `source` and the
+    `bracket_drag` actually applied so the math is reproducible.
+    """
+    sim = _read_simulation(deck_id)
+    if sim is None:
+        return None
+    by_turn = (sim.get("goldfish") or {}).get("byTurn") or {}
+    if not by_turn:
+        return None
+
+    try:
+        turns = sorted((int(k) for k in by_turn.keys()))
+    except (TypeError, ValueError):
+        return None
+    if not turns:
+        return None
+
+    source = _win_turn_source(deck)
+
+    def payoff_at(t: int) -> float:
+        row = by_turn.get(str(t)) or {}
+        cl = float(row.get("comboLethal") or 0.0)
+        lp = float(row.get("lethalProxy") or 0.0)
+        if source == "comboLethal":
+            return cl
+        if source == "lethalProxy":
+            return lp
+        return max(cl, lp)
+
+    curve = [(t, payoff_at(t)) for t in turns]
+    if max(v for _, v in curve) <= 0.0:
+        # Flat-zero curve — the selected source carries no signal at all.
+        # Suppress everything; surfacing "—" three times is just noise.
+        return None
+
+    best = next((t for t, v in curve if v >= WIN_TURN_BEST_THRESHOLD), None)
+    typical = next((t for t, v in curve if v >= WIN_TURN_TYPICAL_THRESHOLD), None)
+    drag = WIN_TURN_DRAG.get(bracket, WIN_TURN_DRAG[4])
+    contested = (typical + drag) if typical is not None else None
+
+    return {
+        "best": best,
+        "typical": typical,
+        "contested": contested,
+        "source": source,
+        "bracket_drag": drag,
+        "thresholds": {
+            "best": WIN_TURN_BEST_THRESHOLD,
+            "typical": WIN_TURN_TYPICAL_THRESHOLD,
+        },
+        "window_last_turn": turns[-1],
+    }
+
+
 # ---- Top-level orchestration ------------------------------------------------
 
 def commander_color_identity(deck: dict, mirror: dict[str, dict]) -> set[str]:
@@ -985,6 +1098,8 @@ def compute(
         resilience_components=resilience.get("components", {}),
     )
 
+    win_turn = win_turn_triple(deck, deck_id, bracket)
+
     return {
         "version": 2,
         "methodology": METHODOLOGY_VERSION,
@@ -1015,6 +1130,7 @@ def compute(
         "global_health": global_health,
         "confidence_margin": confidence["margin"],
         "confidence_inputs": confidence["inputs"],
+        "win_turn": win_turn,
         "gaps": role_gaps + resilience_gaps,
     }
 
