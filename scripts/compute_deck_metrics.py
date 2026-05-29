@@ -803,6 +803,143 @@ def validate_roles(deck: dict, deck_id: str) -> list[str]:
     return errs
 
 
+CONFIDENCE_DEFAULT = 5
+CONFIDENCE_MIN = 2
+CONFIDENCE_MAX = 15
+CONFIDENCE_ROLE_PENALTY_CAP = 15
+CONFIDENCE_CANDIDATES_STALE_DAYS = 90
+CONFIDENCE_CANDIDATES_FRESH_DAYS = 30
+
+
+def _is_nonland_entry(entry: dict, scry: dict | None) -> bool:
+    """A non-land card for role-coverage purposes; MDFC-with-land-back still counts."""
+    if entry.get("is_mdfc_land"):
+        return True
+    if scry and "land" in (scry.get("type_line") or "").lower():
+        return False
+    if "land" in (entry.get("type") or "").lower():
+        return False
+    return True
+
+
+def _parse_iso(ts: str | None) -> datetime | None:
+    if not ts:
+        return None
+    try:
+        # tolerate both "Z" and "+00:00" suffixes
+        return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    except (ValueError, TypeError):
+        return None
+
+
+def confidence_margin(
+    deck: dict,
+    deck_id: str,
+    mirror: dict[str, dict],
+    role_cov_score: int,
+    resilience_components: dict,
+) -> dict:
+    """DEC-310 — ±margin around global_health based on data-completeness signals.
+
+    Returns {"margin": int, "inputs": {...}}: the inputs dict is descriptive
+    only (does not feed downstream), but is stored on metrics.json so reviewers
+    can see exactly which penalties/bonuses fired.
+    """
+    deck_dir = DECKS_DIR / deck_id
+    sim_path = deck_dir / "simulation.json"
+    cand_path = deck_dir / "candidates.json"
+
+    # Penalty: non-land cards without primary_role (+1 each, cap +15)
+    role_unset = 0
+    for entry in deck.get("decklist", []):
+        scry = get_scry(entry, mirror)
+        if not _is_nonland_entry(entry, scry):
+            continue
+        if not entry.get("primary_role"):
+            role_unset += card_quantity(entry)
+    role_penalty = min(role_unset, CONFIDENCE_ROLE_PENALTY_CAP)
+
+    # Penalty: wincon_style unset on commander deck (+6)
+    is_commander = (deck.get("type") or "commander") == "commander"
+    wincon_unset = is_commander and not deck.get("wincon_style")
+    wincon_penalty = 6 if wincon_unset else 0
+
+    # Penalty: archetypes empty (+6)
+    archetypes_unset = not (deck.get("archetypes") or [])
+    archetypes_penalty = 6 if archetypes_unset else 0
+
+    # Penalty: simulation.json missing (+10)
+    sim_missing = not sim_path.exists()
+    sim_penalty = 10 if sim_missing else 0
+
+    # Penalty: candidates.json missing OR stale (+6).
+    # Prefer the file's internal `generated_at` over mtime — the ticket asks us
+    # to confirm there's no internal stamp before falling back. There is one.
+    cand_missing = not cand_path.exists()
+    cand_age_days: float | None = None
+    if not cand_missing:
+        try:
+            cand_payload = json.loads(cand_path.read_text())
+            gen_at = _parse_iso(cand_payload.get("generated_at"))
+        except (json.JSONDecodeError, OSError):
+            gen_at = None
+        if gen_at is None:
+            # Fallback to file mtime
+            gen_at = datetime.fromtimestamp(cand_path.stat().st_mtime, tz=timezone.utc)
+        now = datetime.now(timezone.utc)
+        cand_age_days = (now - gen_at).total_seconds() / 86400.0
+    cand_stale = cand_missing or (cand_age_days is not None and cand_age_days > CONFIDENCE_CANDIDATES_STALE_DAYS)
+    cand_penalty = 6 if cand_stale else 0
+
+    # Penalty: fewer than 4 resilience components carrying real signal (+3).
+    # "Data completeness" framing: a component scoring 0 means we have no
+    # signal on that axis at all (no recursion tags, no protection, no
+    # winConditions[], no graveyard rebuild).
+    res_components = resilience_components or {}
+    res_signal_count = sum(1 for c in res_components.values() if (c.get("score") or 0) > 0)
+    res_penalty = 3 if res_signal_count < 4 else 0
+
+    penalties = role_penalty + wincon_penalty + archetypes_penalty + sim_penalty + cand_penalty + res_penalty
+
+    # Bonus floor: all of {archetypes set, wincon_style set, 100% role coverage,
+    # simulation present, candidates within 30 days} → floor at ±2.
+    full_data = (
+        not archetypes_unset
+        and not wincon_unset
+        and role_cov_score >= 100
+        and not sim_missing
+        and cand_age_days is not None
+        and cand_age_days <= CONFIDENCE_CANDIDATES_FRESH_DAYS
+    )
+
+    raw = CONFIDENCE_DEFAULT + penalties
+    if full_data:
+        raw = min(raw, CONFIDENCE_MIN)
+    margin = max(CONFIDENCE_MIN, min(CONFIDENCE_MAX, raw))
+
+    return {
+        "margin": margin,
+        "inputs": {
+            "default": CONFIDENCE_DEFAULT,
+            "penalties": {
+                "role_unset_cards": role_unset,
+                "role_unset_applied": role_penalty,
+                "wincon_style_unset": wincon_unset,
+                "archetypes_unset": archetypes_unset,
+                "simulation_missing": sim_missing,
+                "candidates_missing": cand_missing,
+                "candidates_age_days": (round(cand_age_days, 1) if cand_age_days is not None else None),
+                "candidates_stale": cand_stale,
+                "resilience_signal_components": res_signal_count,
+                "resilience_signal_low": res_signal_count < 4,
+                "total": penalties,
+            },
+            "bonus_floor_eligible": full_data,
+            "role_coverage_score": role_cov_score,
+        },
+    }
+
+
 def blend_global_health(
     manabase: int, role: int, curve: int, interaction: int, cohesion: int, resilience: int,
     weights: tuple[float, float, float, float, float, float],
@@ -842,6 +979,12 @@ def compute(
         weights,
     )
 
+    confidence = confidence_margin(
+        deck, deck_id, mirror,
+        role_cov_score=role_cov["score"],
+        resilience_components=resilience.get("components", {}),
+    )
+
     return {
         "version": 2,
         "methodology": METHODOLOGY_VERSION,
@@ -870,6 +1013,8 @@ def compute(
             "resilience_health": resilience,
         },
         "global_health": global_health,
+        "confidence_margin": confidence["margin"],
+        "confidence_inputs": confidence["inputs"],
         "gaps": role_gaps + resilience_gaps,
     }
 
@@ -988,7 +1133,7 @@ def main(argv: list[str]) -> int:
         changed = write_metrics(deck_id, payload)
         m = payload["metrics"]
         print(
-            f"  [{deck_id}] global={payload['global_health']}  "
+            f"  [{deck_id}] global={payload['global_health']}±{payload['confidence_margin']}  "
             f"mana={m['manabase_health']['score']}  "
             f"roles={m['role_coverage_health']['score']}  "
             f"curve={m['curve_health']['score']}  "

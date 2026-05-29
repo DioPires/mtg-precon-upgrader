@@ -220,6 +220,8 @@ export interface RawMetrics {
   bracket: string;
   color_identity?: string[];
   global_health: number;
+  /** DEC-310 — ±N data-completeness band around `global_health`. Clamped [2, 15]. */
+  confidence_margin?: number;
   metrics: Record<string, RawMetricsComponent>;
   gaps: RawMetricsGap[];
   methodology?: string;
@@ -324,6 +326,7 @@ export interface DeckCombo {
 export interface DeckApothecary {
   diagnosis: {
     score: number;
+    confidenceMargin?: number;
     methodology: string;
     generatedAt?: string;
     mirrorUpdatedAt?: string;

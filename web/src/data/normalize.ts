@@ -219,6 +219,7 @@ function transformApothecary(bundle: RawDeckBundle): DeckApothecary | null {
   return {
     diagnosis: {
       score: metrics.global_health,
+      confidenceMargin: metrics.confidence_margin,
       methodology: metrics.methodology || 'deck-metrics-v1',
       generatedAt: metrics.generated_at,
       mirrorUpdatedAt: candidates.scryfall_mirror_updated_at,

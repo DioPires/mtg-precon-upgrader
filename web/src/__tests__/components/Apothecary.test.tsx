@@ -93,4 +93,53 @@ describe('Apothecary', () => {
     expect(screen.getByRole('button', { name: /hide breakdown/i })).toBeInTheDocument();
     expect(screen.getAllByText(/weakest/i).length).toBeGreaterThan(0);
   });
+
+  it('renders the confidence margin next to the score when provided (DEC-310)', () => {
+    render(
+      <Apothecary
+        apothecary={makeApothecary({
+          diagnosis: {
+            score: 82,
+            confidenceMargin: 5,
+            methodology: 'deck-metrics-v2',
+            generatedAt: '2026-05-29T00:00:00Z',
+            mirrorUpdatedAt: '2026-05-29T00:00:00Z',
+            components: {
+              manabase_health: { score: 80 },
+              role_coverage_health: { score: 80 },
+              curve_health: { score: 80 },
+              interaction_density: { score: 80 },
+              gameplan_cohesion: { score: 80 },
+              resilience_health: { score: 80 },
+            },
+          },
+        })}
+      />,
+    );
+
+    expect(screen.getByText(/± 5/)).toBeInTheDocument();
+    expect(screen.getByText('82')).toBeInTheDocument();
+  });
+
+  it('renders a single-letter grade with no banding (DEC-310)', () => {
+    render(
+      <Apothecary
+        apothecary={makeApothecary({
+          diagnosis: {
+            score: 87,
+            confidenceMargin: 4,
+            methodology: 'deck-metrics-v2',
+            generatedAt: '2026-05-29T00:00:00Z',
+            mirrorUpdatedAt: '2026-05-29T00:00:00Z',
+            components: { manabase_health: { score: 80 } },
+          },
+        })}
+      />,
+    );
+
+    // 87 used to be "A+"; under DEC-310 it must collapse to "B".
+    expect(screen.queryByText('A+')).not.toBeInTheDocument();
+    expect(screen.queryByText('A-')).not.toBeInTheDocument();
+    expect(screen.getByText('B')).toBeInTheDocument();
+  });
 });

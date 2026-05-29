@@ -69,6 +69,7 @@ function makeBundle(over: Partial<RawDeckBundle> = {}): RawDeckBundle {
       commander: 'Zhulodok, Void Gorger',
       bracket: '4',
       global_health: 72,
+      confidence_margin: 7,
       metrics: { manabase_health: { score: 80 }, role_coverage_health: { score: 60 } },
       gaps: [{ role: 'card-draw', actual: 4, target: 10, score: 40 }],
       methodology: 'deck-metrics-v1',
@@ -198,6 +199,7 @@ describe('normalizeDeck', () => {
     const out = normalizeDeck(makeBundle(), 1);
     expect(out.apothecary).not.toBeNull();
     expect(out.apothecary?.diagnosis.score).toBe(72);
+    expect(out.apothecary?.diagnosis.confidenceMargin).toBe(7);
     expect(out.apothecary?.maladies).toHaveLength(1);
     expect(out.apothecary?.remedies[0].name).toBe('Dreamstone Hedron');
   });

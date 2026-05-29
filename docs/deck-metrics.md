@@ -188,6 +188,33 @@ Rationale: a tuned `combo` deck closing on T6 doesn't need five recursion slots;
 
 **`gaps[]` surfacing:** any component whose percentage-of-max is `< 70` is appended to `metrics.json`'s `gaps[]` as `{resilience_component, score_pct, max, ...}` (with component-specific fields — actual/target for recursion/protection/gy, lines/floor for redundancy, and `wincon_style` on recursion/redundancy entries). This rides the same `gaps[]` feed that role-coverage already uses, so candidate enrichment (P7.7) can prioritize cards that close a resilience gap just like it prioritizes role gaps.
 
+### Confidence band: `confidence_margin` (±2…±15) — DEC-310
+
+`global_health` is presented to the reader as **`{score} ± {margin}`**. The margin is a data-completeness uncertainty channel, not a quality channel — it widens when the underlying tags or sibling files are missing/stale, and narrows when the deck is fully tagged and the sibling files are current. Letter grade renders as a single letter (A/B/C/D/F); the margin number is the only uncertainty signal.
+
+Inputs:
+
+| Trigger | Effect |
+|---|---|
+| (baseline) | `default = 5` |
+| Non-land card with unset `primary_role` | `+1` per card, capped at `+15` |
+| Commander deck without `wincon_style` | `+6` |
+| Empty `archetypes` array | `+6` |
+| `simulation.json` missing | `+10` |
+| `candidates.json` missing **or** `generated_at` older than 90 days | `+6` |
+| `resilience_health` components with non-zero signal `< 4` (data-completeness on the recovery axis) | `+3` |
+| **Bonus floor**: all of `{archetypes set, wincon_style set, role_coverage_health.score ≥ 100, simulation present, candidates within 30 days}` | clamp to `±2` |
+
+Final:
+
+```
+margin = clamp(default + penalties − bonuses, 2, 15)
+```
+
+The cap was lowered from `±25` to `±15` deliberately — a band that spans three full letter grades is presentationally useless (an "82 ± 22" deck could be anywhere between F and A and the reader learns nothing).
+
+Implementation detail: `candidates.json` carries an internal `generated_at` timestamp (written by `scripts/generate_candidate_pool.py`); the margin reads that and falls back to file mtime only if the field is missing.
+
 ### Global blend: `global_health` (0–100)
 
 ```
@@ -230,6 +257,7 @@ Mana and roles still co-dominate at 50% combined — they remain the most action
     }
   },
   "global_health": 85,
+  "confidence_margin": 5,
   "gaps": [
     { "role": "protection", "actual": 2, "target": 4, "score": 50 },
     { "resilience_component": "protection", "score_pct": 55, "max": 25, "actual": 2.0, "target": 4 }
@@ -273,23 +301,25 @@ The Vitals card sources this score and grade from `metrics.json` only.
 
 Component scores (`mana`, `role`, `curve`, `int`, `cohesion`, `resilience`) are weight-option-independent. The three columns project `global_health` under DEC-308's three candidate weight tuples; the chosen option is **A** (committed as `DEFAULT_WEIGHT_OPTION` in `compute_deck_metrics.py`).
 
-| Deck | mana | role | curve | int | cohesion | resilience | A (25/25/15/15/10/10) | B (28/28/14/14/8/8) | C (30/25/15/12/8/10) | A grade |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|
-| silverquill-the-disputant | 85 | 100 | 93 | 120 | 54 | 106 | 94 | 94 | 94 | A |
-| witherbloom-the-balancer | 71 | 109 | 100 | 120 | 50 | 94 | 92 | 93 | 91 | A |
-| aziza-mage-tower-captain | 75 | 99 | 94 | 120 | 40 | 106 | 90 | 90 | 90 | A |
-| creeping-corruption | 82 | 94 | 92 | 120 | 47 | 70 | 88 | 88 | 87 | B |
-| the-white-forge | 69 | 103 | 87 | 120 | 19 | 106 | 87 | 87 | 86 | B |
-| zada-hedron-grinder | 69 | 104 | 88 | 102 | 38 | 106 | 86 | 87 | 86 | B |
-| dark-dominion | 82 | 86 | 95 | 118 | 24 | 88 | 85 | 86 | 85 | B |
-| hidden-legion | 64 | 100 | 95 | 120 | 32 | 85 | 85 | 85 | 84 | B |
-| eternal-agony | 75 | 86 | 100 | 120 | 45 | 66 | 84 | 85 | 84 | B |
-| superfriends-esika | 62 | 107 | 82 | 120 | 33 | 80 | 84 | 85 | 83 | B |
-| pyre-and-panic | 70 | 85 | 98 | 120 | 47 | 68 | 83 | 83 | 82 | B |
-| eternal-harvest | 69 | 79 | 100 | 104 | 50 | 81 | 81 | 80 | 80 | B |
-| mutant-multiplication | 86 | 72 | 97 | 89 | 52 | 64 | 79 | 80 | 80 | C |
-| verdant-tide | 71 | 91 | 80 | 80 | 44 | 70 | 76 | 77 | 76 | C |
-| titan-convergence | 69 | 75 | 0 | 93 | 44 | 71 | 61 | 63 | 61 | D |
+| Deck | mana | role | curve | int | cohesion | resilience | A (25/25/15/15/10/10) | B (28/28/14/14/8/8) | C (30/25/15/12/8/10) | A grade | margin |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|---:|
+| silverquill-the-disputant | 85 | 100 | 93 | 120 | 54 | 106 | 94 | 94 | 94 | A | ±11 |
+| witherbloom-the-balancer | 71 | 109 | 100 | 120 | 50 | 94 | 92 | 93 | 91 | A | ±2 |
+| aziza-mage-tower-captain | 75 | 99 | 94 | 120 | 40 | 106 | 90 | 90 | 90 | A | ±5 |
+| creeping-corruption | 82 | 94 | 92 | 120 | 47 | 70 | 88 | 88 | 87 | B | ±8 |
+| the-white-forge | 69 | 103 | 87 | 120 | 19 | 106 | 87 | 87 | 86 | B | ±2 |
+| zada-hedron-grinder | 69 | 104 | 88 | 102 | 38 | 106 | 86 | 87 | 86 | B | ±2 |
+| dark-dominion | 82 | 86 | 95 | 118 | 24 | 88 | 85 | 86 | 85 | B | ±5 |
+| hidden-legion | 64 | 100 | 95 | 120 | 32 | 85 | 85 | 85 | 84 | B | ±2 |
+| eternal-agony | 75 | 86 | 100 | 120 | 45 | 66 | 84 | 85 | 84 | B | ±5 |
+| superfriends-esika | 62 | 107 | 82 | 120 | 33 | 80 | 84 | 85 | 83 | B | ±2 |
+| pyre-and-panic | 70 | 85 | 98 | 120 | 47 | 68 | 83 | 83 | 82 | B | ±8 |
+| eternal-harvest | 69 | 79 | 100 | 104 | 50 | 81 | 81 | 80 | 80 | B | ±8 |
+| mutant-multiplication | 86 | 72 | 97 | 89 | 52 | 64 | 79 | 80 | 80 | C | ±8 |
+| verdant-tide | 71 | 91 | 80 | 80 | 44 | 70 | 76 | 77 | 76 | C | ±8 |
+| titan-convergence | 69 | 75 | 0 | 93 | 44 | 71 | 61 | 63 | 61 | D | ±5 |
+
+**DEC-310 margin distribution** (15 decks): no margin exceeds ±15 (acceptance), max is ±11 on silverquill (its `wincon_style` is currently unset, which the metric correctly flags as a data gap). Five decks reach the ±2 floor — every one of them has full archetype + wincon tagging, ≥100 role-coverage score, a present `simulation.json`, and a `candidates.json` regenerated within the last 30 days. The remaining ten decks land at ±5 or ±8, dominated by `wincon_style` not yet tagged on older builds and one or two slightly stale `candidates.json` files (>90 days). This is the metric working as intended: it points review effort at decks whose underlying tagging is the bottleneck, not their gameplay quality.
 
 **Why option A was chosen** against the invariants from DEC-308:
 

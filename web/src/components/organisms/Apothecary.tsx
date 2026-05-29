@@ -43,19 +43,13 @@ const ROLE_LABELS: Record<string, string> = {
 const REMEDIES_TOP_N = 30;
 
 function gradeForGlobalHealth(s: number | null | undefined): string {
+  // DEC-310 — single letter only. The ±margin number is the uncertainty
+  // channel; banding ("A+/A/A-") double-counts that signal and adds noise.
   if (s == null) return '—';
-  if (s >= 87) return 'A+';
-  if (s >= 83) return 'A';
-  if (s >= 78) return 'A-';
-  if (s >= 73) return 'B+';
-  if (s >= 68) return 'B';
-  if (s >= 63) return 'B-';
-  if (s >= 58) return 'C+';
-  if (s >= 53) return 'C';
-  if (s >= 48) return 'C-';
-  if (s >= 43) return 'D+';
-  if (s >= 38) return 'D';
-  if (s >= 33) return 'D-';
+  if (s >= 90) return 'A';
+  if (s >= 80) return 'B';
+  if (s >= 70) return 'C';
+  if (s >= 60) return 'D';
   return 'F';
 }
 
@@ -128,6 +122,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
   const { diagnosis, maladies, remedies } = apothecary;
   const score = Math.round(diagnosis.score ?? 0);
   const grade = gradeForGlobalHealth(diagnosis.score);
+  const margin = diagnosis.confidenceMargin;
 
   let weakKey: string | null = null;
   let weakScore = Infinity;
@@ -176,6 +171,9 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
           <div className="gv1-apo-grade-meta">
             <div className="gv1-serif-xxl">
               {score}
+              {typeof margin === 'number' && (
+                <span className="gv1-mono-xs gv1-dim gv1-apo-margin"> ± {margin}</span>
+              )}
               <span className="gv1-mono-xs gv1-dim"> / 100</span>
             </div>
             <div className="gv1-mono-xs gv1-dim">DECK HEALTH</div>
