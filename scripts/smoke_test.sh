@@ -17,6 +17,10 @@ echo "=== Deck JSON Validation ==="
 python3 "$ROOT/scripts/validate_deck_json.py" || exit 1
 echo ""
 
+echo "=== Strategy-Ceiling Check (DEC-309) ==="
+python3 "$ROOT/scripts/validate_strategy_ceiling.py" || true
+echo ""
+
 # Start server
 python3 -m http.server "$PORT" --directory "$ROOT" &>/dev/null &
 SERVER_PID=$!

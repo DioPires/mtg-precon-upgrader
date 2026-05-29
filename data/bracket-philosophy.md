@@ -126,3 +126,59 @@ A deck at 50% comboLethal at T6 in the proxy will typically win the actual game 
 ### Case study
 
 DEC-205 Dark Dominion retune (commits [`4094952`](https://github.com/DioPires/mtg-precon-upgrader/commit/4094952) through [`a62d993`](https://github.com/DioPires/mtg-precon-upgrader/commit/a62d993)) — slow value-pile B5 (T8+ goldfish lethal, comboLethal not tracked) → tutored combo B4+ (comboLethal T6 48.2%, T7 53.3%, median combo-ready turn T7). DeckHealthScore C(65) → B(67.5), manabase_health 74 → 82, global_health 78 → 85. Total spend: $56. Six combo lines tagged (3 wincon-permanents × 2 finishers).
+
+### Shell-vs-payoff ceiling (DEC-309)
+
+Added 2026-05-29 from DEC-309. A B4 deck has to match its **shell** (manabase + interaction) to its **payoff** (what the proxy says it can actually win with). ScryCheck downgrades brackets when these don't match: Sol Ring + Demonic Tutor + 7-mana coin-flip wincon is not actually B4, no matter what the `bracket` field says.
+
+The check lives in `scripts/validate_strategy_ceiling.py` and runs as part of `scripts/smoke_test.sh`. It is **non-blocking** — warnings to stdout, exit 0 either way.
+
+**Inputs:**
+
+- `shell = min(manabase_health, interaction_density)` — the weaker of the two. Fast mana with no countermagic is still a slow shell to defend a combo turn on.
+- `payoff`: branched on the deck-root `wincon_style`:
+  - `combo` → `comboLethal@T6`
+  - `combat`, `drain`, `drain-x`, `discrete-threats` → `lethalProxy@T7`
+  - `value-incremental` → `max(comboLethal@T6, lethalProxy@T7)` — a value pile can win either way.
+  - Multi-kind (card-level mix of `combo` + any non-combo style, or missing root style) → `max(comboLethal@T6, lethalProxy@T7)` — silverquill-style decks where the payoff is genuinely diversified.
+
+**Detection rules (final thresholds):**
+
+- **shell-exceeds-payoff** (downgrade signal): `shell ≥ 80` AND `payoff < 15%`.
+  → "B4 shell, sub-B4 payoff. Either reduce shell investment or upgrade wincon."
+- **payoff-exceeds-shell** (consistency risk): `comboLethal@T5 ≥ 50%` AND `shell < 60`.
+  → "Fast wincon, weak shell — combo line exists but won't survive a contested table."
+
+**Calibration snapshot (2026-05-29):**
+
+Computed across all 15 production decks. Columns: manaH = manabase_health, intD = interaction_density, shell = min(manaH, intD), CL@T5/T6 = comboLethal at turn 5/6, LP@T7 = lethalProxy at turn 7, payoff per the branching rules above.
+
+| deck | bracket | root `wincon_style` | manaH | intD | shell | CL@T5 | CL@T6 | LP@T7 | payoff | flag |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| aziza-mage-tower-captain | 3 | combat (multi) | 75 | 120 | 75 | 18.4 | 23.6 | 18.9 | 23.6 | ok |
+| creeping-corruption | 3 | value-incremental | 82 | 120 | 82 | 0.0 | 0.0 | 46.8 | 46.8 | ok |
+| dark-dominion | 4+ | value-incremental | 82 | 118 | 82 | 46.2 | 57.4 | 19.0 | 57.4 | ok |
+| eternal-agony | 4 | value-incremental | 75 | 120 | 75 | 5.4 | 8.2 | 42.0 | 42.0 | ok |
+| eternal-harvest | 4 | value-incremental | 69 | 104 | 69 | 0.0 | 0.0 | 29.2 | 29.2 | ok |
+| hidden-legion | 3 | combat (multi) | 64 | 120 | 64 | 0.1 | 0.3 | 26.6 | 26.6 | ok |
+| mutant-multiplication | 4 | value-incremental | 86 | 89 | 86 | 0.0 | 0.0 | 33.3 | 33.3 | ok |
+| pyre-and-panic | 3 | drain | 70 | 120 | 70 | 0.0 | 0.0 | 35.6 | 35.6 | ok |
+| silverquill-the-disputant | 3 | (mixed: drain+tokens) | 85 | 120 | 85 | 1.6 | 2.8 | 22.4 | 22.4 | ok |
+| superfriends-esika | 3+ | value-incremental | 62 | 120 | 62 | 3.9 | 7.0 | 5.7 | 7.0 | ok |
+| the-white-forge | 4 | value-incremental | 69 | 120 | 69 | 0.0 | 0.0 | 14.0 | 14.0 | ok |
+| titan-convergence | 4 | discrete-threats | 69 | 93 | 69 | 0.0 | 0.0 | 31.7 | 31.7 | ok |
+| verdant-tide | 3 | discrete-threats | 71 | 80 | 71 | 0.0 | 0.0 | 58.8 | 58.8 | ok |
+| witherbloom-the-balancer | 3 | drain-x | 71 | 120 | 71 | 0.0 | 0.0 | 27.0 | 27.0 | ok |
+| zada-hedron-grinder | 3 | combo (multi) | 69 | 102 | 69 | 0.0 | 0.0 | 48.4 | 48.4 | ok |
+
+**Threshold rationale:**
+
+- `shell_floor=80` clears the four decks that earn B4-shell scores (creeping-corruption 82, dark-dominion 82, silverquill 85, mutant-multiplication 86). Anything below isn't paying B4 tax in the first place, so shell-exceeds-payoff isn't the right diagnosis for it.
+- `payoff_floor=15` leaves silverquill (22.4%) above the floor by ~7 points — the canonical multi-axis case that *should not* trigger. Mutant-multiplication (33.3%) and creeping-corruption (46.8%) are well clear.
+- `fast_payoff=50%` (CL@T5) and `weak_shell=60` form the opposite warning. No current deck triggers it — the closest is superfriends-esika at shell 62 / CL@T5 3.9%. The rule is forward-looking: it catches a future deck that adds a Thoracle line without strengthening its lands or interaction.
+
+**Sanity checks (from DEC-309 acceptance):**
+
+- silverquill-the-disputant does **not** trigger (shell 85, payoff 22.4% — multi-axis case respected). ✓
+- titan-convergence does **not** trigger because its shell (69) is below `shell_floor`. Reason: titan is a B4 *deck* by composition but its shell score is sub-B4. The strategy-ceiling check is specifically about decks that pay the B4 shell tax; titan's gap is "shell needs upgrading," which is a [`metrics.json gaps[]`](../docs/deck-metrics.md) finding, not a ceiling mismatch.
+- mutant-multiplication does **not** trigger (tuned multi-axis B4 — shell 86, payoff 33.3%). ✓
