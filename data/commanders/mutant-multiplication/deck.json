@@ -118,7 +118,6 @@
     {
       "name": "Finishers",
       "cards": [
-        "Cyberdrive Awakener",
         "Herald of Secret Streams",
         "Second Harvest",
         "Pathbreaker Ibex",
@@ -135,7 +134,8 @@
         "Caretaker's Talent",
         "Idol of Oblivion",
         "Sylvan Library",
-        "Vivien Reid"
+        "Vivien Reid",
+        "Enduring Innocence"
       ]
     },
     {
@@ -159,21 +159,6 @@
         "Leonardo, the Balance"
       ],
       "description": "Overload Cyclonic Rift at instant speed to bounce all opponents' nonland permanents. Swing with the token army that has been accumulating +1/+1 counters from Leonardo's triggers. The cleanest finisher — one-sided board clear into lethal combat.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Strategic win path identification"
-        }
-      ]
-    },
-    {
-      "title": "Cyberdrive Awakener",
-      "cards": [
-        "Cyberdrive Awakener",
-        "Donatello, the Brains"
-      ],
-      "description": "Cast Cyberdrive Awakener to turn all noncreature artifacts into 4/4 flying creatures until end of turn. With 10+ Mutagen tokens from Donatello's triggers, this represents 40+ flying damage. Must attack the same turn — no haste needed since the artifacts become creatures on your turn.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -291,21 +276,6 @@
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Counter multiplication"
-        }
-      ]
-    },
-    {
-      "title": "Mutagen Air Force",
-      "cards": [
-        "Cyberdrive Awakener",
-        "Donatello, the Brains"
-      ],
-      "description": "Donatello accumulates Mutagen artifact tokens passively. Cyberdrive Awakener turns all noncreature artifacts into 4/4 flyers until end of turn. 10 Mutagens + other artifacts = 40+ flying damage in one swing.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Artifact-to-creature finisher"
         }
       ]
     },
@@ -515,15 +485,15 @@
       ]
     },
     {
-      "name": "Cyberdrive Awakener",
-      "price": "$1-3",
+      "name": "Enduring Innocence",
+      "price": "$2-4",
       "isGameChanger": false,
-      "reason": "Turns all noncreature artifacts into 4/4 flyers until end of turn. 10 Mutagen tokens = 40 flying damage. Must attack the same turn.",
+      "reason": "Whenever one or more other creatures you control with power 2 or less enter, draw a card. Triggers on every wave of 1/1 Saprolings, Spirits, Soldiers, Mutagens, and Eldrazi Spawn. Lifelink stabilises swarms. Dies-returns-as-enchantment provides built-in resilience against single-target removal.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Mutagen artifact finisher"
+          "detail": "Token-payoff card-draw engine; board-directed swap per DEC-322 (CEO comment 940c503b)"
         }
       ]
     },
@@ -1080,10 +1050,10 @@
       "primary_role": "engine"
     },
     {
-      "name": "Cyberdrive Awakener",
+      "name": "Enduring Innocence",
       "type": "Creature",
-      "primary_role": "wincon",
-      "wincon_style": "combat"
+      "primary_role": "card-draw",
+      "secondary_role": "protection"
     },
     {
       "name": "Herald of Secret Streams",
