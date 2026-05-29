@@ -94,6 +94,7 @@ RESILIENCE_RECURSION_TARGETS: dict[str | None, dict[int, int]] = {
     "combat":            {3: 2, 4: 3, 5: 4},
     "drain":             {3: 2, 4: 3, 5: 4},
     "drain-x":           {3: 2, 4: 3, 5: 4},
+    "mixed":             {3: 2, 4: 3, 5: 4},
     None:                {3: 2, 4: 3, 5: 4},
 }
 RESILIENCE_WINCON_LINE_FLOOR: dict[str | None, int] = {
@@ -103,6 +104,7 @@ RESILIENCE_WINCON_LINE_FLOOR: dict[str | None, int] = {
     "combat": 1,
     "drain": 1,
     "drain-x": 1,
+    "mixed": 1,
     None: 1,
 }
 RESILIENCE_PROTECTION_TARGETS = {3: 2, 4: 4, 5: 5}
@@ -801,7 +803,7 @@ def _win_turn_source(deck: dict) -> str:
         return "comboLethal"
     if style in _WIN_TURN_LP_STYLES:
         return "lethalProxy"
-    # value-incremental, unset, or any unknown style — fall through to max.
+    # value-incremental, "mixed", unset, or any unknown style — fall through to max.
     return "max"
 
 

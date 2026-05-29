@@ -85,15 +85,23 @@ Both fields use the same 15-role vocabulary. The metrics computer (P7.5, DEC-119
 
 ## `wincon_style`
 
-When `primary_role == "wincon"` (or `secondary_role == "wincon"`), add `wincon_style` to disambiguate. Closed set:
+`wincon_style` is used in two places. As a **card-level** field on `decklist[]` entries with `primary_role == "wincon"` (or `secondary_role == "wincon"`), it disambiguates the kind of close. As a **deck-level** root field, it summarizes the deck's dominant win plan and feeds the resilience-target tables, the win-turn payoff curve selection, and the DEC-310 confidence margin.
+
+**Closed set** (matches `RESILIENCE_RECURSION_TARGETS` and `RESILIENCE_WINCON_LINE_FLOOR` in [`scripts/compute_deck_metrics.py`](../scripts/compute_deck_metrics.py)):
 
 | Value | Meaning |
 |---|---|
 | `combat` | Wins via attacks (Craterhoof, Overrun-style, voltron commander damage, infect) |
 | `combo` | Wins via assembled combo (Thoracle/Consultation, Food Chain loops, infinite mana → drain) |
 | `drain` | Wins via incremental life loss (Bolas's Citadel, Aetherflux, Exsanguinate-style X-spells) |
+| `drain-x` | Wins via X-spell drain or life-total swings (Torment of Hailfire, Debt to the Deathless) |
+| `discrete-threats` | Wins by stacking discrete must-answer threats that outpace removal (planeswalker ult armies, big-creature midrange) |
+| `value-incremental` | Grindy attrition close — incremental advantage compresses to lethal pressure over many turns |
+| `burst` | Single-turn-window finishers fired from a built-up board or resource pile (Exsanguinate, Genesis Wave, large X-spells) |
+| `tokens` | Wins by wide token swarms — used only on card-level entries; deck-level usually downstreams to `combat` or `discrete-threats` |
 | `mill` | Wins by emptying opponent libraries |
 | `alt` | Alt wincons (Approach, Coalition Victory, Maze's End) |
+| `mixed` | **Deck-level only.** Multiple kinds, no dominant plan (no single `winConditions[].kind` ≥ 60% of the lines). Inherits the same resilience-target row as `null`; the win-turn triple falls through to `max(comboLethal, lethalProxy)`. Use sparingly — most decks have a recognizable top-line plan. |
 
 The metrics computer applies a small penalty to **`combo` wincons in B3 decks** and to **multiple `combo` wincons in B4 decks** (cohesion guardrail — see [`deck-metrics.md`](deck-metrics.md)).
 

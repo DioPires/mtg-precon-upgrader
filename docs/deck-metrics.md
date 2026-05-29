@@ -178,7 +178,9 @@ Components:
 | `value-incremental` | 3 / 4 / 5 | 1 |
 | `discrete-threats` | 2 / 3 / 3 | 2 |
 | `combat`, `drain`, `drain-x` | 2 / 3 / 4 | 1 |
-| (unset) | 2 / 3 / 4 | 1 |
+| `mixed`, (unset) | 2 / 3 / 4 | 1 |
+
+`mixed` is the deck-level value for multi-kind decks with no dominant plan (see [`role-taxonomy.md`](role-taxonomy.md#wincon_style)). It deliberately inherits the unset-row targets and the `max(comboLethal, lethalProxy)` win-turn curve so the metric stays honest when the deck closes on more than one axis.
 
 Protection target (bracket-only): B3 = 2, B4 = 4, B5 = 5.
 
