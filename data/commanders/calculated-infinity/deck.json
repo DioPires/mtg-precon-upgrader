@@ -36,6 +36,10 @@
     {
       "type": "ai-inferred",
       "name": "DEC-318 board-approved swaps (run 2026-06-01): +Foil (cut Veil of Summer — counters answer broader threats than narrow hexproof); +Curse of the Swine (cut Hedron Archive — restored the dedicated creature wipe Pest Infestation does not provide; ramp slot dropped because 2-mana ramp suite is sufficient). Also corrected Cyclonic Rift / Pest Infestation rationale: Rift is overload {6}{U} (not X) bouncing every opponent's nonland perms; Pest Infestation destroys artifacts/enchantments (not creatures) and creates 2X Pest tokens."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-318 board-approved swap (run 2026-06-01, post-audit): +Hullbreaker Horror (cut Paradox Surveyor — weakest X-payoff trigger). Hullbreaker is a third combo finisher path: its 'whenever you cast a spell' trigger fires off each Reversal copy in the Scepter loop, giving zero-marginal-cost bounces of opponents' permanents OR spells on the stack (option 1 also pre-empts opposing counters during the combo turn). Uncounterable, flash, 7/8 — also serves as a beatdown body if the combo line stalls."
     }
   ],
   "guideContent": {
@@ -66,6 +70,13 @@
         "description": "Aetherflux on the battlefield converts the Scepter loop into damage: each Reversal copy is a cast, triggers Aetherflux for cumulative N+1 life. N=17 → 153 life → pay 50 three times → one-shot the table.",
         "cards": [
           "Aetherflux Reservoir"
+        ]
+      },
+      {
+        "name": "Backup Combo — Hullbreaker Horror",
+        "description": "Flash 7/8 Kraken Horror, can't be countered. Whenever you cast a spell, optionally bounce a target nonland permanent OR target spell you don't control. In the Scepter loop, each Reversal copy is a cast → Hullbreaker triggers → bounce one thing per cycle, zero per-bounce mana cost. Crucially, the spell-bounce mode eats opposing counters mid-combo turn, making the line resilient to instant-speed disruption. Also a 7/8 beatdown body if combo stalls.",
+        "cards": [
+          "Hullbreaker Horror"
         ]
       },
       {
@@ -113,7 +124,6 @@
         "description": "Loot / tutor / scry on each X-spell cast. Smooth the build-around dependency. Brass Infiniscope ramps {C}{C} AND draws + gains life on the next X-spell — the deck's best 4-mana payoff.",
         "cards": [
           "Geometer's Arthropod",
-          "Paradox Surveyor",
           "Nev, the Practical Dean",
           "Brass Infiniscope"
         ]
@@ -519,8 +529,8 @@
     {"name": "Hardened Scales", "type": "Enchantment", "primary_role": "engine", "secondary_role": "payoff"},
 
     {"name": "Geometer's Arthropod", "type": "Creature — Fractal Crab", "primary_role": "payoff", "secondary_role": "card-draw"},
-    {"name": "Paradox Surveyor", "type": "Creature — Elf Druid", "primary_role": "tutor"},
     {"name": "Nev, the Practical Dean", "type": "Legendary Creature — Merfolk Wizard", "primary_role": "payoff", "secondary_role": "threat"},
+    {"name": "Hullbreaker Horror", "type": "Creature — Kraken Horror", "primary_role": "wincon", "secondary_role": "protection"},
 
     {"name": "Cyclonic Rift", "type": "Instant", "primary_role": "removal-board"},
     {"name": "Pest Infestation", "type": "Sorcery", "primary_role": "removal-board", "secondary_role": "threat"},
