@@ -29,7 +29,16 @@ function serveDeckData(): Plugin {
           res.setHeader('content-type', cleaned.endsWith('.json') ? 'application/json' : 'application/octet-stream');
           res.setHeader('cache-control', 'no-cache');
           res.end(buf);
-        } catch {
+        } catch (err) {
+          // Mirror production (Vercel rewrite excludes /data/) — return 404 for
+          // missing files instead of falling through to the SPA index.html,
+          // which would otherwise crash JSON-parsing loaders with `Unexpected
+          // token '<', "<!DOCTYPE"...`.
+          if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
+            res.statusCode = 404;
+            res.end('not found');
+            return;
+          }
           next();
         }
       });
@@ -48,7 +57,12 @@ function serveDeckData(): Plugin {
           const buf = await readFile(filePath);
           res.setHeader('content-type', cleaned.endsWith('.json') ? 'application/json' : 'application/octet-stream');
           res.end(buf);
-        } catch {
+        } catch (err) {
+          if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
+            res.statusCode = 404;
+            res.end('not found');
+            return;
+          }
           next();
         }
       });
