@@ -27,7 +27,19 @@ export interface CardAtlasProps {
 export function CardAtlas({ decks }: CardAtlasProps) {
   const navigate = useNavigate();
   const index = useMemo(() => buildCardAtlasIndex(decks), [decks]);
-  const owned = useMemo(() => loadOwnedMap(), []);
+  // Owned map refreshes on cross-tab storage events and tab focus so a CSV
+  // imported on /shopping in another tab (or before /atlas was opened) shows
+  // up without a manual reload (DEC-325).
+  const [owned, setOwned] = useState<Map<string, number>>(() => loadOwnedMap());
+  useEffect(() => {
+    const refresh = () => setOwned(loadOwnedMap());
+    window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    return () => {
+      window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, []);
 
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string>('');
