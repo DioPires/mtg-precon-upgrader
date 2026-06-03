@@ -73,7 +73,8 @@ import type {
 // v34 -> v35 (DEC-311 2026-05-29): metrics.json now ships a derived win_turn { best, typical, contested } triple surfaced on the Vitals card; force-invalidate so returning users see the new readout.
 // v35 -> v36 (DEC-318 2026-06-01): new brewing deck "Calculated Infinity" (Zimone, Infinite Analyst). Force-invalidate so returning users see the new index entry.
 // v36 -> v37 (DEC-318 2026-06-01 post-audit): Calculated Infinity board-approved swap +Hullbreaker Horror / -Paradox Surveyor.
-const STORAGE_PREFIX = 'gv1-deck-data-v37:';
+// v37 -> v38 (DEC-327/DEC-329 2026-06-03): Mutant Multiplication board-approved swap +Kutzil, Malamet Exemplar / -Basalt Monolith.
+const STORAGE_PREFIX = 'gv1-deck-data-v38:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
