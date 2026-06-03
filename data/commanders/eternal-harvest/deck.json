@@ -73,6 +73,11 @@
       "type": "ai-inferred",
       "name": "DEC-148 mana base revision",
       "detail": "Owned-land swap approved 2026-05-05 (rev 3 plan)"
+    },
+    {
+      "type": "other",
+      "name": "DEC-326 board-approved swap",
+      "detail": "Fauna Shaman -> Fiend Artisan. 2-drop B/G hybrid sac-tutor that puts a creature with MV <= X directly onto the battlefield (vs Fauna Shaman's discard-creature-tutor-to-hand). Non-Human for Mikaeus undying. Tutors Walking Ballista at X=0 (Ballista's library MV is 0) — directly assembles the Ballista+Mikaeus 2-card infinite death-trigger combo from any sac fodder. Scales as a finisher (+1/+1 per creature card in graveyard). Birthing Pod complement, not redundancy: Pod = +1 MV jumps locked, Artisan = flexible MV <= X."
     }
   ],
   "guideContent": {
@@ -140,7 +145,6 @@
         "Plumb the Forbidden",
         "Greater Good",
         "Twilight Diviner",
-        "Fauna Shaman",
         "Liliana, Dreadhorde General",
         "Emeritus of Woe",
         "Witherbloom Charm",
@@ -176,7 +180,8 @@
         "Mikaeus, the Unhallowed",
         "Gravecrawler",
         "Insidious Roots",
-        "Culling the Weak"
+        "Culling the Weak",
+        "Fiend Artisan"
       ]
     }
   ],
@@ -804,14 +809,42 @@
       "title": "Tyvar Haste Tutor",
       "cards": [
         "Tyvar, Jubilant Brawler",
-        "Fauna Shaman"
+        "Fiend Artisan"
       ],
-      "description": "Tyvar's static gives creature activated abilities haste. Fauna Shaman tutors immediately the turn it enters — no waiting a turn cycle. Tyvar's +1 untaps Fauna Shaman for a second activation in the same turn. Two tutors per turn with Tyvar out.",
+      "description": "Tyvar's static gives creature activated abilities haste. Fiend Artisan sacs+tutors a creature directly onto the battlefield the turn it enters — no waiting a turn cycle. Tyvar's +1 untaps Fiend Artisan for a second sorcery-speed activation in the same main phase. Two creature tutors-to-battlefield per turn with Tyvar out.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Haste enabler + untap synergy"
+        }
+      ]
+    },
+    {
+      "title": "Fiend Artisan Combo Tutor",
+      "cards": [
+        "Fiend Artisan",
+        "Walking Ballista",
+        "Mikaeus, the Unhallowed"
+      ],
+      "description": "Walking Ballista's mana value in the library is 0 (X-cost cards count X as 0 outside the stack). Fiend Artisan at X=0 costs {B/G}, sacrifices a creature, and puts Walking Ballista directly onto the battlefield. With Mikaeus in play that immediately assembles the 2-card infinite death-trigger loop — Ballista enters as 1/1 (Mikaeus buff), sac to any outlet, undying returns it with 1 counter, remove counter to ping itself, dies, loops. Any sac fodder (Bloodghast, Nether Traitor, Bitterblossom token, mana dork) becomes a combo-assembly piece. Outside the Ballista line, Fiend Artisan also tutors Yawgmoth (X=3), Gray Merchant (X=5), Carrion Feeder/Gravecrawler (X=1), and any of the 2-3 drop combo creatures.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/628-3693/",
+          "detail": "Mikaeus + Walking Ballista — Fiend Artisan tutors Ballista directly into play"
+        },
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Walking Ballista",
+          "url": "https://scryfall.com/card/2xm/306/walking-ballista",
+          "detail": "MV 0 in zones outside the stack (X-cost rule)"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Combo-assembly tutor synergy"
         }
       ]
     },
@@ -1357,7 +1390,7 @@
       "name": "Tyvar, Jubilant Brawler",
       "price": "$3-5",
       "isGameChanger": false,
-      "reason": "3-CMC planeswalker that gives creature abilities haste (Fauna Shaman tutors immediately). -2 mills 3 and reanimates MV 2 or less for free — hits Blood Artist, Spore Frog, Sakura-Tribe Elder, Zulaport Cutthroat, Gravecrawler. +1 untap doubles Yawgmoth or Fauna Shaman activations. A mini-Meren that skips XP requirements.",
+      "reason": "3-CMC planeswalker that gives creature abilities haste (Fiend Artisan sacs+tutors a creature directly into play the turn it enters). -2 mills 3 and reanimates MV 2 or less for free — hits Blood Artist, Spore Frog, Sakura-Tribe Elder, Zulaport Cutthroat, Gravecrawler, Fiend Artisan. +1 untap doubles Yawgmoth or Fiend Artisan activations. A mini-Meren that skips XP requirements.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -1439,6 +1472,30 @@
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Board-approved swap for Wight of the Reliquary (DEC-143)"
+        }
+      ]
+    },
+    {
+      "name": "Fiend Artisan",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "2-drop B/G hybrid creature-tutor that puts a creature with MV <= X directly onto the battlefield. Unique angle in the deck — only Birthing Pod tutors to battlefield, and Pod is 4-mana setup locked to +1 MV jumps. Fiend Artisan is flexible: X=0 fetches Walking Ballista (library MV 0) for {B/G} — directly assembles the Ballista+Mikaeus 2-card infinite death-trigger combo from any sac fodder. X=1 fetches Carrion Feeder/Gravecrawler. X=2 fetches Blood Artist, Zulaport, Spore Frog, Bloodghast, Nether Traitor, Twilight Diviner. X=3 fetches Yawgmoth, Sephiroth, Priest, Grave Researcher. X=5 fetches Gray Merchant. Scales into a finisher (+1/+1 per creature card in graveyard — 15-25+ creatures in the yard mid-game). Non-Human Nightmare for Mikaeus undying. Recurs via Meren at 2+ XP. Every sac activation fires Blood Artist / Zulaport / Bastion / Sephiroth counter / Grave Pact / Meren XP / Yawgmoth proliferate / Insidious Roots Plant.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Fiend Artisan",
+          "url": "https://scryfall.com/card/iko/220/fiend-artisan"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/628-3693/",
+          "detail": "Mikaeus + Walking Ballista — Fiend Artisan tutors Ballista directly into play"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Board-approved swap for Fauna Shaman (DEC-326)"
         }
       ]
     }
@@ -1628,7 +1685,7 @@
       "primary_role": "card-draw"
     },
     {
-      "name": "Fauna Shaman",
+      "name": "Fiend Artisan",
       "type": "Creature",
       "primary_role": "engine",
       "secondary_role": "tutor"
