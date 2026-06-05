@@ -37,6 +37,7 @@ import mana_simulation_hidden_legion as sim_hidden_legion
 import mana_simulation_superfriends_esika as sim_superfriends_esika
 import mana_simulation_aziza_mage_tower_captain as sim_boros
 import mana_simulation_zada_hedron_grinder as sim_zada
+import mana_simulation_calculated_infinity as sim_calculated_infinity
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -179,6 +180,14 @@ KEY_COMBOS = {
             "pieces": ["Impact Tremors", "Purphoros, God of the Forge", "Panharmonicon"],
             "requiresCommander": True,
             "description": "Norin's repeating self-flicker triggers Impact Tremors + Purphoros twice each per cycle under Panharmonicon — 6 dmg/opp baseline, scales with Torbran/Fiery Emancipation.",
+        }
+    ],
+    "calculated-infinity": [
+        {
+            "name": "Dramatic Scepter",
+            "pieces": ["Dramatic Reversal", "Isochron Scepter"],
+            "requiresCommander": False,
+            "description": "Imprint Reversal on Scepter; with 3+ mana of rocks/dorks in play, each {2} Scepter activation untaps everything for infinite mana. Closes via Walking Ballista, Stroke of Genius mill, or Aetherflux Reservoir.",
         }
     ],
 }
@@ -2444,6 +2453,19 @@ def export_orzhov(metadata: dict) -> dict:
     )
 
 
+def export_calculated_infinity(metadata: dict) -> dict:
+    """Export Calculated Infinity (Simic Zimone X-spell combo) simulation."""
+    return _export_colored(
+        sim_module=sim_calculated_infinity,
+        deck_id="calculated-infinity",
+        deck_name="Calculated Infinity",
+        commander_name="Zimone, Infinite Analyst",
+        commander_cmc=3,
+        colors=["U", "G"],
+        metadata=metadata,
+    )
+
+
 def export_wubg_poison(metadata: dict) -> dict:
     """Export Creeping Corruption (WUBG Atraxa poison/proliferate) simulation."""
     return _export_colored(
@@ -2510,6 +2532,7 @@ DECKS = [
     ("superfriends-esika", "Esika's Council", export_superfriends_esika),
     ("aziza-mage-tower-captain", "Mage Tower Brigade", export_boros),
     ("zada-hedron-grinder", "Hedron Storm", export_zada),
+    ("calculated-infinity", "Calculated Infinity", export_calculated_infinity),
 ]
 
 
