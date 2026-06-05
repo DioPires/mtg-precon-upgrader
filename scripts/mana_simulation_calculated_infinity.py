@@ -63,14 +63,14 @@ ROCK_DEFS = {
 }
 
 # --- Mana dork definitions ---
-# 1-mana dorks: Birds (any color → flexible UG), Llanowar Elves ({G}).
+# 1-mana dorks: Birds (any color → flexible UG), Fyndhorn Elves ({G}).
 # Troyan, Gutsy Explorer is {2}{G}{U}: legendary creature that taps for {X}{X} of
 # any color in CI but only when an X-spell is being cast — too situational to
 # model as standing mana. Skip from DORK_DEFS (treated as filler spell).
 
 DORK_DEFS = {
     "Birds of Paradise": {"cmc": 1, "U": 1, "G": 1, "C": 0, "flexible": True},
-    "Llanowar Elves":    {"cmc": 1, "U": 0, "G": 1, "C": 0, "flexible": False},
+    "Fyndhorn Elves":    {"cmc": 1, "U": 0, "G": 1, "C": 0, "flexible": False},
 }
 
 # --- Creature ramp definitions ---
@@ -473,7 +473,7 @@ class GameState:
         priority_order = [
             ("rock", "Sol Ring"),
             ("dork", "Birds of Paradise"),
-            ("dork", "Llanowar Elves"),
+            ("dork", "Fyndhorn Elves"),
             ("rock", "Simic Signet"),
             ("creature_ramp", "Three Visits"),
             ("creature_ramp", "Nature's Lore"),
