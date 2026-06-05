@@ -91,6 +91,7 @@ U_PRODUCING_LANDS = {
     "Otawara, Soaring City", "Castle Vantress", "Hall of Storm Giants",
     "Cavern of Souls",
     "Halimar Depths", "Simic Growth Chamber", "Path of Ancestry",
+    "Flooded Grove",
     # Fetches: any fetch that can crack for an Island-typed land:
     "Misty Rainforest", "Prismatic Vista",
 }
@@ -99,9 +100,10 @@ U_PRODUCING_LANDS = {
 G_PRODUCING_LANDS = {
     "Forest", "Breeding Pool", "Command Tower", "Botanical Sanctum",
     "Yavimaya Coast", "Hinterland Harbor", "Waterlogged Grove",
-    "Lush Portico", "Boseiju, Who Endures", "Yavimaya, Cradle of Growth",
+    "Boseiju, Who Endures", "Yavimaya, Cradle of Growth",
     "Cavern of Souls",
     "Simic Growth Chamber", "Path of Ancestry", "Llanowar Reborn",
+    "Flooded Grove",
     "Misty Rainforest", "Prismatic Vista",
 }
 
@@ -112,7 +114,7 @@ C_ONLY_LANDS = {
 }
 
 # Lands with Forest subtype (for ramp-fetch targeting):
-FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Lush Portico"}
+FOREST_TYPED_LANDS = {"Forest", "Breeding Pool"}
 # Lands with Island subtype:
 ISLAND_TYPED_LANDS = {"Island", "Breeding Pool"}
 
@@ -173,13 +175,11 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     if name == "Hall of Storm Giants":
         return other_count >= 2
 
-    if name == "Lush Portico":
-        # Bond-cycle surveil land — text says "enters tapped" unconditionally.
-        return True
-
     if name in ("Halimar Depths", "Simic Growth Chamber", "Path of Ancestry", "Llanowar Reborn"):
         # All four enter tapped unconditionally.
         return True
+
+    # Flooded Grove enters untapped (filter land); falls through to default.
 
     # Fetches go to graveyard immediately; resolved as the fetched basic, which
     # in this deck enters untapped.
@@ -275,7 +275,7 @@ def compute_land_mana(name: str) -> tuple[int, int, int, int]:
     if name in ("Otawara, Soaring City", "Castle Vantress", "Hall of Storm Giants"):
         return (1, 0, 0, 0)
 
-    if name in ("Boseiju, Who Endures", "Lush Portico", "Yavimaya, Cradle of Growth"):
+    if name in ("Boseiju, Who Endures", "Yavimaya, Cradle of Growth"):
         return (0, 1, 0, 0)
 
     if name in C_ONLY_LANDS:

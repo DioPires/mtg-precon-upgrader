@@ -79,7 +79,8 @@ import type {
 // v40 -> v41 (DEC-331 2026-06-05 board-approved mana-base rebalance): Calculated Infinity drops LD (Strip Mine, Wasteland) + 5 fetches, adds Forest, 2× Island, Halimar Depths, Simic Growth Chamber, Path of Ancestry, Llanowar Reborn. Sim + metrics regenerated.
 // v41 -> v42 (DEC-331 2026-06-05 board-approved X-density add): Calculated Infinity +Pull from Tomorrow / -Mystic Remora.
 // v42 -> v43 (DEC-331 2026-06-05 board-approved ownership swap): Calculated Infinity Llanowar Elves -> Fyndhorn Elves (strict functional reprint).
-const STORAGE_PREFIX = 'gv1-deck-data-v43:';
+// v43 -> v44 (DEC-331 2026-06-05 illegal-land fix): Calculated Infinity -Lush Portico (Forest/Plains, illegal in {U}{G} CI) / +Flooded Grove (filter dual). Metrics global 85 -> 86, mana 73 -> 74.
+const STORAGE_PREFIX = 'gv1-deck-data-v44:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
