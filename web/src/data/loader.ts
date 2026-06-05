@@ -75,7 +75,8 @@ import type {
 // v36 -> v37 (DEC-318 2026-06-01 post-audit): Calculated Infinity board-approved swap +Hullbreaker Horror / -Paradox Surveyor.
 // v37 -> v38 (DEC-327/DEC-329 2026-06-03): Mutant Multiplication board-approved swap +Kutzil, Malamet Exemplar / -Basalt Monolith.
 // v38 -> v39 (DEC-331 2026-06-05): Calculated Infinity graduates from brewing — status removed and entry reordered above brewing decks in index.json.
-const STORAGE_PREFIX = 'gv1-deck-data-v39:';
+// v39 -> v40 (DEC-332 2026-06-05): Calculated Infinity simulation.json finally written (new mana_simulation_calculated_infinity.py + export_calculated_infinity() wired in); force-invalidate so Compare tab populates for returning users.
+const STORAGE_PREFIX = 'gv1-deck-data-v40:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
