@@ -74,7 +74,8 @@ import type {
 // v35 -> v36 (DEC-318 2026-06-01): new brewing deck "Calculated Infinity" (Zimone, Infinite Analyst). Force-invalidate so returning users see the new index entry.
 // v36 -> v37 (DEC-318 2026-06-01 post-audit): Calculated Infinity board-approved swap +Hullbreaker Horror / -Paradox Surveyor.
 // v37 -> v38 (DEC-327/DEC-329 2026-06-03): Mutant Multiplication board-approved swap +Kutzil, Malamet Exemplar / -Basalt Monolith.
-const STORAGE_PREFIX = 'gv1-deck-data-v38:';
+// v38 -> v39 (DEC-331 2026-06-05): Calculated Infinity graduates from brewing — status removed and entry reordered above brewing decks in index.json.
+const STORAGE_PREFIX = 'gv1-deck-data-v39:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
