@@ -90,9 +90,9 @@ U_PRODUCING_LANDS = {
     "Yavimaya Coast", "Hinterland Harbor", "Waterlogged Grove",
     "Otawara, Soaring City", "Castle Vantress", "Hall of Storm Giants",
     "Cavern of Souls",
+    "Halimar Depths", "Simic Growth Chamber", "Path of Ancestry",
     # Fetches: any fetch that can crack for an Island-typed land:
-    "Misty Rainforest", "Scalding Tarn", "Flooded Strand",
-    "Polluted Delta", "Prismatic Vista",
+    "Misty Rainforest", "Prismatic Vista",
 }
 
 # G-producing lands in deck:
@@ -101,13 +101,13 @@ G_PRODUCING_LANDS = {
     "Yavimaya Coast", "Hinterland Harbor", "Waterlogged Grove",
     "Lush Portico", "Boseiju, Who Endures", "Yavimaya, Cradle of Growth",
     "Cavern of Souls",
-    "Misty Rainforest", "Verdant Catacombs", "Wooded Foothills",
-    "Prismatic Vista",
+    "Simic Growth Chamber", "Path of Ancestry", "Llanowar Reborn",
+    "Misty Rainforest", "Prismatic Vista",
 }
 
 # Lands that produce only {C} when tapped:
 C_ONLY_LANDS = {
-    "Reliquary Tower", "Riptide Laboratory", "Strip Mine", "Wasteland",
+    "Reliquary Tower", "Riptide Laboratory",
     "Ash Barrens",
 }
 
@@ -122,11 +122,6 @@ BASIC_ISLANDS = {"Island"}
 # Fetchlands that crack for any-CI basic via search-and-sacrifice:
 FETCHLANDS = {
     "Misty Rainforest":  {"targets": ("Forest", "Island")},   # Forest or Island
-    "Scalding Tarn":     {"targets": ("Island",)},            # Mountain or Island; only Island in CI
-    "Flooded Strand":    {"targets": ("Island",)},            # Plains or Island
-    "Verdant Catacombs": {"targets": ("Forest",)},            # Swamp or Forest
-    "Wooded Foothills":  {"targets": ("Forest",)},            # Mountain or Forest
-    "Polluted Delta":    {"targets": ("Island",)},            # Island or Swamp
     "Prismatic Vista":   {"targets": ("Forest", "Island")},   # any basic; in CI → F or I
 }
 
@@ -180,6 +175,10 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
 
     if name == "Lush Portico":
         # Bond-cycle surveil land — text says "enters tapped" unconditionally.
+        return True
+
+    if name in ("Halimar Depths", "Simic Growth Chamber", "Path of Ancestry", "Llanowar Reborn"):
+        # All four enter tapped unconditionally.
         return True
 
     # Fetches go to graveyard immediately; resolved as the fetched basic, which
