@@ -1,0 +1,835 @@
+{
+  "id": "slivers",
+  "type": "commander",
+  "name": "Hivebound Cascade",
+  "subtitle": "Five Colors, One Hive Mind",
+  "commander": "The First Sliver",
+  "cost": "$300-400",
+  "bracket": "3+",
+  "status": "brewing",
+  "gameChangers": 2,
+  "asymmetric_only": false,
+  "commanderRoles": {
+    "primary": "engine",
+    "secondary": "payoff"
+  },
+  "archetypes": [
+    "tokens-go-wide",
+    "changeling-omnitype-tribal"
+  ],
+  "wincon_style": "combat",
+  "lastUpdatedSet": "Edge of Eternities",
+  "sources": [
+    {
+      "type": "ai-inferred",
+      "name": "DEC-336 — board-approved brewing build (swaps + no-fetch manabase)"
+    },
+    {
+      "type": "commanderspellbook",
+      "name": "Find My Combos — Morophon/Hibernation/Syphon/Lavabelly infinite verified",
+      "url": "https://commanderspellbook.com/combo/321-877-2475-6707/"
+    },
+    {
+      "type": "scryfall",
+      "name": "All 100 cards validated — 0 color-identity violations within WUBRG",
+      "url": "https://scryfall.com/@pirex"
+    }
+  ],
+  "guideContent": {
+    "strategyOverview": "Hivebound Cascade is a five-color Sliver tribal deck built around The First Sliver. Every Sliver spell you cast has Cascade, so each Sliver chains into another free Sliver — the deck snowballs an entire hive onto the battlefield while digging through the library for free. Sliver Legion, Morophon, and the stat anthems turn that wide board into lethal commander damage, while keyword lords (flying, haste, double strike, menace, deathtouch) push the swarm through blockers. Card advantage (Rhystic Study, Kindred Discovery, Vanquisher's Banner, Synapse Sliver) and a green ramp package keep the gas flowing; Cyclonic Rift, Constricting Sliver, and Telekinetic Sliver provide the interaction a five-color table demands. The deck also packs a compact 4-card infinite-damage combo (Morophon + Hibernation Sliver + Syphon/Essence Sliver + Lavabelly Sliver) as a backup win. Built as a budget brew: no fetch lands and no Sliver Queen, with green ramp standing in as the fixing engine.",
+    "deckCategories": [
+      {
+        "name": "Cascade Engine",
+        "description": "The First Sliver gives every Sliver spell Cascade, converting each Sliver into a chain of free Slivers and card selection.",
+        "cards": [
+          "The First Sliver",
+          "Morophon, the Boundless",
+          "Herald's Horn",
+          "Descendants' Path"
+        ]
+      },
+      {
+        "name": "Tribal Anthems & Keyword Lords",
+        "description": "Stat anthems plus keyword granters turn the wide board into evasive lethal damage.",
+        "cards": [
+          "Sliver Legion",
+          "Sinew Sliver",
+          "Muscle Sliver",
+          "Predatory Sliver",
+          "Cloudshredder Sliver",
+          "Bonescythe Sliver",
+          "Heart Sliver"
+        ]
+      },
+      {
+        "name": "Card Advantage",
+        "description": "Repeatable draw keeps the hive refueled across a long game.",
+        "cards": [
+          "Rhystic Study",
+          "Kindred Discovery",
+          "Vanquisher's Banner",
+          "Synapse Sliver",
+          "Opaline Sliver",
+          "Distant Melody"
+        ]
+      },
+      {
+        "name": "Ramp & Fixing",
+        "description": "Green ramp tutors basic-typed duals/triomes — standing in for the cut fetch lands — alongside Sliver mana dorks.",
+        "cards": [
+          "Sol Ring",
+          "Chromatic Lantern",
+          "Gemhide Sliver",
+          "Manaweft Sliver",
+          "Cultivate",
+          "Kodama's Reach",
+          "Nature's Lore",
+          "Three Visits",
+          "Farseek"
+        ]
+      },
+      {
+        "name": "Interaction",
+        "description": "Removal and answers for a five-color table — much of it stapled to Sliver bodies via Cascade.",
+        "cards": [
+          "Cyclonic Rift",
+          "Constricting Sliver",
+          "Telekinetic Sliver",
+          "Swords to Plowshares",
+          "Path to Exile",
+          "Necrotic Sliver",
+          "Mana Drain",
+          "Harmonic Sliver"
+        ]
+      },
+      {
+        "name": "Token Generation",
+        "description": "Sliver token makers widen the board and feed anthems; see the Tokens section for the full list of bodies produced.",
+        "cards": [
+          "Sliver Hive",
+          "Thrumming Hivepool",
+          "Sliver Overlord",
+          "Reflections of Littjara"
+        ]
+      },
+      {
+        "name": "Resilience & Combo",
+        "description": "Mass recursion plus a compact infinite-damage line provide reach and a backup win.",
+        "cards": [
+          "Patriarch's Bidding",
+          "Sliver Gravemother",
+          "Morophon, the Boundless",
+          "Hibernation Sliver",
+          "Syphon Sliver",
+          "Lavabelly Sliver",
+          "Essence Sliver"
+        ]
+      }
+    ]
+  },
+  "winConditions": [
+    {
+      "name": "Go-wide commander damage",
+      "cards": [
+        "Sliver Legion",
+        "Morophon, the Boundless",
+        "Bonescythe Sliver"
+      ],
+      "description": "Stacked anthems (Sliver Legion scales exponentially) plus double strike and evasion turn the swarm into one-shot lethal swings."
+    },
+    {
+      "name": "Infinite damage combo",
+      "cards": [
+        "Morophon, the Boundless",
+        "Hibernation Sliver",
+        "Syphon Sliver",
+        "Lavabelly Sliver"
+      ],
+      "description": "With Morophon naming Sliver, Hibernation Sliver costs {0}. Bounce-recast Lavabelly's ETB pings each loop; Syphon/Essence lifelink pays the 2-life bounce — infinite damage. Essence Sliver is a redundant copy of the lifegain half."
+    },
+    {
+      "name": "Poison / toxic kill",
+      "cards": [
+        "Virulent Sliver",
+        "Sliver Legion"
+      ],
+      "description": "Virulent Sliver gives the team toxic; a pumped evasive board can race an opponent to ten poison counters as an alternate clock."
+    },
+    {
+      "name": "Incremental drain",
+      "cards": [
+        "Lavabelly Sliver",
+        "Syphon Sliver",
+        "Essence Sliver"
+      ],
+      "description": "Lavabelly pings on every Sliver ETB (amplified by Cascade); Syphon and Essence convert combat into a widening life swing."
+    }
+  ],
+  "synergies": [
+    {
+      "title": "The First Sliver turns every Sliver into card advantage",
+      "cards": [
+        "The First Sliver",
+        "Morophon, the Boundless"
+      ],
+      "description": "Cascade triggers on each Sliver spell; Morophon makes colored Sliver costs free, so a single cast can chain multiple free Slivers and cascade hits.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Cascade tribal analysis"
+        }
+      ]
+    },
+    {
+      "title": "Morophon + Hibernation + Syphon + Lavabelly = infinite damage",
+      "cards": [
+        "Morophon, the Boundless",
+        "Hibernation Sliver",
+        "Syphon Sliver",
+        "Lavabelly Sliver"
+      ],
+      "description": "Morophon makes Hibernation Sliver cost {0}; bounce and recast it infinitely, Lavabelly pinging each loop while Syphon's lifelink pays the 2-life cost.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Combo 321-877-2475-6707",
+          "url": "https://commanderspellbook.com/combo/321-877-2475-6707/"
+        }
+      ]
+    },
+    {
+      "title": "Essence Sliver backs up the combo",
+      "cards": [
+        "Essence Sliver",
+        "Hibernation Sliver",
+        "Lavabelly Sliver"
+      ],
+      "description": "Essence Sliver provides the same lifegain half as Syphon, giving the infinite a second enabler so a single removal spell does not break it.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Combo 321-1887 (Essence variant)",
+          "url": "https://commanderspellbook.com/"
+        }
+      ]
+    },
+    {
+      "title": "Patriarch's Bidding rebuilds the hive",
+      "cards": [
+        "Patriarch's Bidding",
+        "Sliver Legion"
+      ],
+      "description": "After a board wipe, Bidding returns every Sliver from all graveyards at once — often a bigger board than before the wipe.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Resilience analysis"
+        }
+      ]
+    },
+    {
+      "title": "Telekinetic Sliver soft-locks the table",
+      "cards": [
+        "Telekinetic Sliver",
+        "Sentinel Sliver"
+      ],
+      "description": "Telekinetic gives every Sliver a tap ability; with a wide board you tap down opposing lands, blockers, and combo pieces. Sentinel's vigilance lets attackers keep tapping on opponents' turns.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Stax interaction analysis"
+        }
+      ]
+    },
+    {
+      "title": "Constricting Sliver = repeatable Cascade removal",
+      "cards": [
+        "Constricting Sliver",
+        "The First Sliver"
+      ],
+      "description": "Every Sliver gains an exile-a-creature ETB; cascading into more Slivers turns each chain into incremental removal.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Interaction analysis"
+        }
+      ]
+    }
+  ],
+  "highlights": [
+    {
+      "name": "The First Sliver"
+    },
+    {
+      "name": "Sliver Legion"
+    },
+    {
+      "name": "Morophon, the Boundless"
+    },
+    {
+      "name": "Sliver Overlord"
+    },
+    {
+      "name": "Sliver Gravemother"
+    },
+    {
+      "name": "Cyclonic Rift"
+    },
+    {
+      "name": "Constricting Sliver"
+    },
+    {
+      "name": "Telekinetic Sliver"
+    },
+    {
+      "name": "Patriarch's Bidding"
+    },
+    {
+      "name": "Rhystic Study"
+    },
+    {
+      "name": "Kindred Discovery"
+    },
+    {
+      "name": "Lavabelly Sliver"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Poison Counter",
+      "type_line": "Card",
+      "oracle_text": "(A player with ten or more poison counters loses the game.)",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "8a9cb417-8709-4336-be36-2fb0cea31fe1",
+      "image_uri": "https://cards.scryfall.io/normal/front/8/a/8a9cb417-8709-4336-be36-2fb0cea31fe1.jpg?1768158241",
+      "produced_by": [
+        "Virulent Sliver"
+      ]
+    },
+    {
+      "name": "Sliver",
+      "type_line": "Token Creature — Sliver",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "scryfall_id": "dec96e95-5580-4110-86ec-561007ab0f1e",
+      "image_uri": "https://cards.scryfall.io/normal/front/d/e/dec96e95-5580-4110-86ec-561007ab0f1e.jpg?1562640084",
+      "produced_by": [
+        "Sliver Hive",
+        "Thrumming Hivepool"
+      ]
+    },
+    {
+      "name": "Sliver Army",
+      "type_line": "Token Creature — Sliver Army",
+      "oracle_text": "",
+      "power": "0",
+      "toughness": "0",
+      "colors": [
+        "B"
+      ],
+      "scryfall_id": "b9821f26-04b4-460b-880e-5052122b21ae",
+      "image_uri": "https://cards.scryfall.io/normal/front/b/9/b9821f26-04b4-460b-880e-5052122b21ae.jpg?1691359840",
+      "produced_by": [
+        "Lazotep Sliver"
+      ]
+    }
+  ],
+  "decklist": [
+    {
+      "name": "Winged Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Opaline Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "card-draw",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Muscle Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Galerider Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Shifting Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Lavabelly Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "wincon",
+      "secondary_role": "payoff"
+    },
+    {
+      "name": "Sliver Hivelord",
+      "type": "Legendary Creature — Sliver",
+      "primary_role": "protection",
+      "secondary_role": "payoff"
+    },
+    {
+      "name": "Heart Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Venom Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "removal-spot",
+      "secondary_role": "payoff"
+    },
+    {
+      "name": "Sliver Gravemother",
+      "type": "Legendary Creature — Sliver",
+      "primary_role": "recursion",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Crystalline Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Blur Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Homing Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Crypt Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Gemhide Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "ramp",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Sliver Overlord",
+      "type": "Legendary Creature — Sliver Mutant",
+      "primary_role": "tutor",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Spiteful Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Root Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Necrotic Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Sliver Legion",
+      "type": "Legendary Creature — Sliver",
+      "primary_role": "payoff",
+      "secondary_role": "wincon"
+    },
+    {
+      "name": "Syphon Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff",
+      "secondary_role": "wincon"
+    },
+    {
+      "name": "Synapse Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Quick Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "utility",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Constricting Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "removal-spot",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Hibernation Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "protection",
+      "secondary_role": "wincon"
+    },
+    {
+      "name": "Harmonic Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Sentinel Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Cloudshredder Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Bonescythe Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff",
+      "secondary_role": "wincon"
+    },
+    {
+      "name": "Lazotep Sliver",
+      "type": "Creature — Zombie Sliver",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Morophon, the Boundless",
+      "type": "Legendary Creature — Shapeshifter",
+      "primary_role": "ramp",
+      "secondary_role": "payoff"
+    },
+    {
+      "name": "Essence Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff",
+      "secondary_role": "wincon"
+    },
+    {
+      "name": "Sinew Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Predatory Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Telekinetic Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "utility",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Virulent Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "payoff",
+      "secondary_role": "wincon"
+    },
+    {
+      "name": "Diffusion Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Manaweft Sliver",
+      "type": "Creature — Sliver",
+      "primary_role": "ramp",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Sol Ring",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Chromatic Lantern",
+      "type": "Artifact",
+      "primary_role": "ramp",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Vanquisher's Banner",
+      "type": "Artifact",
+      "primary_role": "card-draw",
+      "secondary_role": "payoff"
+    },
+    {
+      "name": "Thrumming Hivepool",
+      "type": "Artifact",
+      "primary_role": "payoff",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Herald's Horn",
+      "type": "Artifact",
+      "primary_role": "ramp",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Descendants' Path",
+      "type": "Enchantment",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Kindred Discovery",
+      "type": "Enchantment",
+      "primary_role": "card-draw",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Reflections of Littjara",
+      "type": "Enchantment",
+      "primary_role": "engine",
+      "secondary_role": "payoff"
+    },
+    {
+      "name": "Rhystic Study",
+      "type": "Enchantment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Heroic Intervention",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Mana Drain",
+      "type": "Instant",
+      "primary_role": "counterspell",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "For the Ancestors",
+      "type": "Instant",
+      "primary_role": "tutor",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Erode",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Path to Exile",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Swords to Plowshares",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Patriarch's Bidding",
+      "type": "Sorcery",
+      "primary_role": "recursion"
+    },
+    {
+      "name": "Distant Melody",
+      "type": "Sorcery",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Nature's Lore",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Three Visits",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Cultivate",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Farseek",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Kodama's Reach",
+      "type": "Sorcery — Arcane",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Cyclonic Rift",
+      "type": "Instant",
+      "primary_role": "removal-board",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Unclaimed Territory",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Cavern of Souls",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Overgrown Tomb",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Command Tower",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Steam Vents",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Secluded Courtyard",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Hallowed Fountain",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Blood Crypt",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Temple Garden",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Path of Ancestry",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Stomping Ground",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sacred Foundry",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Godless Shrine",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Breeding Pool",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Watery Grave",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sliver Hive",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "payoff"
+    },
+    {
+      "name": "Spara's Headquarters",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Raffine's Tower",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Xander's Lounge",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Ziatora's Proving Ground",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Jetmir's Garden",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Exotic Orchard",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Reflecting Pool",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Forest",
+      "type": "Basic Land",
+      "primary_role": "land",
+      "quantity": 4
+    },
+    {
+      "name": "Plains",
+      "type": "Basic Land",
+      "primary_role": "land",
+      "quantity": 3
+    },
+    {
+      "name": "Island",
+      "type": "Basic Land",
+      "primary_role": "land",
+      "quantity": 3
+    },
+    {
+      "name": "Swamp",
+      "type": "Basic Land",
+      "primary_role": "land",
+      "quantity": 3
+    },
+    {
+      "name": "Mountain",
+      "type": "Basic Land",
+      "primary_role": "land",
+      "quantity": 2
+    }
+  ]
+}
