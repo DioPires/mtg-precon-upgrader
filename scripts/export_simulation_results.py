@@ -38,6 +38,7 @@ import mana_simulation_superfriends_esika as sim_superfriends_esika
 import mana_simulation_aziza_mage_tower_captain as sim_boros
 import mana_simulation_zada_hedron_grinder as sim_zada
 import mana_simulation_calculated_infinity as sim_calculated_infinity
+import mana_simulation_slivers as sim_slivers
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -2466,6 +2467,19 @@ def export_calculated_infinity(metadata: dict) -> dict:
     )
 
 
+def export_slivers(metadata: dict) -> dict:
+    """Export Hivebound Cascade (5C Slivers — The First Sliver) simulation."""
+    return _export_colored(
+        sim_module=sim_slivers,
+        deck_id="slivers",
+        deck_name="Hivebound Cascade",
+        commander_name="The First Sliver",
+        commander_cmc=5,
+        colors=["W", "U", "B", "R", "G"],
+        metadata=metadata,
+    )
+
+
 def export_wubg_poison(metadata: dict) -> dict:
     """Export Creeping Corruption (WUBG Atraxa poison/proliferate) simulation."""
     return _export_colored(
@@ -2533,6 +2547,7 @@ DECKS = [
     ("aziza-mage-tower-captain", "Mage Tower Brigade", export_boros),
     ("zada-hedron-grinder", "Hedron Storm", export_zada),
     ("calculated-infinity", "Calculated Infinity", export_calculated_infinity),
+    ("slivers", "Hivebound Cascade", export_slivers),
 ]
 
 

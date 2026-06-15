@@ -84,7 +84,8 @@ import type {
 // v45 -> v46 (DEC-334 2026-06-15 board catch): drop false-positive "Shadows Over Innistrad Checklist 2" marker from Quill of Casualties (checklist printing artifact misread as a marker; compute_tokens.py filter now excludes any "...Checklist..." name, not just trailing "Checklist").
 // v46 -> v47 (DEC-334 2026-06-15 board catch): add Hanweir's 3/2 Eldrazi Horror token to Pyre & Panic; compute_tokens.py now harvests meld-result tokens (one hop past the meld pieces) when every meld piece is in the deck.
 // v47 -> v48 (DEC-336 2026-06-15): new brewing deck "Hivebound Cascade" (The First Sliver, 5C Sliver tribal cascade) added at the brewing-group tail of index.json; ships with deck.json + tokens[] + metrics. Force-invalidate so returning users see the new entry.
-const STORAGE_PREFIX = 'gv1-deck-data-v48:';
+// v48 -> v49 (DEC-337 2026-06-15): Hivebound Cascade bespoke Monte Carlo simulation.json (5C no-fetch manabase); metrics refreshed (confidence margin 15 -> 5, win-turn triple populated). Force-invalidate so returning users see the simulation-backed Compare numbers.
+const STORAGE_PREFIX = 'gv1-deck-data-v49:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
