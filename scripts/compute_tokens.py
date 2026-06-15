@@ -275,6 +275,39 @@ def compute_tokens_for_deck(deck: dict) -> list[dict]:
             if marker_name not in linked_marker_names:
                 marker_refs.setdefault(marker_name, set()).add(name)
 
+    # Meld results: a deck card's all_parts links its meld_result, but the
+    # tokens that melded creature makes (e.g. Hanweir, the Writhing Township's
+    # 3/2 Eldrazi Horrors) live on the *result* card, one hop away. Harvest
+    # them only when every meld piece is actually in the deck, and attribute
+    # them to the in-deck meld pieces that enable the meld.
+    deck_names = set(card_names)
+    meld_result_uris = {
+        part["uri"]
+        for card in cards
+        for part in card.get("all_parts", [])
+        if part.get("component") == "meld_result" and part.get("uri")
+    }
+    for uri in meld_result_uris:
+        meld_card = fetch_token(uri)
+        if not meld_card:
+            continue
+        result_name = meld_card.get("name", "")
+        meld_pieces = [
+            p.get("name", "")
+            for p in meld_card.get("all_parts", [])
+            if p.get("component") == "meld_part"
+        ]
+        if not meld_pieces or not all(mp in deck_names for mp in meld_pieces):
+            continue  # deck can't form this meld; skip its tokens
+        producers = sorted(mp for mp in meld_pieces if mp in deck_names)
+        for part in meld_card.get("all_parts", []):
+            component = part.get("component", "")
+            part_uri = part.get("uri", "")
+            if not part_uri:
+                continue
+            if component in ("token", "emblem") or is_marker_part(part, result_name):
+                token_refs.setdefault(part_uri, set()).update(producers)
+
     # Fetch each unique token/marker card, deduped by (name, power, toughness)
     tokens_by_key: dict[tuple, dict] = {}
     producers_by_key: dict[tuple, set[str]] = {}
