@@ -348,6 +348,63 @@ describe('Shopping organism', () => {
     expect(screen.getByText(/· 0 of 2/)).toBeInTheDocument();
   });
 
+  it('excludes brewing decks from the picker by default but includes them via the toggle (DEC-338)', () => {
+    const BREW: DeckFull = makeDeck({
+      idx: 3,
+      slug: 'hivebound',
+      deckName: 'Hivebound Cascade',
+      commander: 'Sliver Commander',
+      colors: '🟢',
+      status: 'brewing',
+      list: [
+        group('Commander', ['Sliver Commander']),
+        group('Threats (1)', ['Sliver Hivelord']),
+      ],
+    });
+    renderShopping([ALPHA, BREW]);
+    // Default: brewing deck absent from the picker, production deck present.
+    expect(screen.queryByRole('button', { name: /Add Hivebound Cascade/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Remove Alpha/i })).toBeInTheDocument();
+
+    // Opt brewing in.
+    const toggle = screen.getByRole('button', { name: /Include brewing/i });
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+
+    // Select the brewing deck and confirm its buy-list renders.
+    fireEvent.click(screen.getByRole('button', { name: /Add Hivebound Cascade/i }));
+    expect(screen.getByText('Sliver Hivelord')).toBeInTheDocument();
+  });
+
+  it('drops brewing decks from the selection when the toggle is turned back off (DEC-338)', () => {
+    const BREW: DeckFull = makeDeck({
+      idx: 3,
+      slug: 'hivebound',
+      deckName: 'Hivebound Cascade',
+      commander: 'Sliver Commander',
+      status: 'brewing',
+      list: [
+        group('Commander', ['Sliver Commander']),
+        group('Threats (1)', ['Sliver Hivelord']),
+      ],
+    });
+    renderShopping([ALPHA, BREW]);
+    fireEvent.click(screen.getByRole('button', { name: /Include brewing/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Add Hivebound Cascade/i }));
+    expect(screen.getByText('Sliver Hivelord')).toBeInTheDocument();
+    // Toggle brewing off → brewing card leaves the buy list, counter excludes
+    // the pruned brewing deck (only the preselected production deck remains).
+    fireEvent.click(screen.getByRole('button', { name: /Include brewing/i }));
+    expect(screen.queryByText('Sliver Hivelord')).not.toBeInTheDocument();
+    expect(screen.getByText(/· 1 of 1/)).toBeInTheDocument();
+  });
+
+  it('hides the Include-brewing toggle when no brewing decks are present (DEC-338)', () => {
+    renderShopping([ALPHA, BETA]);
+    expect(screen.queryByRole('button', { name: /Include brewing/i })).not.toBeInTheDocument();
+  });
+
   it('persists imported owned cards in localStorage on mount and removes them from the buy list', () => {
     localStorage.setItem(
       STORAGE_KEY,

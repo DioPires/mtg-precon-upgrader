@@ -330,11 +330,19 @@ export interface ShoppingProps {
 }
 
 export function Shopping({ decks: allDecksProp }: ShoppingProps) {
-  // Brewing decks (e.g., builds the user is exploring but not physically
-  // assembling) must not contribute to cards-to-buy aggregation.
-  const decks = useMemo(
-    () => allDecksProp.filter((d) => d.status !== 'brewing'),
+  // Brewing decks (builds being explored but not physically assembled) are
+  // excluded by default so they don't contribute to cards-to-buy aggregation.
+  // The Shopping surface alone can opt them in (DEC-338) so a board member can
+  // price out a brew's buy-list; the DEC-297 exclusion stays the default
+  // everywhere else (CardAtlas, aggregates).
+  const [includeBrewing, setIncludeBrewing] = useState(false);
+  const brewingCount = useMemo(
+    () => allDecksProp.filter((d) => d.status === 'brewing').length,
     [allDecksProp],
+  );
+  const decks = useMemo(
+    () => allDecksProp.filter((d) => includeBrewing || d.status !== 'brewing'),
+    [allDecksProp, includeBrewing],
   );
   const [selected, setSelected] = useState<Set<string>>(() =>
     new Set(decks.length ? [decks[0].slug] : []),
@@ -391,6 +399,21 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
   };
   const selectAll = () => setSelected(new Set(decks.map((d) => d.slug)));
   const clearSelection = () => setSelected(new Set());
+
+  // Toggling brewing decks off must drop any brewing slug still held in the
+  // selection, or the "X of Y" counter would over-count phantom decks.
+  const toggleIncludeBrewing = () => {
+    setIncludeBrewing((on) => {
+      const next = !on;
+      if (!next) {
+        const brewingSlugs = new Set(
+          allDecksProp.filter((d) => d.status === 'brewing').map((d) => d.slug),
+        );
+        setSelected((prev) => new Set([...prev].filter((s) => !brewingSlugs.has(s))));
+      }
+      return next;
+    });
+  };
 
   const toggleBuiltDeckLocal = (slug: string) => {
     if (selected.has(slug)) {
@@ -533,6 +556,21 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           <span className="gv1-mono-xs gv1-dim">SELECT DECKS</span>
           <span className="gv1-mono-xs gv1-dim">· {selected.size} of {decks.length}</span>
           <span className="gv1-shop-rail-spacer" />
+          {brewingCount > 0 && (
+            <button
+              className={'gv1-shop-mini-btn' + (includeBrewing ? ' gv1-active' : '')}
+              onClick={toggleIncludeBrewing}
+              type="button"
+              aria-pressed={includeBrewing}
+              title={
+                includeBrewing
+                  ? 'Hide brewing decks from the picker'
+                  : `Include ${brewingCount} brewing deck${brewingCount === 1 ? '' : 's'} in the picker`
+              }
+            >
+              Include brewing
+            </button>
+          )}
           <button className="gv1-shop-mini-btn" onClick={selectAll} type="button">Select all</button>
           <button className="gv1-shop-mini-btn" onClick={clearSelection} type="button" disabled={selected.size === 0}>Clear</button>
         </div>
