@@ -160,7 +160,11 @@ def is_marker_part(part: dict, card_name: str) -> bool:
     name = part.get("name", "")
     if not name or name == card_name:
         return False
-    if name.endswith("Checklist"):
+    # Checklist cards (DFC helper printings) link via all_parts with type_line
+    # "Card" and masquerade as markers. Names may carry a numeric suffix
+    # ("Shadows Over Innistrad Checklist 2"), so match the word, not just a
+    # trailing token. No real token/marker is ever named "...Checklist...".
+    if "checklist" in name.lower():
         return False
     type_line = part.get("type_line", "")
     if not type_line:
