@@ -377,6 +377,29 @@ describe('Shopping organism', () => {
     expect(screen.getByText('Sliver Hivelord')).toBeInTheDocument();
   });
 
+  it('keeps brewing decks out of the Built rail even when opted into the picker (DEC-336 follow-up)', () => {
+    const BREW: DeckFull = makeDeck({
+      idx: 3,
+      slug: 'hivebound',
+      deckName: 'Hivebound Cascade',
+      commander: 'Sliver Commander',
+      status: 'brewing',
+      list: [
+        group('Commander', ['Sliver Commander']),
+        group('Threats (1)', ['Sliver Hivelord']),
+      ],
+    });
+    renderShopping([ALPHA, BREW]);
+    // Production deck is markable as built; brewing deck never is.
+    expect(screen.getByRole('button', { name: /Mark Alpha as built/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Mark Hivebound Cascade as built/i })).not.toBeInTheDocument();
+
+    // Opt brewing into the picker — it shows in Select decks but still NOT in the Built rail.
+    fireEvent.click(screen.getByRole('button', { name: /Include brewing/i }));
+    expect(screen.getByRole('button', { name: /Add Hivebound Cascade/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Mark Hivebound Cascade as built/i })).not.toBeInTheDocument();
+  });
+
   it('drops brewing decks from the selection when the toggle is turned back off (DEC-338)', () => {
     const BREW: DeckFull = makeDeck({
       idx: 3,

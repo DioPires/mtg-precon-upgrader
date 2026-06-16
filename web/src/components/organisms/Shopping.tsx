@@ -68,7 +68,7 @@ export function parseCsvRows(text: string): string[][] {
 }
 
 export function parseOwnedFile(text: string): Map<string, number> {
-  const stripped = (text || '').replace(/^﻿/, '');
+  const stripped = (text || '').replace(/^\uFEFF/, '');
   const rows = parseCsvRows(stripped);
   const out = new Map<string, number>();
   if (rows.length) {
@@ -344,6 +344,13 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
     () => allDecksProp.filter((d) => includeBrewing || d.status !== 'brewing'),
     [allDecksProp, includeBrewing],
   );
+  // The Built rail reserves owned copies of *physically assembled* decks, so
+  // brewing decks never belong there — even when the picker opts them in
+  // (DEC-336 board follow-up). Built rail always sees physical decks only.
+  const builtDecks = useMemo(
+    () => allDecksProp.filter((d) => d.status !== 'brewing'),
+    [allDecksProp],
+  );
   const [selected, setSelected] = useState<Set<string>>(() =>
     new Set(decks.length ? [decks[0].slug] : []),
   );
@@ -373,7 +380,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
   }, [decks]);
 
   const cardMap = useMemo(() => aggregateCards(selected, decks), [selected, decks]);
-  const builtClaims = useMemo(() => aggregateBuiltClaims(built, decks), [built, decks]);
+  const builtClaims = useMemo(() => aggregateBuiltClaims(built, builtDecks), [built, builtDecks]);
   const { buy, own } = useMemo(
     () => splitOwnership(cardMap, owned, builtClaims),
     [cardMap, owned, builtClaims],
@@ -425,12 +432,12 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
     }
     toggleBuilt(slug);
   };
-  const allBuiltSelected = decks.length > 0 && built.size === decks.length;
+  const allBuiltSelected = builtDecks.length > 0 && built.size === builtDecks.length;
   const toggleBuiltAll = () => {
     if (allBuiltSelected) {
       clearBuilt();
     } else {
-      setAllBuilt(decks.map((d) => d.slug));
+      setAllBuilt(builtDecks.map((d) => d.slug));
       // Drop any selected decks that just became built.
       setSelected(new Set());
     }
@@ -521,13 +528,13 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
             className="gv1-shop-mini-btn"
             onClick={toggleBuiltAll}
             type="button"
-            disabled={decks.length === 0}
+            disabled={builtDecks.length === 0}
           >
             {allBuiltSelected ? 'None' : 'All'}
           </button>
         </div>
         <div className="gv1-shop-built-chips" role="group" aria-label="Built decks (reserves owned cards)">
-          {decks.map((d) => {
+          {builtDecks.map((d) => {
             const on = built.has(d.slug);
             return (
               <button
