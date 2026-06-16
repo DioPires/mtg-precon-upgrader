@@ -20,6 +20,8 @@ npm run typecheck
 
 Production deploy (`vercel.json`) runs `npm run build` in `web/`, copies `data/` into `dist/data/`, and serves `web/dist/` as the host root.
 
+**Python scripts: run with `uv run python`** (e.g. `uv run python scripts/refresh_card_pool.py --deck {id}`). Bare `python` is not on PATH in all shells; the project uses `uv` for env + deps.
+
 ## Project Overview
 
 A web application that provides recommended commander deck builds for Magic: The Gathering. The app displays card recommendations, synergies, and shopping lists for building commander decks up to Bracket 4.
@@ -91,8 +93,8 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - Every card recommendation must be attributed via `sources`
 - **Card pool**: All Commander-legal cards printed up to and including the current date of the analysis. There is no frozen cutoff — treat "the day this deck is being designed or reviewed" as the boundary. When in doubt about a recent printing, query Scryfall (`scryfall_search` with `released<=YYYY-MM-DD` if needed) rather than assuming a stale window.
 - **Card text validation**: ALWAYS verify card names and oracle text via the `scryfall_card_by_name` MCP tool before recommending cards. Never assume card text or abilities from memory — validate every card considered. For bulk validation, use `scryfall_collection`.
-- **Deck JSON validation**: After editing any `deck.json`, run `python scripts/validate_deck_json.py --deck {id}`. The validator checks commander/decklist/highlight/category/win-condition/synergy card references against `priv_data/scryfall-oracle.json` and fails if reference blocks point to cards not in that deck. If the mirror is missing or stale, run `python scripts/refresh_scryfall_mirror.py`.
-- **Strategy-ceiling check (DEC-309)**: When validating a deck (or running `/phase-validate` on deck data), also run `python scripts/validate_strategy_ceiling.py [--deck {id}]`. Detects shell/payoff mismatches (B4 shell + sub-B4 payoff, or fast combo + weak shell). Non-blocking — warnings only, exit code 0. Already invoked by `scripts/smoke_test.sh`. Thresholds + calibration documented in [`data/bracket-philosophy.md`](data/bracket-philosophy.md) "B4 Reality Check".
+- **Deck JSON validation**: After editing any `deck.json`, run `uv run python scripts/validate_deck_json.py --deck {id}`. The validator checks commander/decklist/highlight/category/win-condition/synergy card references against `priv_data/scryfall-oracle.json` and fails if reference blocks point to cards not in that deck. If the mirror is missing or stale, run `uv run python scripts/refresh_scryfall_mirror.py`.
+- **Strategy-ceiling check (DEC-309)**: When validating a deck (or running `/phase-validate` on deck data), also run `uv run python scripts/validate_strategy_ceiling.py [--deck {id}]`. Detects shell/payoff mismatches (B4 shell + sub-B4 payoff, or fast combo + weak shell). Non-blocking — warnings only, exit code 0. Already invoked by `scripts/smoke_test.sh`. Thresholds + calibration documented in [`data/bracket-philosophy.md`](data/bracket-philosophy.md) "B4 Reality Check".
 - **Bracket 4/5 deckbuilding principles**: See [`data/bracket-philosophy.md`](data/bracket-philosophy.md) for mana base, fast mana, free spells, interaction, and card quality standards. Apply when building or updating B4+ decks.
 - **Deck modification workflow (board-approval required)**: When asked to review, rebalance, tune, or improve any existing deck, the deliverable is a **proposal comment** with adds/cuts and rationale — *not* edited `deck.json` files. Do not write to `deck.json`, `candidates.json`, or `metrics.json` (even as untracked draft files) before the board has explicitly accepted each individual swap. Acceptable pre-approval work: Scryfall lookups, `scripts/refresh_card_pool.py`, reading `candidates.json`, drafting proposal text. Present swaps as a checklist (`- [ ] CardName — reason`) so the board can accept/block line-by-line. Untracked ≠ approved.
 
@@ -125,7 +127,8 @@ Every card add, synergy, and deck must have a `sources` array for traceability.
 
 When building or updating deck guides, use all available sources and cross-reference findings:
 
-1. **Candidate Pool (mandatory first step — DEC-90)** — Run `python scripts/refresh_card_pool.py --deck {id}` before any review. This refreshes the local Scryfall mirror and regenerates `data/commanders/{id}/candidates.json`: the top-200 commander-legal cards scored against the deck's archetype tags + color identity + curve + ownership. Diff the `decklist` against the top of `candidates.json`. Any high-scoring candidate that is *not* in the decklist must be explicitly considered. Cuts require a reason captured in deck `sources` or review notes. See [`docs/discovery-playbook.md`](docs/discovery-playbook.md) for the archetype tagging contract.
+1. **Candidate Pool (mandatory first step — DEC-90)** — Run `uv run python scripts/refresh_card_pool.py --deck {id}` before any review. This refreshes the local Scryfall mirror and regenerates `data/commanders/{id}/candidates.json`: the top-200 commander-legal cards scored against the deck's archetype tags + color identity + curve + ownership. Diff the `decklist` against the top of `candidates.json`. Any high-scoring candidate that is *not* in the decklist must be explicitly considered. Cuts require a reason captured in deck `sources` or review notes. See [`docs/discovery-playbook.md`](docs/discovery-playbook.md) for the archetype tagging contract.
+   - **Re-run whenever it keeps `candidates.json` in sync**, not only before a review: **after any change to a deck's `decklist`** (scoring is decklist-dependent — keeps candidates + `gaps[]` current), when the **Scryfall mirror was just refreshed**, or when a deck's `candidates.json` is **stale** (≳7 days per `candidates_age_days`). Regenerating `candidates.json` *after* a committed/approved deck change is expected hygiene, not a pre-approval edit. (`metrics.json` is regenerated by its own metrics step, separate from card-pool.)
 1b. **Archetype recipes (DEC-238)** — For each `archetypes` tag on the deck that has an approved recipe in `data/archetype-recipes/{id}.json` (status `live`), run the recipe's sub-recipe queries. Splice the deck's color identity (`id<=<colors>`) into each query at runtime; order by `edhrec`; cap at top-50 per sub-recipe. Post-filter results against `decklist` + `candidates.json` top-50 to surface only genuine deltas. For each delta, triage: include (with `sources: [{type: scryfall, detail: "archetype-recipe:<archetype>/<sub_recipe>"}]`), defer (with note), or reject (with reason). If the deck has no archetype tag with a `live` recipe, record a comment in `sources` and skip — do not block on missing recipes. See [`docs/archetype-recipes.md`](docs/archetype-recipes.md) for the methodology.
 2. **YouTube** — Search for commander deck tech videos, fetch transcripts, extract card recommendations
 3. **EDHREC** — Check commander pages for top cards, new additions from recent sets
@@ -145,7 +148,7 @@ Attribute every recommendation to its source(s). Multiple sources for the same c
 Before recommending changes to any deck:
 
 1. Confirm `archetypes` is set on `data/commanders/{id}/deck.json`. If missing, tag with one or more IDs from [`data/discovery-playbook.json`](data/discovery-playbook.json).
-2. Run `python scripts/refresh_card_pool.py --deck {id}`.
+2. Run `uv run python scripts/refresh_card_pool.py --deck {id}`.
 3. Open `data/commanders/{id}/candidates.json`. Scan the top 50 — each entry not already in the decklist is a potential overlook.
 4. For each top candidate not in the deck, decide: include, defer (with note), or reject (with reason).
 5. Verify any candidate you plan to add via `scryfall_card_by_name` MCP — never trust the playbook's pattern match without confirming the card text.
@@ -166,7 +169,7 @@ When tagging cards, building decks, or reading metrics output:
 2. Add entry to `data/index.json` `commanders` array (with `theme` and `colors`)
 3. Include full 99-card `decklist` array
 4. Use `deckCategories` in `guideContent` for deck theme groupings
-5. Run `python scripts/validate_deck_json.py --deck {new-id}` before handing off the change
+5. Run `uv run python scripts/validate_deck_json.py --deck {new-id}` before handing off the change
 
 ### Research Deck Updates (with YouTube MCP)
 1. Search YouTube for relevant videos
@@ -174,4 +177,4 @@ When tagging cards, building decks, or reading metrics output:
 3. Extract card recommendations
 4. Compare with existing deck data
 5. Update deck.json with new findings
-6. Run `python scripts/validate_deck_json.py --deck {id}`
+6. Run `uv run python scripts/validate_deck_json.py --deck {id}`

@@ -6,7 +6,7 @@ The Grimoire is now `web/` (Vite + React 18 + TypeScript). The vanilla-JS app is
 
 ## Deck JSON Validation
 
-After changing any commander `deck.json`, run `python scripts/validate_deck_json.py --deck {id}`. This is also called by `scripts/smoke_test.sh`.
+After changing any commander `deck.json`, run `uv run python scripts/validate_deck_json.py --deck {id}`. This is also called by `scripts/smoke_test.sh`.
 
 ## YouTube Research MCP Server
 
