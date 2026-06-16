@@ -110,3 +110,4 @@ symmetric punisher/resource-denial templates and emit a
 - Color identity filtering — handled by the generator, not the playbook.
 - Bracket gating — handled by the scoring layer.
 - Synergy combos — covered by Commander Spellbook MCP, not this playbook.
+- **EDHREC synergy score ingestion** — investigated under DEC-312 (2026-05-29) and **cancelled**. EDHREC's Terms of Service prohibit automated queries ("use software or automated agents or scripts to ... generate automated searches, requests, or queries to the Site"), forbid content reproduction ("no part of the Site may be copied, reproduced, distributed, republished, downloaded ... in any form"), and bar building "a similar or competitive website". Using EDHREC's per-commander synergy delta to power our candidate scorer falls inside all three clauses. Do not re-open without ToS change or a licensed data source.
