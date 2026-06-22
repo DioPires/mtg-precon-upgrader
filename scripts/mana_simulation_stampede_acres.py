@@ -24,7 +24,7 @@ Manabase model (38 lands):
   Orchard) modeled as R/G/W.
 - 4 mono/colorless utility lands (Castle Embereth, Den of the Bugbear, Castle
   Ardenvale, Rogue's Passage).
-- 13 basics (Forest x5, Plains x6, Mountain x2).
+- 13 basics (Forest x4, Plains x7, Mountain x2).
 - Ramp: Nature's Lore fetches a Forest-typed land untapped; Sol Ring (x2 C) +
   Arcane Signet (R/G/W) rocks; dorks Birds / Fyndhorn Elves / Elvish Mystic /
   Delighted Halfling.
