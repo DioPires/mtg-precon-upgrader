@@ -93,7 +93,8 @@ import type {
 // v54 -> v55 (DEC-347 2026-06-22): Field of Blades graduates from brewing — status removed from deck.json + index.json, entry reordered above the brewing group (board is assembling it). Now appears in Shopping. Force-invalidate so returning users see it as a production deck.
 // v55 -> v56 (DEC-347 2026-06-22): Field of Blades board-approved swap -Ivy Lane Denizen / +Mother of Runes (Ivy Lane was a redundant combo piece — Scurry Oak still goes infinite with Rosie Cotton; Mother protects the engine). Combo win-condition/synergy refs updated to Scurry Oak + Rosie Cotton; candidates + metrics + sim regenerated (global 81 -> 83).
 // v56 -> v57 (DEC-347 2026-06-22): Field of Blades board-approved swap -Heroic Intervention -Skyclave Apparition / +Scute Swarm +Pest Infestation (two unconditional X/landfall token producers; Pest also doubles as artifact/enchant removal). tokens[] Illusion->Pest; candidates + metrics (global 83->81, traded interaction for producers) + sim regenerated.
-const STORAGE_PREFIX = 'gv1-deck-data-v57:';
+// v57 -> v58 (DEC-347 2026-06-22): Field of Blades mana-base rebalance — basics 5F/4P/4M -> 5F/6P/2M to match the white-heavy pip demand (W 52% / G 30% / R 18%; lands were an even 21/21/21). White sources 21->23, red 21->19. Metrics + sim regenerated.
+const STORAGE_PREFIX = 'gv1-deck-data-v58:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
