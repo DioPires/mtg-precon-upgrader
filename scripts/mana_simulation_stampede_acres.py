@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Monte Carlo mana base simulation for Stampede Acres (Naya tokens).
+"""Monte Carlo mana base simulation for Field of Blades (Naya tokens).
 
 Simulates 100,000 games measuring Naya (R/G/W) mana production and Baylen, the
 Haymaker castability across turns 1-10.
@@ -679,7 +679,7 @@ def export_enhanced_json(metadata: dict) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Monte Carlo mana base simulation for Stampede Acres (Naya tokens)")
+        description="Monte Carlo mana base simulation for Field of Blades (Naya tokens)")
     parser.add_argument("--json", action="store_true",
                         help="Write simulation.json instead of console output")
     args = parser.parse_args()
@@ -691,7 +691,7 @@ def main():
     with open(deck_file) as f:
         deck_data = json.load(f)
 
-    print("Building Stampede Acres decklist...")
+    print("Building Field of Blades decklist...")
     decklist = build_decklist(deck_data)
     print(f"Decklist: {len(decklist)} cards")
 

@@ -2482,11 +2482,11 @@ def export_slivers(metadata: dict) -> dict:
 
 
 def export_stampede_acres(metadata: dict) -> dict:
-    """Export Stampede Acres (Naya tokens — Baylen, the Haymaker) simulation."""
+    """Export Field of Blades (Naya tokens — Baylen, the Haymaker) simulation."""
     return _export_colored(
         sim_module=sim_stampede_acres,
         deck_id="stampede-acres",
-        deck_name="Stampede Acres",
+        deck_name="Field of Blades",
         commander_name="Baylen, the Haymaker",
         commander_cmc=3,
         colors=["R", "G", "W"],
@@ -2562,7 +2562,7 @@ DECKS = [
     ("zada-hedron-grinder", "Hedron Storm", export_zada),
     ("calculated-infinity", "Calculated Infinity", export_calculated_infinity),
     ("slivers", "Hivebound Cascade", export_slivers),
-    ("stampede-acres", "Stampede Acres", export_stampede_acres),
+    ("stampede-acres", "Field of Blades", export_stampede_acres),
 ]
 
 
