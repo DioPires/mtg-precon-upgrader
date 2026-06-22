@@ -60,7 +60,8 @@ def parse_mana_cost(mana_cost: str) -> dict:
 
 ROCK_DEFS = {
     "Sol Ring":        {"cmc": 1, "B": 0, "G": 0, "C": 2, "burst": False},
-    "Arcane Signet":   {"cmc": 2, "B": 1, "G": 1, "C": 0, "burst": False, "flexible": True},
+    # The Soul Stone ({1}{B}) replaced Arcane Signet (DEC-348). Indestructible, taps {B} only.
+    "The Soul Stone":  {"cmc": 2, "B": 1, "G": 0, "C": 0, "burst": False},
 }
 
 # --- Mana dork definitions ---
@@ -579,7 +580,7 @@ class GameState:
         # Priority: Sol Ring > 2-CMC rock > 1-CMC dorks > creature ramp
         priority_order = [
             ("rock", "Sol Ring"),
-            ("rock", "Arcane Signet"),
+            ("rock", "The Soul Stone"),
             ("dork", "Llanowar Elves"),
             ("dork", "Elves of Deep Shadow"),
             ("dork", "Birds of Paradise"),
