@@ -90,7 +90,8 @@ import type {
 // v51 -> v52 (DEC-347 2026-06-22): Stampede Acres bespoke Monte Carlo simulation.json (new mana_simulation_stampede_acres.py + export_stampede_acres wired in); metrics refreshed (confidence margin 15 -> 8, win-turn triple populated, Baylen median cast T3). Force-invalidate so Compare populates the simulation-backed numbers.
 // v52 -> v53 (DEC-347 2026-06-22): project-wide MDFC policy fix. Display now buckets by the FRONT (non-land) face (classifyTypeLine split on // — Hagra Mauling / Valakut Awakening move from Lands to Instants). Metrics use front-face land detection so transform DFCs (Ojer Taq) count as their cast face, modal spell//land MDFCs stay 0.5 land + 0.5 spell, Pathways/Westvale stay full lands. Data fixes: Hagra role land->removal-spot + type (eternal-harvest/silverquill/witherbloom), Valakut type (zada), removed erroneous is_mdfc_land on Needleverge Pathway (aziza) + Hanweir Battlements (pyre). Metrics regenerated for the 7 affected decks.
 // v53 -> v54 (DEC-347 2026-06-22): board renamed the new Naya tokens deck "Stampede Acres" -> "Field of Blades" (subtitle "Every Acre an Army"); id stays stampede-acres. Force-invalidate so the catalog/guide show the new name.
-const STORAGE_PREFIX = 'gv1-deck-data-v54:';
+// v54 -> v55 (DEC-347 2026-06-22): Field of Blades graduates from brewing — status removed from deck.json + index.json, entry reordered above the brewing group (board is assembling it). Now appears in Shopping. Force-invalidate so returning users see it as a production deck.
+const STORAGE_PREFIX = 'gv1-deck-data-v55:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
