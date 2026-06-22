@@ -39,6 +39,7 @@ import mana_simulation_aziza_mage_tower_captain as sim_boros
 import mana_simulation_zada_hedron_grinder as sim_zada
 import mana_simulation_calculated_infinity as sim_calculated_infinity
 import mana_simulation_slivers as sim_slivers
+import mana_simulation_stampede_acres as sim_stampede_acres
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -2480,6 +2481,19 @@ def export_slivers(metadata: dict) -> dict:
     )
 
 
+def export_stampede_acres(metadata: dict) -> dict:
+    """Export Stampede Acres (Naya tokens — Baylen, the Haymaker) simulation."""
+    return _export_colored(
+        sim_module=sim_stampede_acres,
+        deck_id="stampede-acres",
+        deck_name="Stampede Acres",
+        commander_name="Baylen, the Haymaker",
+        commander_cmc=3,
+        colors=["R", "G", "W"],
+        metadata=metadata,
+    )
+
+
 def export_wubg_poison(metadata: dict) -> dict:
     """Export Creeping Corruption (WUBG Atraxa poison/proliferate) simulation."""
     return _export_colored(
@@ -2548,6 +2562,7 @@ DECKS = [
     ("zada-hedron-grinder", "Hedron Storm", export_zada),
     ("calculated-infinity", "Calculated Infinity", export_calculated_infinity),
     ("slivers", "Hivebound Cascade", export_slivers),
+    ("stampede-acres", "Stampede Acres", export_stampede_acres),
 ]
 
 
