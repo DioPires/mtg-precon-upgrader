@@ -35,7 +35,6 @@ mtg-precon-upgrader/
 │       ├── titan-convergence/
 │       ├── eternal-agony/
 │       ├── dark-dominion/
-│       ├── mutant-multiplication/
 │       └── ...
 └── scripts/                # Mana simulation scripts
 ```
