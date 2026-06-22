@@ -17,7 +17,12 @@ export function typeBucket(name: string, fallback: string | undefined): TypeBuck
 
 /** Pure classifier — exposed for tests that don't want to seed cardCache. */
 export function classifyTypeLine(typeLine: string): TypeBucket {
-  const tl = typeLine.toLowerCase();
+  // Categorize MDFCs by their FRONT (non-land) face: an `Instant // Land` card
+  // (Hagra Mauling, Valakut Awakening) belongs in the Instant section, not
+  // Lands; a `Land // …` card (Pathways, Westvale Abbey) stays a Land. The
+  // front face is the one Scryfall prints first. (DEC-347 board policy.)
+  const front = typeLine.split('//')[0];
+  const tl = front.toLowerCase();
   if (tl.includes('creature')) return 'Creature';
   if (tl.includes('planeswalker')) return 'Planeswalker';
   if (tl.includes('land')) return 'Land';

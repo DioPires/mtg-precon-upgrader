@@ -155,41 +155,49 @@ def card_quantity(entry: dict) -> int:
         return 1
 
 
+def _front_face_typeline(entry: dict, scry: dict | None) -> str:
+    """Type line of the FRONT (primary) face. For an MDFC/DFC the front face is
+    the one you reference and play first; Scryfall lists it first in card_faces.
+    Falls back to the deck.json `type` field when no Scryfall data is present."""
+    if scry:
+        faces = scry.get("card_faces") or []
+        if faces:
+            return (faces[0].get("type_line") or "").lower()
+        return (scry.get("type_line") or "").lower()
+    return (entry.get("type") or "").lower()
+
+
+def _front_is_land(entry: dict, scry: dict | None) -> bool:
+    return "land" in _front_face_typeline(entry, scry)
+
+
 def is_land_entry(entry: dict, scry: dict | None) -> bool:
-    if scry and "land" in (scry.get("type_line") or "").lower():
-        # An MDFC counts as a land via is_mdfc_land flag, but its non-land face
-        # is also a spell. The caller decides weighting; here just say "has land
-        # face".
-        if entry.get("is_mdfc_land"):
-            return True
-        return "land" in (scry.get("type_line") or "").lower() and not entry.get("is_mdfc_land", False) or False
-    # Fallback: trust the deck.json type field
-    type_field = (entry.get("type") or "").lower()
-    return "land" in type_field
+    # A card contributes a *playable* land if its front face is a land (real
+    # lands, Pathways, Westvale Abbey) OR it's a modal DFC with a land back
+    # (is_mdfc_land — Hagra Mauling, Valakut Awakening). A transform DFC whose
+    # front is a nonland (Ojer Taq — a creature that only becomes a land on
+    # death) is NOT a playable land. (DEC-347 board policy.)
+    return _front_is_land(entry, scry) or bool(entry.get("is_mdfc_land"))
 
 
 def land_weight(entry: dict, scry: dict | None) -> float:
-    """How many lands this entry contributes (basics multiply by quantity)."""
+    """Lands this entry contributes (basics multiply by quantity)."""
     qty = card_quantity(entry)
+    if _front_is_land(entry, scry):
+        return 1.0 * qty           # real land / Pathway / Westvale (front is land)
     if entry.get("is_mdfc_land"):
-        return 0.5 * qty
-    if scry and "land" in (scry.get("type_line") or "").lower():
-        return 1.0 * qty
-    if "land" in (entry.get("type") or "").lower():
-        return 1.0 * qty
-    return 0.0
+        return 0.5 * qty           # modal spell//land — counts as half a land
+    return 0.0                      # transform creature (Ojer Taq) / nonland
 
 
 def spell_weight(entry: dict, scry: dict | None) -> float:
-    """How many spells this entry contributes (MDFCs at 0.5)."""
+    """Spells this entry contributes (modal land MDFCs count 0.5 on each side)."""
     qty = card_quantity(entry)
-    if entry.get("is_mdfc_land"):
-        return 0.5 * qty
-    if scry and "land" in (scry.get("type_line") or "").lower():
-        return 0.0
-    if "land" in (entry.get("type") or "").lower():
-        return 0.0
-    return 1.0 * qty
+    if entry.get("is_mdfc_land") and not _front_is_land(entry, scry):
+        return 0.5 * qty           # modal spell//land — half spell, half land
+    if _front_is_land(entry, scry):
+        return 0.0                  # pure land contributes no spell
+    return 1.0 * qty                # everything else incl. Ojer Taq (creature)
 
 
 def get_scry(entry: dict, mirror: dict[str, dict]) -> dict | None:
