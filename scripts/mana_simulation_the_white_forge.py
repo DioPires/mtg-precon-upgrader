@@ -66,7 +66,7 @@ ROCK_DEFS = {
     "Sol Ring":           {"cmc": 1, "C": 2, "burst": False},
     "Arcane Signet":      {"cmc": 2, "W": 1, "burst": False},
     "Mind Stone":         {"cmc": 2, "C": 1, "burst": False},
-    "Thought Vessel":     {"cmc": 2, "C": 1, "burst": False},
+    "The Mind Stone":     {"cmc": 2, "W": 1, "burst": False},
     "Pearl Medallion":    {"cmc": 2, "C": 0, "burst": False},  # cost reducer, not mana
     "Basalt Monolith":    {"cmc": 3, "C": 3, "burst": False},  # doesn't untap normally, but sim treats all rocks as available each turn
 }
@@ -390,7 +390,7 @@ class GameState:
             "Sol Ring",         # CMC 1, +2C
             "Arcane Signet",    # CMC 2, +1W
             "Mind Stone",       # CMC 2, +1C
-            "Thought Vessel",   # CMC 2, +1C
+            "The Mind Stone",   # CMC 2, +1W
             "Pearl Medallion",  # CMC 2, cost reducer
             "Basalt Monolith",  # CMC 3, +3C
         ]
