@@ -91,7 +91,8 @@ import type {
 // v52 -> v53 (DEC-347 2026-06-22): project-wide MDFC policy fix. Display now buckets by the FRONT (non-land) face (classifyTypeLine split on // — Hagra Mauling / Valakut Awakening move from Lands to Instants). Metrics use front-face land detection so transform DFCs (Ojer Taq) count as their cast face, modal spell//land MDFCs stay 0.5 land + 0.5 spell, Pathways/Westvale stay full lands. Data fixes: Hagra role land->removal-spot + type (eternal-harvest/silverquill/witherbloom), Valakut type (zada), removed erroneous is_mdfc_land on Needleverge Pathway (aziza) + Hanweir Battlements (pyre). Metrics regenerated for the 7 affected decks.
 // v53 -> v54 (DEC-347 2026-06-22): board renamed the new Naya tokens deck "Stampede Acres" -> "Field of Blades" (subtitle "Every Acre an Army"); id stays stampede-acres. Force-invalidate so the catalog/guide show the new name.
 // v54 -> v55 (DEC-347 2026-06-22): Field of Blades graduates from brewing — status removed from deck.json + index.json, entry reordered above the brewing group (board is assembling it). Now appears in Shopping. Force-invalidate so returning users see it as a production deck.
-const STORAGE_PREFIX = 'gv1-deck-data-v55:';
+// v55 -> v56 (DEC-347 2026-06-22): Field of Blades board-approved swap -Ivy Lane Denizen / +Mother of Runes (Ivy Lane was a redundant combo piece — Scurry Oak still goes infinite with Rosie Cotton; Mother protects the engine). Combo win-condition/synergy refs updated to Scurry Oak + Rosie Cotton; candidates + metrics + sim regenerated (global 81 -> 83).
+const STORAGE_PREFIX = 'gv1-deck-data-v56:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
