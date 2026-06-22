@@ -86,7 +86,8 @@ import type {
 // v47 -> v48 (DEC-336 2026-06-15): new brewing deck "Hivebound Cascade" (The First Sliver, 5C Sliver tribal cascade) added at the brewing-group tail of index.json; ships with deck.json + tokens[] + metrics. Force-invalidate so returning users see the new entry.
 // v48 -> v49 (DEC-337 2026-06-15): Hivebound Cascade bespoke Monte Carlo simulation.json (5C no-fetch manabase); metrics refreshed (confidence margin 15 -> 5, win-turn triple populated). Force-invalidate so returning users see the simulation-backed Compare numbers.
 // v49 -> v50 (DEC-347 2026-06-22): catalog changes — Calculated Infinity marked brewing (moved to brewing group); Mutant Multiplication deck removed entirely. Force-invalidate so returning users see the updated catalog.
-const STORAGE_PREFIX = 'gv1-deck-data-v50:';
+// v50 -> v51 (DEC-347 2026-06-22): new brewing deck "Stampede Acres" (Baylen, the Haymaker — Naya tokens go-wide) added at the brewing-group tail; ships with deck.json + tokens[] + candidates + metrics (global 83). Force-invalidate so returning users see the new entry.
+const STORAGE_PREFIX = 'gv1-deck-data-v51:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

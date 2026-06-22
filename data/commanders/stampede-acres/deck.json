@@ -1,0 +1,975 @@
+{
+  "id": "stampede-acres",
+  "type": "commander",
+  "name": "Stampede Acres",
+  "subtitle": "Go Wide, Hit Once",
+  "commander": "Baylen, the Haymaker",
+  "cost": "$300-450",
+  "bracket": "4-",
+  "status": "brewing",
+  "gameChangers": 5,
+  "asymmetric_only": false,
+  "commanderRoles": {
+    "primary": "engine",
+    "secondary": "payoff"
+  },
+  "archetypes": [
+    "tokens-go-wide"
+  ],
+  "wincon_style": "combat",
+  "lastUpdatedSet": "Tarkir: Dragonstorm",
+  "sources": [
+    {
+      "type": "ai-inferred",
+      "name": "DEC-347 — board-approved Naya tokens build (6 review rounds + owned-swap pass)"
+    }
+  ],
+  "guideContent": {
+    "strategyOverview": "Baylen, the Haymaker is a Naya (RGW) go-wide tokens deck. Baylen doesn't make tokens himself — he consumes a wide board, tapping untapped tokens to ramp into any color, draw cards, and grow with trample. The 99 flood the board with unconditional and instant-speed token makers, multiply them with doublers, and convert the swarm into damage through ETB pingers, anthems, and overrun. Two compact combos (Scurry Oak + Ivy Lane Denizen, Kiki-Jiki + Zealous Conscripts) provide infinite-token inevitability that turns lethal alongside Impact Tremors or Purphoros.",
+    "deckCategories": [
+      {
+        "name": "Token Producers",
+        "description": "Unconditional and instant-speed makers that flood the board from an empty start — several can fire on opponents' turns.",
+        "cards": [
+          "Dragon Fodder",
+          "Hordeling Outburst",
+          "Raise the Alarm",
+          "Secure the Wastes",
+          "Grand Crescendo",
+          "March of the Multitudes",
+          "Prosperous Partnership",
+          "Springheart Nantuko",
+          "Felidar Retreat",
+          "Halo Fountain",
+          "Adeline, Resplendent Cathar",
+          "Anim Pakal, Thousandth Moon"
+        ]
+      },
+      {
+        "name": "Token Multipliers",
+        "description": "Doublers and a tripler that turn every maker into an exponential flood.",
+        "cards": [
+          "Anointed Procession",
+          "Parallel Lives",
+          "Mondrak, Glory Dominus",
+          "Ojer Taq, Deepest Foundation // Temple of Civilization",
+          "Elspeth, Storm Slayer",
+          "Exalted Sunborn",
+          "Second Harvest"
+        ]
+      },
+      {
+        "name": "Token Payoffs & Anthems",
+        "description": "Convert width into damage — ETB pingers fire per token, anthems push the swarm through.",
+        "cards": [
+          "Impact Tremors",
+          "Purphoros, God of the Forge",
+          "Rosie Cotton of South Lane",
+          "Warleader's Call",
+          "Wedding Announcement // Wedding Festivity",
+          "Dictate of Heliod"
+        ]
+      },
+      {
+        "name": "Baylen's Engine",
+        "description": "Card advantage and untap effects that refuel the swarm and let Baylen tap the board for mana, cards, and pressure — every turn.",
+        "cards": [
+          "Baylen, the Haymaker",
+          "Seedborn Muse",
+          "Skullclamp",
+          "Tocasia's Welcome",
+          "Staff of the Storyteller",
+          "Mentor of the Meek",
+          "Bennie Bracks, Zoologist",
+          "The Great Henge",
+          "Caretaker's Talent"
+        ]
+      },
+      {
+        "name": "Overrun & Combo Finishes",
+        "description": "Close the game: a static double-strike anthem, a one-shot trample lord, and two infinite-token combos that turn lethal with any ETB pinger.",
+        "cards": [
+          "Jetmir, Nexus of Revels",
+          "Craterhoof Behemoth",
+          "Scurry Oak",
+          "Ivy Lane Denizen",
+          "Kiki-Jiki, Mirror Breaker",
+          "Zealous Conscripts",
+          "Natural Order"
+        ]
+      },
+      {
+        "name": "Interaction",
+        "description": "Clean spot removal, two asymmetric wipes that spare our tokens, and board protection.",
+        "cards": [
+          "Swords to Plowshares",
+          "Path to Exile",
+          "Skyclave Apparition",
+          "Winds of Abandon",
+          "Artifact Mutation",
+          "Aura Shards",
+          "Hour of Reckoning",
+          "The Battle of Bywater",
+          "Heroic Intervention",
+          "Clever Concealment",
+          "Voice of Victory",
+          "Flawless Maneuver"
+        ]
+      }
+    ]
+  },
+  "winConditions": [
+    {
+      "name": "Go-wide overrun",
+      "cards": [
+        "Jetmir, Nexus of Revels",
+        "Craterhoof Behemoth",
+        "Warleader's Call"
+      ],
+      "description": "A wide token board plus a static double-strike anthem (Jetmir) or a one-shot trample pump (Craterhoof) swings for lethal in a single attack."
+    },
+    {
+      "name": "Infinite tokens — Scurry Oak line",
+      "cards": [
+        "Scurry Oak",
+        "Ivy Lane Denizen",
+        "Impact Tremors",
+        "Purphoros, God of the Forge"
+      ],
+      "description": "A green Squirrel from Scurry Oak triggers Ivy Lane Denizen to put a counter back on Scurry Oak, looping infinitely. With Impact Tremors or Purphoros on board, each token deals damage — infinite damage."
+    },
+    {
+      "name": "Infinite tokens — Kiki line",
+      "cards": [
+        "Kiki-Jiki, Mirror Breaker",
+        "Zealous Conscripts",
+        "Impact Tremors",
+        "Purphoros, God of the Forge"
+      ],
+      "description": "Kiki-Jiki copies Zealous Conscripts; the copy's ETB untaps Kiki to repeat — infinite hasty tokens and ETBs, lethal with any ETB pinger or a swing."
+    },
+    {
+      "name": "Halo Fountain alternate win",
+      "cards": [
+        "Halo Fountain",
+        "Seedborn Muse"
+      ],
+      "description": "On a wide, vigilant board, untap fifteen creatures to Halo Fountain's third ability and win the game outright — trivial with Seedborn Muse untapping each turn."
+    }
+  ],
+  "synergies": [
+    {
+      "title": "Baylen converts a wide board into mana, cards, and reach",
+      "cards": [
+        "Baylen, the Haymaker",
+        "Anointed Procession",
+        "Mondrak, Glory Dominus"
+      ],
+      "description": "Every extra token is more fuel for Baylen's tap abilities (2 tokens = any-color mana, 3 = draw, 4 = +3/+3 trample). Doublers multiply both the swarm and Baylen's activations.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Commander synergy analysis"
+        }
+      ]
+    },
+    {
+      "title": "Scurry Oak + Ivy Lane Denizen = infinite tokens",
+      "cards": [
+        "Scurry Oak",
+        "Ivy Lane Denizen"
+      ],
+      "description": "Each green Squirrel Scurry Oak makes triggers Ivy Lane Denizen to place a +1/+1 counter on Scurry Oak, which makes another Squirrel — a mana-free infinite loop.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook combo"
+        }
+      ]
+    },
+    {
+      "title": "Kiki-Jiki + Zealous Conscripts = infinite tokens",
+      "cards": [
+        "Kiki-Jiki, Mirror Breaker",
+        "Zealous Conscripts"
+      ],
+      "description": "Kiki copies Conscripts; the token's ETB untaps Kiki to copy again — infinite hasty tokens and ETB triggers.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook combo"
+        }
+      ]
+    },
+    {
+      "title": "ETB pingers scale with token doublers",
+      "cards": [
+        "Impact Tremors",
+        "Purphoros, God of the Forge",
+        "Anointed Procession"
+      ],
+      "description": "Impact Tremors and Purphoros fire for every creature that enters; doublers multiply each token wave, multiplying the damage independent of creature power.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Token payoff analysis"
+        }
+      ]
+    },
+    {
+      "title": "Seedborn Muse lets Baylen and instant-makers work every turn",
+      "cards": [
+        "Seedborn Muse",
+        "Baylen, the Haymaker",
+        "Secure the Wastes"
+      ],
+      "description": "Untapping all permanents on each opponent's turn means Baylen taps the board around the table and instant-speed makers (Secure the Wastes, Grand Crescendo) flash in blockers and fuel.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Engine analysis"
+        }
+      ]
+    },
+    {
+      "title": "Skullclamp turns 1/1 tokens into card advantage",
+      "cards": [
+        "Skullclamp",
+        "Dragon Fodder",
+        "Hordeling Outburst"
+      ],
+      "description": "Equipping Skullclamp to a 1/1 token kills it and draws two — a relentless draw engine fed by every cheap token maker.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Card advantage analysis"
+        }
+      ]
+    }
+  ],
+  "highlights": [
+    {
+      "name": "Baylen, the Haymaker"
+    },
+    {
+      "name": "Mondrak, Glory Dominus"
+    },
+    {
+      "name": "Ojer Taq, Deepest Foundation // Temple of Civilization"
+    },
+    {
+      "name": "Craterhoof Behemoth"
+    },
+    {
+      "name": "Seedborn Muse"
+    },
+    {
+      "name": "Jetmir, Nexus of Revels"
+    },
+    {
+      "name": "Scurry Oak"
+    },
+    {
+      "name": "Impact Tremors"
+    },
+    {
+      "name": "Skullclamp"
+    }
+  ],
+  "decklist": [
+    {
+      "name": "Sol Ring",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Arcane Signet",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Birds of Paradise",
+      "type": "Creature — Bird",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Fyndhorn Elves",
+      "type": "Creature — Elf Druid",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Elvish Mystic",
+      "type": "Creature — Elf Druid",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Delighted Halfling",
+      "type": "Creature — Halfling Citizen",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Nature's Lore",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Jeska's Will",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "The Great Henge",
+      "type": "Legendary Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Seedborn Muse",
+      "type": "Creature — Spirit",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Adeline, Resplendent Cathar",
+      "type": "Legendary Creature — Human Knight",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Anim Pakal, Thousandth Moon",
+      "type": "Legendary Creature — Human Soldier",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Dragon Fodder",
+      "type": "Sorcery",
+      "primary_role": "threat"
+    },
+    {
+      "name": "Hordeling Outburst",
+      "type": "Sorcery",
+      "primary_role": "threat"
+    },
+    {
+      "name": "Raise the Alarm",
+      "type": "Instant",
+      "primary_role": "threat"
+    },
+    {
+      "name": "Secure the Wastes",
+      "type": "Instant",
+      "primary_role": "threat"
+    },
+    {
+      "name": "Grand Crescendo",
+      "type": "Instant",
+      "primary_role": "threat"
+    },
+    {
+      "name": "March of the Multitudes",
+      "type": "Instant",
+      "primary_role": "threat"
+    },
+    {
+      "name": "Second Harvest",
+      "type": "Instant",
+      "primary_role": "threat"
+    },
+    {
+      "name": "Prosperous Partnership",
+      "type": "Enchantment",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Springheart Nantuko",
+      "type": "Enchantment Creature — Insect Monk",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Felidar Retreat",
+      "type": "Enchantment",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Halo Fountain",
+      "type": "Artifact",
+      "primary_role": "engine",
+      "secondary_role": "wincon"
+    },
+    {
+      "name": "Anointed Procession",
+      "type": "Enchantment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Parallel Lives",
+      "type": "Enchantment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Mondrak, Glory Dominus",
+      "type": "Legendary Creature — Phyrexian Horror",
+      "primary_role": "payoff",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Ojer Taq, Deepest Foundation // Temple of Civilization",
+      "type": "Legendary Creature — God // Land",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Elspeth, Storm Slayer",
+      "type": "Legendary Planeswalker — Elspeth",
+      "primary_role": "payoff",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Exalted Sunborn",
+      "type": "Creature — Angel Wizard",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Impact Tremors",
+      "type": "Enchantment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Purphoros, God of the Forge",
+      "type": "Legendary Enchantment Creature — God",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Rosie Cotton of South Lane",
+      "type": "Legendary Creature — Halfling Peasant",
+      "primary_role": "payoff",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Caretaker's Talent",
+      "type": "Enchantment — Class",
+      "primary_role": "payoff",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Wedding Announcement // Wedding Festivity",
+      "type": "Enchantment // Enchantment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Dictate of Heliod",
+      "type": "Enchantment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Warleader's Call",
+      "type": "Enchantment",
+      "primary_role": "payoff",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Skullclamp",
+      "type": "Artifact — Equipment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Tocasia's Welcome",
+      "type": "Enchantment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Staff of the Storyteller",
+      "type": "Artifact",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Mentor of the Meek",
+      "type": "Creature — Human Soldier",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Bennie Bracks, Zoologist",
+      "type": "Legendary Creature — Elf Druid",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Scurry Oak",
+      "type": "Creature — Treefolk",
+      "primary_role": "wincon",
+      "secondary_role": "engine",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Ivy Lane Denizen",
+      "type": "Creature — Elf Warrior",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Kiki-Jiki, Mirror Breaker",
+      "type": "Legendary Creature — Goblin Shaman",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Zealous Conscripts",
+      "type": "Creature — Human Warrior",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Craterhoof Behemoth",
+      "type": "Creature — Beast",
+      "primary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Jetmir, Nexus of Revels",
+      "type": "Legendary Creature — Cat Demon",
+      "primary_role": "wincon",
+      "secondary_role": "payoff",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Hour of Reckoning",
+      "type": "Sorcery",
+      "primary_role": "removal-board"
+    },
+    {
+      "name": "The Battle of Bywater",
+      "type": "Sorcery",
+      "primary_role": "removal-board"
+    },
+    {
+      "name": "Swords to Plowshares",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Path to Exile",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Skyclave Apparition",
+      "type": "Creature — Kor Spirit",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Winds of Abandon",
+      "type": "Sorcery",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Artifact Mutation",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Aura Shards",
+      "type": "Enchantment",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Heroic Intervention",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Clever Concealment",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Voice of Victory",
+      "type": "Creature — Human Bard",
+      "primary_role": "protection",
+      "secondary_role": "threat"
+    },
+    {
+      "name": "Flawless Maneuver",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Natural Order",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Enlightened Tutor",
+      "type": "Instant",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Command Tower",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Jungle Shrine",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Stomping Ground",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sacred Foundry",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Temple Garden",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Inspiring Vantage",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Fire-Lit Thicket",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Razorverge Thicket",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Clifftop Retreat",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Rootbound Crag",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sunpetal Grove",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Spire Garden",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Canopy Vista",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Spectator Seating",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Karplusan Forest",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Battlefield Forge",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Brushland",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Exotic Orchard",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Path of Ancestry",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Fabled Passage",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Rogue's Passage",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Den of the Bugbear",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Castle Embereth",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Castle Ardenvale",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Horizon Canopy",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Forest",
+      "type": "Land",
+      "quantity": 5,
+      "primary_role": "land"
+    },
+    {
+      "name": "Plains",
+      "type": "Land",
+      "quantity": 4,
+      "primary_role": "land"
+    },
+    {
+      "name": "Mountain",
+      "type": "Land",
+      "quantity": 4,
+      "primary_role": "land"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Cat Beast",
+      "type_line": "Token Creature — Cat Beast",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "322ef76e-e0f0-48d7-a6ad-5d4c1c9ccb2e",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/2/322ef76e-e0f0-48d7-a6ad-5d4c1c9ccb2e.jpg?1730485673",
+      "produced_by": [
+        "Felidar Retreat"
+      ]
+    },
+    {
+      "name": "Citizen",
+      "type_line": "Token Creature — Citizen",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G",
+        "W"
+      ],
+      "scryfall_id": "40135aa8-d531-427d-ab5c-9a2192f61bf9",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/0/40135aa8-d531-427d-ab5c-9a2192f61bf9.jpg?1742506203",
+      "produced_by": [
+        "Grand Crescendo",
+        "Halo Fountain",
+        "Prosperous Partnership"
+      ]
+    },
+    {
+      "name": "Food",
+      "type_line": "Token Artifact — Food",
+      "oracle_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "4a029bdc-92e3-4d85-8af5-e33429a5f017",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/a/4a029bdc-92e3-4d85-8af5-e33429a5f017.jpg?1699974438",
+      "produced_by": [
+        "Rosie Cotton of South Lane",
+        "The Battle of Bywater"
+      ]
+    },
+    {
+      "name": "Gnome",
+      "type_line": "Token Artifact Creature — Gnome",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "scryfall_id": "6def709a-53b3-4520-9544-74ab6472d256",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/d/6def709a-53b3-4520-9544-74ab6472d256.jpg?1699017702",
+      "produced_by": [
+        "Anim Pakal, Thousandth Moon"
+      ]
+    },
+    {
+      "name": "Goblin",
+      "type_line": "Token Creature — Goblin",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "R"
+      ],
+      "scryfall_id": "1425e965-7eea-419c-a7ec-c8169fa9edbf",
+      "image_uri": "https://cards.scryfall.io/normal/front/1/4/1425e965-7eea-419c-a7ec-c8169fa9edbf.jpg?1641306248",
+      "produced_by": [
+        "Den of the Bugbear",
+        "Dragon Fodder",
+        "Hordeling Outburst"
+      ]
+    },
+    {
+      "name": "Human",
+      "type_line": "Token Creature — Human",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "5054bb15-ddd5-4e5e-a9fd-6bdf255f7fd3",
+      "image_uri": "https://cards.scryfall.io/normal/front/5/0/5054bb15-ddd5-4e5e-a9fd-6bdf255f7fd3.jpg?1742506325",
+      "produced_by": [
+        "Adeline, Resplendent Cathar",
+        "Castle Ardenvale",
+        "Wedding Announcement // Wedding Festivity"
+      ]
+    },
+    {
+      "name": "Illusion",
+      "type_line": "Token Creature — Illusion",
+      "oracle_text": "",
+      "power": "*",
+      "toughness": "*",
+      "colors": [
+        "U"
+      ],
+      "scryfall_id": "f6469938-5af9-4f0a-9f2e-603c833e48ba",
+      "image_uri": "https://cards.scryfall.io/normal/front/f/6/f6469938-5af9-4f0a-9f2e-603c833e48ba.jpg?1775827438",
+      "produced_by": [
+        "Skyclave Apparition"
+      ]
+    },
+    {
+      "name": "Insect",
+      "type_line": "Token Creature — Insect",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "059e9d51-c7bf-41c0-a6f0-c0bbc6d3b434",
+      "image_uri": "https://cards.scryfall.io/normal/front/0/5/059e9d51-c7bf-41c0-a6f0-c0bbc6d3b434.jpg?1717191895",
+      "produced_by": [
+        "Springheart Nantuko"
+      ]
+    },
+    {
+      "name": "Saproling",
+      "type_line": "Token Creature — Saproling",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "535d07c3-819f-4922-a732-b3641b43fccf",
+      "image_uri": "https://cards.scryfall.io/normal/front/5/3/535d07c3-819f-4922-a732-b3641b43fccf.jpg?1675456753",
+      "produced_by": [
+        "Artifact Mutation"
+      ]
+    },
+    {
+      "name": "Soldier",
+      "type_line": "Token Creature — Soldier",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "6455d903-6996-448f-9148-9068febecb00",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/4/6455d903-6996-448f-9148-9068febecb00.jpg?1742506671",
+      "produced_by": [
+        "Elspeth, Storm Slayer",
+        "Raise the Alarm"
+      ]
+    },
+    {
+      "name": "Soldier",
+      "type_line": "Token Creature — Soldier",
+      "oracle_text": "Lifelink",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "36f266dc-d850-45fd-a57a-c266c2a4051b",
+      "image_uri": "https://cards.scryfall.io/normal/front/3/6/36f266dc-d850-45fd-a57a-c266c2a4051b.jpg?1675456603",
+      "produced_by": [
+        "March of the Multitudes"
+      ]
+    },
+    {
+      "name": "Spirit",
+      "type_line": "Token Creature — Spirit",
+      "oracle_text": "Flying",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "6f5a5786-e2be-4bb0-b971-81d1d5cc8f52",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/f/6f5a5786-e2be-4bb0-b971-81d1d5cc8f52.jpg?1775827376",
+      "produced_by": [
+        "Staff of the Storyteller"
+      ]
+    },
+    {
+      "name": "Squirrel",
+      "type_line": "Token Creature — Squirrel",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "977ddd05-1aae-46fc-95ce-866710d1c5c6",
+      "image_uri": "https://cards.scryfall.io/normal/front/9/7/977ddd05-1aae-46fc-95ce-866710d1c5c6.jpg?1641306196",
+      "produced_by": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "name": "Treasure",
+      "type_line": "Token Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "93116d98-2dad-4b80-a3af-9e36e34da6d4",
+      "image_uri": "https://cards.scryfall.io/normal/front/9/3/93116d98-2dad-4b80-a3af-9e36e34da6d4.jpg?1674337958",
+      "produced_by": [
+        "Prosperous Partnership"
+      ]
+    },
+    {
+      "name": "Warrior",
+      "type_line": "Token Creature — Warrior",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "9feb9fa0-29d3-4cf7-a996-e7cb718f02b6",
+      "image_uri": "https://cards.scryfall.io/normal/front/9/f/9feb9fa0-29d3-4cf7-a996-e7cb718f02b6.jpg?1682210903",
+      "produced_by": [
+        "Secure the Wastes",
+        "Voice of Victory"
+      ]
+    }
+  ]
+}
