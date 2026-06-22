@@ -92,7 +92,8 @@ import type {
 // v53 -> v54 (DEC-347 2026-06-22): board renamed the new Naya tokens deck "Stampede Acres" -> "Field of Blades" (subtitle "Every Acre an Army"); id stays stampede-acres. Force-invalidate so the catalog/guide show the new name.
 // v54 -> v55 (DEC-347 2026-06-22): Field of Blades graduates from brewing — status removed from deck.json + index.json, entry reordered above the brewing group (board is assembling it). Now appears in Shopping. Force-invalidate so returning users see it as a production deck.
 // v55 -> v56 (DEC-347 2026-06-22): Field of Blades board-approved swap -Ivy Lane Denizen / +Mother of Runes (Ivy Lane was a redundant combo piece — Scurry Oak still goes infinite with Rosie Cotton; Mother protects the engine). Combo win-condition/synergy refs updated to Scurry Oak + Rosie Cotton; candidates + metrics + sim regenerated (global 81 -> 83).
-const STORAGE_PREFIX = 'gv1-deck-data-v56:';
+// v56 -> v57 (DEC-347 2026-06-22): Field of Blades board-approved swap -Heroic Intervention -Skyclave Apparition / +Scute Swarm +Pest Infestation (two unconditional X/landfall token producers; Pest also doubles as artifact/enchant removal). tokens[] Illusion->Pest; candidates + metrics (global 83->81, traded interaction for producers) + sim regenerated.
+const STORAGE_PREFIX = 'gv1-deck-data-v57:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
