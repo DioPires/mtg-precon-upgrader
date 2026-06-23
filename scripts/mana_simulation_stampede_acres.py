@@ -17,15 +17,15 @@ Manabase model (38 lands):
 - 1 Naya tri-land (Jungle Shrine, always tapped) + Path of Ancestry (tapped) +
   3 fetches: Fabled Passage (tapped basic), Prismatic Vista (untapped basic),
   Windswept Heath (untapped Forest/Plains).
-- 17 untapped Naya duals (shocks / fastlands / checklands / bondlands /
-  painlands / filters / battlelands) — all modeled untapped: pay-2-life and
-  on-curve conditions are effectively free in a goldfish, the same precedent as
-  the shockland treatment in the other sims.
+- 18 untapped Naya duals (shocks / fastlands / checklands / bondlands /
+  painlands / filters / battlelands / Turbulent Steppe) — all modeled untapped:
+  pay-2-life, on-curve, and opponents-8+-lands conditions are effectively free
+  in a goldfish, the same precedent as the shockland treatment in the other sims.
 - 3 commander-CI rainbow producers (Command Tower, Path of Ancestry, Exotic
   Orchard) modeled as R/G/W.
 - Utility / white lands: Castle Ardenvale (W token-land), Eiganjo Seat of the
   Empire (W; removal channel), Wooded Bastion (G/W filter).
-- 12 basics (Forest x4, Plains x7, Mountain x1).
+- 11 basics (Forest x4, Plains x6, Mountain x1).
 - Ramp: Nature's Lore fetches a Forest-typed land untapped; Sol Ring (x2 C) +
   Arcane Signet (R/G/W) rocks; dorks Birds / Fyndhorn Elves / Elvish Mystic /
   Delighted Halfling.
@@ -146,6 +146,7 @@ LAND_COLORS: dict[str, frozenset] = {
     "Spectator Seating": frozenset({"R", "W"}),
     "Karplusan Forest":  frozenset({"R", "G"}),
     "Battlefield Forge": frozenset({"R", "W"}),
+    "Turbulent Steppe":  frozenset({"R", "W"}),  # untapped once opponents have 8+ lands (~T3 in a pod)
     "Brushland":         frozenset({"G", "W"}),
     "Horizon Canopy":    frozenset({"G", "W"}),
 
