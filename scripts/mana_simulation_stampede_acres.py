@@ -22,8 +22,9 @@ Manabase model (38 lands):
   the shockland treatment in the other sims.
 - 3 commander-CI rainbow producers (Command Tower, Path of Ancestry, Exotic
   Orchard) modeled as R/G/W.
-- 4 mono/colorless utility lands (Castle Embereth, Den of the Bugbear, Castle
-  Ardenvale, Rogue's Passage).
+- Utility / white lands: Den of the Bugbear (R manland), Castle Ardenvale (W
+  token-land), Eiganjo Seat of the Empire (W; removal channel), Wooded Bastion
+  (G/W filter).
 - 13 basics (Forest x4, Plains x7, Mountain x2).
 - Ramp: Nature's Lore fetches a Forest-typed land untapped; Sol Ring (x2 C) +
   Arcane Signet (R/G/W) rocks; dorks Birds / Fyndhorn Elves / Elvish Mystic /
@@ -150,10 +151,10 @@ LAND_COLORS: dict[str, frozenset] = {
     "Exotic Orchard":  frozenset({"R", "G", "W"}),
 
     # Mono / colorless utility lands
-    "Castle Embereth": frozenset({"R"}),
+    "Eiganjo, Seat of the Empire": frozenset({"W"}),
+    "Wooded Bastion": frozenset({"G", "W"}),
     "Den of the Bugbear": frozenset({"R"}),
     "Castle Ardenvale": frozenset({"W"}),
-    "Rogue's Passage": frozenset({"C"}),
 }
 
 # Lands with a Forest basic type — fetchable by Nature's Lore.
