@@ -15,17 +15,17 @@ combo lines are out of scope here.
 
 Manabase model (38 lands):
 - 1 Naya tri-land (Jungle Shrine, always tapped) + Path of Ancestry (tapped) +
-  Fabled Passage (fetches a tapped basic).
+  3 fetches: Fabled Passage (tapped basic), Prismatic Vista (untapped basic),
+  Windswept Heath (untapped Forest/Plains).
 - 17 untapped Naya duals (shocks / fastlands / checklands / bondlands /
   painlands / filters / battlelands) — all modeled untapped: pay-2-life and
   on-curve conditions are effectively free in a goldfish, the same precedent as
   the shockland treatment in the other sims.
 - 3 commander-CI rainbow producers (Command Tower, Path of Ancestry, Exotic
   Orchard) modeled as R/G/W.
-- Utility / white lands: Den of the Bugbear (R manland), Castle Ardenvale (W
-  token-land), Eiganjo Seat of the Empire (W; removal channel), Wooded Bastion
-  (G/W filter).
-- 13 basics (Forest x4, Plains x7, Mountain x2).
+- Utility / white lands: Castle Ardenvale (W token-land), Eiganjo Seat of the
+  Empire (W; removal channel), Wooded Bastion (G/W filter).
+- 12 basics (Forest x4, Plains x7, Mountain x1).
 - Ramp: Nature's Lore fetches a Forest-typed land untapped; Sol Ring (x2 C) +
   Arcane Signet (R/G/W) rocks; dorks Birds / Fyndhorn Elves / Elvish Mystic /
   Delighted Halfling.
@@ -125,6 +125,10 @@ LAND_COLORS: dict[str, frozenset] = {
     "Jungle Shrine":  frozenset({"R", "G", "W"}),
     "Fabled Passage": frozenset({"R", "G", "W"}),  # fetches one of our basics
 
+    # Untapped fetches (sacrifice for an untapped basic)
+    "Prismatic Vista": frozenset({"R", "G", "W"}),  # any basic we run
+    "Windswept Heath": frozenset({"G", "W"}),       # Forest or Plains only
+
     # Shocks / fastlands / checklands / bondlands / painlands / filters /
     # battlelands — all modeled untapped (pay-2-life / on-curve are free in a
     # goldfish; same precedent as the shockland treatment in other sims).
@@ -153,7 +157,6 @@ LAND_COLORS: dict[str, frozenset] = {
     # Mono / colorless utility lands
     "Eiganjo, Seat of the Empire": frozenset({"W"}),
     "Wooded Bastion": frozenset({"G", "W"}),
-    "Den of the Bugbear": frozenset({"R"}),
     "Castle Ardenvale": frozenset({"W"}),
 }
 
