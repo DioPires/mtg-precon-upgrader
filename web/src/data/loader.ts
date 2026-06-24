@@ -101,7 +101,8 @@ import type {
 // v62 -> v63 (DEC-347 2026-06-23): Field of Blades board-approved swap -1 Plains / +Turbulent Steppe (RW dual, Mountain Plains types; untapped once opponents control 8+ lands ~T3 in a pod). Adds a red source back (16->17, easing Kiki's RRR) without costing white, and is fetchable by Windswept Heath. Basics 4F/6P/1M; 99/38 held. Metrics + sim regenerated.
 // v63 -> v64 (DEC-351 2026-06-24): new brewing deck "Exponential Growth" — Zimone, Infinite Analyst +1/+1 counters / Hydra go-big (2nd Zimone build, distinct from Calculated Infinity). Owned-pool constraint build: 11 strategy-specific buys, rest owned/generic.
 // v64 -> v65 (DEC-351 2026-06-24): Exponential Growth protection pass — +Repulsive Mutation +Heroic Intervention / -Kinetic Ooze -Altered Ego (protection 2->4, buys 11->12). deck.json/sim/metrics refreshed.
-const STORAGE_PREFIX = 'gv1-deck-data-v65:';
+// v65 -> v66 (DEC-351 2026-06-24): promote Exponential Growth brewing -> non-brewing (status removed, moved into production group). Now appears in Shopping/cardAtlas.
+const STORAGE_PREFIX = 'gv1-deck-data-v66:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
