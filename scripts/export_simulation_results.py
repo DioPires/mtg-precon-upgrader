@@ -38,6 +38,7 @@ import mana_simulation_superfriends_esika as sim_superfriends_esika
 import mana_simulation_aziza_mage_tower_captain as sim_boros
 import mana_simulation_zada_hedron_grinder as sim_zada
 import mana_simulation_calculated_infinity as sim_calculated_infinity
+import mana_simulation_exponential_growth as sim_exponential_growth
 import mana_simulation_slivers as sim_slivers
 import mana_simulation_stampede_acres as sim_stampede_acres
 
@@ -2468,6 +2469,19 @@ def export_calculated_infinity(metadata: dict) -> dict:
     )
 
 
+def export_exponential_growth(metadata: dict) -> dict:
+    """Export Exponential Growth (Simic Zimone +1/+1 counters / Hydra) simulation."""
+    return _export_colored(
+        sim_module=sim_exponential_growth,
+        deck_id="exponential-growth",
+        deck_name="Exponential Growth",
+        commander_name="Zimone, Infinite Analyst",
+        commander_cmc=3,
+        colors=["U", "G"],
+        metadata=metadata,
+    )
+
+
 def export_slivers(metadata: dict) -> dict:
     """Export Hivebound Cascade (5C Slivers — The First Sliver) simulation."""
     return _export_colored(
@@ -2561,6 +2575,7 @@ DECKS = [
     ("aziza-mage-tower-captain", "Mage Tower Brigade", export_boros),
     ("zada-hedron-grinder", "Hedron Storm", export_zada),
     ("calculated-infinity", "Calculated Infinity", export_calculated_infinity),
+    ("exponential-growth", "Exponential Growth", export_exponential_growth),
     ("slivers", "Hivebound Cascade", export_slivers),
     ("stampede-acres", "Field of Blades", export_stampede_acres),
 ]
