@@ -99,7 +99,8 @@ import type {
 // v60 -> v61 (DEC-347 2026-06-23): Field of Blades nonbasic color fix -Castle Embereth -Rogue's Passage / +Eiganjo (W + removal channel) +Wooded Bastion (G/W filter dual). Shifts the red-skewed nonbasics toward white (nonbasic W17/R17 -> W19/R16; total W24/R19 -> W26/R18) to match the W52/R18/G30 pip demand. Metrics + sim regenerated.
 // v61 -> v62 (DEC-347 2026-06-23): Field of Blades board-approved swaps -Mentor of the Meek -Bennie Bracks / +Enduring Innocence +Sylvan Library (Enduring = free power<=2 draw + lifelink + resilient enchantment recursion; Sylvan = premium top-deck selection) AND lands -Den of the Bugbear -1 Mountain / +Windswept Heath +Prismatic Vista (two fetches: landfall double-dips, thinning, Sylvan shuffle synergy). 99/38 lands held; GCs stay 6. Metrics + sim regenerated.
 // v62 -> v63 (DEC-347 2026-06-23): Field of Blades board-approved swap -1 Plains / +Turbulent Steppe (RW dual, Mountain Plains types; untapped once opponents control 8+ lands ~T3 in a pod). Adds a red source back (16->17, easing Kiki's RRR) without costing white, and is fetchable by Windswept Heath. Basics 4F/6P/1M; 99/38 held. Metrics + sim regenerated.
-const STORAGE_PREFIX = 'gv1-deck-data-v63:';
+// v63 -> v64 (DEC-351 2026-06-24): new brewing deck "Exponential Growth" — Zimone, Infinite Analyst +1/+1 counters / Hydra go-big (2nd Zimone build, distinct from Calculated Infinity). Owned-pool constraint build: 11 strategy-specific buys, rest owned/generic.
+const STORAGE_PREFIX = 'gv1-deck-data-v64:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
