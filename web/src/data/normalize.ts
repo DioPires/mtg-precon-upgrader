@@ -181,7 +181,14 @@ function transformWincons(deck: RawDeck, ctx: DeckCtx): DeckWincon[] {
 }
 
 function transformEngine(deck: RawDeck, ctx: DeckCtx): DeckEngineSection[] {
-  return (deck.categories || [])
+  // Prefer the legacy top-level `categories`; fall back to the canonical
+  // `guideContent.deckCategories` (the documented field — several decks, incl.
+  // brewing builds, only populate that one). See DEC-351.
+  const cats =
+    deck.categories && deck.categories.length
+      ? deck.categories
+      : deck.guideContent?.deckCategories || [];
+  return cats
     .map((cat: RawCategory): DeckEngineSection => ({
       title: cat.name,
       count: (cat.cards || []).length,

@@ -170,6 +170,20 @@ describe('normalizeDeck', () => {
     expect(out.engine[1].isGameChangers).toBe(false);
   });
 
+  it('falls back to guideContent.deckCategories when top-level categories is absent (DEC-351)', () => {
+    const bundle = makeBundle();
+    delete bundle.deck.categories;
+    bundle.deck.guideContent = {
+      strategyOverview: 'Counters.',
+      deckCategories: [
+        { name: 'Counter Doublers', cards: ['Mana Vault'] },
+        { name: 'Empty', cards: [] },
+      ],
+    };
+    const out = normalizeDeck(bundle, 1);
+    expect(out.engine.map((e) => e.title)).toEqual(['Counter Doublers']);
+  });
+
   it('truncates wincon card lists to 3', () => {
     const out = normalizeDeck(makeBundle(), 1);
     expect(out.wincons).toHaveLength(1);
