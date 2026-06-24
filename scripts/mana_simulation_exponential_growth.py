@@ -92,7 +92,7 @@ U_PRODUCING_LANDS = {
     "Yavimaya Coast", "Hinterland Harbor", "Dreamroot Cascade",
     "Otawara, Soaring City", "Exotic Orchard", "Simic Growth Chamber",
     "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet",
-    "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove",
+    "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
 }
 
 # G-producing lands in deck:
@@ -101,7 +101,7 @@ G_PRODUCING_LANDS = {
     "Yavimaya Coast", "Hinterland Harbor", "Dreamroot Cascade",
     "Exotic Orchard", "Simic Growth Chamber",
     "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet",
-    "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove",
+    "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
 }
 
 # Lands that produce only {C} when tapped:

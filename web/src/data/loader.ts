@@ -102,7 +102,8 @@ import type {
 // v63 -> v64 (DEC-351 2026-06-24): new brewing deck "Exponential Growth" — Zimone, Infinite Analyst +1/+1 counters / Hydra go-big (2nd Zimone build, distinct from Calculated Infinity). Owned-pool constraint build: 11 strategy-specific buys, rest owned/generic.
 // v64 -> v65 (DEC-351 2026-06-24): Exponential Growth protection pass — +Repulsive Mutation +Heroic Intervention / -Kinetic Ooze -Altered Ego (protection 2->4, buys 11->12). deck.json/sim/metrics refreshed.
 // v65 -> v66 (DEC-351 2026-06-24): promote Exponential Growth brewing -> non-brewing (status removed, moved into production group). Now appears in Shopping/cardAtlas.
-const STORAGE_PREFIX = 'gv1-deck-data-v66:';
+// v66 -> v67 (DEC-351 2026-06-24): Exponential Growth tuning — +Strength of the Tajuru +Wan Shi Tong +Valgavoth's Onslaught +Fabled Passage / -Open the Way -Nature's Rhythm -Biomass Mutation -1 Forest. 15 buys (== original ceiling); X-density held at 22; sim/metrics refreshed.
+const STORAGE_PREFIX = 'gv1-deck-data-v67:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
