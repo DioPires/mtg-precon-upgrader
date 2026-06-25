@@ -80,7 +80,6 @@ DORK_DEFS = {
 CREATURE_RAMP = {
     "Three Visits":  {"cmc": 2, "pips": {"generic": 1, "U": 0, "G": 1}, "fetch": "forest", "tapped": False},
     "Nature's Lore": {"cmc": 2, "pips": {"generic": 1, "U": 0, "G": 1}, "fetch": "forest", "tapped": False},
-    "Cultivate":     {"cmc": 3, "pips": {"generic": 2, "U": 0, "G": 1}, "fetch": "forest", "tapped": True},
     "Kodama's Reach":{"cmc": 3, "pips": {"generic": 2, "U": 0, "G": 1}, "fetch": "forest", "tapped": True},
 }
 

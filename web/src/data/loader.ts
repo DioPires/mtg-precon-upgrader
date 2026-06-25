@@ -107,7 +107,8 @@ import type {
 // v68 -> v69 (DEC-351 2026-06-25): Exponential Growth green-mana fix — basics 9F/6I -> 12F/4I, -Arch of Orazca / +1 Forest (Archidekt flagged 70% green demand vs 47% green production). Green-screw T3 ~15% (was higher); 37 lands held, 0 buys.
 // v69 -> v70 (DEC-351 2026-06-25): Exponential Growth -Reliquary Tower / +1 Forest (12F->13F). Colorless->green swap: green-screw 15%->13.5% T3 with blue unchanged (~29%); manaReliability 71->71.5, sim 81.3 (A). Strict mana improvement, 0 buys.
 // v70 -> v71 (DEC-351 2026-06-25): Exponential Growth -Rapid Hybridization / +Repeal (flexible X-spell cantrip over redundant creature-removal). Kept Beast Within as catch-all; declined Syncopate (counter-saturation). X-density 21->22; sim 81.3 (A); 17 strategic buys.
-const STORAGE_PREFIX = 'gv1-deck-data-v71:';
+// v71 -> v72 (DEC-356 2026-06-25): Exponential Growth +Terrasymbiosis / -Cultivate. Counter->card draw engine (wrath-resilient) over redundant ramp (Kodama's Reach retains the identical tapped-fetch effect); ramp was the only over-target role. global 71; sim + candidate pool refreshed.
+const STORAGE_PREFIX = 'gv1-deck-data-v72:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

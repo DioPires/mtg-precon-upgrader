@@ -34,6 +34,11 @@
       "type": "commanderspellbook",
       "name": "Commander Spellbook find-my-combos",
       "detail": "Full 99 scanned: 0 included combos (kept distinct from the combo-oriented Calculated Infinity build)."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Card assessment (DEC-356)",
+      "detail": "Board-approved swap: +Terrasymbiosis / -Cultivate. Terrasymbiosis converts the deck's bulk counter placements into a repeatable, wrath-resilient draw engine; Cultivate cut as redundant ramp (Kodama's Reach retains the identical tapped-fetch + land-to-hand effect), ramp was the only over-target role."
     }
   ],
   "guideContent": {
@@ -111,7 +116,8 @@
           "Mystic Remora",
           "Tatyova, Benthic Druid",
           "Hydroid Krasis",
-          "The Great Henge"
+          "The Great Henge",
+          "Terrasymbiosis"
         ]
       },
       {
@@ -124,7 +130,6 @@
           "Birds of Paradise",
           "Llanowar Elves",
           "Paradise Druid",
-          "Cultivate",
           "Kodama's Reach",
           "Nature's Lore",
           "Three Visits"
@@ -226,6 +231,26 @@
         {
           "type": "ai-inferred",
           "name": "Wincon analysis (DEC-351)"
+        }
+      ]
+    },
+    {
+      "title": "Terrasymbiosis: bulk counters into cards",
+      "cards": [
+        "Terrasymbiosis",
+        "Doubling Season",
+        "Primordial Hydra",
+        "Forgotten Ancient"
+      ],
+      "description": "Terrasymbiosis draws cards equal to the +1/+1 counters placed in a single event (once per turn). A Hydra entering with X counters — doubled by Doubling Season/Branching Evolution — or a Forgotten Ancient counter dump turns one trigger into a 5-15 card refill. As an enchantment it survives board wipes, refueling the engine when the creatures don't.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Card text verification"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card assessment (DEC-356)"
         }
       ]
     },
@@ -617,9 +642,10 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Cultivate",
-      "type": "Sorcery",
-      "primary_role": "ramp"
+      "name": "Terrasymbiosis",
+      "type": "Enchantment",
+      "primary_role": "card-draw",
+      "secondary_role": "payoff"
     },
     {
       "name": "Kodama's Reach",
