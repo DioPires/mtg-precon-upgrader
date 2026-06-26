@@ -109,7 +109,8 @@ import type {
 // v70 -> v71 (DEC-351 2026-06-25): Exponential Growth -Rapid Hybridization / +Repeal (flexible X-spell cantrip over redundant creature-removal). Kept Beast Within as catch-all; declined Syncopate (counter-saturation). X-density 21->22; sim 81.3 (A); 17 strategic buys.
 // v71 -> v72 (DEC-356 2026-06-25): Exponential Growth +Terrasymbiosis / -Cultivate. Counter->card draw engine (wrath-resilient) over redundant ramp (Kodama's Reach retains the identical tapped-fetch effect); ramp was the only over-target role. global 71; sim + candidate pool refreshed.
 // v72 -> v73 (DEC-356 2026-06-25): Exponential Growth +Fierce Guardianship / -An Offer You Can't Refuse. Free noncreature counter with Zimone out (the deck's normal state); drops An Offer's 2-Treasure donation. gameChangers 1->2 (B4-legal). global 71->72; counter count unchanged.
-const STORAGE_PREFIX = 'gv1-deck-data-v73:';
+// v73 -> v74 (DEC-358 2026-06-26): Field of Blades -Kiki-Jiki/-Zealous Conscripts/-Dictate of Heliod +Cori-Steel Cutter/+Frontline Rush/+Aligned Heart. Cut the backup combo + lowest-synergy anthem for on-theme token engines. Inevitability intact (Scurry+Rosie, Halo Fountain, Craterhoof). gameChangers unchanged at 6; global 84; strategy-ceiling ok.
+const STORAGE_PREFIX = 'gv1-deck-data-v74:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

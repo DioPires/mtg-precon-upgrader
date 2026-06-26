@@ -21,10 +21,14 @@
     {
       "type": "ai-inferred",
       "name": "DEC-347 — board-approved Naya tokens build (6 review rounds + owned-swap pass)"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-358 — board-approved −3/+3: cut Kiki-Jiki + Zealous Conscripts + Dictate of Heliod; add Cori-Steel Cutter + Frontline Rush + Aligned Heart"
     }
   ],
   "guideContent": {
-    "strategyOverview": "Baylen, the Haymaker is a Naya (RGW) go-wide tokens deck. Baylen doesn't make tokens himself — he consumes a wide board, tapping untapped tokens to ramp into any color, draw cards, and grow with trample. The 99 flood the board with unconditional and instant-speed token makers, multiply them with doublers, and convert the swarm into damage through ETB pingers, anthems, and overrun. Two compact combos (Scurry Oak + Rosie Cotton, Kiki-Jiki + Zealous Conscripts) provide infinite-token inevitability that turns lethal alongside Impact Tremors or Purphoros.",
+    "strategyOverview": "Baylen, the Haymaker is a Naya (RGW) go-wide tokens deck. Baylen doesn't make tokens himself — he consumes a wide board, tapping untapped tokens to ramp into any color, draw cards, and grow with trample. The 99 flood the board with unconditional and instant-speed token makers, multiply them with doublers, and convert the swarm into damage through ETB pingers, anthems, and overrun. A compact combo (Scurry Oak + Rosie Cotton) provides infinite-token inevitability that turns lethal alongside Impact Tremors or Purphoros, while repeatable Flurry engines (Cori-Steel Cutter, Aligned Heart) and instant-speed makers keep the board refilling.",
     "deckCategories": [
       {
         "name": "Token Producers",
@@ -44,7 +48,10 @@
           "Anim Pakal, Thousandth Moon",
           "Scute Swarm",
           "Pest Infestation",
-          "Carrot Cake"
+          "Carrot Cake",
+          "Cori-Steel Cutter",
+          "Aligned Heart",
+          "Frontline Rush"
         ]
       },
       {
@@ -67,8 +74,7 @@
           "Purphoros, God of the Forge",
           "Rosie Cotton of South Lane",
           "Warleader's Call",
-          "Wedding Announcement // Wedding Festivity",
-          "Dictate of Heliod"
+          "Wedding Announcement // Wedding Festivity"
         ]
       },
       {
@@ -89,13 +95,11 @@
       },
       {
         "name": "Overrun & Combo Finishes",
-        "description": "Close the game: a static double-strike anthem, a one-shot trample lord, and two infinite-token combos that turn lethal with any ETB pinger.",
+        "description": "Close the game: a one-shot trample lord and an infinite-token combo (Scurry Oak + Rosie Cotton) that turns lethal with any ETB pinger.",
         "cards": [
           "Craterhoof Behemoth",
           "Scurry Oak",
           "Rosie Cotton of South Lane",
-          "Kiki-Jiki, Mirror Breaker",
-          "Zealous Conscripts",
           "Natural Order"
         ]
       },
@@ -138,16 +142,6 @@
       "description": "Whenever you create a token, Rosie Cotton puts a +1/+1 counter on Scurry Oak, which makes a 1/1 green Squirrel — itself a token — looping infinitely. With Impact Tremors or Purphoros on board, each token deals damage: infinite damage."
     },
     {
-      "name": "Infinite tokens — Kiki line",
-      "cards": [
-        "Kiki-Jiki, Mirror Breaker",
-        "Zealous Conscripts",
-        "Impact Tremors",
-        "Purphoros, God of the Forge"
-      ],
-      "description": "Kiki-Jiki copies Zealous Conscripts; the copy's ETB untaps Kiki to repeat — infinite hasty tokens and ETBs, lethal with any ETB pinger or a swing."
-    },
-    {
       "name": "Halo Fountain alternate win",
       "cards": [
         "Halo Fountain",
@@ -187,16 +181,17 @@
       ]
     },
     {
-      "title": "Kiki-Jiki + Zealous Conscripts = infinite tokens",
+      "title": "Flurry Monks feed the ETB-pinger + doubler engine",
       "cards": [
-        "Kiki-Jiki, Mirror Breaker",
-        "Zealous Conscripts"
+        "Cori-Steel Cutter",
+        "Aligned Heart",
+        "Impact Tremors"
       ],
-      "description": "Kiki copies Conscripts; the token's ETB untaps Kiki to copy again — infinite hasty tokens and ETB triggers.",
+      "description": "Each Flurry trigger makes a 1/1 Monk; every Monk is a token (multiplied by Anointed Procession/Parallel Lives/Mondrak) and a creature ETB that pings with Impact Tremors/Purphoros and grows Scurry Oak via Rosie Cotton. Cori-Steel Cutter's equip hands a single Monk haste + trample to push damage through.",
       "sources": [
         {
-          "type": "commanderspellbook",
-          "name": "Commander Spellbook combo"
+          "type": "ai-inferred",
+          "name": "DEC-358 — board-approved token-engine swap"
         }
       ]
     },
@@ -447,9 +442,10 @@
       "primary_role": "payoff"
     },
     {
-      "name": "Dictate of Heliod",
+      "name": "Aligned Heart",
       "type": "Enchantment",
-      "primary_role": "payoff"
+      "primary_role": "engine",
+      "secondary_role": "payoff"
     },
     {
       "name": "Warleader's Call",
@@ -485,16 +481,15 @@
       "primary_role": "protection"
     },
     {
-      "name": "Kiki-Jiki, Mirror Breaker",
-      "type": "Legendary Creature — Goblin Shaman",
-      "primary_role": "wincon",
-      "wincon_style": "combo"
+      "name": "Cori-Steel Cutter",
+      "type": "Artifact — Equipment",
+      "primary_role": "engine",
+      "secondary_role": "threat"
     },
     {
-      "name": "Zealous Conscripts",
-      "type": "Creature — Human Warrior",
-      "primary_role": "wincon",
-      "wincon_style": "combo"
+      "name": "Frontline Rush",
+      "type": "Instant",
+      "primary_role": "threat"
     },
     {
       "name": "Craterhoof Behemoth",
@@ -823,6 +818,7 @@
       "image_uri": "https://cards.scryfall.io/normal/front/7/0/70f8a1de-cd4c-4afa-bf03-0245d375d42e.jpg?1732803363",
       "produced_by": [
         "Dragon Fodder",
+        "Frontline Rush",
         "Hordeling Outburst"
       ]
     },
@@ -857,6 +853,22 @@
       "produced_by": [
         "Scute Swarm",
         "Springheart Nantuko"
+      ]
+    },
+    {
+      "name": "Monk",
+      "type_line": "Token Creature — Monk",
+      "oracle_text": "Prowess",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "633d2d10-def7-426f-8496-ed6b45684299",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/3/633d2d10-def7-426f-8496-ed6b45684299.jpg?1742421122",
+      "produced_by": [
+        "Aligned Heart",
+        "Cori-Steel Cutter"
       ]
     },
     {
