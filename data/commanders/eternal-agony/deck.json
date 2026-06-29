@@ -53,7 +53,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Rakdos group slug with a true Bracket 4 combo gear. Valgavoth, Harrower of Souls commands the deck: a 4-mana Ward+flying engine that puts a +1/+1 counter on itself and draws a card the first time each opponent loses life on their own turn. In a shell wired to make every opponent bleed (Eidolon of the Great Revel, Pyrostatic Pillar, Harsh Mentor, Mogis, Underworld Dreams, Roiling Vortex), Valgavoth refuels ~3 cards per turn cycle while growing into an evasive clock that survives spot removal. The Lord of Pain backs it up from the 99 — when drawn or tutored it locks off opponent lifegain and deals each turn's first-spell mana value to a chosen player. Damage multipliers like Fiery Emancipation, Solphim, Twinflame Tyrant, and Bloodletter of Aclazotz turn those pings into lethal threats. Four tutors (Demonic Tutor, Vampiric Tutor, Grim Tutor, Diabolic Intent) assemble the Hidetsugu + damage-doubler combo on turn 5-6, and also reliably fetch The Lord of Pain when the lifegain lock is needed. A cheap draw-punisher cluster (Kederekt Parasite, Razorkin Needlehead, Underworld Dreams, Fate Unraveler, Sheoldred) taxes every opponent draw for asymmetric life loss that also feeds Valgavoth. Reanimate / Animate Dead recur a high-value creature from a naturally-filled graveyard. Mana Vault and Sol Ring provide the explosive turns needed to land a doubler and Hidetsugu in the same turn."
+    "strategyOverview": "Rakdos group slug with a true Bracket 4 combo gear. Valgavoth, Harrower of Souls commands the deck: a 4-mana Ward+flying engine that puts a +1/+1 counter on itself and draws a card the first time each opponent loses life on their own turn. In a shell wired to make every opponent bleed (Eidolon of the Great Revel, Pyrostatic Pillar, Harsh Mentor, Mogis, Underworld Dreams, Roiling Vortex), Valgavoth refuels ~3 cards per turn cycle while growing into an evasive clock that survives spot removal. The Lord of Pain backs it up from the 99 — when drawn or tutored it locks off opponent lifegain and deals each turn's first-spell mana value to a chosen player. Damage multipliers like Fiery Emancipation, Solphim, Twinflame Tyrant, and Bloodletter of Aclazotz turn those pings into lethal threats. Five tutors (Demonic Tutor, Vampiric Tutor, Grim Tutor, Diabolic Intent, Beseech the Mirror) assemble the Hidetsugu + damage-doubler combo on turn 5-6, and also reliably fetch The Lord of Pain when the lifegain lock is needed. A cheap draw-punisher cluster (Kederekt Parasite, Razorkin Needlehead, Underworld Dreams, Fate Unraveler, Sheoldred) taxes every opponent draw for asymmetric life loss that also feeds Valgavoth. Reanimate / Animate Dead recur a high-value creature from a naturally-filled graveyard. Mana Vault and Sol Ring provide the explosive turns needed to land a doubler and Hidetsugu in the same turn."
   },
   "categories": [
     {
@@ -62,7 +62,8 @@
         "Demonic Tutor",
         "Vampiric Tutor",
         "Grim Tutor",
-        "Diabolic Intent"
+        "Diabolic Intent",
+        "Beseech the Mirror"
       ]
     },
     {
@@ -84,8 +85,7 @@
         "Sheoldred, the Apocalypse",
         "Painful Quandary",
         "Underworld Dreams",
-        "Repercussion",
-        "Descent into Avernus"
+        "Repercussion"
       ]
     },
     {
@@ -588,9 +588,10 @@
         "Vampiric Tutor",
         "Demonic Tutor",
         "Grim Tutor",
-        "Diabolic Intent"
+        "Diabolic Intent",
+        "Beseech the Mirror"
       ],
-      "description": "Four tutors at different speeds and turns. Sequence: end of opponent's T4 cast Vampiric Tutor for Hidetsugu; T5 main draw Hidetsugu, cast Demonic Tutor for damage doubler, cast Hidetsugu = lethal. With Mana Vault + Sol Ring online, T5 combo kill becomes consistent. Tutor density 1 -> 4 is the primary combo-velocity lever (Entomb cut in DEC-362 to make room for proactive group-slug damage).",
+      "description": "Five tutors at different speeds and turns. Sequence: end of opponent's T4 cast Vampiric Tutor for Hidetsugu; T5 main draw Hidetsugu, cast Demonic Tutor for damage doubler, cast Hidetsugu = lethal. Beseech the Mirror can both find and free-cast a doubler/payoff (MV <= 4) when bargained. With Mana Vault + Sol Ring online, T5 combo kill becomes consistent.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -855,21 +856,15 @@
       ]
     },
     {
-      "name": "Descent into Avernus",
-      "price": "$3-5",
+      "name": "Beseech the Mirror",
+      "price": "$15-20",
       "isGameChanger": false,
-      "reason": "Escalating damage + treasure generation; bigger spells trigger bigger Lord of Pain damage",
+      "reason": "{1}{B}{B}{B} tutor that can also CAST the found card for free if you bargain (sac an artifact/enchantment/token) and the card's MV is 4 or less. Fifth tutor; finds a doubler, a payoff, or The Lord of Pain, and can deploy a cheap one same-turn. Restores the tutor density trimmed when Entomb was cut.",
       "sources": [
         {
-          "type": "youtube",
-          "name": "Commander Mechanic - Endless Punishment Upgrade",
-          "url": "https://www.youtube.com/watch?v=MShurd1GYuU",
-          "detail": "Best single card for Lord of Pain"
-        },
-        {
-          "type": "edhrec",
-          "name": "EDHREC - The Lord of Pain",
-          "url": "https://edhrec.com/commanders/the-lord-of-pain"
+          "type": "ai-inferred",
+          "name": "DEC-362 board-approved swap",
+          "detail": "Replaces Descent into Avernus (symmetric: ramped opponents + self-damage, didn't trigger Valgavoth). Tutor density 4 -> 5."
         }
       ]
     },
@@ -1745,9 +1740,12 @@
       "primary_role": "engine"
     },
     {
-      "name": "Descent into Avernus",
-      "type": "Enchantment",
-      "primary_role": "engine"
+      "name": "Beseech the Mirror",
+      "type": "Sorcery",
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "any"
+      ]
     },
     {
       "name": "Heartless Hidetsugu",
@@ -1982,19 +1980,6 @@
       "image_uri": "https://cards.scryfall.io/normal/front/6/9/6943f966-fd21-427c-a13f-44727edcaa4b.jpg?1699974497",
       "produced_by": [
         "Orcish Bowmasters"
-      ]
-    },
-    {
-      "name": "Treasure",
-      "type_line": "Token Artifact — Treasure",
-      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
-      "power": null,
-      "toughness": null,
-      "colors": [],
-      "scryfall_id": "770b988d-4f31-4746-8c23-4ed8d9a6b393",
-      "image_uri": "https://cards.scryfall.io/normal/front/7/7/770b988d-4f31-4746-8c23-4ed8d9a6b393.jpg?1675455871",
-      "produced_by": [
-        "Descent into Avernus"
       ]
     }
   ],
