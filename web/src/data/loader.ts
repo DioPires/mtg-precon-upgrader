@@ -111,7 +111,8 @@ import type {
 // v72 -> v73 (DEC-356 2026-06-25): Exponential Growth +Fierce Guardianship / -An Offer You Can't Refuse. Free noncreature counter with Zimone out (the deck's normal state); drops An Offer's 2-Treasure donation. gameChangers 1->2 (B4-legal). global 71->72; counter count unchanged.
 // v73 -> v74 (DEC-358 2026-06-26): Field of Blades -Kiki-Jiki/-Zealous Conscripts/-Dictate of Heliod +Cori-Steel Cutter/+Frontline Rush/+Aligned Heart. Cut the backup combo + lowest-synergy anthem for on-theme token engines. Inevitability intact (Scurry+Rosie, Halo Fountain, Craterhoof). gameChangers unchanged at 6; global 84; strategy-ceiling ok.
 // v74 -> v75 (DEC-359 2026-06-29): Exponential Growth +Turbulent Wilderness / -1 Forest (13->12). Fetchable G/U dual (Forest Island types) untapped from ~turn 3 in a pod; manabase polish, land count + colors unchanged.
-const STORAGE_PREFIX = 'gv1-deck-data-v75:';
+// v75 -> v76 (DEC-359 2026-06-29): Exponential Growth +Mind into Matter / -Stroke of Genius. GU X-sorcery (draw X + free permanent) — Zimone trigger + copied by Unbound Flourishing; board cut Stroke over Pull after a wash-level economy comparison.
+const STORAGE_PREFIX = 'gv1-deck-data-v76:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
