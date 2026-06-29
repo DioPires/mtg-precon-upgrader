@@ -72,7 +72,6 @@
         "Wound Reflection",
         "Fiery Emancipation",
         "Solphim, Mayhem Dominus",
-        "Dictate of the Twin Gods",
         "Twinflame Tyrant",
         "Bloodletter of Aclazotz"
       ]
@@ -141,7 +140,6 @@
         "Bolas's Citadel",
         "Jeska's Will",
         "Crypt Ghast",
-        "Treasonous Ogre",
         "Roiling Vortex",
         "Dark Ritual"
       ]
@@ -175,7 +173,7 @@
         "Heartless Hidetsugu",
         "Solphim, Mayhem Dominus"
       ],
-      "description": "Activate Heartless Hidetsugu to deal half each player's life total as damage. With any damage doubler (Solphim, Dictate of the Twin Gods, or Fiery Emancipation), the damage equals or exceeds their life total. Lethal to all opponents at even life totals. Stay at odd life to survive. Twinflame Tyrant doubles only opponent damage for a safer kill. Sim caveat: Heartless Hidetsugu's tap activation has summoning sickness, so the goldfish sim may over-credit comboLethal by one turn when both pieces are cast the same turn.",
+      "description": "Activate Heartless Hidetsugu to deal half each player's life total as damage. With any damage doubler (Solphim, Twinflame Tyrant, or Fiery Emancipation), the damage equals or exceeds their life total. Lethal to all opponents at even life totals. Stay at odd life to survive. Twinflame Tyrant doubles only opponent damage for a safer kill. Sim caveat: Heartless Hidetsugu's tap activation has summoning sickness, so the goldfish sim may over-credit comboLethal by one turn when both pieces are cast the same turn.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -354,20 +352,6 @@
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Replacement effect stacking with end-step doublers"
-        }
-      ]
-    },
-    {
-      "title": "Dictate of the Twin Gods (Flash Doubler)",
-      "cards": [
-        "Dictate of the Twin Gods",
-        "The Lord of Pain"
-      ],
-      "description": "Deploy at instant speed before opponents' turns; surprise doubled Lord triggers all around the table",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Claude analysis"
         }
       ]
     },
@@ -758,20 +742,15 @@
       ]
     },
     {
-      "name": "Dictate of the Twin Gods",
-      "price": "$3-5",
+      "name": "Lightning Bolt",
+      "price": "$1-3",
       "isGameChanger": false,
-      "reason": "FLASH damage doubler; deploy at instant speed before opponents' turns",
+      "reason": "{R} instant, 3 damage to any target. Triple-duty: cheap early creature removal, instant-speed answer the deck was light on, and asymmetric reach to a face (6 with Solphim, 9 with Fiery Emancipation, 6 to an opponent with Twinflame Tyrant). The best one-mana flex slot in the colors.",
       "sources": [
         {
-          "type": "edhrec",
-          "name": "EDHREC - The Lord of Pain",
-          "url": "https://edhrec.com/commanders/the-lord-of-pain"
-        },
-        {
           "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Flash enables surprise damage multiplication"
+          "name": "DEC-362 board-approved swap",
+          "detail": "Replaces Dictate of the Twin Gods (symmetric 5-MV doubler, redundant with three one-sided doublers). Adds cheap instant interaction + on-plan reach."
         }
       ]
     },
@@ -993,20 +972,15 @@
       ]
     },
     {
-      "name": "Treasonous Ogre",
-      "price": "$3-5",
+      "name": "Terminate",
+      "price": "$1-3",
       "isGameChanger": false,
-      "reason": "Pay 3 life: add {R}. On-theme fast mana replacing banned Dockside — life payment is a feature, not a bug",
+      "reason": "{B}{R} instant: destroy target creature, no regeneration. Clean unconditional spot removal at two mana — answers any threat (commanders, hexproof-less bombs) at instant speed. Deepens the early interaction the deck was light on.",
       "sources": [
         {
-          "type": "edhrec",
-          "name": "EDHREC - The Lord of Pain",
-          "url": "https://edhrec.com/commanders/the-lord-of-pain"
-        },
-        {
           "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Dockside Extortionist replacement; life payment synergizes with group slug theme"
+          "name": "DEC-362 board-approved swap",
+          "detail": "Replaces Treasonous Ogre (ramp over-indexed 12 vs target 10). Trades a redundant mana source for instant-speed removal."
         }
       ]
     },
@@ -1709,9 +1683,9 @@
       "primary_role": "engine"
     },
     {
-      "name": "Dictate of the Twin Gods",
-      "type": "Enchantment",
-      "primary_role": "engine"
+      "name": "Lightning Bolt",
+      "type": "Instant",
+      "primary_role": "removal-spot"
     },
     {
       "name": "Sheoldred, the Apocalypse",
@@ -1795,9 +1769,9 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Treasonous Ogre",
-      "type": "Creature",
-      "primary_role": "ramp"
+      "name": "Terminate",
+      "type": "Instant",
+      "primary_role": "removal-spot"
     },
     {
       "name": "Bloodletter of Aclazotz",
