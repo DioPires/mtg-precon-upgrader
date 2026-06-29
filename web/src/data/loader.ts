@@ -110,7 +110,8 @@ import type {
 // v71 -> v72 (DEC-356 2026-06-25): Exponential Growth +Terrasymbiosis / -Cultivate. Counter->card draw engine (wrath-resilient) over redundant ramp (Kodama's Reach retains the identical tapped-fetch effect); ramp was the only over-target role. global 71; sim + candidate pool refreshed.
 // v72 -> v73 (DEC-356 2026-06-25): Exponential Growth +Fierce Guardianship / -An Offer You Can't Refuse. Free noncreature counter with Zimone out (the deck's normal state); drops An Offer's 2-Treasure donation. gameChangers 1->2 (B4-legal). global 71->72; counter count unchanged.
 // v73 -> v74 (DEC-358 2026-06-26): Field of Blades -Kiki-Jiki/-Zealous Conscripts/-Dictate of Heliod +Cori-Steel Cutter/+Frontline Rush/+Aligned Heart. Cut the backup combo + lowest-synergy anthem for on-theme token engines. Inevitability intact (Scurry+Rosie, Halo Fountain, Craterhoof). gameChangers unchanged at 6; global 84; strategy-ceiling ok.
-const STORAGE_PREFIX = 'gv1-deck-data-v74:';
+// v74 -> v75 (DEC-359 2026-06-29): Exponential Growth +Turbulent Wilderness / -1 Forest (13->12). Fetchable G/U dual (Forest Island types) untapped from ~turn 3 in a pod; manabase polish, land count + colors unchanged.
+const STORAGE_PREFIX = 'gv1-deck-data-v75:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

@@ -90,7 +90,7 @@ U_PRODUCING_LANDS = {
     "Island", "Breeding Pool", "Command Tower", "Botanical Sanctum",
     "Yavimaya Coast", "Hinterland Harbor", "Dreamroot Cascade",
     "Otawara, Soaring City", "Exotic Orchard", "Simic Growth Chamber",
-    "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet",
+    "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet", "Turbulent Wilderness",
     "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
 }
 
@@ -99,7 +99,7 @@ G_PRODUCING_LANDS = {
     "Forest", "Breeding Pool", "Command Tower", "Botanical Sanctum",
     "Yavimaya Coast", "Hinterland Harbor", "Dreamroot Cascade",
     "Exotic Orchard", "Simic Growth Chamber",
-    "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet",
+    "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet", "Turbulent Wilderness",
     "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
 }
 
@@ -110,9 +110,9 @@ C_ONLY_LANDS = {
 }
 
 # Lands with Forest subtype (for ramp-fetch targeting):
-FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet"}
+FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet", "Turbulent Wilderness"}
 # Lands with Island subtype:
-ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet"}
+ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet", "Turbulent Wilderness"}
 
 BASIC_FORESTS = {"Forest"}
 BASIC_ISLANDS = {"Island"}
@@ -176,6 +176,12 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     if name in ("Simic Growth Chamber", "Sodden Verdure", "Rain-Slicked Copse",
                 "Tangled Islet", "Temple of Mystery"):
         # Karoo bounce / tapped duals / scry temple — always enter tapped.
+        return True
+
+    if name == "Turbulent Wilderness":
+        # Enters tapped unless opponents control 8+ lands. Single-player goldfish
+        # has no opponents, so it always enters tapped here (conservative model;
+        # in a real 4-player pod the threshold is met by ~turn 3).
         return True
 
     # Breeding Pool, Flooded Grove, Yavimaya Coast, Command Tower, Exotic Orchard,
@@ -288,6 +294,7 @@ def compute_land_mana(name: str) -> tuple[int, int, int, int]:
     if name in {
         "Breeding Pool", "Command Tower", "Botanical Sanctum",
         "Yavimaya Coast", "Hinterland Harbor", "Waterlogged Grove",
+        "Turbulent Wilderness",
     }:
         return (0, 0, 0, 1)
 
