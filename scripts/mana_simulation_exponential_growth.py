@@ -90,7 +90,7 @@ U_PRODUCING_LANDS = {
     "Island", "Breeding Pool", "Command Tower", "Botanical Sanctum",
     "Yavimaya Coast", "Hinterland Harbor", "Dreamroot Cascade",
     "Otawara, Soaring City", "Exotic Orchard", "Simic Growth Chamber",
-    "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet", "Turbulent Wilderness",
+    "Sodden Verdure", "Rain-Slicked Copse", "Overflowing Basin", "Turbulent Wilderness",
     "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
 }
 
@@ -99,7 +99,7 @@ G_PRODUCING_LANDS = {
     "Forest", "Breeding Pool", "Command Tower", "Botanical Sanctum",
     "Yavimaya Coast", "Hinterland Harbor", "Dreamroot Cascade",
     "Exotic Orchard", "Simic Growth Chamber",
-    "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet", "Turbulent Wilderness",
+    "Sodden Verdure", "Rain-Slicked Copse", "Overflowing Basin", "Turbulent Wilderness",
     "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
 }
 
@@ -110,9 +110,9 @@ C_ONLY_LANDS = {
 }
 
 # Lands with Forest subtype (for ramp-fetch targeting):
-FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet", "Turbulent Wilderness"}
+FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Turbulent Wilderness"}
 # Lands with Island subtype:
-ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Tangled Islet", "Turbulent Wilderness"}
+ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Turbulent Wilderness"}
 
 BASIC_FORESTS = {"Forest"}
 BASIC_ISLANDS = {"Island"}
@@ -174,9 +174,14 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         return other_count < 1
 
     if name in ("Simic Growth Chamber", "Sodden Verdure", "Rain-Slicked Copse",
-                "Tangled Islet", "Temple of Mystery"):
+                "Temple of Mystery"):
         # Karoo bounce / tapped duals / scry temple — always enter tapped.
         return True
+
+    if name == "Overflowing Basin":
+        # Filter land: enters untapped, then {1},{T}: GU. Activation cost is
+        # abstracted (same simplification as Simic Growth Chamber's karoo bounce).
+        return False
 
     if name == "Turbulent Wilderness":
         # Enters tapped unless opponents control 8+ lands. Single-player goldfish
