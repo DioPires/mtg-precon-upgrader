@@ -113,7 +113,8 @@ import type {
 // v74 -> v75 (DEC-359 2026-06-29): Exponential Growth +Turbulent Wilderness / -1 Forest (13->12). Fetchable G/U dual (Forest Island types) untapped from ~turn 3 in a pod; manabase polish, land count + colors unchanged.
 // v75 -> v76 (DEC-359 2026-06-29): Exponential Growth +Mind into Matter / -Stroke of Genius. GU X-sorcery (draw X + free permanent) — Zimone trigger + copied by Unbound Flourishing; board cut Stroke over Pull after a wash-level economy comparison.
 // v76 -> v77 (DEC-359 2026-06-29): Exponential Growth +Overflowing Basin / -Tangled Islet. GU dual that enters untapped (net +1 mana via {1},{T}: GU); trims a tapland per B4 manabase philosophy. Land count + colors unchanged.
-const STORAGE_PREFIX = 'gv1-deck-data-v77:';
+// v77 -> v78 (DEC-359 2026-06-29): Exponential Growth +Owlin Spiralmancer / -Pathbreaker Ibex. {3}{U} flyer copies first X-spell each turn (any type) — extends copy engine to X-creature Hydras Unbound Flourishing can't; board cut Ibex (no counter synergy) over Master Biomancer.
+const STORAGE_PREFIX = 'gv1-deck-data-v78:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

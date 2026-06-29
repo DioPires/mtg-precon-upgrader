@@ -53,6 +53,11 @@
     {
       "type": "ai-inferred",
       "name": "Card assessment (DEC-359)",
+      "detail": "Board-approved swap: +Owlin Spiralmancer / -Pathbreaker Ibex. Owlin ({3}{U} 3/4 flyer) copies the first X-spell each turn of ANY type, extending the copy engine to the deck's X-creature Hydras that Unbound Flourishing's instant/sorcery-only copy clause can't reach; copied 'enters with X counters' Hydras are full X/X bodies whose counters get doubled, and on X instants/sorceries Owlin stacks with Unbound Flourishing for a double-copy. Board chose to cut Pathbreaker Ibex (6 CMC, +X/+X until-EOT = no counter synergy, redundant overrun finisher) over Master Biomancer. Caveat: copies aren't cast (CR 707.10), so cast-triggered Hydras (Hydroid Krasis, Genesis Hydra) yield only a body on the copy."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Card assessment (DEC-359)",
       "detail": "Board-approved swap: +Turbulent Wilderness / -1 Forest (13->12). Fetchable G/U dual (Forest Island types — grabbable by Nature's Lore/Three Visits); its 'enters tapped unless opponents control 8+ lands' clause counts all opponents combined, so in a 4-player pod it enters untapped from ~turn 3. Manabase polish over a basic; colors and spell composition unchanged."
     },
     {
@@ -67,7 +72,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Exponential Growth is the +1/+1 counters / Hydra go-big build of Zimone, Infinite Analyst — a Bracket-4 Simic deck whose plan is to cast X-cost Hydras and X-creatures (the first X-spell each turn grows Zimone by two counters and is discounted by {1} per counter on her), multiply those counters with stacked doublers (Doubling Season, Unbound Flourishing, Branching Evolution, Innkeeper's Talent, Kalonian Hydra), and close through oversized trample combat, an unblockable counters alpha-strike (Herald of Secret Streams), an overrun (Pathbreaker Ibex, Finale of Devastation at X≥10), or the Simic Ascendancy alternate win. It is deliberately distinct from the existing Calculated Infinity (X-spell storm/combo) Zimone deck: this is a resilient creature-combat midrange deck, not a combo deck (0 unintended infinite combos). Built under an owned-collection constraint — 11 strategy-specific cards to acquire, everything else owned or a generic staple.",
+    "strategyOverview": "Exponential Growth is the +1/+1 counters / Hydra go-big build of Zimone, Infinite Analyst — a Bracket-4 Simic deck whose plan is to cast X-cost Hydras and X-creatures (the first X-spell each turn grows Zimone by two counters and is discounted by {1} per counter on her), multiply those counters with stacked doublers (Doubling Season, Unbound Flourishing, Branching Evolution, Innkeeper's Talent, Kalonian Hydra), and close through oversized trample combat, an unblockable counters alpha-strike (Herald of Secret Streams), an overrun (Finale of Devastation at X≥10), or the Simic Ascendancy alternate win. It is deliberately distinct from the existing Calculated Infinity (X-spell storm/combo) Zimone deck: this is a resilient creature-combat midrange deck, not a combo deck (0 unintended infinite combos). Built under an owned-collection constraint — 11 strategy-specific cards to acquire, everything else owned or a generic staple.",
     "deckCategories": [
       {
         "name": "Hydras & X-Creatures",
@@ -106,7 +111,8 @@
           "The Ozolith",
           "Master Biomancer",
           "Warden of the Grove",
-          "Tanazir Quandrix"
+          "Tanazir Quandrix",
+          "Owlin Spiralmancer"
         ]
       },
       {
@@ -115,7 +121,6 @@
         "cards": [
           "Herald of Secret Streams",
           "Zegana, Utopian Speaker",
-          "Pathbreaker Ibex",
           "Simic Ascendancy",
           "Forgotten Ancient",
           "Kami of Whispered Hopes",
@@ -245,17 +250,37 @@
       ]
     },
     {
-      "title": "Unblockable / overrun finish",
+      "title": "Unblockable / trample finish",
       "cards": [
         "Herald of Secret Streams",
-        "Pathbreaker Ibex",
         "Zegana, Utopian Speaker"
       ],
-      "description": "Herald of Secret Streams makes every creature with a +1/+1 counter unblockable; Zegana grants them all trample; Pathbreaker Ibex pumps the team by your biggest creature's power on attack. Any of these turns a tall counter board into a lethal swing.",
+      "description": "Herald of Secret Streams makes every creature with a +1/+1 counter unblockable; Zegana grants them all trample. Either turns a tall counter board into a lethal swing.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Wincon analysis (DEC-351)"
+        }
+      ]
+    },
+    {
+      "title": "Owlin Spiralmancer: copy the first X-spell",
+      "cards": [
+        "Owlin Spiralmancer",
+        "Unbound Flourishing",
+        "Doubling Season",
+        "Hydroid Krasis",
+        "Finale of Devastation"
+      ],
+      "description": "Owlin copies your first X-spell each turn — including the Hydras, which Unbound Flourishing's instant/sorcery-only copy clause can't touch. The token copy of an 'enters with X counters' Hydra is a full X/X whose counters are then doubled by Doubling Season / Branching Evolution. On X instants/sorceries (Finale of Devastation, Pull from Tomorrow) Owlin stacks with Unbound Flourishing for a double-copy. Caveat: a copy isn't cast (CR 707.10), so cast-triggered Hydras like Hydroid Krasis and Genesis Hydra yield only a body on the copy, not their draw/dig.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Card text verification"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card assessment (DEC-359)"
         }
       ]
     },
@@ -306,10 +331,9 @@
       "cards": [
         "Kalonian Hydra",
         "Doubling Season",
-        "Zegana, Utopian Speaker",
-        "Pathbreaker Ibex"
+        "Zegana, Utopian Speaker"
       ],
-      "description": "Doublers (Doubling Season, Kalonian Hydra) balloon the Hydras; Zegana grants trample and Pathbreaker Ibex pumps the team on attack for a lethal swing."
+      "description": "Doublers (Doubling Season, Kalonian Hydra) balloon the Hydras; Zegana grants the team trample for a lethal swing."
     },
     {
       "title": "Unblockable counters alpha-strike",
@@ -607,9 +631,10 @@
       "primary_role": "payoff"
     },
     {
-      "name": "Pathbreaker Ibex",
-      "type": "Creature — Goat",
-      "primary_role": "payoff"
+      "name": "Owlin Spiralmancer",
+      "type": "Creature — Bird Wizard",
+      "primary_role": "payoff",
+      "secondary_role": "threat"
     },
     {
       "name": "Ozolith, the Shattered Spire",
