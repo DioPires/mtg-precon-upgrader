@@ -2200,8 +2200,8 @@ def export_rakdos(metadata: dict) -> dict:
         sim_module=sim_rakdos,
         deck_id="eternal-agony",
         deck_name="Eternal Agony",
-        commander_name="The Lord of Pain",
-        commander_cmc=5,
+        commander_name="Valgavoth, Harrower of Souls",
+        commander_cmc=4,
         colors=["B", "R"],
         metadata=metadata,
     )

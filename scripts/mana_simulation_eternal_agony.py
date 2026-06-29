@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Monte Carlo mana base simulation for Eternal Agony (The Lord of Pain).
+"""Monte Carlo mana base simulation for Eternal Agony (Valgavoth, Harrower of Souls).
 
 Simulates 100,000 games measuring mana production, color balance, and curve
 efficiency turns 1-10 for the Bracket 4 Rakdos decklist.
 
-Commander: The Lord of Pain ({3}{B}{R}, CMC 5)
+Commander: Valgavoth, Harrower of Souls ({2}{B}{R}, CMC 4) — DEC-362 swap;
+The Lord of Pain moved into the 99.
 """
 
 import argparse
@@ -790,8 +791,8 @@ def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAM
             if r_avail == 0:
                 zero_r_by_turn[t] += 1
 
-            # Commander castable: 5+ total AND 1+ B AND 1+ R
-            cmd_pips = {"generic": 3, "B": 1, "R": 1}
+            # Commander castable: 4+ total AND 1+ B AND 1+ R (Valgavoth {2}{B}{R})
+            cmd_pips = {"generic": 2, "B": 1, "R": 1}
             if cmd_cast_turn is None and pool.can_cast(cmd_pips):
                 cmd_cast_turn = t
                 commander_by_turn[t] += 1
@@ -904,7 +905,7 @@ def print_results(stats: dict, classified: dict, avg_cmc: float, pip_B: int, pip
     # Dimension 3: Curve Efficiency
     print(f"\n--- Dimension 3: Curve Efficiency ---")
 
-    print(f"\n  Commander castable (The Lord of Pain, {{3}}{{B}}{{R}}):")
+    print(f"\n  Commander castable (Valgavoth, Harrower of Souls, {{2}}{{B}}{{R}}):")
     for t in range(3, NUM_TURNS + 1):
         count = stats["commander_by_turn"][t]
         print(f"    By T{t}: {count/total*100:.1f}%")
@@ -963,7 +964,7 @@ def print_results(stats: dict, classified: dict, avg_cmc: float, pip_B: int, pip
     # Commander timing
     cmd_by_t4 = stats["commander_by_turn"][4] / total * 100
     if cmd_by_t4 > 50:
-        print(f"  Commander by T4: {cmd_by_t4:.0f}% — realistic T4 Lord of Pain")
+        print(f"  Commander by T4: {cmd_by_t4:.0f}% — realistic T4 Valgavoth")
     else:
         print(f"  Commander by T4: {cmd_by_t4:.0f}% — below 50%, ramp may be insufficient")
 
@@ -1017,7 +1018,7 @@ def export_enhanced_json(metadata: dict) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Monte Carlo mana base simulation for Eternal Agony (The Lord of Pain)")
+        description="Monte Carlo mana base simulation for Eternal Agony (Valgavoth, Harrower of Souls)")
     parser.add_argument("--json", action="store_true",
                         help="Write simulation.json instead of console output")
     args = parser.parse_args()
