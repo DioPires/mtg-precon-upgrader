@@ -69,6 +69,16 @@
       "type": "ai-inferred",
       "name": "Card assessment (DEC-356)",
       "detail": "Board-approved swap: +Fierce Guardianship / -An Offer You Can't Refuse. Free hard counter (noncreature) while Zimone is on the battlefield — the deck's normal state — and removes An Offer's two-Treasure donation to the caster. Adds the deck's 2nd Game Changer (gameChangers 1->2), legal at Bracket 4. Both counter noncreature spells only, so counter count and role coverage are unchanged."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Card assessment (DEC-359)",
+      "detail": "Board-approved swap: +Lattice Library / -Master Biomancer. Lattice ({X}{G}{G} enchantment) enters with X study counters and creates a Fractal token sized to those counters on ETB and on each turn's first X-spell — a board-wipe-proof recurring token engine (resilience patch: metric 54->57). X doubled by Unbound Flourishing; Fractal + counters doubled by Doubling Season. Replaces Master Biomancer (non-X build-around). Worktree-isolated metrics: global flat 72, interaction held 111, resilience +3, sim A/81.4."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Card assessment (DEC-359)",
+      "detail": "Board-approved swap: +Nev, the Practical Dean / -Warden of the Grove. Nev ({2}{G}) grants team-wide trample to creatures with +1/+1 counters (nearly the whole board) — redundant evasion for the oversized-combat finish, previously gated on Zegana alone — and grows by X on each turn's first X-spell. Cut Warden as the only non-X engine creature (fixed {2}{G}, lowest synergy with the X-spell payoff suite); board picked Warden over Benevolent Hydra (kept for its '+1 counters to other creatures' amplifier + X-spell trigger). Metrics identical, sim a 0.2 wash."
     }
   ],
   "guideContent": {
@@ -93,7 +103,6 @@
           "Kalonian Hydra",
           "Managorger Hydra",
           "Genesis Hydra",
-          "Warden of the Grove",
           "Wan Shi Tong, Librarian"
         ]
       },
@@ -109,10 +118,9 @@
           "Kalonian Hydra",
           "Ozolith, the Shattered Spire",
           "The Ozolith",
-          "Master Biomancer",
-          "Warden of the Grove",
           "Tanazir Quandrix",
-          "Owlin Spiralmancer"
+          "Owlin Spiralmancer",
+          "Lattice Library"
         ]
       },
       {
@@ -124,7 +132,8 @@
           "Simic Ascendancy",
           "Forgotten Ancient",
           "Kami of Whispered Hopes",
-          "Strength of the Tajuru"
+          "Strength of the Tajuru",
+          "Nev, the Practical Dean"
         ]
       },
       {
@@ -231,25 +240,6 @@
       ]
     },
     {
-      "title": "Warden of the Grove + creature ETBs (doubled)",
-      "cards": [
-        "Warden of the Grove",
-        "Doubling Season",
-        "Master Biomancer"
-      ],
-      "description": "Warden of the Grove makes every other nontoken creature that enters endure X (X = counters on Warden) — dumping counters onto each new Hydra or spawning Spirit tokens. Doubling Season doubles the endure counters, and Master Biomancer stacks even more on each ETB.",
-      "sources": [
-        {
-          "type": "scryfall",
-          "name": "Card text verification"
-        },
-        {
-          "type": "ai-inferred",
-          "name": "Synergy analysis (DEC-351)"
-        }
-      ]
-    },
-    {
       "title": "Unblockable / trample finish",
       "cards": [
         "Herald of Secret Streams",
@@ -320,6 +310,44 @@
         {
           "type": "ai-inferred",
           "name": "Wincon analysis (DEC-351)"
+        }
+      ]
+    },
+    {
+      "title": "Nev, the Practical Dean: team trample",
+      "cards": [
+        "Nev, the Practical Dean",
+        "Herald of Secret Streams",
+        "Kalonian Hydra"
+      ],
+      "description": "Nev gives trample to every creature you control that has a +1/+1 counter — nearly the whole board here — so oversized Hydras punch through chump blockers without leaning on Zegana alone. It also grows by X whenever you cast your first X-spell each turn, feeding the counter doublers.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Card text verification"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card assessment (DEC-359)"
+        }
+      ]
+    },
+    {
+      "title": "Lattice Library: wipe-proof Fractal engine",
+      "cards": [
+        "Lattice Library",
+        "Unbound Flourishing",
+        "Doubling Season"
+      ],
+      "description": "Lattice Library enters with X study counters and creates a Fractal token (sized to those counters) on ETB and on each turn's first X-spell. As an enchantment it survives board wipes, rebuilding a threat every turn; Unbound Flourishing doubles its X and Doubling Season doubles both the token and its +1/+1 counters.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Card text verification"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card assessment (DEC-359)"
         }
       ]
     }
@@ -571,11 +599,6 @@
       "primary_role": "wincon"
     },
     {
-      "name": "Master Biomancer",
-      "type": "Creature — Elf Wizard",
-      "primary_role": "payoff"
-    },
-    {
       "name": "Zegana, Utopian Speaker",
       "type": "Legendary Creature — Merfolk Wizard",
       "primary_role": "payoff"
@@ -588,11 +611,6 @@
     {
       "name": "The Ozolith",
       "type": "Legendary Artifact",
-      "primary_role": "payoff"
-    },
-    {
-      "name": "Warden of the Grove",
-      "type": "Creature — Hydra",
       "primary_role": "payoff"
     },
     {
@@ -798,6 +816,18 @@
       "type": "Instant",
       "primary_role": "removal-spot",
       "secondary_role": "card-draw"
+    },
+    {
+      "name": "Nev, the Practical Dean",
+      "type": "Legendary Creature — Merfolk Wizard",
+      "primary_role": "payoff",
+      "secondary_role": "threat"
+    },
+    {
+      "name": "Lattice Library",
+      "type": "Enchantment",
+      "primary_role": "payoff",
+      "secondary_role": "engine"
     }
   ],
   "tokens": [
@@ -847,19 +877,6 @@
       ]
     },
     {
-      "name": "City's Blessing",
-      "type_line": "Card",
-      "oracle_text": "",
-      "power": null,
-      "toughness": null,
-      "colors": [],
-      "scryfall_id": "9c3a8c98-e189-4cd2-b2fd-b5a591658eaa",
-      "image_uri": "https://cards.scryfall.io/normal/front/9/c/9c3a8c98-e189-4cd2-b2fd-b5a591658eaa.jpg?1759688321",
-      "produced_by": [
-        "Arch of Orazca"
-      ]
-    },
-    {
       "name": "Fish",
       "type_line": "Token Creature — Fish",
       "oracle_text": "",
@@ -900,37 +917,8 @@
       "scryfall_id": "8b5f1fdb-04df-4224-acb4-7819c37565f5",
       "image_uri": "https://cards.scryfall.io/normal/front/8/b/8b5f1fdb-04df-4224-acb4-7819c37565f5.jpg?1775828306",
       "produced_by": [
-        "Primo, the Unbounded"
-      ]
-    },
-    {
-      "name": "Frog Lizard",
-      "type_line": "Token Creature — Frog Lizard",
-      "oracle_text": "",
-      "power": "3",
-      "toughness": "3",
-      "colors": [
-        "G"
-      ],
-      "scryfall_id": "42e98a20-325e-476f-8297-cbe8e09d85b2",
-      "image_uri": "https://cards.scryfall.io/normal/front/4/2/42e98a20-325e-476f-8297-cbe8e09d85b2.jpg?1775827172",
-      "produced_by": [
-        "Rapid Hybridization"
-      ]
-    },
-    {
-      "name": "Spirit",
-      "type_line": "Token Creature — Spirit",
-      "oracle_text": "",
-      "power": "*",
-      "toughness": "*",
-      "colors": [
-        "W"
-      ],
-      "scryfall_id": "8ea4fc2f-95a4-49d0-b06e-b88d19637737",
-      "image_uri": "https://cards.scryfall.io/normal/front/8/e/8ea4fc2f-95a4-49d0-b06e-b88d19637737.jpg?1743176763",
-      "produced_by": [
-        "Warden of the Grove"
+        "Primo, the Unbounded",
+        "Lattice Library"
       ]
     },
     {
@@ -953,8 +941,8 @@
       "power": null,
       "toughness": null,
       "colors": [],
-      "scryfall_id": "21210145-8edd-41f5-9a64-9f0b5be79864",
-      "image_uri": "https://cards.scryfall.io/normal/front/2/1/21210145-8edd-41f5-9a64-9f0b5be79864.jpg?1733068745",
+      "scryfall_id": "ff0357fb-d90c-49c7-b16a-8b52ac686c3b",
+      "image_uri": "https://cards.scryfall.io/normal/front/f/f/ff0357fb-d90c-49c7-b16a-8b52ac686c3b.jpg?1721425653",
       "produced_by": [
         "Fountainport",
         "Goldvein Hydra"
