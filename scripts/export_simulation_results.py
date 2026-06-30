@@ -1794,10 +1794,15 @@ def compute_deck_health_score(result: dict, threat_density: dict, draw_reliabili
         (interaction_availability["byTurn"].get("3", 0.0), 0.45),
         (interaction_availability["byTurn"].get("4", 0.0), 0.25),
     ])
-    combo_score = weighted_average([
+    # DEC-362 #1: floor declared-combo decks at the neutral default so declaring an
+    # honest finisher can only help, never score below a deck that declares none.
+    # (The raw closed-form assembly % understates tutor/redundancy decks; the
+    # tutor-aware Monte-Carlo model that makes this axis discriminating is the #2
+    # follow-up. Until then comboConsistency reads ~50 for every deck.)
+    combo_score = max(50.0, weighted_average([
         (combo_assembly["bestByTurn"].get("5", 0.0), 0.40),
         (combo_assembly["bestByTurn"].get("6", 0.0), 0.60),
-    ]) if combo_assembly["combos"] else 50.0
+    ])) if combo_assembly["combos"] else 50.0
     commander_independence = 100.0 - commander_dependency["score"]
 
     overall = weighted_average([
