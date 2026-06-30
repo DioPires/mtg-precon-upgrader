@@ -56,6 +56,24 @@ GOLDFISH_LETHAL_DAMAGE_PROXY = 40
 GOLDFISH_CHUNKS = 16
 GOLDFISH_SEED = 0xDEC363
 
+# DEC-365 — comboConsistency confidence multiplier keyed by deck-level
+# `wincon_style`. Scales the assembly *bonus above the 50 floor* (never the 50
+# floor itself, so declaring a combo still can't hurt — DEC-362 #1): a combo is
+# the gameplan for combo decks (full weight) but only a backup line for
+# value/aggro decks (reduced). Combo-less decks sit at 50 regardless, so this
+# only moves decks that actually declared and can assemble a combo. The enum
+# mirrors the `wincon_style` set keyed in compute_deck_metrics.py.
+WINCON_COMBO_WEIGHT: dict[str | None, float] = {
+    "combo":             1.00,  # combo IS the gameplan
+    "value-incremental": 0.50,  # engine is the plan; combo a secondary line
+    "drain":             0.50,
+    "drain-x":           0.50,
+    "mixed":             0.50,
+    "combat":            0.25,  # creature-centric; combo incidental
+    "discrete-threats":  0.25,
+}
+WINCON_COMBO_WEIGHT_DEFAULT = 0.50  # unset / unknown style
+
 DRAW_PATTERNS = (
     r"\bdraws?\b",
     r"\binvestigate\b",
@@ -2011,7 +2029,8 @@ def compute_commander_dependency(deck_data: dict, commander_name: str, commander
 
 def compute_deck_health_score(result: dict, threat_density: dict, draw_reliability: dict,
                               interaction_availability: dict, combo_assembly: dict,
-                              color_adequacy: dict, commander_dependency: dict) -> dict:
+                              color_adequacy: dict, commander_dependency: dict,
+                              wincon_style: str | None = None) -> dict:
     """Composite deck health score from mana, pressure, interaction, combo, and commander independence."""
     mana_reliability = weighted_average([
         (pct_to_score(result["commanderTiming"]["byTurn"].get(str(result["commanderTiming"]["cmc"]), 0.0)), 0.35),
@@ -2043,7 +2062,12 @@ def compute_deck_health_score(result: dict, threat_density: dict, draw_reliabili
         (combo_assembly["bestByTurn"].get("5", 0.0), 0.40),
         (combo_assembly["bestByTurn"].get("6", 0.0), 0.60),
     ])
-    combo_score = max(50.0, 50.0 + assembly_signal / 2.0) if combo_assembly["combos"] else 50.0
+    # DEC-365: scale the assembly bonus by the deck's wincon_style confidence —
+    # full for combo decks, reduced where a declared combo is a backup. The 50
+    # floor is unscaled, so this can only shrink the bonus, never breach the
+    # floor (combo_lambda >= 0, assembly_signal >= 0 => combo_score >= 50).
+    combo_lambda = WINCON_COMBO_WEIGHT.get(wincon_style, WINCON_COMBO_WEIGHT_DEFAULT)
+    combo_score = max(50.0, 50.0 + combo_lambda * assembly_signal / 2.0) if combo_assembly["combos"] else 50.0
     commander_independence = 100.0 - commander_dependency["score"]
 
     overall = weighted_average([
@@ -2073,7 +2097,7 @@ def compute_deck_health_score(result: dict, threat_density: dict, draw_reliabili
             "comboConsistency": r1(combo_score),
             "commanderIndependence": r1(commander_independence),
         },
-        "methodology": "Weighted composite: mana 30%, threats 20%, interaction 20%, combo 15%, commander independence 15%.",
+        "methodology": "Weighted composite: mana 30%, threats 20%, interaction 20%, combo 15%, commander independence 15%. Combo term scaled by wincon_style confidence (DEC-365).",
     }
 
 
@@ -2122,6 +2146,7 @@ def enrich_result(result: dict, deck_id: str, deck_data: dict, decklist: list[st
         combo_assembly=combo_assembly,
         color_adequacy=color_adequacy,
         commander_dependency=commander_dependency,
+        wincon_style=deck_data.get("wincon_style"),
     )
     result["goldfish"] = goldfish
     return result
