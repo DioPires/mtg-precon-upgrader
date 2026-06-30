@@ -79,9 +79,9 @@ DECK_META = {
         "wincon_style": "value-incremental",
         "commanderRoles": {"primary": "engine", "secondary": "recursion"},
     },
-    "mutant-multiplication": {
+    "witherbloom-the-balancer": {
         "wincon_style": "value-incremental",
-        "commanderRoles": {"primary": "engine", "secondary": "payoff"},
+        "commanderRoles": {"primary": "payoff", "secondary": "threat"},
     },
     "the-white-forge": {
         "wincon_style": "value-incremental",

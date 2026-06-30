@@ -27,7 +27,7 @@ import mana_simulation_titan_convergence as sim_titan
 import mana_simulation_eternal_agony as sim_rakdos
 import mana_simulation_dark_dominion as sim_grixis
 import mana_simulation_eternal_harvest as sim_golgari
-import mana_simulation_mutant_multiplication as sim_wubrg
+import mana_simulation_witherbloom_the_balancer as sim_witherbloom
 import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
@@ -172,14 +172,6 @@ KEY_COMBOS = {
             "pieces": ["Heliod, Sun-Crowned", "Walking Ballista"],
             "requiresCommander": False,
             "description": "Infinite damage via lifelink counter loop.",
-        }
-    ],
-    "mutant-multiplication": [
-        {
-            "name": "Broodscale Loop",
-            "pieces": ["Basking Broodscale", "Rosie Cotton of South Lane"],
-            "requiresCommander": False,
-            "description": "Counter-driven infinite token engine.",
         }
     ],
     "titan-convergence": [
@@ -2499,15 +2491,15 @@ def export_golgari(metadata: dict) -> dict:
 
 
 
-def export_wubrg(metadata: dict) -> dict:
-    """Export Mutant Multiplication (WUBRG) simulation."""
+def export_witherbloom(metadata: dict) -> dict:
+    """Export Witherbloom Balance (Golgari aristocrats) simulation."""
     return _export_colored(
-        sim_module=sim_wubrg,
-        deck_id="mutant-multiplication",
-        deck_name="Mutant Multiplication",
-        commander_name="Donatello, the Brains",
-        commander_cmc=3,
-        colors=["W", "U", "B", "R", "G"],
+        sim_module=sim_witherbloom,
+        deck_id="witherbloom-the-balancer",
+        deck_name="Witherbloom Balance",
+        commander_name="Witherbloom, the Balancer",
+        commander_cmc=8,
+        colors=["B", "G"],
         metadata=metadata,
     )
 
@@ -2828,7 +2820,7 @@ DECKS = [
     ("eternal-agony", "Eternal Agony", export_rakdos),
     ("dark-dominion", "Dark Dominion", export_grixis),
     ("eternal-harvest", "Eternal Harvest", export_golgari),
-    ("mutant-multiplication", "Mutant Multiplication", export_wubrg),
+    ("witherbloom-the-balancer", "Witherbloom Balance", export_witherbloom),
     ("the-white-forge", "The White Forge", export_mono_white),
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
     ("creeping-corruption", "Creeping Corruption", export_wubg_poison),

@@ -8,7 +8,7 @@ EXPORT_CASES = [
     ("scripts.mana_simulation_dark_dominion", "export_grixis", "dark-dominion"),
     ("scripts.mana_simulation_eternal_agony", "export_rakdos", "eternal-agony"),
     ("scripts.mana_simulation_eternal_harvest", "export_golgari", "eternal-harvest"),
-    ("scripts.mana_simulation_mutant_multiplication", "export_wubrg", "mutant-multiplication"),
+    ("scripts.mana_simulation_witherbloom_the_balancer", "export_witherbloom", "witherbloom-the-balancer"),
     ("scripts.mana_simulation_titan_convergence", "export_titan", "titan-convergence"),
     ("scripts.mana_simulation_superfriends_esika", "export_superfriends_esika", "superfriends-esika"),
 ]

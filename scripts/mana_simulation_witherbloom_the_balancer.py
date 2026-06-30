@@ -1032,9 +1032,9 @@ def export_enhanced_json(metadata: dict) -> dict:
     """Reuse bulk exporter path so standalone JSON stays schema-compatible."""
     import export_simulation_results as exporter
 
-    result = exporter.export_golgari(metadata)
+    result = exporter.export_witherbloom(metadata)
     if not exporter.validate_output(result, "witherbloom-the-balancer"):
-        raise ValueError("export_golgari produced invalid simulation output")
+        raise ValueError("export_witherbloom produced invalid simulation output")
     return result
 
 
@@ -1050,7 +1050,7 @@ def main():
     with open(METADATA_FILE) as f:
         metadata = json.load(f)
 
-    print("Building Eternal Harvest decklist...")
+    print("Building Witherbloom Balance decklist...")
     decklist = build_decklist(deck_data)
     print(f"Decklist: {len(decklist)} cards")
 
