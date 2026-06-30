@@ -65,7 +65,15 @@ INTERACTION_PATTERNS = (
     r"\bexile target\b",
     r"\breturn target\b",
     r"\bfight target\b",
-    r"\bdeals? \d+ damage to target\b",
+    # Targeted burn / removal: catches "deals 3 damage to any target" (Lightning Bolt),
+    # "to target creature/player/planeswalker", and X-damage variants. Requires a
+    # "target" so table-wide pingers ("deals 1 damage to each opponent") stay excluded.
+    r"\bdeals? (?:\d+|x) damage to (?:any )?target\b",
+    # Board wipes count as interaction. Keyed on phrasings unique to sweepers so anthems
+    # ("get +1/+1") and pingers ("to each opponent") don't match.
+    r"\bdamage to each creature\b",
+    r"\bcreatures? gets? -[\dx]",
+    r"\bdestroy all (?:creatures|nonland|other)\b",
     r"\btarget player sacrifices\b",
     r"\beach opponent sacrifices\b",
     r"\bprevent all combat damage\b",
