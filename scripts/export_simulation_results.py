@@ -50,6 +50,11 @@ NUM_TURNS = 10
 GOLDFISH_GAMES = 10_000
 GOLDFISH_MEANINGFUL_PRESSURE_FLOOR = 6
 GOLDFISH_LETHAL_DAMAGE_PROXY = 40
+# Fixed chunking + base seed make the Monte Carlo reproducible regardless of CPU
+# count: the goldfish numbers (and the tutor-aware combo-assembly curves derived
+# from them) stop wiggling on every regen. (DEC-363)
+GOLDFISH_CHUNKS = 16
+GOLDFISH_SEED = 0xDEC363
 
 DRAW_PATTERNS = (
     r"\bdraws?\b",
@@ -120,6 +125,13 @@ NUMBER_WORDS = {
     "three": 3,
 }
 
+# KEY_COMBOS slot schema (DEC-363): a combo is a list of *slots*; the combo is
+# assembled when every slot is filled. A slot is a list of interchangeable cards
+# — any one of them fills the slot — and a card may join a slot only if it
+# *independently* completes that slot's function (e.g. any noncombat-damage
+# doubler for Heartless Hidetsugu). No padding. Back-compat: a combo declared
+# with a bare "pieces" list is read as one 1-card slot per piece. The commander,
+# when named in a slot, fills it from the command zone automatically.
 KEY_COMBOS = {
     "dark-dominion": [
         {
@@ -132,9 +144,18 @@ KEY_COMBOS = {
     "eternal-agony": [
         {
             "name": "Hidetsugu Lethal",
-            "pieces": ["Heartless Hidetsugu", "Twinflame Tyrant"],
+            "slots": [
+                ["Heartless Hidetsugu"],
+                [
+                    "Solphim, Mayhem Dominus",
+                    "Twinflame Tyrant",
+                    "Fiery Emancipation",
+                    "Bloodletter of Aclazotz",
+                ],
+            ],
             "requiresCommander": False,
-            "description": "Damage doubler turns Hidetsugu activations lethal.",
+            "description": "Any noncombat-damage/life-loss doubler turns a Heartless "
+                           "Hidetsugu activation (half each opponent's life) lethal.",
         }
     ],
     "eternal-harvest": [
@@ -202,6 +223,57 @@ KEY_COMBOS = {
         }
     ],
 }
+
+
+def combo_slot_lists(combo: dict) -> list[list[str]]:
+    """Return a combo's slots as lists of interchangeable member card names.
+
+    Slot schema: ``combo["slots"]`` is a list of slots, each a list of names.
+    Back-compat: a combo declared with a bare ``combo["pieces"]`` list is read
+    as one 1-card slot per piece.
+    """
+    if combo.get("slots"):
+        return [list(slot) for slot in combo["slots"]]
+    return [[piece] for piece in combo.get("pieces", [])]
+
+
+def build_combo_assembly_lines(deck_id: str, decklist: list[str],
+                               commander_name: str) -> list[dict]:
+    """Per-combo slot spec for the goldfish assembly tracker.
+
+    Each line: ``{name, pieces, slots, requiresCommander, description}`` where
+    every slot is ``{members: [names present in deck], isCommander: bool}``. A
+    slot is valid if it names the commander (auto-filled from the command zone)
+    or holds >=1 member present in the decklist; a combo whose every slot is
+    valid is included. Combos with a missing-from-deck slot are dropped (the
+    deck cannot assemble them) — mirrors the old closed-form behaviour.
+    """
+    deck_cards = set(decklist)
+    lines = []
+    for combo in KEY_COMBOS.get(deck_id, []):
+        slots = []
+        complete = True
+        for members in combo_slot_lists(combo):
+            is_commander = commander_name in members
+            present = [m for m in members if m != commander_name and m in deck_cards]
+            if is_commander:
+                slots.append({"members": present, "isCommander": True})
+            elif present:
+                slots.append({"members": present, "isCommander": False})
+            else:
+                complete = False
+                break
+        if not complete:
+            continue
+        pieces = combo.get("pieces") or [m for slot in combo_slot_lists(combo) for m in slot]
+        lines.append({
+            "name": combo["name"],
+            "pieces": list(pieces),
+            "slots": slots,
+            "requiresCommander": combo.get("requiresCommander", False),
+            "description": combo.get("description", ""),
+        })
+    return lines
 
 
 # --- Helpers ---
@@ -868,7 +940,8 @@ def extract_reanimation_names(deck_data: dict) -> set[str]:
 
 
 def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
-                           commander_name: str, commander_colors: list[str]) -> dict:
+                           commander_name: str, commander_colors: list[str],
+                           deck_id: str = "") -> dict:
     """Precompute per-card profiles for goldfish simulation."""
     category_lookup = build_card_category_lookup(deck_data)
     profiles = {}
@@ -881,13 +954,18 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
             commander_name=commander_name,
         )
     combo_lines = extract_combo_lines(deck_data, profiles)
-    tutor_meta = extract_tutor_metadata(deck_data) if combo_lines else {}
-    reanim_names = extract_reanimation_names(deck_data) if combo_lines else set()
+    assembly_lines = build_combo_assembly_lines(deck_id, decklist, commander_name)
+    # Tutor/reanim tables drive both the winConditions combo-readiness check and
+    # the KEY_COMBOS assembly tracker; build them whenever either is present.
+    needs_substitution = bool(combo_lines or assembly_lines)
+    tutor_meta = extract_tutor_metadata(deck_data) if needs_substitution else {}
+    reanim_names = extract_reanimation_names(deck_data) if needs_substitution else set()
     return {
         "profiles": profiles,
         "commanderName": commander_name,
         "commanderColors": commander_colors,
         "comboLines": combo_lines,
+        "assemblyLines": assembly_lines,
         "tutorNames": set(tutor_meta.keys()),
         "tutorMeta": tutor_meta,
         "reanimationNames": reanim_names,
@@ -1184,6 +1262,113 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
     return False
 
 
+def _max_bipartite_matching(slot_options: list[list[int]]) -> dict[int, int]:
+    """Match each slot to a distinct tutor; return the tutor->slot assignment.
+
+    ``slot_options[i]`` lists the tutor indices that can legally fill slot ``i``,
+    cheapest tutor first. Standard Kuhn augmenting-path matching. Sizes here are
+    tiny (slots and tutors both <=~5), so the recursion cost is negligible. This
+    one-tutor-one-slot constraint is what stops a single generic tutor from filling
+    two open slots — the bug the DEC-362 review flagged in the naive "tutors as
+    virtual copies" model. ``len(result)`` is the number of slots covered.
+    """
+    tutor_to_slot: dict[int, int] = {}
+
+    def augment(slot: int, seen: set[int]) -> bool:
+        for tutor in slot_options[slot]:
+            if tutor in seen:
+                continue
+            seen.add(tutor)
+            if tutor not in tutor_to_slot or augment(tutor_to_slot[tutor], seen):
+                tutor_to_slot[tutor] = slot
+                return True
+        return False
+
+    for slot in range(len(slot_options)):
+        augment(slot, set())
+    return tutor_to_slot
+
+
+def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict],
+                              library: list[str], assembly_line: dict, profiles: dict,
+                              tutor_meta: dict) -> bool:
+    """Whether every slot of one combo can be filled this turn (DEC-363).
+
+    A slot is filled directly when any of its members has been drawn — i.e. is in
+    hand or already on the battlefield. The commander slot is auto-filled from the
+    command zone. A still-open slot can instead be filled by assigning one
+    not-yet-used generic to-hand tutor that is in hand, can legally fetch a member
+    still left in the library (card-type + mana-value gate), and whose mana is
+    payable. Each tutor fills at most one slot (bipartite matching); the combined
+    cost of all assigned tutors must be castable from this turn's mana pool.
+
+    Conditional tutors (bargain free-cast, sacrifice extra-cost) are credited
+    conservatively as plain hand tutors — full mana, no free ride. Graveyard
+    tutors and reanimation are excluded: they are not library finders that put a
+    piece in hand.
+    """
+    battlefield_names = {p["name"] for p in permanents}
+    drawn = battlefield_names | set(hand)
+    library_set = set(library)
+
+    open_slots = []
+    for slot in assembly_line["slots"]:
+        if slot["isCommander"]:
+            continue  # command zone
+        if any(member in drawn for member in slot["members"]):
+            continue  # directly filled by a drawn member
+        open_slots.append(slot)
+
+    if not open_slots:
+        return True
+
+    # Candidate tutors: generic to-hand tutors currently in hand, cheapest first
+    # so the matching prefers affordable tutors when several could fill a slot.
+    tutors_in_hand = [
+        name for name in hand
+        if name in tutor_meta and tutor_meta[name].get("mode", "to_hand") == "to_hand"
+    ]
+    tutors_in_hand.sort(key=lambda n: profiles[n]["manaCost"].get("total", 0))
+    if len(tutors_in_hand) < len(open_slots):
+        return False  # cannot cover every open slot one-tutor-one-slot
+
+    def tutor_can_fetch(meta: dict, slot: dict) -> bool:
+        mv_cap = meta.get("mv_cap")
+        targets = meta.get("targets", {"any"})
+        for member in slot["members"]:
+            if member not in library_set:
+                continue  # already drawn/used — no copy left to fetch
+            mprofile = profiles.get(member, {})
+            piece_mv = mprofile.get("manaCost", {}).get("total", 0)
+            if mv_cap is not None and piece_mv > mv_cap:
+                continue
+            if not piece_type_matches(card_type_tokens(mprofile.get("typeLine", "")), targets):
+                continue
+            return True
+        return False
+
+    slot_options = []
+    for slot in open_slots:
+        options = [
+            idx for idx, tname in enumerate(tutors_in_hand)
+            if tutor_can_fetch(tutor_meta[tname], slot)
+        ]
+        if not options:
+            return False  # this slot has no legal tutor — combo not assemblable
+        slot_options.append(options)
+
+    assignment = _max_bipartite_matching(slot_options)
+    if len(assignment) < len(open_slots):
+        return False  # no one-tutor-one-slot assignment covers all open slots
+
+    # Mana gate: pay for exactly the tutors in the chosen assignment this turn.
+    pool = GoldfishManaPool(turn_sources(permanents, turn))
+    combined = combine_mana_costs([
+        profiles[tutors_in_hand[tutor_idx]]["manaCost"] for tutor_idx in assignment
+    ])
+    return pool.can_cast(combined)
+
+
 def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
                        commander_in_play: bool, cumulative_damage: float,
                        meaningful_threshold: int, combo_ready_ever: bool) -> dict:
@@ -1220,6 +1405,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     commander_name = context["commanderName"]
     commander_colors = context["commanderColors"]
     combo_lines = context.get("comboLines", [])
+    assembly_lines = context.get("assemblyLines", [])
 
     tutor_names = context.get("tutorNames", set())
     tutor_meta = context.get("tutorMeta", {})
@@ -1231,15 +1417,23 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     commander_play_turn = None
     cumulative_damage = 0.0
     combo_ready_ever = False
+    assembly_turn = [None] * len(assembly_lines)
     # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
     # reanimation spells — never cast as filler. Permanent pieces (e.g. Thassa's Oracle)
     # can still be cast proactively; once on the battlefield they remain available for
-    # the combo check.
+    # the combo check. Non-permanent KEY_COMBOS assembly members are reserved too, so an
+    # instant/sorcery slot member is not spent before the slot is counted as filled.
     reserved_combo_pieces = {
         piece
         for line in combo_lines
         for piece in line["pieces"]
         if not profiles[piece].get("isPermanent")
+    } | {
+        member
+        for line in assembly_lines
+        for slot in line["slots"]
+        for member in slot["members"]
+        if not profiles[member].get("isPermanent")
     } | tutor_names | reanim_names
     by_turn = {}
 
@@ -1368,6 +1562,19 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 commander_play_turn=commander_play_turn,
                 commander_name=commander_name,
             )
+        for idx, line in enumerate(assembly_lines):
+            if assembly_turn[idx] is not None:
+                continue
+            if combo_assembled_this_turn(
+                turn=turn,
+                hand=hand,
+                permanents=permanents,
+                library=library,
+                assembly_line=line,
+                profiles=profiles,
+                tutor_meta=tutor_meta,
+            ):
+                assembly_turn[idx] = turn
         by_turn[turn] = metrics_from_board(
             turn=turn,
             permanents=permanents,
@@ -1378,12 +1585,16 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             combo_ready_ever=combo_ready_ever,
         )
 
-    return by_turn
+    return by_turn, assembly_turn
 
 
 def _run_goldfish_chunk(args):
     """Worker chunk for multiprocessing goldfish simulation."""
-    decklist, metadata, context, num_games, meaningful_threshold = args
+    decklist, metadata, context, num_games, meaningful_threshold, seed = args
+    # Seed per chunk so the whole run is reproducible regardless of how the games
+    # are split across workers (fixed chunk count + fixed per-chunk seed). (DEC-363)
+    random.seed(seed)
+    num_combos = len(context.get("assemblyLines", []))
     aggregate = {
         "lands": {turn: [] for turn in range(1, NUM_TURNS + 1)},
         "ramp": {turn: [] for turn in range(1, NUM_TURNS + 1)},
@@ -1397,12 +1608,15 @@ def _run_goldfish_chunk(args):
         "meaningful_board": Counter(),
         "lethal_proxy": Counter(),
         "combo_lethal": Counter(),
+        # Per-combo cumulative "assembled by turn T" game counts.
+        "combo_assembled": [{turn: 0 for turn in range(1, NUM_TURNS + 1)} for _ in range(num_combos)],
     }
 
     for _ in range(num_games):
-        game = simulate_goldfish_game(decklist, metadata, context, meaningful_threshold)
+        by_turn, assembly_turn = simulate_goldfish_game(
+            decklist, metadata, context, meaningful_threshold)
         for turn in range(1, NUM_TURNS + 1):
-            metrics = game[turn]
+            metrics = by_turn[turn]
             aggregate["lands"][turn].append(metrics["lands"])
             aggregate["ramp"][turn].append(metrics["ramp"])
             aggregate["threats"][turn].append(metrics["threats"])
@@ -1415,12 +1629,18 @@ def _run_goldfish_chunk(args):
             aggregate["meaningful_board"][turn] += metrics["meaningfulBoard"]
             aggregate["lethal_proxy"][turn] += metrics["lethalProxy"]
             aggregate["combo_lethal"][turn] += metrics["comboLethal"]
+        for idx, earliest in enumerate(assembly_turn):
+            if earliest is None:
+                continue
+            for turn in range(earliest, NUM_TURNS + 1):
+                aggregate["combo_assembled"][idx][turn] += 1
 
     return aggregate
 
 
 def merge_goldfish_stats(chunks: list[dict]) -> dict:
     """Merge multiprocessing goldfish chunk results."""
+    num_combos = len(chunks[0]["combo_assembled"]) if chunks else 0
     merged = {
         "lands": {turn: [] for turn in range(1, NUM_TURNS + 1)},
         "ramp": {turn: [] for turn in range(1, NUM_TURNS + 1)},
@@ -1434,6 +1654,7 @@ def merge_goldfish_stats(chunks: list[dict]) -> dict:
         "meaningful_board": Counter(),
         "lethal_proxy": Counter(),
         "combo_lethal": Counter(),
+        "combo_assembled": [{turn: 0 for turn in range(1, NUM_TURNS + 1)} for _ in range(num_combos)],
     }
 
     for chunk in chunks:
@@ -1442,27 +1663,38 @@ def merge_goldfish_stats(chunks: list[dict]) -> dict:
                 merged[key][turn].extend(chunk[key][turn])
         for key in ("commander_cast", "first_threat", "meaningful_board", "lethal_proxy", "combo_lethal"):
             merged[key].update(chunk[key])
+        for idx in range(num_combos):
+            for turn in range(1, NUM_TURNS + 1):
+                merged["combo_assembled"][idx][turn] += chunk["combo_assembled"][idx][turn]
     return merged
 
 
 def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dict,
-                             commander_name: str, commander_colors: list[str]) -> dict:
-    """Compute generic solitaire goldfish metrics for a deck."""
-    context = build_goldfish_context(decklist, deck_data, metadata, commander_name, commander_colors)
+                             commander_name: str, commander_colors: list[str],
+                             deck_id: str = "") -> tuple[dict, dict]:
+    """Compute solitaire goldfish metrics + tutor-aware combo assembly for a deck.
+
+    Returns ``(goldfish_section, combo_assembly)``; the assembly curves are
+    derived from the same Monte-Carlo run (DEC-363), not a separate closed form.
+    """
+    context = build_goldfish_context(decklist, deck_data, metadata, commander_name,
+                                     commander_colors, deck_id)
     meaningful_threshold = max(
         GOLDFISH_MEANINGFUL_PRESSURE_FLOOR,
         int(round(compute_avg_cmc(decklist, metadata) * 2)),
     )
     import multiprocessing
-    n_workers = os.cpu_count() or 4
-    chunk_size = GOLDFISH_GAMES // n_workers
-    remainder = GOLDFISH_GAMES % n_workers
-    chunks = [chunk_size + (1 if i < remainder else 0) for i in range(n_workers)]
+    # Fixed chunk count (independent of CPU count) keeps the seeded run identical
+    # across machines: GOLDFISH_CHUNKS deterministic chunks, each with its own seed.
+    base, remainder = divmod(GOLDFISH_GAMES, GOLDFISH_CHUNKS)
+    chunk_sizes = [base + (1 if i < remainder else 0) for i in range(GOLDFISH_CHUNKS)]
+    chunk_args = [
+        (decklist, metadata, context, games, meaningful_threshold, GOLDFISH_SEED + i)
+        for i, games in enumerate(chunk_sizes) if games > 0
+    ]
+    n_workers = min(GOLDFISH_CHUNKS, os.cpu_count() or 4)
     with multiprocessing.Pool(n_workers) as pool:
-        chunk_results = pool.map(
-            _run_goldfish_chunk,
-            [(decklist, metadata, context, games, meaningful_threshold) for games in chunks if games > 0],
-        )
+        chunk_results = pool.map(_run_goldfish_chunk, chunk_args)
     stats = merge_goldfish_stats(chunk_results)
 
     by_turn = {}
@@ -1494,7 +1726,9 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
         }
 
     combo_lines = context.get("comboLines", [])
-    return {
+    combo_assembly = combo_assembly_from_goldfish(
+        context.get("assemblyLines", []), stats["combo_assembled"])
+    section = {
         "numGames": GOLDFISH_GAMES,
         "byTurn": by_turn,
         "comboLines": [
@@ -1540,6 +1774,59 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "are reserved from filler casting. v2 limitations: no literal graveyard tracking (reanim "
             "assumes piece could be in GY), no opponent interaction, no multi-turn assembly tracking, "
             "no stack-trigger ordering."
+        ),
+    }
+    return section, combo_assembly
+
+
+def combo_assembly_from_goldfish(assembly_lines: list[dict],
+                                 combo_assembled_counts: list[dict]) -> dict:
+    """Build the comboAssembly section from goldfish per-combo assembly counts.
+
+    Replaces the old closed-form hypergeometric ``compute_combo_assembly`` (DEC-363).
+    Each combo's ``byTurn`` is the % of goldfish games in which it was assembled by
+    that turn (slots filled by drawn members or one-tutor-one-slot crediting), and
+    ``bestByTurn`` is the per-turn max across the deck's combos. Output shape is
+    unchanged so downstream consumers (health score, UI) need no changes.
+    """
+    combos = []
+    best_by_turn = {str(turn): 0.0 for turn in range(1, NUM_TURNS + 1)}
+
+    for line, counts in zip(assembly_lines, combo_assembled_counts):
+        by_turn = {}
+        for turn in range(1, NUM_TURNS + 1):
+            pct_value = pct(counts[turn], GOLDFISH_GAMES)
+            by_turn[str(turn)] = pct_value
+            best_by_turn[str(turn)] = max(best_by_turn[str(turn)], pct_value)
+        combos.append({
+            "name": line["name"],
+            "pieces": line["pieces"],
+            "requiresCommander": line["requiresCommander"],
+            "description": line["description"],
+            "byTurn": by_turn,
+            "medianAssemblyTurn": median_turn_from_cumulative(by_turn),
+        })
+
+    fastest = None
+    if combos:
+        fastest = min(
+            combos,
+            key=lambda combo: combo["medianAssemblyTurn"] if combo["medianAssemblyTurn"] is not None else 999,
+        )["name"]
+
+    return {
+        "combos": combos,
+        "bestByTurn": best_by_turn,
+        "fastestCombo": fastest,
+        "medianAssemblyTurn": median_turn_from_cumulative(best_by_turn),
+        "methodology": (
+            "Tutor/redundancy-aware Monte-Carlo assembly (DEC-363): share of "
+            f"{GOLDFISH_GAMES:,} seeded goldfish games in which every combo slot is filled by "
+            "the given turn. A slot is filled by a drawn member (hand or battlefield) or by "
+            "assigning one not-yet-used generic to-hand tutor (drawn + mana payable + a legal "
+            "library target left), with one-tutor-one-slot bipartite matching so a single tutor "
+            "can never fill two open slots. The commander slot is auto-filled from the command "
+            "zone. Graveyard tutors and reanimation are excluded as non-finders."
         ),
     }
 
@@ -1638,49 +1925,6 @@ def compute_reliability_curve(cards: list[str], label: str) -> dict:
         "byTurn": by_turn,
         "medianTurn": median_turn_from_cumulative(by_turn),
         "label": label,
-    }
-
-
-def compute_combo_assembly(deck_id: str, decklist: list[str], commander_name: str) -> dict:
-    """Probability curves for curated combo packages per deck."""
-    deck_cards = set(decklist)
-    combos = []
-    best_by_turn = {str(turn): 0.0 for turn in range(1, NUM_TURNS + 1)}
-
-    for combo in KEY_COMBOS.get(deck_id, []):
-        non_commander_pieces = [piece for piece in combo["pieces"] if piece != commander_name]
-        present_pieces = [piece for piece in non_commander_pieces if piece in deck_cards]
-        if len(present_pieces) != len(non_commander_pieces):
-            continue
-
-        needed = len(present_pieces)
-        by_turn = {}
-        for turn in range(1, NUM_TURNS + 1):
-            pct_value = r1(hypergeom_at_least(99, needed, cards_seen_by_turn(turn), needed) * 100)
-            by_turn[str(turn)] = pct_value
-            best_by_turn[str(turn)] = max(best_by_turn[str(turn)], pct_value)
-
-        combos.append({
-            "name": combo["name"],
-            "pieces": combo["pieces"],
-            "requiresCommander": combo["requiresCommander"],
-            "description": combo["description"],
-            "byTurn": by_turn,
-            "medianAssemblyTurn": median_turn_from_cumulative(by_turn),
-        })
-
-    fastest = None
-    if combos:
-        fastest = min(
-            combos,
-            key=lambda combo: combo["medianAssemblyTurn"] if combo["medianAssemblyTurn"] is not None else 999,
-        )["name"]
-
-    return {
-        "combos": combos,
-        "bestByTurn": best_by_turn,
-        "fastestCombo": fastest,
-        "medianAssemblyTurn": median_turn_from_cumulative(best_by_turn),
     }
 
 
@@ -1794,15 +2038,20 @@ def compute_deck_health_score(result: dict, threat_density: dict, draw_reliabili
         (interaction_availability["byTurn"].get("3", 0.0), 0.45),
         (interaction_availability["byTurn"].get("4", 0.0), 0.25),
     ])
-    # DEC-362 #1: floor declared-combo decks at the neutral default so declaring an
-    # honest finisher can only help, never score below a deck that declares none.
-    # (The raw closed-form assembly % understates tutor/redundancy decks; the
-    # tutor-aware Monte-Carlo model that makes this axis discriminating is the #2
-    # follow-up. Until then comboConsistency reads ~50 for every deck.)
-    combo_score = max(50.0, weighted_average([
+    # DEC-362 #1: floor declared-combo decks at the neutral default (50) so declaring
+    # an honest finisher can only help, never hurt. DEC-363 #2: bestByTurn now comes
+    # from the tutor/redundancy-aware Monte-Carlo assembly model. The raw assembly
+    # rate of a Bracket-4 precon combo peaks ~20-25% by turns 5-6 — always below the
+    # 50 floor — so a literal max(50, assembly%) would leave EVERY deck at 50 and the
+    # axis non-discriminating, defeating the point of this work. Instead we anchor the
+    # speed-weighted assembly signal into the upper [50,100] half: combo-less decks and
+    # combos that never come together stay at 50; a deck that always assembles its best
+    # combo fast reaches 100. Turn-5/6 weighting keeps the speed emphasis from #2's plan.
+    assembly_signal = weighted_average([
         (combo_assembly["bestByTurn"].get("5", 0.0), 0.40),
         (combo_assembly["bestByTurn"].get("6", 0.0), 0.60),
-    ])) if combo_assembly["combos"] else 50.0
+    ])
+    combo_score = max(50.0, 50.0 + assembly_signal / 2.0) if combo_assembly["combos"] else 50.0
     commander_independence = 100.0 - commander_dependency["score"]
 
     overall = weighted_average([
@@ -1843,8 +2092,18 @@ def enrich_result(result: dict, deck_id: str, deck_data: dict, decklist: list[st
     threat_density = compute_threat_density(functional["threats"], metadata, result)
     draw_reliability = compute_reliability_curve(functional["draw"], "Card draw")
     interaction_availability = compute_reliability_curve(functional["interaction"], "Interaction")
-    combo_assembly = compute_combo_assembly(deck_id, decklist, commander_name)
     color_adequacy = compute_colored_source_adequacy(decklist, metadata, commander_name, colors)
+    commander_colors = colors or ["C"]
+    # Goldfish now produces the tutor-aware combo assembly (DEC-363), so it runs
+    # before commander-dependency and the health score, which both consume it.
+    goldfish, combo_assembly = compute_goldfish_section(
+        decklist=decklist,
+        deck_data=deck_data,
+        metadata=metadata,
+        commander_name=commander_name,
+        commander_colors=commander_colors,
+        deck_id=deck_id,
+    )
     commander_dependency = compute_commander_dependency(
         deck_data=deck_data,
         commander_name=commander_name,
@@ -1853,14 +2112,6 @@ def enrich_result(result: dict, deck_id: str, deck_data: dict, decklist: list[st
         threat_density=threat_density,
         draw_reliability=draw_reliability,
         interaction_availability=interaction_availability,
-    )
-    commander_colors = colors or ["C"]
-    goldfish = compute_goldfish_section(
-        decklist=decklist,
-        deck_data=deck_data,
-        metadata=metadata,
-        commander_name=commander_name,
-        commander_colors=commander_colors,
     )
 
     result["reliabilityMetrics"] = {

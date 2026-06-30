@@ -64,7 +64,7 @@
       "median": 7.0,
       "p25": 6.0,
       "p75": 8.0,
-      "mean": 7.1
+      "mean": 7.0
     },
     "10": {
       "median": 7.0,
@@ -81,10 +81,10 @@
   "openingHand": {
     "landDistribution": {
       "0": 0.4,
-      "1": 7.2,
-      "2": 33.1,
+      "1": 7.3,
+      "2": 32.8,
       "3": 33.0,
-      "4": 18.9,
+      "4": 19.0,
       "5": 6.3,
       "6": 1.1,
       "7": 0.1
@@ -96,14 +96,14 @@
     "byTurn": {
       "1": 1.1,
       "2": 4.9,
-      "3": 27.5,
-      "4": 68.1,
-      "5": 78.5,
+      "3": 27.4,
+      "4": 68.4,
+      "5": 78.6,
       "6": 85.1,
-      "7": 89.8,
-      "8": 93.1,
-      "9": 95.3,
-      "10": 96.8
+      "7": 89.7,
+      "8": 93.0,
+      "9": 95.1,
+      "10": 96.7
     },
     "medianTurn": 4
   },
@@ -196,7 +196,7 @@
       "9": {
         "B": {
           "median": 4.0,
-          "mean": 4.7
+          "mean": 4.6
         },
         "R": {
           "median": 3.0,
@@ -216,12 +216,12 @@
     },
     "colorScrewByTurn": {
       "1": {
-        "B": 19.2,
-        "R": 51.2
+        "B": 19.3,
+        "R": 51.3
       },
       "2": {
         "B": 10.0,
-        "R": 23.8
+        "R": 23.9
       },
       "3": {
         "B": 5.1,
@@ -229,7 +229,7 @@
       },
       "4": {
         "B": 3.2,
-        "R": 8.7
+        "R": 8.6
       },
       "5": {
         "B": 2.1,
@@ -237,19 +237,19 @@
       },
       "6": {
         "B": 1.4,
-        "R": 4.6
+        "R": 4.7
       },
       "7": {
         "B": 0.9,
         "R": 3.5
       },
       "8": {
-        "B": 0.7,
-        "R": 2.6
+        "B": 0.6,
+        "R": 2.7
       },
       "9": {
-        "B": 0.4,
-        "R": 2.0
+        "B": 0.5,
+        "R": 2.1
       },
       "10": {
         "B": 0.3,
@@ -259,23 +259,23 @@
   },
   "curveEfficiency": {
     "castableByTurn": {
-      "1": 33.6,
-      "2": 80.7,
+      "1": 33.7,
+      "2": 81.1,
       "3": 93.9,
       "4": 97.5,
-      "5": 98.8,
-      "6": 99.4,
-      "7": 99.7,
+      "5": 98.7,
+      "6": 99.3,
+      "7": 99.6,
       "8": 99.8,
       "9": 99.9,
       "10": 99.9
     },
-    "curveOutRate": 33.6
+    "curveOutRate": 33.7
   },
   "specialMetrics": {
     "cascadeReadiness": null,
     "etbTapped": {
-      "1": 1.4,
+      "1": 1.5,
       "2": 4.6
     }
   },
@@ -371,39 +371,43 @@
           "name": "Hidetsugu Lethal",
           "pieces": [
             "Heartless Hidetsugu",
-            "Twinflame Tyrant"
+            "Solphim, Mayhem Dominus",
+            "Twinflame Tyrant",
+            "Fiery Emancipation",
+            "Bloodletter of Aclazotz"
           ],
           "requiresCommander": false,
-          "description": "Damage doubler turns Hidetsugu activations lethal.",
+          "description": "Any noncombat-damage/life-loss doubler turns a Heartless Hidetsugu activation (half each opponent's life) lethal.",
           "byTurn": {
-            "1": 0.4,
-            "2": 0.6,
-            "3": 0.7,
-            "4": 0.9,
-            "5": 1.1,
-            "6": 1.4,
-            "7": 1.6,
-            "8": 1.9,
-            "9": 2.2,
-            "10": 2.5
+            "1": 3.1,
+            "2": 7.2,
+            "3": 12.0,
+            "4": 16.5,
+            "5": 21.0,
+            "6": 25.5,
+            "7": 29.8,
+            "8": 33.8,
+            "9": 38.0,
+            "10": 42.2
           },
           "medianAssemblyTurn": null
         }
       ],
       "bestByTurn": {
-        "1": 0.4,
-        "2": 0.6,
-        "3": 0.7,
-        "4": 0.9,
-        "5": 1.1,
-        "6": 1.4,
-        "7": 1.6,
-        "8": 1.9,
-        "9": 2.2,
-        "10": 2.5
+        "1": 3.1,
+        "2": 7.2,
+        "3": 12.0,
+        "4": 16.5,
+        "5": 21.0,
+        "6": 25.5,
+        "7": 29.8,
+        "8": 33.8,
+        "9": 38.0,
+        "10": 42.2
       },
       "fastestCombo": "Hidetsugu Lethal",
-      "medianAssemblyTurn": null
+      "medianAssemblyTurn": null,
+      "methodology": "Tutor/redundancy-aware Monte-Carlo assembly (DEC-363): share of 10,000 seeded goldfish games in which every combo slot is filled by the given turn. A slot is filled by a drawn member (hand or battlefield) or by assigning one not-yet-used generic to-hand tutor (drawn + mana payable + a legal library target left), with one-tutor-one-slot bipartite matching so a single tutor can never fill two open slots. The commander slot is auto-filled from the command zone. Graveyard tutors and reanimation are excluded as non-finders."
     },
     "coloredSourceAdequacy": {
       "overallScore": 82.7,
@@ -506,13 +510,13 @@
     }
   },
   "deckHealthScore": {
-    "score": 67.6,
+    "score": 69.4,
     "grade": "B",
     "components": {
-      "manaReliability": 73.9,
+      "manaReliability": 74.0,
       "threatDeployment": 63.9,
       "interactionDensity": 70.0,
-      "comboConsistency": 50.0,
+      "comboConsistency": 61.9,
       "commanderIndependence": 74.0
     },
     "methodology": "Weighted composite: mana 30%, threats 20%, interaction 20%, combo 15%, commander independence 15%."
@@ -563,8 +567,8 @@
           "p75": 0.0,
           "mean": 0.0
         },
-        "commanderCast": 4.8,
-        "firstThreat": 5.6,
+        "commanderCast": 4.7,
+        "firstThreat": 5.7,
         "meaningfulBoard": 5.2,
         "lethalProxy": 0.0,
         "comboLethal": 0.0
@@ -612,11 +616,11 @@
           "p75": 0.0,
           "mean": 0.4
         },
-        "commanderCast": 32.1,
-        "firstThreat": 32.9,
-        "meaningfulBoard": 32.5,
+        "commanderCast": 32.3,
+        "firstThreat": 33.2,
+        "meaningfulBoard": 32.6,
         "lethalProxy": 0.0,
-        "comboLethal": 0.4
+        "comboLethal": 0.3
       },
       "3": {
         "lands": {
@@ -661,11 +665,11 @@
           "p75": 5.0,
           "mean": 3.0
         },
-        "commanderCast": 62.4,
-        "firstThreat": 63.0,
-        "meaningfulBoard": 62.6,
+        "commanderCast": 61.7,
+        "firstThreat": 62.4,
+        "meaningfulBoard": 62.0,
         "lethalProxy": 0.0,
-        "comboLethal": 1.4
+        "comboLethal": 1.3
       },
       "4": {
         "lands": {
@@ -696,7 +700,7 @@
           "median": 8.0,
           "p25": 6.0,
           "p75": 11.0,
-          "mean": 8.5
+          "mean": 8.4
         },
         "combatPressure": {
           "median": 5.0,
@@ -710,11 +714,11 @@
           "p75": 13.0,
           "mean": 8.2
         },
-        "commanderCast": 84.9,
-        "firstThreat": 85.5,
-        "meaningfulBoard": 85.1,
+        "commanderCast": 84.7,
+        "firstThreat": 85.4,
+        "meaningfulBoard": 85.0,
         "lethalProxy": 0.2,
-        "comboLethal": 2.9
+        "comboLethal": 3.1
       },
       "5": {
         "lands": {
@@ -751,19 +755,19 @@
           "median": 7.0,
           "p25": 5.0,
           "p75": 11.0,
-          "mean": 7.7
+          "mean": 7.6
         },
         "cumulativeDamageProxy": {
           "median": 15.0,
           "p25": 9.0,
           "p75": 22.0,
-          "mean": 15.9
+          "mean": 15.8
         },
         "commanderCast": 90.9,
         "firstThreat": 91.5,
         "meaningfulBoard": 91.1,
-        "lethalProxy": 3.3,
-        "comboLethal": 5.0
+        "lethalProxy": 3.2,
+        "comboLethal": 5.2
       },
       "6": {
         "lands": {
@@ -782,7 +786,7 @@
           "median": 2.0,
           "p25": 1.0,
           "p75": 3.0,
-          "mean": 1.9
+          "mean": 2.0
         },
         "availableMana": {
           "median": 6.0,
@@ -808,11 +812,11 @@
           "p75": 35.0,
           "mean": 24.9
         },
-        "commanderCast": 94.2,
-        "firstThreat": 94.8,
-        "meaningfulBoard": 94.5,
-        "lethalProxy": 15.3,
-        "comboLethal": 7.7
+        "commanderCast": 94.1,
+        "firstThreat": 94.7,
+        "meaningfulBoard": 94.3,
+        "lethalProxy": 15.5,
+        "comboLethal": 8.0
       },
       "7": {
         "lands": {
@@ -847,21 +851,21 @@
         },
         "combatPressure": {
           "median": 10.0,
-          "p25": 6.0,
+          "p25": 6.2,
           "p75": 13.0,
           "mean": 10.1
         },
         "cumulativeDamageProxy": {
           "median": 33.0,
-          "p25": 22.0,
+          "p25": 23.0,
           "p75": 46.0,
           "mean": 35.0
         },
         "commanderCast": 96.1,
-        "firstThreat": 96.5,
-        "meaningfulBoard": 96.3,
-        "lethalProxy": 36.6,
-        "comboLethal": 10.7
+        "firstThreat": 96.6,
+        "meaningfulBoard": 96.2,
+        "lethalProxy": 36.2,
+        "comboLethal": 11.0
       },
       "8": {
         "lands": {
@@ -886,7 +890,7 @@
           "median": 8.0,
           "p25": 6.0,
           "p75": 9.0,
-          "mean": 7.8
+          "mean": 7.7
         },
         "pressureScore": {
           "median": 12.0,
@@ -906,10 +910,10 @@
           "p75": 60.0,
           "mean": 46.1
         },
-        "commanderCast": 97.3,
-        "firstThreat": 97.6,
-        "meaningfulBoard": 97.5,
-        "lethalProxy": 57.6,
+        "commanderCast": 97.4,
+        "firstThreat": 97.8,
+        "meaningfulBoard": 97.6,
+        "lethalProxy": 57.8,
         "comboLethal": 14.2
       },
       "9": {
@@ -955,11 +959,11 @@
           "p75": 74.0,
           "mean": 58.0
         },
-        "commanderCast": 98.2,
-        "firstThreat": 98.5,
-        "meaningfulBoard": 98.4,
-        "lethalProxy": 74.1,
-        "comboLethal": 17.9
+        "commanderCast": 98.3,
+        "firstThreat": 98.7,
+        "meaningfulBoard": 98.5,
+        "lethalProxy": 74.6,
+        "comboLethal": 18.1
       },
       "10": {
         "lands": {
@@ -975,7 +979,7 @@
           "mean": 1.2
         },
         "threats": {
-          "median": 3.0,
+          "median": 2.0,
           "p25": 2.0,
           "p75": 3.0,
           "mean": 2.6
@@ -990,13 +994,13 @@
           "median": 14.0,
           "p25": 11.0,
           "p75": 17.0,
-          "mean": 14.2
+          "mean": 14.3
         },
         "combatPressure": {
           "median": 13.0,
           "p25": 9.0,
           "p75": 16.0,
-          "mean": 12.7
+          "mean": 12.8
         },
         "cumulativeDamageProxy": {
           "median": 68.0,
@@ -1004,11 +1008,11 @@
           "p75": 90.0,
           "mean": 70.8
         },
-        "commanderCast": 98.8,
-        "firstThreat": 99.0,
-        "meaningfulBoard": 98.8,
+        "commanderCast": 98.9,
+        "firstThreat": 99.1,
+        "meaningfulBoard": 99.0,
         "lethalProxy": 86.1,
-        "comboLethal": 22.0
+        "comboLethal": 22.2
       }
     },
     "comboLines": [
@@ -1022,46 +1026,46 @@
     "speed": {
       "commanderCast": {
         "byTurn": {
-          "1": 4.8,
-          "2": 32.1,
-          "3": 62.4,
-          "4": 84.9,
+          "1": 4.7,
+          "2": 32.3,
+          "3": 61.7,
+          "4": 84.7,
           "5": 90.9,
-          "6": 94.2,
+          "6": 94.1,
           "7": 96.1,
-          "8": 97.3,
-          "9": 98.2,
-          "10": 98.8
+          "8": 97.4,
+          "9": 98.3,
+          "10": 98.9
         },
         "medianTurn": 3
       },
       "firstThreat": {
         "byTurn": {
-          "1": 5.6,
-          "2": 32.9,
-          "3": 63.0,
-          "4": 85.5,
+          "1": 5.7,
+          "2": 33.2,
+          "3": 62.4,
+          "4": 85.4,
           "5": 91.5,
-          "6": 94.8,
-          "7": 96.5,
-          "8": 97.6,
-          "9": 98.5,
-          "10": 99.0
+          "6": 94.7,
+          "7": 96.6,
+          "8": 97.8,
+          "9": 98.7,
+          "10": 99.1
         },
         "medianTurn": 3
       },
       "meaningfulBoard": {
         "byTurn": {
           "1": 5.2,
-          "2": 32.5,
-          "3": 62.6,
-          "4": 85.1,
+          "2": 32.6,
+          "3": 62.0,
+          "4": 85.0,
           "5": 91.1,
-          "6": 94.5,
-          "7": 96.3,
-          "8": 97.5,
-          "9": 98.4,
-          "10": 98.8
+          "6": 94.3,
+          "7": 96.2,
+          "8": 97.6,
+          "9": 98.5,
+          "10": 99.0
         },
         "medianTurn": 3
       },
@@ -1071,11 +1075,11 @@
           "2": 0.0,
           "3": 0.0,
           "4": 0.2,
-          "5": 3.3,
-          "6": 15.3,
-          "7": 36.6,
-          "8": 57.6,
-          "9": 74.1,
+          "5": 3.2,
+          "6": 15.5,
+          "7": 36.2,
+          "8": 57.8,
+          "9": 74.6,
           "10": 86.1
         },
         "medianTurn": 8
@@ -1083,15 +1087,15 @@
       "comboLethal": {
         "byTurn": {
           "1": 0.0,
-          "2": 0.4,
-          "3": 1.4,
-          "4": 2.9,
-          "5": 5.0,
-          "6": 7.7,
-          "7": 10.7,
+          "2": 0.3,
+          "3": 1.3,
+          "4": 3.1,
+          "5": 5.2,
+          "6": 8.0,
+          "7": 11.0,
           "8": 14.2,
-          "9": 17.9,
-          "10": 22.0
+          "9": 18.1,
+          "10": 22.2
         },
         "medianTurn": null
       }
