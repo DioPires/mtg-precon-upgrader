@@ -63,6 +63,11 @@
       "type": "ai-inferred",
       "name": "DEC-315 swap: cut Plague Wind, add Afterlife from the Loam",
       "detail": "Plague Wind is strictly dominated by In Garruk's Wake (same {7}{B}{B} cost, same creature effect, Garruk's Wake additionally destroys opposing planeswalkers). Slot reused for Afterlife from the Loam, which exploits the Witherbloom affinity-for-creatures + Delve cost-reduction stack unique to this commander."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-366 swaps: cut Tireless Provisioner + Nature's Lore, add Badgermole Cub + Pest Infestation",
+      "detail": "Board-approved 2026-06-30 via DEC-366 thread (assessment + cut review). (1) Tireless Provisioner → Badgermole Cub: affinity-neutral creature-for-creature ramp swap. Tireless's treasure ramp was redundant with Pitiless Plunderer + Sol Ring + Arcane Signet in a non-landfall deck; Badgermole ({1}{G} 2/2) multiplies the deck's primary mana axis — 'whenever you tap a creature for mana, add an additional {G}' roughly doubles the green output of the token board via Springleaf Parade / Cryptolith Rite / Enduring Vitality and the mana-dork suite, directly raising lethal X on Exsanguinate / Torment of Hailfire. Earthbend 1 ETB also yields an extra affinity-creature body. (2) Nature's Lore → Pest Infestation: cut the more redundant of the two functionally-identical Forest-fetchers (Three Visits retained for B-fixing). Pest Infestation ({X}{X}{G} sorcery) is affinity-discounted by Witherbloom on its generic cost like Exsanguinate, makes twice-X 1/1 B/G Pests (doubled again by Parallel Lives) that fuel affinity, X-drains, and aristocrat drain/Skullclamp/Yawgmoth, AND provides the deck's only flexible mass artifact/enchantment removal. In Garruk's Wake explicitly retained as a one-sided board wipe per board direction."
     }
   ],
   "guideContent": {
@@ -83,7 +88,8 @@
         "Infestation Sage",
         "Springleaf Parade",
         "Parallel Lives",
-        "Bastion of Remembrance"
+        "Bastion of Remembrance",
+        "Pest Infestation"
       ]
     },
     {
@@ -125,8 +131,7 @@
         "Sol Ring",
         "Arcane Signet",
         "Three Visits",
-        "Nature's Lore",
-        "Tireless Provisioner"
+        "Badgermole Cub"
       ]
     },
     {
@@ -169,7 +174,8 @@
         "Murderous Rider // Swift End",
         "Yawgmoth, Thran Physician",
         "Heroic Intervention",
-        "Sheoldred's Edict"
+        "Sheoldred's Edict",
+        "Pest Infestation"
       ]
     },
     {
@@ -463,6 +469,58 @@
           "url": "https://scryfall.com/card/tdc/25"
         }
       ]
+    },
+    {
+      "title": "Badgermole Cub — Green-Mana Multiplier on the Tap Axis",
+      "cards": [
+        "Badgermole Cub",
+        "Springleaf Parade",
+        "Cryptolith Rite",
+        "Enduring Vitality",
+        "Llanowar Elves",
+        "Bloom Tender",
+        "Exsanguinate",
+        "Torment of Hailfire"
+      ],
+      "description": "Badgermole Cub's static — \"Whenever you tap a creature for mana, add an additional {G}\" — fires once per tap-for-mana event, so it scales with the deck's creature-tap mana axis rather than duplicating it. With Springleaf Parade / Cryptolith Rite / Enduring Vitality online, every token tapped for mana now yields 2 mana (one any-color + one green), roughly doubling the green output of a wide board; the extra green pays the generic {X} of Exsanguinate / Torment of Hailfire, pulling lethal-X earlier. It also buffs the mana-dork suite (Llanowar Elves, Elves of Deep Shadow, Birds of Paradise, Bloom Tender each tap for +1 green) and its earthbend-1 ETB animates a land into an extra affinity-creature body. Note: Badgermole does not itself grant tap-for-mana — it amplifies an enabler that already does, so it is a ceiling-raiser conditional on Parade/Rite/Vitality or a dork being in play.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall — Badgermole Cub",
+          "url": "https://scryfall.com/card/tla/167/badgermole-cub"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-366 analysis",
+          "detail": "Swap: Tireless Provisioner → Badgermole Cub, board-approved 2026-06-30"
+        }
+      ]
+    },
+    {
+      "title": "Pest Infestation — Affinity-Discounted Token Burst + Noncreature Removal",
+      "cards": [
+        "Pest Infestation",
+        "Witherbloom, the Balancer",
+        "Parallel Lives",
+        "Blood Artist",
+        "Zulaport Cutthroat",
+        "Skullclamp",
+        "Exsanguinate",
+        "Torment of Hailfire"
+      ],
+      "description": "Pest Infestation is {X}{X}{G}: \"Destroy up to X target artifacts and/or enchantments. Create twice X 1/1 black and green Pest creature tokens with 'When this token dies, you gain 1 life.'\" As a sorcery it benefits from Witherbloom's affinity-for-creatures, which strips its generic {X}{X} the same way it discounts Exsanguinate — on a 6-creature board, X=3 costs roughly {G}. The twice-X Pests (doubled again by Parallel Lives to 4×X) refill affinity, widen the X-drain board, feed Springleaf Parade / Cryptolith Rite / Enduring Vitality mana, and die into every drain trigger (Blood Artist, Zulaport Cutthroat, Bastion of Remembrance) plus Skullclamp / Yawgmoth draw — each Pest also gaining 1 life on death. The destroy mode is the deck's only flexible mass artifact/enchantment answer (\"up to X\" can be 0 when you just want bodies). Sorcery-speed and best mid-to-late once the board makes the affinity discount meaningful.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall — Pest Infestation",
+          "url": "https://scryfall.com/card/soc/282/pest-infestation"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-366 analysis",
+          "detail": "Swap: Nature's Lore → Pest Infestation, board-approved 2026-06-30"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -552,6 +610,19 @@
           "type": "scryfall",
           "name": "Scryfall",
           "url": "https://scryfall.com/card/isd/199/parallel-lives"
+        }
+      ]
+    },
+    {
+      "name": "Pest Infestation",
+      "price": "€2-4",
+      "isGameChanger": false,
+      "reason": "Affinity-discounted {X}{X}{G} sorcery (Witherbloom strips its generic cost like Exsanguinate). Makes twice-X Pests — doubled again by Parallel Lives — that fuel affinity, X-drains, and aristocrat drain/Skullclamp draw, plus the deck's only flexible mass artifact/enchantment removal.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall",
+          "url": "https://scryfall.com/card/soc/282/pest-infestation"
         }
       ]
     }
@@ -785,8 +856,8 @@
       "secondary_role": "utility"
     },
     {
-      "name": "Tireless Provisioner",
-      "type": "Creature — Elf Druid",
+      "name": "Badgermole Cub",
+      "type": "Creature — Badger Mole",
       "primary_role": "ramp",
       "secondary_role": "utility"
     },
@@ -929,9 +1000,10 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Nature's Lore",
+      "name": "Pest Infestation",
       "type": "Sorcery",
-      "primary_role": "ramp"
+      "primary_role": "payoff",
+      "secondary_role": "removal-spot"
     },
     {
       "name": "Enduring Vitality",
@@ -1088,16 +1160,19 @@
       ]
     },
     {
-      "name": "Food",
-      "type_line": "Token Artifact — Food",
-      "oracle_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
-      "power": null,
-      "toughness": null,
-      "colors": [],
-      "scryfall_id": "95a625ba-330c-4677-a9b3-9c471225b204",
-      "image_uri": "https://cards.scryfall.io/normal/front/9/5/95a625ba-330c-4677-a9b3-9c471225b204.jpg?1682211123",
+      "name": "Pest",
+      "type_line": "Token Creature — Pest",
+      "oracle_text": "When this creature dies, you gain 1 life.",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "B",
+        "G"
+      ],
+      "scryfall_id": "c72ceae7-72d6-41dc-82cc-b86e845d7aa6",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/7/c72ceae7-72d6-41dc-82cc-b86e845d7aa6.jpg?1782723488",
       "produced_by": [
-        "Tireless Provisioner"
+        "Pest Infestation"
       ]
     },
     {
@@ -1214,8 +1289,7 @@
       "scryfall_id": "3dfaedeb-f8ec-4f0e-b243-c850770a86f2",
       "image_uri": "https://cards.scryfall.io/normal/front/3/d/3dfaedeb-f8ec-4f0e-b243-c850770a86f2.jpg?1698873949",
       "produced_by": [
-        "Pitiless Plunderer",
-        "Tireless Provisioner"
+        "Pitiless Plunderer"
       ]
     }
   ]
