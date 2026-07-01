@@ -65,10 +65,9 @@ def parse_mana_cost(mana_cost: str) -> dict:
 ROCK_DEFS = {
     "Sol Ring":           {"cmc": 1, "C": 2, "burst": False},
     "Arcane Signet":      {"cmc": 2, "W": 1, "burst": False},
-    "Mind Stone":         {"cmc": 2, "C": 1, "burst": False},
     "The Mind Stone":     {"cmc": 2, "W": 1, "burst": False},
-    "Pearl Medallion":    {"cmc": 2, "C": 0, "burst": False},  # cost reducer, not mana
     "Basalt Monolith":    {"cmc": 3, "C": 3, "burst": False},  # doesn't untap normally, but sim treats all rocks as available each turn
+    "White Auracite":     {"cmc": 4, "W": 1, "burst": False},  # DEC-367 add: {T}: add {W}
 }
 
 
