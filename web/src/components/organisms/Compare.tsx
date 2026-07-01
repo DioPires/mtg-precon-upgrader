@@ -48,7 +48,6 @@ const COLUMNS: ColumnDef[] = [
   { key: 'lands',     label: 'Lands',   short: 'LND',   numeric: true,  get: (d) => d.composition?.lands ?? null },
   { key: 'gc',        label: 'GC',      short: 'GC',    numeric: true,  get: (d) => d.gameChangers || (d.engine || []).reduce((n, e) => n + (e.isGameChangers ? e.count : 0), 0) },
   { key: 'combos',    label: 'Combos',  short: 'CBN',   numeric: true,  get: (d) => (d.combos || []).length },
-  { key: 'price',     label: 'Cost',    short: 'COST',  numeric: false, get: (d) => d.price || '—' },
 ];
 
 function sortBy(decks: DeckFull[], key: string, asc: boolean): DeckFull[] {
@@ -352,9 +351,6 @@ export function Compare({ decks }: CompareProps) {
                       ) : (
                         <span className="gv1-mono-xs gv1-dim">—</span>
                       )}
-                    </td>
-                    <td className="gv1-cmp-td">
-                      <span className="gv1-mono-xs">{d.price || '—'}</span>
                     </td>
                   </tr>
                 );
