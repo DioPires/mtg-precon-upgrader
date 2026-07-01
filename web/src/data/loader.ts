@@ -116,7 +116,8 @@ import type {
 // v77 -> v78 (DEC-359 2026-06-29): Exponential Growth +Owlin Spiralmancer / -Pathbreaker Ibex. {3}{U} flyer copies first X-spell each turn (any type) — extends copy engine to X-creature Hydras Unbound Flourishing can't; board cut Ibex (no counter synergy) over Master Biomancer.
 // v78 -> v79 (DEC-359 2026-06-29): Exponential Growth +Nev, the Practical Dean +Lattice Library / -Warden of the Grove -Master Biomancer. Nev = team trample for countered creatures; Lattice = wipe-proof Fractal engine (resilience 54->57). Metrics-verified (worktree): global flat 72, interaction held 111.
 // v84 -> v85 (DEC-367 2026-07-01): The White Forge ETB/LTB assessment 7-for-7. IN Tezzeret Cruel Captain, Ultron Artificial Malevolence, Haliya Guided by Light, White Auracite, Lembas, Aang Airbending Master, Portal to Phyrexia / OUT Mycosynth Wellspring, Mind Stone, Reprieve, Nexus of Becoming, Airbender Ascension, Ao the Dawn Sky, The Eternal Wanderer. Deepens Gandalf-doubled ETB axis + adds Aang as the blink "leave-without-dying" payoff; trims wipe-glut 5->4, keeps Wurmcoil. GC unchanged (6); deck.json/candidates/metrics/sim refreshed (health B/74.5).
-const STORAGE_PREFIX = 'gv1-deck-data-v85:';
+// v85 -> v86 (DEC-367 2026-07-01): The White Forge manabase pass — +3 Plains (33->36 lands) / -Basalt Monolith (net-0 without an untapper, colourless), -Jhoira's Familiar (weakest cost reducer), -Urza's Ruinous Blast (per board wipe eval: most self-damaging in an artifact deck; kept engine-safe Avatar's Wrath). manaReliability 62.1->67.3, health B/74.5->A/76.3, 0-1 land keeps 10.3%->7.1%.
+const STORAGE_PREFIX = 'gv1-deck-data-v86:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

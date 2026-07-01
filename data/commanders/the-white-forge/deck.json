@@ -127,10 +127,15 @@
       "type": "scryfall",
       "name": "Scryfall verification (DEC-367 adds)",
       "detail": "Oracle text + color identity verified for all 7 adds; Gandalf 'leaves the battlefield' doubling of sac/death triggers confirmed via card rulings."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-367 manabase pass (+3 lands to 36)",
+      "detail": "Board-approved 2026-07-01 (follow-up to the 7-for-7). IN 3x Plains (33->36 lands). OUT Basalt Monolith (net-0 without an untapper; only Tezzeret untaps it; colorless-only, can't pay WW), Jhoira's Familiar (weakest of 4 cost reducers), Urza's Ruinous Blast (per board wipe eval: most self-damaging in an artifact deck — exiles own nonlegendary rocks/engine; kept cheap engine-safe Avatar's Wrath). Addresses sim manaReliability (weakest leg) + Gandalf behind curve (median T6)."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Gandalf the White is a mono-white artifact value engine disguised as a Tolkien character. His two abilities — granting flash to legendary and artifact spells, and doubling triggered abilities caused by legendary permanents or artifacts entering/leaving the battlefield — turn mediocre ETB/LTB artifacts into absurd card advantage machines.\n\nThe deck operates on three axes. First: the value grind. Cheap artifacts like Ichor Wellspring draw 2 on entry and 2 on death. Solemn Simulacrum ramps 2 and draws 2. Archaeomancer's Map fetches 4 Plains. Every piece of scrap generates double returns. Second: the recursion loop. Myr Retriever, Scrap Trawler, Junk Diver, and Workshop Assistant all return 2 artifacts on death instead of 1, creating a self-sustaining engine that recycles spent resources. Cost reducers (Foundry Inspector, Cloud Key, Jhoira's Familiar) make replaying these pieces free or near-free. Third: the combo kill. Heliod + Walking Ballista is the cleanest win — both castable at flash speed via Gandalf. KCI + Nim Deathmantle + Myr Battlesphere generates infinite mana and tokens. Aetherflux Reservoir converts the artifact storm into lethal damage.\n\nThe stax package leverages Gandalf's flash ability to deploy disruptive pieces at instant speed. Ethersworn Canonist, Boromir, Karn the Great Creator, and Elesh Norn can all enter at the most devastating moment. Elesh Norn with Gandalf means your ETBs trigger three times while opponents get zero.\n\nB4 fast mana (Sol Ring, Chrome Mox, Ancient Tomb) enables T3-4 Gandalf deployment. From there, the deck snowballs through doubled triggers until it assembles a combo or buries opponents in card advantage.",
+    "strategyOverview": "Gandalf the White is a mono-white artifact value engine disguised as a Tolkien character. His two abilities — granting flash to legendary and artifact spells, and doubling triggered abilities caused by legendary permanents or artifacts entering/leaving the battlefield — turn mediocre ETB/LTB artifacts into absurd card advantage machines.\n\nThe deck operates on three axes. First: the value grind. Cheap artifacts like Ichor Wellspring draw 2 on entry and 2 on death. Solemn Simulacrum ramps 2 and draws 2. Archaeomancer's Map fetches 4 Plains. Every piece of scrap generates double returns. Second: the recursion loop. Myr Retriever, Scrap Trawler, Junk Diver, and Workshop Assistant all return 2 artifacts on death instead of 1, creating a self-sustaining engine that recycles spent resources. Cost reducers (Foundry Inspector, Cloud Key) make replaying these pieces free or near-free. Third: the combo kill. Heliod + Walking Ballista is the cleanest win — both castable at flash speed via Gandalf. KCI + Nim Deathmantle + Myr Battlesphere generates infinite mana and tokens. Aetherflux Reservoir converts the artifact storm into lethal damage.\n\nThe stax package leverages Gandalf's flash ability to deploy disruptive pieces at instant speed. Ethersworn Canonist, Boromir, Karn the Great Creator, and Elesh Norn can all enter at the most devastating moment. Elesh Norn with Gandalf means your ETBs trigger three times while opponents get zero.\n\nB4 fast mana (Sol Ring, Chrome Mox, Ancient Tomb) enables T3-4 Gandalf deployment. From there, the deck snowballs through doubled triggers until it assembles a combo or buries opponents in card advantage.",
     "deckCategories": [
       {
         "name": "ETB/LTB Value Engine",
@@ -162,8 +167,7 @@
         "description": "Artifact cost reducers that enable free casting and combo loops. With 2-3 reducers in play, most value artifacts cost zero mana, enabling rapid artifact storms and infinite recursion loops.",
         "cards": [
           "Foundry Inspector",
-          "Cloud Key",
-          "Jhoira's Familiar"
+          "Cloud Key"
         ]
       },
       {
@@ -268,8 +272,7 @@
       "name": "Cost Reduction",
       "cards": [
         "Foundry Inspector",
-        "Cloud Key",
-        "Jhoira's Familiar"
+        "Cloud Key"
       ]
     },
     {
@@ -584,22 +587,6 @@
           "name": "EDHREC — 69% High Synergy",
           "url": "https://edhrec.com/commanders/gandalf-the-white",
           "detail": "69% inclusion rate as recursion engine"
-        }
-      ]
-    },
-    {
-      "title": "Urza's Ruinous Blast at Flash Speed",
-      "cards": [
-        "Urza's Ruinous Blast",
-        "Gandalf the White"
-      ],
-      "description": "Legendary sorcery that exiles all nonlegendary, nonland permanents. Gandalf grants flash to legendary spells — making this an instant-speed one-sided board wipe. Your legendary creatures and all artifacts survive. Cast on an opponent's combat step for maximum devastation.",
-      "sources": [
-        {
-          "type": "youtube",
-          "name": "The Commander's Quarters — Gandalf is Gross!",
-          "url": "https://www.youtube.com/watch?v=N2oJTRq8xeE",
-          "detail": "Flash-speed legendary sorcery board wipe"
         }
       ]
     }
@@ -1000,11 +987,6 @@
       "secondary_role": "utility"
     },
     {
-      "name": "Jhoira's Familiar",
-      "type": "Creature",
-      "primary_role": "ramp"
-    },
-    {
       "name": "Solemn Simulacrum",
       "type": "Creature",
       "primary_role": "ramp"
@@ -1059,11 +1041,6 @@
       "type": "Artifact",
       "primary_role": "engine",
       "secondary_role": "ramp"
-    },
-    {
-      "name": "Basalt Monolith",
-      "type": "Artifact",
-      "primary_role": "ramp"
     },
     {
       "name": "Arcane Signet",
@@ -1214,14 +1191,9 @@
       "primary_role": "removal-board"
     },
     {
-      "name": "Urza's Ruinous Blast",
-      "type": "Sorcery",
-      "primary_role": "removal-board"
-    },
-    {
       "name": "Plains",
       "type": "Land",
-      "quantity": 18,
+      "quantity": 21,
       "primary_role": "land"
     },
     {
