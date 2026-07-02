@@ -37,6 +37,11 @@ GLOBAL_WEIGHT_OPTIONS: dict[str, tuple[float, float, float, float, float, float]
 }
 DEFAULT_WEIGHT_OPTION = "A"
 
+# DEC-389 — global_health_normalized scores every deck against this one fixed
+# reference bracket's target tables, so cross-deck comparison doesn't mix bars
+# (a bracket redeclaration alone must not move the normalized score).
+NORMALIZED_REFERENCE_BRACKET = 3
+
 VALID_ROLES = {
     "land", "ramp", "mana-fixing", "card-draw", "tutor",
     "removal-spot", "removal-board", "counterspell", "protection",
@@ -587,7 +592,9 @@ def interaction_density(deck: dict, bracket: int) -> dict:
 
 # ---- Gameplan cohesion ------------------------------------------------------
 
-def gameplan_cohesion(deck: dict, mirror: dict[str, dict], bracket: int) -> dict:
+def gameplan_cohesion(
+    deck: dict, mirror: dict[str, dict], bracket: int, apply_bracket_penalty: bool = True
+) -> dict:
     archetypes = deck.get("archetypes") or []
     cohesion_set = set(COHESION_BASE_ROLES)
     extensions: list[str] = []
@@ -647,11 +654,14 @@ def gameplan_cohesion(deck: dict, mirror: dict[str, dict], bracket: int) -> dict
     in_set_pct = (in_set / nonland_total) if nonland_total else 0.0
     raw = in_set_pct * 100
 
+    # The combo penalty judges fit against the deck's *declared* bracket, not
+    # construction quality — the normalized companion score (DEC-389) skips it.
     penalty = 0.0
-    if combo_wincons >= 1 and bracket == 3:
-        penalty += 15
-    if combo_wincons >= 2 and bracket == 4:
-        penalty += 10
+    if apply_bracket_penalty:
+        if combo_wincons >= 1 and bracket == 3:
+            penalty += 15
+        if combo_wincons >= 2 and bracket == 4:
+            penalty += 10
 
     score = max(0.0, raw - penalty)
     if not has_wincon:
@@ -1102,6 +1112,22 @@ def compute(
         weights,
     )
 
+    # DEC-389 — companion score against the fixed reference bracket's targets.
+    # Manabase + curve are bracket-independent and reused as-is; the cohesion
+    # bracket-fit combo penalty is excluded (declared-bracket concern, not
+    # construction quality). Gaps from the normalized pass are discarded —
+    # gaps[] stays scored against the deck's own declared bar.
+    norm_bracket = NORMALIZED_REFERENCE_BRACKET
+    role_cov_norm, _ = role_coverage_health(deck, deck_ci, norm_bracket)
+    interaction_norm = interaction_density(deck, norm_bracket)
+    cohesion_norm = gameplan_cohesion(deck, mirror, norm_bracket, apply_bracket_penalty=False)
+    resilience_norm, _ = resilience_health(deck, norm_bracket)
+    global_health_normalized = blend_global_health(
+        manabase["score"], role_cov_norm["score"], curve["score"],
+        interaction_norm["score"], cohesion_norm["score"], resilience_norm["score"],
+        weights,
+    )
+
     confidence = confidence_margin(
         deck, deck_id, mirror,
         role_cov_score=role_cov["score"],
@@ -1138,6 +1164,18 @@ def compute(
             "resilience_health": resilience,
         },
         "global_health": global_health,
+        "global_health_normalized": global_health_normalized,
+        "normalized": {
+            "reference_bracket": norm_bracket,
+            "components": {
+                "manabase":    manabase["score"],
+                "role":        role_cov_norm["score"],
+                "curve":       curve["score"],
+                "interaction": interaction_norm["score"],
+                "cohesion":    cohesion_norm["score"],
+                "resilience":  resilience_norm["score"],
+            },
+        },
         "confidence_margin": confidence["margin"],
         "confidence_inputs": confidence["inputs"],
         "win_turn": win_turn,
@@ -1260,6 +1298,7 @@ def main(argv: list[str]) -> int:
         m = payload["metrics"]
         print(
             f"  [{deck_id}] global={payload['global_health']}±{payload['confidence_margin']}  "
+            f"norm={payload['global_health_normalized']}  "
             f"mana={m['manabase_health']['score']}  "
             f"roles={m['role_coverage_health']['score']}  "
             f"curve={m['curve_health']['score']}  "

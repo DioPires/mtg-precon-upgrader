@@ -277,6 +277,24 @@ global_health = 0.25 × manabase_health
 
 Mana and roles still co-dominate at 50% combined — they remain the most actionable failure modes. Cohesion and resilience share equal floor weight at 10% each: directional signals, not verdicts. See the [DEC-308 calibration subsection](#calibration-snapshot-2026-05-29-all-15-decks-resilience_health-added) below for the A/B/C comparison and the rationale for picking option A.
 
+### Normalized companion: `global_health_normalized` (DEC-389)
+
+`global_health` is **bracket-aware** — four of its six components (`role_coverage_health`, `interaction_density`, `gameplan_cohesion`, `resilience_health`) look up targets keyed by `bracket_effective`, so the score answers *"does this deck meet its own declared bar?"* That makes it the wrong number for cross-deck comparison: a bracket redeclaration alone moves it with zero card changes (DEC-382: silverquill dropped 95 → 84 on a 3 → 4- redeclaration).
+
+`global_health_normalized` is the companion score for apples-to-apples comparison: the same six components blended with the same weights, but with every bracket-parameterized target table fixed at the **Bracket-3 reference row** (`NORMALIZED_REFERENCE_BRACKET = 3` in `compute_deck_metrics.py`), regardless of what the deck declares. Two deltas from a plain "recompute at B3":
+
+- **Manabase and curve are reused as-is** — they never read the bracket, so both rulers share them.
+- **The cohesion combo penalty is excluded** (`apply_bracket_penalty=False`). That penalty judges combo-wincon *fit against the deck's declared bracket* — a legitimate part of "meets its own bar", but a style bias in a fixed-ruler comparison (it would dock every combo deck 15 points for a choice that is appropriate at its actual bracket).
+
+Two-score semantics:
+
+| Score | Question it answers | Moves on bracket redeclaration? |
+|---|---|---|
+| `global_health` | Does the deck meet its **own declared** bar? | Yes — the bar itself moves |
+| `global_health_normalized` | How does the deck rank on **one fixed ruler** (B3 targets)? | No |
+
+The normalized pass emits no gaps — `gaps[]` stays scored against the deck's own declared bar, since that is what drives candidate enrichment. A deck declared at B3 with no combo wincon scores identically on both rulers. The `normalized` block in `metrics.json` echoes the reference bracket and the six component scores used, so the blend is reproducible from the file alone. `confidence_margin` applies to both scores — it channels data completeness, not bracket targets.
+
 ## Output schema (`data/commanders/{id}/metrics.json`)
 
 ```json
@@ -306,6 +324,11 @@ Mana and roles still co-dominate at 50% combined — they remain the most action
     }
   },
   "global_health": 85,
+  "global_health_normalized": 93,
+  "normalized": {
+    "reference_bracket": 3,
+    "components": { "manabase": 82, "role": 98, "curve": 95, "interaction": 120, "cohesion": 24, "resilience": 96 }
+  },
   "confidence_margin": 5,
   "win_turn": { "best": 6, "typical": 7, "contested": 8, "source": "max", "bracket_drag": 1, "thresholds": { "best": 15.0, "typical": 50.0 }, "window_last_turn": 10 },
   "gaps": [
