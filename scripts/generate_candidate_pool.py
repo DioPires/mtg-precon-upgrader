@@ -74,6 +74,11 @@ KEEP_FIELDS = (
 )
 
 
+def front_face(name: str) -> str:
+    """Mirror indexes DFCs as 'Front // Back'; deck.json decklists use front-face names."""
+    return name.split(" // ", 1)[0]
+
+
 def load_owned() -> set[str]:
     if not OWNED_FILE.exists():
         return set()
@@ -404,12 +409,13 @@ def score_card(
         anti_synergy_multiplier *= flag.get("multiplier", 1.0)
     base_total = max(0.0, (raw_total - flat_anti_synergy_penalty) * anti_synergy_multiplier)
     anti_synergy_penalty = max(0.0, raw_total - base_total)
+    in_decklist = front_face(name) in decklist_names
     breakdown = {
         "density": round(density_score, 1),
         "cmc_fit": round(cmc_score, 1),
         "owned": owned_score,
         "bracket_fit": gc_score,
-        "decklist_demoted": name in decklist_names,
+        "decklist_demoted": in_decklist,
     }
     if saturation_penalty > 0:
         breakdown["density_raw"] = round(raw_density_score, 1)
@@ -452,7 +458,7 @@ def score_card(
                 }
                 base_total = demoted_total
 
-    if name in decklist_names:
+    if in_decklist:
         return min(5.0, base_total), breakdown, matched_archetypes
 
     return round(base_total, 1), breakdown, matched_archetypes
@@ -590,7 +596,7 @@ def generate_for_deck(
     context = deck_context(deck, mirror_index, archetype_ids, archetype_counts)
     deck_ci = commander_color_identity(deck, mirror_index)
     avg_cmc = deck_avg_cmc(deck, mirror_index)
-    decklist_names = {e["name"] for e in deck.get("decklist", [])}
+    decklist_names = {front_face(e["name"]) for e in deck.get("decklist", [])}
     bracket_raw = deck.get("bracket", 4)
     try:
         bracket = int(str(bracket_raw).strip())
@@ -607,7 +613,7 @@ def generate_for_deck(
     commander_name = deck.get("commander", "")
 
     for card in cards:
-        if card.get("name") == commander_name:
+        if front_face(card.get("name", "")) == front_face(commander_name):
             continue
         type_line = (card.get("type_line") or "").lower()
         if "basic" in type_line and "land" in type_line:

@@ -411,5 +411,75 @@ class QualityAwareRoleSaturationTests(unittest.TestCase):
         self.assertGreater(score_default, 0)
 
 
+class DecklistExclusionNormalizationTests(unittest.TestCase):
+    """DEC-386: mirror indexes DFCs as 'Front // Back'; decklists use front-face names."""
+
+    def _archetype(self):
+        return candidate_pool.compile_archetype(
+            {
+                "name": "Reanimator",
+                "oracle_patterns": ["return [^.]*creature card[^.]*graveyard[^.]*battlefield"],
+                "type_constraints": [],
+                "staples": [],
+                "anti_patterns": [],
+            }
+        )
+
+    def _dfc_card(self):
+        return {
+            "name": "Grave Researcher // Reanimate",
+            "cmc": 3,
+            "type_line": "Creature — Human Wizard // Sorcery",
+            "card_faces": [
+                {
+                    "name": "Grave Researcher",
+                    "type_line": "Creature — Human Wizard",
+                    "oracle_text": "When this creature enters, mill three cards.",
+                },
+                {
+                    "name": "Reanimate",
+                    "type_line": "Sorcery",
+                    "oracle_text": (
+                        "Return target creature card from your graveyard to the battlefield."
+                    ),
+                },
+            ],
+        }
+
+    def _score(self, decklist_names):
+        return candidate_pool.score_card(
+            self._dfc_card(),
+            [self._archetype()],
+            deck_avg_cmc=3,
+            decklist_names=decklist_names,
+            owned=set(),
+            game_changers=set(),
+            bracket=4,
+            context={
+                "archetype_ids": {"reanimator"},
+                "archetype_counts": {"Reanimator": 0},
+                "asymmetric_only": False,
+                "creature_count": 30,
+                "sac_outlet_count": 4,
+            },
+        )
+
+    def test_front_face_strips_back_face(self):
+        self.assertEqual(
+            candidate_pool.front_face("Grave Researcher // Reanimate"), "Grave Researcher"
+        )
+        self.assertEqual(candidate_pool.front_face("Sol Ring"), "Sol Ring")
+
+    def test_dfc_scores_normally_when_not_in_decklist(self):
+        score, breakdown, _ = self._score(decklist_names=set())
+        self.assertGreater(score, 5.0)
+        self.assertFalse(breakdown["decklist_demoted"])
+
+    def test_dfc_demoted_when_front_face_name_in_decklist(self):
+        score, breakdown, _ = self._score(decklist_names={"Grave Researcher"})
+        self.assertLessEqual(score, 5.0)
+        self.assertTrue(breakdown["decklist_demoted"])
+
+
 if __name__ == "__main__":
     unittest.main()
