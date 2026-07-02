@@ -285,7 +285,7 @@ KEY_COMBOS = {
                 ["Pitiless Plunderer"],
                 ["Reassembling Skeleton"],
                 ["Teysa Karlov"],
-                ["Viscera Seer", "Carrion Feeder"],
+                ["Viscera Seer", "Carrion Feeder", "Umbral Collar Zealot"],
                 ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance"],
             ],
             "requiresCommander": False,
