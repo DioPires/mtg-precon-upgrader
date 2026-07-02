@@ -1,4 +1,4 @@
-// Official MTG Commander Game Changers list (51 cards).
+// Official MTG Commander Game Changers list (53 cards, Feb 9 2026 update).
 // Used by the Scrying Pool's Swap Analyzer to flag GC additions/removals.
 // Source of truth: data/game-changers.json (port of legacy gv1-game-changers.js).
 
@@ -6,6 +6,7 @@ export const GAME_CHANGERS: readonly string[] = [
   'Ad Nauseam',
   'Ancient Tomb',
   'Aura Shards',
+  'Biorhythm',
   "Bolas's Citadel",
   'Braids, Cabal Minion',
   'Chrome Mox',
@@ -16,6 +17,7 @@ export const GAME_CHANGERS: readonly string[] = [
   'Demonic Tutor',
   'Drannith Magistrate',
   'Enlightened Tutor',
+  'Farewell',
   'Fierce Guardianship',
   'Field of the Dead',
   'Force of Will',
