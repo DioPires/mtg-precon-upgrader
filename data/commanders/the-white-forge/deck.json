@@ -5,7 +5,7 @@
   "subtitle": "Echoes of Artifice",
   "commander": "Gandalf the White",
   "bracket": "4",
-  "gameChangers": 6,
+  "gameChangers": 5,
   "lastUpdatedSet": "Tarkir: Dragonstorm",
   "sources": [
     {
@@ -343,6 +343,11 @@
   "winConditions": [
     {
       "title": "Heliod + Walking Ballista",
+      "kind": "combo",
+      "pieces": [
+        "Heliod, Sun-Crowned",
+        "Walking Ballista"
+      ],
       "cards": [
         "Heliod, Sun-Crowned",
         "Walking Ballista"
@@ -359,6 +364,12 @@
     },
     {
       "title": "KCI + Nim Deathmantle + Myr Battlesphere",
+      "kind": "combo",
+      "pieces": [
+        "Krark-Clan Ironworks",
+        "Nim Deathmantle",
+        "Myr Battlesphere"
+      ],
       "cards": [
         "Krark-Clan Ironworks",
         "Nim Deathmantle",
@@ -961,7 +972,11 @@
       "name": "Oswald Fiddlebender",
       "type": "Creature",
       "primary_role": "engine",
-      "secondary_role": "tutor"
+      "secondary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ],
+      "tutor_extra_cost": "sacrifice-artifact"
     },
     {
       "name": "Scrap Trawler",
@@ -1134,8 +1149,7 @@
     {
       "name": "Karn, the Great Creator",
       "type": "Planeswalker",
-      "primary_role": "utility",
-      "secondary_role": "tutor"
+      "primary_role": "utility"
     },
     {
       "name": "Swords to Plowshares",
@@ -1177,7 +1191,11 @@
     {
       "name": "Enlightened Tutor",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "artifact",
+        "enchantment"
+      ]
     },
     {
       "name": "Farewell",
@@ -1224,13 +1242,20 @@
       "name": "Inventors' Fair",
       "type": "Land",
       "primary_role": "land",
-      "secondary_role": "tutor"
+      "secondary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ]
     },
     {
       "name": "Urza's Saga",
       "type": "Land",
       "primary_role": "land",
-      "secondary_role": "tutor"
+      "secondary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ],
+      "tutor_mv_cap": 1
     },
     {
       "name": "War Room",
@@ -1301,7 +1326,11 @@
       "name": "Tezzeret, Cruel Captain",
       "type": "Planeswalker",
       "primary_role": "engine",
-      "secondary_role": "tutor"
+      "secondary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ],
+      "tutor_mv_cap": 1
     },
     {
       "name": "Ultron, Artificial Malevolence",
