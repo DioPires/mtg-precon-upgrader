@@ -29,6 +29,8 @@ interface ColumnDef {
   short: string;
   numeric: boolean;
   band?: boolean;
+  /** Optional tooltip shown on the header button; falls back to "Sort by {label}". */
+  desc?: string;
   get: (d: DeckFull) => number | string | null;
 }
 
@@ -38,7 +40,9 @@ const COLUMNS: ColumnDef[] = [
   { key: 'commander', label: 'Cmdr',    short: 'CMDR',  numeric: false, get: (d) => d.commander },
   { key: 'colors',    label: 'Colors',  short: 'COLS',  numeric: false, get: (d) => Array.from(d.colors || '').length },
   { key: 'bracket',   label: 'Bracket', short: 'BR',    numeric: false, get: (d) => d.bracket },
-  { key: 'score',     label: 'Health',  short: 'HP',    numeric: true,  band: true, get: (d) => d.health?.score ?? null },
+  { key: 'score',     label: 'Health',  short: 'HP',    numeric: true,  band: true, desc: 'Simulation health composite (mana/threats/interaction/combo/independence)', get: (d) => d.health?.score ?? null },
+  { key: 'vitals',    label: 'Vitals',  short: 'VIT',   numeric: true,  band: true, desc: 'Metrics global health — deck scored against its own declared bracket bar', get: (d) => d.apothecary?.diagnosis.score ?? null },
+  { key: 'vitalsN',   label: 'Norm.',   short: 'NRM',   numeric: true,  band: true, desc: 'Bracket-normalized vitals — every deck scored against fixed B3 reference targets (apples-to-apples)', get: (d) => d.apothecary?.diagnosis.scoreNormalized ?? null },
   { key: 'mana',      label: 'Mana',    short: 'MAN',   numeric: true,  band: true, get: (d) => d.health?.components?.manaReliability ?? null },
   { key: 'threats',   label: 'Threats', short: 'THR',   numeric: true,  band: true, get: (d) => d.health?.components?.threatDeployment ?? null },
   { key: 'interact',  label: 'Inter.',  short: 'INT',   numeric: true,  band: true, get: (d) => d.health?.components?.interactionDensity ?? null },
@@ -120,7 +124,7 @@ function HeaderCell({ col, sortKey, asc, onClick }: HeaderCellProps) {
         type="button"
         className="gv1-cmp-th-btn"
         onClick={() => onClick(col.key)}
-        title={`Sort by ${col.label}`}
+        title={col.desc ?? `Sort by ${col.label}`}
         aria-label={`Sort by ${col.label}${active ? `, currently ${asc ? 'ascending' : 'descending'}` : ''}`}
       >
         <span className="gv1-mono-xs gv1-cmp-th-label">{col.label}</span>
@@ -302,6 +306,18 @@ export function Compare({ decks }: CompareProps) {
                     </td>
                     <td className="gv1-cmp-td gv1-cmp-td--num">
                       <ScoreCell
+                        value={d.apothecary?.diagnosis.score}
+                        band={scoreBand(d.apothecary?.diagnosis.score)}
+                      />
+                    </td>
+                    <td className="gv1-cmp-td gv1-cmp-td--num">
+                      <ScoreCell
+                        value={d.apothecary?.diagnosis.scoreNormalized}
+                        band={scoreBand(d.apothecary?.diagnosis.scoreNormalized)}
+                      />
+                    </td>
+                    <td className="gv1-cmp-td gv1-cmp-td--num">
+                      <ScoreCell
                         value={d.health?.components?.manaReliability}
                         band={scoreBand(d.health?.components?.manaReliability)}
                       />
@@ -363,6 +379,10 @@ export function Compare({ decks }: CompareProps) {
           Health = weighted composite (mana 30%, threats 20%, interaction 20%, combo 15%,
           commander independence 15%). Combo Consistency stays low for non-combo decks by
           design — that doesn't mean weak, it means the deck doesn't rely on a 2-card line.
+          Vitals = deck-metrics global health, each deck scored against its own declared
+          bracket bar (a B2 deck can outscore a B4 deck). Norm. = the same formula scored
+          against fixed Bracket-3 reference targets — the apples-to-apples column for
+          cross-deck comparison.
         </p>
       </section>
     </>

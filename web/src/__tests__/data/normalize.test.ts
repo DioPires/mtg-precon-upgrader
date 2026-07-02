@@ -216,6 +216,16 @@ describe('normalizeDeck', () => {
     expect(out.apothecary?.remedies[0].name).toBe('Dreamstone Hedron');
   });
 
+  it('maps global_health_normalized to scoreNormalized, null when absent (DEC-389/390)', () => {
+    const absent = normalizeDeck(makeBundle(), 1);
+    expect(absent.apothecary?.diagnosis.scoreNormalized).toBeNull();
+
+    const bundle = makeBundle();
+    bundle.metrics = { ...bundle.metrics!, global_health_normalized: 64 };
+    const present = normalizeDeck(bundle, 1);
+    expect(present.apothecary?.diagnosis.scoreNormalized).toBe(64);
+  });
+
   it('returns apothecary=null when metrics or candidates missing', () => {
     const noMetrics = normalizeDeck(makeBundle({ metrics: null }), 1);
     expect(noMetrics.apothecary).toBeNull();

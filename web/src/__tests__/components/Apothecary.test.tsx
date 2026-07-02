@@ -7,6 +7,7 @@ function makeApothecary(over: Partial<DeckApothecary> = {}): DeckApothecary {
   return {
     diagnosis: {
       score: 72,
+      scoreNormalized: null,
       methodology: 'deck-metrics-v1',
       generatedAt: '2026-05-01T00:00:00Z',
       mirrorUpdatedAt: '2026-05-01T00:00:00Z',

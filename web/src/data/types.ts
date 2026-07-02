@@ -235,6 +235,12 @@ export interface RawMetrics {
   bracket: string;
   color_identity?: string[];
   global_health: number;
+  /**
+   * DEC-389 — same formula as `global_health` but scored against fixed Bracket-3
+   * reference targets instead of the deck's declared bracket bar. Cross-deck
+   * apples-to-apples. Absent until compute_deck_metrics.py emits it.
+   */
+  global_health_normalized?: number | null;
   /** DEC-310 — ±N data-completeness band around `global_health`. Clamped [2, 15]. */
   confidence_margin?: number;
   /** DEC-311 — derived win-turn triple. Null when sim missing or curve flat. */
@@ -343,6 +349,8 @@ export interface DeckCombo {
 export interface DeckApothecary {
   diagnosis: {
     score: number;
+    /** DEC-389 — bracket-normalized global health (vs fixed B3 targets). Null until emitted. */
+    scoreNormalized?: number | null;
     confidenceMargin?: number;
     methodology: string;
     generatedAt?: string;

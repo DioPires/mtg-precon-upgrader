@@ -136,6 +136,65 @@ describe('Compare', () => {
     expect(idxHeader.getAttribute('aria-sort')).toBe('descending');
   });
 
+  it('renders Vitals + Norm. columns from apothecary diagnosis (DEC-390)', () => {
+    renderCompare([
+      makeDeck({
+        slug: 'delta',
+        deckName: 'Delta',
+        apothecary: {
+          diagnosis: { score: 85, scoreNormalized: 64, methodology: 'deck-metrics-v2', components: {} },
+          maladies: [],
+          remedies: [],
+        },
+      }),
+    ]);
+    const headers = screen.getAllByRole('columnheader').map((h) => h.textContent ?? '');
+    expect(headers.some((t) => /vitals/i.test(t))).toBe(true);
+    expect(headers.some((t) => /norm\./i.test(t))).toBe(true);
+    expect(screen.getByText('85')).toBeInTheDocument();
+    expect(screen.getByText('64')).toBeInTheDocument();
+  });
+
+  it('renders em-dash in Vitals/Norm. when apothecary or normalized score is missing (DEC-390)', () => {
+    renderCompare([
+      makeDeck({
+        slug: 'epsilon',
+        deckName: 'Epsilon',
+        apothecary: {
+          diagnosis: { score: 77, scoreNormalized: null, methodology: 'deck-metrics-v2', components: {} },
+          maladies: [],
+          remedies: [],
+        },
+      }),
+    ]);
+    expect(screen.getByText('77')).toBeInTheDocument();
+    // Norm. column has no normalized score yet → em-dash placeholder.
+    expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('sorts by the Norm. column when its header is clicked (DEC-390)', () => {
+    const withNorm = (slug: string, name: string, norm: number): DeckFull =>
+      makeDeck({
+        slug,
+        deckName: name,
+        apothecary: {
+          diagnosis: { score: 50, scoreNormalized: norm, methodology: 'deck-metrics-v2', components: {} },
+          maladies: [],
+          remedies: [],
+        },
+      });
+    renderCompare([
+      withNorm('alpha', 'Alpha', 40),
+      withNorm('beta', 'Beta', 90),
+      withNorm('gamma', 'Gamma', 65),
+    ]);
+    const normHeader = screen
+      .getAllByRole('columnheader')
+      .find((h) => /norm\./i.test(h.textContent ?? ''))!;
+    fireEvent.click(normHeader.querySelector('button')!);
+    expect(getRowDeckNames()).toEqual(['Beta', 'Gamma', 'Alpha']);
+  });
+
   it('renders partner alongside commander in the Commander cell (DEC-190)', () => {
     renderCompare([
       makeDeck({

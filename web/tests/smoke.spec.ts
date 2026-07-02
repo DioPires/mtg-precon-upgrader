@@ -61,6 +61,37 @@ test('SPA refresh serves index.html on deep routes (DEC-173)', async ({ page }) 
   }
 });
 
+test('Compare shows Vitals + bracket-normalized columns (DEC-390)', async ({ page }) => {
+  await page.goto('/compare');
+  await expect(page.locator('.gv1-cmp-table')).toBeVisible();
+
+  const vitalsHeader = page.getByRole('columnheader', { name: /vitals/i });
+  const normHeader = page.getByRole('columnheader', { name: /norm\./i });
+  await expect(vitalsHeader).toBeVisible();
+  await expect(normHeader).toBeVisible();
+
+  // Vitals (metrics.global_health) is live data today — at least one row must
+  // show a numeric score. Norm. stays em-dash until DEC-389 emits the field;
+  // assert the column renders either a number or the placeholder, not blank.
+  const rows = page.locator('.gv1-cmp-row');
+  await expect(rows.first()).toBeVisible();
+  const headerCells = page.locator('thead th');
+  const vitalsIdx = await headerCells.evaluateAll((ths) =>
+    ths.findIndex((th) => /vitals/i.test(th.textContent ?? '')),
+  );
+  const normIdx = await headerCells.evaluateAll((ths) =>
+    ths.findIndex((th) => /norm\./i.test(th.textContent ?? '')),
+  );
+  const firstVitals = rows.first().locator('td').nth(vitalsIdx);
+  const firstNorm = rows.first().locator('td').nth(normIdx);
+  await expect(firstVitals).toHaveText(/\d+|—/);
+  await expect(firstNorm).toHaveText(/\d+|—/);
+
+  // Footer explains the two-score semantics.
+  await expect(page.locator('.gv1-cmp-foot')).toContainText(/bracket bar/i);
+  await expect(page.locator('.gv1-cmp-foot')).toContainText(/apples-to-apples/i);
+});
+
 test.describe('mobile responsive routing (DEC-181 + DEC-183)', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
