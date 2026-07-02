@@ -352,6 +352,33 @@ KEY_COMBOS = {
     # comboConsistency is accurate, not measurement debt.
 }
 
+# DEC-385 — commander-granted cascade. The goldfish scores one spell per cast,
+# so commanders like Zhulodok, Void Gorger (colorless 7+ MV spells cast from
+# hand gain "Cascade, cascade") turn every qualifying cast into ~3 spells the
+# sim never saw — lethalProxy/typical-win-turn systematically under-scored the
+# deck (DEC-369/DEC-371 misread T9 as the ceiling; it was a floor). Model: when
+# the commander is on the battlefield and a qualifying spell is cast from hand,
+# resolve `triggers` cascade digs — each exiles from the top of the library
+# until a nonland card with lesser mana value is hit, free-casts it (crediting
+# its pressure/ramp/draw exactly like a paid cast), and bottoms the rest.
+# Config keys:
+#   minValue      — qualifying mana-value threshold (Zhulodok: 7)
+#   triggers      — cascade instances per qualifying cast (Zhulodok: 2)
+#   colorlessOnly — restrict qualifying spells to colorless (Zhulodok: True)
+#   fromHandOnly  — True: cascade free-casts (from library) never re-trigger,
+#                   matching "cast from your hand" grants. False: qualifying
+#                   free-casts recurse (bounded — each hit costs strictly less).
+# Trigger doubling (e.g. Echoes of Eternity) can be layered later by scaling
+# `triggers` per deck.
+COMMANDER_CASCADE = {
+    "titan-convergence": {
+        "minValue": 7,
+        "triggers": 2,
+        "colorlessOnly": True,
+        "fromHandOnly": True,
+    },
+}
+
 
 def combo_slot_lists(combo: dict) -> list[list[str]]:
     """Return a combo's slots as lists of interchangeable member card names.
@@ -902,6 +929,7 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
         "cmc": int(meta.get("cmc", 0) or mana_cost["total"] or 0),
         "manaCost": mana_cost,
         "typeLine": type_line,
+        "isColorless": not meta.get("colors"),
         "isLand": is_land,
         "isPermanent": is_permanent_card(meta),
         "isThreat": is_threat,
@@ -1097,6 +1125,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "tutorNames": set(tutor_meta.keys()),
         "tutorMeta": tutor_meta,
         "reanimationNames": reanim_names,
+        "cascade": COMMANDER_CASCADE.get(deck_id),
     }
 
 
@@ -1526,6 +1555,115 @@ def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
     }
 
 
+def resolve_cast_effects(name: str, profile: dict, turn: int, pool: "GoldfishManaPool",
+                         library: list[str], hand: list[str], permanents: list[dict],
+                         battlefield_lands: list[dict], profiles: dict, metadata: dict,
+                         commander_colors: list[str]) -> None:
+    """Apply the on-resolution effects of a cast spell (ramp fetch, board record, draw).
+
+    Shared by the paid main-phase cast path and the cascade free-cast path (DEC-385)
+    so both credit identical board impact.
+    """
+    if profile["landRamp"]:
+        fetched = select_ramp_targets(
+            library=library,
+            metadata=metadata,
+            commander_colors=commander_colors,
+            battlefield_lands=battlefield_lands,
+            ramp_profile=profile["landRamp"],
+        )
+        for land_name in fetched:
+            land_profile = profiles[land_name]
+            colors = set().union(*land_profile["manaAtoms"]) if land_profile["manaAtoms"] else set()
+            land_record = {
+                "name": land_name,
+                "kind": "land",
+                "manaAtoms": land_profile["manaAtoms"],
+                "manaActiveTurn": turn + (1 if profile["landRamp"]["entersTapped"] else 0),
+                "combatReadyTurn": 99,
+                "impact": 0,
+                "combat": 0,
+                "isThreat": False,
+            }
+            permanents.append(land_record)
+            battlefield_lands.append({
+                "name": land_name,
+                "colors": colors,
+                "subtypes": land_profile["subtypes"],
+                "isBasic": land_profile["isBasic"],
+            })
+            if not profile["landRamp"]["entersTapped"]:
+                pool.sources.extend(land_profile["manaAtoms"])
+
+    if profile["isPermanent"]:
+        mana_active_turn = turn + (profile["manaSourceDelay"] or 0)
+        if profile["manaSourceDelay"] == 0 and profile["manaAtoms"]:
+            pool.sources.extend(profile["manaAtoms"])
+        permanents.append({
+            "name": name,
+            "kind": "ramp" if (profile["landRamp"] or profile["manaSourceDelay"] is not None) else "spell",
+            "manaAtoms": profile["manaAtoms"],
+            "manaActiveTurn": mana_active_turn,
+            "combatReadyTurn": turn + (1 if profile["combat"] > 0 else 99),
+            "impact": profile["impact"],
+            "combat": profile["combat"],
+            "isThreat": profile["isThreat"],
+        })
+
+    for _ in range(profile["immediateDraw"]):
+        if library:
+            hand.append(library.pop())
+
+
+def spell_qualifies_for_cascade(profile: dict, cascade: dict) -> bool:
+    """Whether a cast spell triggers the commander-granted cascade model (DEC-385)."""
+    if profile["cmc"] < cascade["minValue"]:
+        return False
+    if cascade.get("colorlessOnly") and not profile["isColorless"]:
+        return False
+    return True
+
+
+def resolve_cascade_triggers(spell_profile: dict, cascade: dict, turn: int,
+                             pool: "GoldfishManaPool", library: list[str], hand: list[str],
+                             permanents: list[dict], battlefield_lands: list[dict],
+                             profiles: dict, metadata: dict, commander_colors: list[str],
+                             reserved_pieces: set[str]) -> None:
+    """Resolve commander-granted cascade off a qualifying cast (DEC-385).
+
+    Each trigger digs the library top-down: the first nonland card with lesser
+    mana value is free-cast via ``resolve_cast_effects``; the cards dug past it
+    go to the bottom (library order is already random, so no reshuffle needed).
+    "May cast" is declined for reactive spells (no goldfish targets) and for
+    reserved non-permanent combo pieces/tutors — those are bottomed instead.
+    With ``fromHandOnly`` (Zhulodok-style grants) free-casts never re-trigger;
+    without it, qualifying free-casts recurse, bounded because every hit costs
+    strictly less than its parent.
+    """
+    for _ in range(cascade["triggers"]):
+        exiled = []
+        hit = None
+        while library:
+            card = library.pop()
+            if not profiles[card]["isLand"] and profiles[card]["cmc"] < spell_profile["cmc"]:
+                hit = card
+                break
+            exiled.append(card)
+        library[:0] = exiled
+        if hit is None:
+            return
+        hit_profile = profiles[hit]
+        if hit_profile["isInteraction"] or (hit in reserved_pieces and not hit_profile["isPermanent"]):
+            library.insert(0, hit)
+            continue
+        resolve_cast_effects(hit, hit_profile, turn, pool, library, hand, permanents,
+                             battlefield_lands, profiles, metadata, commander_colors)
+        if not cascade.get("fromHandOnly") and spell_qualifies_for_cascade(hit_profile, cascade):
+            resolve_cascade_triggers(hit_profile, cascade, turn, pool, library, hand,
+                                     permanents, battlefield_lands, profiles, metadata,
+                                     commander_colors, reserved_pieces)
+
+
 def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                            meaningful_threshold: int) -> dict:
     """Simulate one solitaire game with heuristic sequencing."""
@@ -1538,6 +1676,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     tutor_names = context.get("tutorNames", set())
     tutor_meta = context.get("tutorMeta", {})
     reanim_names = context.get("reanimationNames", set())
+    cascade = context.get("cascade")
     library, hand = commander_mulligan_goldfish(decklist, profiles)
     permanents = []
     battlefield_lands = []
@@ -1618,60 +1757,28 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if chosen in hand:
                 hand.remove(chosen)
 
-            if chosen_profile["landRamp"]:
-                fetched = select_ramp_targets(
-                    library=library,
-                    metadata=metadata,
-                    commander_colors=commander_colors,
-                    battlefield_lands=battlefield_lands,
-                    ramp_profile=chosen_profile["landRamp"],
-                )
-                for land_name in fetched:
-                    land_profile = profiles[land_name]
-                    colors = set().union(*land_profile["manaAtoms"]) if land_profile["manaAtoms"] else set()
-                    land_record = {
-                        "name": land_name,
-                        "kind": "land",
-                        "manaAtoms": land_profile["manaAtoms"],
-                        "manaActiveTurn": turn + (1 if chosen_profile["landRamp"]["entersTapped"] else 0),
-                        "combatReadyTurn": 99,
-                        "impact": 0,
-                        "combat": 0,
-                        "isThreat": False,
-                    }
-                    permanents.append(land_record)
-                    battlefield_lands.append({
-                        "name": land_name,
-                        "colors": colors,
-                        "subtypes": land_profile["subtypes"],
-                        "isBasic": land_profile["isBasic"],
-                    })
-                    if not chosen_profile["landRamp"]["entersTapped"]:
-                        pool.sources.extend(land_profile["manaAtoms"])
+            # Zhulodok-style cascade fires on cast, so eligibility is checked
+            # before resolution; commander CZ casts are not "from hand".
+            cascade_fires = (
+                cascade is not None
+                and commander_in_play
+                and chosen != commander_name
+                and spell_qualifies_for_cascade(chosen_profile, cascade)
+            )
 
-            if chosen_profile["isPermanent"]:
-                mana_active_turn = turn + (chosen_profile["manaSourceDelay"] or 0)
-                if chosen_profile["manaSourceDelay"] == 0 and chosen_profile["manaAtoms"]:
-                    pool.sources.extend(chosen_profile["manaAtoms"])
-                permanents.append({
-                    "name": chosen,
-                    "kind": "ramp" if (chosen_profile["landRamp"] or chosen_profile["manaSourceDelay"] is not None) else "spell",
-                    "manaAtoms": chosen_profile["manaAtoms"],
-                    "manaActiveTurn": mana_active_turn,
-                    "combatReadyTurn": turn + (1 if chosen_profile["combat"] > 0 else 99),
-                    "impact": chosen_profile["impact"],
-                    "combat": chosen_profile["combat"],
-                    "isThreat": chosen_profile["isThreat"],
-                })
+            resolve_cast_effects(chosen, chosen_profile, turn, pool, library, hand,
+                                 permanents, battlefield_lands, profiles, metadata,
+                                 commander_colors)
 
             if chosen == commander_name:
                 commander_in_play = True
                 if commander_play_turn is None:
                     commander_play_turn = turn
 
-            for _ in range(chosen_profile["immediateDraw"]):
-                if library:
-                    hand.append(library.pop())
+            if cascade_fires:
+                resolve_cascade_triggers(chosen_profile, cascade, turn, pool, library,
+                                         hand, permanents, battlefield_lands, profiles,
+                                         metadata, commander_colors, reserved_combo_pieces)
 
         cumulative_damage += sum(
             permanent["combat"] for permanent in permanents
@@ -1904,6 +2011,17 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "no stack-trigger ordering."
         ),
     }
+    cascade = context.get("cascade")
+    if cascade:
+        section["methodology"] += (
+            f" Commander-granted cascade modeled (DEC-385): with the commander on the battlefield, "
+            f"each {'colorless ' if cascade.get('colorlessOnly') else ''}spell of mana value "
+            f"{cascade['minValue']}+ cast from hand resolves {cascade['triggers']} cascade trigger(s) — "
+            "dig the library for the first cheaper nonland card, free-cast it (reactive spells and "
+            "reserved combo pieces are declined and bottomed), bottom the rest; "
+            + ("free-casts do not re-trigger (from-hand grant)."
+               if cascade.get("fromHandOnly") else "qualifying free-casts re-trigger.")
+        )
     return section, combo_assembly
 
 
