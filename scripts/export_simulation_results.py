@@ -153,10 +153,16 @@ NUMBER_WORDS = {
 KEY_COMBOS = {
     "dark-dominion": [
         {
-            "name": "Worldgorger Loop",
-            "pieces": ["Animate Dead", "Worldgorger Dragon"],
+            # DEC-370: replaced stale Worldgorger Loop (Worldgorger Dragon cut in
+            # the DEC-205 retune) with the tutored Oracle lines the deck actually runs.
+            "name": "Oracle Consultation",
+            "slots": [
+                ["Thassa's Oracle", "Jace, Wielder of Mysteries", "Laboratory Maniac"],
+                ["Demonic Consultation", "Tainted Pact"],
+            ],
             "requiresCommander": False,
-            "description": "Infinite mana reanimation loop.",
+            "description": "Library-exile instant + empty-library win permanent — six "
+                           "Spellbook-confirmed 2-card lines (3 finishers x 2 exilers).",
         }
     ],
     "eternal-agony": [
@@ -194,10 +200,17 @@ KEY_COMBOS = {
     ],
     "titan-convergence": [
         {
-            "name": "Rings Basalt",
-            "pieces": ["Rings of Brighthearth", "Basalt Monolith"],
+            "name": "Basalt Infinite Mana",
+            # DEC-370: Forsaken Monument added as an interchangeable partner —
+            # either card makes Basalt Monolith net positive colorless mana.
+            "slots": [
+                ["Basalt Monolith"],
+                ["Rings of Brighthearth", "Forsaken Monument"],
+            ],
             "requiresCommander": False,
-            "description": "2-card infinite colorless mana engine.",
+            "description": "2-card infinite colorless mana engine: Basalt Monolith plus "
+                           "either Rings of Brighthearth (copy the untap) or Forsaken "
+                           "Monument (extra {C} per tap).",
         }
     ],
     "creeping-corruption": [
@@ -232,6 +245,111 @@ KEY_COMBOS = {
             "description": "Imprint Reversal on Scepter; with 3+ mana of rocks/dorks in play, each {2} Scepter activation untaps everything for infinite mana. Closes via Walking Ballista, Stroke of Genius mill, or Aetherflux Reservoir.",
         }
     ],
+    # DEC-370: entries below fix decks whose comboConsistency was pinned at the
+    # 50 floor despite real, Spellbook-confirmed (or oracle-verified) combo lines.
+    "aziza-mage-tower-captain": [
+        {
+            "name": "Heliod Ballista",
+            "pieces": ["Heliod, Sun-Crowned", "Walking Ballista"],
+            "requiresCommander": False,
+            "description": "Heliod grants Ballista lifelink; each ping gains life, adding "
+                           "a counter back — infinite damage.",
+        }
+    ],
+    "silverquill-the-disputant": [
+        {
+            "name": "Plunderer Skeleton Altar",
+            "slots": [
+                ["Pitiless Plunderer"],
+                ["Reassembling Skeleton"],
+                ["Ashnod's Altar"],
+                ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance"],
+            ],
+            "requiresCommander": False,
+            "description": "Sac Skeleton to Altar ({C}{C}) + Plunderer Treasure covers the "
+                           "{1}{B} rebuy — infinite death triggers drain the table.",
+        },
+        {
+            "name": "Plunderer Teysa Sacrifice",
+            "slots": [
+                ["Pitiless Plunderer"],
+                ["Reassembling Skeleton"],
+                ["Teysa Karlov"],
+                ["Viscera Seer", "Carrion Feeder"],
+                ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance"],
+            ],
+            "requiresCommander": False,
+            "description": "Teysa doubles Plunderer's Treasure per Skeleton death — a free "
+                           "sac outlet loops the rebuy with any aristocrat drain.",
+        },
+    ],
+    "zada-hedron-grinder": [
+        {
+            "name": "Reiterate Ritual Storm",
+            "slots": [
+                ["Reiterate"],
+                ["Mana Geyser", "Jeska's Will"],
+                ["Grapeshot"],
+            ],
+            "requiresCommander": False,
+            "description": "Buyback Reiterate copying a big ritual nets infinite red mana "
+                           "and storm count; Grapeshot closes.",
+        },
+        {
+            "name": "Reiterate Seething Song",
+            "slots": [
+                ["Reiterate"],
+                ["Seething Song"],
+                ["Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+                 "Storm-Kiln Artist", "Ruby Medallion", "Bonus Round"],
+                ["Grapeshot"],
+            ],
+            "requiresCommander": False,
+            "description": "Seething Song alone nets -1 with buyback; any of Birgi, "
+                           "Storm-Kiln Artist, Ruby Medallion, or Bonus Round flips the "
+                           "loop positive (Spellbook-confirmed variants).",
+        },
+        {
+            "name": "Snoop Kiki Tokens",
+            "slots": [
+                ["Conspicuous Snoop"],
+                ["Kiki-Jiki, Mirror Breaker"],
+                ["Goblin Recruiter"],
+                ["Impact Tremors", "Goblin Bombardment"],
+            ],
+            "requiresCommander": False,
+            "description": "Recruiter stacks Kiki-Jiki on top; Snoop gains Kiki's ability "
+                           "and copies itself infinitely — Tremors/Bombardment convert "
+                           "tokens to damage.",
+        },
+    ],
+    "stampede-acres": [
+        {
+            "name": "Scurry Rosie Squirrels",
+            "pieces": ["Scurry Oak", "Rosie Cotton of South Lane"],
+            "requiresCommander": False,
+            "description": "Any token created triggers Rosie's counter onto Scurry Oak, "
+                           "whose counter trigger makes a Squirrel — infinite tokens; "
+                           "Impact Tremors/Purphoros or next-turn combat closes.",
+        }
+    ],
+    "witherbloom-the-balancer": [
+        {
+            "name": "Sprout Swarm Buyback",
+            "slots": [
+                ["Witherbloom, the Balancer"],
+                ["Sprout Swarm"],
+            ],
+            "requiresCommander": True,
+            "description": "Commander grants instants affinity for creatures; convoke + "
+                           "buyback Sprout Swarm recasts itself free once ~4 creatures are "
+                           "out — infinite Saprolings/storm (Spellbook 'included').",
+        }
+    ],
+    # DEC-370 note: exponential-growth was audited and deliberately has NO entry —
+    # Commander Spellbook finds zero included combos (Simic Ascendancy is a
+    # non-deterministic engine payoff, not an assembly combo). Its 50-floor
+    # comboConsistency is accurate, not measurement debt.
 }
 
 
