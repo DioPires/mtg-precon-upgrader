@@ -254,7 +254,17 @@ KEY_COMBOS = {
             "requiresCommander": False,
             "description": "Heliod grants Ballista lifelink; each ping gains life, adding "
                            "a counter back — infinite damage.",
-        }
+        },
+        {
+            # DEC-381: third wincon axis (Spellbook 147-1235).
+            "name": "Twinflame Dualcaster",
+            "pieces": ["Twinflame", "Dualcaster Mage"],
+            "requiresCommander": False,
+            "description": "Dualcaster ETB copies Twinflame targeting itself; each hasty "
+                           "token copy re-copies Twinflame — infinite hasty 2/2s + infinite "
+                           "ETB triggers (lethal via Impact Tremors/Warleader's Call/"
+                           "Purphoros, or same-turn haste swing).",
+        },
     ],
     "silverquill-the-disputant": [
         {
