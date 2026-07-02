@@ -226,7 +226,8 @@
       "cards": [
         "Sensei's Divining Top",
         "Mystic Forge",
-        "Glaring Fleshraker"
+        "Glaring Fleshraker",
+        "Foundry Inspector"
       ],
       "description": "Mystic Forge casts Top from library top. With a cost reducer (Ugin, the Ineffable or Foundry Inspector), Top costs 0. Tap Top to draw and place it back on top. Recast from library via Forge. Each cast triggers Glaring Fleshraker for 1 damage to each opponent plus a Spawn token. Repeat for infinite draw and lethal damage.",
       "sources": [
@@ -234,6 +235,57 @@
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Strategic win path identification"
+        }
+      ],
+      "kind": "combo",
+      "pieces": [
+        "Sensei's Divining Top",
+        "Mystic Forge",
+        "Foundry Inspector"
+      ]
+    },
+    {
+      "title": "Infinite Mana: Rings + Basalt",
+      "kind": "combo",
+      "pieces": [
+        "Rings of Brighthearth",
+        "Basalt Monolith"
+      ],
+      "cards": [
+        "Rings of Brighthearth",
+        "Basalt Monolith",
+        "Eye of Ugin"
+      ],
+      "description": "Tap Basalt for 3, pay 3 to untap, copy the untap with Rings for 2 (needs 2 external mana to start). Each loop nets 1 colorless = infinite mana. Pour into Eye of Ugin to tutor every Eldrazi onto the battlefield.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/4131-4235/",
+          "detail": "Infinite colorless mana"
+        }
+      ]
+    },
+    {
+      "title": "Infinite Mana: Karn's Construct Engine",
+      "kind": "combo",
+      "pieces": [
+        "Karn, the Great Creator",
+        "Voltaic Construct",
+        "Basalt Monolith"
+      ],
+      "cards": [
+        "Karn, the Great Creator",
+        "Voltaic Construct",
+        "Basalt Monolith"
+      ],
+      "description": "Karn's +1 animates Basalt Monolith into an artifact creature; Voltaic Construct pays {2} to untap it while it taps for 3 — net 1 colorless per loop. Thran Dynamo or Mana Vault substitute for Basalt.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/1978-4131-5089/",
+          "detail": "Infinite mana with Basalt Monolith"
         }
       ]
     }
@@ -1420,6 +1472,45 @@
           "detail": "Premium colorless fast mana. Replaces 1 Wastes (10→9)"
         }
       ]
+    },
+    {
+      "name": "Champion's Helm",
+      "price": "$15-20",
+      "isGameChanger": false,
+      "reason": "+2/+2 and hexproof while equipping a legendary creature — cheap, persistent Zhulodok insurance. The whole cascade engine keys off the commander surviving (DEC-371 protection gap: 1 piece)",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-371 board-approved swap: replaces Duplicant — protection gap (score 25) outweighed the weakest 6-MV removal slot"
+        }
+      ]
+    },
+    {
+      "name": "Darksteel Plate",
+      "price": "$8-12",
+      "isGameChanger": false,
+      "reason": "Equipped creature has indestructible — covers the board wipes that hexproof and Lightning Greaves don't. Complements Champion's Helm on the protection axis",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-371 board-approved swap: replaces Flayer of Loyalties — the deck's weakest 7+ MV slot (temporary threaten, win-more)"
+        }
+      ]
+    },
+    {
+      "name": "Idol of Oblivion",
+      "price": "$3-5",
+      "isGameChanger": false,
+      "reason": "{T}: draw a card any turn a token was created — live whenever Glaring Fleshraker (Spawn per colorless cast) or Ugin, the Ineffable (+1 Spirit each turn) is out. Late game, {8} + sac makes a 10/10 Eldrazi",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-371 board-approved swap: replaces Endbringer — cheaper deploy, no {C}{C}-per-card tax, uptime rides the deck's own token engines"
+        }
+      ]
     }
   ],
   "decklist": [
@@ -1451,17 +1542,6 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Duplicant",
-      "type": "Creature",
-      "primary_role": "removal-spot"
-    },
-    {
-      "name": "Flayer of Loyalties",
-      "type": "Creature",
-      "primary_role": "wincon",
-      "wincon_style": "combat"
-    },
-    {
       "name": "Erratic Portal",
       "type": "Artifact",
       "primary_role": "engine"
@@ -1475,11 +1555,6 @@
       "name": "Ugin, the Ineffable",
       "type": "Planeswalker",
       "primary_role": "ramp"
-    },
-    {
-      "name": "Ugin's Mastery",
-      "type": "Enchantment",
-      "primary_role": "engine"
     },
     {
       "name": "All Is Dust",
@@ -1499,7 +1574,7 @@
     {
       "name": "Not of This World",
       "type": "Instant",
-      "primary_role": "counterspell"
+      "primary_role": "protection"
     },
     {
       "name": "Titan's Presence",
@@ -1619,7 +1694,7 @@
     {
       "name": "Wastes",
       "type": "Land",
-      "quantity": 9,
+      "quantity": 10,
       "primary_role": "land"
     },
     {
@@ -1636,11 +1711,6 @@
       "name": "Mana Vault",
       "type": "Artifact",
       "primary_role": "ramp"
-    },
-    {
-      "name": "Endbringer",
-      "type": "Creature",
-      "primary_role": "card-draw"
     },
     {
       "name": "Extraplanar Lens",
@@ -1911,6 +1981,21 @@
       "name": "Wayfarer's Bauble",
       "type": "Artifact",
       "primary_role": "ramp"
+    },
+    {
+      "name": "Champion's Helm",
+      "type": "Artifact",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Darksteel Plate",
+      "type": "Artifact",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Idol of Oblivion",
+      "type": "Artifact",
+      "primary_role": "card-draw"
     }
   ],
   "tokens": [
@@ -1964,6 +2049,19 @@
       "image_uri": "https://cards.scryfall.io/normal/front/5/7/570a8272-7ca1-47db-834b-82f603d1417a.jpg?1691183103",
       "produced_by": [
         "Ugin, the Ineffable"
+      ]
+    },
+    {
+      "name": "Eldrazi",
+      "type_line": "Token Creature — Eldrazi",
+      "oracle_text": "",
+      "power": "10",
+      "toughness": "10",
+      "colors": [],
+      "scryfall_id": "ce6d2786-ef9c-4772-bb71-697131c3c3a4",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/e/ce6d2786-ef9c-4772-bb71-697131c3c3a4.jpg?1782725782",
+      "produced_by": [
+        "Idol of Oblivion"
       ]
     }
   ],
