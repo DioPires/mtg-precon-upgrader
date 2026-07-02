@@ -344,6 +344,34 @@ KEY_COMBOS = {
             "description": "Commander grants instants affinity for creatures; convoke + "
                            "buyback Sprout Swarm recasts itself free once ~4 creatures are "
                            "out — infinite Saprolings/storm (Spellbook 'included').",
+        },
+        {
+            "name": "Altar Skeleton Loop",
+            "slots": [
+                ["Ashnod's Altar"],
+                ["Pitiless Plunderer"],
+                ["Reassembling Skeleton"],
+                ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance",
+                 "Cauldron of Essence"],
+            ],
+            "requiresCommander": False,
+            "description": "Sac Skeleton to Altar (+{C}{C}), Plunderer mints a Treasure, "
+                           "recast Skeleton for {B} — net-positive mana with infinite death "
+                           "triggers; any drain piece makes it lethal (Spellbook 'included' "
+                           "1580-2034-4871, added DEC-379).",
+        },
+        {
+            "name": "Altar Sprout Doubling",
+            "slots": [
+                ["Sprout Swarm"],
+                ["Ashnod's Altar"],
+                ["Parallel Lives"],
+            ],
+            "requiresCommander": False,
+            "description": "Each buyback Sprout Swarm makes 2 Saprolings; sacking both to "
+                           "Altar yields {C}{C}{C}{C}, more than the recast — infinite "
+                           "tokens and colorless mana (Spellbook 'included' 2034-2557-3209, "
+                           "added DEC-379).",
         }
     ],
     # DEC-370 note: exponential-growth was audited and deliberately has NO entry —
