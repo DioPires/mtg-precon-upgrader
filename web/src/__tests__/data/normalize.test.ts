@@ -20,7 +20,6 @@ function makeBundle(over: Partial<RawDeckBundle> = {}): RawDeckBundle {
       name: 'Titan Convergence',
       commander: 'Zhulodok, Void Gorger',
       bracket: '4',
-      cost: '$200-350',
       gameChangers: 3,
       lastUpdatedSet: 'Tarkir: Dragonstorm',
       sources: [
@@ -138,7 +137,6 @@ describe('normalizeDeck', () => {
     expect(out.commander).toBe('Zhulodok, Void Gorger');
     expect(out.bracket).toBe('IV');
     expect(out.colors).toBe('◇');
-    expect(out.price).toBe('$200-350');
     expect(out.winRate).toBe(64);
     expect(out.flavor).toBe('Cascade.');
   });

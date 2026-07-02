@@ -356,7 +356,6 @@ export function normalizeDeck(bundle: RawDeckBundle, idx: number): DeckFull {
     bracket: toRoman(deck.bracket),
     status: deck.status === 'brewing' ? 'brewing' : 'physical',
     pt: '—',
-    price: deck.cost || '—',
     winTurn: '—',
     winRate,
     flavor,
@@ -406,7 +405,6 @@ export function buildDeckStubs(decks: DeckFull[]): DeckStub[] {
     partner: d.partner,
     colors: d.colors,
     bracket: d.bracket,
-    price: d.price,
     hasDetail: true,
     status: d.status,
   }));

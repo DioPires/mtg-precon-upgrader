@@ -21,7 +21,6 @@ function makeDeck(over: Partial<DeckFull>): DeckFull {
     bracket: 'IV',
     status: 'physical',
     pt: '—',
-    price: '$200-300',
     winTurn: '—',
     winRate: null,
     flavor: '',

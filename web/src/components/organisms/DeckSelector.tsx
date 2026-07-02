@@ -116,7 +116,6 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
                 </div>
                 <div className="gv1-sel-pill-foot">
                   <span className="gv1-mono-xs gv1-sel-pill-bracket">BRACKET {d.bracket}</span>
-                  <span className="gv1-mono-xs gv1-dim">{d.price}</span>
                 </div>
                 {active && (
                   <span className="gv1-sel-pill-flag">

@@ -71,10 +71,6 @@ export function Commander({ deck }: CommanderProps) {
               <div className="gv1-mono-xs gv1-dim">BRACKET</div>
               <div className="gv1-serif-lg">{deck.bracket}</div>
             </div>
-            <div className="gv1-cmd-stat">
-              <div className="gv1-mono-xs gv1-dim">BUDGET</div>
-              <div className="gv1-serif-lg gv1-rune">{deck.price}</div>
-            </div>
             {deck.composition && (
               <div className="gv1-cmd-stat">
                 <div className="gv1-mono-xs gv1-dim">AVG CMC</div>

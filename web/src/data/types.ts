@@ -109,7 +109,6 @@ export interface RawDeck {
   subtitle?: string;
   commander: string;
   partner?: string;
-  cost?: string;
   bracket: string;
   /** Build status. Omitted = "physical" for backwards compat. */
   status?: DeckStatus;
@@ -391,7 +390,6 @@ export interface DeckFull {
   /** Build status. Always present after normalization (defaults "physical"). */
   status: DeckStatus;
   pt: string;
-  price: string;
   winTurn: string;
   winRate: number | null;
   flavor: string;
@@ -432,7 +430,6 @@ export interface DeckStub {
   partner?: string;
   colors: string;
   bracket: string;
-  price: string;
   hasDetail: boolean;
   /** Build status (defaults "physical" when omitted in source). */
   status: DeckStatus;

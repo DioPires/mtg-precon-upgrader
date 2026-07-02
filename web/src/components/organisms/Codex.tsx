@@ -256,10 +256,6 @@ function CodexCard({ deck, rank, onOpen }: CodexCardProps) {
           <div className="gv1-mono-xs gv1-dim">LANDS</div>
           <div className="gv1-serif-md">{lands}</div>
         </div>
-        <div>
-          <div className="gv1-mono-xs gv1-dim">$</div>
-          <div className="gv1-serif-md gv1-rune">{deck.price}</div>
-        </div>
       </div>
 
       <div className="gv1-codex-card-bars">
