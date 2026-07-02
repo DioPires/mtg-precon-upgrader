@@ -124,6 +124,7 @@
   "winConditions": [
     {
       "name": "Go-wide overrun",
+      "kind": "combat",
       "cards": [
         "Craterhoof Behemoth",
         "Warleader's Call"
@@ -132,6 +133,11 @@
     },
     {
       "name": "Infinite tokens — Scurry Oak line",
+      "kind": "combo",
+      "pieces": [
+        "Scurry Oak",
+        "Rosie Cotton of South Lane"
+      ],
       "cards": [
         "Scurry Oak",
         "Rosie Cotton of South Lane",
@@ -142,6 +148,7 @@
     },
     {
       "name": "Halo Fountain alternate win",
+      "kind": "alt-win",
       "cards": [
         "Halo Fountain",
         "Seedborn Muse"
@@ -550,12 +557,20 @@
     {
       "name": "Natural Order",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ],
+      "tutor_extra_cost": "sacrifice-creature"
     },
     {
       "name": "Enlightened Tutor",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "artifact",
+        "enchantment"
+      ]
     },
     {
       "name": "Command Tower",
@@ -705,7 +720,10 @@
     {
       "name": "Worldly Tutor",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Eiganjo, Seat of the Empire",
