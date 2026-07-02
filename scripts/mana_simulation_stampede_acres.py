@@ -13,7 +13,7 @@ exporter calls `_export_colored`, which consumes the standard stats keys
 (mana / color / commander castability / curve / tapped-land). Token-payoff and
 combo lines are out of scope here.
 
-Manabase model (38 lands):
+Manabase model (37 lands):
 - 1 Naya tri-land (Jungle Shrine, always tapped) + Path of Ancestry (tapped) +
   3 fetches: Fabled Passage (tapped basic), Prismatic Vista (untapped basic),
   Windswept Heath (untapped Forest/Plains).
@@ -25,7 +25,7 @@ Manabase model (38 lands):
   Orchard) modeled as R/G/W.
 - Utility / white lands: Castle Ardenvale (W token-land), Eiganjo Seat of the
   Empire (W; removal channel), Wooded Bastion (G/W filter).
-- 11 basics (Forest x4, Plains x6, Mountain x1).
+- 10 basics (Forest x4, Plains x5, Mountain x1).
 - Ramp: Nature's Lore fetches a Forest-typed land untapped; Sol Ring (x2 C) +
   Arcane Signet (R/G/W) rocks; dorks Birds / Fyndhorn Elves / Elvish Mystic /
   Delighted Halfling.

@@ -24,6 +24,10 @@
     {
       "type": "ai-inferred",
       "name": "DEC-358 — board-approved −3/+3: cut Kiki-Jiki + Zealous Conscripts + Dictate of Heliod; add Cori-Steel Cutter + Frontline Rush + Aligned Heart"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-378 — board-approved +4/−4: add Idol of Oblivion, Bennie Bracks, Sevinne's Reclamation, Moonshaker Cavalry; cut Exalted Sunborn, Carrot Cake, Second Harvest, 1 Plains (38→37 lands). Blasphemous Act third wipe proposed and rejected by board (board-heavy deck) — removal-board 2/3 is an accepted deviation."
     }
   ],
   "guideContent": {
@@ -47,7 +51,6 @@
           "Anim Pakal, Thousandth Moon",
           "Scute Swarm",
           "Pest Infestation",
-          "Carrot Cake",
           "Cori-Steel Cutter",
           "Aligned Heart",
           "Frontline Rush"
@@ -55,14 +58,12 @@
       },
       {
         "name": "Token Multipliers",
-        "description": "Doublers and a tripler that turn every maker into an exponential flood.",
+        "description": "Static multipliers that turn every maker into an exponential flood.",
         "cards": [
           "Anointed Procession",
           "Parallel Lives",
           "Mondrak, Glory Dominus",
-          "Elspeth, Storm Slayer",
-          "Exalted Sunborn",
-          "Second Harvest"
+          "Elspeth, Storm Slayer"
         ]
       },
       {
@@ -78,7 +79,7 @@
       },
       {
         "name": "Baylen's Engine",
-        "description": "Card advantage and untap effects that refuel the swarm and let Baylen tap the board for mana, cards, and pressure — every turn.",
+        "description": "Card advantage and untap effects that refuel the swarm and let Baylen tap the board for mana, cards, and pressure — plus recursion that rebuilds the engine after a wipe.",
         "cards": [
           "Baylen, the Haymaker",
           "Seedborn Muse",
@@ -89,14 +90,18 @@
           "Sylvan Library",
           "The Great Henge",
           "Caretaker's Talent",
-          "Worldly Tutor"
+          "Worldly Tutor",
+          "Idol of Oblivion",
+          "Bennie Bracks, Zoologist",
+          "Sevinne's Reclamation"
         ]
       },
       {
         "name": "Overrun & Combo Finishes",
-        "description": "Close the game: a one-shot trample lord and an infinite-token combo (Scurry Oak + Rosie Cotton) that turns lethal with any ETB pinger.",
+        "description": "Close the game: two one-shot overrun lords (trample and flying) and an infinite-token combo (Scurry Oak + Rosie Cotton) that turns lethal with any ETB pinger.",
         "cards": [
           "Craterhoof Behemoth",
+          "Moonshaker Cavalry",
           "Scurry Oak",
           "Rosie Cotton of South Lane",
           "Natural Order"
@@ -127,9 +132,10 @@
       "kind": "combat",
       "cards": [
         "Craterhoof Behemoth",
+        "Moonshaker Cavalry",
         "Warleader's Call"
       ],
-      "description": "A wide token board plus a one-shot trample pump from Craterhoof Behemoth (which Worldly Tutor and Natural Order can fetch) swings for lethal in a single attack; Warleader's Call adds reach."
+      "description": "A wide token board plus a one-shot pump from Craterhoof Behemoth (trample) or Moonshaker Cavalry (flying) swings for lethal in a single attack; Worldly Tutor fetches either, Natural Order fetches Craterhoof; Warleader's Call adds reach."
     },
     {
       "name": "Infinite tokens — Scurry Oak line",
@@ -245,6 +251,21 @@
           "name": "Card advantage analysis"
         }
       ]
+    },
+    {
+      "title": "Token creation feeds board-independent draw",
+      "cards": [
+        "Bennie Bracks, Zoologist",
+        "Idol of Oblivion",
+        "Baylen, the Haymaker"
+      ],
+      "description": "Bennie Bracks (each end step) and Idol of Oblivion (tap) draw off the near-automatic token-per-turn stream without spending the board, while their casts and Clues/Food still count as Baylen fuel — draw that survives losing the commander.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-378 draw-engine analysis"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -274,6 +295,12 @@
     },
     {
       "name": "Anim Pakal, Thousandth Moon"
+    },
+    {
+      "name": "Moonshaker Cavalry"
+    },
+    {
+      "name": "Bennie Bracks, Zoologist"
     }
   ],
   "decklist": [
@@ -368,11 +395,6 @@
       "primary_role": "threat"
     },
     {
-      "name": "Second Harvest",
-      "type": "Instant",
-      "primary_role": "threat"
-    },
-    {
       "name": "Prosperous Partnership",
       "type": "Enchantment",
       "primary_role": "engine"
@@ -414,11 +436,6 @@
       "type": "Legendary Planeswalker — Elspeth",
       "primary_role": "payoff",
       "secondary_role": "removal-spot"
-    },
-    {
-      "name": "Exalted Sunborn",
-      "type": "Creature — Angel Wizard",
-      "primary_role": "payoff"
     },
     {
       "name": "Impact Tremors",
@@ -475,6 +492,16 @@
       "primary_role": "card-draw"
     },
     {
+      "name": "Idol of Oblivion",
+      "type": "Artifact",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Bennie Bracks, Zoologist",
+      "type": "Legendary Creature — Elf Druid",
+      "primary_role": "card-draw"
+    },
+    {
       "name": "Scurry Oak",
       "type": "Creature — Treefolk",
       "primary_role": "wincon",
@@ -500,6 +527,12 @@
     {
       "name": "Craterhoof Behemoth",
       "type": "Creature — Beast",
+      "primary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Moonshaker Cavalry",
+      "type": "Creature — Spirit Knight",
       "primary_role": "wincon",
       "wincon_style": "combat"
     },
@@ -691,7 +724,7 @@
     {
       "name": "Plains",
       "type": "Land",
-      "quantity": 6,
+      "quantity": 5,
       "primary_role": "land"
     },
     {
@@ -710,12 +743,6 @@
       "type": "Sorcery",
       "primary_role": "threat",
       "secondary_role": "removal-spot"
-    },
-    {
-      "name": "Carrot Cake",
-      "type": "Artifact — Food",
-      "primary_role": "threat",
-      "secondary_role": "card-draw"
     },
     {
       "name": "Worldly Tutor",
@@ -744,6 +771,11 @@
       "name": "Sylvan Library",
       "type": "Enchantment",
       "primary_role": "card-draw"
+    },
+    {
+      "name": "Sevinne's Reclamation",
+      "type": "Sorcery",
+      "primary_role": "recursion"
     },
     {
       "name": "Windswept Heath",
