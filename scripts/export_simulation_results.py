@@ -221,14 +221,7 @@ KEY_COMBOS = {
             "description": "Vraska enters with doubled loyalty, -9 deals doubled poison for instant kill.",
         }
     ],
-    "hidden-legion": [
-        {
-            "name": "Snoop+Kiki+Tremors",
-            "pieces": ["Conspicuous Snoop", "Kiki-Jiki, Mirror Breaker", "Impact Tremors"],
-            "requiresCommander": False,
-            "description": "Worldly Tutor → Kiki-Jiki on top; Snoop copies Kiki's ability; tap Snoop to make a token copy of Snoop (legendary clause irrelevant — copies are token, sac EOT, but loop fires infinitely while Snoop reads top of library). Each token ETB triggers Impact Tremors → infinite damage.",
-        }
-    ],
+    # hidden-legion: Snoop+Kiki+Tremors combo cut in DEC-373 (1.4% assembly by T7 — phantom line).
     "pyre-and-panic": [
         {
             "name": "Norin Drain Stack",

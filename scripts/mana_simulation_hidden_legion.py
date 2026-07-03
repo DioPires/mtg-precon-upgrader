@@ -145,6 +145,22 @@ ALWAYS_TAPPED = {
     "Path of Ancestry",
 }
 
+# Land subtypes for fetch resolution (DEC-373)
+PLAINS_TYPED = {
+    "Plains", "Temple Garden", "Hallowed Fountain", "Godless Shrine",
+    "Sacred Foundry", "Indatha Triome", "Raugrin Triome", "Savai Triome",
+}
+ISLAND_TYPED = {
+    "Island", "Hallowed Fountain", "Watery Grave", "Steam Vents",
+    "Breeding Pool", "Ketria Triome", "Raugrin Triome", "Zagoth Triome",
+}
+
+TYPED_FETCH_LANDS = {
+    "Flooded Strand": {"targets": PLAINS_TYPED | ISLAND_TYPED},
+    "Fabled Passage": {"targets": BASIC_LANDS, "fetched_tapped_below_lands": 4},
+}
+FETCH_LANDS = set(TYPED_FETCH_LANDS.keys())
+
 # Land color identity
 LAND_COLORS: dict[str, frozenset] = {
     # Basics
@@ -410,6 +426,8 @@ class GameState:
     def _land_play_priority(self, name: str) -> float:
         tapped = land_enters_tapped(name, self.battlefield_lands)
         base = 0 if tapped else 10
+        if name in FETCH_LANDS:
+            base += 5
         sources = compute_land_sources(name)
         if sources:
             n_colors = sum(1 for c in "WUBRG" if c in sources[0])
@@ -477,10 +495,26 @@ class GameState:
         if hand_lands:
             _, land_name = hand_lands[0]
             self.hand.remove(land_name)
-            tapped = land_enters_tapped(land_name, self.battlefield_lands)
-            self.battlefield_lands.append(land_name)
-            if tapped:
-                self.tapped_lands.add(len(self.battlefield_lands) - 1)
+            if land_name in TYPED_FETCH_LANDS:
+                # Fetch resolves immediately: sac, search, put target into play (DEC-373).
+                fetch_def = TYPED_FETCH_LANDS[land_name]
+                target = self._find_best_fetchable(fetch_def["targets"])
+                if target:
+                    self.library.remove(target)
+                    self.battlefield_lands.append(target)
+                    threshold = fetch_def.get("fetched_tapped_below_lands")
+                    fetched_tapped = (
+                        target in ALWAYS_TAPPED
+                        or (threshold is not None and len(self.battlefield_lands) < threshold)
+                    )
+                    if fetched_tapped:
+                        self.tapped_lands.add(len(self.battlefield_lands) - 1)
+                # No target left in library: fetch is sacrificed for nothing.
+            else:
+                tapped = land_enters_tapped(land_name, self.battlefield_lands)
+                self.battlefield_lands.append(land_name)
+                if tapped:
+                    self.tapped_lands.add(len(self.battlefield_lands) - 1)
 
         # Mana rocks first (cheapest priority)
         pool = self.compute_mana_pool(turn_number)
@@ -603,6 +637,22 @@ class GameState:
                 pool = pool.after_spending(effective)
                 self.hand.remove(name)
                 self.battlefield_creatures.append(name)
+
+    def _find_best_fetchable(self, typed_set: set[str]) -> str | None:
+        """Best library land for a fetch: new colors first, untapped tiebreak (DEC-373)."""
+        have_colors = self.colors_present()
+        candidates = [c for c in self.library if c in typed_set]
+        if not candidates:
+            return None
+
+        def score(name: str) -> tuple:
+            colors = LAND_COLORS.get(name, frozenset()) & frozenset("WUBRG")
+            new_colors = len(colors - have_colors)
+            tapped = name in ALWAYS_TAPPED
+            return (new_colors, -int(tapped), len(colors))
+
+        candidates.sort(key=score, reverse=True)
+        return candidates[0]
 
     def _find_best_forest_typed(self) -> str | None:
         forest_typed = {
