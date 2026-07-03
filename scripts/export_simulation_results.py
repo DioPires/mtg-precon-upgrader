@@ -410,6 +410,33 @@ COMMANDER_CASCADE = {
     },
 }
 
+# DEC-393 — commander copy-trigger engines (sequel to DEC-385's cascade).
+# The goldfish credits one resolution per cast, so copy-trigger commanders read
+# artificially slow: Zada, Hedron Grinder copies each instant/sorcery that
+# targets only her once for every other creature she controls (the deck's whole
+# velocity engine), and Aziza, Mage Tower Captain copies any instant/sorcery
+# when three untapped creatures are tapped. Model: on a qualifying paid cast
+# with the commander on the battlefield, resolve N extra copies through
+# resolve_cast_effects — each copy re-credits draw and land-ramp exactly like
+# the original. Copies are NOT cast (CR 707.10): they never re-trigger the
+# engine, cascade, or any other cast-gated model. Board-state dependence is
+# real: creature counts come from creature permanents on the battlefield plus a
+# stat-less ledger of creature tokens made by resolved spells (fixed
+# "create N ... creature token" clauses only — X-spells and storm copies credit
+# 0, so counts are floors; the ledger adds no combat/pressure/threat, it only
+# feeds these gates).
+# Config keys:
+#   mode    — "per_other_creature": copies = creatures you control minus the
+#             commander, gated on the spell targeting only a single creature
+#             (Zada's "targets only Zada" read).
+#             "tap_gate": one copy per cast while `tapCost` untapped creatures
+#             remain; each use taps `tapCost` creatures for the turn.
+#   tapCost — creatures tapped per tap_gate use (Aziza: 3).
+COMMANDER_COPY_ENGINE = {
+    "zada-hedron-grinder": {"mode": "per_other_creature"},
+    "aziza-mage-tower-captain": {"mode": "tap_gate", "tapCost": 3},
+}
+
 
 def combo_slot_lists(combo: dict) -> list[list[str]]:
     """Return a combo's slots as lists of interchangeable member card names.
@@ -826,6 +853,56 @@ def immediate_draw_count(meta: dict) -> int:
     return 0
 
 
+def targets_only_creatures(meta: dict) -> bool:
+    """True when every target the spell takes is a single creature (DEC-393).
+
+    Zada's trigger needs a spell that "targets only Zada": accept oracle text
+    where the word target/targets is always immediately followed by "creature"
+    (e.g. "target creature gains haste") and appears at least once. Plural
+    "target creatures" and reminder text stay disqualifying on purpose —
+    storm/copy reminders mention "new targets" and those spells can't target
+    only the commander.
+    """
+    lowered = (meta.get("oracle_text") or "").lower()
+    if not re.search(r"\btarget creature\b", lowered):
+        return False
+    return not re.search(r"\btargets?\b(?!\s+creature\b)", lowered)
+
+
+_CREATE_COUNT_WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+
+
+def creature_token_count(meta: dict) -> int:
+    """Fixed creature-token count a card makes on resolution (DEC-393).
+
+    Feeds the copy-engine creature ledger only. Sentence filters mirror
+    immediate_draw_count so recurring triggers don't count; granted-ability
+    quotes are stripped so a token's own "Whenever ..." text doesn't hide the
+    create clause. X-counts and storm copies parse as 0 — the ledger is a floor.
+    """
+    oracle = re.sub(r'"[^"]*"', "", meta.get("oracle_text", ""))
+    total = 0
+    for sentence in re.split(r"[\n.]", oracle):
+        lower = sentence.strip().lower()
+        if "create" not in lower:
+            continue
+        if "whenever" in lower or "at the beginning" in lower or "attacks" in lower:
+            continue
+        if "dies" in lower or "deals combat damage" in lower:
+            continue
+        if "enters" not in lower and lower.startswith("when "):
+            continue
+        # A colon before "create" marks an activated/loyalty ability — not an
+        # on-resolution effect; "for each" counts are variable (floor: 0).
+        if ":" in lower.split("create", 1)[0]:
+            continue
+        if "for each" in lower:
+            continue
+        for count_token in re.findall(r"\bcreate (a|an|one|two|three|four|five|\d+)\b[^.]*?\bcreature tokens?\b", lower):
+            total += int(count_token) if count_token.isdigit() else _CREATE_COUNT_WORDS.get(count_token, 1)
+    return total
+
+
 def land_enters_tapped(meta: dict, battlefield_lands: list[dict]) -> bool:
     """Best-effort ETB tapped heuristic for generic goldfish simulation."""
     oracle = meta.get("oracle_text", "")
@@ -970,6 +1047,8 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
         "manaSourceDelay": source_delay,
         "landRamp": land_ramp,
         "immediateDraw": immediate_draw_count(meta),
+        "targetsOnlyCreature": targets_only_creatures(meta),
+        "tokenCreatures": creature_token_count(meta),
         "impact": impact,
         "combat": combat,
         "subtypes": extract_land_subtypes(meta),
@@ -1157,6 +1236,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "tutorMeta": tutor_meta,
         "reanimationNames": reanim_names,
         "cascade": COMMANDER_CASCADE.get(deck_id),
+        "copyEngine": COMMANDER_COPY_ENGINE.get(deck_id),
     }
 
 
@@ -1646,6 +1726,31 @@ def resolve_cast_effects(name: str, profile: dict, turn: int, pool: "GoldfishMan
             hand.append(library.pop())
 
 
+def count_creature_permanents(permanents: list[dict], profiles: dict) -> int:
+    """Creature cards on the goldfish battlefield (commander included)."""
+    return sum(1 for permanent in permanents if "Creature" in profiles[permanent["name"]]["typeLine"])
+
+
+def copy_engine_copy_count(copy_engine: dict, profile: dict, creature_count: int,
+                           gate_uses: int) -> int:
+    """Copies the commander's copy-trigger engine produces for one cast (DEC-393).
+
+    ``creature_count`` is battlefield creatures + the token ledger at trigger
+    time (before the spell itself resolves — a token-maker can't feed its own
+    trigger). tap_gate uses tap ``tapCost`` creatures for the rest of the turn,
+    so ``gate_uses`` throttles repeat casts; summoning sickness doesn't block
+    the gate (tapping via an effect is not a {T} cost).
+    """
+    if copy_engine["mode"] == "per_other_creature":
+        if not profile["targetsOnlyCreature"]:
+            return 0
+        return max(0, creature_count - 1)
+    if copy_engine["mode"] == "tap_gate":
+        untapped = creature_count - copy_engine["tapCost"] * gate_uses
+        return 1 if untapped >= copy_engine["tapCost"] else 0
+    return 0
+
+
 def spell_qualifies_for_cascade(profile: dict, cascade: dict) -> bool:
     """Whether a cast spell triggers the commander-granted cascade model (DEC-385)."""
     if profile["cmc"] < cascade["minValue"]:
@@ -1708,12 +1813,17 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     tutor_meta = context.get("tutorMeta", {})
     reanim_names = context.get("reanimationNames", set())
     cascade = context.get("cascade")
+    copy_engine = context.get("copyEngine")
     library, hand = commander_mulligan_goldfish(decklist, profiles)
     permanents = []
     battlefield_lands = []
     commander_in_play = False
     commander_play_turn = None
     cumulative_damage = 0.0
+    # DEC-393 copy-engine bookkeeping: stat-less creature-token ledger (feeds
+    # engine gates only) and per-turn tap_gate usage.
+    token_creatures = 0
+    copy_gate_uses = 0
     combo_ready_ever = False
     assembly_turn = [None] * len(assembly_lines)
     # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
@@ -1736,6 +1846,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     by_turn = {}
 
     for turn in range(1, NUM_TURNS + 1):
+        copy_gate_uses = 0
         if turn > 1 and library:
             hand.append(library.pop())
 
@@ -1772,6 +1883,18 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                     continue
                 if name in reserved_combo_pieces:
                     continue
+                # DEC-393 — hold per_other_creature engine fuel (spells that
+                # target only the commander) until the commander is online;
+                # casting Expedite into an empty board is a goldfish-only
+                # misplay a real pilot never makes.
+                if (copy_engine is not None
+                        and copy_engine["mode"] == "per_other_creature"
+                        and not commander_in_play
+                        and not profile["isPermanent"]
+                        and profile["targetsOnlyCreature"]
+                        and ("Instant" in profile["typeLine"]
+                             or "Sorcery" in profile["typeLine"])):
+                    continue
                 if not pool.can_cast(profile["manaCost"]):
                     continue
                 candidates.append(name)
@@ -1797,9 +1920,27 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 and spell_qualifies_for_cascade(chosen_profile, cascade)
             )
 
+            # DEC-393 — copy-trigger engines also fire on cast: lock the copy
+            # count from the board state at trigger time, before the original
+            # resolves (its own tokens can't feed its own trigger).
+            engine_copies = 0
+            if (copy_engine is not None and commander_in_play
+                    and chosen != commander_name
+                    and not chosen_profile["isPermanent"]
+                    and ("Instant" in chosen_profile["typeLine"]
+                         or "Sorcery" in chosen_profile["typeLine"])):
+                creature_count = (count_creature_permanents(permanents, profiles)
+                                  + token_creatures)
+                engine_copies = copy_engine_copy_count(
+                    copy_engine, chosen_profile, creature_count, copy_gate_uses)
+                if engine_copies and copy_engine["mode"] == "tap_gate":
+                    copy_gate_uses += 1
+
             resolve_cast_effects(chosen, chosen_profile, turn, pool, library, hand,
                                  permanents, battlefield_lands, profiles, metadata,
                                  commander_colors)
+            if copy_engine is not None:
+                token_creatures += chosen_profile["tokenCreatures"]
 
             if chosen == commander_name:
                 commander_in_play = True
@@ -1810,6 +1951,14 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 resolve_cascade_triggers(chosen_profile, cascade, turn, pool, library,
                                          hand, permanents, battlefield_lands, profiles,
                                          metadata, commander_colors, reserved_combo_pieces)
+
+            # Copies are not cast (CR 707.10): they re-credit resolution effects
+            # (draw, land-ramp, ledger tokens) but never re-trigger the engine.
+            for _ in range(engine_copies):
+                resolve_cast_effects(chosen, chosen_profile, turn, pool, library, hand,
+                                     permanents, battlefield_lands, profiles, metadata,
+                                     commander_colors)
+                token_creatures += chosen_profile["tokenCreatures"]
 
         cumulative_damage += sum(
             permanent["combat"] for permanent in permanents
@@ -2052,6 +2201,27 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "reserved combo pieces are declined and bottomed), bottom the rest; "
             + ("free-casts do not re-trigger (from-hand grant)."
                if cascade.get("fromHandOnly") else "qualifying free-casts re-trigger.")
+        )
+    copy_engine = context.get("copyEngine")
+    if copy_engine:
+        if copy_engine["mode"] == "per_other_creature":
+            gate_text = (
+                "each instant/sorcery that targets only a single creature resolves one extra "
+                "copy per other creature you control (qualifying fuel is held in hand until "
+                "the commander is online)"
+            )
+        else:
+            gate_text = (
+                f"each instant/sorcery cast resolves one extra copy while {copy_engine['tapCost']} "
+                f"untapped creatures remain to tap (each use taps {copy_engine['tapCost']} for the "
+                "turn — board-state gated, not always-on)"
+            )
+        section["methodology"] += (
+            f" Commander copy-trigger engine modeled (DEC-393): with the commander on the "
+            f"battlefield, {gate_text}. Creature counts = creature permanents + a stat-less "
+            "ledger of creature tokens from resolved spells (fixed counts only; X-spells and "
+            "storm credit 0, so copy counts are floors). Copies re-credit draw and land-ramp "
+            "but are not cast (CR 707.10) — they never re-trigger the engine."
         )
     return section, combo_assembly
 

@@ -67,3 +67,63 @@ class ExportSimulationResultsHelperTests(unittest.TestCase):
                 failures = exporter.export_selected_decks({}, selected, output_dir)
 
             self.assertEqual(failures, 1)
+
+
+class CopyEngineHelperTests(unittest.TestCase):
+    """DEC-393 — commander copy-trigger engine helpers."""
+
+    def test_targets_only_creatures_accepts_single_creature_target(self):
+        self.assertTrue(exporter.targets_only_creatures(
+            {"oracle_text": "Target creature gains haste until end of turn.\nDraw a card."}))
+        self.assertTrue(exporter.targets_only_creatures(
+            {"oracle_text": "Create a Role token attached to up to one target creature you control."}))
+
+    def test_targets_only_creatures_rejects_other_target_types(self):
+        for oracle in (
+            "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+            "Grapeshot deals 1 damage to any target.",
+            "Choose target opponent.",
+            "The owner of target permanent shuffles it into their library.",
+            "Create two 1/1 red Goblin creature tokens.",  # no target at all
+            "Up to two target creatures each get +2/+0.",  # plural targeting
+        ):
+            self.assertFalse(exporter.targets_only_creatures({"oracle_text": oracle}), oracle)
+
+    def test_creature_token_count_fixed_counts(self):
+        self.assertEqual(exporter.creature_token_count(
+            {"oracle_text": "Create two 1/1 red Goblin creature tokens."}), 2)
+        self.assertEqual(exporter.creature_token_count(
+            {"oracle_text": "When this artifact enters, create a 1/1 white Spirit creature token with flying."}), 1)
+        # Granted-ability quote must not hide the create clause.
+        self.assertEqual(exporter.creature_token_count(
+            {"oracle_text": 'Create a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."'}), 1)
+
+    def test_creature_token_count_skips_variable_triggered_and_activated(self):
+        for oracle in (
+            "Create X 1/1 white Warrior creature tokens.",
+            "Then create a 1/1 white Monk creature token with prowess for each rally counter on it.",
+            "Whenever a Goblin you control dies, create a 1/1 red Goblin creature token.",
+            "{3}{R}, Sacrifice a Goblin: Create two 1/1 red Goblin creature tokens.",
+            "Create a Treasure token.",  # not a creature token
+        ):
+            self.assertEqual(exporter.creature_token_count({"oracle_text": oracle}), 0, oracle)
+
+    def test_copy_engine_per_other_creature_counts_others(self):
+        engine = exporter.COMMANDER_COPY_ENGINE["zada-hedron-grinder"]
+        profile = {"targetsOnlyCreature": True}
+        # 5 creatures incl. the commander -> 4 copies.
+        self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 5, 0), 4)
+        # Commander alone -> no copies; non-qualifying spell -> no copies.
+        self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 1, 0), 0)
+        self.assertEqual(exporter.copy_engine_copy_count(
+            engine, {"targetsOnlyCreature": False}, 5, 0), 0)
+
+    def test_copy_engine_tap_gate_throttles_per_turn(self):
+        engine = exporter.COMMANDER_COPY_ENGINE["aziza-mage-tower-captain"]
+        profile = {"targetsOnlyCreature": False}
+        # 7 creatures: first two casts copy (3+3 tapped), third finds only 1 untapped.
+        self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 7, 0), 1)
+        self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 7, 1), 1)
+        self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 7, 2), 0)
+        # Below the gate entirely.
+        self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 2, 0), 0)
