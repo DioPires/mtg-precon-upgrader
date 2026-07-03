@@ -162,6 +162,35 @@ When tagging cards, building decks, or reading metrics output:
 - **Metrics**: `data/commanders/{id}/metrics.json` carries 5 deterministic scores (manabase health, role coverage, curve, interaction density, gameplan cohesion) + `global_health` + `gaps[]`. Formulas in [`docs/deck-metrics.md`](docs/deck-metrics.md).
 - **Use gaps[] to drive review** — top-50 candidate review (step 3 above) should explicitly check whether each candidate addresses a `gaps[]` entry. The candidate-pool generator (P7.7) boosts gap-addressing cards in the score.
 
+## Fleet Re-Audit Policy (DEC-396)
+
+Board-approved via the DEC-369 next-steps interaction. Fleet assessments are **event-triggered**, not ad-hoc. Three triggers:
+
+### Trigger 1 — Official Game Changers list update
+
+- **Event**: WotC/Commander Format Panel publishes a Game Changers update (current baseline: 2026-02-09, 53 cards).
+- **Detection (automated)**: `uv run python scripts/check_game_changers.py` — diffs `data/game-changers.json` against live Scryfall `format:commander is:gamechanger` (User-Agent header required, per DEC-370), verifies the `web/src/data/gameChangers.ts` mirror is in sync, recounts every deck's `gameChangers` field against its decklist, and checks caps. Exit 1 on any drift or violation. `--offline` skips the network diff. Run it at the start of any fleet-touching heartbeat; it is cheap (one paginated Scryfall query).
+- **Response on drift**: (1) update `data/game-changers.json` **and** `web/src/data/gameChangers.ts` together — they must stay in sync; (2) re-run the script for the corrected fleet recount and fix stale `gameChangers` fields; (3) cap-compliance check — brackets ≤ 3 (incl. 3+) allow at most 3 GCs; verdant-tide and pyre-and-panic are hard-capped at 1 (board decision, DEC-369); 4-/4/4+/5 are uncapped. Any violation becomes a board proposal: swap-outs or a bracket relabel (relabel floor is GC-gated — a 4+-GC deck can only drop to 4-, see DEC-374).
+- **Why it matters**: the Feb-2026 refresh alone moved 7 decks' counts and created Quill's 4/3 cap violation (DEC-382).
+- **Who runs what**: whichever agent detects the drift runs the recount and files the proposal; deck changes still require per-swap board approval per the standard workflow.
+
+### Trigger 2 — Deck reaches 3+ swap rounds since its last assessment
+
+- **Event**: a deck accumulates 3 or more board-approved swap rounds (committed batches touching its `decklist`) since its last full assessment.
+- **Detection**: after applying an approved swap round, count rounds since the last assessment: `git log --oneline <last-assessment-commit>.. -- data/commanders/{id}/deck.json`. Assessment baselines are the per-deck review issues (e.g., the DEC-369 cycle).
+- **Response**: file a single-deck re-assessment issue — same rubric as a full review: card-pool refresh, metrics, re-sim, bar check (≥ B3+/4-, `data/bracket-philosophy.md`), **plus a stale-reference sweep of prose**: `guideContent`, category descriptions, and win-condition text can reference cut cards that the validator misses (it only checks card arrays). 3+ rounds is the stale-ref breeding regime — DEC-299 accumulated 5+ stale refs over 6 rounds.
+- **Who runs what**: the agent applying the triggering (3rd) swap round files the issue; the board prioritizes it.
+
+### Trigger 3 — Quarterly backstop
+
+- **Event**: a calendar quarter ends. Skip only if a fleet-wide pass (trigger 1 response or a full assessment cycle) already ran that quarter.
+- **Response**: slim verification pass (template: DEC-395 checklist):
+  1. Before/after table for all decks vs the previous baseline — `global_health` (+ normalized), sim components, comboLethal/lethalProxy @T6–T8, `gaps[]` count.
+  2. Bar check: every deck ≥ B3+/4-; flag misses with evidence.
+  3. GC-cap compliance (run `scripts/check_game_changers.py`).
+  4. Stale-reference sweep: `validate_deck_json` across all decks + prose grep for cut-card references.
+- **Who runs what**: board schedules it; CEO executes or delegates via child issues.
+
 ## Common Tasks
 
 ### Add a New Commander Deck
