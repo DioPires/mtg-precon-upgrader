@@ -71,10 +71,15 @@
       "type": "ai-inferred",
       "name": "DEC-384: tutors + recursion light-touch tune",
       "detail": "Board-approved 2026-07-02 (confirmation f89d82a9): +Eladamri's Call/-Grafted Exoskeleton, +Fauna Shaman/-Viral Drake, +Regrowth/-Preordain, +Eternal Witness/-Norn's Choirmaster, +Glistener Elf/-Tainted Strike. Closes tutor gap (0->2 of 2) and recursion 0->2 of 3; partially supersedes the DEC-316 recursion=0 note."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-391: land count 35 -> 37",
+      "detail": "Board-approved 2026-07-03 (comment f8462c40): +Swamp, +Agadeem's Awakening // Agadeem, the Undercrypt (MDFC land, secondary recursion), -Beast Within, -Heroic Intervention. Opener P(0-1 land) 21.8% -> 18.6% raw; land_count metric component stays 0 at 36.5 counted lands (step function) — benefit is sim-side opener consistency. Extension line (+Island/-Experimental Augury) declined by board."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Four-color proliferate midrange that wins primarily through poison counters. The deck deploys cheap toxic and infect creatures in the first two turns to seed initial poison counters, then uses Atraxa's automatic end-step proliferate plus a dense suite of proliferate triggers to scale those counters toward lethal. Atraxa herself is a value engine, not a win condition — her flying, deathtouch, and lifelink make her an excellent attacker and blocker, while her proliferate advances the poison plan incrementally. The deck functions without the commander: toxic creatures like Bloated Contaminator and Venerated Rotpriest apply poison independently, and Triumph of the Hordes can close games with any board. Tekuthal, Inquiry Dominus doubles all proliferate triggers, turning Atraxa's end-step tick into +2 poison on every opponent. Necrogen Rotpriest adds an extra poison counter whenever any toxic creature connects, dramatically accelerating the clock. The interaction suite is built on pay-mana counters and removal — Counterspell, Swan Song, Spell Pierce, Heroic Intervention, Cyclonic Rift, Toxic Deluge, Anguished Unmaking, Swords to Plowshares — without the premium free-spell package (Force of Will / Fierce Guardianship / Deadly Rollick) typical of true bracket-4 decks. Multiple removal spells double as poison delivery (Whisper of the Dross proliferates, Infectious Bite gives each opponent a poison counter). Corrupted payoffs (Skrelv's Hive lifelink, Contaminant Grafter card draw, Glistening Sphere triple mana) reward the deck for doing what it already wants to do. Win path: seed poison T1-3 via small toxic/infect creatures, establish Atraxa + proliferate engine T3-5, close by T7-8 via accumulated poison or Triumph of the Hordes. Bracket 3 by both the game-changer count (3 of the official list: Cyclonic Rift, Rhystic Study, Teferi's Protection) and by simulated speed (median lethal turn ~T8 per `simulation.json`)."
+    "strategyOverview": "Four-color proliferate midrange that wins primarily through poison counters. The deck deploys cheap toxic and infect creatures in the first two turns to seed initial poison counters, then uses Atraxa's automatic end-step proliferate plus a dense suite of proliferate triggers to scale those counters toward lethal. Atraxa herself is a value engine, not a win condition — her flying, deathtouch, and lifelink make her an excellent attacker and blocker, while her proliferate advances the poison plan incrementally. The deck functions without the commander: toxic creatures like Bloated Contaminator and Venerated Rotpriest apply poison independently, and Triumph of the Hordes can close games with any board. Tekuthal, Inquiry Dominus doubles all proliferate triggers, turning Atraxa's end-step tick into +2 poison on every opponent. Necrogen Rotpriest adds an extra poison counter whenever any toxic creature connects, dramatically accelerating the clock. The interaction suite is built on pay-mana counters and removal — Counterspell, Swan Song, Spell Pierce, Cyclonic Rift, Toxic Deluge, Anguished Unmaking, Swords to Plowshares — without the premium free-spell package (Force of Will / Fierce Guardianship / Deadly Rollick) typical of true bracket-4 decks. Multiple removal spells double as poison delivery (Whisper of the Dross proliferates, Infectious Bite gives each opponent a poison counter). Corrupted payoffs (Skrelv's Hive lifelink, Contaminant Grafter card draw, Glistening Sphere triple mana) reward the deck for doing what it already wants to do. Win path: seed poison T1-3 via small toxic/infect creatures, establish Atraxa + proliferate engine T3-5, close by T7-8 via accumulated poison or Triumph of the Hordes. Bracket 3 by both the game-changer count (3 of the official list: Cyclonic Rift, Rhystic Study, Teferi's Protection) and by simulated speed (median lethal turn ~T8 per `simulation.json`)."
   },
   "categories": [
     {
@@ -144,7 +149,8 @@
         "Eladamri's Call",
         "Fauna Shaman",
         "Regrowth",
-        "Eternal Witness"
+        "Eternal Witness",
+        "Agadeem's Awakening // Agadeem, the Undercrypt"
       ]
     },
     {
@@ -153,8 +159,6 @@
         "Swords to Plowshares",
         "Cyclonic Rift",
         "Toxic Deluge",
-        "Beast Within",
-        "Heroic Intervention",
         "Counterspell",
         "Teferi's Protection",
         "Whisper of the Dross",
@@ -936,16 +940,6 @@
       "primary_role": "removal-board"
     },
     {
-      "name": "Beast Within",
-      "type": "Instant",
-      "primary_role": "removal-spot"
-    },
-    {
-      "name": "Heroic Intervention",
-      "type": "Instant",
-      "primary_role": "protection"
-    },
-    {
       "name": "Counterspell",
       "type": "Instant",
       "primary_role": "counterspell"
@@ -1133,6 +1127,12 @@
       "primary_role": "land"
     },
     {
+      "name": "Swamp",
+      "type": "Land",
+      "quantity": 1,
+      "primary_role": "land"
+    },
+    {
       "name": "Turbulent Moor",
       "type": "Land",
       "primary_role": "land"
@@ -1158,24 +1158,16 @@
       "type": "Land",
       "quantity": 1,
       "primary_role": "land"
+    },
+    {
+      "name": "Agadeem's Awakening // Agadeem, the Undercrypt",
+      "type": "Sorcery // Land",
+      "is_mdfc_land": true,
+      "primary_role": "land",
+      "secondary_role": "recursion"
     }
   ],
   "tokens": [
-    {
-      "name": "Beast",
-      "type_line": "Token Creature — Beast",
-      "oracle_text": "",
-      "power": "3",
-      "toughness": "3",
-      "colors": [
-        "G"
-      ],
-      "scryfall_id": "62facbb8-1a83-4731-b515-0f7759ee8c3b",
-      "image_uri": "https://cards.scryfall.io/normal/front/6/2/62facbb8-1a83-4731-b515-0f7759ee8c3b.jpg?1782723063",
-      "produced_by": [
-        "Beast Within"
-      ]
-    },
     {
       "name": "Bird",
       "type_line": "Token Creature — Bird",

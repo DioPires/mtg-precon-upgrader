@@ -109,6 +109,8 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         return len(battlefield_lands) > 2
     if name == "Turbulent Moor":
         return len(battlefield_lands) < 2
+    if name == "Agadeem's Awakening // Agadeem, the Undercrypt":
+        return True
     return False
 
 
@@ -150,6 +152,9 @@ def compute_land_sources(name: str) -> list[frozenset]:
 
     if name in PAIN_LANDS:
         return [PAIN_LANDS[name]]
+
+    if name == "Agadeem's Awakening // Agadeem, the Undercrypt":
+        return [frozenset({"B"})]
 
     if name in {"Karn's Bastion", "Inkmoth Nexus", "The Seedcore"}:
         return [frozenset({"C"})]
