@@ -96,7 +96,6 @@ ROCK_DEFS = {
 COST_REDUCERS = {
     "Foundry Inspector":      {"cmc": 3, "reduction": 1, "applies_to": "artifact"},
     "Etherium Sculptor":      {"cmc": 2, "reduction": 1, "applies_to": "artifact"},
-    "Enthusiastic Mechanaut": {"cmc": 2, "reduction": 1, "applies_to": "artifact"},
 }
 
 # Training Grounds IS simulated: it gates the transform cost ({4}{U}{R} ->
