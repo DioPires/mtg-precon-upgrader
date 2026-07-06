@@ -19,7 +19,7 @@ function makeDeck(over: Partial<DeckFull>): DeckFull {
     commanderMv: '—',
     type: 'Commander · Theme',
     colors: '🔴',
-    bracket: 'IV',
+    bracket: '4',
     status: 'physical',
     pt: '—',
     winTurn: '—',

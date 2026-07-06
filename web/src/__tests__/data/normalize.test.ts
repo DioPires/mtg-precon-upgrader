@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildDeckStubs, colorsToGlyphs, normalizeDeck, splitTitle, toRoman } from '../../data/normalize';
+import { bracketBase, bracketOrder, buildDeckStubs, colorsToGlyphs, normalizeBracket, normalizeDeck, splitTitle } from '../../data/normalize';
 import type { RawDeckBundle } from '../../data/types';
 
 function makeBundle(over: Partial<RawDeckBundle> = {}): RawDeckBundle {
@@ -105,15 +105,39 @@ describe('splitTitle', () => {
   });
 });
 
-describe('toRoman', () => {
-  it('maps 1-5 to roman', () => {
-    expect(toRoman('1')).toBe('I');
-    expect(toRoman(4)).toBe('IV');
-    expect(toRoman('5')).toBe('V');
+describe('normalizeBracket', () => {
+  it('passes canonical numeric forms through', () => {
+    expect(normalizeBracket('3')).toBe('3');
+    expect(normalizeBracket('3+')).toBe('3+');
+    expect(normalizeBracket('4-')).toBe('4-');
+    expect(normalizeBracket(4)).toBe('4');
+  });
+  it('converts legacy Roman input, with or without modifier', () => {
+    expect(normalizeBracket('IV')).toBe('4');
+    expect(normalizeBracket('III')).toBe('3');
+    expect(normalizeBracket('IV+')).toBe('4+');
+    expect(normalizeBracket('V')).toBe('5');
   });
   it('echoes unknown values', () => {
-    expect(toRoman('99')).toBe('99');
-    expect(toRoman(undefined)).toBe('');
+    expect(normalizeBracket('99')).toBe('99');
+    expect(normalizeBracket(undefined)).toBe('');
+  });
+});
+
+describe('bracketBase / bracketOrder', () => {
+  it('extracts numeric base regardless of modifier', () => {
+    expect(bracketBase('4-')).toBe(4);
+    expect(bracketBase('4+')).toBe(4);
+    expect(bracketBase('3+')).toBe(3);
+    expect(bracketBase('IV')).toBe(4);
+    expect(bracketBase(undefined)).toBeNaN();
+  });
+  it('orders brackets by power: 3 < 3+ < 4- < 4 < 4+', () => {
+    const sorted = ['4+', '3', '4-', '3+', '4'].sort((a, b) => bracketOrder(a) - bracketOrder(b));
+    expect(sorted).toEqual(['3', '3+', '4-', '4', '4+']);
+  });
+  it('sorts unknown values last', () => {
+    expect(bracketOrder('?')).toBe(Number.POSITIVE_INFINITY);
   });
 });
 
@@ -135,7 +159,7 @@ describe('normalizeDeck', () => {
     expect(out.slug).toBe('titan-convergence');
     expect(out.deckName).toBe('Titan Convergence');
     expect(out.commander).toBe('Zhulodok, Void Gorger');
-    expect(out.bracket).toBe('IV');
+    expect(out.bracket).toBe('4');
     expect(out.colors).toBe('◇');
     expect(out.winRate).toBe(64);
     expect(out.flavor).toBe('Cascade.');
@@ -407,7 +431,7 @@ describe('buildDeckStubs', () => {
       slug: 'titan-convergence',
       name: 'Titan Convergence',
       cmd: 'Zhulodok, Void Gorger',
-      bracket: 'IV',
+      bracket: '4',
       hasDetail: true,
     });
   });

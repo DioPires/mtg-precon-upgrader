@@ -5,6 +5,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GV1ManaPips } from '../atoms/GV1ManaPips';
+import { bracketBase, bracketOrder } from '../../data/normalize';
 import type { DeckFull } from '../../data/types';
 
 type SortKey = 'idx' | 'health' | 'cmc' | 'wincons' | 'combos';
@@ -22,13 +23,14 @@ const FILTER_OPTIONS: Array<[FilterKey, string]> = [
   ['all', 'all'],
   ['mono', 'mono'],
   ['multi', 'multicolor'],
-  ['bracket4', 'bracket IV'],
+  ['bracket4', 'bracket 4'],
 ];
 
 function applyFilter(decks: DeckFull[], filter: FilterKey): DeckFull[] {
   if (filter === 'mono') return decks.filter((d) => Array.from(d.colors).length <= 1);
   if (filter === 'multi') return decks.filter((d) => Array.from(d.colors).length >= 2);
-  if (filter === 'bracket4') return decks.filter((d) => (d.bracket || '').includes('IV'));
+  // Bracket-4 family: 4-, 4, 4+ (a 3+ deck is effective bracket 3, per DEC-374).
+  if (filter === 'bracket4') return decks.filter((d) => bracketBase(d.bracket) === 4);
   return decks;
 }
 
@@ -117,7 +119,7 @@ export function Codex({ decks }: CodexProps) {
           <div className="gv1-mono-xs gv1-dim">BRACKETS</div>
           <div className="gv1-codex-stat-brackets">
             {Object.entries(stats.bracketCounts)
-              .sort((a, b) => a[0].localeCompare(b[0]))
+              .sort((a, b) => bracketOrder(a[0]) - bracketOrder(b[0]) || a[0].localeCompare(b[0]))
               .map(([b, n]) => (
                 <div key={b} className="gv1-codex-bracket-row">
                   <span className="gv1-mono-xs gv1-rune">{b}</span>

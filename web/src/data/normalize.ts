@@ -40,12 +40,12 @@ const COLOR_TO_GLYPH: Record<string, string> = {
   C: '◇',
 };
 
-const ROMAN: Record<string, string> = {
-  '1': 'I',
-  '2': 'II',
-  '3': 'III',
-  '4': 'IV',
-  '5': 'V',
+const ROMAN_TO_NUMERIC: Record<string, string> = {
+  I: '1',
+  II: '2',
+  III: '3',
+  IV: '4',
+  V: '5',
 };
 
 const ROLE_LABEL: Record<string, string> = {
@@ -82,8 +82,28 @@ export function colorsToGlyphs(arr: string[] | undefined): string {
   return (arr || []).map((c) => COLOR_TO_GLYPH[c] || '◇').join('');
 }
 
-export function toRoman(n: string | number | undefined): string {
-  return ROMAN[String(n)] || String(n ?? '');
+/**
+ * Canonical bracket form (DEC-409): numeric base with optional modifier —
+ * "3", "3+", "4-", "4", "4+". Matches deck.json and board vocabulary; Roman
+ * numerals can't express the +/- modifiers, so Roman input is converted.
+ */
+export function normalizeBracket(b: string | number | undefined): string {
+  const s = String(b ?? '').trim();
+  const m = s.toUpperCase().match(/^(I{1,3}|IV|V)([+-]?)$/);
+  return m ? ROMAN_TO_NUMERIC[m[1]] + m[2] : s;
+}
+
+/** Numeric base of a bracket ("4-" → 4). NaN when unparseable. */
+export function bracketBase(b: string | undefined): number {
+  return parseInt(normalizeBracket(b), 10);
+}
+
+/** Sort key ordering brackets by power: 3 < 3+ < 4- < 4 < 4+. Unknowns last. */
+export function bracketOrder(b: string | undefined): number {
+  const s = normalizeBracket(b);
+  const base = parseInt(s, 10);
+  if (Number.isNaN(base)) return Number.POSITIVE_INFINITY;
+  return base + (s.endsWith('+') ? 0.25 : s.endsWith('-') ? -0.25 : 0);
 }
 
 /**
@@ -354,7 +374,7 @@ export function normalizeDeck(bundle: RawDeckBundle, idx: number): DeckFull {
     commanderMv: '—',
     type: `Commander · ${idxEntry.theme}`,
     colors: colorsToGlyphs(idxEntry.colors),
-    bracket: toRoman(deck.bracket),
+    bracket: normalizeBracket(deck.bracket),
     status: deck.status === 'brewing' ? 'brewing' : 'physical',
     pt: '—',
     winTurn: '—',

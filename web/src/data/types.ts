@@ -393,7 +393,7 @@ export interface DeckFull {
   type: string;
   /** Color identity glyph string (e.g. "🔴⚫"). */
   colors: string;
-  /** Roman bracket (e.g. "IV"). */
+  /** Canonical bracket — numeric base with optional modifier (e.g. "4-", "3+"). DEC-409. */
   bracket: string;
   /** Build status. Always present after normalization (defaults "physical"). */
   status: DeckStatus;

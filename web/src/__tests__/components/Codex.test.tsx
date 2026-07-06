@@ -13,7 +13,7 @@ function makeDeck(over: Partial<DeckFull>): DeckFull {
     commanderMv: '—',
     type: 'Commander · Theme',
     colors: '🔴',
-    bracket: 'IV',
+    bracket: '4',
     status: 'physical',
     pt: '—',
     winTurn: '—',
@@ -48,7 +48,7 @@ const DECKS: DeckFull[] = [
     slug: 'alpha',
     deckName: 'Alpha',
     colors: '🔴',
-    bracket: 'IV',
+    bracket: '4-',
     health: { score: 80, grade: 'A' },
     composition: { totalCards: 100, lands: 36, avgCmc: 3.5 },
     wincons: [{ title: ['x', 'y'], prob: '', desc: '', cards: [] }],
@@ -59,7 +59,7 @@ const DECKS: DeckFull[] = [
     slug: 'beta',
     deckName: 'Beta',
     colors: '🔴🟢',
-    bracket: 'III',
+    bracket: '3+',
     health: { score: 60, grade: 'C' },
     composition: { totalCards: 99, lands: 35, avgCmc: 2.5 },
     wincons: [],
@@ -94,9 +94,9 @@ describe('Codex', () => {
     expect(screen.getByTestId('guide-page')).toBeInTheDocument();
   });
 
-  it('filters to bracket IV decks', () => {
+  it('filters to the bracket-4 family (4-, 4, 4+), excluding 3+ (DEC-409)', () => {
     renderCodex(DECKS);
-    fireEvent.click(screen.getByRole('button', { name: /bracket iv/i, pressed: false }));
+    fireEvent.click(screen.getByRole('button', { name: /bracket 4/i, pressed: false }));
     expect(screen.getByRole('button', { name: /open alpha guide/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /open beta guide/i })).not.toBeInTheDocument();
   });

@@ -66,7 +66,7 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
           <span className="gv1-mono-xs gv1-chip gv1-chip-active">all</span>
           <span className="gv1-mono-xs gv1-chip">mono</span>
           <span className="gv1-mono-xs gv1-chip">multicolor</span>
-          <span className="gv1-mono-xs gv1-chip">bracket IV</span>
+          <span className="gv1-mono-xs gv1-chip">bracket 4</span>
         </div>
       </div>
       <div className="gv1-selector-track" ref={trackRef} onKeyDown={onKey}>

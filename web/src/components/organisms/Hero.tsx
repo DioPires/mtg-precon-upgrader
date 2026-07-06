@@ -21,7 +21,7 @@ export function Hero({
   deckCount,
   scribedCount,
   updated = '22 · IV · 26',
-  bracketRange = 'III–V',
+  bracketRange = '3–5',
 }: HeroProps) {
   const word = NUMBER_WORDS[deckCount] || String(deckCount);
   return (
