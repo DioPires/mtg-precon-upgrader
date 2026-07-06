@@ -6,7 +6,7 @@
   "commander": "Namor the Sub-Mariner",
   "bracket": "3+",
   "status": "brewing",
-  "gameChangers": 0,
+  "gameChangers": 1,
   "asymmetric_only": false,
   "commanderRoles": {
     "primary": "engine",
@@ -28,10 +28,14 @@
     {
       "type": "ai-inferred",
       "name": "DEC-401 strategy A+B — board-approved 2026-07-06 (spellslinger tokens + light lord package)"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-401 v1.1 (2026-07-06): board-approved 5 swaps — IN Mystical Tutor/Solve the Equation/Treason of Isengard/Island #27/Faerie Mastermind, OUT Think Twice/Deduce/Brineborn Cutthroat/Mocking Sprite/Everflowing Chalice. Lands 35->36, GC 0->1, creatures 21->20."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Namor turns every blue pip in a noncreature spell into a 1/1 Merfolk — and his own power equals your Merfolk count, so the engine feeds the commander directly. The deck maximizes spell velocity: 11 cantrips and draw spells keep the chain going, 10 counterspells (7 with double blue pips, each worth 2 tokens) protect the board while fueling it, and token payoffs like Curiosity Crafter and Bident of Thassa convert the swarm into cards. A light Merfolk lord package turns the 1/1s into a real clock and grows Namor into a commander-damage threat. Win by going wide with pumped tokens, or tall with Namor himself — he flies over stalled boards.",
+    "strategyOverview": "Namor turns every blue pip in a noncreature spell into a 1/1 Merfolk — and his own power equals your Merfolk count, so the engine feeds the commander directly. The deck maximizes spell velocity: a dozen cantrips and draw spells backed by cheap tutors and graveyard rebuy keep the chain going, 10 counterspells (7 with double blue pips, each worth 2 tokens) protect the board while fueling it, and token payoffs like Curiosity Crafter and Bident of Thassa convert the swarm into cards. A light Merfolk lord package turns the 1/1s into a real clock and grows Namor into a commander-damage threat. Win by going wide with pumped tokens, or tall with Namor himself — he flies over stalled boards.",
     "deckCategories": [
       {
         "name": "Commander Engine",
@@ -51,14 +55,13 @@
           "Merfolk Sovereign",
           "Svyelun of Sea and Sky",
           "Kopala, Warden of Waves",
-          "Brineborn Cutthroat",
           "Kiora, the Rising Tide",
           "Hydro-Channeler"
         ]
       },
       {
         "name": "Token & Spell Payoffs",
-        "description": "Engines that convert spell velocity and token combat into cards and boards. Curiosity Crafter draws off every token hit; Shark Typhoon and Chrome Host Seedshark add flying bodies per spell.",
+        "description": "Engines that convert spell velocity and token combat into cards and boards. Curiosity Crafter draws off every token hit; Shark Typhoon and Chrome Host Seedshark add flying bodies per spell; Faerie Mastermind taxes opponents' draws at flash speed.",
         "cards": [
           "Curiosity Crafter",
           "Bident of Thassa",
@@ -69,20 +72,19 @@
           "Homunculus Horde",
           "Leitmotif Composer",
           "Deeproot Pilgrimage",
-          "Master of Waves"
+          "Master of Waves",
+          "Faerie Mastermind"
         ]
       },
       {
         "name": "Spell Suite — Draw & Selection",
-        "description": "Cantrip density keeps spell velocity high; every blue pip is a body. Distant Melody refills naming Merfolk.",
+        "description": "Cantrip density keeps spell velocity high; every blue pip is a body. Mystical Tutor and Solve the Equation find the right spell, Treason of Isengard rebuys it, and Distant Melody refills naming Merfolk.",
         "cards": [
           "Brainstorm",
           "Ponder",
           "Preordain",
           "Opt",
           "Consult the Star Charts",
-          "Think Twice",
-          "Deduce",
           "Quick Study",
           "Thirst for Knowledge",
           "Lórien Revealed",
@@ -90,7 +92,10 @@
           "Treasure Cruise",
           "Distant Melody",
           "Teferi's Ageless Insight",
-          "Dirgur Focusmage // Braingeyser"
+          "Dirgur Focusmage // Braingeyser",
+          "Mystical Tutor",
+          "Solve the Equation",
+          "Treason of Isengard"
         ]
       },
       {
@@ -124,11 +129,9 @@
           "Arcane Signet",
           "Thought Vessel",
           "Mind Stone",
-          "Everflowing Chalice",
           "Worn Powerstone",
           "Basalt Monolith",
-          "Solemn Simulacrum",
-          "Mocking Sprite"
+          "Solemn Simulacrum"
         ]
       },
       {
@@ -233,9 +236,9 @@
       "cards": [
         "Homunculus Horde",
         "Brainstorm",
-        "Think Twice"
+        "Opt"
       ],
-      "description": "Fourteen draw spells make the second-card-drawn trigger nearly automatic every turn, copying the Horde repeatedly.",
+      "description": "Twelve draw spells plus Faerie Mastermind's off-turn draws make the second-card-drawn trigger nearly automatic every turn, copying the Horde repeatedly.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -269,6 +272,34 @@
           "name": "EDHREC — Namor the Sub-Mariner",
           "url": "https://edhrec.com/commanders/namor-the-sub-mariner",
           "detail": "2,057 decks; top themes Tokens/Merfolk/Spellslinger (fetched 2026-07-06)"
+        }
+      ]
+    },
+    {
+      "title": "Faerie Mastermind + Teferi's Ageless Insight",
+      "cards": [
+        "Faerie Mastermind",
+        "Teferi's Ageless Insight"
+      ],
+      "description": "The {3}{U} activation reads 'each opponent draws one, you draw two' with Insight out — an instant-speed, card-positive mana sink that also fires Homunculus Horde on opponents' turns.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-401 v1.1 — board-approved 5-swap package 2026-07-06"
+        }
+      ]
+    },
+    {
+      "title": "Treason of Isengard + Saruman's Trickery",
+      "cards": [
+        "Treason of Isengard",
+        "Saruman's Trickery"
+      ],
+      "description": "Both amass Orcs, growing a shared Army body while countering and rebuying spells; Treason returns the deck's best instant or sorcery to the library top for a cantrip to pick up.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-401 v1.1 — board-approved 5-swap package 2026-07-06"
         }
       ]
     }
@@ -309,7 +340,7 @@
     {
       "name": "Island",
       "type": "Basic Land — Island",
-      "quantity": 26,
+      "quantity": 27,
       "primary_role": "land"
     },
     {
@@ -378,11 +409,6 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Everflowing Chalice",
-      "type": "Artifact",
-      "primary_role": "ramp"
-    },
-    {
       "name": "Worn Powerstone",
       "type": "Artifact",
       "primary_role": "ramp"
@@ -400,11 +426,6 @@
     {
       "name": "Hydro-Channeler",
       "type": "Creature — Merfolk Wizard",
-      "primary_role": "ramp"
-    },
-    {
-      "name": "Mocking Sprite",
-      "type": "Creature — Faerie Rogue",
       "primary_role": "ramp"
     },
     {
@@ -522,16 +543,6 @@
     },
     {
       "name": "Consult the Star Charts",
-      "type": "Instant",
-      "primary_role": "card-draw"
-    },
-    {
-      "name": "Think Twice",
-      "type": "Instant",
-      "primary_role": "card-draw"
-    },
-    {
-      "name": "Deduce",
       "type": "Instant",
       "primary_role": "card-draw"
     },
@@ -670,11 +681,6 @@
       "primary_role": "protection"
     },
     {
-      "name": "Brineborn Cutthroat",
-      "type": "Creature — Merfolk Pirate",
-      "primary_role": "threat"
-    },
-    {
       "name": "Rite of Replication",
       "type": "Sorcery",
       "primary_role": "wincon",
@@ -695,22 +701,30 @@
       "name": "Commander's Insight",
       "type": "Instant",
       "primary_role": "card-draw"
+    },
+    {
+      "name": "Mystical Tutor",
+      "type": "Instant",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Solve the Equation",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Treason of Isengard",
+      "type": "Sorcery",
+      "primary_role": "recursion"
+    },
+    {
+      "name": "Faerie Mastermind",
+      "type": "Creature — Faerie Rogue",
+      "primary_role": "card-draw",
+      "secondary_role": "utility"
     }
   ],
   "tokens": [
-    {
-      "name": "Clue",
-      "type_line": "Token Artifact — Clue",
-      "oracle_text": "{2}, Sacrifice this token: Draw a card.",
-      "power": null,
-      "toughness": null,
-      "colors": [],
-      "scryfall_id": "ef607895-d6d2-44ab-a6b4-84af55fce593",
-      "image_uri": "https://cards.scryfall.io/normal/front/e/f/ef607895-d6d2-44ab-a6b4-84af55fce593.jpg?1782730388",
-      "produced_by": [
-        "Deduce"
-      ]
-    },
     {
       "name": "Elemental",
       "type_line": "Token Creature — Elemental",
@@ -844,7 +858,8 @@
       "scryfall_id": "6943f966-fd21-427c-a13f-44727edcaa4b",
       "image_uri": "https://cards.scryfall.io/normal/front/6/9/6943f966-fd21-427c-a13f-44727edcaa4b.jpg?1782733408",
       "produced_by": [
-        "Saruman's Trickery"
+        "Saruman's Trickery",
+        "Treason of Isengard"
       ]
     },
     {
