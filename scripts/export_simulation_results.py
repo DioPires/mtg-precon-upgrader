@@ -41,6 +41,7 @@ import mana_simulation_calculated_infinity as sim_calculated_infinity
 import mana_simulation_exponential_growth as sim_exponential_growth
 import mana_simulation_slivers as sim_slivers
 import mana_simulation_stampede_acres as sim_stampede_acres
+import mana_simulation_tidal_legion as sim_tidal_legion
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -435,6 +436,43 @@ COMMANDER_CASCADE = {
 COMMANDER_COPY_ENGINE = {
     "zada-hedron-grinder": {"mode": "per_other_creature"},
     "aziza-mage-tower-captain": {"mode": "tap_gate", "tapCost": 3},
+}
+
+# DEC-404 — commander token-swarm engines (sequel to DEC-385/DEC-393). The
+# goldfish's combat pressure counts only creature *cards* on the battlefield,
+# so a commander whose primary clock is a growing token army reads near-zero:
+# Namor the Sub-Mariner creates one 1/1 Merfolk per blue pip on each
+# noncreature spell cast, and his own power equals the Merfolk count. Model:
+# on each qualifying paid cast with the commander on the battlefield, mint
+# `manaCost[pipColor]` tokens into a per-game ledger. Tokens attack from the
+# turn after they were minted (summoning sickness): each contributes
+# tokenPower + (count of battlefield anthem permanents) to per-turn combat
+# damage, and the commander adds commanderPowerPerToken per ready token once
+# he can attack (his */4 power scales with the swarm). Copies and free-casts
+# never mint (CR 707.10 — only casts trigger). Floors, not ceilings: X pips
+# credit only printed symbols, anthems don't pump nontoken creature cards
+# (their cmc-based combat already counts), and token draw engines (Curiosity
+# Crafter/Bident) are not modeled.
+# Config keys:
+#   pipColor              — mana symbol counted per qualifying cast ("U")
+#   nonCreatureOnly       — True: creature spells don't trigger
+#   tokenPower            — base power per token (1)
+#   anthemNames           — battlefield permanents granting the tokens +1/+1
+#   commanderPowerPerToken — commander damage added per ready token (Namor: 1)
+COMMANDER_TOKEN_ENGINE = {
+    "tidal-legion": {
+        "pipColor": "U",
+        "nonCreatureOnly": True,
+        "tokenPower": 1,
+        # Verified +1/+1 Merfolk lords only (Scryfall, DEC-404): Svyelun is
+        # ward-only, Kopala is a targeting tax, Master of Waves anthems
+        # Elementals — none of those pump the Merfolk tokens.
+        "anthemNames": {
+            "Lord of Atlantis", "Master of the Pearl Trident",
+            "Merrow Reejerey", "Vodalian Hexcatcher", "Merfolk Sovereign",
+        },
+        "commanderPowerPerToken": 1,
+    },
 }
 
 
@@ -1237,6 +1275,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "reanimationNames": reanim_names,
         "cascade": COMMANDER_CASCADE.get(deck_id),
         "copyEngine": COMMANDER_COPY_ENGINE.get(deck_id),
+        "tokenEngine": COMMANDER_TOKEN_ENGINE.get(deck_id),
     }
 
 
@@ -1639,13 +1678,18 @@ def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict]
 
 def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
                        commander_in_play: bool, cumulative_damage: float,
-                       meaningful_threshold: int, combo_ready_ever: bool) -> dict:
-    """Summarize goldfish board state at end of turn."""
+                       meaningful_threshold: int, combo_ready_ever: bool,
+                       extra_combat: float = 0.0) -> dict:
+    """Summarize goldfish board state at end of turn.
+
+    ``extra_combat`` carries damage from sources outside the permanent list
+    (the DEC-404 commander token-swarm ledger).
+    """
     lands = sum(1 for permanent in permanents if permanent["kind"] == "land")
     ramp = sum(1 for permanent in permanents if permanent["kind"] == "ramp")
     threats = sum(1 for permanent in permanents if permanent["isThreat"])
     pressure = sum(permanent["impact"] for permanent in permanents if permanent["kind"] != "land")
-    combat = sum(
+    combat = extra_combat + sum(
         permanent["combat"] for permanent in permanents
         if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
     )
@@ -1814,6 +1858,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     reanim_names = context.get("reanimationNames", set())
     cascade = context.get("cascade")
     copy_engine = context.get("copyEngine")
+    token_engine = context.get("tokenEngine")
     library, hand = commander_mulligan_goldfish(decklist, profiles)
     permanents = []
     battlefield_lands = []
@@ -1824,6 +1869,10 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     # engine gates only) and per-turn tap_gate usage.
     token_creatures = 0
     copy_gate_uses = 0
+    # DEC-404 token-swarm ledger: tokens minted this turn are summoning-sick;
+    # they migrate to the ready pool at the start of the next turn.
+    swarm_tokens_ready = 0
+    swarm_tokens_new = 0
     combo_ready_ever = False
     assembly_turn = [None] * len(assembly_lines)
     # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
@@ -1847,6 +1896,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
 
     for turn in range(1, NUM_TURNS + 1):
         copy_gate_uses = 0
+        swarm_tokens_ready += swarm_tokens_new
+        swarm_tokens_new = 0
         if turn > 1 and library:
             hand.append(library.pop())
 
@@ -1942,6 +1993,16 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if copy_engine is not None:
                 token_creatures += chosen_profile["tokenCreatures"]
 
+            # DEC-404 — token-swarm engine fires on cast (commander already on
+            # the battlefield; the commander's own cast never triggers). Mint
+            # one token per configured pip in the spell's printed mana cost.
+            if (token_engine is not None and commander_in_play
+                    and chosen != commander_name
+                    and not (token_engine["nonCreatureOnly"]
+                             and "Creature" in chosen_profile["typeLine"])):
+                swarm_tokens_new += chosen_profile["manaCost"].get(
+                    token_engine["pipColor"], 0)
+
             if chosen == commander_name:
                 commander_in_play = True
                 if commander_play_turn is None:
@@ -1964,6 +2025,22 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             permanent["combat"] for permanent in permanents
             if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
         )
+        # DEC-404 — token-swarm combat: ready tokens swing every turn, each
+        # pumped by battlefield anthems; the commander's variable power adds
+        # commanderPowerPerToken per ready token once he can attack himself.
+        swarm_combat = 0.0
+        if token_engine is not None and swarm_tokens_ready > 0:
+            anthem_count = sum(
+                1 for permanent in permanents
+                if permanent["name"] in token_engine["anthemNames"]
+            )
+            swarm_combat = swarm_tokens_ready * (
+                token_engine["tokenPower"] + anthem_count)
+            if (commander_in_play and commander_play_turn is not None
+                    and commander_play_turn < turn):
+                swarm_combat += (token_engine["commanderPowerPerToken"]
+                                 * swarm_tokens_ready)
+            cumulative_damage += swarm_combat
         if not combo_ready_ever and combo_lines:
             combo_ready_ever = combo_ready_this_turn(
                 turn=turn,
@@ -1998,6 +2075,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             cumulative_damage=cumulative_damage,
             meaningful_threshold=meaningful_threshold,
             combo_ready_ever=combo_ready_ever,
+            extra_combat=swarm_combat,
         )
 
     return by_turn, assembly_turn
@@ -2222,6 +2300,20 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "ledger of creature tokens from resolved spells (fixed counts only; X-spells and "
             "storm credit 0, so copy counts are floors). Copies re-credit draw and land-ramp "
             "but are not cast (CR 707.10) — they never re-trigger the engine."
+        )
+    token_engine = context.get("tokenEngine")
+    if token_engine:
+        section["methodology"] += (
+            f" Commander token-swarm engine modeled (DEC-404): with the commander on the "
+            f"battlefield, each {'noncreature ' if token_engine['nonCreatureOnly'] else ''}"
+            f"spell cast mints one {token_engine['tokenPower']}-power token per "
+            f"{{{token_engine['pipColor']}}} symbol in its printed mana cost. Tokens attack "
+            "from the turn after minting (summoning sickness); each contributes tokenPower "
+            f"plus one per battlefield anthem ({len(token_engine['anthemNames'])} tracked), "
+            "and the commander adds one damage per ready token once he can attack (variable "
+            "power). Copies and free-casts never mint (CR 707.10 — only casts trigger). "
+            "Counts are floors: X pips credit printed symbols only, anthems don't pump "
+            "nontoken creatures, and token-hit draw engines are not modeled."
         )
     return section, combo_assembly
 
@@ -3161,6 +3253,19 @@ def export_zada(metadata: dict) -> dict:
     )
 
 
+def export_tidal_legion(metadata: dict) -> dict:
+    """Export Tidal Legion (mono-U — Namor the Sub-Mariner) simulation."""
+    return _export_colored(
+        sim_module=sim_tidal_legion,
+        deck_id="tidal-legion",
+        deck_name="Tidal Legion",
+        commander_name="Namor the Sub-Mariner",
+        commander_cmc=3,
+        colors=["U"],
+        metadata=metadata,
+    )
+
+
 def export_orzhov(metadata: dict) -> dict:
     """Export Quill of Casualties (Orzhov Silverquill aristocrats) simulation."""
     return _export_colored(
@@ -3296,6 +3401,7 @@ DECKS = [
     ("exponential-growth", "Exponential Growth", export_exponential_growth),
     ("slivers", "Hivebound Cascade", export_slivers),
     ("stampede-acres", "Field of Blades", export_stampede_acres),
+    ("tidal-legion", "Tidal Legion", export_tidal_legion),
 ]
 
 
