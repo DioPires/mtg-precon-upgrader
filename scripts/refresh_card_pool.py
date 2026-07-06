@@ -45,6 +45,15 @@ def main(argv: list[str]) -> int:
         print("Mirror refresh failed.", file=sys.stderr)
         return rc
 
+    # EDHREC inclusion rates (DEC-410): cached 7 days; non-fatal so offline runs proceed
+    edhrec_cmd = [sys.executable, str(SCRIPTS / "fetch_edhrec_rates.py")]
+    if args.deck:
+        edhrec_cmd += ["--deck", args.deck]
+    else:
+        edhrec_cmd.append("--all")
+    if run(edhrec_cmd) != 0:
+        print("EDHREC rates refresh failed — continuing with cached/manual rates.", file=sys.stderr)
+
     gen_cmd = [
         sys.executable, str(SCRIPTS / "generate_candidate_pool.py"),
         "--limit", str(args.limit),
