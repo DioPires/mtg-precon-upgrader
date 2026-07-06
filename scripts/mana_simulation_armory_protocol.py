@@ -116,7 +116,7 @@ TRANSFORM_PIPS_REDUCED = {"generic": 2, "U": 1, "R": 1}        # with Training G
 FLEX_LANDS = {
     "Command Tower", "Steam Vents", "Shivan Reef", "Cascade Bluffs",
     "Stormcarved Coast", "Sulfur Falls", "Temple of Epiphany",
-    "Exotic Orchard",
+    "Exotic Orchard", "Riverpyre Verge", "Turbulent Springs",
 }
 # Notes: Steam Vents modeled untapped (pay 2 life). Cascade Bluffs is a filter
 # land ({U/R} in, {U}{U}/{U}{R}/{R}{R} out) — modeled as one flexible source,
@@ -125,21 +125,25 @@ FLEX_LANDS = {
 
 U_LANDS = {"Island", "Seat of the Synod"}
 R_LANDS = {"Mountain", "Great Furnace"}
-C_ONLY_LANDS = {"Reliquary Tower", "Academy Ruins"}
+C_ONLY_LANDS = {"Fomori Vault", "Academy Ruins"}
 
 # Spire of Industry: any color with an artifact on the battlefield, else {C}.
 # Handled dynamically in compute_land_mana (artifact lands / rocks check).
 SPIRE = "Spire of Industry"
 
 # Island-typed lands (for Sulfur Falls checks):
-ISLAND_TYPED = {"Island", "Steam Vents"}
-MOUNTAIN_TYPED = {"Mountain", "Steam Vents"}
+ISLAND_TYPED = {"Island", "Steam Vents", "Turbulent Springs"}
+MOUNTAIN_TYPED = {"Mountain", "Steam Vents", "Turbulent Springs"}
 ARTIFACT_LANDS = {"Seat of the Synod", "Great Furnace"}
 
 # Fetches: crack immediately for a basic, balancing U/R sources.
-# Evolving Wilds / Terramorphic Expanse basics enter tapped; Fabled Passage's
-# basic enters untapped once you control 4+ lands.
-FETCHLANDS = {"Fabled Passage", "Evolving Wilds", "Terramorphic Expanse"}
+# Fabled Passage's basic enters untapped once you control 4+ lands.
+# Riverpyre Verge: {R} always, {U} gated on controlling an Island/Mountain
+# (85-99% from turn 2) — modeled flexible, consistent with Exotic Orchard's
+# 4-player read. Turbulent Springs: untapped once opponents have 8+ lands
+# (~their turn 3) — proxied as "our 2nd land onward", same shape as
+# Stormcarved Coast.
+FETCHLANDS = {"Fabled Passage"}
 
 
 def land_enters_tapped(name: str, battlefield_lands: list[str]) -> bool:
@@ -148,6 +152,9 @@ def land_enters_tapped(name: str, battlefield_lands: list[str]) -> bool:
         return True
 
     if name == "Stormcarved Coast":
+        return len(battlefield_lands) < 2
+
+    if name == "Turbulent Springs":
         return len(battlefield_lands) < 2
 
     if name == "Sulfur Falls":

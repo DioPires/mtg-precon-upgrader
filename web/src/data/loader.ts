@@ -124,7 +124,8 @@ import type {
 // v90 -> v91 (DEC-402 2026-07-06): Armory Protocol bracket 4- round. IN Aggravated Assault, Isochron Scepter, Dramatic Reversal, Mystical Tutor / OUT Resculpt, Everflowing Chalice, Worn Powerstone, Reality Shift. Bracket 3+ -> 4-, GC 0 -> 1; combo winConditions tagged; sim re-run.
 // v91 -> v92 (DEC-401 2026-07-06): Tidal Legion v1.1 board-approved 5-swap package. IN Mystical Tutor, Solve the Equation, Treason of Isengard, Island #27 (35->36 lands), Faerie Mastermind / OUT Think Twice, Deduce, Brineborn Cutthroat, Mocking Sprite, Everflowing Chalice. GC 0->1; metrics 83->87, sim health 78.9 A, LP 82% @T7; recursion gap left half-open by board choice (Relearn declined).
 // v92 -> v93 (DEC-402 2026-07-06): Armory Protocol final slot. IN Mana Sculpt (owned free, beats Wizard's Retort on rider + cost) / OUT Trailblazer's Boots. Counter suite at 6; deck accepted and closed at 4-.
-const STORAGE_PREFIX = 'gv1-deck-data-v93:';
+// v93 -> v94 (DEC-402 2026-07-06): Armory Protocol mana-base round. IN Riverpyre Verge, Turbulent Springs, Fomori Vault / OUT Evolving Wilds, Terramorphic Expanse, Reliquary Tower. Always-tapped lands 3->1; LP 82.4% @T8 (was 76.4); sim 77.2/A.
+const STORAGE_PREFIX = 'gv1-deck-data-v94:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
