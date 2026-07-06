@@ -411,6 +411,93 @@ class QualityAwareRoleSaturationTests(unittest.TestCase):
         self.assertGreater(score_default, 0)
 
 
+class EdhrecInclusionBoostTests(unittest.TestCase):
+    """DEC-410: manually recorded EDHREC inclusion rates boost candidate scores."""
+
+    def _archetype(self):
+        return candidate_pool.compile_archetype(
+            {
+                "name": "Voltron",
+                "oracle_patterns": ["equip\\b", "attached creature"],
+                "type_constraints": [],
+                "staples": [],
+                "anti_patterns": [],
+            }
+        )
+
+    def _context(self):
+        return {
+            "archetype_ids": {"voltron"},
+            "archetype_counts": {"Voltron": 0},
+            "asymmetric_only": False,
+            "creature_count": 30,
+            "sac_outlet_count": 4,
+        }
+
+    def _equipment_card(self, name="Test Blade"):
+        return {
+            "name": name,
+            "cmc": 3,
+            "type_line": "Artifact — Equipment",
+            "oracle_text": "Equipped creature gets +3/+1. Equip {2}",
+        }
+
+    def _score(self, card, owned=frozenset(), edhrec_rates=None):
+        return candidate_pool.score_card(
+            card,
+            [self._archetype()],
+            deck_avg_cmc=3,
+            decklist_names=set(),
+            owned=set(owned),
+            game_changers=set(),
+            bracket=4,
+            context=self._context(),
+            edhrec_rates=edhrec_rates,
+        )
+
+    def test_no_rates_leaves_score_and_breakdown_unchanged(self):
+        card = self._equipment_card()
+        base_score, base_bd, _ = self._score(card)
+        none_score, none_bd, _ = self._score(card, edhrec_rates={})
+        self.assertEqual(base_score, none_score)
+        self.assertNotIn("edhrec", base_bd)
+        self.assertNotIn("edhrec", none_bd)
+
+    def test_rate_adds_scaled_boost_and_breakdown(self):
+        card = self._equipment_card()
+        base_score, _bd, _ = self._score(card)
+        boosted_score, boosted_bd, _ = self._score(card, edhrec_rates={"Test Blade": 43})
+        self.assertAlmostEqual(boosted_score - base_score, 17.2, places=1)
+        self.assertEqual(boosted_bd["edhrec"], 17.2)
+        self.assertEqual(boosted_bd["edhrec_rate"], 43)
+
+    def test_boost_caps_at_max_above_saturation_rate(self):
+        card = self._equipment_card()
+        base_score, _bd, _ = self._score(card)
+        capped_score, capped_bd, _ = self._score(card, edhrec_rates={"Test Blade": 85})
+        self.assertAlmostEqual(capped_score - base_score, candidate_pool.EDHREC_MAX, places=1)
+        self.assertEqual(capped_bd["edhrec"], candidate_pool.EDHREC_MAX)
+
+    def test_forty_percent_unowned_outranks_marginal_owned_filler(self):
+        popular_unowned = self._equipment_card("Popular Blade")
+        owned_filler = self._equipment_card("Owned Filler")
+        unowned_score, _b1, _m1 = self._score(
+            popular_unowned, edhrec_rates={"Popular Blade": 40}
+        )
+        owned_score, _b2, _m2 = self._score(
+            owned_filler, owned={"Owned Filler"}, edhrec_rates={"Popular Blade": 40}
+        )
+        self.assertGreater(unowned_score, owned_score)
+
+    def test_dfc_rate_lookup_falls_back_to_front_face(self):
+        rate = candidate_pool.edhrec_rate_for(
+            "Grave Researcher // Reanimate", {"Grave Researcher": 31}
+        )
+        self.assertEqual(rate, 31)
+        self.assertIsNone(candidate_pool.edhrec_rate_for("Sol Ring", {"Other": 10}))
+        self.assertIsNone(candidate_pool.edhrec_rate_for("Sol Ring", None))
+
+
 class DecklistExclusionNormalizationTests(unittest.TestCase):
     """DEC-386: mirror indexes DFCs as 'Front // Back'; decklists use front-face names."""
 

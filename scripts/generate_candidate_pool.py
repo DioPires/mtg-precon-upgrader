@@ -31,8 +31,9 @@ GAME_CHANGERS_FILE = DATA_DIR / "game-changers.json"
 MIRROR_FILE = PROJECT_ROOT / "priv_data" / "scryfall-oracle.json"
 MIRROR_META = PROJECT_ROOT / "priv_data" / "scryfall-oracle.meta.json"
 OWNED_FILE = PROJECT_ROOT / "priv_data" / "owned_formatted.csv"
+EDHREC_RATES_DIR = PROJECT_ROOT / "priv_data" / "edhrec"
 
-METHODOLOGY_VERSION = "candidate-pool-v4"
+METHODOLOGY_VERSION = "candidate-pool-v5"
 DEFAULT_LIMIT = 200
 SATURATION_THRESHOLD = 8
 SATURATION_FLOOR = 0.35
@@ -40,6 +41,11 @@ ASYMMETRIC_ONLY_MULTIPLIER = 0.55
 ARCHETYPE_POSITION_WEIGHTS = (1.0, 0.5, 0.25)
 ROLE_SATURATION_THRESHOLD = 8
 ROLE_REDUNDANCY_FLOOR = 0.65
+# DEC-410: manually recorded EDHREC inclusion rates (see docs/discovery-playbook.md).
+# min(EDHREC_MAX, rate / EDHREC_RATE_SATURATION * EDHREC_MAX): 40% -> 16 (> owned 15),
+# 50%+ -> 20. Half the density ceiling so archetype fit stays dominant.
+EDHREC_MAX = 20.0
+EDHREC_RATE_SATURATION = 50.0
 
 TOKEN_ENTRY_MISMATCH = re.compile(
     r"tokens? you control (?:that )?entered this turn|whenever [^.]*tokens? enters?",
@@ -90,6 +96,41 @@ def load_owned() -> set[str]:
             if name:
                 owned.add(name)
     return owned
+
+
+def load_edhrec_rates(deck_id: str) -> tuple[dict[str, float], dict | None]:
+    """Load manually recorded EDHREC inclusion rates for a deck.
+
+    Returns (rates, meta). Rates map card name (front-face) -> inclusion percent
+    (0-100). Missing file is normal — automated EDHREC fetching is barred by ToS
+    (DEC-312); rates are recorded by hand during the mandatory closing diff
+    (DEC-402) into priv_data/edhrec/{deck_id}.json.
+    """
+    path = EDHREC_RATES_DIR / f"{deck_id}.json"
+    if not path.exists():
+        return {}, None
+    data = json.loads(path.read_text())
+    rates = {}
+    for name, rate in (data.get("rates") or {}).items():
+        try:
+            rates[name] = max(0.0, min(100.0, float(rate)))
+        except (TypeError, ValueError):
+            print(f"  [{deck_id}] edhrec-rates: non-numeric rate for {name!r} ignored", file=sys.stderr)
+    meta = {
+        "recorded_at": data.get("recorded_at"),
+        "source": data.get("source"),
+        "count": len(rates),
+    }
+    return rates, meta
+
+
+def edhrec_rate_for(name: str, edhrec_rates: dict[str, float] | None) -> float | None:
+    if not edhrec_rates:
+        return None
+    rate = edhrec_rates.get(name)
+    if rate is None:
+        rate = edhrec_rates.get(front_face(name))
+    return rate
 
 
 def load_game_changers() -> set[str]:
@@ -318,6 +359,7 @@ def score_card(
     context: dict | None = None,
     position_weights: dict[str, float] | None = None,
     role_pool: dict[str, dict] | None = None,
+    edhrec_rates: dict[str, float] | None = None,
 ) -> tuple[float, dict, list[str]]:
     """Return (score, breakdown, matched_archetypes)."""
     oracle = card_oracle_blob(card).lower()
@@ -400,8 +442,16 @@ def score_card(
     else:
         gc_score = 0.0
 
-    # 5. Already-in-decklist demotion: cap total at 5
-    raw_total = density_score + cmc_score + owned_score + gc_score
+    # 5. EDHREC inclusion (0–20): manually recorded rates only (DEC-410)
+    edhrec_rate = edhrec_rate_for(name, edhrec_rates)
+    edhrec_score = (
+        min(EDHREC_MAX, edhrec_rate / EDHREC_RATE_SATURATION * EDHREC_MAX)
+        if edhrec_rate is not None
+        else 0.0
+    )
+
+    # 6. Already-in-decklist demotion: cap total at 5
+    raw_total = density_score + cmc_score + owned_score + gc_score + edhrec_score
     anti_synergy = detect_anti_synergy(card, context) if context else []
     flat_anti_synergy_penalty = sum(flag.get("penalty", 0.0) for flag in anti_synergy)
     anti_synergy_multiplier = 1.0
@@ -417,6 +467,9 @@ def score_card(
         "bracket_fit": gc_score,
         "decklist_demoted": in_decklist,
     }
+    if edhrec_rate is not None:
+        breakdown["edhrec"] = round(edhrec_score, 1)
+        breakdown["edhrec_rate"] = edhrec_rate
     if saturation_penalty > 0:
         breakdown["density_raw"] = round(raw_density_score, 1)
         breakdown["saturation_penalty"] = round(saturation_penalty, 1)
@@ -474,6 +527,7 @@ def compute_role_pool_scores(
     bracket: int,
     context: dict,
     position_weights: dict[str, float],
+    edhrec_rates: dict[str, float] | None = None,
 ) -> dict[str, dict]:
     """For each in-deck primary_role, compute count + median candidate-pool score.
 
@@ -505,6 +559,7 @@ def compute_role_pool_scores(
             context=context,
             position_weights=position_weights,
             role_pool=None,
+            edhrec_rates=edhrec_rates,
         )
         by_role.setdefault(role, []).append(score)
 
@@ -557,6 +612,7 @@ def trim_card(
     deck_role: str | None,
     strategy_line: str | None,
     mitigates_gap: str | None,
+    edhrec_rate: float | None,
 ) -> dict:
     out = {k: card.get(k) for k in KEEP_FIELDS if k in card}
     if "card_faces" in card:
@@ -572,6 +628,7 @@ def trim_card(
     out["deck_role"] = deck_role
     out["strategy_line"] = strategy_line
     out["mitigates_gap"] = mitigates_gap
+    out["edhrec_rate"] = edhrec_rate
     return out
 
 
@@ -603,10 +660,12 @@ def generate_for_deck(
     except (TypeError, ValueError):
         bracket = 4
 
+    edhrec_rates, edhrec_meta = load_edhrec_rates(deck_id)
     position_weights = build_position_weights(archetypes)
     role_pool = compute_role_pool_scores(
         deck, mirror_index, archetypes, avg_cmc,
         owned, game_changers, bracket, context, position_weights,
+        edhrec_rates=edhrec_rates,
     )
 
     candidates = []
@@ -624,6 +683,7 @@ def generate_for_deck(
         score, breakdown, matched = score_card(
             card, archetypes, avg_cmc, decklist_names, owned, game_changers, bracket,
             context, position_weights=position_weights, role_pool=role_pool,
+            edhrec_rates=edhrec_rates,
         )
         if score <= 0:
             continue
@@ -649,6 +709,7 @@ def generate_for_deck(
                 role,
                 strategy_line,
                 mitigates,
+                edhrec_rate_for(c.get("name", ""), edhrec_rates),
             )
         )
 
@@ -678,6 +739,11 @@ def generate_for_deck(
             "threshold": ROLE_SATURATION_THRESHOLD,
             "floor": ROLE_REDUNDANCY_FLOOR,
         },
+        "edhrec_rates": (
+            {**edhrec_meta, "max_boost": EDHREC_MAX, "rate_saturation": EDHREC_RATE_SATURATION}
+            if edhrec_meta
+            else None
+        ),
         "candidate_count": len(enriched),
         "candidates": enriched,
     }
