@@ -127,7 +127,8 @@ import type {
 // v93 -> v94 (DEC-402 2026-07-06): Armory Protocol mana-base round. IN Riverpyre Verge, Turbulent Springs, Fomori Vault / OUT Evolving Wilds, Terramorphic Expanse, Reliquary Tower. Always-tapped lands 3->1; LP 82.4% @T8 (was 76.4); sim 77.2/A.
 // v94 -> v95 (DEC-402 2026-07-06): Armory Protocol equipment slot. IN Buster Sword (draw + free-cast MV<=damage on connect, EDHREC 43%) / OUT Mask of Memory (same role, lower ceiling).
 // v95 -> v96 (DEC-401 2026-07-06): Tidal Legion v1.2 — board-approved 14-swap package from the EDHREC closing diff. IN Attuma, Harmonized Crescendo, Lullmage Mentor, Raise the Palisade, Harbinger of the Seas, Patchwork Banner, Transcendent Message, Kindred Discovery, Commander's Sphere, Archmage's Charm, Cryptic Command, Hullbreaker Horror, Sink into Stupor, Three Tree City / OUT Kiora, Treasure Cruise, Homunculus Horde, Aether Gale, Chrome Host Seedshark, Worn Powerstone, Commander's Insight, Quick Study, Basalt Monolith, Brush Off, Spellgyre, Season of Weaving, 2 Islands. Metrics 87->89, sim 78.2/A; manaRel gate missed (75.2<79, fallback proved non-functional — repair option pending board).
-const STORAGE_PREFIX = 'gv1-deck-data-v96:';
+// v96 -> v97 (DEC-401 2026-07-06): Tidal Legion v1.2.1 board-approved mana repair. IN Island #26 (37 lands) / OUT Rite of Replication. manaReliability 75.2 -> 77.7, health 78.7/A; Finishers category folded, Burst wincon re-anchored on Message; last near-miss combo entries gone.
+const STORAGE_PREFIX = 'gv1-deck-data-v97:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
