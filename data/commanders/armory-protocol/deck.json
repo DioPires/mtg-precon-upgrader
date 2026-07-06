@@ -8,9 +8,9 @@
     "primary": "engine",
     "secondary": "wincon"
   },
-  "bracket": "3+",
+  "bracket": "4-",
   "status": "brewing",
-  "gameChangers": 0,
+  "gameChangers": 1,
   "asymmetric_only": false,
   "archetypes": [
     "voltron",
@@ -101,7 +101,8 @@
           "Fabricate",
           "Whir of Invention",
           "Tribute Mage",
-          "Trophy Mage"
+          "Trophy Mage",
+          "Mystical Tutor"
         ]
       },
       {
@@ -117,9 +118,7 @@
           "Prismari Command",
           "Rapid Hybridization",
           "Blasphemous Act",
-          "Chain Reaction",
-          "Resculpt",
-          "Reality Shift"
+          "Chain Reaction"
         ]
       },
       {
@@ -133,14 +132,23 @@
           "Mind Stone",
           "Thought Vessel",
           "Fellwar Stone",
-          "Worn Powerstone",
-          "Everflowing Chalice",
           "Arc Reactor",
           "Sword of the Animist",
           "Foundry Inspector",
           "Etherium Sculptor",
           "Enthusiastic Mechanaut",
           "Training Grounds"
+        ]
+      },
+      {
+        "name": "Overload Protocols",
+        "description": "The bracket 4- combo layer (board-approved, DEC-402). Isochron Scepter imprinting Dramatic Reversal with three-plus mana of rocks in play generates unbounded mana and untaps - Tony's dig then reads the whole library, Emry recasts the graveyard, and Steel Hellkite's firebreathing grows without bound; it wins through combat, not on the spot. Aggravated Assault with The Reaver Cleaver attached to the commander pays for itself (six-plus Treasures per connect vs {3}{R}{R}) - unbounded combat phases in one turn, a full-table kill as long as he keeps connecting. Scepter also imprints any of the deck's four cheap counters or Mystical Tutor for fair-mode value.",
+        "cards": [
+          "Isochron Scepter",
+          "Dramatic Reversal",
+          "Aggravated Assault",
+          "The Reaver Cleaver",
+          "Mystical Tutor"
         ]
       }
     ]
@@ -285,6 +293,44 @@
           "url": "https://edhrec.com/commanders/tony-stark"
         }
       ]
+    },
+    {
+      "title": "Dramatic Scepter",
+      "cards": [
+        "Isochron Scepter",
+        "Dramatic Reversal"
+      ],
+      "description": "With rocks producing three or more mana, each {2} activation copies Reversal, untapping everything for a net mana profit - unbounded mana and untaps. Tutorable from the artifact side (Tribute Mage, Fabricate, Whir, Emry) and the spell side (Mystical Tutor).",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook — Dramatic Scepter",
+          "url": "https://commanderspellbook.com/?q=Isochron+Scepter+Dramatic+Reversal"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-402 bracket 4- round"
+        }
+      ]
+    },
+    {
+      "title": "Cleaver loops",
+      "cards": [
+        "The Reaver Cleaver",
+        "Aggravated Assault"
+      ],
+      "description": "Commander with Cleaver attached makes six-plus Treasures per connect; Aggravated Assault's {3}{R}{R} re-activation is out-paid every combat. Unbounded combats in one turn while he connects - Treasures fix for the double-red cost.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook near-miss (DEC-402 build check)",
+          "url": "https://commanderspellbook.com/?q=Reaver+Cleaver+Aggravated+Assault"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-402 bracket 4- round"
+        }
+      ]
     }
   ],
   "winConditions": [
@@ -322,6 +368,36 @@
         "Big Score"
       ],
       "description": "Twenty artifacts at upkeep wins outright; Treasure generation and stolen artifacts from Tyrant's combat trigger close the gap quickly in an artifact-dense deck."
+    },
+    {
+      "title": "Cleaver + Aggravated Assault",
+      "kind": "combo",
+      "pieces": [
+        "The Reaver Cleaver",
+        "Aggravated Assault"
+      ],
+      "cards": [
+        "The Reaver Cleaver",
+        "Aggravated Assault"
+      ],
+      "mana_cost": 11,
+      "description": "With both online and the commander connecting, each combat mints more Treasure than the next activation costs - unbounded combat phases in one turn kill the table through commander damage."
+    },
+    {
+      "title": "Dramatic Scepter",
+      "kind": "combo",
+      "pieces": [
+        "Isochron Scepter",
+        "Dramatic Reversal"
+      ],
+      "cards": [
+        "Isochron Scepter",
+        "Dramatic Reversal",
+        "Steel Hellkite",
+        "Emry, Lurker of the Loch"
+      ],
+      "mana_cost": 6,
+      "description": "Unbounded mana and untaps with three-plus rock mana in play. Not an instant win: it converts to seeing the entire library with Tony's dig, recasting the graveyard with Emry, and lethal firebreathing on Steel Hellkite over the next combat(s)."
     }
   ],
   "decklist": [
@@ -456,16 +532,6 @@
     },
     {
       "name": "Fellwar Stone",
-      "type": "Artifact",
-      "primary_role": "ramp"
-    },
-    {
-      "name": "Worn Powerstone",
-      "type": "Artifact",
-      "primary_role": "ramp"
-    },
-    {
-      "name": "Everflowing Chalice",
       "type": "Artifact",
       "primary_role": "ramp"
     },
@@ -751,14 +817,32 @@
       "primary_role": "removal-board"
     },
     {
-      "name": "Resculpt",
-      "type": "Instant",
-      "primary_role": "removal-spot"
+      "name": "Aggravated Assault",
+      "type": "Enchantment",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
     },
     {
-      "name": "Reality Shift",
+      "name": "Isochron Scepter",
+      "type": "Artifact",
+      "primary_role": "wincon",
+      "secondary_role": "engine",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Dramatic Reversal",
       "type": "Instant",
-      "primary_role": "removal-spot"
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Mystical Tutor",
+      "type": "Instant",
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "instant",
+        "sorcery"
+      ]
     }
   ],
   "tokens": [

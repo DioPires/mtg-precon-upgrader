@@ -73,12 +73,9 @@ def parse_mana_cost(mana_cost: str) -> dict:
 # - Izzet Signet nets +1 with perfect fixing ({1}, {T}: add {U}{R}) — modeled
 #   as one flexible source, the conservative read.
 # - Fellwar Stone: 4-player table, both colors virtually always available.
-# - Everflowing Chalice: modeled as cast kicked once ({2} for one charge
-#   counter) — its realistic early-game line.
 # - Arc Reactor: {5} improvise, enters tapped, taps for {C}{C}{C}. Modeled at
 #   an effective {4} (improvise floor of one artifact tapped) with production
 #   delayed one turn for the tapped ETB.
-# - Worn Powerstone ETBs tapped too — same one-turn delay.
 
 ROCK_DEFS = {
     "Sol Ring":              {"cast_generic": 1, "C": 2, "flexible": 0, "etb_tapped": False},
@@ -88,8 +85,6 @@ ROCK_DEFS = {
     "Fellwar Stone":         {"cast_generic": 2, "C": 0, "flexible": 1, "etb_tapped": False},
     "Mind Stone":            {"cast_generic": 2, "C": 1, "flexible": 0, "etb_tapped": False},
     "Thought Vessel":        {"cast_generic": 2, "C": 1, "flexible": 0, "etb_tapped": False},
-    "Everflowing Chalice":   {"cast_generic": 2, "C": 1, "flexible": 0, "etb_tapped": False},
-    "Worn Powerstone":       {"cast_generic": 3, "C": 2, "flexible": 0, "etb_tapped": True},
     "Arc Reactor":           {"cast_generic": 4, "C": 3, "flexible": 0, "etb_tapped": True},
 }
 
@@ -458,8 +453,6 @@ class GameState:
             "Fellwar Stone",
             "Mind Stone",
             "Thought Vessel",
-            "Everflowing Chalice",
-            "Worn Powerstone",
             "Arc Reactor",
         ]
         for rock_name in rock_priority:

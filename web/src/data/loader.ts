@@ -121,7 +121,8 @@ import type {
 // v87 -> v88 (DEC-373 2026-07-03): Hidden Legion consistency retune. OUT Conspicuous Snoop/Kiki-Jiki/Impact Tremors (phantom combo, 1.4% assembly @T7), Irregular Cohort, Universal Automaton / IN Flooded Strand, Fabled Passage (37->39 lands, Karsten U/R closed), Kindred Discovery, Esper Sentinel (draw 6->8, median online T5->T2), Graveshifter (recursion gap closed). GC unchanged (3); global 85->93, manabase 64->85, sim health 65.8->67.5.
 // v88 -> v89 (DEC-401 2026-07-06): New brewing deck Tidal Legion (Namor the Sub-Mariner, mono-U spellslinger Merfolk tokens, B3+, 0 GC). Board-approved strategy A+B; index.json gains the entry — force refetch so it appears.
 // v89 -> v90 (DEC-402 2026-07-06): New brewing deck Armory Protocol (Tony Stark // The Invincible Iron Man, UR Equipment Voltron + artifact deploy, B3+, 0 GC). Board-approved strategy A; index.json gains the entry — force refetch so it appears.
-const STORAGE_PREFIX = 'gv1-deck-data-v90:';
+// v90 -> v91 (DEC-402 2026-07-06): Armory Protocol bracket 4- round. IN Aggravated Assault, Isochron Scepter, Dramatic Reversal, Mystical Tutor / OUT Resculpt, Everflowing Chalice, Worn Powerstone, Reality Shift. Bracket 3+ -> 4-, GC 0 -> 1; combo winConditions tagged; sim re-run.
+const STORAGE_PREFIX = 'gv1-deck-data-v91:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
