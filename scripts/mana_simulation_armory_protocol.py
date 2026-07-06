@@ -123,7 +123,7 @@ FLEX_LANDS = {
 # the conservative net. Exotic Orchard assumes a 4-player table where some
 # opponent produces U or R.
 
-U_LANDS = {"Island", "Seat of the Synod", "Mystic Sanctuary"}
+U_LANDS = {"Island", "Seat of the Synod"}
 R_LANDS = {"Mountain", "Great Furnace"}
 C_ONLY_LANDS = {"Reliquary Tower", "Academy Ruins"}
 
@@ -131,8 +131,8 @@ C_ONLY_LANDS = {"Reliquary Tower", "Academy Ruins"}
 # Handled dynamically in compute_land_mana (artifact lands / rocks check).
 SPIRE = "Spire of Industry"
 
-# Island-typed lands (for Mystic Sanctuary / Sulfur Falls checks):
-ISLAND_TYPED = {"Island", "Steam Vents", "Mystic Sanctuary"}
+# Island-typed lands (for Sulfur Falls checks):
+ISLAND_TYPED = {"Island", "Steam Vents"}
 MOUNTAIN_TYPED = {"Mountain", "Steam Vents"}
 ARTIFACT_LANDS = {"Seat of the Synod", "Great Furnace"}
 
@@ -155,10 +155,6 @@ def land_enters_tapped(name: str, battlefield_lands: list[str]) -> bool:
             l in ISLAND_TYPED or l in MOUNTAIN_TYPED for l in battlefield_lands
         )
         return not has_island_or_mountain
-
-    if name == "Mystic Sanctuary":
-        island_count = sum(1 for l in battlefield_lands if l in ISLAND_TYPED)
-        return island_count < 3
 
     # Steam Vents: pay 2 life, untapped. Everything else untapped.
     return False
