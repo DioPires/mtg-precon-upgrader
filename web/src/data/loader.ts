@@ -119,7 +119,8 @@ import type {
 // v85 -> v86 (DEC-367 2026-07-01): The White Forge manabase pass — +3 Plains (33->36 lands) / -Basalt Monolith (net-0 without an untapper, colourless), -Jhoira's Familiar (weakest cost reducer), -Urza's Ruinous Blast (per board wipe eval: most self-damaging in an artifact deck; kept engine-safe Avatar's Wrath). manaReliability 62.1->67.3, health B/74.5->A/76.3, 0-1 land keeps 10.3%->7.1%.
 // v86 -> v87 (DEC-389/DEC-390 2026-07-02): metrics.json regenerated for all 18 decks with global_health_normalized (fixed-B3 ruler); Compare gains Vitals + Norm. columns reading it. Force-invalidate so returning users refetch metrics and the Norm. column populates.
 // v87 -> v88 (DEC-373 2026-07-03): Hidden Legion consistency retune. OUT Conspicuous Snoop/Kiki-Jiki/Impact Tremors (phantom combo, 1.4% assembly @T7), Irregular Cohort, Universal Automaton / IN Flooded Strand, Fabled Passage (37->39 lands, Karsten U/R closed), Kindred Discovery, Esper Sentinel (draw 6->8, median online T5->T2), Graveshifter (recursion gap closed). GC unchanged (3); global 85->93, manabase 64->85, sim health 65.8->67.5.
-const STORAGE_PREFIX = 'gv1-deck-data-v88:';
+// v88 -> v89 (DEC-401 2026-07-06): New brewing deck Tidal Legion (Namor the Sub-Mariner, mono-U spellslinger Merfolk tokens, B3+, 0 GC). Board-approved strategy A+B; index.json gains the entry — force refetch so it appears.
+const STORAGE_PREFIX = 'gv1-deck-data-v89:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
