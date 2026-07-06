@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Compute token data for each deck from Scryfall.
 
-Reads all deck.json files, identifies cards that produce tokens, emblems,
+Reads deck.json files (all decks by default, or a subset via --deck),
+identifies cards that produce tokens, emblems,
 and game-state markers (Experience, Poison Counter, The Monarch, Energy
 Reserve, City's Blessing, The Initiative, etc.), fetches token/marker
 card details, and writes a tokens array back into each deck.json.
@@ -16,8 +17,10 @@ Sources:
     (e.g. ascend → City's Blessing); resolved by Scryfall name lookup.
 """
 
+import argparse
 import json
 import re
+import sys
 import time
 import urllib.parse
 import urllib.request
@@ -25,6 +28,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
+COMMANDERS_DIR = DATA_DIR / "commanders"
 SCRYFALL_COLLECTION_URL = "https://api.scryfall.com/cards/collection"
 SCRYFALL_NAMED_URL = "https://api.scryfall.com/cards/named"
 BATCH_SIZE = 75
@@ -372,8 +376,32 @@ def compute_tokens_for_deck(deck: dict) -> list[dict]:
     return sorted(tokens, key=lambda t: t["name"])
 
 
+def deck_paths_for_ids(deck_ids: list[str] | None) -> list[Path]:
+    """Resolve requested deck ids to deck.json paths, or all decks when omitted."""
+    if not deck_ids:
+        return sorted(COMMANDERS_DIR.glob("*/deck.json"))
+    return [COMMANDERS_DIR / deck_id / "deck.json" for deck_id in deck_ids]
+
+
 def main():
-    deck_paths = sorted(DATA_DIR.glob("commanders/*/deck.json"))
+    parser = argparse.ArgumentParser(
+        description="Compute token/emblem/marker data and write it into deck.json files."
+    )
+    parser.add_argument(
+        "--deck",
+        dest="deck_ids",
+        action="append",
+        help="Process one deck id. Repeat to process multiple decks. Defaults to all decks.",
+    )
+    args = parser.parse_args()
+
+    deck_paths = deck_paths_for_ids(args.deck_ids)
+    missing = [path for path in deck_paths if not path.exists()]
+    if missing:
+        for path in missing:
+            print(f"Unknown deck: {path.parent.name} ({path})", file=sys.stderr)
+        sys.exit(1)
+
     print(f"Found {len(deck_paths)} decks.\n")
 
     for path in deck_paths:
