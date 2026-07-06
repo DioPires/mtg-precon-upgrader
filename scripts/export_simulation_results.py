@@ -471,6 +471,10 @@ COMMANDER_TOKEN_ENGINE = {
         "anthemNames": {
             "Lord of Atlantis", "Master of the Pearl Trident",
             "Merrow Reejerey", "Vodalian Hexcatcher", "Merfolk Sovereign",
+            # v1.2 (DEC-401): Attuma is a 7th +1/+1 lord; Patchwork Banner
+            # (naming Merfolk) is an anthem artifact that pumps Namor too —
+            # the commander pump is unmodeled (floors, not ceilings).
+            "Attuma, Atlantean Warlord", "Patchwork Banner",
         },
         "commanderPowerPerToken": 1,
     },

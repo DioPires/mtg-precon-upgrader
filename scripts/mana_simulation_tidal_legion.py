@@ -9,12 +9,13 @@ Commander: Namor the Sub-Mariner ({1}{U}{U}, CMC 3). His token trigger
 a mana engine — the mana sim treats Namor as a CMC-3 commander only; the
 token clock is modeled in the goldfish layer (DEC-404).
 
-Mono-U rock-based ramp profile (v1.1, DEC-401): Arcane Signet, Thought
-Vessel, Mind Stone, Worn Powerstone, Basalt Monolith. Sapphire Medallion is
-a cost reducer, not a mana source (informational only, matching the
+Mono-U rock-based ramp profile (v1.2, DEC-401): Arcane Signet, Thought
+Vessel, Mind Stone, Commander's Sphere, Patchwork Banner. Sapphire Medallion
+is a cost reducer, not a mana source (informational only, matching the
 Zada/Pyre convention). Hydro-Channeler's spell-restricted dork mana and
 Lórien Revealed's islandcycling are not modeled — both are minor against a
-36-land base, and omitting them keeps the estimate conservative.
+36-land base (34 real + Three Tree City + Sink into Stupor MDFC), and
+omitting them keeps the estimate conservative.
 """
 
 import argparse
@@ -63,17 +64,16 @@ def parse_mana_cost(mana_cost: str) -> dict:
 
 
 # --- Rock definitions ---
-# Worn Powerstone ETBs tapped; modeled untapped for simplicity (same
-# convention as Pyre & Panic). Basalt Monolith taps for {C}{C}{C}; the untap
-# cost is ignored (one activation per turn). Everflowing Chalice was cut in
-# the v1.1 swap round (DEC-401).
+# v1.2 (DEC-401): Worn Powerstone, Basalt Monolith, and Everflowing Chalice
+# are all cut. Commander's Sphere and Patchwork Banner tap for {U} (Sphere is
+# any-CI-color; Banner is any color).
 
 ROCK_DEFS = {
     "Arcane Signet":      {"cmc": 2, "U": 1, "C": 0, "burst": False},
     "Thought Vessel":     {"cmc": 2, "U": 0, "C": 1, "burst": False},
     "Mind Stone":         {"cmc": 2, "U": 0, "C": 1, "burst": False},
-    "Worn Powerstone":    {"cmc": 3, "U": 0, "C": 2, "burst": False},
-    "Basalt Monolith":    {"cmc": 3, "U": 0, "C": 3, "burst": False},
+    "Commander's Sphere": {"cmc": 3, "U": 1, "C": 0, "burst": False},
+    "Patchwork Banner":   {"cmc": 3, "U": 1, "C": 0, "burst": False},
 }
 
 
@@ -88,7 +88,7 @@ COST_REDUCERS = {
 # --- Land definitions ---
 
 # Lands that enter tapped unconditionally
-ALWAYS_TAPPED: set[str] = {"Lonely Sandbar"}
+ALWAYS_TAPPED: set[str] = {"Lonely Sandbar", "Sink into Stupor // Soporific Springs"}
 
 # Conditional-tapped lands evaluated dynamically in land_enters_tapped()
 
@@ -97,10 +97,12 @@ ALWAYS_TAPPED: set[str] = {"Lonely Sandbar"}
 U_LANDS = {
     "Island", "Mystic Sanctuary", "Rivendell", "Lonely Sandbar",
     "Cephalid Coliseum", "Seat of the Synod",
+    "Sink into Stupor // Soporific Springs",
 }
 
 C_ONLY_LANDS = {
     "Fountainport", "Reliquary Tower", "Command Beacon", "Ash Barrens",
+    "Three Tree City",
 }
 
 # Lands with the Island subtype (Mystic Sanctuary's own condition counts
@@ -244,9 +246,10 @@ def choose_bottom_cards(hand: list[str], count: int, metadata: dict,
 
 ENGINE_PAYOFFS = {
     "Curiosity Crafter", "Bident of Thassa", "Archmage Emeritus",
-    "Deekah, Fractal Theorist", "Chrome Host Seedshark", "Shark Typhoon",
-    "Homunculus Horde", "Leitmotif Composer", "Deeproot Pilgrimage",
-    "Faerie Mastermind",
+    "Deekah, Fractal Theorist", "Shark Typhoon",
+    "Leitmotif Composer", "Deeproot Pilgrimage",
+    "Faerie Mastermind", "Kindred Discovery", "Lullmage Mentor",
+    "Hullbreaker Horror",
 }
 
 
