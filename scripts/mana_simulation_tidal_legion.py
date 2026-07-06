@@ -9,12 +9,12 @@ Commander: Namor the Sub-Mariner ({1}{U}{U}, CMC 3). His token trigger
 a mana engine — the mana sim treats Namor as a CMC-3 commander only; the
 token clock is modeled in the goldfish layer (DEC-404).
 
-Mono-U rock-based ramp profile: Arcane Signet, Thought Vessel, Mind Stone,
-Everflowing Chalice, Worn Powerstone, Basalt Monolith. Sapphire Medallion
-and Mocking Sprite are cost reducers, not mana sources (informational only,
-matching the Zada/Pyre convention). Hydro-Channeler's spell-restricted dork
-mana and Lórien Revealed's islandcycling are not modeled — both are minor
-against a 35-land base, and omitting them keeps the estimate conservative.
+Mono-U rock-based ramp profile (v1.1, DEC-401): Arcane Signet, Thought
+Vessel, Mind Stone, Worn Powerstone, Basalt Monolith. Sapphire Medallion is
+a cost reducer, not a mana source (informational only, matching the
+Zada/Pyre convention). Hydro-Channeler's spell-restricted dork mana and
+Lórien Revealed's islandcycling are not modeled — both are minor against a
+36-land base, and omitting them keeps the estimate conservative.
 """
 
 import argparse
@@ -63,16 +63,15 @@ def parse_mana_cost(mana_cost: str) -> dict:
 
 
 # --- Rock definitions ---
-# Everflowing Chalice is {0} with multikicker {2}; modeled at the practical
-# X=1 line (2 mana in, 1 colorless out). Worn Powerstone ETBs tapped; modeled
-# untapped for simplicity (same convention as Pyre & Panic). Basalt Monolith
-# taps for {C}{C}{C}; the untap cost is ignored (one activation per turn).
+# Worn Powerstone ETBs tapped; modeled untapped for simplicity (same
+# convention as Pyre & Panic). Basalt Monolith taps for {C}{C}{C}; the untap
+# cost is ignored (one activation per turn). Everflowing Chalice was cut in
+# the v1.1 swap round (DEC-401).
 
 ROCK_DEFS = {
     "Arcane Signet":      {"cmc": 2, "U": 1, "C": 0, "burst": False},
     "Thought Vessel":     {"cmc": 2, "U": 0, "C": 1, "burst": False},
     "Mind Stone":         {"cmc": 2, "U": 0, "C": 1, "burst": False},
-    "Everflowing Chalice": {"cmc": 2, "U": 0, "C": 1, "burst": False},
     "Worn Powerstone":    {"cmc": 3, "U": 0, "C": 2, "burst": False},
     "Basalt Monolith":    {"cmc": 3, "U": 0, "C": 3, "burst": False},
 }
@@ -83,7 +82,6 @@ ROCK_DEFS = {
 
 COST_REDUCERS = {
     "Sapphire Medallion": {"cmc": 2, "reduction": 1, "applies_to": "blue"},
-    "Mocking Sprite":     {"cmc": 3, "reduction": 1, "applies_to": "instant/sorcery"},
 }
 
 
@@ -248,6 +246,7 @@ ENGINE_PAYOFFS = {
     "Curiosity Crafter", "Bident of Thassa", "Archmage Emeritus",
     "Deekah, Fractal Theorist", "Chrome Host Seedshark", "Shark Typhoon",
     "Homunculus Horde", "Leitmotif Composer", "Deeproot Pilgrimage",
+    "Faerie Mastermind",
 }
 
 
