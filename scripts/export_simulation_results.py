@@ -475,6 +475,8 @@ COMMANDER_TOKEN_ENGINE = {
             # (naming Merfolk) is an anthem artifact that pumps Namor too —
             # the commander pump is unmodeled (floors, not ceilings).
             "Attuma, Atlantean Warlord", "Patchwork Banner",
+            # Roaming Throne (v1.3) doubles Namor's token trigger itself —
+            # left unmodeled in the goldfish (floors, not ceilings).
         },
         "commanderPowerPerToken": 1,
     },

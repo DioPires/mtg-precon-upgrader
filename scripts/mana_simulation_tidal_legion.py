@@ -247,9 +247,9 @@ def choose_bottom_cards(hand: list[str], count: int, metadata: dict,
 ENGINE_PAYOFFS = {
     "Curiosity Crafter", "Bident of Thassa", "Archmage Emeritus",
     "Deekah, Fractal Theorist", "Shark Typhoon",
-    "Leitmotif Composer", "Deeproot Pilgrimage",
+    "Deeproot Pilgrimage",
     "Faerie Mastermind", "Kindred Discovery", "Lullmage Mentor",
-    "Hullbreaker Horror",
+    "Hullbreaker Horror", "Roaming Throne",
 }
 
 
