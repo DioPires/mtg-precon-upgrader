@@ -42,6 +42,7 @@ import mana_simulation_exponential_growth as sim_exponential_growth
 import mana_simulation_slivers as sim_slivers
 import mana_simulation_stampede_acres as sim_stampede_acres
 import mana_simulation_tidal_legion as sim_tidal_legion
+import mana_simulation_armory_protocol as sim_armory_protocol
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -472,6 +473,60 @@ COMMANDER_TOKEN_ENGINE = {
             "Merrow Reejerey", "Vodalian Hexcatcher", "Merfolk Sovereign",
         },
         "commanderPowerPerToken": 1,
+    },
+}
+
+# DEC-405 — commander transform/free-deploy engine (sequel to DEC-385/393/404).
+# Tony Stark casts at {1}{U} but the deck's engine is the BACK face: pay
+# {4}{U}{R} ({2}{U}{R} with Training Grounds — activated abilities of creatures
+# cost {2} less) to transform into a 5/5 flying haste body that, at the
+# beginning of each of your combats, puts one artifact card from your hand onto
+# the battlefield free — Equipment attach directly to him. The stock goldfish
+# is blind to all of it. Model: (1) the transform is attempted each turn once
+# the commander is in play, affordability-checked against the turn pool like
+# any other cast; (2) once transformed, one artifact from hand is deployed
+# free at each combat via resolve_cast_effects (deployed creatures are
+# summoning-sick; the record's combatReadyTurn handles that); (3) deployed
+# Equipment with a configured power bonus count as attached, and the
+# commander swings each turn from the transform turn (haste) for
+# (transformedPower + attached bonuses), doubled while a double-strike
+# Equipment is attached. Configured kill-piece Equipment are held in hand as
+# deploy fuel (mirrors the DEC-393 fuel-hold): the sim has no equip-cost path,
+# so hard-casting them would strand them. Floors, not ceilings: the front-face
+# {1},{T} artifact dig, Nexus of Becoming's second deploy stream, backup
+# attachers (Armory Automaton / Kazuul's Toll Collector / Shuri), and paying
+# equip costs for extra attachments are all unmodeled.
+# Config keys:
+#   transformCost / reducedTransformCost — activation pips; reduced applies
+#       while `reducerName` is on the battlefield
+#   transformedPower — back-face power (5/5 flying haste)
+#   equipmentPower — Equipment name -> commander damage added while attached.
+#       Values re-derived clause-by-clause from Scryfall oracle text
+#       (2026-07-06): Excalibur +10/+0; Colossus Hammer +10/+10 (loses flying
+#       — irrelevant in a blocker-less goldfish); Kaldra Compleat +5/+5;
+#       Aettir and Priwen sets base P/T to your life total — modeled as a
+#       conservative flat +15 (assumes ~20 life mid-game replacing the 5/5
+#       base) because the goldfish tracks no life; Embercleave / The Reaver
+#       Cleaver / Sword of the Animist +1/+1; Iron Man Armor +2/+1.
+#   doubleStrikeNames — Equipment granting double strike (Fireshrieker,
+#       Embercleave): doubles the commander's combat damage while attached.
+COMMANDER_DEPLOY_ENGINE = {
+    "armory-protocol": {
+        "transformCost": {"generic": 4, "U": 1, "R": 1},
+        "reducedTransformCost": {"generic": 2, "U": 1, "R": 1},
+        "reducerName": "Training Grounds",
+        "transformedPower": 5,
+        "equipmentPower": {
+            "Excalibur, Sword of Eden": 10,
+            "Colossus Hammer": 10,
+            "Kaldra Compleat": 5,
+            "Aettir and Priwen": 15,
+            "Embercleave": 1,
+            "The Reaver Cleaver": 1,
+            "Sword of the Animist": 1,
+            "Iron Man Armor": 2,
+        },
+        "doubleStrikeNames": {"Fireshrieker", "Embercleave"},
     },
 }
 
@@ -1276,6 +1331,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "cascade": COMMANDER_CASCADE.get(deck_id),
         "copyEngine": COMMANDER_COPY_ENGINE.get(deck_id),
         "tokenEngine": COMMANDER_TOKEN_ENGINE.get(deck_id),
+        "deployEngine": COMMANDER_DEPLOY_ENGINE.get(deck_id),
     }
 
 
@@ -1795,6 +1851,41 @@ def copy_engine_copy_count(copy_engine: dict, profile: dict, creature_count: int
     return 0
 
 
+def deploy_engine_choice(deploy_engine: dict, hand: list[str], profiles: dict,
+                         attached: set[str]) -> str | None:
+    """Pick the artifact to free-deploy at combat (DEC-405).
+
+    Scores each artifact in hand by the per-turn damage it adds: configured
+    kill-piece Equipment by their attach bonus (a first double-strike piece is
+    worth the commander's whole current swing, since it doubles it), artifact
+    creatures by their combat score, other artifacts by their impact score.
+    CMC breaks ties so the deploy leans toward the biggest mana cheat.
+    """
+    equipment_power = deploy_engine["equipmentPower"]
+    ds_names = deploy_engine["doubleStrikeNames"]
+    has_ds = bool(attached & ds_names)
+    attach_sum = sum(equipment_power.get(n, 0) for n in attached)
+    best_name = None
+    best_score = None
+    for name in ordered_unique(hand):
+        profile = profiles[name]
+        if profile["isLand"] or "Artifact" not in profile["typeLine"]:
+            continue
+        if "Equipment" in profile["typeLine"]:
+            gain = equipment_power.get(name, 0)
+            if name in ds_names and not has_ds:
+                gain += deploy_engine["transformedPower"] + attach_sum
+        elif "Creature" in profile["typeLine"]:
+            gain = profile["combat"]
+        else:
+            gain = profile["impact"]
+        score = (gain, profile["cmc"], name)
+        if best_score is None or score > best_score:
+            best_score = score
+            best_name = name
+    return best_name
+
+
 def spell_qualifies_for_cascade(profile: dict, cascade: dict) -> bool:
     """Whether a cast spell triggers the commander-granted cascade model (DEC-385)."""
     if profile["cmc"] < cascade["minValue"]:
@@ -1859,6 +1950,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     cascade = context.get("cascade")
     copy_engine = context.get("copyEngine")
     token_engine = context.get("tokenEngine")
+    deploy_engine = context.get("deployEngine")
     library, hand = commander_mulligan_goldfish(decklist, profiles)
     permanents = []
     battlefield_lands = []
@@ -1873,6 +1965,11 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     # they migrate to the ready pool at the start of the next turn.
     swarm_tokens_ready = 0
     swarm_tokens_new = 0
+    # DEC-405 transform/free-deploy bookkeeping: the back face comes online
+    # when the transform activation is paid; engine-deployed Equipment with a
+    # configured bonus count as attached from then on.
+    commander_transformed = False
+    attached_equipment: set[str] = set()
     combo_ready_ever = False
     assembly_turn = [None] * len(assembly_lines)
     # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
@@ -1945,6 +2042,14 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                         and profile["targetsOnlyCreature"]
                         and ("Instant" in profile["typeLine"]
                              or "Sorcery" in profile["typeLine"])):
+                    continue
+                # DEC-405 — configured kill-piece Equipment are deploy fuel:
+                # the sim has no equip-cost path, so a hard-cast copy would
+                # sit on the battlefield unattached forever. A real pilot
+                # holds them for the back face's free attach.
+                if (deploy_engine is not None
+                        and (name in deploy_engine["equipmentPower"]
+                             or name in deploy_engine["doubleStrikeNames"])):
                     continue
                 if not pool.can_cast(profile["manaCost"]):
                     continue
@@ -2021,6 +2126,51 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                                      commander_colors)
                 token_creatures += chosen_profile["tokenCreatures"]
 
+        # DEC-405 — transform, then free-deploy at the beginning of combat.
+        # The activation is sorcery-speed and affordability-checked against
+        # the turn pool exactly like every other cast in this engine.
+        deploy_combat = 0.0
+        if (deploy_engine is not None and commander_in_play
+                and not commander_transformed):
+            reducer_on_board = any(
+                permanent["name"] == deploy_engine["reducerName"]
+                for permanent in permanents
+            )
+            transform_cost = (deploy_engine["reducedTransformCost"]
+                              if reducer_on_board
+                              else deploy_engine["transformCost"])
+            if GoldfishManaPool(turn_sources(permanents, turn)).can_cast(transform_cost):
+                commander_transformed = True
+                for permanent in permanents:
+                    if permanent["name"] == commander_name:
+                        # Commander damage moves to the engine ledger below —
+                        # zero the record so it isn't double-counted.
+                        permanent["combat"] = 0
+        if deploy_engine is not None and commander_transformed:
+            deploy_name = deploy_engine_choice(deploy_engine, hand, profiles,
+                                               attached_equipment)
+            if deploy_name is not None:
+                hand.remove(deploy_name)
+                deploy_profile = profiles[deploy_name]
+                # Free put-onto-battlefield, not a cast: it re-credits
+                # resolution effects but never triggers cast-gated models.
+                resolve_cast_effects(deploy_name, deploy_profile, turn,
+                                     GoldfishManaPool(turn_sources(permanents, turn)),
+                                     library, hand, permanents, battlefield_lands,
+                                     profiles, metadata, commander_colors)
+                if "Equipment" in deploy_profile["typeLine"]:
+                    attached_equipment.add(deploy_name)
+            # Back face is 5/5 flying haste — it swings from the transform
+            # turn, pumped by attached bonuses, doubled by double strike.
+            attack = deploy_engine["transformedPower"] + sum(
+                deploy_engine["equipmentPower"].get(name, 0)
+                for name in attached_equipment
+            )
+            if attached_equipment & deploy_engine["doubleStrikeNames"]:
+                attack *= 2
+            deploy_combat = float(attack)
+            cumulative_damage += deploy_combat
+
         cumulative_damage += sum(
             permanent["combat"] for permanent in permanents
             if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
@@ -2075,7 +2225,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             cumulative_damage=cumulative_damage,
             meaningful_threshold=meaningful_threshold,
             combo_ready_ever=combo_ready_ever,
-            extra_combat=swarm_combat,
+            extra_combat=swarm_combat + deploy_combat,
         )
 
     return by_turn, assembly_turn
@@ -2314,6 +2464,25 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "power). Copies and free-casts never mint (CR 707.10 — only casts trigger). "
             "Counts are floors: X pips credit printed symbols only, anthems don't pump "
             "nontoken creatures, and token-hit draw engines are not modeled."
+        )
+    deploy_engine = context.get("deployEngine")
+    if deploy_engine:
+        section["methodology"] += (
+            " Commander transform/free-deploy engine modeled (DEC-405): once the "
+            "commander is in play, the transform activation "
+            f"({deploy_engine['transformCost']['generic']} generic + colored pips; "
+            f"{deploy_engine['reducedTransformCost']['generic']} generic with "
+            f"{deploy_engine['reducerName']} on the battlefield) is paid on "
+            "affordability like any other cast. From the transform turn (haste) the "
+            f"{deploy_engine['transformedPower']}-power back face attacks every turn, "
+            "and one artifact from hand is put onto the battlefield free at each "
+            "combat — deployed creatures are summoning-sick, deployed kill-piece "
+            f"Equipment ({len(deploy_engine['equipmentPower'])} configured) add their "
+            "attach bonus to commander damage, and double-strike Equipment double it. "
+            "Configured Equipment are held in hand as deploy fuel (no equip-cost path "
+            "exists in the sim). Floors: the front-face artifact dig, Nexus of "
+            "Becoming's second deploy stream, backup attachers, and paid equips are "
+            "not modeled."
         )
     return section, combo_assembly
 
@@ -3266,6 +3435,24 @@ def export_tidal_legion(metadata: dict) -> dict:
     )
 
 
+def export_armory_protocol(metadata: dict) -> dict:
+    """Export Armory Protocol (Izzet — Tony Stark) simulation.
+
+    commander_cmc=6 is the transform activation ({4}{U}{R}) — the sim's
+    commanderTiming tracks the suit-online event, not the {1}{U} front-face
+    cast (Esika/Prismatic Bridge precedent, DEC-405).
+    """
+    return _export_colored(
+        sim_module=sim_armory_protocol,
+        deck_id="armory-protocol",
+        deck_name="Armory Protocol",
+        commander_name="Tony Stark // The Invincible Iron Man",
+        commander_cmc=6,
+        colors=["U", "R"],
+        metadata=metadata,
+    )
+
+
 def export_orzhov(metadata: dict) -> dict:
     """Export Quill of Casualties (Orzhov Silverquill aristocrats) simulation."""
     return _export_colored(
@@ -3402,6 +3589,7 @@ DECKS = [
     ("slivers", "Hivebound Cascade", export_slivers),
     ("stampede-acres", "Field of Blades", export_stampede_acres),
     ("tidal-legion", "Tidal Legion", export_tidal_legion),
+    ("armory-protocol", "Armory Protocol", export_armory_protocol),
 ]
 
 

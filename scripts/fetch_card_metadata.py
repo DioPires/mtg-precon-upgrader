@@ -54,6 +54,37 @@ def collect_card_names(deck_ids: list[str] | None = None) -> set[str]:
     return names
 
 
+def _entry_from_card(card: dict) -> dict:
+    """Build a metadata entry from a Scryfall card object.
+
+    Transform/modal DFC layouts carry mana_cost, oracle_text, and colors on
+    card_faces, not top-level — fill empty fields from the FRONT face (the
+    cast face; matches the project's MDFC handling policy). type_line and cmc
+    stay top-level ("A // B", front-face cmc) so land/type checks still see
+    both faces.
+    """
+    layout = card.get("layout", "normal")
+    entry = {
+        "type_line": card.get("type_line", "Unknown"),
+        "cmc": card.get("cmc", 0),
+        "mana_cost": card.get("mana_cost", ""),
+        "colors": card.get("colors", []),
+        "oracle_text": card.get("oracle_text", ""),
+    }
+    faces = card.get("card_faces") or []
+    if faces:
+        front = faces[0]
+        if not entry["mana_cost"]:
+            entry["mana_cost"] = front.get("mana_cost", "")
+        if not entry["oracle_text"]:
+            entry["oracle_text"] = front.get("oracle_text", "")
+        if not entry["colors"]:
+            entry["colors"] = front.get("colors", [])
+    if layout in ("modal_dfc", "transform"):
+        entry["layout"] = layout
+    return entry
+
+
 def _fetch_single(name: str) -> dict | None:
     """Fetch a single card by name via Scryfall named search."""
     import urllib.parse
@@ -65,17 +96,7 @@ def _fetch_single(name: str) -> dict | None:
     try:
         with urllib.request.urlopen(req) as resp:
             card = json.loads(resp.read())
-        layout = card.get("layout", "normal")
-        entry = {
-            "type_line": card.get("type_line", "Unknown"),
-            "cmc": card.get("cmc", 0),
-            "mana_cost": card.get("mana_cost", ""),
-            "colors": card.get("colors", []),
-            "oracle_text": card.get("oracle_text", ""),
-        }
-        if layout in ("modal_dfc", "transform"):
-            entry["layout"] = layout
-        return entry
+        return _entry_from_card(card)
     except Exception:
         return None
 
@@ -107,16 +128,7 @@ def fetch_metadata(names: list[str]) -> dict:
                 data = json.loads(resp.read())
 
             for card in data.get("data", []):
-                layout = card.get("layout", "normal")
-                entry = {
-                    "type_line": card.get("type_line", "Unknown"),
-                    "cmc": card.get("cmc", 0),
-                    "mana_cost": card.get("mana_cost", ""),
-                    "colors": card.get("colors", []),
-                    "oracle_text": card.get("oracle_text", ""),
-                }
-                if layout in ("modal_dfc", "transform"):
-                    entry["layout"] = layout
+                entry = _entry_from_card(card)
                 metadata[card["name"]] = entry
                 # DFC cards: also cache by front face name
                 if " // " in card["name"]:
