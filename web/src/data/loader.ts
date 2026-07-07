@@ -129,7 +129,8 @@ import type {
 // v95 -> v96 (DEC-401 2026-07-06): Tidal Legion v1.2 — board-approved 14-swap package from the EDHREC closing diff. IN Attuma, Harmonized Crescendo, Lullmage Mentor, Raise the Palisade, Harbinger of the Seas, Patchwork Banner, Transcendent Message, Kindred Discovery, Commander's Sphere, Archmage's Charm, Cryptic Command, Hullbreaker Horror, Sink into Stupor, Three Tree City / OUT Kiora, Treasure Cruise, Homunculus Horde, Aether Gale, Chrome Host Seedshark, Worn Powerstone, Commander's Insight, Quick Study, Basalt Monolith, Brush Off, Spellgyre, Season of Weaving, 2 Islands. Metrics 87->89, sim 78.2/A; manaRel gate missed (75.2<79, fallback proved non-functional — repair option pending board).
 // v96 -> v97 (DEC-401 2026-07-06): Tidal Legion v1.2.1 board-approved mana repair. IN Island #26 (37 lands) / OUT Rite of Replication. manaReliability 75.2 -> 77.7, health 78.7/A; Finishers category folded, Burst wincon re-anchored on Message; last near-miss combo entries gone.
 // v97 -> v98 (DEC-401 2026-07-06): Tidal Legion v1.3 board-approved 3-swap round. IN Roaming Throne (doubles Namor's trigger), Karn's Temporal Sundering, Champions of the Shoal / OUT Dirgur Focusmage, Leitmotif Composer, Mana Sculpt. Counters 10->9; metrics 89->90; sim 78.5/A, LP 77.2% @T7.
-const STORAGE_PREFIX = 'gv1-deck-data-v98:';
+// v98 -> v99 (DEC-402 2026-07-07): Armory Protocol Synthesizer round. IN Simulacrum Synthesizer (24 MV3+ artifacts each mint a growing Construct; Tyrant/Cyberdrive/Kappa/Urza all feed on the tokens) / OUT Ancient Stone Idol (board's slot pick).
+const STORAGE_PREFIX = 'gv1-deck-data-v99:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
