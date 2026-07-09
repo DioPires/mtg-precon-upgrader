@@ -131,7 +131,8 @@ import type {
 // v97 -> v98 (DEC-401 2026-07-06): Tidal Legion v1.3 board-approved 3-swap round. IN Roaming Throne (doubles Namor's trigger), Karn's Temporal Sundering, Champions of the Shoal / OUT Dirgur Focusmage, Leitmotif Composer, Mana Sculpt. Counters 10->9; metrics 89->90; sim 78.5/A, LP 77.2% @T7.
 // v98 -> v99 (DEC-402 2026-07-07): Armory Protocol Synthesizer round. IN Simulacrum Synthesizer (24 MV3+ artifacts each mint a growing Construct; Tyrant/Cyberdrive/Kappa/Urza all feed on the tokens) / OUT Ancient Stone Idol (board's slot pick).
 // v99 -> v100 (DEC-402 2026-07-07): Armory Protocol Krang round. IN Krang, Utrom Warlord (Constructs + bombs gain flying/trample/indestructible/haste) / OUT Fireshrieker (double strike superseded by Mjölnir + Genji). Kill-math prose re-anchored to Mjölnir.
-const STORAGE_PREFIX = 'gv1-deck-data-v100:';
+// v100 -> v101 (DEC-414 2026-07-09): Tidal Legion promoted out of brewing — board confirmed the v1.6 list and is building the deck. index.json status flag removed.
+const STORAGE_PREFIX = 'gv1-deck-data-v101:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
