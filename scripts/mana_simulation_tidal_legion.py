@@ -9,8 +9,8 @@ Commander: Namor the Sub-Mariner ({1}{U}{U}, CMC 3). His token trigger
 a mana engine — the mana sim treats Namor as a CMC-3 commander only; the
 token clock is modeled in the goldfish layer (DEC-404).
 
-Mono-U rock-based ramp profile (v1.2, DEC-401): Arcane Signet, Thought
-Vessel, Mind Stone, Commander's Sphere, Patchwork Banner. Sapphire Medallion
+Mono-U rock-based ramp profile (v1.6, DEC-414): Sol Ring, Arcane Signet,
+Thought Vessel, Commander's Sphere, Patchwork Banner. Sapphire Medallion
 is a cost reducer, not a mana source (informational only, matching the
 Zada/Pyre convention). Hydro-Channeler's spell-restricted dork mana and
 Lórien Revealed's islandcycling are not modeled — both are minor against a
@@ -69,9 +69,9 @@ def parse_mana_cost(mana_cost: str) -> dict:
 # any-CI-color; Banner is any color).
 
 ROCK_DEFS = {
+    "Sol Ring":           {"cmc": 1, "U": 0, "C": 2, "burst": False},
     "Arcane Signet":      {"cmc": 2, "U": 1, "C": 0, "burst": False},
     "Thought Vessel":     {"cmc": 2, "U": 0, "C": 1, "burst": False},
-    "Mind Stone":         {"cmc": 2, "U": 0, "C": 1, "burst": False},
     "Commander's Sphere": {"cmc": 3, "U": 1, "C": 0, "burst": False},
     "Patchwork Banner":   {"cmc": 3, "U": 1, "C": 0, "burst": False},
 }
@@ -354,7 +354,7 @@ class GameState:
 
     def _try_cast_ramp(self, pool: ManaPool):
         """Cast mana rocks from hand in priority order (cheap first)."""
-        rock_priority = ["Arcane Signet", "Thought Vessel", "Mind Stone",
+        rock_priority = ["Sol Ring", "Arcane Signet", "Thought Vessel",
                          "Everflowing Chalice", "Worn Powerstone", "Basalt Monolith"]
         for rock_name in rock_priority:
             if rock_name not in self.hand:

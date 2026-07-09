@@ -46,10 +46,14 @@
     {
       "type": "ai-inferred",
       "name": "DEC-401 v1.3 (2026-07-06): board-approved 3 swaps — IN Roaming Throne (doubles Namor's trigger), Karn's Temporal Sundering (self-exiling extra turn), Champions of the Shoal (token-behold tap/stun); OUT Dirgur Focusmage, Leitmotif Composer, Mana Sculpt. Counters 10->9."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-414 v1.6 (2026-07-09): board-approved 5 swaps — IN Tishana's Tidebinder (ability-counter), Spirit Water Revival (waterbend GY-reset draw-7), Counterspell, Harmonized Trio (repeatable prepared Brainstorm; 45.1% EDHREC closing-diff line), Sol Ring; OUT Mind Stone, Pull from Tomorrow, Arcane Denial, Opt, Thirst for Knowledge. Swap 6 (Wanderwine Prophets) blocked by board — no bracket change, stays 3+. Ramp 9->9, counters 9->9, draw 12->11."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Namor turns every blue pip in a noncreature spell into a 1/1 Merfolk — and his own power equals your Merfolk count, so the engine feeds the commander directly. The deck maximizes spell velocity: a dozen cantrips and draw spells backed by cheap tutors and graveyard rebuy keep the chain going, nine counterspells (five with double or triple blue pips, each worth multiple tokens) protect the board while fueling it, and token payoffs like Curiosity Crafter and Bident of Thassa convert the swarm into cards. A light Merfolk lord package turns the 1/1s into a real clock and grows Namor into a commander-damage threat. Win by going wide with pumped tokens, or tall with Namor himself — he flies over stalled boards.",
+    "strategyOverview": "Namor turns every blue pip in a noncreature spell into a 1/1 Merfolk — and his own power equals your Merfolk count, so the engine feeds the commander directly. The deck maximizes spell velocity: a dozen cantrips and draw spells backed by cheap tutors and graveyard rebuy keep the chain going, nine counterspells (six with double or triple blue pips, each worth multiple tokens) protect the board while fueling it, and token payoffs like Curiosity Crafter and Bident of Thassa convert the swarm into cards. A light Merfolk lord package turns the 1/1s into a real clock and grows Namor into a commander-damage threat. Win by going wide with pumped tokens, or tall with Namor himself — he flies over stalled boards.",
     "deckCategories": [
       {
         "name": "Commander Engine",
@@ -95,16 +99,15 @@
       },
       {
         "name": "Spell Suite — Draw & Selection",
-        "description": "Cantrip density keeps spell velocity high; every blue pip is a body. Mystical Tutor and Solve the Equation find the right spell, Treason of Isengard rebuys it, and the convoke draw suite (Harmonized Crescendo, Transcendent Message, Distant Melody) refills off the token board.",
+        "description": "Cantrip density keeps spell velocity high; every blue pip is a body. Mystical Tutor and Solve the Equation find the right spell, Treason of Isengard rebuys it, and the convoke draw suite (Harmonized Crescendo, Transcendent Message, Distant Melody) refills off the token board. Harmonized Trio turns the swarm into repeatable Brainstorm casts, and Spirit Water Revival's waterbend mode taps tokens to shuffle the graveyard back and draw seven.",
         "cards": [
           "Brainstorm",
           "Ponder",
           "Preordain",
-          "Opt",
+          "Harmonized Trio // Brainstorm",
           "Consult the Star Charts",
-          "Thirst for Knowledge",
+          "Spirit Water Revival",
           "Lórien Revealed",
-          "Pull from Tomorrow",
           "Distant Melody",
           "Teferi's Ageless Insight",
           "Mystical Tutor",
@@ -117,9 +120,10 @@
       },
       {
         "name": "Interaction",
-        "description": "Nine counterspells (five with two or more blue pips — multiple tokens per cast) plus efficient bounce and polymorph removal. Raise the Palisade naming Merfolk resets the board while keeping the army. Interaction is token fuel here, never dead weight.",
+        "description": "Nine counterspells (six with two or more blue pips — multiple tokens per cast) plus efficient bounce and polymorph removal. Tishana's Tidebinder flashes in to counter an activated or triggered ability — the one interaction class the counter suite can't touch — and strips the permanent's abilities while it sticks. Raise the Palisade naming Merfolk resets the board while keeping the army. Interaction is token fuel here, never dead weight.",
         "cards": [
-          "Arcane Denial",
+          "Counterspell",
+          "Tishana's Tidebinder",
           "An Offer You Can't Refuse",
           "Spell Pierce",
           "Stern Scolding",
@@ -144,7 +148,7 @@
           "Sapphire Medallion",
           "Arcane Signet",
           "Thought Vessel",
-          "Mind Stone",
+          "Sol Ring",
           "Solemn Simulacrum",
           "Patchwork Banner",
           "Commander's Sphere"
@@ -190,13 +194,14 @@
     {
       "title": "Double-pip counterspells = interaction that attacks",
       "cards": [
+        "Counterspell",
         "Refute",
         "Saruman's Trickery",
         "Long River's Pull",
         "Archmage's Charm",
         "Cryptic Command"
       ],
-      "description": "Each counterspell with two or more blue pips makes multiple Merfolk off Namor's trigger — holding up interaction still develops the board and grows Namor. Charm and Cryptic mint three each.",
+      "description": "Each counterspell with two or more blue pips makes multiple Merfolk off Namor's trigger — holding up interaction still develops the board and grows Namor. Charm and Cryptic mint three each; Counterspell is two bodies for two mana.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -473,7 +478,7 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Mind Stone",
+      "name": "Sol Ring",
       "type": "Artifact",
       "primary_role": "ramp"
     },
@@ -488,7 +493,7 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Arcane Denial",
+      "name": "Counterspell",
       "type": "Instant",
       "primary_role": "counterspell"
     },
@@ -570,9 +575,10 @@
       "primary_role": "card-draw"
     },
     {
-      "name": "Opt",
-      "type": "Instant",
-      "primary_role": "card-draw"
+      "name": "Harmonized Trio // Brainstorm",
+      "type": "Creature — Merfolk Bard Wizard // Instant",
+      "primary_role": "card-draw",
+      "secondary_role": "engine"
     },
     {
       "name": "Consult the Star Charts",
@@ -580,9 +586,10 @@
       "primary_role": "card-draw"
     },
     {
-      "name": "Thirst for Knowledge",
-      "type": "Instant",
-      "primary_role": "card-draw"
+      "name": "Tishana's Tidebinder",
+      "type": "Creature — Merfolk Wizard",
+      "primary_role": "removal-spot",
+      "secondary_role": "counterspell"
     },
     {
       "name": "Lórien Revealed",
@@ -590,8 +597,8 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Pull from Tomorrow",
-      "type": "Instant",
+      "name": "Spirit Water Revival",
+      "type": "Sorcery",
       "primary_role": "card-draw"
     },
     {
@@ -892,8 +899,7 @@
       "scryfall_id": "f5d353ad-7160-41fa-809c-d76b36478a2a",
       "image_uri": "https://cards.scryfall.io/normal/front/f/5/f5d353ad-7160-41fa-809c-d76b36478a2a.jpg?1782731581",
       "produced_by": [
-        "Deeproot Pilgrimage",
-        "Lullmage Mentor"
+        "Deeproot Pilgrimage"
       ]
     },
     {
@@ -905,9 +911,10 @@
       "colors": [
         "U"
       ],
-      "scryfall_id": "7f7a4f95-f12b-4c28-a6f7-f3c64364abba",
-      "image_uri": "https://cards.scryfall.io/normal/front/7/f/7f7a4f95-f12b-4c28-a6f7-f3c64364abba.jpg?1782723041",
+      "scryfall_id": "fb1b292b-2da6-4601-9f93-5eb273ce3a50",
+      "image_uri": "https://cards.scryfall.io/normal/front/f/b/fb1b292b-2da6-4601-9f93-5eb273ce3a50.jpg?1782753280",
       "produced_by": [
+        "Lullmage Mentor",
         "Namor the Sub-Mariner"
       ]
     },
