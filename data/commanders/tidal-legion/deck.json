@@ -49,6 +49,10 @@
     {
       "type": "ai-inferred",
       "name": "DEC-414 v1.6 (2026-07-09): board-approved 5 swaps — IN Tishana's Tidebinder (ability-counter), Spirit Water Revival (waterbend GY-reset draw-7), Counterspell, Harmonized Trio (repeatable prepared Brainstorm; 45.1% EDHREC closing-diff line), Sol Ring; OUT Mind Stone, Pull from Tomorrow, Arcane Denial, Opt, Thirst for Knowledge. Swap 6 (Wanderwine Prophets) blocked by board — no bracket change, stays 3+. Ramp 9->9, counters 9->9, draw 12->11."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-416 v1.7 (2026-07-09): board-approved recursion swap — IN Divergent Equation (instant-speed X-spell rebuy of instants/sorceries from graveyard; owned, free), OUT Teferi's Ageless Insight (draw was 14 vs target 8; pure value multiplier with no board impact). Closes the deck's only metrics gap (recursion 1->2): global_health 90->92, gaps 1->0. Draw 11->10, recursion 1->2."
     }
   ],
   "guideContent": {
@@ -98,7 +102,7 @@
       },
       {
         "name": "Spell Suite — Draw & Selection",
-        "description": "Cantrip density keeps spell velocity high; every blue pip is a body. Mystical Tutor and Solve the Equation find the right spell, Treason of Isengard rebuys it, and the convoke draw suite (Harmonized Crescendo, Transcendent Message, Distant Melody) refills off the token board. Harmonized Trio turns the swarm into repeatable Brainstorm casts, and Spirit Water Revival's waterbend mode taps tokens to shuffle the graveyard back and draw seven.",
+        "description": "Cantrip density keeps spell velocity high; every blue pip is a body. Mystical Tutor and Solve the Equation find the right spell, Treason of Isengard rebuys it, Divergent Equation hauls up to X spent spells back from the graveyard at instant speed, and the convoke draw suite (Harmonized Crescendo, Transcendent Message, Distant Melody) refills off the token board. Harmonized Trio turns the swarm into repeatable Brainstorm casts, and Spirit Water Revival's waterbend mode taps tokens to shuffle the graveyard back and draw seven.",
         "cards": [
           "Brainstorm",
           "Ponder",
@@ -108,10 +112,10 @@
           "Spirit Water Revival",
           "Lórien Revealed",
           "Distant Melody",
-          "Teferi's Ageless Insight",
           "Mystical Tutor",
           "Solve the Equation",
           "Treason of Isengard",
+          "Divergent Equation",
           "Harmonized Crescendo",
           "Transcendent Message",
           "Karn's Temporal Sundering"
@@ -185,8 +189,8 @@
       "type": "Legendary Enchantment Artifact"
     },
     {
-      "name": "Teferi's Ageless Insight",
-      "type": "Legendary Enchantment"
+      "name": "Divergent Equation",
+      "type": "Instant"
     }
   ],
   "synergies": [
@@ -257,16 +261,17 @@
       ]
     },
     {
-      "title": "Faerie Mastermind + Teferi's Ageless Insight",
+      "title": "Divergent Equation rebuys the counter suite",
       "cards": [
-        "Faerie Mastermind",
-        "Teferi's Ageless Insight"
+        "Divergent Equation",
+        "Counterspell",
+        "Cryptic Command"
       ],
-      "description": "The {3}{U} activation reads 'each opponent draws one, you draw two' with Insight out — an instant-speed, card-positive mana sink.",
+      "description": "X=2 at instant speed returns two spent counterspells or draw spells to hand, and the {X}{X}{U} cast still shows Namor one blue pip for a Merfolk. Equation exiles itself, so it is a clean one-shot rebuy with no graveyard-loop liability.",
       "sources": [
         {
           "type": "ai-inferred",
-          "name": "DEC-401 v1.1 — board-approved 5-swap package 2026-07-06"
+          "name": "DEC-416 re-assessment — board-approved recursion swap 2026-07-09"
         }
       ]
     },
@@ -287,10 +292,9 @@
     {
       "title": "Kindred Discovery names Merfolk",
       "cards": [
-        "Kindred Discovery",
-        "Teferi's Ageless Insight"
+        "Kindred Discovery"
       ],
-      "description": "Every Merfolk — including each 1/1 token Namor mints — draws a card on entering AND on attacking; with Teferi's Ageless Insight out, each trigger draws two. Double-pip counterspells become instant-speed draw-2s.",
+      "description": "Every Merfolk — including each 1/1 token Namor mints — draws a card on entering AND on attacking. Double-pip counterspells become instant-speed draw-2s.",
       "sources": [
         {
           "type": "edhrec",
@@ -601,9 +605,9 @@
       "primary_role": "card-draw"
     },
     {
-      "name": "Teferi's Ageless Insight",
-      "type": "Legendary Enchantment",
-      "primary_role": "card-draw"
+      "name": "Divergent Equation",
+      "type": "Instant",
+      "primary_role": "recursion"
     },
     {
       "name": "Distant Melody",
