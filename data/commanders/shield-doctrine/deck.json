@@ -1,0 +1,784 @@
+{
+  "id": "shield-doctrine",
+  "type": "commander",
+  "name": "Shield Doctrine",
+  "subtitle": "Throw-Catch Equipment Voltron",
+  "commander": "Captain America, First Avenger",
+  "commanderRoles": {
+    "primary": "engine",
+    "secondary": "wincon"
+  },
+  "bracket": "4-",
+  "status": "brewing",
+  "gameChangers": 2,
+  "asymmetric_only": false,
+  "archetypes": [
+    "voltron",
+    "artifacts-matter"
+  ],
+  "wincon_style": "combat",
+  "lastUpdatedSet": "Marvel Super Heroes",
+  "sources": [
+    {
+      "type": "ai-inferred",
+      "name": "DEC-421 board-approved plan — Phase 2 draft (DEC-423), owned-pool-first build from the DEC-422 research shortlist"
+    },
+    {
+      "type": "edhrec",
+      "name": "EDHREC — Captain America, First Avenger",
+      "url": "https://edhrec.com/commanders/captain-america-first-avenger",
+      "detail": "~14,400 decks (data date 2026-06-10); top-30 + category tables swept in DEC-422"
+    },
+    {
+      "type": "youtube",
+      "name": "Poppmagic — Captain America deck tech",
+      "detail": "2024-11-04, transcript swept in DEC-422"
+    },
+    {
+      "type": "youtube",
+      "name": "Guys That Magic — Captain America deck tech",
+      "detail": "2024-11-07, transcript swept in DEC-422"
+    },
+    {
+      "type": "youtube",
+      "name": "FINX MTG — Captain America Bracket 3 build",
+      "detail": "2026-02-12, transcript swept in DEC-422"
+    },
+    {
+      "type": "scryfall",
+      "name": "Scryfall oracle verification",
+      "detail": "Commander + all 99 cards verified against oracle text and RWU color identity, 2026-07-10"
+    }
+  ],
+  "guideContent": {
+    "strategyOverview": "Suit up Captain America and win two ways with the same gear. Catch attaches an Equipment free at the start of each of your combats, and Throw ({3}, reduced to {1} by Zirda) unattaches one to deal its mana value in damage split among up to three targets — the Equipment stays on the battlefield, so Catch re-attaches it next turn for a repeatable damage engine. The primary kill is 21 commander damage through Excalibur, Colossus Hammer, and Mjölnir's damage doubling; the backup plan converts high-mana-value gear into amplified Throw burn (Mjölnir doubles it, Fiery Emancipation triples it). Eight attach-cheat effects beyond Catch keep equip costs honest, Sunforger packages the deck's red-white instants, and Sword of Feast and Famine plus Aggravated Assault closes with infinite combats when the table demands it.",
+    "deckCategories": [
+      {
+        "name": "Vibranium Payloads",
+        "description": "High-mana-value Throw fuel: each of these deals its full mana value when thrown and comes back via Catch. Excalibur throws for 12 and usually casts for far less thanks to its historic cost reduction; Kaldra Compleat and Batterskull bring living-weapon bodies.",
+        "cards": [
+          "Excalibur, Sword of Eden",
+          "Kaldra Compleat",
+          "Argentum Armor",
+          "Batterskull",
+          "Genji Glove",
+          "Hexplate Wallbreaker"
+        ]
+      },
+      {
+        "name": "Standard-Issue Kit",
+        "description": "Cheap combat gear for the voltron line: Colossus Hammer plus a free attach is the classic one-shot, Mjölnir doubles all of Cap's damage (equip {1} — he is worthy), and Captain America's own Shield gives him +0/+8 and indestructibility to hide behind.",
+        "cards": [
+          "Colossus Hammer",
+          "Mjölnir, Hammer of Thor",
+          "Captain America's Shield",
+          "Basilisk Collar",
+          "Sword of Feast and Famine",
+          "Sword of Fire and Ice",
+          "Sword of Forge and Frontier",
+          "Sunforger",
+          "Buster Sword",
+          "Masterwork of Ingenuity",
+          "Mithril Coat",
+          "Mask of Memory",
+          "Lightning Greaves",
+          "Sword of the Animist"
+        ]
+      },
+      {
+        "name": "Rapid Deployment",
+        "description": "Attach-cheat density beyond Catch: flash attaches, free equips, mass re-attach at combat, and cost reduction. Zirda cuts Throw from {3} to {1} and shaves generic equip costs (it cannot discount Sunforger's all-colored unattach).",
+        "cards": [
+          "Sigarda's Aid",
+          "Puresteel Paladin",
+          "Hammer of Nazahn",
+          "Ardenn, Intrepid Archaeologist",
+          "Forge Anew",
+          "Super-Soldier Serum",
+          "Zirda, the Dawnwaker",
+          "Codsworth, Handy Helper"
+        ]
+      },
+      {
+        "name": "Quartermaster Corps",
+        "description": "Equipment tutors keep the draw consistent: Stoneforge cheats the fetched piece into play, Fighter Class tutors on entry then discounts every equip by {2}, and Armored Skyhunter digs six deep and attaches for free on attack.",
+        "cards": [
+          "Stoneforge Mystic",
+          "Steelshaper's Gift",
+          "Open the Armory",
+          "Armored Skyhunter",
+          "Fighter Class"
+        ]
+      },
+      {
+        "name": "S.H.I.E.L.D. Intel",
+        "description": "Equipment-native card advantage. Sram and Puresteel cantrip every Equipment cast; Loki draws a card the first time each turn an ability you control targets — Catch, Throw, and every equip activation all qualify.",
+        "cards": [
+          "Sram, Senior Edificer",
+          "Akiri, Fearless Voyager",
+          "The Mighty Thor, Jane Foster",
+          "Loki, God of Mischief",
+          "Jhoira, Weatherlight Captain"
+        ]
+      },
+      {
+        "name": "Bodyguard Detail",
+        "description": "Keeping one creature alive is the whole game plan: free counterspells and redirects while Cap is out, Bastion Protector's indestructibility, and Clever Concealment phasing the whole suit out of a board wipe with everything still attached.",
+        "cards": [
+          "Boros Charm",
+          "Deflecting Swat",
+          "Fierce Guardianship",
+          "Bastion Protector",
+          "Clever Concealment"
+        ]
+      },
+      {
+        "name": "Counteroffensive",
+        "description": "Interaction that leans on the deck's shape: Dispatch's metalcraft is trivially on, Stubborn Denial is a one-mana Negate while 4-power Cap is deployed, and Single Combat is an asymmetric wrath that leaves the suited commander standing alone.",
+        "cards": [
+          "Swords to Plowshares",
+          "Dispatch",
+          "Abrade",
+          "Rip Apart",
+          "Generous Gift",
+          "Stubborn Denial",
+          "Dovin's Veto",
+          "Single Combat",
+          "Chandra's Ignition",
+          "Mystical Tutor"
+        ]
+      },
+      {
+        "name": "Supply Lines",
+        "description": "Artifact-lean acceleration. Dalakos taps for {C}{C} that pays equip costs (they are Equipment abilities) — though not Throw, which is Cap's own ability — and gives the equipped commander flying and haste.",
+        "cards": [
+          "Sol Ring",
+          "Arcane Signet",
+          "Talisman of Conviction",
+          "Talisman of Progress",
+          "Talisman of Creativity",
+          "Mind Stone",
+          "Fellwar Stone",
+          "Dalakos, Crafter of Wonders"
+        ]
+      }
+    ]
+  },
+  "highlights": [
+    {
+      "name": "Excalibur, Sword of Eden"
+    },
+    {
+      "name": "Mjölnir, Hammer of Thor"
+    },
+    {
+      "name": "Colossus Hammer"
+    },
+    {
+      "name": "Sigarda's Aid"
+    },
+    {
+      "name": "Sunforger"
+    },
+    {
+      "name": "Captain America's Shield"
+    },
+    {
+      "name": "Loki, God of Mischief"
+    },
+    {
+      "name": "Puresteel Paladin"
+    }
+  ],
+  "synergies": [
+    {
+      "title": "The hammer drop",
+      "cards": [
+        "Sigarda's Aid",
+        "Colossus Hammer"
+      ],
+      "description": "Sigarda's Aid gives Equipment flash and attaches them free on entry — Colossus Hammer's equip {8} never gets paid. A 14/14 Captain America is a two-hit commander kill.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Captain America, First Avenger",
+          "detail": "Sigarda's Aid 87.6% inclusion, +0.82 synergy; Colossus Hammer 70.0%"
+        }
+      ]
+    },
+    {
+      "title": "Worthy of the hammer",
+      "cards": [
+        "Mjölnir, Hammer of Thor",
+        "Excalibur, Sword of Eden"
+      ],
+      "description": "Cap is legendary, non-Villain, and red-white — worthy, so Mjölnir equips for {1} and doubles all damage he deals. Excalibur in combat is 28 commander damage in one connect (4+10 power, doubled); thrown, it is 24 damage split up to three ways.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-422 kill-line analysis"
+        }
+      ]
+    },
+    {
+      "title": "Infinite combat steps",
+      "cards": [
+        "Sword of Feast and Famine",
+        "Aggravated Assault"
+      ],
+      "description": "Combat damage from the equipped commander untaps all lands; with five lands producing {3}{R}{R}, Aggravated Assault grants another combat every time — arbitrarily many attacks. Flagged as this deck's single compact combo line.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/900-3750/",
+          "detail": "Classic two-card combat loop; verified against the drafted 99"
+        }
+      ]
+    },
+    {
+      "title": "Deathtouch fastball",
+      "cards": [
+        "Basilisk Collar",
+        "Fiery Emancipation"
+      ],
+      "description": "With Basilisk Collar attached, every Throw split is deathtouch-and-lifelink removal — a three-way split kills three creatures regardless of size. Fiery Emancipation triples the same Throw at faces when the board is clear.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-422 Throw-engine analysis"
+        }
+      ]
+    },
+    {
+      "title": "Every trigger is a draw",
+      "cards": [
+        "Loki, God of Mischief",
+        "Sunforger"
+      ],
+      "description": "Loki draws the first time each turn an ability you control targets anything — Catch targets an Equipment, Throw targets up to three things, Sunforger's unattach-and-cast and every equip activation target too. One reliable extra card per turn cycle, often more across opponents' turns.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-422 owned-pool sweep find"
+        }
+      ]
+    },
+    {
+      "title": "Field repair loop",
+      "cards": [
+        "Akiri, Fearless Voyager",
+        "Hammer of Nazahn"
+      ],
+      "description": "Akiri unattaches an Equipment for {W} to make Cap indestructible in a pinch, and Catch re-attaches it free next combat; Hammer of Nazahn makes the same protection permanent while auto-attaching every Equipment that enters.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Captain America, First Avenger",
+          "detail": "Akiri 56.7%, Hammer of Nazahn 61.3% inclusion"
+        }
+      ]
+    },
+    {
+      "title": "Sunforger package",
+      "cards": [
+        "Sunforger",
+        "Boros Charm",
+        "Deflecting Swat",
+        "Swords to Plowshares"
+      ],
+      "description": "Unattach Sunforger to fetch and free-cast any of six red/white instants (Swords, Dispatch, Abrade, Generous Gift, Boros Charm, Deflecting Swat) — then Catch re-attaches Sunforger for free next turn instead of paying equip {3}.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-422 package analysis"
+        }
+      ]
+    }
+  ],
+  "winConditions": [
+    {
+      "title": "21 commander damage",
+      "kind": "combat",
+      "cards": [
+        "Excalibur, Sword of Eden",
+        "Colossus Hammer",
+        "Mjölnir, Hammer of Thor",
+        "Sigarda's Aid",
+        "Super-Soldier Serum"
+      ],
+      "description": "Free-attached kill pieces turn the 4/4 commander into a one- or two-hit clock: Colossus Hammer makes him 14/14, Excalibur 14/4 with vigilance, and Mjölnir doubles either into a single-connect kill. Super-Soldier Serum mass-attaches the whole armory when he attacks."
+    },
+    {
+      "title": "Amplified Throw burn",
+      "kind": "burst",
+      "cards": [
+        "Excalibur, Sword of Eden",
+        "Mjölnir, Hammer of Thor",
+        "Fiery Emancipation",
+        "Chandra's Ignition"
+      ],
+      "description": "Throw converts gear into direct damage: Excalibur alone is 12 split three ways, 24 with Mjölnir attached, 72 with Fiery Emancipation — lethal at three faces. Chandra's Ignition off a suited-up Cap doubles as a board wipe that hits every opponent for his power."
+    },
+    {
+      "title": "Infinite combats",
+      "kind": "combo",
+      "pieces": [
+        "Sword of Feast and Famine",
+        "Aggravated Assault"
+      ],
+      "cards": [
+        "Sword of Feast and Famine",
+        "Aggravated Assault"
+      ],
+      "description": "Sword of Feast and Famine untaps all lands on connect; Aggravated Assault converts {3}{R}{R} into an extra combat — every attack pays for the next. The deck's only infinite line, board-flagged per the DEC-422 combo watch."
+    }
+  ],
+  "decklist": [
+    {
+      "name": "Command Tower",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Hallowed Fountain",
+      "type": "Land — Plains Island",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sacred Foundry",
+      "type": "Land — Mountain Plains",
+      "primary_role": "land"
+    },
+    {
+      "name": "Steam Vents",
+      "type": "Land — Island Mountain",
+      "primary_role": "land"
+    },
+    {
+      "name": "Spirebluff Canal",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Inspiring Vantage",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Seachrome Coast",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Shivan Reef",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Battlefield Forge",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Adarkar Wastes",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Spectator Seating",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Training Center",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Exotic Orchard",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Rogue's Passage",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Axgard Armory",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "tutor"
+    },
+    {
+      "name": "Buried Ruin",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "recursion"
+    },
+    {
+      "name": "Plains",
+      "type": "Basic Land — Plains",
+      "quantity": 8,
+      "primary_role": "land"
+    },
+    {
+      "name": "Island",
+      "type": "Basic Land — Island",
+      "quantity": 6,
+      "primary_role": "land"
+    },
+    {
+      "name": "Mountain",
+      "type": "Basic Land — Mountain",
+      "quantity": 6,
+      "primary_role": "land"
+    },
+    {
+      "name": "Sol Ring",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Arcane Signet",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Talisman of Conviction",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Talisman of Progress",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Talisman of Creativity",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Mind Stone",
+      "type": "Artifact",
+      "primary_role": "ramp",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Fellwar Stone",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Sword of the Animist",
+      "type": "Legendary Artifact — Equipment",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Dalakos, Crafter of Wonders",
+      "type": "Legendary Creature — Merfolk Artificer",
+      "primary_role": "ramp",
+      "secondary_role": "utility"
+    },
+    {
+      "name": "Excalibur, Sword of Eden",
+      "type": "Legendary Artifact — Equipment",
+      "primary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Kaldra Compleat",
+      "type": "Legendary Artifact — Equipment",
+      "primary_role": "threat",
+      "secondary_role": "payoff"
+    },
+    {
+      "name": "Argentum Armor",
+      "type": "Artifact — Equipment",
+      "primary_role": "payoff",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Batterskull",
+      "type": "Artifact — Equipment",
+      "primary_role": "payoff",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Genji Glove",
+      "type": "Artifact — Equipment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Hexplate Wallbreaker",
+      "type": "Artifact — Equipment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Colossus Hammer",
+      "type": "Artifact — Equipment",
+      "primary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Mjölnir, Hammer of Thor",
+      "type": "Legendary Artifact — Equipment",
+      "primary_role": "payoff",
+      "secondary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Captain America's Shield",
+      "type": "Legendary Artifact — Equipment",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Basilisk Collar",
+      "type": "Artifact — Equipment",
+      "primary_role": "utility",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Sword of Feast and Famine",
+      "type": "Artifact — Equipment",
+      "primary_role": "payoff",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Sword of Fire and Ice",
+      "type": "Artifact — Equipment",
+      "primary_role": "card-draw",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Sword of Forge and Frontier",
+      "type": "Artifact — Equipment",
+      "primary_role": "card-draw",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Sunforger",
+      "type": "Artifact — Equipment",
+      "primary_role": "engine",
+      "secondary_role": "tutor"
+    },
+    {
+      "name": "Buster Sword",
+      "type": "Artifact — Equipment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Masterwork of Ingenuity",
+      "type": "Artifact — Equipment",
+      "primary_role": "utility"
+    },
+    {
+      "name": "Mithril Coat",
+      "type": "Legendary Artifact — Equipment",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Mask of Memory",
+      "type": "Artifact — Equipment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Lightning Greaves",
+      "type": "Artifact — Equipment",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Sigarda's Aid",
+      "type": "Enchantment",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Puresteel Paladin",
+      "type": "Creature — Human Knight",
+      "primary_role": "engine",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Hammer of Nazahn",
+      "type": "Legendary Artifact — Equipment",
+      "primary_role": "engine",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Ardenn, Intrepid Archaeologist",
+      "type": "Legendary Creature — Kor Scout",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Forge Anew",
+      "type": "Enchantment",
+      "primary_role": "engine",
+      "secondary_role": "recursion"
+    },
+    {
+      "name": "Super-Soldier Serum",
+      "type": "Enchantment — Aura",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Zirda, the Dawnwaker",
+      "type": "Legendary Creature — Elemental Fox",
+      "primary_role": "utility"
+    },
+    {
+      "name": "Codsworth, Handy Helper",
+      "type": "Legendary Artifact Creature — Robot",
+      "primary_role": "protection",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Stoneforge Mystic",
+      "type": "Creature — Kor Artificer",
+      "primary_role": "tutor",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Steelshaper's Gift",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Open the Armory",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Armored Skyhunter",
+      "type": "Creature — Cat Knight",
+      "primary_role": "engine",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Fighter Class",
+      "type": "Enchantment — Class",
+      "primary_role": "tutor",
+      "secondary_role": "utility"
+    },
+    {
+      "name": "Sram, Senior Edificer",
+      "type": "Legendary Creature — Dwarf Advisor",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Akiri, Fearless Voyager",
+      "type": "Legendary Creature — Kor Warrior",
+      "primary_role": "card-draw",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "The Mighty Thor, Jane Foster",
+      "type": "Legendary Creature — Human God Hero",
+      "primary_role": "card-draw",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Loki, God of Mischief",
+      "type": "Legendary Creature — God Sorcerer Villain",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Jhoira, Weatherlight Captain",
+      "type": "Legendary Creature — Human Artificer",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Boros Charm",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Deflecting Swat",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Fierce Guardianship",
+      "type": "Instant",
+      "primary_role": "counterspell",
+      "secondary_role": "protection"
+    },
+    {
+      "name": "Bastion Protector",
+      "type": "Creature — Human Soldier",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Clever Concealment",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Swords to Plowshares",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Dispatch",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Abrade",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Rip Apart",
+      "type": "Sorcery",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Generous Gift",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Stubborn Denial",
+      "type": "Instant",
+      "primary_role": "counterspell"
+    },
+    {
+      "name": "Dovin's Veto",
+      "type": "Instant",
+      "primary_role": "counterspell"
+    },
+    {
+      "name": "Single Combat",
+      "type": "Sorcery",
+      "primary_role": "removal-board"
+    },
+    {
+      "name": "Chandra's Ignition",
+      "type": "Sorcery",
+      "primary_role": "removal-board",
+      "secondary_role": "wincon",
+      "wincon_style": "burst"
+    },
+    {
+      "name": "Mystical Tutor",
+      "type": "Instant",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Fiery Emancipation",
+      "type": "Enchantment",
+      "primary_role": "payoff",
+      "secondary_role": "wincon",
+      "wincon_style": "burst"
+    },
+    {
+      "name": "Aggravated Assault",
+      "type": "Enchantment",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    }
+  ],
+  "tokens": []
+}
