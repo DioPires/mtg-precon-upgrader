@@ -43,6 +43,7 @@ import mana_simulation_slivers as sim_slivers
 import mana_simulation_stampede_acres as sim_stampede_acres
 import mana_simulation_tidal_legion as sim_tidal_legion
 import mana_simulation_armory_protocol as sim_armory_protocol
+import mana_simulation_shield_doctrine as sim_shield_doctrine
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -327,6 +328,16 @@ KEY_COMBOS = {
                            "and copies itself infinitely — Tremors/Bombardment convert "
                            "tokens to damage.",
         },
+    ],
+    "shield-doctrine": [
+        {
+            "name": "Feast and Famine Assault",
+            "pieces": ["Sword of Feast and Famine", "Aggravated Assault"],
+            "requiresCommander": False,
+            "description": "Sword of Feast and Famine untaps all lands on combat damage; "
+                           "Aggravated Assault converts {3}{R}{R} into an extra combat — "
+                           "every connect pays for the next attack step.",
+        }
     ],
     "stampede-acres": [
         {
@@ -3524,6 +3535,19 @@ def export_stampede_acres(metadata: dict) -> dict:
     )
 
 
+def export_shield_doctrine(metadata: dict) -> dict:
+    """Export Shield Doctrine (Jeskai equipment voltron — Captain America) simulation."""
+    return _export_colored(
+        sim_module=sim_shield_doctrine,
+        deck_id="shield-doctrine",
+        deck_name="Shield Doctrine",
+        commander_name="Captain America, First Avenger",
+        commander_cmc=3,
+        colors=["W", "U", "R"],
+        metadata=metadata,
+    )
+
+
 def export_wubg_poison(metadata: dict) -> dict:
     """Export Creeping Corruption (WUBG Atraxa poison/proliferate) simulation."""
     return _export_colored(
@@ -3596,6 +3620,7 @@ DECKS = [
     ("stampede-acres", "Field of Blades", export_stampede_acres),
     ("tidal-legion", "Tidal Legion", export_tidal_legion),
     ("armory-protocol", "Armory Protocol", export_armory_protocol),
+    ("shield-doctrine", "Shield Doctrine", export_shield_doctrine),
 ]
 
 

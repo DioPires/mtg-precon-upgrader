@@ -132,7 +132,8 @@ import type {
 // v98 -> v99 (DEC-402 2026-07-07): Armory Protocol Synthesizer round. IN Simulacrum Synthesizer (24 MV3+ artifacts each mint a growing Construct; Tyrant/Cyberdrive/Kappa/Urza all feed on the tokens) / OUT Ancient Stone Idol (board's slot pick).
 // v99 -> v100 (DEC-402 2026-07-07): Armory Protocol Krang round. IN Krang, Utrom Warlord (Constructs + bombs gain flying/trample/indestructible/haste) / OUT Fireshrieker (double strike superseded by Mjölnir + Genji). Kill-math prose re-anchored to Mjölnir.
 // v100 -> v101 (DEC-414 2026-07-09): Tidal Legion promoted out of brewing — board confirmed the v1.6 list and is building the deck. index.json status flag removed.
-const STORAGE_PREFIX = 'gv1-deck-data-v101:';
+// v101 -> v102 (DEC-424 2026-07-10): Shield Doctrine (Captain America, First Avenger — Jeskai equipment voltron, brewing) data artifacts landed: tokens, candidates, metrics (85±5/89), 100k sim.
+const STORAGE_PREFIX = 'gv1-deck-data-v102:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
