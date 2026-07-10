@@ -13,20 +13,28 @@ exporter calls `_export_colored`, which consumes the standard stats keys
 (mana / color / commander castability / curve / tapped-land). Equipment
 attach/Throw lines are out of scope here.
 
-Manabase model (36 lands):
-- 13 untapped Jeskai duals: shocks (Hallowed Fountain, Sacred Foundry, Steam
+Manabase model (36 lands, tuning round v1.1 — DEC-421):
+- 14 untapped Jeskai duals: shocks (Hallowed Fountain, Sacred Foundry, Steam
   Vents), fastlands (Spirebluff Canal, Inspiring Vantage, Seachrome Coast),
   painlands (Shivan Reef, Battlefield Forge, Adarkar Wastes), bondlands
-  (Spectator Seating, Training Center) — all modeled untapped: pay-2-life,
-  on-curve, and two-or-more-opponents conditions are effectively free in a
-  goldfish, the same precedent as the shockland treatment in the other sims.
+  (Spectator Seating, Training Center, Sea of Clouds) — all modeled untapped:
+  pay-2-life, on-curve, and two-or-more-opponents conditions are effectively
+  free in a goldfish, the same precedent as the shockland treatment in the
+  other sims.
+- 3 checklands (Clifftop Retreat, Glacial Fortress, Sulfur Falls) — modeled
+  honestly: enter tapped unless a Plains/Island/Mountain-typed land (basics
+  or the three typed shocks) is already on the battlefield (armory-protocol
+  Sulfur Falls precedent).
+- Flooded Strand — fetches any Plains/Island-typed land, which includes all
+  three typed shocks, so it fixes into any of the three color pairs; modeled
+  as a W/U/R source (silverquill Marsh Flats precedent).
 - 2 commander-CI rainbow producers (Command Tower, Exotic Orchard) modeled
   as W/U/R.
-- Utility lands: Axgard Armory (W; enters tapped — the deck's only tapped
-  land), Rogue's Passage (C), Buried Ruin (C).
-- 20 basics (Plains x8, Island x6, Mountain x6).
+- Utility lands: Axgard Armory (W; enters tapped — the deck's only
+  always-tapped land), Rogue's Passage (C), Buried Ruin (C).
+- 15 basics (Plains x5, Island x5, Mountain x5).
 - Ramp: rocks only — Sol Ring (x2 C), Arcane Signet (W/U/R), Talismans of
-  Conviction/Progress/Creativity (C or their two colors), Mind Stone (C),
+  Conviction/Progress/Creativity (C or their two colors),
   Fellwar Stone (modeled W/U/R, Exotic Orchard precedent); Dalakos taps for
   {C}{C} restricted to artifacts — modeled as 2x C, safe for the commander
   metric (all-colored cost never uses C) and a fair approximation for generic
@@ -89,7 +97,6 @@ ROCK_DEFS = {
     "Talisman of Conviction": {"cmc": 2, "colors": frozenset({"C", "R", "W"}), "count": 1},
     "Talisman of Progress":   {"cmc": 2, "colors": frozenset({"C", "W", "U"}), "count": 1},
     "Talisman of Creativity": {"cmc": 2, "colors": frozenset({"C", "U", "R"}), "count": 1},
-    "Mind Stone":             {"cmc": 2, "colors": frozenset({"C"}), "count": 1},
     # Fellwar Stone: opponent-land dependent — modeled as commander CI
     # (Exotic Orchard precedent).
     "Fellwar Stone":          {"cmc": 2, "colors": frozenset({"W", "U", "R"}), "count": 1},
@@ -148,6 +155,19 @@ LAND_COLORS: dict[str, frozenset] = {
     "Adarkar Wastes":     frozenset({"W", "U"}),
     "Spectator Seating":  frozenset({"R", "W"}),
     "Training Center":    frozenset({"U", "R"}),
+    "Sea of Clouds":      frozenset({"W", "U"}),
+
+    # Checklands — ETB-tapped condition handled in land_enters_tapped.
+    "Clifftop Retreat":   frozenset({"R", "W"}),
+    "Glacial Fortress":   frozenset({"W", "U"}),
+    "Sulfur Falls":       frozenset({"U", "R"}),
+
+    # Flooded Strand fetches any Plains/Island-typed land — basics or the
+    # three typed shocks — so it fixes into any of the deck's three color
+    # pairs. Modeled as a flexible W/U/R source (Marsh Flats precedent in
+    # the silverquill sim: fetches produce the color identity of their
+    # fetchable targets).
+    "Flooded Strand":     frozenset({"W", "U", "R"}),
 
     # Rainbow / commander-CI producers — modeled as Jeskai (W/U/R)
     "Command Tower":  frozenset({"W", "U", "R"}),
@@ -164,8 +184,23 @@ FOREST_TYPED: set[str] = set()
 FARSEEK_TARGETS: set[str] = set()
 BASIC_TYPED = set(BASIC_LANDS)
 
+# Basic-typed lands on the battlefield that satisfy checkland conditions
+# (basics + the three typed shocks).
+PLAINS_TYPED = {"Plains", "Hallowed Fountain", "Sacred Foundry"}
+ISLAND_TYPED = {"Island", "Hallowed Fountain", "Steam Vents"}
+MOUNTAIN_TYPED = {"Mountain", "Sacred Foundry", "Steam Vents"}
+
+CHECKLAND_TYPES = {
+    "Clifftop Retreat": (MOUNTAIN_TYPED, PLAINS_TYPED),
+    "Glacial Fortress": (PLAINS_TYPED, ISLAND_TYPED),
+    "Sulfur Falls": (ISLAND_TYPED, MOUNTAIN_TYPED),
+}
+
 
 def land_enters_tapped(name: str, battlefield_lands: list[str]) -> bool:
+    if name in CHECKLAND_TYPES:
+        type_a, type_b = CHECKLAND_TYPES[name]
+        return not any(l in type_a or l in type_b for l in battlefield_lands)
     return name in ALWAYS_TAPPED
 
 

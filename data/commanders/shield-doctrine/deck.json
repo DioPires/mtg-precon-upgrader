@@ -48,10 +48,15 @@
       "type": "scryfall",
       "name": "Scryfall oracle verification",
       "detail": "Commander + all 99 cards verified against oracle text and RWU color identity, 2026-07-10"
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-421 tuning round v1.1 — board-approved 8-swap batch (interaction f53b16c3, 2026-07-10)",
+      "detail": "In: Sea of Clouds, Clifftop Retreat, Glacial Fortress, Sulfur Falls, Flooded Strand, Training Grounds, Counterspell, Bureau Headmaster. Out: 3 Plains, 1 Island, 1 Mountain, Genji Glove, Loki (God of Mischief), Mind Stone. Combo line (SoFaF + Aggravated Assault) reviewed and kept by board decision."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Suit up Captain America and win two ways with the same gear. Catch attaches an Equipment free at the start of each of your combats, and Throw ({3}, reduced to {1} by Zirda) unattaches one to deal its mana value in damage split among up to three targets — the Equipment stays on the battlefield, so Catch re-attaches it next turn for a repeatable damage engine. The primary kill is 21 commander damage through Excalibur, Colossus Hammer, and Mjölnir's damage doubling; the backup plan converts high-mana-value gear into amplified Throw burn (Mjölnir doubles it, Fiery Emancipation triples it). Eight attach-cheat effects beyond Catch keep equip costs honest, Sunforger packages the deck's red-white instants, and Sword of Feast and Famine plus Aggravated Assault closes with infinite combats when the table demands it.",
+    "strategyOverview": "Suit up Captain America and win two ways with the same gear. Catch attaches an Equipment free at the start of each of your combats, and Throw ({3}, reduced to {1} by Zirda or Training Grounds) unattaches one to deal its mana value in damage split among up to three targets — the Equipment stays on the battlefield, so Catch re-attaches it next turn for a repeatable damage engine. The primary kill is 21 commander damage through Excalibur, Colossus Hammer, and Mjölnir's damage doubling; the backup plan converts high-mana-value gear into amplified Throw burn (Mjölnir doubles it, Fiery Emancipation triples it). Eight attach-cheat effects beyond Catch keep equip costs honest, Sunforger packages the deck's red-white instants, and Sword of Feast and Famine plus Aggravated Assault closes with infinite combats when the table demands it.",
     "deckCategories": [
       {
         "name": "Vibranium Payloads",
@@ -61,7 +66,6 @@
           "Kaldra Compleat",
           "Argentum Armor",
           "Batterskull",
-          "Genji Glove",
           "Hexplate Wallbreaker"
         ]
       },
@@ -87,7 +91,7 @@
       },
       {
         "name": "Rapid Deployment",
-        "description": "Attach-cheat density beyond Catch: flash attaches, free equips, mass re-attach at combat, and cost reduction. Zirda cuts Throw from {3} to {1} and shaves generic equip costs (it cannot discount Sunforger's all-colored unattach).",
+        "description": "Attach-cheat density beyond Catch: flash attaches, free equips, mass re-attach at combat, and cost reduction. Zirda and Training Grounds each cut Throw from {3} to {1}; Bureau Headmaster discounts every Equipment cast and equip activation by {1} (it cannot discount Sunforger's all-colored unattach).",
         "cards": [
           "Sigarda's Aid",
           "Puresteel Paladin",
@@ -96,6 +100,8 @@
           "Forge Anew",
           "Super-Soldier Serum",
           "Zirda, the Dawnwaker",
+          "Training Grounds",
+          "Bureau Headmaster",
           "Codsworth, Handy Helper"
         ]
       },
@@ -112,12 +118,11 @@
       },
       {
         "name": "S.H.I.E.L.D. Intel",
-        "description": "Equipment-native card advantage. Sram and Puresteel cantrip every Equipment cast; Loki draws a card the first time each turn an ability you control targets — Catch, Throw, and every equip activation all qualify.",
+        "description": "Equipment-native card advantage. Sram and Puresteel cantrip every Equipment cast; Akiri draws whenever an equipped creature attacks a player, and Jhoira draws on every historic cast — most of the deck qualifies.",
         "cards": [
           "Sram, Senior Edificer",
           "Akiri, Fearless Voyager",
           "The Mighty Thor, Jane Foster",
-          "Loki, God of Mischief",
           "Jhoira, Weatherlight Captain"
         ]
       },
@@ -134,7 +139,7 @@
       },
       {
         "name": "Counteroffensive",
-        "description": "Interaction that leans on the deck's shape: Dispatch's metalcraft is trivially on, Stubborn Denial is a one-mana Negate while 4-power Cap is deployed, and Single Combat is an asymmetric wrath that leaves the suited commander standing alone.",
+        "description": "Interaction that leans on the deck's shape: Dispatch's metalcraft is trivially on, Stubborn Denial is a one-mana Negate while 4-power Cap is deployed, Counterspell answers anything, and Single Combat is an asymmetric wrath that leaves the suited commander standing alone.",
         "cards": [
           "Swords to Plowshares",
           "Dispatch",
@@ -142,6 +147,7 @@
           "Rip Apart",
           "Generous Gift",
           "Stubborn Denial",
+          "Counterspell",
           "Dovin's Veto",
           "Single Combat",
           "Chandra's Ignition",
@@ -157,7 +163,6 @@
           "Talisman of Conviction",
           "Talisman of Progress",
           "Talisman of Creativity",
-          "Mind Stone",
           "Fellwar Stone",
           "Dalakos, Crafter of Wonders"
         ]
@@ -182,9 +187,6 @@
     },
     {
       "name": "Captain America's Shield"
-    },
-    {
-      "name": "Loki, God of Mischief"
     },
     {
       "name": "Puresteel Paladin"
@@ -251,16 +253,16 @@
       ]
     },
     {
-      "title": "Every trigger is a draw",
+      "title": "Throw for one mana",
       "cards": [
-        "Loki, God of Mischief",
-        "Sunforger"
+        "Training Grounds",
+        "Zirda, the Dawnwaker"
       ],
-      "description": "Loki draws the first time each turn an ability you control targets anything — Catch targets an Equipment, Throw targets up to three things, Sunforger's unattach-and-cast and every equip activation target too. One reliable extra card per turn cycle, often more across opponents' turns.",
+      "description": "Throw is an activated ability of a creature you control, so Training Grounds cuts it from {3} to {1} — same discount Zirda provides, now with redundancy. At {1} per activation, every high-mana-value Equipment becomes cheap repeatable burn (Training Grounds does not touch equip costs; those are the Equipment's abilities, which Zirda and Bureau Headmaster cover).",
       "sources": [
         {
           "type": "ai-inferred",
-          "name": "DEC-422 owned-pool sweep find"
+          "name": "DEC-421 tuning round v1.1 — board-approved swap"
         }
       ]
     },
@@ -418,21 +420,46 @@
       "secondary_role": "recursion"
     },
     {
+      "name": "Sea of Clouds",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Clifftop Retreat",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Glacial Fortress",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sulfur Falls",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Flooded Strand",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
       "name": "Plains",
       "type": "Basic Land — Plains",
-      "quantity": 8,
+      "quantity": 5,
       "primary_role": "land"
     },
     {
       "name": "Island",
       "type": "Basic Land — Island",
-      "quantity": 6,
+      "quantity": 5,
       "primary_role": "land"
     },
     {
       "name": "Mountain",
       "type": "Basic Land — Mountain",
-      "quantity": 6,
+      "quantity": 5,
       "primary_role": "land"
     },
     {
@@ -459,12 +486,6 @@
       "name": "Talisman of Creativity",
       "type": "Artifact",
       "primary_role": "ramp"
-    },
-    {
-      "name": "Mind Stone",
-      "type": "Artifact",
-      "primary_role": "ramp",
-      "secondary_role": "card-draw"
     },
     {
       "name": "Fellwar Stone",
@@ -505,11 +526,6 @@
       "type": "Artifact — Equipment",
       "primary_role": "payoff",
       "secondary_role": "protection"
-    },
-    {
-      "name": "Genji Glove",
-      "type": "Artifact — Equipment",
-      "primary_role": "payoff"
     },
     {
       "name": "Hexplate Wallbreaker",
@@ -628,6 +644,16 @@
       "primary_role": "utility"
     },
     {
+      "name": "Training Grounds",
+      "type": "Enchantment",
+      "primary_role": "utility"
+    },
+    {
+      "name": "Bureau Headmaster",
+      "type": "Creature — Human Assassin",
+      "primary_role": "utility"
+    },
+    {
       "name": "Codsworth, Handy Helper",
       "type": "Legendary Artifact Creature — Robot",
       "primary_role": "protection",
@@ -677,11 +703,6 @@
       "type": "Legendary Creature — Human God Hero",
       "primary_role": "card-draw",
       "secondary_role": "removal-spot"
-    },
-    {
-      "name": "Loki, God of Mischief",
-      "type": "Legendary Creature — God Sorcerer Villain",
-      "primary_role": "card-draw"
     },
     {
       "name": "Jhoira, Weatherlight Captain",
@@ -741,6 +762,11 @@
     },
     {
       "name": "Stubborn Denial",
+      "type": "Instant",
+      "primary_role": "counterspell"
+    },
+    {
+      "name": "Counterspell",
       "type": "Instant",
       "primary_role": "counterspell"
     },
