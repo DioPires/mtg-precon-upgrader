@@ -13,7 +13,7 @@ exporter calls `_export_colored`, which consumes the standard stats keys
 (mana / color / commander castability / curve / tapped-land). Equipment
 attach/Throw lines are out of scope here.
 
-Manabase model (36 lands, tuning round v1.1 — DEC-421):
+Manabase model (36 lands, unchanged in tuning round v1.2 — DEC-421):
 - 14 untapped Jeskai duals: shocks (Hallowed Fountain, Sacred Foundry, Steam
   Vents), fastlands (Spirebluff Canal, Inspiring Vantage, Seachrome Coast),
   painlands (Shivan Reef, Battlefield Forge, Adarkar Wastes), bondlands
@@ -40,12 +40,11 @@ Manabase model (36 lands, tuning round v1.1 — DEC-421):
   metric (all-colored cost never uses C) and a fair approximation for generic
   costs in a 25+-artifact deck.
 
-Deliberately NOT modeled as mana sources:
-- Codsworth, Handy Helper — {T}: Add {W}{W} restricted to Aura/Equipment
-  spells. Unlike Dalakos' colorless, restricted W sources WOULD falsely
-  inflate commander castability, so Codsworth stays a plain spell here.
-- Sword of the Animist — land ramp gated on equip + attack; the sim has no
-  combat step.
+Tuning round v1.2 (9 spell swaps, board-approved) left the mana model
+untouched: none of the nine adds produces mana, and the two cut cards with
+mana notes (Codsworth — restricted {W}{W}, deliberately unmodeled; Sword of
+the Animist — combat-gated land ramp, unmodeled) were never sources here.
+All adds/cuts flow through deck.json + card-metadata.json automatically.
 """
 
 import argparse
@@ -105,8 +104,7 @@ ROCK_DEFS = {
 
 # --- Ramp spell definitions ---
 
-# No land-ramp spells: Sword of the Animist needs equip + attack (no combat
-# step in this sim) and is left out of the mana model.
+# No land-ramp spells in the 99 (Sword of the Animist cut in v1.2).
 RAMP_DEFS: dict = {}
 
 
