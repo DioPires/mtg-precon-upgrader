@@ -13,7 +13,7 @@ exporter calls `_export_colored`, which consumes the standard stats keys
 (mana / color / commander castability / curve / tapped-land). Equipment
 attach/Throw lines are out of scope here.
 
-Manabase model (36 lands, unchanged in tuning round v1.2 — DEC-421):
+Manabase model (36 lands; lands round applied after v1.2 — DEC-421):
 - 14 untapped Jeskai duals: shocks (Hallowed Fountain, Sacred Foundry, Steam
   Vents), fastlands (Spirebluff Canal, Inspiring Vantage, Seachrome Coast),
   painlands (Shivan Reef, Battlefield Forge, Adarkar Wastes), bondlands
@@ -30,9 +30,16 @@ Manabase model (36 lands, unchanged in tuning round v1.2 — DEC-421):
   as a W/U/R source (silverquill Marsh Flats precedent).
 - 2 commander-CI rainbow producers (Command Tower, Exotic Orchard) modeled
   as W/U/R.
+- 3 conditional-tapped duals (lands round, board-approved 2026-07-11):
+  Sundown Pass (RW) and Stormcarved Coast (UR) are slowlands (tapped unless
+  you control 2+ other lands); Turbulent Steppe (RW, typed Mountain Plains —
+  satisfies checkland conditions, Flooded Strand-fetchable) is tapped unless
+  opponents control 8+ lands (~T3 in a pod). All three modeled honestly as
+  tapped while <2 lands on our battlefield (dark-dominion Turbulent Springs
+  precedent).
 - Utility lands: Axgard Armory (W; enters tapped — the deck's only
   always-tapped land), Rogue's Passage (C), Buried Ruin (C).
-- 15 basics (Plains x5, Island x5, Mountain x5).
+- 12 basics (Plains x5, Island x5, Mountain x2).
 - Ramp: rocks only — Sol Ring (x2 C), Arcane Signet (W/U/R), Talismans of
   Conviction/Progress/Creativity (C or their two colors),
   Fellwar Stone (modeled W/U/R, Exotic Orchard precedent); Dalakos taps for
@@ -160,6 +167,15 @@ LAND_COLORS: dict[str, frozenset] = {
     "Glacial Fortress":   frozenset({"W", "U"}),
     "Sulfur Falls":       frozenset({"U", "R"}),
 
+    # Lands round (DEC-421): slowlands enter tapped with <2 other lands;
+    # Turbulent Steppe enters tapped until opponents control 8+ lands
+    # (~T3 in a pod) — both proxied as tapped while <2 lands on our
+    # battlefield (dark-dominion Turbulent Springs precedent), handled in
+    # land_enters_tapped.
+    "Sundown Pass":       frozenset({"R", "W"}),
+    "Stormcarved Coast":  frozenset({"U", "R"}),
+    "Turbulent Steppe":   frozenset({"R", "W"}),
+
     # Flooded Strand fetches any Plains/Island-typed land — basics or the
     # three typed shocks — so it fixes into any of the deck's three color
     # pairs. Modeled as a flexible W/U/R source (Marsh Flats precedent in
@@ -183,10 +199,16 @@ FARSEEK_TARGETS: set[str] = set()
 BASIC_TYPED = set(BASIC_LANDS)
 
 # Basic-typed lands on the battlefield that satisfy checkland conditions
-# (basics + the three typed shocks).
-PLAINS_TYPED = {"Plains", "Hallowed Fountain", "Sacred Foundry"}
+# (basics + the three typed shocks + Turbulent Steppe, typed Mountain Plains).
+PLAINS_TYPED = {"Plains", "Hallowed Fountain", "Sacred Foundry", "Turbulent Steppe"}
 ISLAND_TYPED = {"Island", "Hallowed Fountain", "Steam Vents"}
-MOUNTAIN_TYPED = {"Mountain", "Sacred Foundry", "Steam Vents"}
+MOUNTAIN_TYPED = {"Mountain", "Sacred Foundry", "Steam Vents", "Turbulent Steppe"}
+
+# Conditional-tapped duals added in the lands round: Sundown Pass /
+# Stormcarved Coast (tapped unless 2+ other lands) and Turbulent Steppe
+# (tapped unless opponents control 8+ lands, ~T3 in a pod — same on-curve
+# battlefield proxy).
+SLOW_CONDITION_LANDS = {"Sundown Pass", "Stormcarved Coast", "Turbulent Steppe"}
 
 CHECKLAND_TYPES = {
     "Clifftop Retreat": (MOUNTAIN_TYPED, PLAINS_TYPED),
@@ -199,6 +221,8 @@ def land_enters_tapped(name: str, battlefield_lands: list[str]) -> bool:
     if name in CHECKLAND_TYPES:
         type_a, type_b = CHECKLAND_TYPES[name]
         return not any(l in type_a or l in type_b for l in battlefield_lands)
+    if name in SLOW_CONDITION_LANDS:
+        return len(battlefield_lands) < 2
     return name in ALWAYS_TAPPED
 
 
