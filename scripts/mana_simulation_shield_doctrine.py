@@ -184,8 +184,11 @@ LAND_COLORS: dict[str, frozenset] = {
     "Flooded Strand":     frozenset({"W", "U", "R"}),
 
     # Rainbow / commander-CI producers — modeled as Jeskai (W/U/R)
+    # Spire's artifact gate is trivially on (24 Equipment) and pay-1-life
+    # is free in a goldfish — same treatment as the painlands above.
     "Command Tower":  frozenset({"W", "U", "R"}),
     "Exotic Orchard": frozenset({"W", "U", "R"}),
+    "Spire of Industry": frozenset({"W", "U", "R"}),
 
     # Mono / colorless utility lands
     "Axgard Armory":   frozenset({"W"}),
