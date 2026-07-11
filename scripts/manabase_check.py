@@ -15,6 +15,13 @@ candidates.json (0/200 for every deck). This standalone audit closes that gap:
 Owned-first per DEC-369: the sweep covers the owned pool only. Unowned land
 cycles still enter via the EDHREC closing diff (DEC-402).
 
+Known limitation — colorless-CI decks (CI = {}): every `produced & deck_ci`
+intersection is empty, so colored credit, pip census, and deficit bonuses all
+zero out and the ranking degrades to ETB-tier + free-copy only (Command Tower
+ties with genuinely useful utility lands). Treat colorless decks as out of
+scope for the discovery ranking; audit half still applies. (Founding Engineer
+review finding, DEC-426.)
+
 Usage:
     uv run python scripts/manabase_check.py --deck DECK_ID [--top N] [--json]
     uv run python scripts/manabase_check.py --deck DECK_ID --deck-file PATH
