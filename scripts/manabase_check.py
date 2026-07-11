@@ -43,6 +43,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import compute_deck_metrics as cdm  # noqa: E402
+import generate_candidate_pool as gcp  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DECKS_DIR = PROJECT_ROOT / "data" / "commanders"
@@ -64,6 +65,22 @@ SCORE_FREE_COPY = 3         # a copy is free right now (owned-first tiebreak)
 SCORE_PIP_DEMAND = 8        # scaled by share of the deck's pips the land covers
 SCORE_RESTRICTED = -8       # "spend this mana only ..." — produced_mana overstates
                             # these (DEC-424 restricted-mana lesson); flag + demote
+
+# DEC-429: utility lands almost all land on the same base score (untapped +
+# free-copy), which made the utility top-10 effectively alphabetical. The
+# cached per-deck EDHREC inclusion rate (priv_data/edhrec/{deck-id}.json,
+# written by fetch_edhrec_rates.py) breaks the tie: utility scores get the
+# same 0-20 boost the candidate scorer uses; fixing lands keep their
+# Karsten-driven score and use the rate only as a sort tiebreak, so a popular
+# tapped land can never outrank an untapped dual. Missing cache file or
+# missing card entry degrades to a boost of 0 (current behavior).
+
+
+def edhrec_boost(rate: float | None) -> int:
+    """0-20 boost from an EDHREC inclusion percent (candidate-scorer formula)."""
+    if rate is None:
+        return 0
+    return round(min(gcp.EDHREC_MAX, rate / gcp.EDHREC_RATE_SATURATION * gcp.EDHREC_MAX))
 
 
 def load_owned_quantities() -> dict[str, int]:
@@ -207,12 +224,16 @@ def discover_lands(
     owned: dict[str, int],
     locks: dict[str, list[str]],
     census: dict[str, int] | None = None,
+    edhrec_rates: dict[str, float] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     """Returns (fixing_candidates, utility_candidates), each sorted by score desc.
 
     Fixing = produces at least one in-CI color or fetches. Utility = in-CI land
     with no in-CI colored production (Reliquary Tower et al.) — listed
     separately so pure fixing review isn't diluted.
+
+    EDHREC inclusion rate (DEC-429): added into the utility score as a 0-20
+    boost; used only as a sort tiebreak for fixing lands (score unchanged).
     """
     decklist_names = set()
     for entry in deck.get("decklist", []):
@@ -237,10 +258,12 @@ def discover_lands(
         locked_by = locks.get(full_name, [])
         free_copies = max(0, qty - len(locked_by))
         score, features = score_land(scry, deck_ci, deficit_colors, free_copies, census)
+        rate = gcp.edhrec_rate_for(full_name, edhrec_rates)
         row = {
             "name": full_name,
             "score": score,
             **features,
+            "edhrec_rate": rate,
             "owned": qty,
             "free_copies": free_copies,
             "locked_by": sorted(set(locked_by)),
@@ -248,9 +271,10 @@ def discover_lands(
         if features["produces"] or features["fetch"]:
             fixing.append(row)
         else:
+            row["score"] += edhrec_boost(rate)
             utility.append(row)
 
-    key = lambda r: (-r["score"], r["name"])  # noqa: E731
+    key = lambda r: (-r["score"], -(r["edhrec_rate"] or 0), r["name"])  # noqa: E731
     return sorted(fixing, key=key), sorted(utility, key=key)
 
 
@@ -298,15 +322,17 @@ def render_text(report: dict, top: int) -> str:
         typed = f" typed[{'/'.join(r['typed'])}]" if r["typed"] else ""
         fetch = " fetch" if r["fetch"] else ""
         restricted = " RESTRICTED" if r.get("restricted") else ""
+        rate = f"  edhrec {r['edhrec_rate']:.0f}%" if r.get("edhrec_rate") is not None else ""
         lines.append(
             f"  {r['score']:>3}  {r['name']}  ({''.join(r['produces']) or '-'},"
-            f" {r['etb']}{typed}{fetch}{restricted})  x{r['owned']} {lock}"
+            f" {r['etb']}{typed}{fetch}{restricted})  x{r['owned']} {lock}{rate}"
         )
     if report["utility"]:
         lines.append(f"\nOwned utility lands (no in-CI colored production, top 10 of {len(report['utility'])}):")
         for r in report["utility"][:10]:
             lock = "free" if r["free_copies"] > 0 else f"LOCKED: {', '.join(r['locked_by'])}"
-            lines.append(f"  {r['score']:>3}  {r['name']}  ({r['etb']})  x{r['owned']} {lock}")
+            rate = f"  edhrec {r['edhrec_rate']:.0f}%" if r.get("edhrec_rate") is not None else ""
+            lines.append(f"  {r['score']:>3}  {r['name']}  ({r['etb']})  x{r['owned']} {lock}{rate}")
     return "\n".join(lines)
 
 
@@ -334,7 +360,10 @@ def main(argv: list[str]) -> int:
     census = pip_census(deck, mirror, deck_ci)
     owned = load_owned_quantities()
     locks = load_locks(exclude_deck=args.deck)
-    fixing, utility = discover_lands(deck, mirror, deck_ci, deficit_colors, owned, locks, census)
+    edhrec_rates, _ = gcp.load_edhrec_rates(args.deck)
+    fixing, utility = discover_lands(
+        deck, mirror, deck_ci, deficit_colors, owned, locks, census, edhrec_rates
+    )
 
     report = {
         "deck_id": args.deck,

@@ -121,3 +121,56 @@ def test_discover_lands_filters_and_locks():
     assert row["owned"] == 2
     assert row["locked_by"] == ["prod-deck-a"]
     assert row["free_copies"] == 1  # owned duplicate frees the locked copy
+
+
+# --- DEC-429: EDHREC inclusion rate in discovery ranking ---
+
+UTILITY_A = land("Alpha Filler", oracle="{T}: Add {C}.", produced=["C"], ci=[])
+UTILITY_Z = land("Zeta Staple", oracle="{T}: Add {C}.", produced=["C"], ci=[])
+
+
+def discover(mirror, rates=None):
+    deck = {"decklist": []}
+    owned = {name: 1 for name in mirror}
+    return mc.discover_lands(deck, mirror, CI, NO_DEFICIT, owned, {}, CENSUS, rates)
+
+
+def test_edhrec_boost_formula_mirrors_candidate_scorer():
+    assert mc.edhrec_boost(None) == 0
+    assert mc.edhrec_boost(25.0) == 10
+    assert mc.edhrec_boost(50.0) == 20
+    assert mc.edhrec_boost(90.0) == 20  # saturates at 50%
+
+
+def test_utility_high_inclusion_staple_outranks_alphabetical_filler():
+    # Regression (DEC-429): both score base 11 (untapped 8 + free copy 3);
+    # without rates the alphabetically-earlier filler wins the display slot.
+    mirror = {"Alpha Filler": UTILITY_A, "Zeta Staple": UTILITY_Z}
+    _, utility = discover(mirror, rates={"Zeta Staple": 45.0})
+    assert [r["name"] for r in utility] == ["Zeta Staple", "Alpha Filler"]
+    assert utility[0]["score"] == utility[1]["score"] + mc.edhrec_boost(45.0)
+    assert utility[0]["edhrec_rate"] == 45.0
+
+
+def test_missing_rates_degrade_to_current_behavior():
+    mirror = {"Alpha Filler": UTILITY_A, "Zeta Staple": UTILITY_Z}
+    for rates in (None, {}):
+        _, utility = discover(mirror, rates=rates)
+        assert [r["name"] for r in utility] == ["Alpha Filler", "Zeta Staple"]
+        assert {r["score"] for r in utility} == {mc.SCORE_ALWAYS_UNTAPPED + mc.SCORE_FREE_COPY}
+
+
+def test_fixing_rate_is_tiebreak_only():
+    dual_a = land("Alpha Dual", oracle="{T}: Add {R} or {W}.", produced=["R", "W"])
+    dual_z = land("Zeta Dual", oracle="{T}: Add {R} or {W}.", produced=["R", "W"])
+    mirror = {
+        "Alpha Dual": dual_a,
+        "Zeta Dual": dual_z,
+        "Tapped Tri": TAPPED_TRI,
+    }
+    fixing, _ = discover(mirror, rates={"Zeta Dual": 60.0, "Tapped Tri": 60.0})
+    # Equal scores: rate flips the alphabetical tie, but no boost lands on the
+    # fixing score — a 60%-inclusion tapped tri still can't outrank an
+    # untapped dual (B4 ETB ordering preserved).
+    assert [r["name"] for r in fixing] == ["Zeta Dual", "Alpha Dual", "Tapped Tri"]
+    assert fixing[0]["score"] == fixing[1]["score"]
