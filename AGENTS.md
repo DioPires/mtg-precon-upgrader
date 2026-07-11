@@ -155,6 +155,7 @@ Before recommending changes to any deck:
 4. For each top candidate not in the deck, decide: include, defer (with note), or reject (with reason).
 5. Verify any candidate you plan to add via `scryfall_card_by_name` MCP — never trust the playbook's pattern match without confirming the card text.
 6. Update `decklist`, `highlights`, `synergies` as needed. Always attribute via `sources`.
+7. **Manabase audit (DEC-426)** — Run `uv run python scripts/manabase_check.py --deck {id}`. The candidate pipeline never surfaces lands (`score_card` disqualifies cards with no archetype match), so this is the only automated land-discovery step. Review the Karsten deficits, the weak-current-lands list, and the top owned fixing candidates; give each land you skip an explicit defer/reject reason, same as step 4. Ranking caveats: `RESTRICTED` marks "spend this mana only" producers; cost-gated or conditionally-gated any-color lands (extra `{1}`, devotion, graveyard gates) still rank optimistically — judge those against the deck by hand. Unowned new land cycles still enter via the EDHREC closing diff (DEC-402).
 
 ### Role taxonomy & deck metrics (DEC-90 P7)
 

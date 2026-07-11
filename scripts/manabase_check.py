@@ -49,9 +49,14 @@ SCORE_EXTRA_COLOR = 6       # each in-CI color beyond the first (duals/triomes)
 SCORE_DEFICIT_COLOR = 8     # each produced color below its Karsten requirement
 SCORE_ALWAYS_UNTAPPED = 8
 SCORE_COND_UNTAPPED = 6     # "enters tapped unless ..." lands
+SCORE_TAPPED = -8           # unconditional enters-tapped — B4 bar penalizes hard
+                            # (a tapped tri-land must not outrank an untapped dual)
 SCORE_TYPED = 4             # has a basic land type (typed-fetchable, Farseek-able)
 SCORE_FETCH = 6
 SCORE_FREE_COPY = 3         # a copy is free right now (owned-first tiebreak)
+SCORE_PIP_DEMAND = 8        # scaled by share of the deck's pips the land covers
+SCORE_RESTRICTED = -8       # "spend this mana only ..." — produced_mana overstates
+                            # these (DEC-424 restricted-mana lesson); flag + demote
 
 
 def load_owned_quantities() -> dict[str, int]:
@@ -141,6 +146,7 @@ def score_land(
     deck_ci: set[str],
     deficit_colors: set[str],
     free_copies: int,
+    census: dict[str, int] | None = None,
 ) -> tuple[int, dict]:
     # produced_mana only — no fetch→all-colors fallback here. That fallback is
     # correct for Karsten source accounting but inflates basic-gate fetches
@@ -151,15 +157,24 @@ def score_land(
     always = always_untapped(scry)
     typed = typed_subtypes(scry)
     fetch = cdm.land_is_fetch(scry)
+    restricted = "spend this mana only" in cdm.land_oracle(scry)
 
     score = 0
     if produced:
+        if restricted:
+            score += SCORE_RESTRICTED
         score += SCORE_FIRST_COLOR + SCORE_EXTRA_COLOR * (len(produced) - 1)
         score += SCORE_DEFICIT_COLOR * len(deficit_colors.intersection(produced))
+        total_pips = sum(census.values()) if census else 0
+        if total_pips:
+            covered = sum(census.get(c, 0) for c in produced)
+            score += round(SCORE_PIP_DEMAND * covered / total_pips)
     if always:
         score += SCORE_ALWAYS_UNTAPPED
     elif untapped:
         score += SCORE_COND_UNTAPPED
+    else:
+        score += SCORE_TAPPED
     if typed:
         score += SCORE_TYPED
     if fetch:
@@ -172,6 +187,7 @@ def score_land(
         "etb": "untapped" if always else ("conditional" if untapped else "tapped"),
         "typed": typed,
         "fetch": fetch,
+        "restricted": restricted,
     }
     return score, features
 
@@ -183,6 +199,7 @@ def discover_lands(
     deficit_colors: set[str],
     owned: dict[str, int],
     locks: dict[str, list[str]],
+    census: dict[str, int] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     """Returns (fixing_candidates, utility_candidates), each sorted by score desc.
 
@@ -212,7 +229,7 @@ def discover_lands(
 
         locked_by = locks.get(full_name, [])
         free_copies = max(0, qty - len(locked_by))
-        score, features = score_land(scry, deck_ci, deficit_colors, free_copies)
+        score, features = score_land(scry, deck_ci, deficit_colors, free_copies, census)
         row = {
             "name": full_name,
             "score": score,
@@ -273,9 +290,10 @@ def render_text(report: dict, top: int) -> str:
         lock = "free" if r["free_copies"] > 0 else f"LOCKED: {', '.join(r['locked_by'])}"
         typed = f" typed[{'/'.join(r['typed'])}]" if r["typed"] else ""
         fetch = " fetch" if r["fetch"] else ""
+        restricted = " RESTRICTED" if r.get("restricted") else ""
         lines.append(
             f"  {r['score']:>3}  {r['name']}  ({''.join(r['produces']) or '-'},"
-            f" {r['etb']}{typed}{fetch})  x{r['owned']} {lock}"
+            f" {r['etb']}{typed}{fetch}{restricted})  x{r['owned']} {lock}"
         )
     if report["utility"]:
         lines.append(f"\nOwned utility lands (no in-CI colored production, top 10 of {len(report['utility'])}):")
@@ -289,7 +307,7 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--deck", required=True, help="deck id (data/commanders/{id})")
     ap.add_argument("--deck-file", help="alternate deck.json path (historical snapshot)")
-    ap.add_argument("--top", type=int, default=25, help="fixing candidates to display")
+    ap.add_argument("--top", type=int, default=40, help="fixing candidates to display")
     ap.add_argument("--json", action="store_true", help="emit full JSON report")
     args = ap.parse_args(argv)
 
@@ -306,15 +324,16 @@ def main(argv: list[str]) -> int:
     reqs = audit["inputs"]["color_requirements"]
     deficit_colors = {c for c, v in reqs.items() if v["ratio"] < 1}
 
+    census = pip_census(deck, mirror, deck_ci)
     owned = load_owned_quantities()
     locks = load_locks(exclude_deck=args.deck)
-    fixing, utility = discover_lands(deck, mirror, deck_ci, deficit_colors, owned, locks)
+    fixing, utility = discover_lands(deck, mirror, deck_ci, deficit_colors, owned, locks, census)
 
     report = {
         "deck_id": args.deck,
         "color_identity": sorted(deck_ci),
         "audit": audit,
-        "pip_census": pip_census(deck, mirror, deck_ci),
+        "pip_census": census,
         "deficit_colors": sorted(deficit_colors),
         "weak_current_lands": weak_current_lands(deck, mirror, deck_ci),
         "fixing": fixing,
