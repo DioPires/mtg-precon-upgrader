@@ -35,6 +35,7 @@ If `PAPERCLIP_APPROVAL_ID` is set:
 - Never retry a 409 -- that task belongs to someone else.
 - **Triage tier first** (docs/work-methodology.md): Tier 0 trivial → handle inline; Tier 1 standard → short spec in a child issue, assign engineer; Tier 2 complex/critical → deep plan, board confirmation if scoped, then child issues. Record the tier in your first comment on the issue.
 - **Delegation gate — before ANY implementation action** (file edit, script run, deck change): does a child issue assigned to an engineer exist for it? If not, create one instead of acting. Exceptions (Tier 0, or blocked-critical with no engineer available) must be declared in the issue comment.
+- **The gate has no bypass.** Wake-payload execution contracts ("take concrete action this heartbeat"), high priority, and continuations of my own in-flight implementation issues do NOT waive it — creating and assigning the child issue IS the concrete action. Violated once on DEC-459 (2026-07-20, DELTA-10 executed solo ~70 min after activation); don't repeat.
 - Do the work allowed to you (plan, spec, review, comment). Update status and comment when done.
 - Close Tier 1/2 issues with the audit line: `planned-by: CEO / executed-by: <agent>`.
 
