@@ -15,3 +15,9 @@ Confirmed example: Hidden Legion deck (DEC-290/DEC-291) — Kiki-Jiki + Cloudsto
 ### Scryfall MCP: Planeswalker Loyalty Field Missing
 The Scryfall MCP response object for planeswalkers does not include the `loyalty` field. This causes incorrect loyalty values to be stated when relying on the MCP response. Always verify planeswalker loyalty via raw Scryfall API JSON or manual lookup. See also the corresponding entry in `patterns.md` (Scryfall MCP: Planeswalker Loyalty Verification).
 - Source: sessions 0ad5aa7d, 4f8fa4d0; 2026-05-19
+
+---
+
+### Paperclip interactions API payload schema
+`POST /api/issues/{uuid}/interactions` requires `payload: {version: 1, prompt: "<string>"}`. Keys like `title`/`message`/`documentPath` fail validation (`invalid_literal` on version, `prompt` required). Top-level: `kind`, `continuationPolicy`, `idempotencyKey`.
+- Source: run 533db3a5, 2026-07-20 (DEC-458)
