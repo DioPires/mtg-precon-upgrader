@@ -1,6 +1,6 @@
 # Work Methodology — Plan on Fable, Execute on Opus
 
-Status: PROPOSED r2 (DEC-458, awaiting board confirmation; revised 2026-07-20 after board flipped engineer models)
+Status: ACTIVE (accepted by board 2026-07-20, DEC-458; r2)
 Owner: CEO. Applies to: all agents.
 
 ## Problem
@@ -59,6 +59,6 @@ Process rules decay; structure and config stick. Four layers:
 ## Rollout (on board acceptance)
 
 1. ~~Board switches Simulation Engineer default model to opus-4-8.~~ **Done 2026-07-20** (board flipped all engineers; verified via agents API).
-2. CEO amends own `SOUL.md`/`HEARTBEAT.md` with the rule + gate (layer 1).
-3. Optional, board call: enable cheap-profile routing for non-Tier-2 CEO runs when harness support allows (layer 2 caveat).
-4. Methodology status flips to ACTIVE; tier recorded on every new issue from then on.
+2. ~~CEO amends own `SOUL.md`/`HEARTBEAT.md` with the rule + gate (layer 1).~~ **Done 2026-07-20** (board accepted, comment `4bc6820a`).
+3. Optional, board call: enable cheap-profile routing for non-Tier-2 CEO runs when harness support allows (layer 2 caveat). **Open — board-owned.**
+4. ~~Methodology status flips to ACTIVE; tier recorded on every new issue from then on.~~ **Done 2026-07-20.**

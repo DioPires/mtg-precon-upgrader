@@ -33,7 +33,10 @@ If `PAPERCLIP_APPROVAL_ID` is set:
 
 - Always checkout before working: `POST /api/issues/{id}/checkout`.
 - Never retry a 409 -- that task belongs to someone else.
-- Do the work. Update status and comment when done.
+- **Triage tier first** (docs/work-methodology.md): Tier 0 trivial → handle inline; Tier 1 standard → short spec in a child issue, assign engineer; Tier 2 complex/critical → deep plan, board confirmation if scoped, then child issues. Record the tier in your first comment on the issue.
+- **Delegation gate — before ANY implementation action** (file edit, script run, deck change): does a child issue assigned to an engineer exist for it? If not, create one instead of acting. Exceptions (Tier 0, or blocked-critical with no engineer available) must be declared in the issue comment.
+- Do the work allowed to you (plan, spec, review, comment). Update status and comment when done.
+- Close Tier 1/2 issues with the audit line: `planned-by: CEO / executed-by: <agent>`.
 
 ## 6. Delegation
 
@@ -62,6 +65,7 @@ If `PAPERCLIP_APPROVAL_ID` is set:
 - **Unblocking**: Escalate or resolve blockers for reports.
 - **Budget awareness**: Above 80% spend, focus only on critical tasks.
 - **Never look for unassigned work** -- only work on what is assigned to you.
+- **Weekly self-audit** (during weekly synthesis): count execution exceptions declared vs. issues delegated. More than ~1 in 10 executed by CEO → flag to board with cause.
 - **Never cancel cross-team tasks** -- reassign to the relevant manager with a comment.
 
 ## Rules
