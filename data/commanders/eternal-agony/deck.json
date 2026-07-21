@@ -97,7 +97,8 @@
         "Repercussion",
         "Razorkin Needlehead",
         "Rubble Rouser",
-        "Syr Konrad, the Grim"
+        "Syr Konrad, the Grim",
+        "Chandra, Awakened Inferno"
       ]
     },
     {
@@ -139,7 +140,6 @@
       "name": "Board Wipes",
       "cards": [
         "Toxic Deluge",
-        "Day of Black Sun",
         "Blasphemous Act"
       ]
     },
@@ -480,16 +480,16 @@
       ]
     },
     {
-      "title": "Day of Black Sun + Death Trigger Denial",
+      "title": "Chandra Emblems + Guaranteed Valgavoth Triggers",
       "cards": [
-        "Day of Black Sun"
+        "Chandra, Awakened Inferno"
       ],
-      "description": "Strips abilities BEFORE destroying. Opponents lose death triggers (Blood Artist, Grave Pact, etc.), indestructible, and regeneration. Clean board wipe with no blowback.",
+      "description": "Each +2 gives every opponent an emblem that deals 1 damage to them on their upkeep. Emblems can't be removed and the cast can't be countered, so one activation permanently guarantees a Valgavoth trigger on all three opponent turns — 3 cards and 3 counters per cycle, even through board wipes. Note: opponents control the emblems, so our damage doublers do not amplify them.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Ability-stripping wipe prevents opponent value"
+          "detail": "DEC-461: unremovable their-turn damage floor vs removable permanent bleeders"
         }
       ]
     },
@@ -1312,20 +1312,21 @@
       ]
     },
     {
-      "name": "Day of Black Sun",
-      "price": "$0.91",
+      "name": "Chandra, Awakened Inferno",
+      "price": "$9-10",
       "isGameChanger": false,
-      "reason": "Strips abilities then destroys creatures with MV <= X. Kills indestructible, prevents death triggers",
+      "reason": "Uncounterable 6-drop. +2 gives each opponent a permanent, unremovable emblem (1 damage at their upkeep) — the only their-turn damage source in the deck that survives removal, and it stacks with every activation. Guarantees Valgavoth triggers on all three opponent turns. -3/-X double as creature sweep and spot exile.",
       "sources": [
         {
-          "type": "scryfall",
-          "name": "Scryfall - Day of Black Sun",
-          "url": "https://scryfall.com/card/fdn/68/day-of-black-sun"
+          "type": "edhrec",
+          "name": "EDHREC - Valgavoth, Harrower of Souls",
+          "url": "https://edhrec.com/commanders/valgavoth-harrower-of-souls",
+          "detail": "39% inclusion on Valgavoth pages"
         },
         {
           "type": "ai-inferred",
-          "name": "Claude analysis",
-          "detail": "Foundations (Nov 2024). Ability-stripping prevents opponent death trigger value"
+          "name": "DEC-461 board-approved swap",
+          "detail": "Replaces Day of Black Sun (option A: 3rd board wipe was the most redundant slot; 0 gaps after cut). Opponent-controlled emblems: our doublers do NOT amplify them."
         }
       ]
     },
@@ -2073,9 +2074,10 @@
       "primary_role": "removal-board"
     },
     {
-      "name": "Day of Black Sun",
-      "type": "Sorcery",
-      "primary_role": "removal-board"
+      "name": "Chandra, Awakened Inferno",
+      "type": "Planeswalker",
+      "primary_role": "engine",
+      "secondary_role": "removal-board"
     },
     {
       "name": "Bloodchief Ascension",
@@ -2164,6 +2166,19 @@
     }
   ],
   "tokens": [
+    {
+      "name": "Chandra, Awakened Inferno Emblem",
+      "type_line": "Emblem",
+      "oracle_text": "At the beginning of your upkeep, this emblem deals 1 damage to you.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "02347c41-407f-4388-9d9b-263ddf8b4e11",
+      "image_uri": "https://cards.scryfall.io/normal/front/0/2/02347c41-407f-4388-9d9b-263ddf8b4e11.jpg?1783915228",
+      "produced_by": [
+        "Chandra, Awakened Inferno"
+      ]
+    },
     {
       "name": "Demon",
       "type_line": "Token Creature — Demon",
