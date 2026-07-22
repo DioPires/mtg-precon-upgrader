@@ -108,6 +108,11 @@
       "type": "ai-inferred",
       "name": "DEC-434 Swordsman's Steel assessment — board-approved defer (interaction 9d191846, 2026-07-13)",
       "detail": "Swordsman's Steel (unowned, EDHREC 15.1% new-printing) assessed on board request: fit is real (Equipment-count payoff, {4} team +2/+2 per Equipment) but the deck is gap-free (88/92, 0 gaps) and every incumbent Equipment sits at 36-86% inclusion. Ownership hypothetical forced a correction: Colossus Hammer is the wrong cut (winConditions[0] anchor, flagship Sigarda's Aid synergy 87.6%/70.0%, {1} for +10/+10 beats Steel's board-dependent buff until 6 Equipment); least-bad cut would be Buster Sword, and even that swap is metrics-neutral. Board selected defer: watchlist, revisit on a flagged draw gap, a weak Equipment slot, or ownership. No decklist change."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-465 poison-axis swap — board-approved (interaction 367ca093, 2026-07-22)",
+      "detail": "In: Grafted Exoskeleton (poison alt-wincon: infect converts Throw / Chandra's Ignition / combat damage into a 10-count kill axis; owned, candidates #11 at 56.7, EDHREC 16.8%; not a Game Changer). Out: Masterwork of Ingenuity (EDHREC 58.5% but least-embedded flex slot; its Excalibur-copy mode — copies keep the printed {12} cost, so a {1} second lethal throw — is real but win-more once Excalibur plus Catch already loop a lethal throw every turn cycle). Rules chain Scryfall-verified: Throw's source is Cap himself so infect applies (CR 702.90b); the Exoskeleton must never be unattached (sac trigger resolves before Throw damage — you lose Cap for 4); Ignition at power 16 also wipes our own board via -1/-1 counters. Full assessment in DEC-465 comments c66785a9 + edf303bc."
     }
   ],
   "guideContent": {
@@ -125,7 +130,7 @@
       },
       {
         "name": "Standard-Issue Kit",
-        "description": "Cheap combat gear for the voltron line: Colossus Hammer plus a free attach is the classic one-shot, Mjölnir doubles all of Cap's damage (equip {1} — he is worthy), and Captain America's own Shield gives him +0/+8 and indestructibility to hide behind. Shadowspear adds trample and lifelink for one mana — Hammer-Cap punches through chump blocks — and its {1} activation strips opponents' hexproof and indestructible for the turn.",
+        "description": "Cheap combat gear for the voltron line: Colossus Hammer plus a free attach is the classic one-shot, Mjölnir doubles all of Cap's damage (equip {1} — he is worthy), and Captain America's own Shield gives him +0/+8 and indestructibility to hide behind. Shadowspear adds trample and lifelink for one mana — Hammer-Cap punches through chump blocks — and its {1} activation strips opponents' hexproof and indestructible for the turn. Grafted Exoskeleton opens the poison track: with it attached, every point Cap deals to a player — combat or Throw — becomes poison counters, and 10 kill. One iron rule: the Exoskeleton sacrifices whatever it becomes unattached from, so it goes on Cap and never moves — never Throw it (you lose Cap for 4 damage), never relocate it with Ardenn or Halvar, and never Catch it off another creature you want to keep.",
         "cards": [
           "Shadowspear",
           "Colossus Hammer",
@@ -137,7 +142,7 @@
           "Sword of Forge and Frontier",
           "Sunforger",
           "Buster Sword",
-          "Masterwork of Ingenuity",
+          "Grafted Exoskeleton",
           "Mithril Coat",
           "Lightning Greaves"
         ]
@@ -245,6 +250,9 @@
     },
     {
       "name": "Puresteel Paladin"
+    },
+    {
+      "name": "Grafted Exoskeleton"
     }
   ],
   "synergies": [
@@ -366,6 +374,26 @@
       ]
     },
     {
+      "title": "Poison fastball",
+      "cards": [
+        "Grafted Exoskeleton",
+        "Excalibur, Sword of Eden",
+        "Mjölnir, Hammer of Thor"
+      ],
+      "description": "With the Exoskeleton attached, Cap himself is Throw's damage source — infect converts every thrown point into poison counters, and 10 kill regardless of life total. Throwing Excalibur (MV 12) is one dead player at instant speed for {3} ({1} with Zirda); with Mjölnir also attached the throw doubles to 24, a 10/10/4 split that kills two players in one activation. The Exoskeleton itself never moves: it sacrifices whatever it becomes unattached from, so throwing it costs you Cap for 4 damage, and Ardenn, Halvar, or Catch relocating it does the same.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-465 assessment — poison-line rules check (Throw source, CR 702.90b infect, unattach-sacrifice trigger) verified via Scryfall oracle text"
+        },
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Captain America, First Avenger",
+          "detail": "Grafted Exoskeleton 16.8% inclusion; deck runs the full amplifier suite (Excalibur, Mjölnir, Zirda, Chandra's Ignition) that the average list lacks"
+        }
+      ]
+    },
+    {
       "title": "Sunforger package",
       "cards": [
         "Sunforger",
@@ -414,6 +442,17 @@
         "Chandra's Ignition"
       ],
       "description": "Throw converts gear into direct damage: Excalibur alone is 12 split three ways, 24 with Mjölnir attached. Chandra's Ignition off a suited-up Cap doubles as a board wipe that hits every opponent for his power — and it only scales up as the suit grows."
+    },
+    {
+      "title": "Poison protocol",
+      "kind": "combat",
+      "cards": [
+        "Grafted Exoskeleton",
+        "Excalibur, Sword of Eden",
+        "Mjölnir, Hammer of Thor",
+        "Chandra's Ignition"
+      ],
+      "description": "Grafted Exoskeleton turns every point Cap deals to a player into poison counters — 10 kill, ignoring life totals, lifegain, and the 21-commander-damage track. Thrown Excalibur is 12 poison (24 with Mjölnir — two players per activation); in combat Cap+Exoskeleton is a 6/6 infect body that one-shots with Colossus Hammer at 16/16; Chandra's Ignition at effective power 10+ poisons the whole table at once. Two costs to respect: the Exoskeleton sacrifices anything it becomes unattached from (it stays on Cap forever — throw the other gear), and Ignition's -1/-1-counter damage at that power also wipes our own board except Cap, so fire it as the table kill, not a value play."
     },
     {
       "title": "Infinite combats",
@@ -698,9 +737,10 @@
       "primary_role": "card-draw"
     },
     {
-      "name": "Masterwork of Ingenuity",
+      "name": "Grafted Exoskeleton",
       "type": "Artifact — Equipment",
-      "primary_role": "utility"
+      "primary_role": "wincon",
+      "wincon_style": "combat"
     },
     {
       "name": "Mithril Coat",
@@ -932,7 +972,7 @@
         "G"
       ],
       "scryfall_id": "e96f22c0-b9c8-418a-8224-e7d0b2841bd2",
-      "image_uri": "https://cards.scryfall.io/normal/front/e/9/e96f22c0-b9c8-418a-8224-e7d0b2841bd2.jpg?1782723063",
+      "image_uri": "https://cards.scryfall.io/normal/front/e/9/e96f22c0-b9c8-418a-8224-e7d0b2841bd2.jpg?1783902808",
       "produced_by": [
         "Generous Gift"
       ]
@@ -947,9 +987,22 @@
         "B"
       ],
       "scryfall_id": "fc375fe9-e8aa-4b7d-b439-a67c0b61beaf",
-      "image_uri": "https://cards.scryfall.io/normal/front/f/c/fc375fe9-e8aa-4b7d-b439-a67c0b61beaf.jpg?1782732393",
+      "image_uri": "https://cards.scryfall.io/normal/front/f/c/fc375fe9-e8aa-4b7d-b439-a67c0b61beaf.jpg?1783915256",
       "produced_by": [
         "Kaldra Compleat"
+      ]
+    },
+    {
+      "name": "Poison Counter",
+      "type_line": "Card",
+      "oracle_text": "(A player with ten or more poison counters loses the game.)",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "8a9cb417-8709-4336-be36-2fb0cea31fe1",
+      "image_uri": "https://cards.scryfall.io/normal/front/8/a/8a9cb417-8709-4336-be36-2fb0cea31fe1.jpg?1783904328",
+      "produced_by": [
+        "Grafted Exoskeleton"
       ]
     }
   ]
