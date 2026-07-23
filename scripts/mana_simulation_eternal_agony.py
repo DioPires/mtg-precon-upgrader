@@ -76,7 +76,7 @@ BASIC_SWAMPS = {"Swamp"}
 BASIC_MOUNTAINS = {"Mountain"}
 
 # Lands with Swamp subtype (for Urborg/Coffers counting)
-SWAMP_TYPED_LANDS = {"Swamp", "Blood Crypt", "Smoldering Marsh"}
+SWAMP_TYPED_LANDS = {"Swamp", "Blood Crypt", "Smoldering Marsh", "Leechridden Swamp"}
 MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Smoldering Marsh"}
 
 # Lands that produce B
@@ -84,7 +84,7 @@ B_PRODUCING_LANDS = {
     "Swamp", "Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs",
     "Blackcleave Cliffs", "Dragonskull Summit", "Foreboding Ruins", "Smoldering Marsh",
     "Haunted Ridge", "Blightstep Pathway", "Castle Locthwain",
-    "Urborg, Tomb of Yawgmoth",
+    "Urborg, Tomb of Yawgmoth", "Leechridden Swamp",
 }
 
 # Lands that produce R
@@ -97,7 +97,7 @@ R_PRODUCING_LANDS = {
 # Colorless-only lands
 C_ONLY_LANDS = {
     "Ash Barrens", "Graven Cairns", "Phyrexian Tower",
-    "Cabal Coffers",
+    "Cabal Coffers", "Shivan Gorge",
 }
 
 # Tainted Peak: C always, B/R only with Swamp in play
@@ -165,6 +165,9 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         l in SWAMP_TYPED_LANDS or l in MOUNTAIN_TYPED_LANDS
         for l in battlefield_lands
     )
+
+    if name == "Leechridden Swamp":
+        return True  # always enters tapped
 
     if name == "Blackcleave Cliffs":
         return other_count >= 3
@@ -337,6 +340,17 @@ def compute_land_mana(name: str, battlefield_lands: list[str], has_crypt_ghast: 
 
     if name == "Ash Barrens":
         return (0, 0, 1, 0)
+
+    if name == "Shivan Gorge":
+        # {C} only; damage activation is outside the mana model
+        return (0, 0, 1, 0)
+
+    if name == "Leechridden Swamp":
+        # Swamp-typed, produces {B}; Crypt Ghast bonus applies
+        b = 1
+        if has_crypt_ghast:
+            b += 1
+        return (b, 0, 0, 0)
 
     if name == "Castle Locthwain":
         # Produces {B}. With Urborg, Castle is a Swamp -> Crypt Ghast adds extra {B}.
