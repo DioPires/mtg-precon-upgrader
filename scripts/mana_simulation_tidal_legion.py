@@ -14,8 +14,13 @@ Thought Vessel, Commander's Sphere, Patchwork Banner. Sapphire Medallion
 is a cost reducer, not a mana source (informational only, matching the
 Zada/Pyre convention). Hydro-Channeler's spell-restricted dork mana and
 Lórien Revealed's islandcycling are not modeled — both are minor against a
-36-land base (34 real + Three Tree City + Sink into Stupor MDFC), and
-omitting them keeps the estimate conservative.
+38-source base (37 real lands incl. Three Tree City + Sink into Stupor MDFC),
+and omitting them keeps the estimate conservative.
+
+v1.7 (DEC-471): Sink into Stupor // Soporific Springs is now modeled as an
+MDFC backup land with pay-3-life untapped entry. Previously its front-face
+Instant type excluded it from the land pool entirely, so the ALWAYS_TAPPED
+entry was dead code and the land face never contributed mana.
 """
 
 import argparse
@@ -88,7 +93,24 @@ COST_REDUCERS = {
 # --- Land definitions ---
 
 # Lands that enter tapped unconditionally
-ALWAYS_TAPPED: set[str] = {"Lonely Sandbar", "Sink into Stupor // Soporific Springs"}
+ALWAYS_TAPPED: set[str] = {"Lonely Sandbar"}
+
+# MDFC spell//land backup land (DEC-471). Soporific Springs reads "As this
+# land enters, you may pay 3 life. If you don't, it enters tapped." The front
+# face is an Instant, so is_land_card() excludes it from the land pool —
+# run_simulation() adds it back explicitly. It is only played as a land when
+# the hand has no other land drop (lowest play priority), matching real MDFC
+# piloting and the DEC-470 Karsten 0.74 land credit on the metrics side.
+MDFC_PAY_LIFE_LANDS: set[str] = {"Sink into Stupor // Soporific Springs"}
+
+# Pay-life untapped policy: pay 3 while the mana base is still developing
+# (fewer than PAY_LIFE_DEV_LANDS lands already down) and life stays above
+# PAY_LIFE_FLOOR; otherwise enter tapped for free. The sim models no incoming
+# damage, so the floor never binds from 40 starting life — it documents the
+# real-game rule for future damage-aware extensions.
+PAY_LIFE_COST = 3
+PAY_LIFE_FLOOR = 10
+PAY_LIFE_DEV_LANDS = 6
 
 # Conditional-tapped lands evaluated dynamically in land_enters_tapped()
 
@@ -111,10 +133,17 @@ ISLAND_SUBTYPE = {"Island", "Mystic Sanctuary"}
 
 
 def land_enters_tapped(name: str, battlefield_lands: list[str],
-                       commander_in_play: bool) -> bool:
+                       commander_in_play: bool, life: int = 40) -> bool:
     """Determine if a land enters tapped given board state."""
     if name in ALWAYS_TAPPED:
         return True
+
+    # MDFC pay-life land: enters untapped iff the pilot pays 3 life, which
+    # they do while still developing and comfortably above the life floor.
+    if name in MDFC_PAY_LIFE_LANDS:
+        pays = (life - PAY_LIFE_COST >= PAY_LIFE_FLOOR
+                and len(battlefield_lands) < PAY_LIFE_DEV_LANDS)
+        return not pays
 
     # Mystic Sanctuary: ETBs tapped unless you control 3+ other Islands.
     if name == "Mystic Sanctuary":
@@ -265,6 +294,7 @@ class GameState:
         self.battlefield_rocks: list[str] = []
         self.battlefield_payoffs: set[str] = set()
         self.commander_in_play = False
+        self.life = 40
         self.metadata = metadata
         self.land_set = land_set
         self.mana_per_turn: list[ManaPool] = []
@@ -282,8 +312,15 @@ class GameState:
         return name in self.land_set
 
     def _land_play_priority(self, name: str) -> float:
-        """Higher = play first. Untapped U > untapped C > tapped lands."""
-        tapped = land_enters_tapped(name, self.battlefield_lands, self.commander_in_play)
+        """Higher = play first. Untapped U > untapped C > tapped lands.
+
+        The MDFC backup land sorts below every real land — it is only played
+        when the hand has no other land drop, keeping the spell face live.
+        """
+        if name in MDFC_PAY_LIFE_LANDS:
+            return -1
+        tapped = land_enters_tapped(name, self.battlefield_lands,
+                                    self.commander_in_play, self.life)
         base = 0 if tapped else 10
         if name == "Island":
             base += 5
@@ -324,7 +361,10 @@ class GameState:
             _, land_name = hand_lands[0]
             self.hand.remove(land_name)
 
-            tapped = land_enters_tapped(land_name, self.battlefield_lands, self.commander_in_play)
+            tapped = land_enters_tapped(land_name, self.battlefield_lands,
+                                        self.commander_in_play, self.life)
+            if land_name in MDFC_PAY_LIFE_LANDS and not tapped:
+                self.life -= PAY_LIFE_COST
             self.battlefield_lands.append(land_name)
             if tapped:
                 self.tapped_lands.add(len(self.battlefield_lands) - 1)
@@ -395,7 +435,10 @@ def can_cast_from_hand(state: GameState, pool: ManaPool) -> list[str]:
     ramp_cards = set(ROCK_DEFS)
     castable = []
     for card in state.hand:
-        if card in ramp_cards or card in state.land_set:
+        # The MDFC counts as a castable spell while in hand (front face is a
+        # live {1}{U}{U} instant) even though it also sits in land_set.
+        if card in ramp_cards or (card in state.land_set
+                                  and card not in MDFC_PAY_LIFE_LANDS):
             continue
         meta = state.metadata.get(card, {})
         mc = meta.get("mana_cost", "")
@@ -419,6 +462,9 @@ def run_simulation(decklist: list[str], metadata: dict,
         meta = metadata.get(name, {})
         if is_land_card(meta.get("type_line", "")):
             land_set.add(name)
+    # MDFC spell//land: front-face classification misses the land face
+    # (DEC-471) — count it as a mana source for mulligans and land drops.
+    land_set |= MDFC_PAY_LIFE_LANDS.intersection(decklist)
 
     mana_by_turn = {t: [] for t in range(1, NUM_TURNS + 1)}
     u_by_turn = {t: [] for t in range(1, NUM_TURNS + 1)}
@@ -437,6 +483,10 @@ def run_simulation(decklist: list[str], metadata: dict,
 
     # Engine readiness: % games with 2+ token/spell payoff permanents out.
     engine_ready_by_turn = {t: 0 for t in range(1, NUM_TURNS + 1)}
+
+    # MDFC backup-land behavior (DEC-471, informational)
+    mdfc_land_games = 0
+    mdfc_untapped_games = 0
 
     for _ in range(num_games):
         state = commander_mulligan(decklist, metadata, land_set)
@@ -490,6 +540,11 @@ def run_simulation(decklist: list[str], metadata: dict,
         if cast_every_turn:
             curve_out_games += 1
 
+        if any(n in state.battlefield_lands for n in MDFC_PAY_LIFE_LANDS):
+            mdfc_land_games += 1
+        if state.life < 40:
+            mdfc_untapped_games += 1
+
     return {
         "mana_by_turn": mana_by_turn,
         "u_by_turn": u_by_turn,
@@ -502,6 +557,8 @@ def run_simulation(decklist: list[str], metadata: dict,
         "curve_out_games": curve_out_games,
         "tapped_land_turns": tapped_land_turns,
         "engine_ready_by_turn": engine_ready_by_turn,
+        "mdfc_land_games": mdfc_land_games,
+        "mdfc_untapped_games": mdfc_untapped_games,
     }
 
 
