@@ -185,21 +185,52 @@ def is_land_entry(entry: dict, scry: dict | None) -> bool:
     return _front_is_land(entry, scry) or bool(entry.get("is_mdfc_land"))
 
 
+# Karsten-calibrated MDFC land credit (DEC-470, ~95k-deck regression).
+# Spell credit is always 1 - land credit so each physical card sums to 1.0
+# across the land and spell inventories.
+MDFC_LAND_WEIGHT_UNTAPPED = 0.74   # back land face can enter untapped
+MDFC_LAND_WEIGHT_TAPPED = 0.38     # back land face unconditionally enters tapped
+
+
+def mdfc_back_land_face(scry: dict | None) -> dict | None:
+    """Back land face of a modal spell//land. Classification and untapped tests
+    read ONLY this face (DEC-470 amendment): a spell face's conditional-cost
+    text ("unless its controller pays {1}", Jwari Disruption) must not leak
+    into the land-side tap test."""
+    if not scry:
+        return None
+    for face in scry.get("card_faces") or []:
+        if "land" in (face.get("type_line") or "").lower():
+            return face
+    return None
+
+
+def mdfc_land_weight_per_copy(scry: dict | None) -> float:
+    face = mdfc_back_land_face(scry)
+    if face is None:
+        return MDFC_LAND_WEIGHT_TAPPED  # no oracle data — take the conservative class
+    return (
+        MDFC_LAND_WEIGHT_UNTAPPED
+        if _oracle_is_untapped((face.get("oracle_text") or "").lower())
+        else MDFC_LAND_WEIGHT_TAPPED
+    )
+
+
 def land_weight(entry: dict, scry: dict | None) -> float:
     """Lands this entry contributes (basics multiply by quantity)."""
     qty = card_quantity(entry)
     if _front_is_land(entry, scry):
         return 1.0 * qty           # real land / Pathway / Westvale (front is land)
     if entry.get("is_mdfc_land"):
-        return 0.5 * qty           # modal spell//land — counts as half a land
+        return mdfc_land_weight_per_copy(scry) * qty
     return 0.0                      # transform creature (Ojer Taq) / nonland
 
 
 def spell_weight(entry: dict, scry: dict | None) -> float:
-    """Spells this entry contributes (modal land MDFCs count 0.5 on each side)."""
+    """Spells this entry contributes (modal land MDFCs get 1 - land credit)."""
     qty = card_quantity(entry)
     if entry.get("is_mdfc_land") and not _front_is_land(entry, scry):
-        return 0.5 * qty           # modal spell//land — half spell, half land
+        return (1.0 - mdfc_land_weight_per_copy(scry)) * qty
     if _front_is_land(entry, scry):
         return 0.0                  # pure land contributes no spell
     return 1.0 * qty                # everything else incl. Ojer Taq (creature)
@@ -263,12 +294,20 @@ def land_oracle(scry: dict) -> str:
     return "\n".join(parts).lower()
 
 
-def land_is_untapped(scry: dict) -> bool:
-    """Lands that always or conditionally enter untapped count as untapped."""
-    oracle = land_oracle(scry)
+def _oracle_is_untapped(oracle: str) -> bool:
     if "enters tapped" not in oracle and "enters the battlefield tapped" not in oracle:
         return True
     return any(tok in oracle for tok in CONDITIONAL_TAP_TOKENS)
+
+
+def land_is_untapped(scry: dict, entry: dict | None = None) -> bool:
+    """Lands that always or conditionally enter untapped count as untapped.
+    Modal spell//lands are judged on the back land face alone (DEC-470)."""
+    if entry is not None and entry.get("is_mdfc_land"):
+        face = mdfc_back_land_face(scry)
+        if face is not None:
+            return _oracle_is_untapped((face.get("oracle_text") or "").lower())
+    return _oracle_is_untapped(land_oracle(scry))
 
 
 _FETCH_BASIC = re.compile(
@@ -342,20 +381,21 @@ def manabase_health(deck: dict, mirror: dict[str, dict], deck_ci: set[str]) -> d
     fetch_lands = 0.0
     sources_by_color: dict[str, float] = {c: 0.0 for c in deck_ci}
 
-    # Spell inventory (for land count fit avg cmc, and Karsten thresholds)
-    nonland_cmcs: list[float] = []
+    # Spell inventory (for land count fit avg cmc, and Karsten thresholds).
+    # Entries are (cmc, spell_weight) so fractional MDFC spell credit weighs
+    # the average consistently with curve_health (DEC-470).
+    nonland_cmcs: list[tuple[float, float]] = []
     requirements: dict[str, int] = {c: 0 for c in deck_ci}
 
     for entry in decklist:
         scry = get_scry(entry, mirror)
-        qty = card_quantity(entry)
 
         lw = land_weight(entry, scry)
         sw = spell_weight(entry, scry)
         total_lands += lw
 
         if lw > 0 and scry:
-            untapped = land_is_untapped(scry)
+            untapped = land_is_untapped(scry, entry)
             if untapped:
                 untapped_lands += lw
             if land_is_fetch(scry):
@@ -365,8 +405,7 @@ def manabase_health(deck: dict, mirror: dict[str, dict], deck_ci: set[str]) -> d
 
         if sw > 0 and scry:
             cmc = spell_face_cmc(entry, scry)
-            for _ in range(qty):
-                nonland_cmcs.append(cmc)
+            nonland_cmcs.append((cmc, sw))  # sw already includes quantity
             mana_cost = spell_face_mana_cost(entry, scry)
             for color in deck_ci:
                 pips = color_pip_count(mana_cost, color)
@@ -375,7 +414,8 @@ def manabase_health(deck: dict, mirror: dict[str, dict], deck_ci: set[str]) -> d
                     if req > requirements[color]:
                         requirements[color] = req
 
-    avg_cmc = (sum(nonland_cmcs) / len(nonland_cmcs)) if nonland_cmcs else 0.0
+    total_spell_w = sum(w for _, w in nonland_cmcs)
+    avg_cmc = (sum(c * w for c, w in nonland_cmcs) / total_spell_w) if total_spell_w else 0.0
 
     # 1. Karsten color compliance (40)
     if deck_ci and any(requirements[c] > 0 for c in deck_ci):

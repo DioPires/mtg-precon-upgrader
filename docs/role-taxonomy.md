@@ -107,7 +107,7 @@ The metrics computer applies a small penalty to **`combo` wincons in B3 decks** 
 
 ## `is_mdfc_land`
 
-MDFCs (modal double-faced cards) like Shelldock Isle / Bala Ged Recovery count as lands for manabase math and as a non-land role for role coverage. Mark them:
+Modal spell//land DFCs like Agadeem's Awakening / Bala Ged Recovery count as partial lands for manabase math and as a non-land role for role coverage. Mark them:
 
 ```json
 {
@@ -118,7 +118,7 @@ MDFCs (modal double-faced cards) like Shelldock Isle / Bala Ged Recovery count a
 }
 ```
 
-The metrics computer counts an MDFC as **0.5 land + 0.5 spell** for curve and manabase calculations, and uses `primary_role` for role coverage on the spell side.
+The metrics computer gives an MDFC Karsten-calibrated per-card credit (DEC-470): **0.74 land / 0.26 spell** when the back land face can enter untapped (pay-life clause), **0.38 land / 0.62 spell** when it unconditionally enters tapped — classified from the back land face's oracle text only (see `docs/deck-metrics.md`). `primary_role` still drives role coverage on the spell side at full weight.
 
 ## Validation
 

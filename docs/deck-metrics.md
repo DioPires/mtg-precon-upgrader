@@ -26,7 +26,9 @@ Every `metrics.json` carries the resolved `bracket_effective` alongside the decl
 
 ### 1. `manabase_health` (0–100)
 
-Inputs: `decklist` lands (incl. MDFCs at 0.5 weight), `commander_color_identity`, oracle text patterns for tap/untap/fetch.
+Inputs: `decklist` lands (incl. MDFCs at Karsten-calibrated weight — see below), `commander_color_identity`, oracle text patterns for tap/untap/fetch.
+
+**MDFC land weights (DEC-470).** Modal spell//lands (`is_mdfc_land: true`) get per-card land credit from Frank Karsten's ~95k-deck MDFC regression, classified from the **back land face's oracle text only**: **0.74** if the land face can enter untapped (e.g. Agadeem's Awakening — "you may pay 3 life"), **0.38** if it unconditionally enters tapped (e.g. Hagra Mauling). Spell credit is always `1 − land credit` (0.26 / 0.62) so each card sums to 1.0 across the land and spell inventories. The untapped-ratio test for these cards likewise reads only the back land face — a spell face's "unless its controller pays" text (Jwari Disruption) must not leak into the tap classification. Transform DFCs (Ojer Taq) remain full-spell, zero land credit.
 
 Sub-scores:
 
@@ -96,7 +98,7 @@ Rationale: a tuned combo deck closes off one assembled line; a value-incremental
 
 ### 3. `curve_health` (0–100)
 
-Inputs: non-land cards' `cmc`. **Lands are excluded** (commander deck curves are conventionally drawn for spells only). MDFCs contribute 0.5 weight at their spell-side CMC.
+Inputs: non-land cards' `cmc`. **Lands are excluded** (commander deck curves are conventionally drawn for spells only). MDFCs contribute their spell credit (`1 − land credit`: 0.26 untapped-capable / 0.62 tapped-only, per the DEC-470 weights in `manabase_health`) at their spell-side CMC. The manabase `avg_cmc` input uses the same spell-credit weighting.
 
 Compute target curve based on archetype + bracket:
 
