@@ -136,7 +136,7 @@ import type {
 // v102 -> v103 (DEC-467 2026-07-27): Titan Convergence +Wastes/-Idol of Oblivion; Tidal Legion 4-for-4 swap (IN Island x2, Arcane Denial, Spellgyre / OUT Deekah, Merrow Reejerey, Bident of Thassa, Shark Typhoon) + follow-up +Brush Off/-Arcane Denial.
 // v103 -> v104 (DEC-467 round 2 2026-07-27): Tidal Legion board-approved 7-for-7 spell-dense rebuild. IN Fierce Guardianship, Hinder (board pick over Mana Drain), Cyclonic Rift, Quick Study, Commander's Insight, Aquitect's Will, Merrow Commerce / OUT Archmage Emeritus, Attuma, Curiosity Crafter, Master of Waves, Solemn Simulacrum, Merfolk Sovereign, Faerie Mastermind. GC 1->3 (at 3+ cap); metrics 95->94, sim 78.4/A; counters 11->13, draw 10->12.
 // v104 -> v105 (DEC-467 2026-07-27): Titan Convergence board-approved land tune-up — OUT Cloudstone Curio, Mirage Mirror / IN Wastes x2 (11->13; 37->39 lands). Rings of Brighthearth kept.
-const STORAGE_PREFIX = 'gv1-deck-data-v105:';
+const STORAGE_PREFIX = 'gv1-deck-data-v106:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
