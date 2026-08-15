@@ -58,6 +58,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -78,7 +79,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Static Orb",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0004ebd0-dfd6-4276-b4a6-de0003e94237",
     "provenance_summary": {},
@@ -89,6 +90,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -108,7 +110,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Sensory Deprivation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0006faf6-7a61-426c-9034-579f2cfcfa83",
     "provenance_summary": {},
@@ -248,6 +250,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -270,7 +273,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Ravnica at War",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0012bc78-e69d-4a67-a302-e5fe0dfd4407",
     "provenance_summary": {},
@@ -396,6 +399,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -410,7 +414,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -421,13 +426,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Torrent of Fire",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00181784-9213-492a-ba8c-2028969b049e",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "Torrent of Fire deals damage to any target",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1266,6 +1280,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1285,7 +1300,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Aura Graft",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00317e4f-0228-469a-9789-fb6c39976860",
     "provenance_summary": {},
@@ -1338,6 +1353,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -1356,22 +1372,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Whispering Shade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0036d062-10dc-4267-98b4-1d2f6b190a61",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Shade",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}: This creature gets +1/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -1498,6 +1524,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G",
@@ -1518,7 +1545,7 @@
     "is_dfc": false,
     "mana_cost": "{G/W}",
     "name": "Safewright Quest",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "003c48d4-0303-4970-8637-47ae060385aa",
     "provenance_summary": {},
@@ -1754,6 +1781,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1771,7 +1799,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Weakstone",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "004584f8-fd89-4a3e-9782-c117dbe1532b",
     "provenance_summary": {},
@@ -2077,6 +2105,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -2097,7 +2126,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{W}",
     "name": "Behemoth Sledge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00573e77-8ff6-4acb-8683-8827d965288f",
     "provenance_summary": {},
@@ -2349,6 +2378,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2374,7 +2404,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Strength of Unity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00606d5e-a134-4363-9ee6-05e03d58f234",
     "provenance_summary": {
@@ -2723,6 +2753,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -2742,7 +2773,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{G}",
     "name": "Carnage Wurm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "007161cb-a44b-4443-a53a-dfaacc6cfb86",
     "provenance_summary": {},
@@ -2963,6 +2994,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2986,7 +3018,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Mind Extraction",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0077740a-528b-4ee3-b331-fac321b95302",
     "provenance_summary": {},
@@ -3252,6 +3284,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3281,7 +3314,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Brawn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00876e98-d062-4a12-85e6-86a2b20cf867",
     "provenance_summary": {
@@ -4197,6 +4230,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4217,7 +4251,7 @@
     "is_dfc": false,
     "mana_cost": "{6}",
     "name": "Phyrexian Juggernaut",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "009fcd1e-5c5f-435b-afc1-099f1622e45c",
     "provenance_summary": {},
@@ -4521,6 +4555,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -4546,7 +4581,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Hunt the Hunter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00afc724-be09-4e92-a50c-88011bd10ccd",
     "provenance_summary": {
@@ -5750,6 +5785,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -5769,7 +5805,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Guul Draz Vampire",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00d3fcdf-6959-4437-9bad-93a8625510a1",
     "provenance_summary": {},
@@ -6334,6 +6370,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6353,7 +6390,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Stand Up for Yourself",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00e94b75-ad31-4e1f-b3be-eed7cd3e4d76",
     "provenance_summary": {},
@@ -6364,6 +6401,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -6389,7 +6427,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Bond of Discipline",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00e9957a-5684-4a07-954e-8161925fefe4",
     "provenance_summary": {
@@ -6402,6 +6440,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -6427,7 +6466,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Tanglewalker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00e9c357-5d0b-45cc-a5fd-70ac1f327d28",
     "provenance_summary": {
@@ -6698,6 +6737,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -6722,7 +6762,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Bladed Sentinel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "00f579f4-2d18-4c7c-91b2-34726b384535",
     "provenance_summary": {

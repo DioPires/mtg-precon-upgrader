@@ -531,6 +531,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -550,7 +551,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Bronzeplate Boar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
     "provenance_summary": {},
@@ -844,6 +845,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -866,7 +868,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Extinction Event",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a11a3a8-ee5f-4caf-bf84-c8248e07c825",
     "provenance_summary": {},
@@ -1077,6 +1079,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -1097,7 +1100,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{R}",
     "name": "Wrecking Ball",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a1b0910-3b0c-4aa3-b47f-8eb069122743",
     "provenance_summary": {},
@@ -1265,6 +1268,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -1287,7 +1291,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Nevermore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a1f4892-c9fa-4c60-a41e-7986cdd59096",
     "provenance_summary": {},
@@ -1430,6 +1434,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -1443,17 +1448,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Leeches",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a265cb5-47c7-4e06-9030-602e17bedae5",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "Leeches deals that much damage to that player.",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3686,6 +3702,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -3711,7 +3728,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Markov Crusader",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a8511b9-ed7d-4e33-9c2f-96b9a4c535e2",
     "provenance_summary": {
@@ -3928,6 +3945,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3947,7 +3965,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Fatigue",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a88dcb6-a391-408f-8bfc-7b5b2cc34267",
     "provenance_summary": {},
@@ -3958,6 +3976,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -3976,17 +3995,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}{U}",
     "name": "Sail into the West",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a8956d0-bd37-4305-8443-4df043796f6e",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "each player returns up to two cards from their graveyard to their hand",
+        "feature": "recursion",
+        "magnitude": 2,
+        "provenance": "llm"
+      },
+      {
+        "economy": "draw",
+        "evidence": "each player may discard their hand and draw seven cards",
+        "feature": "draw",
+        "magnitude": 7,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -4197,6 +4234,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4216,7 +4254,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Aether Tunnel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a90d1fb-7a76-4b62-b001-4a539a8e5df1",
     "provenance_summary": {},
@@ -4276,6 +4314,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4301,7 +4340,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Abzan Runemark",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a9276fc-387c-4bde-a6d6-b0dd7abee94b",
     "provenance_summary": {
@@ -4314,6 +4353,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -4333,7 +4373,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Incite Hysteria",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0a992ad5-136f-482d-8390-fdfe745fe764",
     "provenance_summary": {},
@@ -4484,6 +4524,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R",
@@ -4504,7 +4545,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{R}",
     "name": "Steam Augury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0aa556a6-66aa-42f1-ba41-0001e10c20a4",
     "provenance_summary": {},
@@ -4907,6 +4948,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4926,7 +4968,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Perilous Voyage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0ab090db-f8fc-42ff-95db-e9370796db97",
     "provenance_summary": {},
@@ -4999,6 +5041,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -5013,7 +5056,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5024,19 +5068,29 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Roar of the Crowd",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0ab56978-7add-4427-b10d-4f59ab4b2c5d",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to any target equal to the number of permanents you control",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -5056,7 +5110,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Zulaport Enforcer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0ab5fde8-e7db-4265-81c6-2a6488ba56c4",
     "provenance_summary": {},
@@ -5248,6 +5302,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B",
@@ -5271,7 +5326,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}{B}{B}",
     "name": "Identity Crisis",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0abe0584-d876-4827-972b-589da53dbe96",
     "provenance_summary": {},
@@ -5321,6 +5376,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5338,7 +5394,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Thran Lens",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0ac723bf-ce86-4028-a693-0ef498e4c82d",
     "provenance_summary": {},
@@ -5349,6 +5405,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5368,7 +5425,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Psychotic Episode",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0ac7bacd-944d-44f4-927b-28e8c0a4371d",
     "provenance_summary": {},
@@ -5459,6 +5516,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5475,17 +5533,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Savage Surge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0acbc9a6-0de0-4096-b35c-1a586a1312ea",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap that creature.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5782,6 +5851,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5801,7 +5871,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Scrap",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0ad3b788-eb3d-4876-9c89-893429595e0e",
     "provenance_summary": {},
@@ -6298,6 +6368,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "U",
@@ -6322,7 +6393,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Idyllic Beachfront",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0aea7e5d-40d7-46c7-a8a6-479cb8061e49",
     "provenance_summary": {},
