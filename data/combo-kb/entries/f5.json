@@ -2347,6 +2347,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -2366,7 +2367,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Raise the Palisade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f55a3781-fe33-4301-9bb5-6a54b9c13c4f",
     "provenance_summary": {},
@@ -3130,6 +3131,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "G",
@@ -3149,17 +3151,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Jetmir's Garden",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f5896356-5744-4f7e-a4e5-1cc36dde5958",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "{T}: Add {R}, {G}, or {W}.",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "draw",
+        "evidence": "Cycling {3} ... Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Land — Mountain Forest Plains",
     "wants": []
@@ -4992,6 +5012,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -5005,17 +5026,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{R}{R}",
     "name": "Conspicuous Snoop",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f5d1bd3c-0e65-4999-a810-881b2389b40e",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "You may cast Goblin spells from the top of your library.",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Goblin Rogue",
     "wants": []
@@ -6063,6 +6095,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -6080,7 +6113,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Basilisk Collar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f5f4dd28-f4ae-4d39-b9b8-6ebfd63c93fe",
     "provenance_summary": {},

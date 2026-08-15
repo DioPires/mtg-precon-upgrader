@@ -1640,6 +1640,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "R",
@@ -1658,17 +1659,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Turbulent Steppe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "db444f9d-4dde-4308-b0f2-7acfe6de871a",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "{T}: Add {R} or {W}.",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Land — Mountain Plains",
     "wants": []
@@ -2130,6 +2142,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2147,7 +2160,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Urborg, Tomb of Yawgmoth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "db6174d7-211d-4817-b8e4-8384594c83f9",
     "provenance_summary": {},

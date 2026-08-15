@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -20,7 +21,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Demonic Tutor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "82004860-e589-4e38-8d61-8c0210e4ea39",
     "provenance_summary": {},
@@ -147,6 +148,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -160,17 +162,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Buried Alive",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8203c621-a1a0-4865-8c9a-0d4064c86107",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "Search your library for up to three creature cards, put them into your graveyard",
+        "feature": "self_mill",
+        "magnitude": 3,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1297,6 +1310,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -1319,7 +1333,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Single Combat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "822ef47e-3f1b-40a6-8c5c-fea3d7deba5b",
     "provenance_summary": {},
@@ -3367,6 +3381,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "B",
@@ -3386,17 +3401,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Xander's Lounge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8291543f-d086-48aa-b2b7-5481ca8c9198",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "{T}: Add {U}, {B}, or {R}.",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "draw",
+        "evidence": "Cycling {3} ... Discard this card: Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Land — Island Swamp Mountain",
     "wants": []

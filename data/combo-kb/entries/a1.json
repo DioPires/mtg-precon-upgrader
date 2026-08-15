@@ -5905,6 +5905,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -5919,7 +5920,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -5930,19 +5932,29 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Hardened Scales",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Enchantment",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "+1/+1 counters ... that many plus one ... put on it instead",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -5962,7 +5974,7 @@
     "is_dfc": false,
     "mana_cost": "{R}{R}",
     "name": "Reverberate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
     "provenance_summary": {},

@@ -951,6 +951,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "B",
@@ -970,17 +971,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Indatha Triome",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec2b3779-55f7-4169-aa66-6312fb52721f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "{T}: Add {W}, {B}, or {G}.",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "draw",
+        "evidence": "Cycling {3} ... Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Land — Plains Swamp Forest",
     "wants": []
@@ -1107,6 +1126,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1126,7 +1146,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Ethersworn Canonist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec3471ad-b65c-4e35-a7d1-68da9555a9ec",
     "provenance_summary": {},
@@ -2534,6 +2554,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2551,7 +2572,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{C}",
     "name": "Zhulodok, Void Gorger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec726c54-987b-48ed-8ffa-ec73a5e35333",
     "provenance_summary": {},
@@ -5707,6 +5728,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -5723,17 +5745,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Reforge the Soul",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ece854f8-8c60-4f30-894f-2286d3dd61b9",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Each player discards their hand, then draws seven cards.",
+        "feature": "draw",
+        "magnitude": 7,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

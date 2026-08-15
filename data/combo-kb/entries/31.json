@@ -1035,6 +1035,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "G",
@@ -1054,17 +1055,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Spara's Headquarters",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3123ec89-8e95-4761-ba17-747ec667509f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "{T}: Add {G}, {W}, or {U}.",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "draw",
+        "evidence": "Cycling {3} ... Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Land — Forest Plains Island",
     "wants": []

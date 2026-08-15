@@ -2962,6 +2962,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -2985,7 +2986,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -2996,16 +2998,25 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Sisay, Weatherlight Captain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fb777610-7562-4d9d-8497-62c562e6d7cb",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Legendary Creature — Human Soldier",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{W}{U}{B}{R}{G}: Search your library for a legendary permanent",
+        "feature": "mana_sink",
+        "magnitude": 5,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3333,6 +3344,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -3352,7 +3364,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Mystical Tutor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fb81f95c-70f8-4eb7-8d15-15d0ae23ec03",
     "provenance_summary": {},
@@ -4701,7 +4713,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "cost_reduction",
+        "evidence": "Affinity for creatures ... Instant and sorcery spells you cast have affinity for",
+        "feature": "cost_reduction",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "B",
@@ -4716,16 +4737,19 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{6}{B}{G}",
     "name": "Witherbloom, the Balancer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fbb04a21-e513-4317-aac8-fa6df91c3438",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Legendary Creature — Elder Dragon",

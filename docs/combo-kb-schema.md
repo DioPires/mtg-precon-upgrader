@@ -125,9 +125,27 @@ ordering; EI-4 tier inflation is release-blocking). The rule is unit-tested in
 |---|---|---|
 | 1. Author ontology | `gen_combo_kb_ontology.py` | `ontology.json` (v1.0.1) |
 | 2. Deterministic extraction | `build_combo_kb.py` | `entries/*.json`, `meta.json` |
-| 3. Offline LLM enrichment (`needs_llm`) | `classify_combo_kb.py --emit-batch` / `--apply` | enriched entries + `ontology-gaps.json` |
+| 3. Offline LLM enrichment (`needs_llm`) | `classify_combo_kb.py --emit-batch [--names-file wave.txt]` / `--apply` | enriched entries + `ontology-gaps.json` + refreshed `meta.json` |
 | 4. Sampling QA | `kb_sampling_qa.py` | pass rates + human-review worksheet |
 | 5. Coverage gate | `check_kb_coverage.py` | stage-1 / stage-full pass/fail |
+
+**Stage-2 wave enrichment (`--names-file`).** Full-coverage LLM enrichment runs
+in reviewable waves: `--names-file` restricts `--emit-batch` to a targeted set
+(card names — front-face or full DFC name — or oracle_ids; `#` comments and
+blanks ignored), fleet-first then by Spellbook variant-membership rank. `--apply`
+merges responses, then:
+- clears `needs_llm` for **every processed card** — an empty (no-feature) result
+  is a valid "no combo-economy features" verdict (pure removal/counter/ramp), so
+  waves converge toward `needs_llm` = 0. `classifier_version` is the audit stamp.
+- refreshes `meta.json` dynamic counts (`needs_llm_count`,
+  `deterministic_signal_count`, `llm_classified_count`, provenance/feature
+  histograms) so meta never lies about coverage after enrichment.
+- merges (de-duplicated) into `ontology-gaps.json` so prior waves' gaps persist.
+
+llm-provenance items remain **not Tier-B eligible** until human-reviewed
+(§Provenance); their `evidence` is model rationale, not a verbatim oracle
+snippet, so the auto-QA grounding check (which requires verbatim snippets) scopes
+to deterministic items only.
 
 Three version stamps travel on every entry and in `meta.json`:
 `ontology_version` (semantic model), `extractor_version` (deterministic pass),

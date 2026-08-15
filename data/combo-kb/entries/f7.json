@@ -7170,6 +7170,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "B",
@@ -7189,17 +7190,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Ziatora's Proving Ground",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7e7b78c-c769-4720-8585-1874773eb342",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "{T}: Add {B}, {R}, or {G}.",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "draw",
+        "evidence": "Cycling {3} ... Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Land — Swamp Mountain Forest",
     "wants": []

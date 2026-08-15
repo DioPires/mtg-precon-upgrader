@@ -61,9 +61,9 @@
       "title": "Stage-2 full-coverage LLM enrichment waves + KB-7 elevated review",
       "file": "phase-1/P1.7-stage2-enrichment-waves.md",
       "requirements": ["KB-5", "KB-7", "QE-5"],
-      "deliverables": ["enriched entries/*.json (needs_llm cleared)", "sampling-QA evidence per wave"],
-      "status": "pending",
-      "note": "Rolling waves after the stage-1 interim gate passes; each wave merges with sampling-QA evidence + Founding Engineer sign-off (no per-wave confirmation)."
+      "deliverables": ["enriched entries/*.json (needs_llm cleared)", "sampling-QA evidence per wave", "scripts/classify_combo_kb.py --names-file enabler"],
+      "status": "in_progress",
+      "note": "Rolling waves after the stage-1 interim gate passes; each wave merges with sampling-QA evidence + Founding Engineer sign-off (no per-wave confirmation). Wave 1 (fleet needs_llm, 191 cards) executed 2026-08-15 — QA phase-1/P1.7-wave1-qa.md; needs_llm 6701->6510; awaiting FE sign-off. Waves 2..N by Spellbook variant-membership rank pending."
     }
   ],
   "gates": {
@@ -77,7 +77,7 @@
       "definition": "KB covers all 31,830 Commander-legal cards; needs_llm entries enriched; sampling-QA + FE sign-off per wave.",
       "check": "uv run python scripts/check_kb_coverage.py --stage full",
       "confirmation_idempotency_key": "confirmation:{issueId}:phase1-full-acceptance",
-      "status": "deterministic coverage PASS; LLM-enrichment waves pending (P1.7)"
+      "status": "deterministic coverage PASS; LLM-enrichment in progress (P1.7): Wave 1 done (needs_llm 6701->6510), Waves 2..N pending"
     }
   }
 }

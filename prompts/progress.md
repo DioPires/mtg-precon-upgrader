@@ -73,3 +73,33 @@ implementer), no per-wave board confirmation. Full-coverage completion gets the
 
 Harness end-to-end verified this heartbeat: `--emit-batch --limit 5` produced
 5 hardened prompt records (`name`, `oracle_id`, `schema`, `system`, `user`).
+
+## 2026-08-15 — Stage-2 Wave 1 executed (fleet `needs_llm`, 191 cards)
+
+Branch `dec-488-combo-kb-phase1-stage2`. Full QA evidence:
+[`prompts/phase-1/P1.7-wave1-qa.md`](phase-1/P1.7-wave1-qa.md).
+
+- **Enabler shipped** — `classify_combo_kb.py --names-file` targets a wave by
+  card name / oracle_id (comments + blanks ignored). Unit-tested
+  (`test_names_filter_matches_oracle_id_full_name_and_face`).
+- **Apply hardened for rolling waves** (3 corrections, all tested):
+  1. `merge_response()` extracted (pure/testable); an empty classifier result
+     now clears `needs_llm` (empty = valid "no combo features" verdict) so waves
+     converge toward 0 — previously such cards were re-queued forever.
+  2. `refresh_meta()` recomputes `needs_llm_count`,
+     `deterministic_signal_count`, `llm_classified_count`, provenance/feature
+     histograms after `--apply` (meta no longer goes stale post-enrichment).
+  3. `ontology-gaps.json` now **merges** (de-duped) across waves instead of
+     overwriting — prior waves' gaps persist.
+- **Result** — `needs_llm` 6,701 → **6,510**; coverage stage-full **PASS**;
+  vocab integrity 100% (0 OOV, 0 mis-bucket); 77/77 feature items defensible;
+  127 cards correctly classified empty (interaction/ramp/tutor — out of combo
+  ontology scope by design). Provenance gate intact (llm items Tier-C capped).
+- **QE-3 signals** — candidate ambient features for a v1.1 ontology bump:
+  counter_doubler, damage_doubler, life-loss doubler.
+- **Tests**: `tests/test_combo_kb.py` 16 → **21** green.
+
+**Next**: Founding Engineer sign-off on Wave 1 (child issue; reviewer ≠
+implementer, cross-agent writes closed) → merge → Waves 2..N by Spellbook
+variant-membership rank (batched, same protocol). Full-coverage completion
+(`needs_llm` → ~0) gets the `phase1-full-acceptance` confirmation ceremony.

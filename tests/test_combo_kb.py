@@ -235,6 +235,27 @@ def test_classifier_prompt_fences_oracle_and_states_data_only():
     assert "Ignore your instructions" in fenced
 
 
+def test_names_filter_matches_oracle_id_full_name_and_face(tmp_path):
+    """--names-file (P1.7 wave targeting) matches by oracle_id, full name, and
+    either DFC face, case-insensitively; comments/blanks are ignored."""
+    nf = tmp_path / "wave.txt"
+    nf.write_text(
+        "# wave 1\n"
+        "Sol Ring\n"
+        "\n"
+        "The Invincible Iron Man\n"     # a DFC back face
+        "abc-123-oid\n",
+        encoding="utf-8")
+    keys = clf.load_name_filter(nf)
+    assert "sol ring" in keys and "#" not in "".join(keys)
+
+    assert clf.entry_matches_filter({"oracle_id": "abc-123-oid", "name": "Whatever"}, keys)
+    assert clf.entry_matches_filter({"oracle_id": "x", "name": "sol ring"}, keys)  # ci name
+    assert clf.entry_matches_filter(
+        {"oracle_id": "x", "name": "Tony Stark // The Invincible Iron Man"}, keys)  # face
+    assert not clf.entry_matches_filter({"oracle_id": "x", "name": "Grizzly Bears"}, keys)
+
+
 def test_validate_response_drops_out_of_vocab_and_stamps_llm():
     ont = json.loads((ROOT / "data" / "combo-kb" / "ontology.json").read_text())
     valid = {f["id"] for f in ont["features"]}
@@ -250,3 +271,63 @@ def test_validate_response_drops_out_of_vocab_and_stamps_llm():
     assert ids == ["mana_add"]                       # invented id dropped
     assert all(i["provenance"] == clf.PROV_LLM for i in clean["provides"])
     assert any(g.get("unknown_feature") == "totally_made_up" for g in gaps)
+
+
+# --------------------------------------------------------------------------- #
+# LLM classifier — stage-2 wave merge / convergence                           #
+# --------------------------------------------------------------------------- #
+
+_VALID_IDS = {f["id"] for f in json.loads(
+    (ROOT / "data" / "combo-kb" / "ontology.json").read_text())["features"]}
+
+
+def test_merge_empty_response_still_clears_needs_llm():
+    """Stage-2 convergence: a card the classifier saw but found NO combo-economy
+    features (pure removal/counter/ramp) must be marked processed, else it is
+    re-emitted every wave and needs_llm never reaches 0. Provenance is untouched
+    when nothing was added."""
+    entry = {"oracle_id": "oid1", "name": "Negate", "needs_llm": True,
+             "field_provenance": {"provides": lib.PROV_DETERMINISTIC},
+             "provides": [], "wants": [], "ambient": []}
+    resp = {"oracle_id": "oid1", "provides": [], "wants": [], "ambient": [],
+            "ontology_gaps": ["counterspell"]}
+    gaps = clf.merge_response(entry, resp, _VALID_IDS)
+    assert entry["needs_llm"] is False                     # processed → cleared
+    assert entry["classifier_version"] == clf.CLASSIFIER_VERSION
+    assert entry["field_provenance"]["provides"] == lib.PROV_DETERMINISTIC  # untouched
+    assert gaps == [{"oracle_id": "oid1", "note": "counterspell"}]
+
+
+def test_merge_nonempty_response_adds_llm_items_and_provenance():
+    entry = {"oracle_id": "oid2", "name": "Mystic X", "needs_llm": True,
+             "field_provenance": {}, "provides": [], "wants": [], "ambient": []}
+    resp = {"oracle_id": "oid2", "ontology_gaps": [],
+            "provides": [{"feature": "draw", "economy": "draw", "magnitude": 2,
+                          "evidence": "Draw two cards."}],
+            "wants": [], "ambient": []}
+    clf.merge_response(entry, resp, _VALID_IDS)
+    assert entry["needs_llm"] is False
+    assert [i["feature"] for i in entry["provides"]] == ["draw"]
+    assert entry["provides"][0]["provenance"] == lib.PROV_LLM   # stamped llm
+    assert entry["field_provenance"]["provides"] == lib.PROV_LLM
+    # llm items are NOT Tier-B eligible (gate holds after enrichment).
+    assert lib.tier_b_view(entry)["provides"] == []
+    assert "provides" in lib.tier_b_view(entry)["tier_b_capped"]
+
+
+def test_merge_is_idempotent_and_preserves_deterministic_items():
+    """Re-applying a wave must not duplicate llm signal; deterministic items
+    survive re-classification (they are never dropped)."""
+    entry = {"oracle_id": "oid3", "name": "Altar", "needs_llm": True,
+             "field_provenance": {"provides": lib.PROV_DETERMINISTIC},
+             "provides": [{"feature": "mana_add", "economy": "mana", "magnitude": 2,
+                           "provenance": lib.PROV_DETERMINISTIC, "evidence": "Add {C}{C}."}],
+             "wants": [], "ambient": []}
+    resp = {"oracle_id": "oid3", "ontology_gaps": [], "wants": [], "ambient": [],
+            "provides": [{"feature": "sac_outlet", "economy": "sacrifice",
+                          "magnitude": 1, "evidence": "Sacrifice a creature:"}]}
+    clf.merge_response(entry, resp, _VALID_IDS)
+    clf.merge_response(entry, resp, _VALID_IDS)          # re-apply
+    feats = [(i["feature"], i["provenance"]) for i in entry["provides"]]
+    assert feats == [("mana_add", lib.PROV_DETERMINISTIC),
+                     ("sac_outlet", lib.PROV_LLM)]        # no duplication
