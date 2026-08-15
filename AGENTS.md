@@ -146,6 +146,8 @@ When building or updating deck guides, use all available sources and cross-refer
 
 Attribute every recommendation to its source(s). Multiple sources for the same card strengthens the recommendation.
 
+**Trigger frequency per turn cycle (DEC-477, from DEC-474 lesson L1)**: before citing a triggered ability in a rationale, state how often it fires per turn cycle under the vanilla 4-player model. Opponent-turn triggers fire ×3. Symmetric "each player" triggers fire ×2 versus the 1v1 read. Own-attack-gated triggers fire ×1. This keeps multiplayer value claims explicit instead of imported from 1v1 intuition. (The candidate scorer applies a matching +5 boost for opponent-scaled trigger templates — see [`docs/discovery-playbook.md`](docs/discovery-playbook.md).)
+
 ### Deck Review Checklist (DEC-90)
 
 Before recommending changes to any deck:

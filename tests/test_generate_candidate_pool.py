@@ -498,6 +498,80 @@ class EdhrecInclusionBoostTests(unittest.TestCase):
         self.assertIsNone(candidate_pool.edhrec_rate_for("Sol Ring", None))
 
 
+class MultiplayerScalingBoostTests(unittest.TestCase):
+    """DEC-477: flat tiebreaker boost for opponent-scaled trigger templates."""
+
+    def _archetype(self):
+        return candidate_pool.compile_archetype(
+            {
+                "name": "Group Slug",
+                "oracle_patterns": ["loses? \\d+ life", "gain \\d+ life"],
+                "type_constraints": [],
+                "staples": [],
+                "anti_patterns": [],
+            }
+        )
+
+    def _card(self, name, oracle_text):
+        return {
+            "name": name,
+            "cmc": 2,
+            "type_line": "Enchantment",
+            "oracle_text": oracle_text,
+        }
+
+    def _score(self, card):
+        return candidate_pool.score_card(
+            card,
+            [self._archetype()],
+            deck_avg_cmc=3,
+            decklist_names=set(),
+            owned=set(),
+            game_changers=set(),
+            bracket=4,
+        )
+
+    def test_opponent_scaled_trigger_gets_flat_boost(self):
+        plain = self._card("Plain Drain", "When this enchantment enters, you gain 2 life.")
+        scaled = self._card(
+            "Consuls Class",
+            "Whenever a creature an opponent controls enters, you gain 1 life.",
+        )
+        plain_score, plain_bd, _ = self._score(plain)
+        scaled_score, scaled_bd, _ = self._score(scaled)
+        self.assertEqual(
+            scaled_bd["multiplayer_scaled"], candidate_pool.MULTIPLAYER_SCALED_BOOST
+        )
+        self.assertNotIn("multiplayer_scaled", plain_bd)
+        self.assertAlmostEqual(
+            scaled_score - plain_score, candidate_pool.MULTIPLAYER_SCALED_BOOST, places=1
+        )
+
+    def test_templates_match_and_symmetric_variants_do_not(self):
+        rx = candidate_pool.MULTIPLAYER_SCALED_TRIGGER
+        for text in (
+            "each opponent loses 2 life.",
+            "at the beginning of each opponent's upkeep, that player mills a card.",
+            "whenever an opponent casts a noncreature spell, draw a card.",
+            "whenever a creature enters under an opponent's control, you gain 1 life.",
+            "whenever a creature you don't control dies, draw a card.",
+            "whenever a creature dies during an opponent's turn, draw a card.",
+        ):
+            self.assertTrue(rx.search(text), text)
+        for text in (
+            "at the beginning of each player's upkeep, that player loses 1 life.",
+            "each opponent and you each sacrifice a creature.",
+            "whenever this creature attacks, gain control of target creature an opponent controls.",
+            "destroy target creature an opponent controls.",
+        ):
+            self.assertFalse(rx.search(text), text)
+
+    def test_boost_stays_a_tiebreaker(self):
+        self.assertLess(candidate_pool.MULTIPLAYER_SCALED_BOOST, 15.0)  # owned
+        self.assertLess(candidate_pool.MULTIPLAYER_SCALED_BOOST, candidate_pool.EDHREC_MAX)
+        self.assertLessEqual(candidate_pool.MULTIPLAYER_SCALED_BOOST, 40.0 / 8.0)  # density/8
+
+
 class DecklistExclusionNormalizationTests(unittest.TestCase):
     """DEC-386: mirror indexes DFCs as 'Front // Back'; decklists use front-face names."""
 

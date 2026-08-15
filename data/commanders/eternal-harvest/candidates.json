@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "methodology": "candidate-pool-v5",
+  "methodology": "candidate-pool-v6",
   "deck_id": "eternal-harvest",
   "commander": "Meren of Clan Nel Toth",
   "archetypes": [
@@ -14,7 +14,7 @@
     "G"
   ],
   "bracket": 4,
-  "generated_at": "2026-07-28T11:35:17+00:00",
+  "generated_at": "2026-08-15T13:16:44+00:00",
   "scryfall_mirror_updated_at": "2026-07-28T09:02:56.705+00:00",
   "deck_gaps": [
     "removal-spot"
@@ -38,7 +38,7 @@
     },
     "card-draw": {
       "count": 7,
-      "median": 49.6
+      "median": 51.3
     },
     "utility": {
       "count": 8,
@@ -58,7 +58,7 @@
     },
     "removal-board": {
       "count": 4,
-      "median": 60.5
+      "median": 63.0
     },
     "tutor": {
       "count": 3,
@@ -81,6 +81,9 @@
     "threshold": 8,
     "floor": 0.65
   },
+  "multiplayer_scaling": {
+    "boost": 5.0
+  },
   "edhrec_rates": {
     "recorded_at": "2026-07-28",
     "source": "edhrec json route (board informed-override, DEC-410 interaction 7a8bc464)",
@@ -90,6 +93,51 @@
   },
   "candidate_count": 200,
   "candidates": [
+    {
+      "name": "Cauldron of Essence",
+      "cmc": 3.0,
+      "mana_cost": "{1}{B}{G}",
+      "type_line": "Artifact",
+      "oracle_text": "Whenever a creature you control dies, each opponent loses 1 life and you gain 1 life.\n{1}{B}{G}, {T}, Sacrifice a creature: Return target creature card from your graveyard to the battlefield. Activate only as a sorcery.",
+      "score": 70.1,
+      "score_breakdown": {
+        "density": 2.7,
+        "cmc_fit": 19.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "edhrec": 12.8,
+        "edhrec_rate": 32.0,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 11.4,
+        "saturation_penalty": 8.7,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          },
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice",
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": 32.0
+    },
     {
       "name": "Viscera Seer",
       "cmc": 1.0,
@@ -129,22 +177,23 @@
       "edhrec_rate": 67.0
     },
     {
-      "name": "Cauldron of Essence",
-      "cmc": 3.0,
-      "mana_cost": "{1}{B}{G}",
-      "type_line": "Artifact",
-      "oracle_text": "Whenever a creature you control dies, each opponent loses 1 life and you gain 1 life.\n{1}{B}{G}, {T}, Sacrifice a creature: Return target creature card from your graveyard to the battlefield. Activate only as a sorcery.",
-      "score": 65.1,
+      "name": "Syr Konrad, the Grim",
+      "cmc": 5.0,
+      "mana_cost": "{3}{B}{B}",
+      "type_line": "Legendary Creature — Human Knight",
+      "oracle_text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.\n{1}{B}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
+      "score": 68.4,
       "score_breakdown": {
-        "density": 2.7,
-        "cmc_fit": 19.5,
+        "density": 1.0,
+        "cmc_fit": 14.5,
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
-        "edhrec": 12.8,
-        "edhrec_rate": 32.0,
-        "density_raw": 11.4,
-        "saturation_penalty": 8.7,
+        "edhrec": 17.8,
+        "edhrec_rate": 44.6,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 3.8,
+        "saturation_penalty": 2.8,
         "saturated_archetypes": [
           {
             "archetype": "Graveyard Reanimator",
@@ -162,15 +211,15 @@
         }
       },
       "matched_archetypes": [
-        "Aristocrats / Sacrifice",
-        "Graveyard Reanimator"
+        "Graveyard Reanimator",
+        "Aristocrats / Sacrifice"
       ],
       "owned": true,
       "game_changer": false,
       "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
+      "strategy_line": "Graveyard Reanimator",
       "mitigates_gap": null,
-      "edhrec_rate": 32.0
+      "edhrec_rate": 44.6
     },
     {
       "name": "Wight of the Reliquary",
@@ -211,20 +260,105 @@
       "edhrec_rate": 37.3
     },
     {
-      "name": "Syr Konrad, the Grim",
+      "name": "Jarad, Golgari Lich Lord",
+      "cmc": 4.0,
+      "mana_cost": "{B}{B}{G}{G}",
+      "type_line": "Legendary Creature — Zombie Elf",
+      "oracle_text": "Jarad gets +1/+1 for each creature card in your graveyard.\n{1}{B}{G}, Sacrifice another creature: Each opponent loses life equal to the sacrificed creature's power.\nSacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.",
+      "score": 63.1,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "edhrec": 10.2,
+        "edhrec_rate": 25.5,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": 25.5
+    },
+    {
+      "name": "Deathrite Shaman",
+      "cmc": 1.0,
+      "mana_cost": "{B/G}",
+      "type_line": "Creature — Elf Shaman",
+      "oracle_text": "{T}: Exile target land card from a graveyard. Add one mana of any color.\n{B}, {T}: Exile target instant or sorcery card from a graveyard. Each opponent loses 2 life.\n{G}, {T}: Exile target creature card from a graveyard. You gain 2 life.",
+      "score": 62.8,
+      "score_breakdown": {
+        "density": 1.4,
+        "cmc_fit": 15.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "edhrec": 11.0,
+        "edhrec_rate": 27.4,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.7,
+        "saturation_penalty": 4.4,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          },
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice",
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": "removal-spot",
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": "removal-spot",
+      "edhrec_rate": 27.4
+    },
+    {
+      "name": "Junji, the Midnight Sky",
       "cmc": 5.0,
       "mana_cost": "{3}{B}{B}",
-      "type_line": "Legendary Creature — Human Knight",
-      "oracle_text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.\n{1}{B}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
-      "score": 63.4,
+      "type_line": "Legendary Creature — Dragon Spirit",
+      "oracle_text": "Flying, menace\nWhen Junji dies, choose one —\n• Each opponent discards two cards and loses 2 life.\n• Put target non-Dragon creature card from a graveyard onto the battlefield under your control. You lose 2 life.",
+      "score": 60.6,
       "score_breakdown": {
         "density": 1.0,
         "cmc_fit": 14.5,
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
-        "edhrec": 17.8,
-        "edhrec_rate": 44.6,
+        "edhrec": 10.0,
+        "edhrec_rate": 25.1,
+        "multiplayer_scaled": 5.0,
         "density_raw": 3.8,
         "saturation_penalty": 2.8,
         "saturated_archetypes": [
@@ -252,7 +386,7 @@
       "deck_role": null,
       "strategy_line": "Graveyard Reanimator",
       "mitigates_gap": null,
-      "edhrec_rate": 44.6
+      "edhrec_rate": 25.1
     },
     {
       "name": "Fauna Shaman",
@@ -416,60 +550,23 @@
       "edhrec_rate": 24.1
     },
     {
-      "name": "Jarad, Golgari Lich Lord",
-      "cmc": 4.0,
-      "mana_cost": "{B}{B}{G}{G}",
-      "type_line": "Legendary Creature — Zombie Elf",
-      "oracle_text": "Jarad gets +1/+1 for each creature card in your graveyard.\n{1}{B}{G}, Sacrifice another creature: Each opponent loses life equal to the sacrificed creature's power.\nSacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.",
-      "score": 58.1,
+      "name": "Butcher of Malakir",
+      "cmc": 7.0,
+      "mana_cost": "{5}{B}{B}",
+      "type_line": "Creature — Vampire Warrior",
+      "oracle_text": "Flying\nWhenever this creature or another creature you control dies, each opponent sacrifices a creature of their choice.",
+      "score": 58.2,
       "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 17.0,
+        "density": 1.0,
+        "cmc_fit": 9.5,
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
-        "edhrec": 10.2,
-        "edhrec_rate": 25.5,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": 25.5
-    },
-    {
-      "name": "Deathrite Shaman",
-      "cmc": 1.0,
-      "mana_cost": "{B/G}",
-      "type_line": "Creature — Elf Shaman",
-      "oracle_text": "{T}: Exile target land card from a graveyard. Add one mana of any color.\n{B}, {T}: Exile target instant or sorcery card from a graveyard. Each opponent loses 2 life.\n{G}, {T}: Exile target creature card from a graveyard. You gain 2 life.",
-      "score": 57.8,
-      "score_breakdown": {
-        "density": 1.4,
-        "cmc_fit": 15.5,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "edhrec": 11.0,
-        "edhrec_rate": 27.4,
-        "density_raw": 5.7,
-        "saturation_penalty": 4.4,
+        "edhrec": 12.6,
+        "edhrec_rate": 31.6,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 3.8,
+        "saturation_penalty": 2.8,
         "saturated_archetypes": [
           {
             "archetype": "Graveyard Reanimator",
@@ -487,15 +584,15 @@
         }
       },
       "matched_archetypes": [
-        "Aristocrats / Sacrifice",
-        "Graveyard Reanimator"
+        "Graveyard Reanimator",
+        "Aristocrats / Sacrifice"
       ],
       "owned": true,
       "game_changer": false,
-      "deck_role": "removal-spot",
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": "removal-spot",
-      "edhrec_rate": 27.4
+      "deck_role": null,
+      "strategy_line": "Graveyard Reanimator",
+      "mitigates_gap": null,
+      "edhrec_rate": 31.6
     },
     {
       "name": "Pitiless Plunderer",
@@ -615,6 +712,49 @@
       "edhrec_rate": 21.7
     },
     {
+      "name": "Sedgemoor Witch",
+      "cmc": 3.0,
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Human Warlock",
+      "oracle_text": "Menace\nWard—Pay 3 life. (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays 3 life.)\nMagecraft — Whenever you cast or copy an instant or sorcery spell, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+      "score": 56.2,
+      "score_breakdown": {
+        "density": 1.7,
+        "cmc_fit": 19.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 7.6,
+        "saturation_penalty": 5.9,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          },
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice",
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
       "name": "Awakening Zone",
       "cmc": 3.0,
       "mana_cost": "{2}{G}",
@@ -653,22 +793,21 @@
       "edhrec_rate": 14.3
     },
     {
-      "name": "Junji, the Midnight Sky",
-      "cmc": 5.0,
-      "mana_cost": "{3}{B}{B}",
-      "type_line": "Legendary Creature — Dragon Spirit",
-      "oracle_text": "Flying, menace\nWhen Junji dies, choose one —\n• Each opponent discards two cards and loses 2 life.\n• Put target non-Dragon creature card from a graveyard onto the battlefield under your control. You lose 2 life.",
-      "score": 55.6,
+      "name": "Yahenni, Undying Partisan",
+      "cmc": 3.0,
+      "mana_cost": "{2}{B}",
+      "type_line": "Legendary Creature — Aetherborn Vampire",
+      "oracle_text": "Haste\nWhenever a creature an opponent controls dies, put a +1/+1 counter on Yahenni.\nSacrifice another creature: Yahenni gains indestructible until end of turn.",
+      "score": 55.9,
       "score_breakdown": {
-        "density": 1.0,
-        "cmc_fit": 14.5,
+        "density": 1.4,
+        "cmc_fit": 19.5,
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
-        "edhrec": 10.0,
-        "edhrec_rate": 25.1,
-        "density_raw": 3.8,
-        "saturation_penalty": 2.8,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.7,
+        "saturation_penalty": 4.4,
         "saturated_archetypes": [
           {
             "archetype": "Graveyard Reanimator",
@@ -686,15 +825,52 @@
         }
       },
       "matched_archetypes": [
-        "Graveyard Reanimator",
+        "Aristocrats / Sacrifice",
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Glaring Fleshraker",
+      "cmc": 3.0,
+      "mana_cost": "{2}{C}",
+      "type_line": "Creature — Eldrazi Drone",
+      "oracle_text": "Whenever you cast a colorless spell, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"\nWhenever another colorless creature you control enters, this creature deals 1 damage to each opponent.",
+      "score": 55.4,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 19.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
         "Aristocrats / Sacrifice"
       ],
       "owned": true,
       "game_changer": false,
       "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
+      "strategy_line": "Aristocrats / Sacrifice",
       "mitigates_gap": null,
-      "edhrec_rate": 25.1
+      "edhrec_rate": null
     },
     {
       "name": "Grim Haruspex",
@@ -739,6 +915,43 @@
       "strategy_line": "Graveyard Reanimator",
       "mitigates_gap": null,
       "edhrec_rate": 49.5
+    },
+    {
+      "name": "Marauding Blight-Priest",
+      "cmc": 3.0,
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Vampire Cleric",
+      "oracle_text": "Whenever you gain life, each opponent loses 1 life.",
+      "score": 55.4,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 19.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
     },
     {
       "name": "Necromancy",
@@ -814,6 +1027,385 @@
       "edhrec_rate": 27.4
     },
     {
+      "name": "Dina, Soul Steeper",
+      "cmc": 2.0,
+      "mana_cost": "{B}{G}",
+      "type_line": "Legendary Creature — Dryad Druid",
+      "oracle_text": "Whenever you gain life, each opponent loses 1 life.\n{1}, Sacrifice another creature: Dina gets +X/+0 until end of turn, where X is the sacrificed creature's power.",
+      "score": 54.7,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Marionette Apprentice",
+      "cmc": 2.0,
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Human Artificer",
+      "oracle_text": "Fabricate 1 (When this creature enters, put a +1/+1 counter on it or create a 1/1 colorless Servo artifact creature token.)\nWhenever another creature or artifact you control is put into a graveyard from the battlefield, each opponent loses 1 life.",
+      "score": 54.7,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Melancholic Poet",
+      "cmc": 2.0,
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Elf Bard",
+      "oracle_text": "Repartee — Whenever you cast an instant or sorcery spell that targets a creature, each opponent loses 1 life and you gain 1 life.",
+      "score": 54.7,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Sanguine Syphoner",
+      "cmc": 2.0,
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Vampire Warlock",
+      "oracle_text": "Whenever this creature attacks, each opponent loses 1 life and you gain 1 life.",
+      "score": 54.7,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Send in the Pest",
+      "cmc": 2.0,
+      "mana_cost": "{1}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Each opponent discards a card. You create a 1/1 black and green Pest creature token with \"Whenever this token attacks, you gain 1 life.\"",
+      "score": 54.7,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Starscape Cleric",
+      "cmc": 2.0,
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Bat Cleric",
+      "oracle_text": "Offspring {2}{B} (You may pay an additional {2}{B} as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it.)\nFlying\nThis creature can't block.\nWhenever you gain life, each opponent loses 1 life.",
+      "score": 54.7,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Witherbloom Apprentice",
+      "cmc": 2.0,
+      "mana_cost": "{B}{G}",
+      "type_line": "Creature — Human Druid",
+      "oracle_text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, each opponent loses 1 life and you gain 1 life.",
+      "score": 54.7,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Grave Venerations",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, you become the monarch.\nAt the beginning of your end step, if you're the monarch, return up to one target creature card from your graveyard to your hand.\nWhenever a creature you control dies, each opponent loses 1 life and you gain 1 life.",
+      "score": 54.4,
+      "score_breakdown": {
+        "density": 2.4,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 9.5,
+        "saturation_penalty": 7.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          },
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice",
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Postmortem Professor",
+      "cmc": 2.0,
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Zombie Warlock",
+      "oracle_text": "This creature can't block.\nWhenever this creature attacks, each opponent loses 1 life and you gain 1 life.\n{1}{B}, Exile an instant or sorcery card from your graveyard: Return this card from your graveyard to the battlefield.",
+      "score": 54.3,
+      "score_breakdown": {
+        "density": 1.4,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.7,
+        "saturation_penalty": 4.4,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          },
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice",
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Bandit's Talent",
+      "cmc": 2.0,
+      "mana_cost": "{1}{B}",
+      "type_line": "Enchantment — Class",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, each opponent discards two cards unless they discard a nonland card.\n{B}: Level 2\nAt the beginning of each opponent's upkeep, if that player has one or fewer cards in hand, they lose 2 life.\n{3}{B}: Level 3\nAt the beginning of your draw step, draw an additional card for each opponent who has one or fewer cards in hand.",
+      "score": 54.1,
+      "score_breakdown": {
+        "density": 1.1,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 3.1,
+        "saturation_penalty": 2.0,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          }
+        ]
+      },
+      "matched_archetypes": [
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Graveyard Reanimator",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
       "name": "Disciple of Bolas",
       "cmc": 4.0,
       "mana_cost": "{3}{B}",
@@ -852,22 +1444,343 @@
       "edhrec_rate": 15.0
     },
     {
-      "name": "Butcher of Malakir",
-      "cmc": 7.0,
-      "mana_cost": "{5}{B}{B}",
-      "type_line": "Creature — Vampire Warrior",
-      "oracle_text": "Flying\nWhenever this creature or another creature you control dies, each opponent sacrifices a creature of their choice.",
-      "score": 53.2,
+      "name": "Dimension X Pizzasaur",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Artifact Creature — Food Alien Mutant",
+      "oracle_text": "When this creature enters, put two +1/+1 counters on target creature. When you do, destroy up to one target creature with mana value less than or equal to the number of counters among permanents you control.\n{2}, {T}, Sacrifice this creature: You gain 3 life and each opponent loses 3 life.",
+      "score": 53.8,
       "score_breakdown": {
-        "density": 1.0,
-        "cmc_fit": 9.5,
+        "density": 1.8,
+        "cmc_fit": 17.0,
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
-        "edhrec": 12.6,
-        "edhrec_rate": 31.6,
-        "density_raw": 3.8,
-        "saturation_penalty": 2.8,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Eccentric Pestfinder // Turn Stones",
+      "cmc": 4.0,
+      "mana_cost": "{2}{B}{G} // {B}{G}",
+      "type_line": "Creature — Troll Druid // Sorcery",
+      "card_faces": [
+        {
+          "name": "Eccentric Pestfinder",
+          "mana_cost": "{2}{B}{G}",
+          "type_line": "Creature — Troll Druid",
+          "oracle_text": "Trample\nAt the beginning of each end step, if you gained life this turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)"
+        },
+        {
+          "name": "Turn Stones",
+          "mana_cost": "{B}{G}",
+          "type_line": "Sorcery",
+          "oracle_text": "For each opponent, you create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\""
+        }
+      ],
+      "score": 53.8,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Lathril, Blade of the Elves",
+      "cmc": 4.0,
+      "mana_cost": "{2}{B}{G}",
+      "type_line": "Legendary Creature — Elf Noble",
+      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nWhenever Lathril deals combat damage to a player, create that many 1/1 green Elf Warrior creature tokens.\n{T}, Tap ten untapped Elves you control: Each opponent loses 10 life and you gain 10 life.",
+      "score": 53.8,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Leech Collector // Bloodletting",
+      "cmc": 2.0,
+      "mana_cost": "{1}{B} // {B}",
+      "type_line": "Creature — Human Warlock // Sorcery",
+      "card_faces": [
+        {
+          "name": "Leech Collector",
+          "mana_cost": "{1}{B}",
+          "type_line": "Creature — Human Warlock",
+          "oracle_text": "Whenever you gain life for the first time each turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)"
+        },
+        {
+          "name": "Bloodletting",
+          "mana_cost": "{B}",
+          "type_line": "Sorcery",
+          "oracle_text": "Each opponent loses 2 life."
+        }
+      ],
+      "score": 53.8,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Oath of the Grey Host",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — You and target opponent each create a Food token.\nII — Each opponent loses 3 life. Create a Treasure token.\nIII — Create three tapped 1/1 white Spirit creature tokens with flying.",
+      "score": 53.8,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Sinister Monolith",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Artifact",
+      "oracle_text": "At the beginning of combat on your turn, each opponent loses 1 life and you gain 1 life.\n{T}, Pay 2 life, Sacrifice this artifact: Draw two cards. Activate only as a sorcery.",
+      "score": 53.8,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": "card-draw",
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Soul-Shackled Zombie",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Creature — Zombie",
+      "oracle_text": "When this creature enters, exile up to two target cards from a single graveyard. If at least one creature card was exiled this way, each opponent loses 2 life and you gain 2 life.",
+      "score": 53.8,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Torment of Hailfire",
+      "cmc": 2.0,
+      "mana_cost": "{X}{B}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Repeat the following process X times. Each opponent loses 3 life unless that player sacrifices a nonland permanent of their choice or discards a card.",
+      "score": 53.8,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 18.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Hazel's Nocturne",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Return up to two target creature cards from your graveyard to your hand. Each opponent loses 2 life and you gain 2 life.",
+      "score": 53.4,
+      "score_breakdown": {
+        "density": 1.4,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.7,
+        "saturation_penalty": 4.4,
         "saturated_archetypes": [
           {
             "archetype": "Graveyard Reanimator",
@@ -885,15 +1798,15 @@
         }
       },
       "matched_archetypes": [
-        "Graveyard Reanimator",
-        "Aristocrats / Sacrifice"
+        "Aristocrats / Sacrifice",
+        "Graveyard Reanimator"
       ],
       "owned": true,
       "game_changer": false,
       "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
+      "strategy_line": "Aristocrats / Sacrifice",
       "mitigates_gap": null,
-      "edhrec_rate": 31.6
+      "edhrec_rate": null
     },
     {
       "name": "Jungle Hollow",
@@ -932,6 +1845,225 @@
       "strategy_line": "Aristocrats / Sacrifice",
       "mitigates_gap": null,
       "edhrec_rate": 23.2
+    },
+    {
+      "name": "Crypt Ghast",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Creature — Spirit",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\nWhenever you tap a Swamp for mana, add an additional {B}.",
+      "score": 52.9,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Endless Ranks of HYDRA",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "For each opponent, you create a 2/1 black Villain creature token with menace.\nWhenever your commander enters or attacks, you may pay {1}{B}. If you do, return this card from your graveyard to your hand.",
+      "score": 52.9,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Mirkwood Bats",
+      "cmc": 4.0,
+      "mana_cost": "{3}{B}",
+      "type_line": "Creature — Bat",
+      "oracle_text": "Flying\nWhenever you create or sacrifice a token, each opponent loses 1 life.",
+      "score": 52.9,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "One Ring to Rule Them All",
+      "cmc": 4.0,
+      "mana_cost": "{2}{B}{B}",
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — The Ring tempts you, then each player mills cards equal to your Ring-bearer's power.\nII — Destroy all nonlegendary creatures.\nIII — Each opponent loses 1 life for each creature card in that player's graveyard.",
+      "score": 52.9,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Sheoldred, the Apocalypse",
+      "cmc": 4.0,
+      "mana_cost": "{2}{B}{B}",
+      "type_line": "Legendary Creature — Phyrexian Praetor",
+      "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+      "score": 52.9,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 17.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": "card-draw",
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Soul-Guide Lantern",
+      "cmc": 1.0,
+      "mana_cost": "{1}",
+      "type_line": "Artifact",
+      "oracle_text": "When this artifact enters, exile target card from a graveyard.\n{T}, Sacrifice this artifact: Exile each opponent's graveyard.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+      "score": 51.6,
+      "score_breakdown": {
+        "density": 1.1,
+        "cmc_fit": 15.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 3.1,
+        "saturation_penalty": 2.0,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          }
+        ]
+      },
+      "matched_archetypes": [
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": "card-draw",
+      "strategy_line": "Graveyard Reanimator",
+      "mitigates_gap": null,
+      "edhrec_rate": null
     },
     {
       "name": "Witherbloom Charm",
@@ -1020,6 +2152,43 @@
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Glidedive Duo",
+      "cmc": 5.0,
+      "mana_cost": "{4}{B}",
+      "type_line": "Creature — Bat Lizard",
+      "oracle_text": "Flying\nWhen this creature enters, each opponent loses 2 life and you gain 2 life.",
+      "score": 51.3,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 14.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
         "density_raw": 10.0,
         "saturation_penalty": 8.2,
         "saturated_archetypes": [
@@ -1224,6 +2393,80 @@
       "edhrec_rate": null
     },
     {
+      "name": "Pulse Tracker",
+      "cmc": 1.0,
+      "mana_cost": "{B}",
+      "type_line": "Creature — Vampire Rogue",
+      "oracle_text": "Whenever this creature attacks, each opponent loses 1 life.",
+      "score": 51.3,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 15.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Sneering Shadewriter",
+      "cmc": 5.0,
+      "mana_cost": "{4}{B}",
+      "type_line": "Creature — Vampire Warlock",
+      "oracle_text": "Flying\nWhen this creature enters, each opponent loses 2 life and you gain 2 life.",
+      "score": 51.3,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 14.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
       "name": "Tireless Provisioner",
       "cmc": 3.0,
       "mana_cost": "{2}{G}",
@@ -1265,48 +2508,6 @@
       "mana_cost": "{2}{B}",
       "type_line": "Enchantment",
       "oracle_text": "Attacking Pests you control get +1/+0 and have menace.\nWhenever a nontoken creature you control dies, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
-      "score": 51.2,
-      "score_breakdown": {
-        "density": 1.7,
-        "cmc_fit": 19.5,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 7.6,
-        "saturation_penalty": 5.9,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          },
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice",
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Sedgemoor Witch",
-      "cmc": 3.0,
-      "mana_cost": "{2}{B}",
-      "type_line": "Creature — Human Warlock",
-      "oracle_text": "Menace\nWard—Pay 3 life. (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays 3 life.)\nMagecraft — Whenever you cast or copy an instant or sorcery spell, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
       "score": 51.2,
       "score_breakdown": {
         "density": 1.7,
@@ -1475,48 +2676,6 @@
       "mana_cost": "{1}{B}{B}",
       "type_line": "Creature — Vampire Shaman",
       "oracle_text": "Whenever this creature or another nontoken creature you control dies, you may create a 0/1 colorless Eldrazi Spawn creature token. It has \"Sacrifice this token: Add {C}.\"",
-      "score": 50.9,
-      "score_breakdown": {
-        "density": 1.4,
-        "cmc_fit": 19.5,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.7,
-        "saturation_penalty": 4.4,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          },
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice",
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Yahenni, Undying Partisan",
-      "cmc": 3.0,
-      "mana_cost": "{2}{B}",
-      "type_line": "Legendary Creature — Aetherborn Vampire",
-      "oracle_text": "Haste\nWhenever a creature an opponent controls dies, put a +1/+1 counter on Yahenni.\nSacrifice another creature: Yahenni gains indestructible until end of turn.",
       "score": 50.9,
       "score_breakdown": {
         "density": 1.4,
@@ -1917,6 +3076,40 @@
       "edhrec_rate": null
     },
     {
+      "name": "Painful Quandary",
+      "cmc": 5.0,
+      "mana_cost": "{3}{B}{B}",
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever an opponent casts a spell, that player loses 5 life unless they discard a card.",
+      "score": 50.7,
+      "score_breakdown": {
+        "density": 1.1,
+        "cmc_fit": 14.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 3.1,
+        "saturation_penalty": 2.0,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          }
+        ]
+      },
+      "matched_archetypes": [
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Graveyard Reanimator",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
       "name": "Skorpekh Lord",
       "cmc": 3.0,
       "mana_cost": "{2}{B}",
@@ -1995,6 +3188,74 @@
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
+        "density_raw": 3.1,
+        "saturation_penalty": 2.0,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          }
+        ]
+      },
+      "matched_archetypes": [
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Graveyard Reanimator",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Witch of the Moors",
+      "cmc": 5.0,
+      "mana_cost": "{3}{B}{B}",
+      "type_line": "Creature — Human Warlock",
+      "oracle_text": "Deathtouch\nAt the beginning of your end step, if you gained life this turn, each opponent sacrifices a creature of their choice and you return up to one target creature card from your graveyard to your hand.",
+      "score": 50.7,
+      "score_breakdown": {
+        "density": 1.1,
+        "cmc_fit": 14.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 3.1,
+        "saturation_penalty": 2.0,
+        "saturated_archetypes": [
+          {
+            "archetype": "Graveyard Reanimator",
+            "deck_matches": 22,
+            "multiplier": 0.36
+          }
+        ]
+      },
+      "matched_archetypes": [
+        "Graveyard Reanimator"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Graveyard Reanimator",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Witch-king of Angmar",
+      "cmc": 5.0,
+      "mana_cost": "{3}{B}{B}",
+      "type_line": "Legendary Creature — Wraith Noble",
+      "oracle_text": "Flying\nWhenever one or more creatures deal combat damage to you, each opponent sacrifices a creature of their choice that dealt combat damage to you this turn. The Ring tempts you.\nDiscard a card: Witch-king of Angmar gains indestructible until end of turn. Tap it.",
+      "score": 50.7,
+      "score_breakdown": {
+        "density": 1.1,
+        "cmc_fit": 14.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
         "density_raw": 3.1,
         "saturation_penalty": 2.0,
         "saturated_archetypes": [
@@ -2275,6 +3536,43 @@
       "edhrec_rate": null
     },
     {
+      "name": "Age of Ultron",
+      "cmc": 5.0,
+      "mana_cost": "{4}{B}",
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — For each opponent, destroy up to one target nonartifact creature that player controls.\nII — For each opponent, you create a 2/2 colorless Robot Villain artifact creature token.\nIII — Artifact creatures you control gain deathtouch until end of turn. Put a +1/+1 counter on each of them.",
+      "score": 50.4,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 14.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
       "name": "Bitterthorn, Nissa's Animus",
       "cmc": 3.0,
       "mana_cost": "{3}",
@@ -2395,6 +3693,43 @@
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Defiling Daemogoth",
+      "cmc": 5.0,
+      "mana_cost": "{3}{B}{B}",
+      "type_line": "Creature — Demon",
+      "oracle_text": "Menace\nWhenever a creature you control deals combat damage to a player, you gain 1 life.\nAt the beginning of your end step, each opponent loses X life, where X is the amount of life you gained this turn.",
+      "score": 50.4,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 14.5,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
         "density_raw": 5.0,
         "saturation_penalty": 4.1,
         "saturated_archetypes": [
@@ -2604,42 +3939,6 @@
       "mana_cost": "{X}{2}{G}",
       "type_line": "Artifact — Equipment",
       "oracle_text": "When this Equipment enters, create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it and attach this Equipment to it.\nWhenever equipped creature attacks, double the number of +1/+1 counters on it.\nEquip {2}",
-      "score": 50.4,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 19.5,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Glaring Fleshraker",
-      "cmc": 3.0,
-      "mana_cost": "{2}{C}",
-      "type_line": "Creature — Eldrazi Drone",
-      "oracle_text": "Whenever you cast a colorless spell, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"\nWhenever another colorless creature you control enters, this creature deals 1 damage to each opponent.",
       "score": 50.4,
       "score_breakdown": {
         "density": 0.9,
@@ -2928,42 +4227,6 @@
       "mana_cost": "{2}{G}",
       "type_line": "Creature — Elf Warrior",
       "oracle_text": "Other Elves you control get +1/+1.\n{G}, {T}: Create a 1/1 green Elf Warrior creature token.",
-      "score": 50.4,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 19.5,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Marauding Blight-Priest",
-      "cmc": 3.0,
-      "mana_cost": "{2}{B}",
-      "type_line": "Creature — Vampire Cleric",
-      "oracle_text": "Whenever you gain life, each opponent loses 1 life.",
       "score": 50.4,
       "score_breakdown": {
         "density": 0.9,
@@ -3683,119 +4946,11 @@
       "edhrec_rate": null
     },
     {
-      "name": "Dina, Soul Steeper",
-      "cmc": 2.0,
-      "mana_cost": "{B}{G}",
-      "type_line": "Legendary Creature — Dryad Druid",
-      "oracle_text": "Whenever you gain life, each opponent loses 1 life.\n{1}, Sacrifice another creature: Dina gets +X/+0 until end of turn, where X is the sacrificed creature's power.",
-      "score": 49.7,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
       "name": "Dreadhorde Invasion",
       "cmc": 2.0,
       "mana_cost": "{1}{B}",
       "type_line": "Enchantment",
       "oracle_text": "At the beginning of your upkeep, you lose 1 life and amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)\nWhenever a Zombie token you control with power 6 or greater attacks, it gains lifelink until end of turn.",
-      "score": 49.7,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Marionette Apprentice",
-      "cmc": 2.0,
-      "mana_cost": "{1}{B}",
-      "type_line": "Creature — Human Artificer",
-      "oracle_text": "Fabricate 1 (When this creature enters, put a +1/+1 counter on it or create a 1/1 colorless Servo artifact creature token.)\nWhenever another creature or artifact you control is put into a graveyard from the battlefield, each opponent loses 1 life.",
-      "score": 49.7,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Melancholic Poet",
-      "cmc": 2.0,
-      "mana_cost": "{1}{B}",
-      "type_line": "Creature — Elf Bard",
-      "oracle_text": "Repartee — Whenever you cast an instant or sorcery spell that targets a creature, each opponent loses 1 life and you gain 1 life.",
       "score": 49.7,
       "score_breakdown": {
         "density": 1.8,
@@ -3935,42 +5090,6 @@
       "edhrec_rate": null
     },
     {
-      "name": "Sanguine Syphoner",
-      "cmc": 2.0,
-      "mana_cost": "{1}{B}",
-      "type_line": "Creature — Vampire Warlock",
-      "oracle_text": "Whenever this creature attacks, each opponent loses 1 life and you gain 1 life.",
-      "score": 49.7,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
       "name": "Savor",
       "cmc": 2.0,
       "mana_cost": "{1}{B}",
@@ -4004,78 +5123,6 @@
       "deck_role": "removal-spot",
       "strategy_line": "Aristocrats / Sacrifice",
       "mitigates_gap": "removal-spot",
-      "edhrec_rate": null
-    },
-    {
-      "name": "Send in the Pest",
-      "cmc": 2.0,
-      "mana_cost": "{1}{B}",
-      "type_line": "Sorcery",
-      "oracle_text": "Each opponent discards a card. You create a 1/1 black and green Pest creature token with \"Whenever this token attacks, you gain 1 life.\"",
-      "score": 49.7,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Starscape Cleric",
-      "cmc": 2.0,
-      "mana_cost": "{1}{B}",
-      "type_line": "Creature — Bat Cleric",
-      "oracle_text": "Offspring {2}{B} (You may pay an additional {2}{B} as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it.)\nFlying\nThis creature can't block.\nWhenever you gain life, each opponent loses 1 life.",
-      "score": 49.7,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
       "edhrec_rate": null
     },
     {
@@ -4115,84 +5162,6 @@
       "edhrec_rate": null
     },
     {
-      "name": "Witherbloom Apprentice",
-      "cmc": 2.0,
-      "mana_cost": "{B}{G}",
-      "type_line": "Creature — Human Druid",
-      "oracle_text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, each opponent loses 1 life and you gain 1 life.",
-      "score": 49.7,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Grave Venerations",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Enchantment",
-      "oracle_text": "When this enchantment enters, you become the monarch.\nAt the beginning of your end step, if you're the monarch, return up to one target creature card from your graveyard to your hand.\nWhenever a creature you control dies, each opponent loses 1 life and you gain 1 life.",
-      "score": 49.4,
-      "score_breakdown": {
-        "density": 2.4,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 9.5,
-        "saturation_penalty": 7.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          },
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice",
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
       "name": "Moonstone, Harsh Mistress",
       "cmc": 4.0,
       "mana_cost": "{3}{B}",
@@ -4207,81 +5176,6 @@
         "decklist_demoted": false,
         "density_raw": 6.2,
         "saturation_penalty": 3.9,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Postmortem Professor",
-      "cmc": 2.0,
-      "mana_cost": "{1}{B}",
-      "type_line": "Creature — Zombie Warlock",
-      "oracle_text": "This creature can't block.\nWhenever this creature attacks, each opponent loses 1 life and you gain 1 life.\n{1}{B}, Exile an instant or sorcery card from your graveyard: Return this card from your graveyard to the battlefield.",
-      "score": 49.3,
-      "score_breakdown": {
-        "density": 1.4,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.7,
-        "saturation_penalty": 4.4,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          },
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice",
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Bandit's Talent",
-      "cmc": 2.0,
-      "mana_cost": "{1}{B}",
-      "type_line": "Enchantment — Class",
-      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, each opponent discards two cards unless they discard a nonland card.\n{B}: Level 2\nAt the beginning of each opponent's upkeep, if that player has one or fewer cards in hand, they lose 2 life.\n{3}{B}: Level 3\nAt the beginning of your draw step, draw an additional card for each opponent who has one or fewer cards in hand.",
-      "score": 49.1,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
         "saturated_archetypes": [
           {
             "archetype": "Graveyard Reanimator",
@@ -5075,6 +5969,43 @@
       "edhrec_rate": null
     },
     {
+      "name": "Big Apple, 3 a.m.",
+      "cmc": 0.0,
+      "mana_cost": "",
+      "type_line": "Land",
+      "oracle_text": "This land enters tapped. As it enters, choose a color.\n{T}: Add one mana of the chosen color.\n{5}, {T}: Create a 1/1 black Rat creature token for each opponent you have.",
+      "score": 48.8,
+      "score_breakdown": {
+        "density": 0.9,
+        "cmc_fit": 13.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 5.0,
+        "saturation_penalty": 4.1,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": "land",
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
       "name": "Biotransference",
       "cmc": 4.0,
       "mana_cost": "{2}{B}{B}",
@@ -5147,42 +6078,6 @@
       "edhrec_rate": null
     },
     {
-      "name": "Dimension X Pizzasaur",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Artifact Creature — Food Alien Mutant",
-      "oracle_text": "When this creature enters, put two +1/+1 counters on target creature. When you do, destroy up to one target creature with mana value less than or equal to the number of counters among permanents you control.\n{2}, {T}, Sacrifice this creature: You gain 3 life and each opponent loses 3 life.",
-      "score": 48.8,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
       "name": "Dwynen's Elite",
       "cmc": 2.0,
       "mana_cost": "{1}{G}",
@@ -5233,55 +6128,6 @@
         "decklist_demoted": false,
         "density_raw": 5.0,
         "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Eccentric Pestfinder // Turn Stones",
-      "cmc": 4.0,
-      "mana_cost": "{2}{B}{G} // {B}{G}",
-      "type_line": "Creature — Troll Druid // Sorcery",
-      "card_faces": [
-        {
-          "name": "Eccentric Pestfinder",
-          "mana_cost": "{2}{B}{G}",
-          "type_line": "Creature — Troll Druid",
-          "oracle_text": "Trample\nAt the beginning of each end step, if you gained life this turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)"
-        },
-        {
-          "name": "Turn Stones",
-          "mana_cost": "{B}{G}",
-          "type_line": "Sorcery",
-          "oracle_text": "For each opponent, you create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\""
-        }
-      ],
-      "score": 48.8,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
         "saturated_archetypes": [
           {
             "archetype": "Aristocrats / Sacrifice",
@@ -5592,42 +6438,6 @@
       "edhrec_rate": null
     },
     {
-      "name": "Lathril, Blade of the Elves",
-      "cmc": 4.0,
-      "mana_cost": "{2}{B}{G}",
-      "type_line": "Legendary Creature — Elf Noble",
-      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nWhenever Lathril deals combat damage to a player, create that many 1/1 green Elf Warrior creature tokens.\n{T}, Tap ten untapped Elves you control: Each opponent loses 10 life and you gain 10 life.",
-      "score": 48.8,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
       "name": "Lattice Library",
       "cmc": 2.0,
       "mana_cost": "{X}{G}{G}",
@@ -5664,31 +6474,19 @@
       "edhrec_rate": null
     },
     {
-      "name": "Leech Collector // Bloodletting",
-      "cmc": 2.0,
-      "mana_cost": "{1}{B} // {B}",
-      "type_line": "Creature — Human Warlock // Sorcery",
-      "card_faces": [
-        {
-          "name": "Leech Collector",
-          "mana_cost": "{1}{B}",
-          "type_line": "Creature — Human Warlock",
-          "oracle_text": "Whenever you gain life for the first time each turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)"
-        },
-        {
-          "name": "Bloodletting",
-          "mana_cost": "{B}",
-          "type_line": "Sorcery",
-          "oracle_text": "Each opponent loses 2 life."
-        }
-      ],
+      "name": "Leechridden Swamp",
+      "cmc": 0.0,
+      "mana_cost": "",
+      "type_line": "Land — Swamp",
+      "oracle_text": "({T}: Add {B}.)\nThis land enters tapped.\n{B}, {T}: Each opponent loses 1 life. Activate only if you control two or more black permanents.",
       "score": 48.8,
       "score_breakdown": {
         "density": 0.9,
-        "cmc_fit": 18.0,
+        "cmc_fit": 13.0,
         "owned": 15.0,
         "bracket_fit": 15.0,
         "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
         "density_raw": 5.0,
         "saturation_penalty": 4.1,
         "saturated_archetypes": [
@@ -5707,7 +6505,7 @@
       ],
       "owned": true,
       "game_changer": false,
-      "deck_role": null,
+      "deck_role": "land",
       "strategy_line": "Aristocrats / Sacrifice",
       "mitigates_gap": null,
       "edhrec_rate": null
@@ -5929,42 +6727,6 @@
       "edhrec_rate": null
     },
     {
-      "name": "Oath of the Grey Host",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Enchantment — Saga",
-      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — You and target opponent each create a Food token.\nII — Each opponent loses 3 life. Create a Treasure token.\nIII — Create three tapped 1/1 white Spirit creature tokens with flying.",
-      "score": 48.8,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
       "name": "Orcish Medicine",
       "cmc": 2.0,
       "mana_cost": "{1}{B}",
@@ -6051,78 +6813,6 @@
         "decklist_demoted": false,
         "density_raw": 5.0,
         "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Sinister Monolith",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Artifact",
-      "oracle_text": "At the beginning of combat on your turn, each opponent loses 1 life and you gain 1 life.\n{T}, Pay 2 life, Sacrifice this artifact: Draw two cards. Activate only as a sorcery.",
-      "score": 48.8,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": "card-draw",
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Soul-Shackled Zombie",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Creature — Zombie",
-      "oracle_text": "When this creature enters, exile up to two target cards from a single graveyard. If at least one creature card was exiled this way, each opponent loses 2 life and you gain 2 life.",
-      "score": 48.8,
-      "score_breakdown": {
-        "density": 1.8,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 10.0,
-        "saturation_penalty": 8.2,
         "saturated_archetypes": [
           {
             "archetype": "Aristocrats / Sacrifice",
@@ -6253,42 +6943,6 @@
       "edhrec_rate": null
     },
     {
-      "name": "Torment of Hailfire",
-      "cmc": 2.0,
-      "mana_cost": "{X}{B}{B}",
-      "type_line": "Sorcery",
-      "oracle_text": "Repeat the following process X times. Each opponent loses 3 life unless that player sacrifices a nonland permanent of their choice or discards a card.",
-      "score": 48.8,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 18.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
       "name": "Vampire Gourmand",
       "cmc": 2.0,
       "mana_cost": "{1}{B}",
@@ -6320,6 +6974,43 @@
       "owned": true,
       "game_changer": false,
       "deck_role": "card-draw",
+      "strategy_line": "Aristocrats / Sacrifice",
+      "mitigates_gap": null,
+      "edhrec_rate": null
+    },
+    {
+      "name": "Voracious Fell Beast",
+      "cmc": 6.0,
+      "mana_cost": "{4}{B}{B}",
+      "type_line": "Creature — Drake Beast",
+      "oracle_text": "Flying\nWhen this creature enters, each opponent sacrifices a creature of their choice. Create a Food token for each creature sacrificed this way. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+      "score": 48.8,
+      "score_breakdown": {
+        "density": 1.8,
+        "cmc_fit": 12.0,
+        "owned": 15.0,
+        "bracket_fit": 15.0,
+        "decklist_demoted": false,
+        "multiplayer_scaled": 5.0,
+        "density_raw": 10.0,
+        "saturation_penalty": 8.2,
+        "saturated_archetypes": [
+          {
+            "archetype": "Aristocrats / Sacrifice",
+            "deck_matches": 31,
+            "multiplier": 0.35
+          }
+        ],
+        "archetype_position_weights": {
+          "Aristocrats / Sacrifice": 0.5
+        }
+      },
+      "matched_archetypes": [
+        "Aristocrats / Sacrifice"
+      ],
+      "owned": true,
+      "game_changer": false,
+      "deck_role": null,
       "strategy_line": "Aristocrats / Sacrifice",
       "mitigates_gap": null,
       "edhrec_rate": null
@@ -6480,48 +7171,6 @@
       "mana_cost": "{3}{B}",
       "type_line": "Creature — Vampire Noble",
       "oracle_text": "Flying\nWhenever this creature or another creature dies, target player loses 1 life and you gain 1 life.",
-      "score": 48.4,
-      "score_breakdown": {
-        "density": 1.4,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.7,
-        "saturation_penalty": 4.4,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          },
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice",
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Hazel's Nocturne",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Instant",
-      "oracle_text": "Return up to two target creature cards from your graveyard to your hand. Each opponent loses 2 life and you gain 2 life.",
       "score": 48.4,
       "score_breakdown": {
         "density": 1.4,
@@ -6833,606 +7482,6 @@
       "deck_role": "removal-spot",
       "strategy_line": "Graveyard Reanimator",
       "mitigates_gap": "removal-spot",
-      "edhrec_rate": null
-    },
-    {
-      "name": "Lokhust Heavy Destroyer",
-      "cmc": 4.0,
-      "mana_cost": "{1}{B}{B}{B}",
-      "type_line": "Artifact Creature — Necron",
-      "oracle_text": "Flying\nEnmitic Exterminator — When this creature enters, each player sacrifices a creature of their choice.\nUnearth {5}{B}{B}{B} ({5}{B}{B}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
-      "score": 48.2,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": "removal-board",
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Mindless Automaton",
-      "cmc": 4.0,
-      "mana_cost": "{4}",
-      "type_line": "Artifact Creature — Construct",
-      "oracle_text": "This creature enters with two +1/+1 counters on it.\n{1}, Discard a card: Put a +1/+1 counter on this creature.\nRemove two +1/+1 counters from this creature: Draw a card.",
-      "score": 48.2,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": "card-draw",
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Sanguine Indulgence",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Sorcery",
-      "oracle_text": "This spell costs {3} less to cast if you've gained 3 or more life this turn.\nReturn up to two target creature cards from your graveyard to your hand.",
-      "score": 48.2,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Steward of the Harvest",
-      "cmc": 4.0,
-      "mana_cost": "{3}{G}",
-      "type_line": "Creature — Human Druid",
-      "oracle_text": "When this creature enters, exile up to three target land cards from your graveyard.\nCreatures you control have all activated abilities of all land cards exiled with this creature.",
-      "score": 48.2,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Timeless Witness",
-      "cmc": 4.0,
-      "mana_cost": "{2}{G}{G}",
-      "type_line": "Creature — Human Shaman",
-      "oracle_text": "When this creature enters, return target card from your graveyard to your hand.\nEternalize {5}{G}{G} ({5}{G}{G}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Human Shaman with no mana cost. Eternalize only as a sorcery.)",
-      "score": 48.2,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Tragedy Feaster",
-      "cmc": 4.0,
-      "mana_cost": "{2}{B}{B}",
-      "type_line": "Creature — Demon",
-      "oracle_text": "Trample\nWard—Discard a card.\nInfusion — At the beginning of your end step, sacrifice a permanent unless you gained life this turn.",
-      "score": 48.2,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Treetop Sentries",
-      "cmc": 4.0,
-      "mana_cost": "{3}{G}",
-      "type_line": "Creature — Squirrel Archer",
-      "oracle_text": "Reach\nWhen this creature enters, you may forage. If you do, draw a card. (To forage, exile three cards from your graveyard or sacrifice a Food.)",
-      "score": 48.2,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": "card-draw",
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Zombify",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Sorcery",
-      "oracle_text": "Return target creature card from your graveyard to the battlefield.",
-      "score": 48.2,
-      "score_breakdown": {
-        "density": 1.1,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.1,
-        "saturation_penalty": 2.0,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          }
-        ]
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Thornplate Intimidator",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Creature — Rat Rogue",
-      "oracle_text": "Offspring {3} (You may pay an additional {3} as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it.)\nWhen this creature enters, target opponent loses 3 life unless they sacrifice a nonland permanent of their choice or discard a card.",
-      "score": 48.1,
-      "score_breakdown": {
-        "density": 1.0,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.8,
-        "saturation_penalty": 2.8,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          },
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator",
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Welcome the Dead",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Sorcery",
-      "oracle_text": "Draw two cards, then discard a card and you lose 2 life. Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.\nFlashback {5}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
-      "score": 48.1,
-      "score_breakdown": {
-        "density": 1.0,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 3.8,
-        "saturation_penalty": 2.8,
-        "saturated_archetypes": [
-          {
-            "archetype": "Graveyard Reanimator",
-            "deck_matches": 22,
-            "multiplier": 0.36
-          },
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Graveyard Reanimator",
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": "card-draw",
-      "strategy_line": "Graveyard Reanimator",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Aetherflux Reservoir",
-      "cmc": 4.0,
-      "mana_cost": "{4}",
-      "type_line": "Artifact",
-      "oracle_text": "Whenever you cast a spell, you gain 1 life for each spell you've cast this turn.\nPay 50 life: This artifact deals 50 damage to any target.",
-      "score": 47.9,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Canoptek Scarab Swarm",
-      "cmc": 4.0,
-      "mana_cost": "{4}",
-      "type_line": "Artifact Creature — Insect",
-      "oracle_text": "Flying\nFeeder Mandibles — When this creature enters, exile target player's graveyard. For each artifact or land card exiled this way, create a 1/1 colorless Insect artifact creature token with flying.",
-      "score": 47.9,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Creakwood Liege",
-      "cmc": 4.0,
-      "mana_cost": "{1}{B/G}{B/G}{B/G}",
-      "type_line": "Creature — Horror",
-      "oracle_text": "Other black creatures you control get +1/+1.\nOther green creatures you control get +1/+1.\nAt the beginning of your upkeep, you may create a 1/1 black and green Worm creature token.",
-      "score": 47.9,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Crypt Ghast",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Creature — Spirit",
-      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\nWhenever you tap a Swamp for mana, add an additional {B}.",
-      "score": 47.9,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Dwynen, Gilt-Leaf Daen",
-      "cmc": 4.0,
-      "mana_cost": "{2}{G}{G}",
-      "type_line": "Legendary Creature — Elf Warrior",
-      "oracle_text": "Reach (This creature can block creatures with flying.)\nOther Elf creatures you control get +1/+1.\nWhenever Dwynen attacks, you gain 1 life for each attacking Elf you control.",
-      "score": 47.9,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Endless Ranks of HYDRA",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Sorcery",
-      "oracle_text": "For each opponent, you create a 2/1 black Villain creature token with menace.\nWhenever your commander enters or attacks, you may pay {1}{B}. If you do, return this card from your graveyard to your hand.",
-      "score": 47.9,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
-      "edhrec_rate": null
-    },
-    {
-      "name": "Gothmog, Morgul Lieutenant",
-      "cmc": 4.0,
-      "mana_cost": "{3}{B}",
-      "type_line": "Legendary Creature — Human Soldier",
-      "oracle_text": "When Gothmog enters, amass Orcs 1. (Put a +1/+1 counter on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)\nCreature tokens you control have deathtouch.",
-      "score": 47.9,
-      "score_breakdown": {
-        "density": 0.9,
-        "cmc_fit": 17.0,
-        "owned": 15.0,
-        "bracket_fit": 15.0,
-        "decklist_demoted": false,
-        "density_raw": 5.0,
-        "saturation_penalty": 4.1,
-        "saturated_archetypes": [
-          {
-            "archetype": "Aristocrats / Sacrifice",
-            "deck_matches": 31,
-            "multiplier": 0.35
-          }
-        ],
-        "archetype_position_weights": {
-          "Aristocrats / Sacrifice": 0.5
-        }
-      },
-      "matched_archetypes": [
-        "Aristocrats / Sacrifice"
-      ],
-      "owned": true,
-      "game_changer": false,
-      "deck_role": null,
-      "strategy_line": "Aristocrats / Sacrifice",
-      "mitigates_gap": null,
       "edhrec_rate": null
     }
   ]

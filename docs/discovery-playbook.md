@@ -59,6 +59,17 @@ Set it only when the deck has an explicit opponent-only preference. Example: Ete
 
 When enabled, the generator applies a multiplicative anti-synergy penalty to broad symmetric templates such as `each player`, `each player's upkeep`, `each opponent and you`, `whenever a player`, `players can't gain life`, `whenever a land enters the battlefield`, `each player loses N life`, and `each player sacrifices`. Asymmetric templates such as `each opponent`, `target opponent`, and `each other player` are unaffected.
 
+### Multiplayer-scaling boost (DEC-477, from DEC-474 lesson L1)
+
+Separate from `asymmetric_only` and applied to **every** deck: the scorer adds a flat **+5** to any card whose oracle text matches an opponent-scaled trigger template. Under the vanilla 4-player model these triggers fire up to 3× per turn cycle, so they read better than the 1v1 intuition suggests. The templates:
+
+- `each opponent` (including `each opponent's upkeep/turn`; the symmetric `each opponent and you` is excluded) and `each of your opponents`
+- `whenever an opponent ...` (opponent-action triggers)
+- `whenever [a permanent] an opponent controls / your opponents control / under an opponent's control / you don't control ...` — opponent-permanent event triggers whose trigger subject is opponent-owned (the Authority of the Consuls class)
+- `during an opponent's turn` (opponent-turn-gated triggers)
+
+The boost is a **tiebreaker by design**: at +5 it sits below the owned boost (+15) and the EDHREC boost (max +20), and at 1/8 of the density ceiling (40). It reorders near-ties toward multiplayer-scaled options but cannot outrank archetype fit. On `asymmetric_only` decks the symmetric-template penalty composes over it, so symmetric traps stay demoted. Emitted as `score_breakdown.multiplayer_scaled`.
+
 ## Per-archetype entry structure (in JSON)
 
 ```jsonc
@@ -86,8 +97,9 @@ Each candidate card is scored 0–100 by the generator. Components:
 4. **Game Changer × bracket (0–15):** Game Changers score full at B5, partial at B4, zero at B3.
 5. **EDHREC inclusion (0–20, DEC-410):** `min(20, rate / 50 × 20)` where `rate` is the card's inclusion percentage on the commander's EDHREC page. A 40% card gets +16 — deliberately above the owned +15 so a high-inclusion unowned card outranks marginal owned filler (the Buster Sword failure mode from DEC-402). Rates ≥ 50% cap at +20, half the density ceiling, so archetype fit stays dominant. The boost is additive inside the raw total: it only applies to cards that already pass archetype gating, and anti-synergy penalties/multipliers and role-redundancy demotion compose over it. Emitted as `score_breakdown.edhrec` + `score_breakdown.edhrec_rate`; every candidate entry carries `edhrec_rate` (null when unrecorded).
    **Provisioning**: `scripts/fetch_edhrec_rates.py` (invoked by `refresh_card_pool.py`, non-fatal offline) fetches the commander's EDHREC JSON page into `priv_data/edhrec/{deck-id}.json` (`rates`: front-face card name → 0–100, `fetched_at` freshness stamp, 7-day cache TTL, `slug` override key honored). This automation runs under an explicit board risk-acceptance override of the DEC-312 ToS bar (see Out of scope) — keep it low-volume: one request per commander per TTL window; do not widen without a fresh board decision. Manual transcription during the DEC-402 closing diff remains valid for adding or correcting entries. A missing file is normal: the generator emits `edhrec_rates: null` in the candidates metadata and scores are unchanged.
-6. **Decklist demotion:** cards already in the deck cap at 5, so they still rank but yield to alternatives.
-7. **Quality-aware role redundancy:** for each candidate, the scorer looks up the in-deck cards that share the candidate's `primary_role` and computes their median candidate-pool score (scored as fresh candidates, ignoring the decklist cap). If the role bucket is saturated (≥ 8 in-deck cards in that role) **and** the candidate scores below the bucket median, the candidate's total is multiplied by `0.65`. The intent is to stop strictly-worse alternatives bubbling up under tuned decks: a colorless ramp deck running Mana Crypt + Thran Dynamo should not score Dreamstone Hedron above genuine upgrades just because the ramp role is open. Surfaced as `score_breakdown.redundancy_below_roster_median` with role, bucket count, bucket median, and the applied multiplier. The deck-level `role_pool` field on the candidates JSON exposes the per-role count and median used.
+6. **Multiplayer-scaling boost (+5, DEC-477):** deck-independent tiebreaker for opponent-scaled trigger templates — see [Deck-level modifiers](#deck-level-modifiers) for the template list and rationale. Emitted as `score_breakdown.multiplayer_scaled` when applied. It is additive inside the raw total, so anti-synergy penalties/multipliers and role-redundancy demotion compose over it.
+7. **Decklist demotion:** cards already in the deck cap at 5, so they still rank but yield to alternatives.
+8. **Quality-aware role redundancy:** for each candidate, the scorer looks up the in-deck cards that share the candidate's `primary_role` and computes their median candidate-pool score (scored as fresh candidates, ignoring the decklist cap). If the role bucket is saturated (≥ 8 in-deck cards in that role) **and** the candidate scores below the bucket median, the candidate's total is multiplied by `0.65`. The intent is to stop strictly-worse alternatives bubbling up under tuned decks: a colorless ramp deck running Mana Crypt + Thran Dynamo should not score Dreamstone Hedron above genuine upgrades just because the ramp role is open. Surfaced as `score_breakdown.redundancy_below_roster_median` with role, bucket count, bucket median, and the applied multiplier. The deck-level `role_pool` field on the candidates JSON exposes the per-role count and median used.
 
 Anti-patterns disqualify outright (return score 0).
 

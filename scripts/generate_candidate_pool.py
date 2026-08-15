@@ -33,7 +33,7 @@ MIRROR_META = PROJECT_ROOT / "priv_data" / "scryfall-oracle.meta.json"
 OWNED_FILE = PROJECT_ROOT / "priv_data" / "owned_formatted.csv"
 EDHREC_RATES_DIR = PROJECT_ROOT / "priv_data" / "edhrec"
 
-METHODOLOGY_VERSION = "candidate-pool-v5"
+METHODOLOGY_VERSION = "candidate-pool-v6"
 DEFAULT_LIMIT = 200
 SATURATION_THRESHOLD = 8
 SATURATION_FLOOR = 0.35
@@ -46,6 +46,9 @@ ROLE_REDUNDANCY_FLOOR = 0.65
 # 50%+ -> 20. Half the density ceiling so archetype fit stays dominant.
 EDHREC_MAX = 20.0
 EDHREC_RATE_SATURATION = 50.0
+# DEC-477 (DEC-474 L1): tiebreaker for opponent-scaled triggers — must stay below
+# owned (15) and EDHREC (20), and at 1/8 of the density ceiling (40).
+MULTIPLAYER_SCALED_BOOST = 5.0
 
 TOKEN_ENTRY_MISMATCH = re.compile(
     r"tokens? you control (?:that )?entered this turn|whenever [^.]*tokens? enters?",
@@ -72,6 +75,21 @@ SYMMETRIC_LAND_ENTRY = re.compile(
 )
 OPPONENT_LAND_ENTRY = re.compile(
     r"\bwhenever (?:a|one or more) lands? enters? the battlefield under an opponent's control\b",
+    re.IGNORECASE,
+)
+# DEC-477: opponent-scaled trigger templates. Per-opponent effects and opponent-turn
+# triggers ("each opponent", incl. "each opponent's upkeep/turn"), opponent-action
+# triggers ("whenever an opponent"), and opponent-permanent event triggers whose
+# trigger subject is opponent-owned (Authority of the Consuls class). The comma-free
+# {0,60} window keeps the opponent scope inside the trigger condition, so
+# "whenever this creature attacks, ... an opponent controls" does not match.
+MULTIPLAYER_SCALED_TRIGGER = re.compile(
+    r"\beach opponent\b(?! and you\b)"
+    r"|\beach of your opponents\b"
+    r"|\bwhenever an opponent\b"
+    r"|\bwhenever [^.,\n;]{0,60}?(?:an opponent controls|your opponents control"
+    r"|under an opponent's control|you don't control)\b"
+    r"|\bduring an opponent's turn\b",
     re.IGNORECASE,
 )
 
@@ -450,8 +468,16 @@ def score_card(
         else 0.0
     )
 
-    # 6. Already-in-decklist demotion: cap total at 5
-    raw_total = density_score + cmc_score + owned_score + gc_score + edhrec_score
+    # 6. Multiplayer-scaling boost (DEC-477): deck-independent tiebreaker for
+    # triggers that scale with opponent count in 4-player (fire up to 3x per
+    # turn cycle vs the 1v1 read). Additive like EDHREC, so anti-synergy
+    # penalties/multipliers and role-redundancy demotion compose over it.
+    multiplayer_score = (
+        MULTIPLAYER_SCALED_BOOST if MULTIPLAYER_SCALED_TRIGGER.search(oracle) else 0.0
+    )
+
+    # 7. Already-in-decklist demotion: cap total at 5
+    raw_total = density_score + cmc_score + owned_score + gc_score + edhrec_score + multiplayer_score
     anti_synergy = detect_anti_synergy(card, context) if context else []
     flat_anti_synergy_penalty = sum(flag.get("penalty", 0.0) for flag in anti_synergy)
     anti_synergy_multiplier = 1.0
@@ -470,6 +496,8 @@ def score_card(
     if edhrec_rate is not None:
         breakdown["edhrec"] = round(edhrec_score, 1)
         breakdown["edhrec_rate"] = edhrec_rate
+    if multiplayer_score > 0:
+        breakdown["multiplayer_scaled"] = multiplayer_score
     if saturation_penalty > 0:
         breakdown["density_raw"] = round(raw_density_score, 1)
         breakdown["saturation_penalty"] = round(saturation_penalty, 1)
@@ -738,6 +766,9 @@ def generate_for_deck(
         "role_redundancy": {
             "threshold": ROLE_SATURATION_THRESHOLD,
             "floor": ROLE_REDUNDANCY_FLOOR,
+        },
+        "multiplayer_scaling": {
+            "boost": MULTIPLAYER_SCALED_BOOST,
         },
         "edhrec_rates": (
             {**edhrec_meta, "max_boost": EDHREC_MAX, "rate_saturation": EDHREC_RATE_SATURATION}
