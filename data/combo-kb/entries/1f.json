@@ -310,6 +310,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -329,7 +330,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Hunter's Ambush",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f085891-0d99-46a6-8f09-b84f44d701f8",
     "provenance_summary": {},
@@ -1418,6 +1419,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1440,7 +1442,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Deepcavern Imp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f295f2f-969a-4b82-98d1-7fe307ec83a7",
     "provenance_summary": {},
@@ -1530,6 +1532,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -1545,17 +1548,42 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}{U}{B}",
     "name": "Obscura Confluence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f2fb1dd-82e4-45fa-b2a9-7df7b8a4d533",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 3
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card, then discard a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "returns a creature card from their graveyard to their hand",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on that creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1812,6 +1840,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -1825,17 +1854,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Toxin Analysis",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f3b0b15-2c38-4aaa-b527-afbb540a6715",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Create a Clue token.",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1953,6 +1993,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -1975,7 +2016,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Grand Master of Flowers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f3dbc53-4075-40b8-b70d-ce74d3ff5f6d",
     "provenance_summary": {},
@@ -2433,6 +2474,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2446,17 +2488,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Soothing Balm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f493e26-a556-4ca0-bb44-5408800ccf82",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "Target player gains 5 life.",
+        "feature": "lifegain",
+        "magnitude": 5,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -2761,6 +2814,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -2774,23 +2828,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Opportunity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f544a9f-c238-4858-be19-d6cd7d023dcc",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Target player draws four cards.",
+        "feature": "draw",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2816,7 +2882,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Yixlid Jailer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f55303e-1369-4e42-9ed4-36609887c7c1",
     "provenance_summary": {
@@ -3326,6 +3392,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3348,7 +3415,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Pollen Lullaby",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f64d70d-ea38-4419-be91-8b68aab3401e",
     "provenance_summary": {},
@@ -3596,6 +3663,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3615,7 +3683,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Ignite the Beacon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f74d046-e695-4ad9-a27c-8ff1f30d4c23",
     "provenance_summary": {},
@@ -4120,6 +4188,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4139,7 +4208,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Leonin Lightbringer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f874f7f-b959-4de5-a5db-e65a90ac2f9d",
     "provenance_summary": {},
@@ -4309,6 +4378,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4328,7 +4398,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Valorous Stance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f938353-9081-4dc1-b8e7-d18ece038bd4",
     "provenance_summary": {},
@@ -4553,6 +4623,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -4575,7 +4646,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Harsh Judgment",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fa272bf-8759-4750-b40b-8e2f6972d570",
     "provenance_summary": {},
@@ -4618,6 +4689,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4646,7 +4718,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Oak Street Innkeeper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fa94925-04e5-4073-91af-1857dbc09991",
     "provenance_summary": {
@@ -4779,6 +4851,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4798,7 +4871,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Silumgar's Scorn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fb3b5a3-ca4b-4cbf-ab58-71c960f3efd0",
     "provenance_summary": {},
@@ -4892,6 +4965,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -4911,7 +4985,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Wardscale Dragon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fb53b6a-b456-4252-9614-12ac72968113",
     "provenance_summary": {},
@@ -4988,6 +5062,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5007,7 +5082,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Protective Bubble",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fba543c-bd22-4f7b-9ff4-0631af8ee814",
     "provenance_summary": {},
@@ -5018,6 +5093,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -5037,7 +5113,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Fell the Mighty",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fbb2a7c-8093-4729-b8fe-cf032d99470f",
     "provenance_summary": {},
@@ -5347,6 +5423,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -5366,7 +5443,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Break Open",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fcec3b2-47ba-4c56-9ce1-a4807e8ad262",
     "provenance_summary": {},
@@ -5472,6 +5549,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -5485,17 +5563,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Mirran Bardiche",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fd04d9e-cf89-49ba-a932-5d278f65bf77",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a 2/2 red Rebel creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []
@@ -5615,6 +5704,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "W"
@@ -5640,7 +5730,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}{W}",
     "name": "Windbrisk Raptor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1fd729f6-27ea-4b07-81f0-885f2c0c00eb",
     "provenance_summary": {
@@ -5905,6 +5995,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5927,7 +6018,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Dismal Failure",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1feeb881-ebe6-4afb-ba31-3d116d8ab7a1",
     "provenance_summary": {},

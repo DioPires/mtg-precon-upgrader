@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -23,7 +24,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Vengeance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d001145-5d14-43a9-bf3b-3ce5c20b2a46",
     "provenance_summary": {},
@@ -136,6 +137,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "B",
@@ -160,22 +162,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{B}{R}{R}{G}",
     "name": "Hellkite Overlord",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d05e441-84d4-482f-95a8-7842e776cad2",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Dragon",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -615,6 +627,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -631,17 +644,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Quag Vampires",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d28ed9a-cc4e-48d9-a1a6-7504fc6cc56d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "This creature enters with a +1/+1 counter on it for each time it was kicked.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Vampire Rogue",
     "wants": []
@@ -1331,6 +1355,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -1355,7 +1380,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Wall of Pine Needles",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d5bc31c-f4a1-4a59-b466-0347ddbbc7fb",
     "provenance_summary": {
@@ -1398,6 +1423,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1417,7 +1443,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "Viridian Betrayers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d5ebb4b-0248-4255-8e1a-bcba4d5eaf7f",
     "provenance_summary": {},
@@ -1603,6 +1629,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1632,7 +1659,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Memory Theft",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d60e2a7-2059-48cb-a6ab-36ba25b80b3a",
     "provenance_summary": {
@@ -1791,6 +1818,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -1804,17 +1832,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Uncharted Voyage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d6796ce-9316-430a-8126-8b0414cf181c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "Surveil 1.",
+        "feature": "self_mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1980,6 +2019,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2005,7 +2045,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Vedalken Infiltrator",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d6aa6ab-7cfc-463f-a8ba-007058933ebf",
     "provenance_summary": {
@@ -2084,6 +2124,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2103,7 +2144,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Standard Bearer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d6e9716-8c3c-443d-afd8-68d0d6c469a5",
     "provenance_summary": {},
@@ -2618,6 +2659,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -2638,7 +2680,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{U}",
     "name": "Temporal Spring",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d7a4e9c-b3c9-421e-b5f4-82d51d7d5125",
     "provenance_summary": {},
@@ -2848,6 +2890,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -2875,7 +2918,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Viashino Sandswimmer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d82f01a-29be-4756-8745-e2c04bf77c61",
     "provenance_summary": {
@@ -3272,6 +3315,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3294,7 +3338,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Mind Rake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d8e0d40-ab2c-46e2-80c2-69dfdd47aefc",
     "provenance_summary": {},
@@ -3305,6 +3349,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -3325,7 +3370,7 @@
     "is_dfc": false,
     "mana_cost": "{R}{G}",
     "name": "Colossal Might",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1d8e39c9-e04d-4328-af66-db6e1241ac06",
     "provenance_summary": {},
@@ -4535,6 +4580,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4554,7 +4600,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Undertow",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1dc51112-ee5d-492a-9c79-80ebcad60bc8",
     "provenance_summary": {},
@@ -4696,6 +4742,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4716,7 +4763,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Winter Orb",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1dcbd583-3388-4b34-a7cd-131648aa6abd",
     "provenance_summary": {},
@@ -4727,6 +4774,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -4761,7 +4809,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Sandsower",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1dce1f39-eacb-4d29-899b-55569284c7ed",
     "provenance_summary": {
@@ -4840,6 +4888,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -4859,7 +4908,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Defend the Hearth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1dd64972-5713-4c25-b7a5-a35a56886ef4",
     "provenance_summary": {},
@@ -4909,6 +4958,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -4923,7 +4973,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4934,13 +4985,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Earth Tremor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1dd7d11b-e3f3-4886-b412-0c085187869c",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target creature or planeswalker equal to the number of lands",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -4998,6 +5058,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -5024,7 +5085,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R/G}",
     "name": "Earth Rumble Wrestlers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1de17747-27e8-40bb-b6f7-6d5402d4705c",
     "provenance_summary": {
@@ -5322,6 +5383,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -5347,7 +5409,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Nim Shrieker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1dff7c82-e49f-45e8-8f66-d5801f420fa6",
     "provenance_summary": {

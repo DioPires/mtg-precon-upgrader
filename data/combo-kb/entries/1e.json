@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -20,7 +21,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Scourge of Geier Reach",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e02f371-5dce-415a-8563-1f93c35401d5",
     "provenance_summary": {},
@@ -893,6 +894,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -917,7 +919,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Whip Sergeant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e25c9bd-2a6a-4856-80e6-775847a2c89f",
     "provenance_summary": {
@@ -1153,6 +1155,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1172,7 +1175,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Aether Burst",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e33f39b-a61a-4a09-a541-16cc1bd53d02",
     "provenance_summary": {},
@@ -1670,6 +1673,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -1687,7 +1691,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1698,13 +1703,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Break Ties",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e44bb4e-aeea-4f43-9cbd-4c24a9b6b022",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter on target creature.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1816,6 +1830,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -1834,22 +1849,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Lightning Berserker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e474772-3fe4-46be-8c5f-6e477b9fd74e",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Human Berserker",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2064,7 +2089,16 @@
     ]
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Artifact creatures you control have afflict 3.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2076,6 +2110,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -2088,11 +2123,12 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Cyberman Patrol",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e51fab7-3ca5-4fbb-a1e9-b39c842895e8",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -2254,6 +2290,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2275,19 +2312,29 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Sanctum Spirit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e640846-8f50-4a94-b7aa-f228124290d3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "Lifelink",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit",
     "wants": []
@@ -2612,6 +2659,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -2625,23 +2673,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Blessings of Nature",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e77cf90-ac51-4ac7-b123-be04aabe1688",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Distribute four +1/+1 counters among any number of target creatures.",
+        "feature": "counter_add",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -2661,7 +2721,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Dokuchi Shadow-Walker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e79b7bf-8a2d-4585-81d0-755dce78a4ea",
     "provenance_summary": {},
@@ -2714,6 +2774,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2730,23 +2791,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Mire's Malice",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e7b18a3-43eb-4491-bb19-99f261a94719",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "also put three +1/+1 counters on target land you control",
+        "feature": "counter_add",
+        "magnitude": 3,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -2775,7 +2848,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Vow of Duty",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e7bddbd-e448-4aea-9d18-b44bd45837c5",
     "provenance_summary": {
@@ -2917,6 +2990,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2942,7 +3016,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Dragon Grip",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e83a750-bf86-468e-8342-2c4eb7700dfd",
     "provenance_summary": {
@@ -3006,6 +3080,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3019,17 +3094,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Murmurs from Beyond",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e8be8b4-f7be-49cb-b32e-d92015dea7a2",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "the rest into your hand",
+        "feature": "draw",
+        "magnitude": 2,
+        "provenance": "llm"
+      },
+      {
+        "economy": "mill",
+        "evidence": "Put that card into your graveyard",
+        "feature": "self_mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant — Arcane",
     "wants": []
@@ -3704,6 +3797,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3723,7 +3817,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Skyhunter Cub",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1e9ebdf3-306a-48e1-8096-6a1d289e108c",
     "provenance_summary": {},
@@ -4014,6 +4108,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4036,7 +4131,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Cerebral Confiscation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1ea71ea2-65ca-4907-b857-dbd1ba8efacd",
     "provenance_summary": {},
@@ -4315,6 +4410,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4347,7 +4443,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Ultimate Magic: Holy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1eae48aa-f01d-4398-a68e-3b5af0542ab1",
     "provenance_summary": {
@@ -4543,6 +4639,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -4567,7 +4664,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Phyrexian Monitor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1eb6c28d-ebac-4016-ad07-c90081ee4983",
     "provenance_summary": {
@@ -5115,6 +5212,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5139,7 +5237,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Prakhata Pillar-Bug",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1ec95969-4a6f-49f3-af23-1680276e7da2",
     "provenance_summary": {
@@ -5592,6 +5690,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -5617,7 +5716,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Piper's Melody",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1ed80dd0-0980-4830-aad2-5b78ca373098",
     "provenance_summary": {
