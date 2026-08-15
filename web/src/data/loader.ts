@@ -151,7 +151,7 @@ import type { DeckSynergyCandidates } from './synergy';
 // pairs/triples/4-cycles). Bump invalidates the persisted deck envelope so
 // returning users pick up the new member. (The 3.3 MB feature index used by
 // paste mode bypasses this localStorage cache entirely — see data/synergy.ts.)
-const STORAGE_PREFIX = 'gv1-deck-data-v110:';
+const STORAGE_PREFIX = 'gv1-deck-data-v111:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
