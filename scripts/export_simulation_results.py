@@ -44,6 +44,7 @@ import mana_simulation_stampede_acres as sim_stampede_acres
 import mana_simulation_tidal_legion as sim_tidal_legion
 import mana_simulation_armory_protocol as sim_armory_protocol
 import mana_simulation_shield_doctrine as sim_shield_doctrine
+import mana_simulation_gandalf_party_guest as sim_gandalf
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -388,6 +389,22 @@ KEY_COMBOS = {
                            "Altar yields {C}{C}{C}{C}, more than the recast — infinite "
                            "tokens and colorless mana (Spellbook 'included' 2034-2557-3209, "
                            "added DEC-379).",
+        }
+    ],
+    "gandalf-party-guest": [
+        {
+            # Fury Storm copies itself once per prior commander cast from the
+            # command zone — with zero casts it makes no copies, so the line is
+            # commander-gated. requiresCommander mirrors the pyre-and-panic
+            # precedent: it flags commander dependency (resilience component),
+            # it does not delay the assembly-turn measurement.
+            "name": "Fury Storm Magecraft",
+            "pieces": ["Fury Storm", "Storm-Kiln Artist"],
+            "requiresCommander": True,
+            "description": "After at least one Gandalf cast, Fury Storm copies "
+                           "itself per commander cast; each copy triggers "
+                           "Storm-Kiln Artist's magecraft for Treasure-positive "
+                           "storm turns.",
         }
     ],
     # DEC-370 note: exponential-growth was audited and deliberately has NO entry —
@@ -3426,6 +3443,19 @@ def export_boros(metadata: dict) -> dict:
     )
 
 
+def export_gandalf_party_guest(metadata: dict) -> dict:
+    """Export Arcane Convocation (Jeskai — Gandalf, Party Guest) simulation."""
+    return _export_colored(
+        sim_module=sim_gandalf,
+        deck_id="gandalf-party-guest",
+        deck_name="Arcane Convocation",
+        commander_name="Gandalf, Party Guest",
+        commander_cmc=4,
+        colors=["U", "R", "W"],
+        metadata=metadata,
+    )
+
+
 def export_zada(metadata: dict) -> dict:
     """Export Hedron Storm (mono-R — Zada, Hedron Grinder) simulation."""
     return _export_colored(
@@ -3621,6 +3651,7 @@ DECKS = [
     ("tidal-legion", "Tidal Legion", export_tidal_legion),
     ("armory-protocol", "Armory Protocol", export_armory_protocol),
     ("shield-doctrine", "Shield Doctrine", export_shield_doctrine),
+    ("gandalf-party-guest", "Arcane Convocation", export_gandalf_party_guest),
 ]
 
 

@@ -143,7 +143,7 @@ import type { SpellbookDeckCombos } from './spellbook';
 // included + near-miss combos). Bump invalidates the persisted deck envelope so
 // returning users pick up the new member. (The 13 MB matcher index used by
 // paste mode bypasses this localStorage cache entirely — see data/spellbook.ts.)
-const STORAGE_PREFIX = 'gv1-deck-data-v109:';
+const STORAGE_PREFIX = 'gv1-deck-data-v110:'; // v110: gandalf-party-guest (Arcane Convocation) added (DEC-472)
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
