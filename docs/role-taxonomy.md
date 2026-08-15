@@ -11,7 +11,7 @@ The 15 roles are deliberately coarse. They power deterministic deck metrics (man
 | `land` | Card with `Land` in `type_line`. Includes MDFCs (see `is_mdfc_land`). | Command Tower, Bojuka Bog, Shelldock Isle |
 | `ramp` | Adds mana, fetches lands, or accelerates land drops. | Sol Ring, Cultivate, Birds of Paradise |
 | `mana-fixing` | Color-fixes without net acceleration (taplands, filter lands as utility, etc.). Use as **secondary** when a card both fixes and ramps. | Reflecting Pool, Path of Ancestry |
-| `card-draw` | Draws cards or generates card advantage on a repeatable or burst basis. | Rhystic Study, Night's Whisper, Esper Sentinel |
+| `card-draw` | Nets ≥ +1 card in hand, or draws repeatably. Net-zero loot/filter effects do not qualify (see Card-draw classification). | Rhystic Study, Night's Whisper, Esper Sentinel |
 | `tutor` | Searches library for a specific card or category. | Demonic Tutor, Worldly Tutor, Eladamri's Call |
 | `removal-spot` | Targeted answer to one permanent. | Swords to Plowshares, Beast Within, Pongify |
 | `removal-board` | Affects multiple permanents (sweeper / mass bounce). | Wrath of God, Cyclonic Rift, Toxic Deluge |
@@ -43,6 +43,19 @@ Use `secondary_role: "tutor"` when the card's primary role is structurally domin
 
 Land-search convention: basic/typed land ramp and fetchlands stay `ramp` or `land`, not `tutor`. Unrestricted land-card search that can find utility lands, such as Crop Rotation, Sylvan Scrying, or Wight of the Reliquary's land mode, counts as `tutor`; add `ramp` secondary when it also accelerates mana by putting the land onto the battlefield.
 
+## Card-draw classification (DEC-478)
+
+`card-draw` as a primary role requires one of:
+
+- **Net ≥ +1 card.** Count the card itself as spent. Night's Whisper spends one card and draws two, so it nets +1 and qualifies. Divination nets +1. A cantrip that draws exactly one card nets 0 and does not qualify.
+- **Repeatable draw.** A permanent or engine that draws over multiple turns qualifies regardless of per-trigger netting. Rhystic Study and Esper Sentinel qualify even when a single trigger only draws one card.
+
+**Net-zero loot and filter effects are not `card-draw`.** Faithless Looting-class effects (draw N, discard N) and pure filters (scry/surveil riders) select cards but do not add them. Tag them `utility` by default.
+
+**Graveyard-deck exception.** In a deck that uses the graveyard as a second hand (reanimator, dredge-style value), a looter genuinely adds resources — the cards it discards stay playable. Tag it `engine` in that deck context. This follows the "roles are deck-contextual" rule above, and an `engine` tag feeds the `gy_second_hand` resilience component in [`deck-metrics.md`](deck-metrics.md), which counts exactly the `recursion`/`engine`-tagged cards.
+
+This is a definition change only (DEC-474 review, lesson L2). The role-coverage targets for `card-draw` (8 at B3, 10 at B4, 12 at B5) are unchanged.
+
 ## Mapping from existing inconsistent vocab
 
 The current `role` field across `data/commanders/*/deck.json` uses 26 distinct values. Migration rules:
@@ -59,7 +72,7 @@ The current `role` field across `data/commanders/*/deck.json` uses 26 distinct v
 | `protection` | `protection` | |
 | `recursion`, `reanimation` | `recursion` | `reanimation` may warrant `engine` primary if the card is a repeatable engine (e.g. Meren) |
 | `engine` | `engine` | |
-| `value` | `engine` | If repeatable; otherwise `card-draw` |
+| `value` | `engine` | If repeatable; otherwise `card-draw` when it nets ≥ +1 card (see Card-draw classification), else `utility` |
 | `enhancer`, `lord` | `payoff` | Anthem effects are payoffs in tribal/tokens decks |
 | `tokens`, `token` | `payoff` | Token-makers in a tokens-go-wide deck are payoffs |
 | `finisher`, `finishers` | `wincon` | |
