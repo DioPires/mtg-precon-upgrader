@@ -218,3 +218,13 @@ Board-approved via the DEC-369 next-steps interaction. Fleet assessments are **e
 4. Compare with existing deck data
 5. Update deck.json with new findings
 6. Run `uv run python scripts/validate_deck_json.py --deck {id}`
+
+## Engineering Principles (board decision DEC-475, 2026-08-15)
+
+1. Choose the simplest implementation that fully meets the current requirement. Avoid speculative abstractions, configuration, and indirection.
+2. Grow the system in layers. Start from the smallest version that works end to end, and add each capability on top of a working product. Never trade a working product for unfinished complexity.
+3. Keep components modular and concerns separated.
+4. Lean on dependencies already in the project before you write new code or add a package. Do not assume a library lacks a capability — check its documentation and types first.
+5. Add a new dependency only when an established, well-maintained library reduces overall complexity, and only within the locked architecture decisions (no Tailwind, no CSS-in-JS, no backend; see DEC-149-plan.md).
+6. Do not preserve backward compatibility by default. Remove obsolete paths instead of adding compatibility layers or fallbacks. Exception: board-approved deprecation windows (for example, `legacy/` for one release).
+7. Make design decisions for the long term. A temporary path is acceptable only with a named removal trigger.
