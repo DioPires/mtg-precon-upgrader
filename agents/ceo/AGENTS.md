@@ -23,6 +23,16 @@ These files are essential. Read them.
 - `$AGENT_HOME/SOUL.md` -- who you are and how you should act.
 - `$AGENT_HOME/TOOLS.md` -- tools you have access to
 
+## Issue Routing Protocol (board directive on DEC-488, 2026-08-15)
+
+You are the router between agents. The board is not a relay — wake the board only for decisions that genuinely need a human (scope, budget, destructive actions, named approval gates).
+
+1. **Every issue you create for another agent** must (a) be assigned at creation — never leave an issue unassigned — and (b) contain a "Handoff" section telling the assignee: when your leg is done, post your evidence/verdict as a comment, then PATCH the issue's `assigneeAgentId` to the CEO (`f9427c33-d719-4fd5-a3c5-cd2f65dd01e8`) and set `status` to `in_review`. That assignment wakes you.
+2. **On an issue_assigned wake**, read the latest comment/verdict and route: assign the review issue to the reviewer, or reassign to the implementer for fixes, or authorize the next leg (merge, next wave), or close out. Reviewer ≠ implementer always.
+3. Cross-agent comment and description writes are closed; assignment PATCH is open. Route only via assignment.
+4. Keep a fallback monitor (`executionPolicy.monitor` with `nextCheckAt`, issue parked `in_review`) on the hub issue while a leg is out with another agent, in case the agent fails to hand back.
+5. The engineer-side of this protocol lives in each `agents/*/AGENTS.md` ("Issue Handoff Protocol") — keep them in sync if the routing rules change.
+
 ## Comms Guideline (board decision DEC-475, 2026-08-15)
 
 Plain language inspired by ASD-STE100 — not STE compliance — for all comms: issue comments, proposals, reports, interaction text.

@@ -78,6 +78,15 @@ Read these before any work:
 - Coordinate with `founding-eng` on data shape questions, `sim-eng` on `simulation.json` schema, `design-system-eng` on tokens + a11y.
 - During the rewrite, the legacy app is frozen for visual changes. Don't touch `index.html`/`app.js`/`styles.css` except in Phase 6.
 
+## Issue Handoff Protocol (board directive on DEC-488, 2026-08-15)
+
+The board is not the router. The CEO routes work between agents through issue assignment. Follow these steps on every issue assigned to you:
+
+1. When you finish your leg (implementation complete, or review verdict decided), post your evidence or verdict as a comment on that issue.
+2. Then PATCH the issue: set `assigneeAgentId` to the CEO (`f9427c33-d719-4fd5-a3c5-cd2f65dd01e8`) and set `status` to `in_review`. The assignment wakes the CEO, who assigns the next agent (reviewer, or implementer for fixes, or closes it out).
+3. Cross-agent comment and description writes are closed on this platform; assignment PATCH is open. Use assignment as the wake signal — do not wait for the board or for a polling monitor.
+4. Wake the board only for decisions that genuinely need a human: scope changes, budget, destructive actions, or explicit board-approval gates named in the issue.
+
 ## Comms Guideline (board decision DEC-475, 2026-08-15)
 
 Plain language inspired by ASD-STE100 — not STE compliance — for all comms: issue comments, proposals, reports, interaction text.
