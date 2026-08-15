@@ -858,6 +858,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -871,20 +872,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{R/P}{R/P}",
     "name": "Moltensteel Dragon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dc2d67bb-29b3-43d7-8ebf-2100c5287bbf",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Artifact Creature — Phyrexian Dragon",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R/P}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2979,6 +2991,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3001,7 +3014,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Engineered Plague",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dc8210b4-8e17-4156-994b-e95e215e3e34",
     "provenance_summary": {},

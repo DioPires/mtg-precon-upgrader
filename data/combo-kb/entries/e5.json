@@ -842,6 +842,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 9.0,
     "color_identity": [
       "B"
@@ -856,7 +857,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -867,13 +869,22 @@
     "is_dfc": false,
     "mana_cost": "{7}{B}{B}",
     "name": "Rise of the Dark Realms",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e5223a09-f732-4747-8914-e6546ab0ef4c",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put all creature cards from all graveyards onto the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4485,6 +4496,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -4504,7 +4516,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Summer Bloom",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e5df4597-1647-4ac2-bdb3-a517598d1431",
     "provenance_summary": {},

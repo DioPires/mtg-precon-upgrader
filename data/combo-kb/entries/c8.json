@@ -1636,6 +1636,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1658,7 +1659,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Constant Mists",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c850a29e-dc40-4ab6-89f1-d501a1a350d1",
     "provenance_summary": {},
@@ -3291,6 +3292,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3308,17 +3310,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Ill-Gotten Gains",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c88eff74-def5-42ea-873c-b3b479f6fe18",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "returns up to three cards from their graveyard to their hand",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

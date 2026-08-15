@@ -427,6 +427,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -440,17 +441,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Orzhov Enforcer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f60b879e-82b4-442d-a544-2349429fe4c9",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "Afterlife 1",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "token",
+        "evidence": "Afterlife 1",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Rogue",
     "wants": []

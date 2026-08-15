@@ -3391,6 +3391,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -3405,7 +3406,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -3416,13 +3418,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Ghouls' Night Out",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cc9f9f14-a11c-4e33-9e11-8bf6ef13cf2b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put those cards onto the battlefield under your control.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

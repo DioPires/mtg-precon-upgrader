@@ -5391,6 +5391,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -5405,7 +5406,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -5416,16 +5418,25 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Sigarda's Summons",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7fd06710-0721-4e3e-90ed-d0ccecb1919a",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Enchantment",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Creatures you control with +1/+1 counters on them",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

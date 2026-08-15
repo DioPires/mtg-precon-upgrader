@@ -2794,6 +2794,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -2807,20 +2808,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Angel of Vitality",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "635fe908-6f58-4c9e-ac55-0775a7c6f278",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Angel",
-    "wants": []
+    "wants": [
+      {
+        "economy": "lifegain",
+        "evidence": "This creature gets +2/+2 as long as you have 25 or more life.",
+        "feature": "lifegain_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

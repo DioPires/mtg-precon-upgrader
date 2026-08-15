@@ -6482,6 +6482,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -6495,17 +6496,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Garruk's Horde",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b9da511e-a57f-43c2-aa97-902f3b4c55fb",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "You may cast creature spells from the top of your library.",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Beast",
     "wants": []

@@ -5560,6 +5560,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -5579,7 +5580,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}{U}",
     "name": "Discontinuity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5cfd73ab-8509-4e4b-9704-68d8dad3b301",
     "provenance_summary": {},
@@ -5590,6 +5591,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5601,17 +5603,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Flayer Husk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5cfdfcac-57fb-4507-a97a-cccbac2d1327",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Living weapon",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []

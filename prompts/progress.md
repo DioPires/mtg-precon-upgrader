@@ -124,3 +124,27 @@ variant-membership rank (batched, same protocol). Full-coverage completion
 
 **Next**: FE sign-off on Wave 2 (child review issue, reviewer ≠ implementer) →
 merge → Wave 3 (648 Spellbook-participating `needs_llm` remain, then long tail).
+
+## 2026-08-15 — Stage-2 Wave 2 batch B (DEC-492, ranks 201–500, +300)
+
+DEC-492 scoped Wave 2 at ~500 cards; batch A (200, `1a3b6bd`) covered ranks 1–200.
+Batch B extends to the DEC-492 target on the same branch `dec-488-combo-kb-phase1-
+stage2`.
+
+- **Batch B — next 300 Spellbook variant-membership `needs_llm` (28…4).** Membership
+  recomputed on the post-batch-A KB (200 already cleared → auto-excluded); targeted
+  via `--names-file` (300 oracle_ids). Classified offline against v1.0.1, `--apply`-ed.
+- **Results**: `needs_llm` 6,310 → **6,010** (−300); `llm_classified` 391 → **691**;
+  45 feature items across 41 cards (all `llm` → Tier-C capped), 259/300 empty by
+  design; `check_kb_coverage.py --stage full` **PASS**; sampling QA 100% (KB-7 100%);
+  vocab integrity 100% (0 OOV, 0 mis-bucket, 0 economy/magnitude/length faults);
+  **evidence grounding 45/45 (100%) verbatim**; 69 QE-3 gaps logged (log 284 → 353).
+- **Gate intact**: 0 of 166 `llm` items Tier-B-eligible; deterministic prov
+  (86,417) + signal count (25,810) untouched. Tests **22/22**. QA doc extended:
+  `prompts/phase-1/P1.7-wave2-qa.md`.
+- **DEC-492 wave total**: batch A + B = **500 cards**, `needs_llm` 6,510 → 6,010.
+- **QE-3 (batch B)**: damage/counter multiplier, free-cast, clone/copy, storm,
+  animate-lands, extra-land — reinforces the v1.1 candidate set.
+
+**Next**: FE sign-off on DEC-492 (reviewer ≠ implementer) → merge → Wave 3 (348
+Spellbook-participating `needs_llm` remain, then the non-combo long tail).

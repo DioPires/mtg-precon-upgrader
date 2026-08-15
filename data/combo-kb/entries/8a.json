@@ -5191,6 +5191,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -5206,7 +5207,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5217,13 +5219,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{B}",
     "name": "Tezzeret, Agent of Bolas",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ab7358e-a0f5-4220-8769-25177237bcdf",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Target player loses X life and you gain X life",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Planeswalker — Tezzeret",
     "wants": []

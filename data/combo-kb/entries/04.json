@@ -68,6 +68,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -82,7 +83,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -93,13 +95,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Rootborn Defenses",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "04046ae4-5c51-434b-930c-f3b1d348bf4b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Populate.",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []

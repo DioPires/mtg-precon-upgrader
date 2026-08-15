@@ -4761,6 +4761,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -4778,17 +4779,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}{B}",
     "name": "Whispering Madness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7bbc5f3a-f8fb-47e8-837e-ce319bc489de",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "draws cards equal to the greatest number of cards a player discarded",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

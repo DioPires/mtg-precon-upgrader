@@ -968,6 +968,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -982,7 +983,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -993,13 +995,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Rishkar's Expertise",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw cards equal to the greatest power among creatures you control.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4933,6 +4944,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -4947,7 +4959,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4958,13 +4971,22 @@
     "is_dfc": false,
     "mana_cost": "{G/P}",
     "name": "Noxious Revival",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "97cabeda-9fe3-490d-99b4-4c8d87c17157",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put target card from a graveyard on top of its owner's library.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []

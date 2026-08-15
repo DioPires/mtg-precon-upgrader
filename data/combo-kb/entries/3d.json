@@ -4693,6 +4693,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G",
@@ -4713,7 +4714,7 @@
     "is_dfc": false,
     "mana_cost": "{G/U}",
     "name": "Bioshift",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3da604fc-68e9-4749-98f9-6fbcebcab9b6",
     "provenance_summary": {},
@@ -5019,6 +5020,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -5035,17 +5037,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Stunning Reversal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3db00947-d568-45d7-82cd-b54b4fcb1312",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "instead draw seven cards and your life total becomes 1",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []

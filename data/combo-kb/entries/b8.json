@@ -2666,6 +2666,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -2687,7 +2688,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{B}{R}",
     "name": "Mai and Zuko",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b86ba0aa-89f3-4924-b3c4-f7ca44468e9b",
     "provenance_summary": {},
@@ -2792,6 +2793,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2805,20 +2807,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Boon Reflection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Enchantment",
-    "wants": []
+    "wants": [
+      {
+        "economy": "lifegain",
+        "evidence": "If you would gain life, you gain twice that much life instead.",
+        "feature": "lifegain_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

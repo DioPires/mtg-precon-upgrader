@@ -1120,6 +1120,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -1139,7 +1140,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Renari, Merchant of Marvels",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "99204279-2a50-4dd6-84ec-f84ba31554cf",
     "provenance_summary": {},
@@ -3173,6 +3174,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3195,7 +3197,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -3206,13 +3209,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Locust Swarm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9963b6a9-d715-430e-9b5e-576fb688d944",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "{G}: Untap this creature.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Insect",
     "wants": []
@@ -5709,6 +5721,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -5738,7 +5751,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{G}",
     "name": "Cosmogoyf",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "99d8c5f9-ad8f-450e-9a7c-51a4c0ca5043",
     "provenance_summary": {

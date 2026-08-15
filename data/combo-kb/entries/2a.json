@@ -3015,6 +3015,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3034,7 +3035,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Maulfist Squad",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2a8ec988-b513-4e66-b7f5-b2196b4bbff2",
     "provenance_summary": {},
@@ -4165,6 +4166,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -4184,7 +4186,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Rhox Faithmender",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2abe9303-d498-4aad-b6b2-8b5064bd2ffd",
     "provenance_summary": {},
@@ -5202,6 +5204,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 12.0,
     "color_identity": [
       "U"
@@ -5215,17 +5218,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{8}{U}{U}{U}{U}",
     "name": "Enter the Infinite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2adbb56a-45e9-4fbe-b586-3488ef8014a3",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw cards equal to the number of cards in your library",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

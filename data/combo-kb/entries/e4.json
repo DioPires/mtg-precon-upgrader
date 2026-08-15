@@ -2106,6 +2106,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2125,7 +2126,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Rhet-Tomb Mystic",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e445825a-e70e-4796-99be-4a7c4080b8cc",
     "provenance_summary": {},
@@ -6753,6 +6754,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "G",
@@ -6770,20 +6772,40 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}{W}{W}",
     "name": "Chorus of the Conclave",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e4e6ffab-3f0c-43f8-b1c3-b59c7fcb095d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "that creature enters with that many additional +1/+1 counters on it.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Creature — Dryad",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "you may pay any amount of mana.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

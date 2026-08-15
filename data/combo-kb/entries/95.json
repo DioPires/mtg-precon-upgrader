@@ -3678,6 +3678,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U",
@@ -3695,17 +3696,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{W}{U}",
     "name": "Energy Arc",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "959bcf99-3c9a-4f99-98b2-13514d3dac16",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap any number of target creatures.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []

@@ -543,6 +543,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "B",
@@ -574,7 +575,7 @@
     "is_dfc": false,
     "mana_cost": "{7}",
     "name": "Legacy Weapon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa1a248d-2f76-4f15-b065-08f299af07b9",
     "provenance_summary": {
@@ -1394,6 +1395,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -1408,7 +1410,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1423,13 +1426,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Blood Tribute",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa2da79c-b36c-4120-8d7d-f5571e87e45e",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Target opponent loses half their life, rounded up.",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -5175,6 +5187,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5194,7 +5207,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Drannith Magistrate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aadd10d0-6dd0-4bdc-8d93-ff08e29a5863",
     "provenance_summary": {},

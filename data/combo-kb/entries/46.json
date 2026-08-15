@@ -4117,6 +4117,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -4134,7 +4135,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4145,13 +4147,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}",
     "name": "Nissa, Worldwaker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "468f9b8e-4423-4131-8611-d34b0aa3d96f",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap up to four target Forests.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Planeswalker — Nissa",
     "wants": []

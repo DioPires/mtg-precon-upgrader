@@ -895,6 +895,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -914,7 +915,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}",
     "name": "Fall of the Thran",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "341803d9-fd29-4721-81bf-ae9b7f1c01d2",
     "provenance_summary": {},
@@ -4700,6 +4701,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4716,17 +4718,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{U}{U}",
     "name": "Reality Spasm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34a2fc4c-ab56-4ecd-95d9-04316046843c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap X target permanents.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5672,6 +5685,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5694,7 +5708,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Mana Severance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34c66f52-dcbf-4d0a-bf7f-cb294bd93e9c",
     "provenance_summary": {},

@@ -1729,6 +1729,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -1748,7 +1749,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Urborg Shambler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7947a210-32d0-4c99-82b4-4b5969447832",
     "provenance_summary": {},
@@ -2909,6 +2910,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -2923,7 +2925,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2934,13 +2937,22 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Reclaim",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "797155cd-faf4-4321-8629-c8c352392748",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put target card from your graveyard on top of your library.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []

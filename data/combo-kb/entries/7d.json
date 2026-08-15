@@ -3022,6 +3022,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3051,7 +3052,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}{B}",
     "name": "Kaervek's Spite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7d69be1e-701a-4bcb-a83e-38b4174f7828",
     "provenance_summary": {
@@ -4994,6 +4995,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R",
@@ -5008,17 +5010,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": true,
     "mana_cost": "{3}{R} // {2}{U}",
     "name": "Refuse // Cooperate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7db22241-fe43-4071-9af9-de1cf394f7f5",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "Refuse deals damage to target spell's controller equal to that spell's",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant // Instant",
     "wants": []

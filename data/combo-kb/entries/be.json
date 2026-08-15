@@ -2276,6 +2276,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -2293,7 +2294,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2304,13 +2306,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Bramblewood Paragon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "be455184-c57d-4504-8c34-3be42bc3f04b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with an additional +1/+1 counter on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Elf Warrior",
     "wants": []
