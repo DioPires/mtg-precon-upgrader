@@ -12,6 +12,7 @@ DEC-90 phase 1.
 """
 
 import argparse
+import gzip
 import json
 import sys
 import urllib.request
@@ -76,7 +77,18 @@ def main(argv: list[str]) -> int:
     bulk = fetch_json(BULK_DATA_URL)
     oracle = find_oracle_cards_entry(bulk)
     remote_updated_at = oracle["updated_at"]
-    download_uri = oracle["download_uri"]
+    # Scryfall dropped the plain-JSON `download_uri` (DEC-486, 2026-08-15). The
+    # bulk-data entry now only exposes `jsonl_download_uri`: a gzipped JSON Lines
+    # file (one card object per line). Fall back to `download_uri` if a future
+    # API revision restores it.
+    download_uri = oracle.get("jsonl_download_uri") or oracle.get("download_uri")
+    if not download_uri:
+        raise RuntimeError(
+            "Scryfall oracle_cards entry has neither jsonl_download_uri nor "
+            "download_uri; API shape changed again."
+        )
+    is_jsonl = download_uri.endswith((".jsonl", ".jsonl.gz"))
+    is_gzip = download_uri.endswith(".gz")
 
     local_updated_at = None
     if META_FILE.exists() and not args.force:
@@ -101,7 +113,13 @@ def main(argv: list[str]) -> int:
     print(f"Downloading {download_uri}...", file=sys.stderr)
     req = urllib.request.Request(download_uri, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=300) as resp:
-        all_cards = json.loads(resp.read())
+        raw = resp.read()
+    if is_gzip:
+        raw = gzip.decompress(raw)
+    if is_jsonl:
+        all_cards = [json.loads(line) for line in raw.splitlines() if line.strip()]
+    else:
+        all_cards = json.loads(raw)
 
     print(f"Downloaded {len(all_cards):,} cards. Filtering to commander-legal...", file=sys.stderr)
     legal = [
