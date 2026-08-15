@@ -25,6 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   { kind: 'static', to: '/shopping', rune: 'IX', label: 'Shopping' },
   { kind: 'static', to: '/compare', rune: 'X', label: 'Compare' },
   { kind: 'static', to: '/atlas', rune: 'XI', label: 'Atlas' },
+  { kind: 'static', to: '/combos', rune: 'XII', label: 'Combos' },
 ];
 
 export function Topbar() {

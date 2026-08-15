@@ -7,6 +7,8 @@
 // Missing / sparse fields in raw deck JSON are filled with sentinels at normalization time
 // (e.g. mv: "—") so components never branch on absence.
 
+import type { SpellbookDeckCombos } from './spellbook';
+
 // ─── 1. RAW JSON ────────────────────────────────────────────────────
 
 export type SourceType =
@@ -297,6 +299,13 @@ export interface RawDeckBundle {
   metrics?: RawMetrics | null;
   candidates?: RawCandidates | null;
   cardMetadata?: RawCardMetadata;
+  /**
+   * DEC-487 — precomputed Commander Spellbook combos for this deck (standalone
+   * file like metrics.json). Named `spellbookCombos`, NOT `combos`: the DeckFull
+   * UI shape already carries a `combos` field derived from synergies
+   * (normalize.ts:390). Null when the deck has no spellbook-combos.json yet.
+   */
+  spellbookCombos?: SpellbookDeckCombos | null;
 }
 
 // ─── 2. DECK_FULL (UI shape) ────────────────────────────────────────

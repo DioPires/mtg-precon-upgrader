@@ -18,6 +18,7 @@ import type {
   RawMetrics,
   RawSimulation,
 } from './types';
+import type { SpellbookDeckCombos } from './spellbook';
 
 // Bump suffix when the persisted shape or upstream data semantics change so
 // returning users don't read stale bundles. v5 (DEC-206): Eternal Agony
@@ -136,7 +137,13 @@ import type {
 // v102 -> v103 (DEC-467 2026-07-27): Titan Convergence +Wastes/-Idol of Oblivion; Tidal Legion 4-for-4 swap (IN Island x2, Arcane Denial, Spellgyre / OUT Deekah, Merrow Reejerey, Bident of Thassa, Shark Typhoon) + follow-up +Brush Off/-Arcane Denial.
 // v103 -> v104 (DEC-467 round 2 2026-07-27): Tidal Legion board-approved 7-for-7 spell-dense rebuild. IN Fierce Guardianship, Hinder (board pick over Mana Drain), Cyclonic Rift, Quick Study, Commander's Insight, Aquitect's Will, Merrow Commerce / OUT Archmage Emeritus, Attuma, Curiosity Crafter, Master of Waves, Solemn Simulacrum, Merfolk Sovereign, Faerie Mastermind. GC 1->3 (at 3+ cap); metrics 95->94, sim 78.4/A; counters 11->13, draw 10->12.
 // v104 -> v105 (DEC-467 2026-07-27): Titan Convergence board-approved land tune-up — OUT Cloudstone Curio, Mirage Mirror / IN Wastes x2 (11->13; 37->39 lands). Rings of Brighthearth kept.
-const STORAGE_PREFIX = 'gv1-deck-data-v108:';
+// v108 -> v109 (DEC-487 2026-08-15): Combo Lab (DEC-476 Phase 0). Deck bundles
+// now carry a `spellbookCombos` member loaded from
+// data/commanders/{id}/spellbook-combos.json (precomputed Commander Spellbook
+// included + near-miss combos). Bump invalidates the persisted deck envelope so
+// returning users pick up the new member. (The 13 MB matcher index used by
+// paste mode bypasses this localStorage cache entirely — see data/spellbook.ts.)
+const STORAGE_PREFIX = 'gv1-deck-data-v109:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
@@ -271,11 +278,12 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   async function fetchDeckBundle(entry: RawDeckIndexEntry): Promise<RawDeckBundle> {
     const id = entry.id;
     const base = `/data/commanders/${id}`;
-    const [deck, sim, metrics, candidates, cardMetadata] = await Promise.all([
+    const [deck, sim, metrics, candidates, spellbookCombos, cardMetadata] = await Promise.all([
       fetchJson<RawDeck>(`${base}/deck.json`),
       fetchJson<RawSimulation>(`${base}/simulation.json`),
       fetchJson<RawMetrics>(`${base}/metrics.json`),
       fetchJson<RawCandidates>(`${base}/candidates.json`),
+      fetchJson<SpellbookDeckCombos>(`${base}/spellbook-combos.json`),
       loadCardMetadata(),
     ]);
     if (!deck) throw new Error(`deck.json missing for ${id}`);
@@ -286,6 +294,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
       sim: sim ?? null,
       metrics: metrics ?? null,
       candidates: candidates ?? null,
+      spellbookCombos: spellbookCombos ?? null,
       cardMetadata,
     };
   }

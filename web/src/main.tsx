@@ -8,6 +8,7 @@ import './styles/deck-theme.css';
 import './styles/states.css';
 import './styles/styles.css';
 import './styles/app.css';
+import './styles/combo-lab.css';
 
 const container = document.getElementById('root');
 if (!container) throw new Error('#root not found');

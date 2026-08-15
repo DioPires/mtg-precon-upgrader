@@ -7,6 +7,7 @@ import { DeckGuide } from './routes/DeckGuide';
 import { Compare } from './routes/Compare';
 import { Shopping } from './routes/Shopping';
 import { Scrying } from './routes/Scrying';
+import { ComboLab } from './routes/ComboLab';
 import { Mobile } from './routes/Mobile';
 import { Dev } from './routes/Dev';
 import { NotFound } from './routes/NotFound';
@@ -23,6 +24,7 @@ export function App() {
           <Route path="/deck/:id" element={<DeckGuide />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/shopping" element={<Shopping />} />
+          <Route path="/combos" element={<ComboLab />} />
           <Route path="/scrying/:id" element={<Scrying />} />
           <Route path="/m/:id" element={<Mobile />} />
           <Route path="/mobile/:id" element={<MobileRedirect />} />
