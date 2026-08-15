@@ -1,0 +1,6078 @@
+[
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{B}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "dies",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{B}",
+    "name": "Discordant Piper",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb0107f4-723a-4f2c-8e4b-237d5f668e3c",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "create a 0/1 white Goat creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 0/1 white Goat creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature dies"
+      }
+    ],
+    "type_line": "Creature — Zombie Satyr",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{3}{B}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{1}{B}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "counter_add",
+      "lifegain",
+      "lifeloss"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "once_per_turn",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{B}",
+    "name": "Blood Hustler",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb02e64c-0c4a-41ae-972e-ce83e6fc4cb9",
+    "provenance_summary": {
+      "deterministic": 7
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "loses 1 life and you gain",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "you gain 1 life",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever you commit a crime"
+      }
+    ],
+    "type_line": "Creature — Vampire Rogue",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{3}{B}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 5.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{2}, {T}, Collect evidence 3",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{4}{B}",
+      "mana_value": 5.0
+    },
+    "events_emitted": [
+      "discard",
+      "etb",
+      "exile",
+      "lifeloss",
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}{B}",
+    "name": "Polygraph Orb",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb039957-9e88-48cf-b41c-38d42eb87251",
+    "provenance_summary": {
+      "deterministic": 8
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this artifact enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "drain",
+        "evidence": "Each opponent loses 3 life",
+        "feature": "drain",
+        "magnitude": 3,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this artifact enters"
+      }
+    ],
+    "type_line": "Artifact",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{2}, {T}, Collect evidence 3:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}, Collect evidence 3:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 6.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{W}{W}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [
+      "etb",
+      "untap"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}{W}{W}",
+    "name": "White Dragon",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb03e682-4525-40d2-8c49-6328f84bd36a",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature enters"
+      }
+    ],
+    "type_line": "Creature — Dragon",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{R}{R}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{R}{R}",
+    "name": "Thunderbreak Regent",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb04f927-0348-4a14-9e74-381f18083f6a",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals 3 damage",
+        "feature": "damage",
+        "magnitude": 3,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever a Dragon you control becomes the target of a spell or ability an opponent controls"
+      }
+    ],
+    "type_line": "Creature — Dragon",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 1.0,
+    "color_identity": [
+      "B",
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{2}, {T}",
+          "provenance": "deterministic"
+        },
+        {
+          "cost": "{2}{W}{B}, {T}, Sacrifice this artifact",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{1}",
+      "mana_value": 1.0
+    },
+    "events_emitted": [
+      "exile",
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}",
+    "name": "Moratorium Stone",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb0d89e7-4ae6-4ac2-a0e6-51ab08226069",
+    "provenance_summary": {
+      "deterministic": 7
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "Sacrifice this artifact:",
+        "feature": "sac_outlet",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Artifact",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{2}, {T}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "B",
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{X}{U}{B}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{X}{U}{B}",
+    "name": "Extract Brain",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb0eb9c2-c26d-452d-9e02-fc0bec2655c4",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 1.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{1}{R}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{R}",
+      "mana_value": 1.0
+    },
+    "events_emitted": [
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{R}",
+    "name": "Firedrinker Satyr",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb107b33-ae2e-4d45-b537-1e6e25c66ec8",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals 1 damage",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever this creature is dealt damage"
+      }
+    ],
+    "type_line": "Creature — Satyr Shaman",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{1}{R}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{G}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{G}",
+    "name": "Rushwood Dryad",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb1963f9-261c-4d3f-a401-90aaced77e7f",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Dryad",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}",
+    "name": "Ghost Ark",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb1b4786-3804-486b-9fd9-85848d24d362",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "unearth",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever this Vehicle becomes crewed"
+      }
+    ],
+    "type_line": "Artifact — Vehicle",
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "card in your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 7.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{5}{G}{G}",
+      "mana_value": 7.0
+    },
+    "events_emitted": [
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{5}{G}{G}",
+    "name": "Dawnglade Regent",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb1c6266-5e25-4a5b-b15a-faeda3ce04dc",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature enters"
+      }
+    ],
+    "type_line": "Creature — Elk",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 7.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{U}{U}{U}",
+      "mana_value": 7.0
+    },
+    "events_emitted": [
+      "attack",
+      "sacrifice",
+      "untap"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}{U}{U}{U}",
+    "name": "Island Fish Jasconius",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb217f12-532f-4833-a27a-99e290aa47d0",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of your upkeep"
+      },
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When you control no Islands"
+      }
+    ],
+    "type_line": "Creature — Fish",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{1}, Remove X ki counters from this creature",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{2}{W}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "cast",
+      "counter_add"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{W}",
+    "name": "Waxmane Baku",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb23221a-f1d0-421d-9769-132e2b26b804",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a Spirit or Arcane spell",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put a ki counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever you cast a Spirit or Arcane spell"
+      }
+    ],
+    "type_line": "Creature — Spirit",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{1}, Remove X ki counters from this creature:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{1}{U}, Exile this card from your graveyard",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{1}{U}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "discard",
+      "draw",
+      "etb",
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}",
+    "name": "Merfolk Pupil",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb244878-6440-4dfe-b96b-c9e18d0abe45",
+    "provenance_summary": {
+      "deterministic": 6
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "draw",
+        "evidence": "draw a card",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature enters"
+      }
+    ],
+    "type_line": "Creature — Merfolk Wizard",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{1}{U}, Exile this card from your graveyard:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{U}{U}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "untap"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{U}{U}",
+    "name": "Rewind",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb27bfdf-fe8d-45bd-ad62-8118dce06eda",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Instant",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 1.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{G}",
+      "mana_value": 1.0
+    },
+    "events_emitted": [
+      "lifegain"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{G}",
+    "name": "Tamiyo's Safekeeping",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb2b324c-970a-4920-884e-c92ba49669f0",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain 2 life",
+        "feature": "lifegain",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Instant",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 0.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{1}, {T}, Remove a gem counter from this artifact",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{X}",
+      "mana_value": 0.0
+    },
+    "events_emitted": [
+      "attack",
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{X}",
+    "name": "Briber's Purse",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb2cc0f4-6abd-48d6-b442-76eafbfd2309",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Artifact",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{1}, {T}, Remove a gem counter from this artifact:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}, Remove a gem counter from this artifact:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "counters",
+        "evidence": "Remove a gem counter",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 7.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{5}{U}{U}",
+      "mana_value": 7.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{5}{U}{U}",
+    "name": "Weaver of Lies",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb2fca84-fc19-4c04-b146-1059aa975535",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature is turned face up"
+      }
+    ],
+    "type_line": "Creature — Beast",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{0}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{1}{U}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "once_per_turn",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}",
+    "name": "Chronatog",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb300e38-32d7-4152-9a82-88d43af99f19",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Atog",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{0}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 1.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{R}",
+      "mana_value": 1.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{R}",
+    "name": "Red Elemental Blast",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb329a5c-b9f9-4973-a53f-090024146325",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Instant",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "R",
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{5}{R}, {T}",
+          "provenance": "deterministic"
+        },
+        {
+          "cost": "{2}{W}, {T}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{R}{W}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{R}{W}",
+    "name": "Legion Guildmage",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb33abbe-b43c-4a74-b2db-cce949f0edf2",
+    "provenance_summary": {
+      "deterministic": 7
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals 3 damage",
+        "feature": "damage",
+        "magnitude": 3,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "damage",
+        "evidence": "{T}: This creature deals 3 damage",
+        "feature": "ping_outlet",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Creature — Human Wizard",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{5}{R}, {T}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{U}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "draw"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{U}",
+    "name": "Field Research",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb377cf8-29ee-489e-86a9-93f4dc2ae02e",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw two cards",
+        "feature": "draw",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{B}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "discard"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}{B}",
+    "name": "Squeaking Pie Grubfellows",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb4107f8-817c-43b2-b64c-f3b4c64eb3f0",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of your upkeep"
+      }
+    ],
+    "type_line": "Creature — Goblin Shaman",
+    "wants": []
+  },
+  {
+    "ambient": [
+      {
+        "economy": "cost_reduction",
+        "evidence": "costs {1} less",
+        "feature": "cost_reduction",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "cmc": 5.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{B}",
+      "mana_value": 5.0
+    },
+    "events_emitted": [
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "ambient": "deterministic",
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}{B}",
+    "name": "Overwhelming Remorse",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb4507c1-1e5d-48b5-8fc0-1d26bd1c9e72",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Instant",
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "card in your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{W}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{W}",
+    "name": "Nightguard Patrol",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb482f90-5624-4e2c-9916-85fb09a3639a",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Human Soldier",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{G}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{G}",
+    "name": "Nature's Cloak",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb493c95-5f6d-405b-aac6-c56fe6b6f42f",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 6.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "Remove a +1/+1 counter from this creature",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{6}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{6}",
+    "name": "Workhorse",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb4ab425-3da7-455d-b217-3d585d476113",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "Add {C",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Artifact Creature — Horse",
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Remove a +1/+1 counter",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{W}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{W}",
+    "name": "Call to Serve",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb4be6b2-507c-4d7c-bea4-010670dce3da",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Enchantment — Aura",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{R}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{R}",
+    "name": "Thundering Rebuke",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb4d9770-f230-4413-a7a4-bb1f1303661a",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals 4 damage",
+        "feature": "damage",
+        "magnitude": 4,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{G}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{G}",
+    "name": "Snapping Creeper",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb4e1340-da63-46b8-a5e3-79dfedec3e78",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "Whenever a land you control enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever a land you control enters"
+      }
+    ],
+    "type_line": "Creature — Plant",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{R}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{R}",
+    "name": "Voidpouncer",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb4ebe30-2501-48aa-879a-2402a9eb1be7",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Eldrazi",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "G",
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "Creatures you control with vigilance have \"{1}, {T}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{2}{G}{W}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{G}{W}",
+    "name": "Frondland Felidar",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb504fb1-1d19-4d0b-958f-e8f2433e0575",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Cat Beast",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{1}, {T}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 5.0,
+    "color_identity": [
+      "R",
+      "U",
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{U}{R}{W}",
+      "mana_value": 5.0
+    },
+    "events_emitted": [
+      "draw",
+      "lifegain"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{U}{R}{W}",
+    "name": "Jeskai Shrinekeeper",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb50b4f4-f0da-4283-821b-6d74bd20752f",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "you gain 1 life",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "draw",
+        "evidence": "draw a card",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever this creature deals combat damage to a player"
+      }
+    ],
+    "type_line": "Creature — Dragon",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{2}, {T}, Sacrifice this creature",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{2}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "sacrifice",
+      "tap"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}",
+    "name": "Troop of Ponies",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb52b3c3-09f0-4506-b7c0-250ab0b91866",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "Sacrifice this creature:",
+        "feature": "sac_outlet",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Creature — Horse",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{2}, {T}, Sacrifice this creature:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}, Sacrifice this creature:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 0.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{W}, {T}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "",
+      "mana_value": 0.0
+    },
+    "events_emitted": [
+      "etb",
+      "tap"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "",
+    "name": "Mistveil Plains",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb5c1817-ac22-4779-9005-251bc354f181",
+    "provenance_summary": {
+      "deterministic": 6
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "Add {W",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Land — Plains",
+    "wants": [
+      {
+        "economy": "untap",
+        "evidence": "{T}:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "B",
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{B}{G}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "counter_add",
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "timing_sorcery",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{B}{G}",
+    "name": "Sluiceway Scorpion",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb5ea7c7-741a-4edd-9696-b9881b70afe0",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a number of +1/+1 counters",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Creature — Scorpion",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{1}{B}{G} ({1}{B}{G}, Exile this card from your graveyard:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{R}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "discard",
+      "draw",
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "timing_sorcery",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{R}",
+    "name": "Ragged Short Spear",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb67d0a4-864e-4f46-8538-fdd920bf0197",
+    "provenance_summary": {
+      "deterministic": 6
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this Equipment enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "draw",
+        "evidence": "draw two cards",
+        "feature": "draw",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this Equipment enters"
+      }
+    ],
+    "type_line": "Artifact — Equipment",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{3} ({3}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{U}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "etb",
+      "tap",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{U}",
+    "name": "Donatello, Gadget Master",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb6aef0d-052b-44e6-b4cd-2d2eafd84969",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "create a token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever Donatello deals combat damage to a player"
+      }
+    ],
+    "type_line": "Legendary Creature — Mutant Ninja Turtle",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{T}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{4}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}",
+    "name": "Canal Dredger",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb6bda0d-ddb8-47fa-be07-bbcd73a52830",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Artifact Creature — Construct",
+    "wants": [
+      {
+        "economy": "untap",
+        "evidence": "{T}:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 9.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{X}, {T}, Exile X cards from your graveyard",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{7}{B}{B}",
+      "mana_value": 9.0
+    },
+    "events_emitted": [
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{7}{B}{B}",
+    "name": "Necropolis Fiend",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb714bc6-9f32-42f6-9064-f28a383675b5",
+    "provenance_summary": {
+      "deterministic": 6
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Demon",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "X}, {T}, Exile X cards from your graveyard: Target creature gets -X/",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}, Exile X cards from your graveyard:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "Delve",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 6.0,
+    "color_identity": [
+      "B",
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{B/G}{B/G}{B/G}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{3}{B/G}{B/G}{B/G}",
+    "name": "Gleancrawler",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb7389fa-ab01-4ca2-bd18-03cf5b4cedf6",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of your end step"
+      }
+    ],
+    "type_line": "Creature — Insect Horror",
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "cards in your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [
+      {
+        "economy": "cost_reduction",
+        "evidence": "cost {1} less",
+        "feature": "cost_reduction",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "cmc": 2.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{G}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "attack"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "ambient": "deterministic",
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{G}",
+    "name": "Moon-Boy, Dino Rider",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb7638ce-3802-4198-89d2-6f5b647bd8fb",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever Moon-Boy attacks while you control a Dinosaur"
+      }
+    ],
+    "type_line": "Legendary Creature — Ape Human",
+    "wants": []
+  },
+  {
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "get +1/+0",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "cmc": 6.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{B}{B}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{3}{B}{B}{B}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "ambient": "deterministic",
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}{B}{B}{B}",
+    "name": "Stronghold Overseer",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb77b63f-e679-463c-b983-4f2a4ef7bafe",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Demon",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{U}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "draw",
+      "mill"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}",
+    "name": "Jace's Erasure",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb7c069b-8d3f-4ba2-874b-8ec575fd6dd4",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "mill",
+        "feature": "mill",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "draw",
+        "evidence": "draw a card",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever you draw a card"
+      }
+    ],
+    "type_line": "Enchantment",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{W}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "attack",
+      "draw",
+      "etb",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{W}",
+    "name": "Glimmer Lens",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb7cebb7-a979-4879-b834-deab13f2a22c",
+    "provenance_summary": {
+      "deterministic": 6
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this Equipment enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "create a 2/2 red Rebel creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 2/2 red Rebel creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "draw",
+        "evidence": "draw a card",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this Equipment enters"
+      },
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever equipped creature and at least one other creature attack"
+      }
+    ],
+    "type_line": "Artifact — Equipment",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "U",
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{W}{U}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "exile",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "timing_sorcery",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{W}{U}",
+    "name": "Aven Wind Guide",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb813ffa-2615-4177-a7fb-6e0dfb819fc2",
+    "provenance_summary": {
+      "deterministic": 7
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "Create a token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "Create a token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "Embalm",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Creature — Bird Warrior",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{4}{W}{U} ({4}{W}{U}, Exile this card from your graveyard:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "B",
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{W}{B}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{W}{B}",
+    "name": "Soul Link",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb81aa50-49db-4743-85fc-6b4d9ed29bc6",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever enchanted creature deals damage"
+      },
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever enchanted creature is dealt damage"
+      }
+    ],
+    "type_line": "Enchantment — Aura",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{R}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "attack"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{R}",
+    "name": "Mogis's Warhound",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb87917f-33fb-4024-9317-0992c2f8f55e",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Enchantment Creature — Dog",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{R}{R}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "cast",
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{R}{R}",
+    "name": "Leyline of Lightning",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb87ec08-bb1b-43d8-8809-92904cbba685",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a spell",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "damage",
+        "evidence": "deals 1 damage",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever you cast a spell"
+      }
+    ],
+    "type_line": "Enchantment",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "pay {1",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "Remove a fade counter from this creature",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{3}{W}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "etb",
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}{W}",
+    "name": "Defender en-Vec",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb8a55a5-596e-427c-b745-4de8b0dfb095",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of your upkeep"
+      }
+    ],
+    "type_line": "Creature — Human Cleric",
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "remove a fade counter",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 5.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{5}",
+      "mana_value": 5.0
+    },
+    "events_emitted": [
+      "etb",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{5}",
+    "name": "Turtle Blimp",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb8c6dd2-1abe-4eb2-be1f-b0c078e5f257",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this Vehicle enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "create a 2/2 red Mutant creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 2/2 red Mutant creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this Vehicle enters"
+      }
+    ],
+    "type_line": "Artifact — Vehicle",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 1.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{R}",
+      "mana_value": 1.0
+    },
+    "events_emitted": [
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{R}",
+    "name": "Boltwave",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb8cccc8-e56f-42fa-a0d7-fc889b5e1c7b",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals 3 damage",
+        "feature": "damage",
+        "magnitude": 3,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 5.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{W}{W}",
+      "mana_value": 5.0
+    },
+    "events_emitted": [
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{3}{W}{W}",
+    "name": "Astelli Reclaimer",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb956492-e3ed-483a-9169-5b795a8e619e",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "return target noncreature, nonland permanent card with mana value X or less fro…",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature enters"
+      }
+    ],
+    "type_line": "Creature — Angel Warrior",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "X or less from your graveyard to the battlefield, where X is the amount of mana",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{B}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{3}{B}",
+    "name": "Zombify",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb95db4d-5017-4121-bf79-d68476602d8c",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Return target creature card from your graveyard to the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 1.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{U}",
+      "mana_value": 1.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{U}",
+    "name": "Trickery Charm",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb97f7c6-6a75-4f4e-b74e-c57ce98a08fc",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Instant",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 6.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{U}{U}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}{U}{U}",
+    "name": "Spectral Deluge",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb9bb65e-504f-4edd-8d47-d0efa03e7d17",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "pay {2",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 0.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{T}",
+          "provenance": "deterministic"
+        },
+        {
+          "cost": "{3}{B}, {T}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "",
+      "mana_value": 0.0
+    },
+    "events_emitted": [
+      "etb",
+      "tap",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "",
+    "name": "Realm of Koh",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb9ce416-eef1-49e8-89a0-2b6837505070",
+    "provenance_summary": {
+      "deterministic": 9
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "Add {B",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "Create a 1/1 colorless Spirit creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "Create a 1/1 colorless Spirit creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Land",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{3}{B}, {T}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{R}{R}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{R}{R}",
+    "name": "Thoughts of Ruin",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb9e1d12-ebcc-4a8a-baef-9f69638a51cd",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{W}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "tap"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{W}",
+    "name": "Masako the Humorless",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb9e77c0-eb94-4bba-9b71-1935be280b75",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Legendary Creature — Human Advisor",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 7.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{6}{U}",
+      "mana_value": 7.0
+    },
+    "events_emitted": [
+      "etb",
+      "exile",
+      "ltb",
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{6}{U}",
+    "name": "Supreme Exemplar",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bb9ed5c8-0437-4705-9133-9863786e6af8",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "ltb",
+        "evidence": "When this leaves the battlefield",
+        "feature": "ltb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this enters"
+      },
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this leaves the battlefield"
+      }
+    ],
+    "type_line": "Creature — Elemental",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 6.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{G}{G}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{4}{G}{G}",
+    "name": "Tusked Colossodon",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bba11c0e-01a3-45ad-8de4-2148cf660ba8",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Beast",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 1.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{U}",
+      "mana_value": 1.0
+    },
+    "events_emitted": [
+      "counter_add",
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{U}",
+    "name": "Mind Harness",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bba30360-c54a-4906-8b2e-84bb1209c43d",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put an age counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of your upkeep"
+      }
+    ],
+    "type_line": "Enchantment — Aura",
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "for each age counter",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{B}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "etb",
+      "exile",
+      "lifegain"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{3}{B}",
+    "name": "Carrion Imp",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bba44fad-b3ca-4892-b7d1-2d03478062af",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "you gain 2 life",
+        "feature": "lifegain",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature enters"
+      }
+    ],
+    "type_line": "Creature — Imp",
+    "wants": []
+  },
+  {
+    "ambient": [
+      {
+        "economy": "cost_reduction",
+        "evidence": "cost {1} less",
+        "feature": "cost_reduction",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "cmc": 1.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{W}",
+      "mana_value": 1.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "ambient": "deterministic",
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{W}",
+    "name": "Kinjalli's Caller",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bba6075b-8bbb-4496-80a9-bfa7f003d1e8",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Human Cleric",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "Sacrifice a creature",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{B}{B}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "once_per_turn",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{B}{B}",
+    "name": "Gate to Phyrexia",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbb005de-bbba-458e-87c1-912a004e80da",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "Sacrifice a creature:",
+        "feature": "sac_outlet",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Enchantment",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "counter_add",
+      "dies",
+      "exile",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{3}",
+    "name": "Lightning Coils",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbb16f23-fdb1-444b-bef8-ce3e177c2678",
+    "provenance_summary": {
+      "deterministic": 8
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "Whenever a nontoken creature you control dies",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "create that many 3/1 red Elemental creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create that many 3/1 red Elemental creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put a charge counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever a nontoken creature you control dies"
+      },
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of your upkeep"
+      },
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "at the beginning of the next end step"
+      }
+    ],
+    "type_line": "Artifact",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{1}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{1}{U}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}",
+    "name": "Mistform Mask",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbb2ac2e-de5c-441a-9707-5ced64df43a6",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Enchantment — Aura",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{1}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{G}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{G}",
+    "name": "Waxing Moon",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbb4f08f-3016-40c2-ae7c-afc720eeb27a",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Instant",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{4}",
+    "name": "Magnetic Mine",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbb50cf5-cd07-4ae8-bfa8-d747e44fb1ef",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals 2 damage",
+        "feature": "damage",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever another artifact is put into a graveyard from the battlefield"
+      }
+    ],
+    "type_line": "Artifact",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "R",
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{U} // {R}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "cast",
+      "damage",
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_exile",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": true,
+    "mana_cost": "{2}{U} // {R}",
+    "name": "Frolicking Familiar // Blow Off Steam",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbb6867f-7186-41de-9828-21be469178c1",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast an instant or sorcery spell",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "damage",
+        "evidence": "deals 1 damage",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever you cast an instant or sorcery spell"
+      }
+    ],
+    "type_line": "Creature — Otter Wizard // Instant — Adventure",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{G}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{G}",
+    "name": "Saproling Migration",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbbb80bd-76fa-4155-929b-4a3565d1cb35",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "Create two 1/1 green Saproling creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "Create two 1/1 green Saproling creature token",
+        "feature": "token_create",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "G",
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{G}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{2}{G}{W}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{G}{W}",
+    "name": "Charging Troll",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbc1b96d-5a63-4091-a2c7-08bd289e0bf2",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Troll",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{X}{R}{R}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{X}{R}{R}",
+    "name": "Duelist's Flame",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbc990e4-1601-498f-9031-0cd663139367",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever this creature deals combat damage to a player"
+      }
+    ],
+    "type_line": "Instant",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "X/+0 and gains trample and \"Whenever this creature deals combat damage",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [
+      {
+        "economy": "cost_reduction",
+        "evidence": "cost {1} less",
+        "feature": "cost_reduction",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "cmc": 3.0,
+    "color_identity": [
+      "R",
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{U}{R}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "ambient": "deterministic",
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}{R}",
+    "name": "Sarkhan, Soul Aflame",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbcae463-ba05-4cfe-9c25-13f2e64698c7",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "Whenever a Dragon you control enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever a Dragon you control enters"
+      }
+    ],
+    "type_line": "Legendary Creature — Human Shaman",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{R}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": true,
+    "mana_cost": null,
+    "name": "Tormented Pariah // Rampaging Werewolf",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbcc2d2d-b29c-410f-bee7-5ef1609a5b32",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of each upkeep"
+      }
+    ],
+    "type_line": "Creature — Human Warrior Werewolf // Creature — Werewolf",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 6.0,
+    "color_identity": [
+      "B",
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{B}{R}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [
+      "etb",
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}{B}{R}",
+    "name": "Razing Snidd",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbcd2045-cf51-4346-a561-ebae8ffdc181",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature enters"
+      }
+    ],
+    "type_line": "Creature — Beast",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "Power-up — {4}{G}{G}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{3}{G}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "counter_add"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}{G}",
+    "name": "She-Hulk, Jade Defender",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbd0a2a4-f81b-4a6b-bc4d-d7e53dc51333",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Legendary Creature — Gamma Hero",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{4}{G}{G}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [
+      {
+        "economy": "cost_reduction",
+        "evidence": "cost {2} less",
+        "feature": "cost_reduction",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "cmc": 3.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "etb",
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "ambient": "deterministic",
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}",
+    "name": "Semblance Anvil",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbd0c406-c995-46e0-898d-375fdbede203",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this artifact enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this artifact enters"
+      }
+    ],
+    "type_line": "Artifact",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{U}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}{U}",
+    "name": "Phantom Monster",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbd30183-524c-4b93-b953-90853ec3f39f",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Illusion",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{W}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{W}",
+    "name": "Gathering Throng",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbd340ce-cf06-43df-a060-be80bc46e985",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature enters"
+      }
+    ],
+    "type_line": "Creature — Human Citizen",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "R",
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{T}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{1}{U/R}{U/R}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "discard",
+      "draw",
+      "etb",
+      "tap"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": true,
+    "mana_cost": null,
+    "name": "Rush of Inspiration // Crackling Falls",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbd569cc-bc21-46df-b8eb-5b5bcd8fe762",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "Add {U} or {R",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "draw",
+        "evidence": "Draw two cards",
+        "feature": "draw",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Instant // Land",
+    "wants": [
+      {
+        "economy": "untap",
+        "evidence": "{T}:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 11.0,
+    "color_identity": [
+      "G",
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{2}{U}{U}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{10}{G}",
+      "mana_value": 11.0
+    },
+    "events_emitted": [
+      "attack"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{10}{G}",
+    "name": "The Pride of Hull Clade",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbd7b756-bbee-451e-9446-06019791cb36",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever this creature deals combat damage to a player"
+      }
+    ],
+    "type_line": "Legendary Creature — Crocodile Elk Turtle",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{2}{U}{U}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{B}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "attack",
+      "damage",
+      "lifegain"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{B}",
+    "name": "Boomerang, Blade Flinger",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbd84035-3efd-4301-9778-913898efd57a",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "you gain 1 life",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "damage",
+        "evidence": "deals 1 damage",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever Boomerang attacks"
+      }
+    ],
+    "type_line": "Legendary Creature — Human Villain",
+    "wants": []
+  },
+  {
+    "ambient": [
+      {
+        "economy": "cost_reduction",
+        "evidence": "cost {2} less",
+        "feature": "cost_reduction",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "cmc": 3.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{B}{B}{B}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "etb",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "ambient": "deterministic",
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{B}{B}{B}",
+    "name": "The Sibsig Ceremony",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbdb731d-c533-48ef-b82a-cf1a8ba36208",
+    "provenance_summary": {
+      "deterministic": 6
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "Whenever a creature you control enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "create a 2/2 black Zombie Druid creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 2/2 black Zombie Druid creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever a creature you control enters"
+      }
+    ],
+    "type_line": "Legendary Enchantment",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{U}{U}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}{U}",
+    "name": "Faerie Trickery",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbe370ba-412b-4052-89d9-2d0ae4928118",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Kindred Instant — Faerie",
+    "wants": []
+  },
+  {
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Creatures you control get +",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "cmc": 4.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{R}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "ambient": "deterministic",
+      "costs": "deterministic",
+      "guards": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{3}{R}",
+    "name": "Start Your Engines",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbe3726b-e14d-48d1-8bbf-40d48f1ef8c7",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 5.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{R}{R}",
+      "mana_value": 5.0
+    },
+    "events_emitted": [
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{3}{R}{R}",
+    "name": "Quakebringer",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbe41a21-f8ad-4e5c-88d8-2a41dfd32d13",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals 2 damage",
+        "feature": "damage",
+        "magnitude": 2,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of your upkeep"
+      }
+    ],
+    "type_line": "Creature — Giant Berserker",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{B}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "dies",
+      "sacrifice",
+      "tap",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{B}",
+    "name": "Beamsaw Prospector",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbe740f8-6e7c-4cfd-9134-9bf8d5f48cf5",
+    "provenance_summary": {
+      "deterministic": 8
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "Sacrifice this token:",
+        "feature": "sac_outlet",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "create a Lander token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a Lander token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature dies"
+      }
+    ],
+    "type_line": "Creature — Human Artificer",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{2}, {T}, Sacrifice this token:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}, Sacrifice this token:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "Renew — {2}{B}, Exile this card from your graveyard",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "counter_add",
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "timing_sorcery",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{B}{B}",
+    "name": "Qarsi Revenant",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbea79bc-71d4-4100-92f4-783c2c4b46da",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a flying counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Creature — Vampire",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{2}{B}, Exile this card from your graveyard:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 5.0,
+    "color_identity": [
+      "B"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{B}",
+      "mana_value": 5.0
+    },
+    "events_emitted": [
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{4}{B}",
+    "name": "Vampire Soulcaller",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbea8ade-a641-4132-b306-f39fe2f14311",
+    "provenance_summary": {
+      "deterministic": 4
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "return target creature card from your graveyard to your hand",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature enters"
+      }
+    ],
+    "type_line": "Creature — Vampire Warlock",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}{R}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}{R}",
+    "name": "Ceaseless Searblades",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbed284c-987a-4765-b3a8-4f18a228ad0e",
+    "provenance_summary": {
+      "deterministic": 1
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever you activate an ability of an Elemental"
+      }
+    ],
+    "type_line": "Creature — Elemental Warrior",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "Power-up — {6}{G}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{3}{G}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "counter_add",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}{G}",
+    "name": "Pet Avengers",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbee7921-19c9-4c70-8462-f16e7e9c25db",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "create a 3/2 white Hero creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 3/2 white Hero creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Creature — Dragon Cat Dog Bird Frog Hero",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{6}{G}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "B",
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{B}{G}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "attack",
+      "cast",
+      "exile",
+      "sacrifice",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{B}{G}",
+    "name": "Ghoulcaller's Harvest",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbef4d8e-5861-4d50-9589-14b46c71e9af",
+    "provenance_summary": {
+      "deterministic": 7
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Flashback",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "Create X 2/2 black Zombie creature token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "Create X 2/2 black Zombie creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When it attacks"
+      }
+    ],
+    "type_line": "Sorcery",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "X 2/",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "cards in your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "B",
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{B}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{2}{U}{B}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [
+      "exile"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{2}{U}{B}",
+    "name": "Kathari Remnant",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbf07946-33d0-48fe-85af-022e9b0b834c",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When you cast this spell"
+      }
+    ],
+    "type_line": "Creature — Bird Skeleton",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{W}{W}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "lifegain"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{W}{W}",
+    "name": "Descendant of Kiyomaro",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbf07bec-9c02-455b-885d-7cb5fc77b5de",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "you gain 3 life",
+        "feature": "lifegain",
+        "magnitude": 3,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever this creature deals combat damage"
+      }
+    ],
+    "type_line": "Creature — Human Soldier",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{G}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{G}",
+    "name": "Argothian Pixies",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbf183bc-d502-4432-8202-f29f60c08396",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Faerie",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{R}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "cast",
+      "damage"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      },
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{R}",
+    "name": "Iron Fist, Living Weapon",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbf873c2-94c1-46b8-912e-e29e48e0212c",
+    "provenance_summary": {
+      "deterministic": 6
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a spell",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "damage",
+        "evidence": "deals damage equal to",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever you cast a spell that targets a creature you control"
+      }
+    ],
+    "type_line": "Legendary Creature — Human Warrior Hero",
+    "wants": [
+      {
+        "economy": "untap",
+        "evidence": "{T}:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 6.0,
+    "color_identity": [
+      "G",
+      "R"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{R}{G}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [
+      "sacrifice"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "triggers": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{4}{R}{G}",
+    "name": "Killer Instinct",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbf90463-280a-413e-b8a3-4577dcf11e54",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "At the beginning of your upkeep"
+      },
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "at the beginning of the next end step"
+      }
+    ],
+    "type_line": "Enchantment",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{3}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{3}",
+    "name": "Rings of Brighthearth",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbf9494c-c4bb-4d36-98fe-8387846b342e",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever you activate an ability"
+      }
+    ],
+    "type_line": "Artifact",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "pay {2",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{3}{U}",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{1}{U}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [
+      "draw"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "provides": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}",
+    "name": "Azure Mage",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbf9fd47-10e1-4749-b06f-4fe72200afc7",
+    "provenance_summary": {
+      "deterministic": 3
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [],
+    "type_line": "Creature — Human Wizard",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{3}{U}:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 2.0,
+    "color_identity": [
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{U}",
+      "mana_value": 2.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}",
+    "name": "Memory Lapse",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbfb3e4a-b389-4391-8141-13b68c0ef2e0",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Instant",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [
+        {
+          "cost": "{2}, {T}, Sacrifice this artifact",
+          "provenance": "deterministic"
+        }
+      ],
+      "mana_cost": "{2}{G}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "etb",
+      "lifegain",
+      "sacrifice",
+      "tap"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{G}",
+    "name": "Heaped Harvest",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbfc5011-a9b7-442d-a443-974a5a64de46",
+    "provenance_summary": {
+      "deterministic": 8
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this artifact enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "Sacrifice this artifact:",
+        "feature": "sac_outlet",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "You gain 3 life",
+        "feature": "lifegain",
+        "magnitude": 3,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this artifact enters and when you sacrifice it"
+      }
+    ],
+    "type_line": "Artifact — Food",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{2}, {T}, Sacrifice this artifact:",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "untap",
+        "evidence": "{T}, Sacrifice this artifact:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 4.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{G}{G}",
+      "mana_value": 4.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "guards": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "control_requirement",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{G}{G}",
+    "name": "Sunbringer's Touch",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbfced8f-0f83-4cc9-9143-aa2473828b48",
+    "provenance_summary": {
+      "deterministic": 2
+    },
+    "provides": [],
+    "triggers": [],
+    "type_line": "Sorcery",
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "X, choose a creature with the least toughness among creatures you control and p…",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "B",
+      "U"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{1}{U}{B}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "attack",
+      "discard",
+      "draw",
+      "etb"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "zone_graveyard",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{1}{U}{B}",
+    "name": "Dreadwing Scavenger",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbfd0de0-3558-4833-bae4-8efae44b7fff",
+    "provenance_summary": {
+      "deterministic": 5
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "Whenever this creature enters",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "draw",
+        "evidence": "draw a card",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "Whenever this creature enters or attacks"
+      }
+    ],
+    "type_line": "Creature — Nightmare Bird",
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "cards in your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  },
+  {
+    "ambient": [],
+    "cmc": 6.0,
+    "color_identity": [
+      "U",
+      "W"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{4}{W}{U}",
+      "mana_value": 6.0
+    },
+    "events_emitted": [],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic"
+    },
+    "guards": [],
+    "is_dfc": false,
+    "mana_cost": "{4}{W}{U}",
+    "name": "Azorius Skyguard",
+    "needs_llm": true,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbfdb5eb-2140-4d50-a667-1b4ac75d03a5",
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
+    "type_line": "Creature — Human Knight",
+    "wants": []
+  },
+  {
+    "ambient": [],
+    "cmc": 3.0,
+    "color_identity": [
+      "G"
+    ],
+    "corpus_version": "2026-08-15T09:01:55.591+00:00",
+    "costs": {
+      "activated": [],
+      "mana_cost": "{2}{G}",
+      "mana_value": 3.0
+    },
+    "events_emitted": [
+      "dies",
+      "sacrifice",
+      "token_create"
+    ],
+    "extractor_version": "det-1.0.0",
+    "field_provenance": {
+      "costs": "deterministic",
+      "events_emitted": "deterministic",
+      "guards": "deterministic",
+      "provides": "deterministic",
+      "triggers": "deterministic",
+      "wants": "deterministic"
+    },
+    "guards": [
+      {
+        "guard": "summoning_sick",
+        "provenance": "deterministic"
+      }
+    ],
+    "is_dfc": false,
+    "mana_cost": "{2}{G}",
+    "name": "Jewel-Eyed Cobra",
+    "needs_llm": false,
+    "ontology_version": "1.0.0",
+    "oracle_id": "bbfee53c-30a6-4ed0-beef-5c254be75fc5",
+    "provenance_summary": {
+      "deterministic": 8
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "Add one mana",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "Sacrifice this token:",
+        "feature": "sac_outlet",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "sacrifice",
+        "evidence": "create a Treasure token",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a Treasure token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ],
+    "triggers": [
+      {
+        "guarded": false,
+        "provenance": "deterministic",
+        "trigger": "When this creature dies"
+      }
+    ],
+    "type_line": "Creature — Snake",
+    "wants": [
+      {
+        "economy": "untap",
+        "evidence": "{T}, Sacrifice this token:",
+        "feature": "tap_ability",
+        "magnitude": 1,
+        "provenance": "deterministic"
+      }
+    ]
+  }
+]

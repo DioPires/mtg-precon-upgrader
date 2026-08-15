@@ -1,0 +1,83 @@
+{
+  "project": "mtg-precon-upgrader",
+  "package": "combo-lab-kb",
+  "issue": "DEC-488",
+  "parent": "DEC-476",
+  "phase": 1,
+  "phase_title": "Combo Lab knowledge base (full coverage): ontology v1, deterministic extraction, LLM classification, provenance",
+  "contract": "DEC-476 Laço / Combo Lab build plan (v2), revision 21d448a4; Laco Prd",
+  "prompt_size_default_pct": 50,
+  "prompts": [
+    {
+      "id": "P1.1",
+      "title": "Ontology v1",
+      "file": "phase-1/P1.1-ontology-v1.md",
+      "requirements": ["KB-1", "KB-2", "KB-3", "QE-3", "RSK-3"],
+      "deliverables": ["scripts/gen_combo_kb_ontology.py", "data/combo-kb/ontology.json"],
+      "status": "done"
+    },
+    {
+      "id": "P1.2",
+      "title": "Deterministic extraction + provenance gate",
+      "file": "phase-1/P1.2-deterministic-extraction.md",
+      "requirements": ["KB-1", "KB-2", "KB-4", "DR-1", "DR-2"],
+      "deliverables": ["scripts/combo_kb_lib.py", "scripts/build_combo_kb.py", "data/combo-kb/entries/*.json", "data/combo-kb/meta.json"],
+      "status": "done"
+    },
+    {
+      "id": "P1.3",
+      "title": "Coverage gate + provenance-gate tests",
+      "file": "phase-1/P1.3-coverage-and-tests.md",
+      "requirements": ["KB-1", "KB-4"],
+      "deliverables": ["scripts/check_kb_coverage.py", "tests/test_combo_kb.py"],
+      "status": "done"
+    },
+    {
+      "id": "P1.4",
+      "title": "Offline LLM classifier harness (injection-hardened)",
+      "file": "phase-1/P1.4-llm-classifier.md",
+      "requirements": ["KB-5", "IN-7", "NF-1", "QE-3"],
+      "deliverables": ["scripts/classify_combo_kb.py"],
+      "status": "done"
+    },
+    {
+      "id": "P1.5",
+      "title": "Sampling QA (QE-5 / KB-7)",
+      "file": "phase-1/P1.5-sampling-qa.md",
+      "requirements": ["QE-5", "KB-7"],
+      "deliverables": ["scripts/kb_sampling_qa.py"],
+      "status": "done"
+    },
+    {
+      "id": "P1.6",
+      "title": "KB schema documentation",
+      "file": "phase-1/P1.6-schema-doc.md",
+      "requirements": ["KB-4", "DR-7"],
+      "deliverables": ["docs/combo-kb-schema.md"],
+      "status": "done"
+    },
+    {
+      "id": "P1.7",
+      "title": "Stage-2 full-coverage LLM enrichment waves + KB-7 elevated review",
+      "file": "phase-1/P1.7-stage2-enrichment-waves.md",
+      "requirements": ["KB-5", "KB-7", "QE-5"],
+      "deliverables": ["enriched entries/*.json (needs_llm cleared)", "sampling-QA evidence per wave"],
+      "status": "pending",
+      "note": "Rolling waves after the stage-1 interim gate passes; each wave merges with sampling-QA evidence + Founding Engineer sign-off (no per-wave confirmation)."
+    }
+  ],
+  "gates": {
+    "stage1_interim": {
+      "definition": "KB covers every fleet-decklist card + top-2,000 by Spellbook variant membership (deterministic).",
+      "check": "uv run python scripts/check_kb_coverage.py --stage 1",
+      "confirmation_idempotency_key": "confirmation:{issueId}:phase1-interim-acceptance",
+      "status": "PASS (0 misses)"
+    },
+    "stage2_full": {
+      "definition": "KB covers all 31,830 Commander-legal cards; needs_llm entries enriched; sampling-QA + FE sign-off per wave.",
+      "check": "uv run python scripts/check_kb_coverage.py --stage full",
+      "confirmation_idempotency_key": "confirmation:{issueId}:phase1-full-acceptance",
+      "status": "deterministic coverage PASS; LLM-enrichment waves pending (P1.7)"
+    }
+  }
+}

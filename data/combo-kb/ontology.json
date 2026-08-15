@@ -1,0 +1,638 @@
+{
+  "schema": "combo-kb-ontology",
+  "version": "1.0.0",
+  "comment": "Combo Lab knowledge-base ontology (DEC-476 Phase 1 / DEC-488). Source of truth for deterministic feature extraction. Patterns are case-insensitive Python regex matched against oracle_text (per face for DFCs), after word-number normalisation. See docs/combo-kb-schema.md.",
+  "resources": [
+    {
+      "id": "mana",
+      "label": "Mana",
+      "finite_zone": false,
+      "note": "Typed by color plus generic; floating within a phase."
+    },
+    {
+      "id": "hand",
+      "label": "Cards in hand",
+      "finite_zone": false
+    },
+    {
+      "id": "library",
+      "label": "Cards in library",
+      "finite_zone": true,
+      "note": "Finite zone — net-consuming loops are bounded (PRD 6.5.4)."
+    },
+    {
+      "id": "graveyard",
+      "label": "Cards in graveyard",
+      "finite_zone": true
+    },
+    {
+      "id": "exile",
+      "label": "Cards in exile",
+      "finite_zone": true
+    },
+    {
+      "id": "life",
+      "label": "Life total",
+      "finite_zone": false
+    },
+    {
+      "id": "tokens",
+      "label": "Tokens by type",
+      "finite_zone": false
+    },
+    {
+      "id": "counters",
+      "label": "Counters (+1/+1, charge, loyalty, experience)",
+      "finite_zone": false
+    },
+    {
+      "id": "turn_phase_budget",
+      "label": "Per-turn allowances",
+      "finite_zone": false,
+      "note": "Untap steps, draw steps, once-per-turn windows, extra turns — the k in the k=0 / k>0 classification (PRD 6.5)."
+    }
+  ],
+  "events": [
+    "etb",
+    "dies",
+    "ltb",
+    "cast",
+    "draw",
+    "discard",
+    "mill",
+    "sacrifice",
+    "exile",
+    "tap",
+    "untap",
+    "damage",
+    "token_create",
+    "attack",
+    "lifegain",
+    "lifeloss",
+    "counter_add",
+    "extra_turn"
+  ],
+  "guards": [
+    {
+      "id": "zone_graveyard",
+      "label": "Requires a card in a graveyard",
+      "patterns": [
+        "from (?:your |a |target )?graveyard",
+        "in your graveyard",
+        "cards? in (?:your |a )?graveyard"
+      ]
+    },
+    {
+      "id": "zone_exile",
+      "label": "Interacts with exile",
+      "patterns": [
+        "in exile",
+        "exiled with",
+        "from exile"
+      ]
+    },
+    {
+      "id": "timing_sorcery",
+      "label": "Sorcery-speed timing",
+      "patterns": [
+        "any time you could cast a sorcery",
+        "only (?:as a sorcery|during your (?:main phase|turn))"
+      ]
+    },
+    {
+      "id": "summoning_sick",
+      "label": "Summoning-sickness / haste-relevant tap cost",
+      "patterns": [
+        "\\{T\\}",
+        "tap an untapped",
+        "tap (?:target|another)"
+      ]
+    },
+    {
+      "id": "control_requirement",
+      "label": "Control / ownership requirement",
+      "patterns": [
+        "you control",
+        "under your control",
+        "you own and control"
+      ]
+    },
+    {
+      "id": "once_per_turn",
+      "label": "Once-per-turn / per-turn window",
+      "patterns": [
+        "once (?:each|per) turn",
+        "only once each turn",
+        "for the first time each turn"
+      ]
+    }
+  ],
+  "features": [
+    {
+      "id": "mana_add",
+      "kind": "provides",
+      "economy": "mana",
+      "label": "Adds mana",
+      "role_hint": "ramp",
+      "patterns": [
+        "\\badd\\b[^.]*\\{[wubrgc0-9]",
+        "\\badd (?:one|two|three) mana",
+        "add \\{[wubrgcx]\\}"
+      ],
+      "magnitude": {
+        "pattern": "add ((?:\\{[wubrgcx0-9]\\})+)",
+        "group": 1,
+        "default": 1,
+        "kind": "pip_count"
+      },
+      "pairs_with": [
+        "mana_sink",
+        "untap_permanent"
+      ]
+    },
+    {
+      "id": "mana_sink",
+      "kind": "wants",
+      "economy": "mana",
+      "label": "Repeatable mana sink",
+      "role_hint": "payoff",
+      "patterns": [
+        "\\{\\d+\\}[^.]*:",
+        "pay \\{?\\d",
+        "\\bx\\b[^.]*(?:damage|mana|/)"
+      ],
+      "pairs_with": [
+        "mana_add"
+      ]
+    },
+    {
+      "id": "cost_reduction",
+      "kind": "ambient",
+      "economy": "cost_reduction",
+      "label": "Reduces costs (ambient modifier)",
+      "role_hint": "engine",
+      "patterns": [
+        "cost(?:s)? \\{?\\d+\\}? less",
+        "cost(?:s)? \\{[wubrg]\\} less",
+        "spells you cast cost",
+        "costs? \\{?\\d+\\}? less to (?:cast|activate)"
+      ],
+      "magnitude": {
+        "pattern": "cost(?:s)? \\{?(\\d+)\\}? less",
+        "group": 1,
+        "default": 1
+      },
+      "pairs_with": []
+    },
+    {
+      "id": "etb_trigger",
+      "kind": "provides",
+      "economy": "etb",
+      "label": "ETB payoff",
+      "role_hint": "engine",
+      "patterns": [
+        "when(?:ever)? (?:this creature|[^.]{0,40}?) enters",
+        "when(?:ever)? (?:a|another)[^.]{0,40}? enters(?: the battlefield)? under your control"
+      ],
+      "pairs_with": [
+        "blink",
+        "token_create",
+        "recursion"
+      ]
+    },
+    {
+      "id": "blink",
+      "kind": "provides",
+      "economy": "blink",
+      "label": "Blink / flicker (re-triggers ETB)",
+      "role_hint": "engine",
+      "patterns": [
+        "exile (?:target|another target|up to one target|any number of target)[^.]*?(?:then )?return (?:it|them|that card)[^.]*?(?:to the battlefield|under (?:your|its owner's) control)",
+        "flicker",
+        "exile[^.]*?return[^.]*?to the battlefield[^.]*?(?:tapped|under)"
+      ],
+      "pairs_with": [
+        "etb_trigger"
+      ]
+    },
+    {
+      "id": "dies_trigger",
+      "kind": "provides",
+      "economy": "dies",
+      "label": "Death payoff",
+      "role_hint": "engine",
+      "patterns": [
+        "when(?:ever)? (?:this creature|[^.]{0,40}?) dies",
+        "when(?:ever)? (?:a|another)[^.]{0,40}? dies"
+      ],
+      "pairs_with": [
+        "sac_outlet",
+        "sac_fodder"
+      ]
+    },
+    {
+      "id": "ltb_trigger",
+      "kind": "provides",
+      "economy": "ltb",
+      "label": "Leaves-the-battlefield payoff",
+      "role_hint": "engine",
+      "patterns": [
+        "when(?:ever)? (?:this creature|[^.]{0,40}?) leaves the battlefield"
+      ],
+      "pairs_with": [
+        "blink",
+        "sac_outlet"
+      ]
+    },
+    {
+      "id": "cast_trigger",
+      "kind": "provides",
+      "economy": "cast",
+      "label": "Cast payoff (magecraft-style)",
+      "role_hint": "payoff",
+      "patterns": [
+        "when(?:ever)? you cast (?:a|your|an)[^.]{0,40}?spell",
+        "\\bmagecraft\\b",
+        "when(?:ever)? you cast (?:an instant or sorcery|a noncreature)"
+      ],
+      "pairs_with": [
+        "spell_source"
+      ]
+    },
+    {
+      "id": "spell_source",
+      "kind": "provides",
+      "economy": "cast",
+      "label": "Repeatable / recastable spell source",
+      "role_hint": "engine",
+      "patterns": [
+        "\\bflashback\\b",
+        "\\bretrace\\b",
+        "cast [^.]*?from your graveyard",
+        "copy that spell",
+        "you may cast (?:it|that card) from exile"
+      ],
+      "pairs_with": [
+        "cast_trigger"
+      ]
+    },
+    {
+      "id": "sac_outlet",
+      "kind": "provides",
+      "economy": "sacrifice",
+      "label": "Sacrifice outlet",
+      "role_hint": "utility",
+      "patterns": [
+        "sacrifice (?:a|another|target|this|two|three|any number of)[^.:]*?(?:creature|permanent|artifact|token)[^.]*?:",
+        "sacrifice (?:a|another)[^.:]*?:"
+      ],
+      "pairs_with": [
+        "sac_fodder",
+        "dies_trigger"
+      ]
+    },
+    {
+      "id": "sac_fodder",
+      "kind": "provides",
+      "economy": "sacrifice",
+      "label": "Recurring sacrifice fodder",
+      "role_hint": "engine",
+      "patterns": [
+        "create[^.]*?token",
+        "return (?:it|this card)[^.]*?to (?:the battlefield|your hand)",
+        "when(?:ever)? [^.]*? dies,[^.]*?return"
+      ],
+      "pairs_with": [
+        "sac_outlet"
+      ]
+    },
+    {
+      "id": "untap_permanent",
+      "kind": "provides",
+      "economy": "untap",
+      "label": "Untaps a permanent",
+      "role_hint": "engine",
+      "patterns": [
+        "untap (?:target|another target|up to (?:one|two|three)|all)[^.]*?(?:permanent|creature|land|artifact)",
+        "untap [^.]*?\\bit\\b"
+      ],
+      "pairs_with": [
+        "tap_ability",
+        "mana_add"
+      ]
+    },
+    {
+      "id": "tap_ability",
+      "kind": "wants",
+      "economy": "untap",
+      "label": "Has a tap-ability worth untapping",
+      "role_hint": "engine",
+      "patterns": [
+        "\\{T\\}[^.]*?:",
+        "\\{T\\},"
+      ],
+      "pairs_with": [
+        "untap_permanent"
+      ]
+    },
+    {
+      "id": "token_create",
+      "kind": "provides",
+      "economy": "token",
+      "label": "Creates tokens",
+      "role_hint": "engine",
+      "patterns": [
+        "create(?:s)? [^.]*?token",
+        "put(?:s)? [^.]*?token onto the battlefield"
+      ],
+      "magnitude": {
+        "pattern": "create(?:s)? (\\d+)[^.]*?token",
+        "group": 1,
+        "default": 1
+      },
+      "pairs_with": [
+        "sac_outlet",
+        "anthem",
+        "token_doubler"
+      ]
+    },
+    {
+      "id": "token_doubler",
+      "kind": "ambient",
+      "economy": "token",
+      "label": "Token doubler (ambient)",
+      "role_hint": "payoff",
+      "patterns": [
+        "create twice that many[^.]*?token",
+        "if [^.]*?would create one or more tokens[^.]*?(?:twice|instead)"
+      ],
+      "pairs_with": [
+        "token_create"
+      ]
+    },
+    {
+      "id": "mill",
+      "kind": "provides",
+      "economy": "mill",
+      "label": "Mill (self or opponent)",
+      "role_hint": "payoff",
+      "patterns": [
+        "\\bmills?\\b",
+        "put(?:s)? the top (\\d+) cards? of [^.]*?library into"
+      ],
+      "magnitude": {
+        "pattern": "mills? (\\d+)",
+        "group": 1,
+        "default": 1
+      },
+      "pairs_with": [
+        "recursion",
+        "graveyard_payoff"
+      ]
+    },
+    {
+      "id": "drain",
+      "kind": "provides",
+      "economy": "drain",
+      "label": "Life drain to opponents",
+      "role_hint": "wincon",
+      "patterns": [
+        "each opponent loses (\\d+) life",
+        "loses (\\d+) life[^.]*?you gain",
+        "each opponent loses[^.]*?life"
+      ],
+      "magnitude": {
+        "pattern": "loses (\\d+) life",
+        "group": 1,
+        "default": 1
+      },
+      "pairs_with": [
+        "dies_trigger",
+        "etb_trigger"
+      ]
+    },
+    {
+      "id": "lifegain",
+      "kind": "provides",
+      "economy": "lifegain",
+      "label": "Life gain",
+      "role_hint": "payoff",
+      "patterns": [
+        "you gain (\\d+) life",
+        "gain (\\d+) life",
+        "whenever you gain life"
+      ],
+      "magnitude": {
+        "pattern": "gain (\\d+) life",
+        "group": 1,
+        "default": 1
+      },
+      "pairs_with": [
+        "lifegain_payoff"
+      ]
+    },
+    {
+      "id": "lifegain_payoff",
+      "kind": "wants",
+      "economy": "lifegain",
+      "label": "Lifegain payoff",
+      "role_hint": "payoff",
+      "patterns": [
+        "whenever you gain life",
+        "if you gained life"
+      ],
+      "pairs_with": [
+        "lifegain"
+      ]
+    },
+    {
+      "id": "recursion",
+      "kind": "provides",
+      "economy": "recursion",
+      "label": "Graveyard recursion",
+      "role_hint": "recursion",
+      "patterns": [
+        "return (?:target|[^.]{0,40}?) card[^.]*?from (?:your |a )?graveyard to (?:your hand|the battlefield)",
+        "return [^.]*?from your graveyard",
+        "\\bunearth\\b",
+        "\\bencore\\b",
+        "\\bembalm\\b",
+        "\\beternalize\\b"
+      ],
+      "pairs_with": [
+        "mill",
+        "sac_fodder",
+        "self_mill"
+      ]
+    },
+    {
+      "id": "graveyard_payoff",
+      "kind": "wants",
+      "economy": "recursion",
+      "label": "Graveyard-as-resource payoff",
+      "role_hint": "payoff",
+      "patterns": [
+        "\\bdelve\\b",
+        "\\bescape\\b",
+        "cards? in your graveyard",
+        "for each [^.]*?in your graveyard"
+      ],
+      "pairs_with": [
+        "mill",
+        "recursion"
+      ]
+    },
+    {
+      "id": "trigger_doubler",
+      "kind": "ambient",
+      "economy": "trigger_doubling",
+      "label": "Trigger doubler (ambient)",
+      "role_hint": "payoff",
+      "patterns": [
+        "triggers? an additional time",
+        "triggers? one more time",
+        "if [^.]*?would (?:trigger|be dealt|create)[^.]*?(?:twice|instead)"
+      ],
+      "pairs_with": [
+        "etb_trigger",
+        "dies_trigger",
+        "cast_trigger"
+      ]
+    },
+    {
+      "id": "counter_add",
+      "kind": "provides",
+      "economy": "counters",
+      "label": "Adds counters",
+      "role_hint": "engine",
+      "patterns": [
+        "put(?:s)? (\\d+|a|one|two|three)[^.]*?counters?",
+        "\\bproliferate\\b",
+        "\\bamass\\b"
+      ],
+      "magnitude": {
+        "pattern": "put (\\d+)[^.]*?counter",
+        "group": 1,
+        "default": 1
+      },
+      "pairs_with": [
+        "counter_payoff"
+      ]
+    },
+    {
+      "id": "counter_payoff",
+      "kind": "wants",
+      "economy": "counters",
+      "label": "Counter payoff",
+      "role_hint": "payoff",
+      "patterns": [
+        "for each [^.]*?counter",
+        "remove (?:a|one|\\d+)[^.]*?counter"
+      ],
+      "pairs_with": [
+        "counter_add"
+      ]
+    },
+    {
+      "id": "draw",
+      "kind": "provides",
+      "economy": "draw",
+      "label": "Card draw",
+      "role_hint": "card-draw",
+      "patterns": [
+        "draws? (\\d+|a|one|two|three) cards?",
+        "draw a card"
+      ],
+      "magnitude": {
+        "pattern": "draws? (\\d+) cards?",
+        "group": 1,
+        "default": 1
+      },
+      "pairs_with": []
+    },
+    {
+      "id": "damage",
+      "kind": "provides",
+      "economy": "damage",
+      "label": "Deals damage",
+      "role_hint": "wincon",
+      "patterns": [
+        "deals? (\\d+) damage",
+        "deals? damage equal to",
+        "deals? x damage"
+      ],
+      "magnitude": {
+        "pattern": "deals? (\\d+) damage",
+        "group": 1,
+        "default": 1
+      },
+      "pairs_with": [
+        "ping_outlet"
+      ]
+    },
+    {
+      "id": "ping_outlet",
+      "kind": "provides",
+      "economy": "damage",
+      "label": "Repeatable damage outlet",
+      "role_hint": "wincon",
+      "patterns": [
+        "\\{T\\}[^.]*?deals? \\d+ damage",
+        ":[^.]*?deals? \\d+ damage to any target"
+      ],
+      "pairs_with": [
+        "untap_permanent"
+      ]
+    },
+    {
+      "id": "extra_turn",
+      "kind": "provides",
+      "economy": "turn_phase_budget",
+      "label": "Extra turn / extra combat",
+      "role_hint": "wincon",
+      "patterns": [
+        "take an extra turn",
+        "an additional combat phase",
+        "take (?:a|an) [^.]*?turn after this one"
+      ],
+      "pairs_with": []
+    },
+    {
+      "id": "anthem",
+      "kind": "ambient",
+      "economy": "token",
+      "label": "Anthem / static buff (ambient)",
+      "role_hint": "payoff",
+      "patterns": [
+        "creatures you control get \\+",
+        "other creatures you control get \\+",
+        "get \\+\\d+/\\+\\d+"
+      ],
+      "pairs_with": [
+        "token_create"
+      ]
+    },
+    {
+      "id": "self_mill",
+      "kind": "provides",
+      "economy": "mill",
+      "label": "Self-mill",
+      "role_hint": "engine",
+      "patterns": [
+        "mill(?:s)? (?:yourself|\\d+)",
+        "put the top [^.]*?of your library into your graveyard"
+      ],
+      "pairs_with": [
+        "recursion",
+        "graveyard_payoff"
+      ]
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-08-15",
+      "note": "Ontology v1 (DEC-488). Seeded from the 15-role taxonomy (docs/role-taxonomy.md) and the KB-3 mandated trigger economies (ETB, dies, LTB, cast, sacrifice outlet/fodder, blink, untap, tap-ability, token creation, mill, drain/lifegain, cost reduction, trigger doubling, recursion) plus core combo resources (mana, draw, damage, counters, extra turns)."
+    }
+  ]
+}
