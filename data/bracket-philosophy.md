@@ -25,6 +25,22 @@ Source: [Command Zone Episode 731](https://www.youtube.com/watch?v=jzeTz9clIC8) 
 
 **Note:** Mana Vault ({C}{C}{C}) is weaker in 3+ color decks without untap effects. Evaluate per-deck.
 
+### Explosive Ramp (Burst Mana)
+
+Added from DEC-481 (2026-08-15), adopting lesson L4 (as amended) from the DEC-474 video review.
+
+**Category definition.** Explosive ramp (burst mana) is one-shot or temporary mana acceleration, distinct from the persistent rocks and dorks above. It covers rituals, treasure bursts, cost-cheat effects, and extra turns used as mana. The definition merges two videos by Gage (@TheCommanderChallenge): V2 (*…I will change how you think about Commander Forever*, 2026-05-27) supplies the mana-doubling framing plus cost-cheat and extra turns; V1 (*How to Build a Commander Deck from Scratch*, 2026-05-11) supplies rituals and treasures.
+
+**Count ladder (creator-sourced heuristic — cross-check only).** Every rung below is the creator's stated practice, not a validated target. Use the ladder only as a cross-check until we validate it against our mana sims.
+
+- ~2 pieces at Bracket 2 (his practice)
+- 3–5 pieces at Bracket 3 (his practice)
+- 9 pieces at Bracket 4 — his stated B4 practice, one example deck, no range given
+
+**Source credibility cross-check.** His land counts independently corroborate our Karsten formula. He runs 38 lands; our formula (35 + 1.5×avg_cmc) gives ≈39–40 at typical curves (39.8 at the default 3.2 avg CMC), and 38 sits inside the formula's ±1–2 credit tolerance.
+
+**No role-taxonomy change.** Burst-mana cards keep their existing role tags (`ramp` per [`docs/role-taxonomy.md`](../docs/role-taxonomy.md)); this category is descriptive only.
+
 ## Free Spells (Mandatory by Color)
 
 **Bracket 4:**
