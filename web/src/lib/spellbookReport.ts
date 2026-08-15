@@ -6,6 +6,25 @@
 // phases; nothing in Phase 0 is labeled beyond Tier A.
 
 import { BRACKET_TAG_LABELS, type SpellbookCombo } from '../data/spellbook';
+import type { SynergyCandidate, SynergyCounts } from '../data/synergy';
+
+/**
+ * DEC-491 — Tier-C heuristic synergy layer attached to a combo report. Never
+ * verified-combo language (EI-4); coarse bands only (RK-5). Fleet mode ships
+ * triples/cycles in the precompute; paste mode fills them on a deep scan.
+ */
+export interface SynergyReport {
+  crowdPriorApplied: boolean;
+  deepFocused: boolean;
+  counts: SynergyCounts;
+  /** KB-gap names skipped for synergy analysis (DC-6) — distinct from IN-6. */
+  uncovered: string[];
+  pairs: SynergyCandidate[];
+  triples: SynergyCandidate[];
+  cycles: SynergyCandidate[];
+  /** True once triples/cycles are loaded (fleet: from the start; paste: after a deep scan). */
+  deepAvailable: boolean;
+}
 
 export interface ComboReport {
   mode: 'fleet' | 'paste';
@@ -20,6 +39,8 @@ export interface ComboReport {
   cardsTotal: number;
   /** IN-6 unresolvable lines (paste mode). */
   unresolved: string[];
+  /** DEC-491 Tier-C synergy layer. Absent when no synergy data is available. */
+  synergy?: SynergyReport;
 }
 
 /** A combo's element count: cycle-piece cards + required templates (BR-1). */

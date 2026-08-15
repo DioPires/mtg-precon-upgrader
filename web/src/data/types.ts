@@ -8,6 +8,7 @@
 // (e.g. mv: "—") so components never branch on absence.
 
 import type { SpellbookDeckCombos } from './spellbook';
+import type { DeckSynergyCandidates } from './synergy';
 
 // ─── 1. RAW JSON ────────────────────────────────────────────────────
 
@@ -306,6 +307,12 @@ export interface RawDeckBundle {
    * (normalize.ts:390). Null when the deck has no spellbook-combos.json yet.
    */
   spellbookCombos?: SpellbookDeckCombos | null;
+  /**
+   * DEC-491 — precomputed Tier-C synergy candidates for this deck (standalone
+   * file like metrics.json, produced by the fleet synergy build). Null when the
+   * deck has no synergy-candidates.json yet.
+   */
+  synergyCandidates?: DeckSynergyCandidates | null;
 }
 
 // ─── 2. DECK_FULL (UI shape) ────────────────────────────────────────

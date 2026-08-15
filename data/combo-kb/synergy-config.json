@@ -1,0 +1,238 @@
+{
+  "compat": {
+    "anthem": [
+      "token_create"
+    ],
+    "blink": [
+      "etb_trigger",
+      "ltb_trigger"
+    ],
+    "cast_trigger": [
+      "spell_source",
+      "trigger_doubler"
+    ],
+    "cost_reduction": [],
+    "counter_add": [
+      "counter_payoff"
+    ],
+    "counter_payoff": [
+      "counter_add"
+    ],
+    "damage": [
+      "ping_outlet"
+    ],
+    "dies_trigger": [
+      "drain",
+      "sac_fodder",
+      "sac_outlet",
+      "trigger_doubler"
+    ],
+    "drain": [
+      "dies_trigger",
+      "etb_trigger"
+    ],
+    "draw": [],
+    "etb_trigger": [
+      "blink",
+      "drain",
+      "recursion",
+      "token_create",
+      "trigger_doubler"
+    ],
+    "extra_turn": [],
+    "graveyard_payoff": [
+      "mill",
+      "recursion",
+      "self_mill"
+    ],
+    "lifegain": [
+      "lifegain_payoff"
+    ],
+    "lifegain_payoff": [
+      "lifegain"
+    ],
+    "ltb_trigger": [
+      "blink",
+      "sac_outlet"
+    ],
+    "mana_add": [
+      "mana_sink",
+      "untap_permanent"
+    ],
+    "mana_sink": [
+      "mana_add"
+    ],
+    "mill": [
+      "graveyard_payoff",
+      "recursion"
+    ],
+    "ping_outlet": [
+      "damage",
+      "untap_permanent"
+    ],
+    "recursion": [
+      "etb_trigger",
+      "graveyard_payoff",
+      "mill",
+      "sac_fodder",
+      "self_mill"
+    ],
+    "sac_fodder": [
+      "dies_trigger",
+      "recursion",
+      "sac_outlet"
+    ],
+    "sac_outlet": [
+      "dies_trigger",
+      "ltb_trigger",
+      "sac_fodder",
+      "token_create"
+    ],
+    "self_mill": [
+      "graveyard_payoff",
+      "recursion"
+    ],
+    "spell_source": [
+      "cast_trigger"
+    ],
+    "tap_ability": [
+      "untap_permanent"
+    ],
+    "token_create": [
+      "anthem",
+      "etb_trigger",
+      "sac_outlet",
+      "token_doubler"
+    ],
+    "token_doubler": [
+      "token_create"
+    ],
+    "trigger_doubler": [
+      "cast_trigger",
+      "dies_trigger",
+      "etb_trigger"
+    ],
+    "untap_permanent": [
+      "mana_add",
+      "ping_outlet",
+      "tap_ability"
+    ]
+  },
+  "constants": {
+    "CYCLE_CAP": 30,
+    "DEEP_EDGE_LIMIT": 200,
+    "EDGE_MIN_SIGNAL": 3.0,
+    "EDGE_WEIGHT_SCALE": 6.0,
+    "IDF_FALLBACK": 2.0,
+    "PAIR_CAP": 80,
+    "STRONG_BAND_CUT": 0.5,
+    "TRIPLE_CAP": 40,
+    "W_CROWD_PRIOR": 1.0,
+    "W_DECK_FIT": 1.0,
+    "W_MAGNITUDE": 1.0
+  },
+  "economies": {
+    "anthem": "token",
+    "blink": "blink",
+    "cast_trigger": "cast",
+    "cost_reduction": "cost_reduction",
+    "counter_add": "counters",
+    "counter_payoff": "counters",
+    "damage": "damage",
+    "dies_trigger": "dies",
+    "drain": "drain",
+    "draw": "draw",
+    "etb_trigger": "etb",
+    "extra_turn": "turn_phase_budget",
+    "graveyard_payoff": "recursion",
+    "lifegain": "lifegain",
+    "lifegain_payoff": "lifegain",
+    "ltb_trigger": "ltb",
+    "mana_add": "mana",
+    "mana_sink": "mana",
+    "mill": "mill",
+    "ping_outlet": "damage",
+    "recursion": "recursion",
+    "sac_fodder": "sacrifice",
+    "sac_outlet": "sacrifice",
+    "self_mill": "mill",
+    "spell_source": "cast",
+    "tap_ability": "untap",
+    "token_create": "token",
+    "token_doubler": "token",
+    "trigger_doubler": "trigger_doubling",
+    "untap_permanent": "untap"
+  },
+  "idf": {
+    "anthem": 3.4455,
+    "blink": 5.4854,
+    "cast_trigger": 3.4816,
+    "cost_reduction": 4.101,
+    "counter_add": 2.4398,
+    "counter_payoff": 3.9613,
+    "damage": 2.5022,
+    "dies_trigger": 3.3551,
+    "drain": 4.4765,
+    "draw": 2.3326,
+    "etb_trigger": 1.8241,
+    "extra_turn": 5.8795,
+    "graveyard_payoff": 3.8329,
+    "lifegain": 3.1478,
+    "lifegain_payoff": 5.6232,
+    "ltb_trigger": 5.0069,
+    "mana_add": 2.7209,
+    "mana_sink": 1.6995,
+    "mill": 4.0438,
+    "ping_outlet": 4.4793,
+    "recursion": 3.2681,
+    "sac_fodder": 2.1134,
+    "sac_outlet": 3.1147,
+    "self_mill": 4.9837,
+    "spell_source": 4.1496,
+    "tap_ability": 2.0147,
+    "token_create": 2.2494,
+    "token_doubler": 8.4223,
+    "trigger_doubler": 6.2573,
+    "untap_permanent": 4.2746
+  },
+  "labels": {
+    "anthem": "Anthem / static buff (ambient)",
+    "blink": "Blink / flicker (re-triggers ETB)",
+    "cast_trigger": "Cast payoff (magecraft-style)",
+    "cost_reduction": "Reduces costs (ambient modifier)",
+    "counter_add": "Adds counters",
+    "counter_payoff": "Counter payoff",
+    "damage": "Deals damage",
+    "dies_trigger": "Death payoff",
+    "drain": "Life drain to opponents",
+    "draw": "Card draw",
+    "etb_trigger": "ETB payoff",
+    "extra_turn": "Extra turn / extra combat",
+    "graveyard_payoff": "Graveyard-as-resource payoff",
+    "lifegain": "Life gain",
+    "lifegain_payoff": "Lifegain payoff",
+    "ltb_trigger": "Leaves-the-battlefield payoff",
+    "mana_add": "Adds mana",
+    "mana_sink": "Repeatable mana sink",
+    "mill": "Mill (self or opponent)",
+    "ping_outlet": "Repeatable damage outlet",
+    "recursion": "Graveyard recursion",
+    "sac_fodder": "Recurring sacrifice fodder",
+    "sac_outlet": "Sacrifice outlet",
+    "self_mill": "Self-mill",
+    "spell_source": "Repeatable / recastable spell source",
+    "tap_ability": "Has a tap-ability worth untapping",
+    "token_create": "Creates tokens",
+    "token_doubler": "Token doubler (ambient)",
+    "trigger_doubler": "Trigger doubler (ambient)",
+    "untap_permanent": "Untaps a permanent"
+  },
+  "noisePairs": [
+    [
+      "mana_add",
+      "mana_sink"
+    ]
+  ],
+  "ontologyVersion": "1.0.1",
+  "schema": "combo-synergy-config"
+}

@@ -143,6 +143,13 @@
   background: rgba(124, 200, 146, 0.08);
 }
 
+/* Tier C — distinct, subordinate to Tier A (blue vs Tier A's green). */
+.gv1-cl-tier-c {
+  color: var(--gv1-mana-u);
+  border: 1px solid var(--gv1-mana-u-stroke);
+  background: rgba(168, 200, 232, 0.08);
+}
+
 /* ── sections ───────────────────────────────────────────────────────────── */
 
 .gv1-cl-section {
@@ -372,7 +379,102 @@
   padding-top: var(--gv1-space-3);
 }
 
+/* ── Tier-C synergies (DEC-491) ─────────────────────────────────────────────── */
+
+.gv1-cl-framing-c {
+  border-left-color: var(--gv1-mana-u-stroke);
+}
+
+.gv1-cl-synergy-note {
+  text-transform: none;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.gv1-cl-h3 {
+  margin: 0 0 var(--gv1-space-2);
+  color: var(--gv1-ink-bright);
+}
+
+.gv1-cl-synergy-deep {
+  display: flex;
+  align-items: center;
+  gap: var(--gv1-space-3);
+  flex-wrap: wrap;
+}
+
+.gv1-cl-synergy-deep .gv1-cl-more:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.gv1-cl-synergy-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gv1-space-3);
+}
+
+/* Coarse band chip (RK-5) — NEVER a numeric score. */
+.gv1-cl-band {
+  font-family: var(--gv1-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: var(--gv1-radius-0);
+  padding: 1px 6px;
+}
+
+.gv1-cl-band-strong {
+  color: var(--gv1-gold-300);
+  border: 1px solid var(--gv1-gold-700);
+}
+
+.gv1-cl-band-spec {
+  color: var(--gv1-ink-dim);
+  border: 1px solid var(--gv1-line-strong);
+}
+
+.gv1-cl-shape {
+  margin-left: auto;
+}
+
+/* Matched-edge explanations (DC-3 / TX-1). */
+.gv1-cl-edges {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.gv1-cl-edge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--gv1-space-2);
+  line-height: 1.5;
+}
+
+.gv1-cl-edge-pair {
+  font-family: var(--gv1-mono);
+  font-size: 12px;
+  color: var(--gv1-ink);
+}
+
+.gv1-cl-edge-label {
+  font-family: var(--gv1-mono);
+  font-size: 11px;
+  color: var(--gv1-ink-dim);
+  background: var(--gv1-bg-3);
+  border-radius: var(--gv1-radius-0);
+  padding: 1px 6px;
+}
+
 @media (max-width: 560px) {
+  .gv1-cl-shape {
+    margin-left: 0;
+  }
   .gv1-cl {
     padding: var(--gv1-space-4) var(--gv1-space-3) var(--gv1-space-12);
   }
