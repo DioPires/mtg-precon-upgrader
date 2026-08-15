@@ -36,8 +36,40 @@ Entry precondition verified: `b2d36a1` (Phase 0 / DEC-487) is an ancestor of
 **Stage-1 interim gate: reached.** Awaiting Founding Engineer review + interim
 acceptance confirmation.
 
-### Remaining (stage 2, P1.7)
-Full-coverage LLM enrichment of the 5,613 `needs_llm` cards as rolling waves,
-KB-7 elevated human review, per-wave sampling-QA evidence + FE sign-off, then
-the full-acceptance confirmation. Deterministic coverage of the full pool is
-already in place, so stage-2 is enrichment/QA depth, not new coverage.
+## 2026-08-15 — Stage-1 interim gate ACCEPTED + merged
+
+- **FE sign-off**: DEC-489, reviewer `4e51e111` ≠ implementer `6ba3ac88`,
+  APPROVED on `96ceaf4` (B1 reminder-text strip + B2 untap-vocab widening both
+  fixed and re-validated).
+- **Board acceptance**: `request_confirmation`
+  `confirmation:a2b38c44…:phase1-interim-acceptance` **accepted** by
+  `local-board` at 2026-08-15T17:30:06Z. Acceptance authorized the merge.
+- **Merge**: fast-forward `dec-488-combo-kb-phase1` (`96ceaf4`) → `origin/main`
+  (`b2d36a1..96ceaf4`). Verified: `96ceaf4` is an ancestor of `origin/main`.
+  Two commits landed (`2c5e1fe` ontology/extraction/gate, `96ceaf4` B1/B2 fix).
+- **Handoff**: CEO creates the Phase 2 issue per the contract. Stage 2 (below)
+  continues under DEC-488 and was explicitly NOT part of this acceptance.
+
+### Remaining (stage 2, P1.7) — full-coverage LLM enrichment
+Enrich the **6,701** `needs_llm` cards (deterministic pass covered 25,129 /
+31,830 = 78.9% with signal; all 31,830 already have deterministic provenance
+fields). Stage-2 is enrichment/QA depth, not new coverage. Rolling waves, each
+gated by per-wave sampling-QA evidence + Founding Engineer sign-off (reviewer ≠
+implementer), no per-wave board confirmation. Full-coverage completion gets the
+`confirmation:{issueId}:phase1-full-acceptance` ceremony.
+
+**Wave plan (priority order):**
+1. **Wave 1 — fleet `needs_llm` (191 cards).** Highest Tier-B value: these are
+   in live decklists, so their KB entries feed real combo verdicts first.
+   Enabler needed: `classify_combo_kb.py` currently filters only by `--limit`;
+   add a name/oracle-id filter (e.g. `--names-file`) so waves can target a set.
+   This enabler ships through the prompt lifecycle with FE review, not direct-to-main.
+2. **Waves 2..N — by Spellbook variant-membership rank** (top-2000 corpus set,
+   `data/spellbook/matcher-index.json`), then the long tail, batched ~500/wave.
+3. Per wave: `--emit-batch` → out-of-band batch model (hardened prompts,
+   IN-7) → `--apply` → `kb_sampling_qa.py` (KB-7 oversampled) → FE sign-off →
+   merge. Outputs stamped `llm` (not Tier-B eligible until human-reviewed per
+   KB-4 / `combo_kb_lib.TIER_B_PROVENANCES`).
+
+Harness end-to-end verified this heartbeat: `--emit-batch --limit 5` produced
+5 hardened prompt records (`name`, `oracle_id`, `schema`, `system`, `user`).
