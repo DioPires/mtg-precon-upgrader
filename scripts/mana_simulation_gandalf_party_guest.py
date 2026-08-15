@@ -81,28 +81,23 @@ ROCK_DEFS = {
 
 # --- Land subtype definitions (for check lands and the battleland) ---
 
-PLAINS_TYPED_LANDS = {"Plains", "Prairie Stream", "Turbulent Steppe",
+PLAINS_TYPED_LANDS = {"Plains", "Turbulent Steppe",
                       "Hallowed Fountain", "Sacred Foundry"}
-ISLAND_TYPED_LANDS = {"Island", "Prairie Stream", "Turbulent Springs",
+ISLAND_TYPED_LANDS = {"Island", "Turbulent Springs",
                       "Steam Vents", "Hallowed Fountain"}
 MOUNTAIN_TYPED_LANDS = {"Mountain", "Turbulent Springs", "Turbulent Steppe",
                         "Steam Vents", "Sacred Foundry"}
 
 BASIC_LANDS = {"Island", "Mountain", "Plains"}
 
-ALWAYS_TAPPED = {"Path of Ancestry", "Temple of Epiphany"}
+# Plaza of Heroes: {T}: Add {C}, or any color but only to cast a legendary
+# spell / activate a legendary ability. Modeled as a restricted atom: the "L"
+# marker pays generic always and upgrades to any color for legendary casts.
+PLAZA_ATOM = frozenset({"C", "L"})
 
 
 def land_enters_tapped(name: str, battlefield_lands: list[str], turn: int) -> bool:
     """Determine if a land enters tapped given current board and turn number."""
-    if name in ALWAYS_TAPPED:
-        return True
-
-    # Battleland: untapped with 2+ basics already on the battlefield
-    if name == "Prairie Stream":
-        basics = sum(1 for l in battlefield_lands if l in BASIC_LANDS)
-        return basics < 2
-
     # "Tapped unless your opponents control eight or more lands" — 4-player
     # model: 3 opponents make ~3 land drops per turn cycle, so untapped from T4.
     if name in {"Turbulent Springs", "Turbulent Steppe"}:
@@ -121,7 +116,8 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], turn: int) -> bo
 
     # Shock lands (Steam Vents, Hallowed Fountain, Sacred Foundry): pay 2 life.
     # Pathways (modal DFC duals), Skycloud Expanse (filter, modeled as dual),
-    # Command Tower, Exotic Orchard, Adarkar Wastes, Ancient Tomb, basics: untapped.
+    # Command Tower, Exotic Orchard, Adarkar Wastes, Ancient Tomb, Mana
+    # Confluence, City of Brass, Plaza of Heroes, basics: untapped.
     return False
 
 
@@ -139,17 +135,23 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
     if name == "Plains":
         return [frozenset({"W"})]
 
-    # Tri-color lands
-    if name in {"Command Tower", "Exotic Orchard", "Path of Ancestry"}:
+    # Tri-color lands (Mana Confluence / City of Brass are any-color for 1
+    # life or damage per tap — life is not modeled, matching the shock lands)
+    if name in {"Command Tower", "Exotic Orchard", "Mana Confluence",
+                "City of Brass"}:
         return [frozenset({"U", "R", "W"})]
 
+    # Plaza of Heroes: {C} for generic; any color only for legendary casts
+    if name == "Plaza of Heroes":
+        return [PLAZA_ATOM]
+
     # WU duals (Skycloud Expanse filter + Hengegate Pathway MDFC modeled as duals)
-    if name in {"Skycloud Expanse", "Prairie Stream", "Adarkar Wastes",
+    if name in {"Skycloud Expanse", "Adarkar Wastes",
                 "Glacial Fortress", "Hengegate Pathway", "Hallowed Fountain"}:
         return [frozenset({"W", "U"})]
 
     # UR duals (Riverglide Pathway MDFC modeled as a dual)
-    if name in {"Temple of Epiphany", "Turbulent Springs", "Sulfur Falls",
+    if name in {"Turbulent Springs", "Sulfur Falls",
                 "Riverglide Pathway", "Steam Vents"}:
         return [frozenset({"U", "R"})]
 
@@ -249,8 +251,17 @@ class ManaPool:
         remaining = available[generic:]
         return True, remaining
 
-    def can_cast(self, pips: dict) -> bool:
-        """Check if this pool can pay the given mana cost."""
+    def can_cast(self, pips: dict, legendary: bool = False) -> bool:
+        """Check if this pool can pay the given mana cost.
+
+        For legendary casts, Plaza of Heroes atoms ("L" marker) upgrade from
+        generic-only to any color.
+        """
+        if legendary and any("L" in s for s in self.sources):
+            upgraded = [frozenset({"U", "R", "W"}) if "L" in s else s
+                        for s in self.sources]
+            success, _ = ManaPool(upgraded)._allocate(pips)
+            return success
         success, _ = self._allocate(pips)
         return success
 
@@ -390,7 +401,7 @@ class GameState:
         if self.legendary_resolved:
             return
         pool = self.compute_mana_pool()
-        if pool.can_cast(COMMANDER_PIPS):
+        if pool.can_cast(COMMANDER_PIPS, legendary=True):
             self.legendary_resolved = True
             return
         for card in self.hand:
@@ -398,7 +409,7 @@ class GameState:
             if not front_face_type_line(meta).startswith("Legendary Creature"):
                 continue
             pips = parse_mana_cost(meta.get("mana_cost", ""))
-            if pool.can_cast(pips):
+            if pool.can_cast(pips, legendary=True):
                 self.legendary_resolved = True
                 return
 
@@ -516,7 +527,8 @@ def can_cast_from_hand(state: GameState, pool: ManaPool) -> list[str]:
         pips = parse_mana_cost(mc)
         if pips["total"] == 0 and not pips["X"]:
             continue
-        if pool.can_cast(pips):
+        legendary = front_face_type_line(meta).startswith("Legendary")
+        if pool.can_cast(pips, legendary=legendary):
             castable.append(card)
     return castable
 
@@ -583,7 +595,7 @@ def print_static_analysis(decklist: list[str], metadata: dict,
 
     # Mana source inventory
     lands = classified["lands"]
-    u_lands, r_lands, w_lands, c_only = 0, 0, 0, 0
+    u_lands, r_lands, w_lands, c_only, leg_restricted = 0, 0, 0, 0, 0
     for l in lands:
         sources = compute_land_sources(l, [])  # empty board for static count
         if not sources:
@@ -597,6 +609,8 @@ def print_static_analysis(decklist: list[str], metadata: dict,
             w_lands += 1
         if colors == frozenset({"C"}):
             c_only += 1
+        if "L" in colors:
+            leg_restricted += 1
 
     def _count_pair(pair):
         return sum(1 for l in lands
@@ -613,7 +627,7 @@ def print_static_analysis(decklist: list[str], metadata: dict,
     print(f"    U-producing: {u_lands}  R-producing: {r_lands}  W-producing: {w_lands}")
     print(f"    URW tri-lands: {urw_lands}")
     print(f"    UR duals: {ur_lands}  WU duals: {wu_lands}  RW duals: {rw_lands}")
-    print(f"    C-only: {c_only}")
+    print(f"    C-only: {c_only}  Legendary-restricted any-color: {leg_restricted}")
 
     # Rock inventory
     rocks = classified["rocks"]
@@ -702,11 +716,11 @@ def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAM
 
             # Commander: Gandalf, Party Guest {1}{U}{R}{W}
             if cmd_cast_turn is None:
-                castable_now = pool.can_cast(COMMANDER_PIPS)
+                castable_now = pool.can_cast(COMMANDER_PIPS, legendary=True)
                 if not castable_now and state.petal_available:
                     # Crack Lotus Petal the turn its mana is needed for the commander
                     boosted = ManaPool(pool.sources + [state.petal_atom()])
-                    if boosted.can_cast(COMMANDER_PIPS):
+                    if boosted.can_cast(COMMANDER_PIPS, legendary=True):
                         castable_now = True
                         state.petal_available = False
                 if castable_now:
