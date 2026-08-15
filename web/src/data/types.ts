@@ -9,6 +9,7 @@
 
 import type { SpellbookDeckCombos } from './spellbook';
 import type { DeckSynergyCandidates } from './synergy';
+import type { DeckTierBLoops } from './tierB';
 
 // ─── 1. RAW JSON ────────────────────────────────────────────────────
 
@@ -313,6 +314,12 @@ export interface RawDeckBundle {
    * deck has no synergy-candidates.json yet.
    */
   synergyCandidates?: DeckSynergyCandidates | null;
+  /**
+   * DEC-501 — precomputed Tier-B verified-loop verdicts for this deck (standalone
+   * file like metrics.json, produced by the fleet Tier-B verifier build). Null
+   * when the deck has no tier-b-loops.json yet.
+   */
+  tierBLoops?: DeckTierBLoops | null;
 }
 
 // ─── 2. DECK_FULL (UI shape) ────────────────────────────────────────

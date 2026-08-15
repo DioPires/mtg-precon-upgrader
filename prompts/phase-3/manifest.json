@@ -1,0 +1,75 @@
+{
+  "project": "mtg-precon-upgrader",
+  "package": "combo-lab-tier-b",
+  "issue": "DEC-501",
+  "parent": "DEC-476",
+  "phase": 3,
+  "phase_title": "Tier B verifier: closure model, deterministic verification, deficit vectors, computed prerequisites, ranking completion + calibration, computed result types, Tier-B tracing",
+  "contract": "DEC-476 Laço / Combo Lab build plan (v2); Laco Prd — Phase-3 row",
+  "prompt_size_default_pct": 50,
+  "note": "Phase-3 tracking is kept self-contained under prompts/phase-3/ (its own manifest + progress), matching the Phase-2 package: the root prompts/manifest.json is owned by DEC-488 (Phase 1), and the working tree is shared. Implementation was built directly and mirrored into this package as the lifecycle artifact (the accepted Phase-0 precedent); /phase-validate run at the gate.",
+  "prompts": [
+    {
+      "id": "P3.1",
+      "title": "Closure model + deterministic verifier",
+      "file": "phase-3/P3.1-closure-model-verifier.md",
+      "requirements": ["DB-1", "DB-2", "DB-3", "DB-5", "DB-6", "NF-3"],
+      "deliverables": ["scripts/combo_verifier_lib.py", "docs/combo-verifier.md"],
+      "status": "done"
+    },
+    {
+      "id": "P3.2",
+      "title": "Provenance gate + corroboration/novel split",
+      "file": "phase-3/P3.2-provenance-gate.md",
+      "requirements": ["DB-6", "DB-7", "EI-2", "EI-4", "QE-4"],
+      "deliverables": ["scripts/combo_verifier_lib.py (tier_b_view gate, CLOSE_SAFE, novel gate)"],
+      "status": "done"
+    },
+    {
+      "id": "P3.3",
+      "title": "Deficit vectors + computed prerequisites + command-zone guards",
+      "file": "phase-3/P3.3-deficits-and-prerequisites.md",
+      "requirements": ["DB-4", "PR-1", "PR-3", "PR-5", "IN-4", "TX-3", "UC3"],
+      "deliverables": ["scripts/combo_verifier_lib.py (compute_prerequisites, deficit)"],
+      "status": "done"
+    },
+    {
+      "id": "P3.4",
+      "title": "Result types + Tier-B tracing + fleet precompute",
+      "file": "phase-3/P3.4-result-types-and-fleet.md",
+      "requirements": ["RT-1", "TX-1", "TX-2"],
+      "deliverables": ["scripts/build_tier_b_candidates.py", "data/commanders/{id}/tier-b-loops.json"],
+      "status": "done"
+    },
+    {
+      "id": "P3.5",
+      "title": "Full regression suite (QE-1 b/c) + calibration (RK-3/RK-4)",
+      "file": "phase-3/P3.5-regression-and-calibration.md",
+      "requirements": ["QE-1", "QE-2", "QE-6", "RK-2", "RK-3", "RK-4"],
+      "deliverables": ["scripts/qe1_regression.py", "data/combo-kb/verifier-ranking.json"],
+      "status": "done"
+    },
+    {
+      "id": "P3.6",
+      "title": "Web Tier-B surface (fleet) + EI-2 labelling + export",
+      "file": "phase-3/P3.6-web-tier-b.md",
+      "requirements": ["EI-1", "EI-2", "EI-4", "RT-2", "RT-3", "RT-4"],
+      "deliverables": [
+        "web/src/data/tierB.ts",
+        "web/src/routes/ComboLab.tsx (TierBSection)",
+        "web/src/lib/spellbookReport.ts (TierBReport + export)",
+        "web/src/data/loader.ts (tierBLoops, STORAGE_PREFIX v112)",
+        "web/src/styles/combo-lab.css"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "P3.7",
+      "title": "Tests (Python verifier + web report parity of tier labels)",
+      "file": "phase-3/P3.7-tests.md",
+      "requirements": ["QE-4", "EI-4", "DB-5"],
+      "deliverables": ["tests/test_combo_verifier.py", "web/src/__tests__/lib/tierBReport.test.ts"],
+      "status": "done"
+    }
+  ]
+}

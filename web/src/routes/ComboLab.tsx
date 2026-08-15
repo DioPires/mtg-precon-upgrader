@@ -24,9 +24,12 @@ import {
   buildPlainTextExport,
   isTwoCardInfinite,
   isWinCombo,
+  loopClassLabel,
   type ComboReport,
   type SynergyReport,
+  type TierBReport,
 } from '../lib/spellbookReport';
+import type { TierBFinding } from '../data/tierB';
 
 const NEAR_MISS_COLLAPSE_THRESHOLD = 12;
 const SYNERGY_COLLAPSE_THRESHOLD = 10;
@@ -134,6 +137,17 @@ function FleetMode({
     const sc = bundle?.spellbookCombos;
     if (!bundle || !sc) return null;
     const deckSize = bundle.deck.decklist?.length ?? 0;
+    const tbl = bundle.tierBLoops;
+    const tierB: TierBReport | undefined = tbl
+      ? {
+          counts: tbl.counts,
+          corroborated: tbl.verifiedCorroborated,
+          novel: tbl.verifiedNovel,
+          engines: tbl.engines,
+          capped: tbl.capped,
+          crowdPriorApplied: tbl.meta.crowdPriorApplied,
+        }
+      : undefined;
     const syn = bundle.synergyCandidates;
     const synergy: SynergyReport | undefined = syn
       ? {
@@ -160,6 +174,7 @@ function FleetMode({
       cardsTotal: deckSize,
       unresolved: [],
       synergy,
+      tierB,
     };
   }, [bundle]);
 
@@ -465,6 +480,9 @@ function ComboReportView({
         )}
       </section>
 
+      {/* Tier-B verified loops (RT-2 order: after Tier-A combos, before the rest). */}
+      {report.tierB && <TierBSection tierB={report.tierB} />}
+
       {/* Tier-A near-misses */}
       <section className="gv1-cl-section" aria-label="Near-misses">
         <h2 className="gv1-cl-h2 gv1-mono-xs">
@@ -650,6 +668,147 @@ function FindingCard({ combo, kind }: { combo: SpellbookCombo; kind: 'included' 
  * empty and rely on the permalink. */
 function hasCuratedDetail(c: SpellbookCombo): boolean {
   return Boolean(c.steps || c.prerequisites.easy || c.prerequisites.notable || c.manaNeeded);
+}
+
+// ─── Tier-B verified loops (DEC-501) ─────────────────────────────────────────────
+
+/** Machine-verified loop layer. Findings here are Tier B — computed, "verified
+ * under Laço's game model" (EI-2), never a comprehensive-rules proof. Corroborated
+ * loops are also curated (Tier A) and labelled as such (DB-7). Loops the provenance
+ * gate held back are disclosed, not shown as verified (plan 6b). */
+function TierBSection({ tierB }: { tierB: TierBReport }) {
+  const { corroborated, novel, engines, capped } = tierB;
+  const nothing =
+    !corroborated.length && !novel.length && !engines.length && !capped.length;
+  return (
+    <section className="gv1-cl-section" aria-label="Tier-B verified loops">
+      <h2 className="gv1-cl-h2 gv1-mono-xs">
+        Verified loops{' '}
+        <span className="gv1-dim">({corroborated.length + novel.length})</span>
+      </h2>
+
+      {/* Epistemic framing (EI-1/EI-2) — model-conditional, one detail away. */}
+      <p className="gv1-cl-framing gv1-cl-framing-b gv1-mono-xs">
+        <span className="gv1-cl-tier gv1-cl-tier-b">Tier B · Computed</span> Machine-verified
+        against Laço's loop-closure model — <strong>verified under the model</strong>, not a
+        comprehensive-rules ruling. Deterministic (no AI at query time); a goldfish is assumed.
+        Findings consume only human-reviewed / deterministic knowledge (provenance gate).
+      </p>
+
+      {nothing ? (
+        <p className="gv1-cl-empty gv1-mono-xs gv1-dim">
+          No loops verified under the model — not an exhaustiveness claim (only the modelled loop
+          shapes over covered cards are checked).
+        </p>
+      ) : (
+        <ul className="gv1-cl-list">
+          {corroborated.map((f, i) => (
+            <TierBFindingCard key={`corr-${i}-${f.cards.join('|')}`} f={f} kind="corroborated" />
+          ))}
+          {novel.map((f, i) => (
+            <TierBFindingCard key={`nov-${i}-${f.cards.join('|')}`} f={f} kind="novel" />
+          ))}
+          {engines.map((f, i) => (
+            <TierBFindingCard key={`eng-${i}-${f.cards.join('|')}`} f={f} kind="engine" />
+          ))}
+        </ul>
+      )}
+
+      {/* Provenance-gate disclosure (plan 6b) — held at Tier C, not shown as verified. */}
+      {capped.length > 0 && (
+        <div className="gv1-cl-warn gv1-mono-xs" role="status">
+          {capped.length} candidate loop{capped.length > 1 ? 's' : ''} held at Tier C: a
+          loop-relevant card's knowledge-base entry is not yet human-reviewed, so the verifier will
+          not label {capped.length > 1 ? 'them' : 'it'} verified (provenance gate).
+        </div>
+      )}
+    </section>
+  );
+}
+
+const TIER_B_KIND_FLAG: Record<'corroborated' | 'novel' | 'engine', string> = {
+  corroborated: 'Also curated (Tier A)',
+  novel: 'Novel — verified by the model',
+  engine: 'Value engine / near-miss',
+};
+
+function TierBFindingCard({
+  f,
+  kind,
+}: {
+  f: TierBFinding;
+  kind: 'corroborated' | 'novel' | 'engine';
+}) {
+  // A corroborated loop is presented at Tier A (it is curated ground truth), with
+  // the computed verification as corroboration. Novel/engine are Tier B.
+  const tierClass = kind === 'corroborated' ? 'gv1-cl-tier-a' : 'gv1-cl-tier-b';
+  const tierLabel = kind === 'corroborated' ? 'Tier A' : 'Tier B';
+  return (
+    <li className="gv1-cl-finding">
+      <div className="gv1-cl-finding-head">
+        <span className={['gv1-cl-tier', tierClass].join(' ')}>{tierLabel}</span>
+        <span className="gv1-cl-flag">{TIER_B_KIND_FLAG[kind]}</span>
+        <span className="gv1-mono-xs gv1-dim gv1-cl-shape">{loopClassLabel(f)}</span>
+      </div>
+
+      <div className="gv1-cl-finding-cards">
+        {f.cards.map((n, i) => (
+          <span key={`${n}-${i}`} className="gv1-cl-cardname" data-card-name={n}>
+            {n}
+          </span>
+        ))}
+      </div>
+
+      {f.resultTypes.length > 0 && (
+        <div className="gv1-cl-produces">
+          {f.resultTypes.map((r) => (
+            <span key={r} className="gv1-cl-result">
+              {r.replace(/_/g, ' ')}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* TX-1 — the loop trace / why-is-this-here. For a near-miss, the deficit
+          vector states the leak in user terms (TX-3). */}
+      {f.deficit.length > 0 && f.deficit.some((d) => d.shortfall != null) ? (
+        <p className="gv1-cl-needs gv1-mono-xs">
+          <span className="gv1-cl-needs-label">Leaks</span>{' '}
+          {f.deficit
+            .filter((d) => d.shortfall != null)
+            .map((d) => `${d.shortfall} ${d.resource}/iteration`)
+            .join(', ')}
+        </p>
+      ) : null}
+
+      <details className="gv1-cl-detail">
+        <summary className="gv1-mono-xs gv1-cl-detail-summary">Loop trace &amp; prerequisites</summary>
+        {f.trace.length > 0 && (
+          <div className="gv1-cl-detail-block">
+            <span className="gv1-cl-detail-label gv1-mono-xs gv1-dim">Trace</span>
+            {f.trace.map((line, i) => (
+              <p key={i}>{line}</p>
+            ))}
+          </div>
+        )}
+        <div className="gv1-cl-detail-block">
+          <span className="gv1-cl-detail-label gv1-mono-xs gv1-dim">Prerequisites</span>
+          <p>Minimum starting mana: {f.prerequisites.minInitialMana}</p>
+          {f.prerequisites.guards.length > 0 && (
+            <p>Guards: {f.prerequisites.guards.map((g) => g.replace(/_/g, ' ')).join(', ')}</p>
+          )}
+          <p className="gv1-dim">{f.prerequisites.note}</p>
+        </div>
+        <div className="gv1-cl-detail-block">
+          <span className="gv1-cl-detail-label gv1-mono-xs gv1-dim">Provenance</span>
+          <p className="gv1-dim">
+            Ontology {String(f.provenance.ontologyVersion)} · extractor{' '}
+            {String(f.provenance.extractorVersion)} · {f.provenance.gate}
+          </p>
+        </div>
+      </details>
+    </li>
+  );
 }
 
 // ─── Tier-C synergies (DEC-491) ──────────────────────────────────────────────────

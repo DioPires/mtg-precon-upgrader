@@ -7,6 +7,7 @@
 
 import { BRACKET_TAG_LABELS, type SpellbookCombo } from '../data/spellbook';
 import type { SynergyCandidate, SynergyCounts } from '../data/synergy';
+import type { TierBFinding, TierBCounts } from '../data/tierB';
 
 /**
  * DEC-491 — Tier-C heuristic synergy layer attached to a combo report. Never
@@ -26,6 +27,26 @@ export interface SynergyReport {
   deepAvailable: boolean;
 }
 
+/**
+ * DEC-501 — Tier-B verified-loop layer attached to a combo report. Machine-
+ * verified UNDER LAÇO'S MODEL (EI-2), never a comprehensive-rules proof.
+ * Corroborated loops stay Tier A (DB-7). Fleet mode ships the precompute; paste
+ * mode fills it after an on-demand verify. Absent when no Tier-B data is available.
+ */
+export interface TierBReport {
+  counts: TierBCounts;
+  /** Curated loops the verifier also closes — corroboration, presented at Tier A. */
+  corroborated: TierBFinding[];
+  /** Novel verified loops (NOT in the curated corpus). Rare by design (DC-6). */
+  novel: TierBFinding[];
+  /** Value engines / near-misses with a concrete deficit (NM-1 Tier B / TX-3). */
+  engines: TierBFinding[];
+  /** Would-be Tier-B loops demoted to Tier C by the provenance gate (plan 6b). */
+  capped: TierBFinding[];
+  /** True in fleet mode (crowd prior folded into ranking order only). */
+  crowdPriorApplied: boolean;
+}
+
 export interface ComboReport {
   mode: 'fleet' | 'paste';
   deckLabel: string;
@@ -41,6 +62,8 @@ export interface ComboReport {
   unresolved: string[];
   /** DEC-491 Tier-C synergy layer. Absent when no synergy data is available. */
   synergy?: SynergyReport;
+  /** DEC-501 Tier-B verified-loop layer. Absent when no Tier-B data is available. */
+  tierB?: TierBReport;
 }
 
 /** A combo's element count: cycle-piece cards + required templates (BR-1). */
@@ -62,6 +85,20 @@ export function isTwoCardInfinite(c: SpellbookCombo): boolean {
 
 export function bracketLabel(tag: string): string {
   return BRACKET_TAG_LABELS[tag] ?? tag ?? '—';
+}
+
+/** Human label for a Tier-B loop's (k, bound) classification. Infinite (k=0) vs
+ * per-turn value engine (k>0); the finite-zone bound is an attribute on either
+ * class (never a third class — the plan's (k, bound) clarification). */
+export function loopClassLabel(f: TierBFinding): string {
+  const base =
+    f.loopClass === 'infinite' ? 'infinite loop (k=0)'
+    : f.loopClass === 'engine' ? `per-turn value engine (k=${f.k ?? '?'})`
+    : 'candidate loop';
+  if (f.finiteZoneBound) {
+    return `${base}, bounded by ${f.finiteZoneBound.zone}${f.finiteZoneBound.bound ? ` (~${f.finiteZoneBound.bound}×)` : ''}`;
+  }
+  return base;
 }
 
 export interface BracketDisclosure {
@@ -146,6 +183,35 @@ export function buildPlainTextExport(report: ComboReport): string {
     lines.push(`    ${c.permalink}`);
   }
   lines.push('');
+
+  // Tier-B verified loops (RT-2 order: after Tier-A combos). Model-conditional
+  // language is mandatory (EI-2); tier labels must survive the export (EI-4).
+  if (report.tierB) {
+    const tb = report.tierB;
+    lines.push(
+      `— TIER B · VERIFIED LOOPS — computed, verified under Laço's game model (${tb.novel.length} novel) —`,
+    );
+    lines.push('  "Verified under the model" is not a comprehensive-rules proof; goldfish assumed.');
+    if (!tb.novel.length && !tb.corroborated.length) {
+      lines.push('  No loops verified under the model (this is not an exhaustiveness claim).');
+    }
+    for (const f of tb.corroborated) {
+      lines.push(`• [Tier A · computed-corroborated] ${f.cards.join(' + ')}`);
+      lines.push(`    ${loopClassLabel(f)} · result: ${f.resultTypes.join(', ') || '—'}`);
+    }
+    for (const f of tb.novel) {
+      lines.push(`• [Tier B · verified under the model] ${f.cards.join(' + ')}`);
+      lines.push(`    ${loopClassLabel(f)} · result: ${f.resultTypes.join(', ') || '—'}`);
+      if (f.prerequisites?.minInitialMana)
+        lines.push(`    Prerequisite: ${f.prerequisites.minInitialMana} starting mana`);
+    }
+    if (tb.capped.length) {
+      lines.push(
+        `  ${tb.capped.length} loop(s) held at Tier C — a loop-relevant KB entry is not yet human-reviewed (provenance gate).`,
+      );
+    }
+    lines.push('');
+  }
 
   lines.push(
     `— TIER A · NEAR-MISSES / ONE-TO-TWO CARDS AWAY (${report.nearMisses.length}${report.nearMissesTotal > report.nearMisses.length ? ` of ${report.nearMissesTotal}` : ''}) —`,

@@ -20,6 +20,7 @@ import type {
 } from './types';
 import type { SpellbookDeckCombos } from './spellbook';
 import type { DeckSynergyCandidates } from './synergy';
+import type { DeckTierBLoops } from './tierB';
 
 // Bump suffix when the persisted shape or upstream data semantics change so
 // returning users don't read stale bundles. v5 (DEC-206): Eternal Agony
@@ -151,7 +152,13 @@ import type { DeckSynergyCandidates } from './synergy';
 // pairs/triples/4-cycles). Bump invalidates the persisted deck envelope so
 // returning users pick up the new member. (The 3.3 MB feature index used by
 // paste mode bypasses this localStorage cache entirely — see data/synergy.ts.)
-const STORAGE_PREFIX = 'gv1-deck-data-v111:';
+// v111 -> v112 (DEC-501 2026-08-15): Combo Lab Tier-B (DEC-476 Phase 3). Deck
+// bundles now carry a `tierBLoops` member loaded from
+// data/commanders/{id}/tier-b-loops.json (precomputed deterministic loop
+// verdicts: verified/corroborated loops, near-misses, provenance-gate caps).
+// Bump invalidates the persisted deck envelope so returning users pick up the new
+// member (guards the "no dark period" regression — see DEC-491 B1 lesson).
+const STORAGE_PREFIX = 'gv1-deck-data-v112:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
@@ -286,16 +293,18 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   async function fetchDeckBundle(entry: RawDeckIndexEntry): Promise<RawDeckBundle> {
     const id = entry.id;
     const base = `/data/commanders/${id}`;
-    const [deck, sim, metrics, candidates, spellbookCombos, synergyCandidates, cardMetadata] =
-      await Promise.all([
-        fetchJson<RawDeck>(`${base}/deck.json`),
-        fetchJson<RawSimulation>(`${base}/simulation.json`),
-        fetchJson<RawMetrics>(`${base}/metrics.json`),
-        fetchJson<RawCandidates>(`${base}/candidates.json`),
-        fetchJson<SpellbookDeckCombos>(`${base}/spellbook-combos.json`),
-        fetchJson<DeckSynergyCandidates>(`${base}/synergy-candidates.json`),
-        loadCardMetadata(),
-      ]);
+    const [
+      deck, sim, metrics, candidates, spellbookCombos, synergyCandidates, tierBLoops, cardMetadata,
+    ] = await Promise.all([
+      fetchJson<RawDeck>(`${base}/deck.json`),
+      fetchJson<RawSimulation>(`${base}/simulation.json`),
+      fetchJson<RawMetrics>(`${base}/metrics.json`),
+      fetchJson<RawCandidates>(`${base}/candidates.json`),
+      fetchJson<SpellbookDeckCombos>(`${base}/spellbook-combos.json`),
+      fetchJson<DeckSynergyCandidates>(`${base}/synergy-candidates.json`),
+      fetchJson<DeckTierBLoops>(`${base}/tier-b-loops.json`),
+      loadCardMetadata(),
+    ]);
     if (!deck) throw new Error(`deck.json missing for ${id}`);
     return {
       id,
@@ -306,6 +315,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
       candidates: candidates ?? null,
       spellbookCombos: spellbookCombos ?? null,
       synergyCandidates: synergyCandidates ?? null,
+      tierBLoops: tierBLoops ?? null,
       cardMetadata,
     };
   }
