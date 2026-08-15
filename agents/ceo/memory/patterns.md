@@ -97,3 +97,9 @@ The Scryfall MCP strips the `loyalty` field from planeswalker response payloads 
 ### Mana Simulation Script Pattern
 Per-deck Monte Carlo simulation scripts follow the naming convention `scripts/mana_simulation_{deck-id}.py`. Standard parameters: 100,000 games × 10 turns. Output schema goes to `data/commanders/{id}/simulation.json`. Reference implementation: `scripts/mana_simulation_pyre_and_panic.py` (676 lines). Scripts must also be registered in `scripts/export_simulation_results.py`. For 5-color decks, model each of WUBRG separately; account for commander cost-reduction interactions (Eminence, Morophon) in the castability calculations.
 - Source: session c3cac001, 2026-05-20
+
+---
+
+### Comms Guideline — plain language, not ASD-STE100 (DEC-475)
+Board decision 2026-08-15: all agent comms follow a 10-line STE-inspired plain-language guideline, embedded in every `agents/*/AGENTS.md` ("Comms Guideline" section). Full ASD-STE100 was rejected: wrong genre (procedural spec vs. our analytical comms), licensed ~900-word dictionary makes compliance unverifiable, MTG/stats vocabulary would all ride the Technical-Names exception. Core rules: lead with the outcome, short active-voice sentences, one term per concept, plain words, explicit numbers with stated comparison basis, complete sentences, clarity wins over any rule.
+- Source: DEC-475, 2026-08-15

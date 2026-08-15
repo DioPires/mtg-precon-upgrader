@@ -2,10 +2,11 @@
 
 ## Topics
 - [mtg-cards.md](mtg-cards.md) — 24 entries
-- [patterns.md](patterns.md) — 12 entries
+- [patterns.md](patterns.md) — 13 entries
 - [debugging.md](debugging.md) — 3 entries
 
 ## Recent Additions
+- 2026-08-15: Comms guideline — plain language, not ASD-STE100 (DEC-475) → patterns.md
 - 2026-07-20: Paperclip interactions API payload schema (version:1 + prompt required) → debugging.md
 - 2026-07-20: Work methodology proposal (tiered plan-and-delegate) → docs/work-methodology.md, DEC-458 in_review
 - 2026-05-20: Commander Spellbook MCP transient null error → debugging.md

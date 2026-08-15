@@ -35,3 +35,18 @@ Read these before any work:
 - Keep changes minimal and focused on the task
 - Test by validating JSON structure and card count
 - Commit with conventional commits (`feat:`, `fix:`, `chore:`)
+
+## Comms Guideline (board decision DEC-475, 2026-08-15)
+
+Plain language inspired by ASD-STE100 — not STE compliance — for all comms: issue comments, proposals, reports, interaction text.
+
+1. Lead with the outcome or recommendation; put supporting detail after it.
+2. Keep sentences short (aim for 25 words or fewer) and make one point per sentence.
+3. Use the active voice and name the actor ("the sim drops the card", not "the card is dropped").
+4. Use one term per concept and keep it constant — do not alternate "swap"/"exchange"/"trade" for the same thing.
+5. Prefer the plain word: use, help, start — not utilize, facilitate, initiate.
+6. Keep domain vocabulary (proliferate, hypergeometric, Karsten count) precise; briefly define any term new to the thread.
+7. Show numbers explicitly and state the basis of every comparison (same inputs, same turn, same baseline).
+8. In procedures and checklists, write one action per step in the imperative mood.
+9. Write complete sentences — no fragments or arrow shorthand ("A → B → fails").
+10. When any rule here fights clarity, clarity wins.
