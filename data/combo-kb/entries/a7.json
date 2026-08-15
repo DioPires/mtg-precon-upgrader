@@ -2650,6 +2650,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -2673,7 +2674,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2684,13 +2686,22 @@
     "is_dfc": false,
     "mana_cost": "{W}{U}{B}{R}{G}",
     "name": "Horde of Notions",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a7656948-4d7d-47f7-b8a1-fc9716155e37",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "You may play target Elemental card from your graveyard without paying its mana c",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Creature — Elemental",
     "wants": []
@@ -6888,6 +6899,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -6907,7 +6919,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Stunt Double",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a7ff1b64-8eab-4309-892c-17a619cd302e",
     "provenance_summary": {},

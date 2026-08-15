@@ -5245,6 +5245,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -5259,7 +5260,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5270,13 +5272,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Fateful Handoff",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1ecde43f-e418-437b-8b8f-efe120f96cb3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw cards equal to the mana value of target artifact or creature you control",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -5415,6 +5426,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U",
@@ -5435,7 +5447,7 @@
     "is_dfc": false,
     "mana_cost": "{W/U}{W/U}{W/U}{W/U}{W/U}",
     "name": "Godhead of Awe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1ed5751a-4b45-4cd2-b19c-ac84508de4f8",
     "provenance_summary": {},

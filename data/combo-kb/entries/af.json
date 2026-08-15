@@ -5143,6 +5143,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5162,7 +5163,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Sakashima's Student",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "afcc68e2-3634-43ce-ae99-dd2ec735d146",
     "provenance_summary": {},
@@ -5741,6 +5742,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -5759,7 +5761,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5770,13 +5773,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{U}",
     "name": "Master Biomancer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "afeba4d7-b659-4fb1-84dd-27704fbb2621",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Each other creature you control enters with a number of additional +1/+1 counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Elf Wizard",
     "wants": []

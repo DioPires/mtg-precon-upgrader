@@ -2367,6 +2367,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -2385,7 +2386,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2396,13 +2398,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{G}",
     "name": "Grumgully, the Generous",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Each other non-Human creature you control enters with an additional +1/+1 counte",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Creature — Goblin Shaman",
     "wants": []

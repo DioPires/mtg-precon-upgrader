@@ -103,3 +103,24 @@ Branch `dec-488-combo-kb-phase1-stage2`. Full QA evidence:
 implementer, cross-agent writes closed) → merge → Waves 2..N by Spellbook
 variant-membership rank (batched, same protocol). Full-coverage completion
 (`needs_llm` → ~0) gets the `phase1-full-acceptance` confirmation ceremony.
+
+## 2026-08-15 — Stage-2 Wave 1 FE-approved + merged; Wave 2 executed
+
+- **Wave 1 merged.** FE (`4e51e111` ≠ implementer) APPROVED on DEC-490; `dec-488-
+  combo-kb-phase1-stage2` fast-forwarded to main (`96ceaf4..fe475a0`, includes
+  Wave-1 `47f55d9` + board-directed handoff-protocol docs `fe475a0`).
+- **Wave 2 — top-200 Spellbook variant-membership `needs_llm` (28…1236).** The
+  highest combo-value cards after the fleet; every one a real combo participant.
+  Targeted via `--names-file` (oracle_id). Classified offline, `--apply`-ed.
+- **Results**: `needs_llm` 6,510 → **6,310** (−200); `llm_classified` 191 →
+  **391**; 44 feature items (all `llm` → Tier-C capped); `check_kb_coverage.py
+  --stage full` **PASS**; sampling QA 100% (KB-7 100%); vocab integrity 100%
+  (0 OOV, 0 mis-bucket); 44/44 defensible; **evidence grounding 100% verbatim**
+  (Wave-1 FE follow-up closed, was 41.6%); 105 QE-3 gaps logged (log 179 → 284).
+- **Gate intact**: 0 of 121 `llm` items Tier-B-eligible; deterministic prov
+  (86,417) untouched. Tests **22/22**. QA doc: `prompts/phase-1/P1.7-wave2-qa.md`.
+- **QE-3**: type-changer, clone, damage/counter/mana multiplier, haste-grant,
+  free-cast recur most — candidate v1.1 ontology bump.
+
+**Next**: FE sign-off on Wave 2 (child review issue, reviewer ≠ implementer) →
+merge → Wave 3 (648 Spellbook-participating `needs_llm` remain, then long tail).

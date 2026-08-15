@@ -2577,6 +2577,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2602,7 +2603,7 @@
     "is_dfc": true,
     "mana_cost": "{2}{U} // {2}{U}",
     "name": "Animating Faerie // Bring to Life",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "db6fbdc9-1c45-416f-a08e-2082f65adb65",
     "provenance_summary": {
@@ -4712,6 +4713,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4725,17 +4727,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Time Warp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dbd6a94b-62ff-4a10-9d52-bdd90b26e425",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "turn_phase_budget",
+        "evidence": "Target player takes an extra turn after this one.",
+        "feature": "extra_turn",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

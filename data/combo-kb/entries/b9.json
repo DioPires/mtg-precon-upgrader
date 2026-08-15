@@ -5650,6 +5650,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -5669,7 +5670,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5680,13 +5682,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{W}{U}",
     "name": "Falco Spara, Pactweaver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b9c1ca24-5696-4777-8465-13a8f78e4fb5",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "You may cast spells from the top of your library by removing a counter from a cr",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Creature — Bird Demon",
     "wants": []

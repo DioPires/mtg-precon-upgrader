@@ -687,6 +687,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -706,7 +707,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Clone",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
     "provenance_summary": {},
@@ -1358,6 +1359,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -1377,7 +1379,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1392,13 +1395,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Gravespawn Sovereign",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4235c99b-50de-4190-8938-3ce5ec5c5248",
     "provenance_summary": {
-      "deterministic": 3
+      "deterministic": 3,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put target creature card from a graveyard onto the battlefield under your contro",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Zombie",
     "wants": []
@@ -1468,6 +1480,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -1488,7 +1501,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R/G}",
     "name": "Scuzzback Marauders",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "423a1fc2-f623-4b5f-9a3e-7f63b2f3cf5d",
     "provenance_summary": {},

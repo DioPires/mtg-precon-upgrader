@@ -590,6 +590,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -617,7 +618,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Noose Constrictor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fb1d521f-cb64-4b87-b3f4-a74e91a60349",
     "provenance_summary": {
@@ -5424,6 +5425,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -5449,7 +5451,7 @@
     "is_dfc": false,
     "mana_cost": "{W/B}{W/B}{W/B}",
     "name": "Restless Apparition",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fbd6dda7-ccee-4640-805d-78a9d60f45ef",
     "provenance_summary": {
@@ -5977,6 +5979,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5990,17 +5993,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Exhume",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fbe61f74-1b3c-4e12-8758-7029872c9ff1",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Each player puts a creature card from their graveyard onto the battlefield.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

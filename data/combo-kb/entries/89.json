@@ -2062,6 +2062,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -2087,7 +2088,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Body Double",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "895527a6-e3b2-454d-a3be-c0036630ec73",
     "provenance_summary": {
@@ -3984,6 +3985,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4001,7 +4003,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4012,13 +4015,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "Thunderous Velocipede",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "899007b5-6a07-4491-9104-bb537106b07d",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with an additional +1/+1 counter on it if its mana value is 4 or less",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Vehicle",
     "wants": []

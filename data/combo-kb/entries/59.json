@@ -2208,6 +2208,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2227,7 +2228,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Opalescence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "59489b46-9d02-4f3c-bcd0-884e7605e9a5",
     "provenance_summary": {},
@@ -4367,6 +4368,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4381,7 +4383,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4392,13 +4395,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Rise and Shine",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "59925461-99f5-4217-8343-49c9b1ce24c1",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put four +1/+1 counters on each artifact that became a creature this way.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

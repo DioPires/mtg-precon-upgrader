@@ -561,6 +561,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -586,7 +587,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Encroaching Mycosynth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f0bb053-4967-4289-b2b1-f6309f2eca7d",
     "provenance_summary": {
@@ -2461,6 +2462,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2486,7 +2488,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Temple Altisaur",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f499d39-b963-45c0-9604-d3cab98c9e05",
     "provenance_summary": {
@@ -4256,6 +4258,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4271,7 +4274,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4282,13 +4286,22 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Metallic Mimic",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1f91297a-ec2b-4ea8-9198-aa1daac20ff8",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Each other creature you control of the chosen type enters with an additional +1/",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact Creature — Shapeshifter",
     "wants": []

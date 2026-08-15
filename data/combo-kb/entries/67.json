@@ -2615,6 +2615,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -2632,7 +2633,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2643,13 +2645,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Renata, Called to the Hunt",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Each other creature you control enters with an additional +1/+1 counter on it.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Enchantment Creature — Demigod",
     "wants": []
@@ -3962,6 +3973,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -3981,7 +3993,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{G}{G}{G}",
     "name": "Chord of Calling",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6789a170-f2c5-4fc0-8a45-2b2361e67410",
     "provenance_summary": {},
