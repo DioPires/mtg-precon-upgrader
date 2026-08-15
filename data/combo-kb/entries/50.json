@@ -1910,6 +1910,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1929,7 +1930,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Reality Ripple",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "504d5c29-7c37-4c31-8549-2a49eeef74c8",
     "provenance_summary": {},
@@ -2035,6 +2036,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -2054,7 +2056,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Spider-Man, Web-Slinger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "505231d8-714f-4c5b-a635-d1662bd18a78",
     "provenance_summary": {},
@@ -5886,6 +5888,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -5899,17 +5902,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Knight of Sorrows",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "50f644d6-2597-4ad6-8ea8-6b09056f90c0",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 1/1 white and black Spirit creature token with flying",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Knight",
     "wants": []

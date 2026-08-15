@@ -2226,6 +2226,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2245,7 +2246,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Reprobation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "445dfef5-358e-49b1-880c-b30fc45f0a9a",
     "provenance_summary": {},
@@ -2298,6 +2299,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -2331,7 +2333,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Supreme Inquisitor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4460962e-c9cd-4cfd-b227-4278ee636206",
     "provenance_summary": {
@@ -3405,6 +3407,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3430,7 +3433,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Absorb Identity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4489f362-9b7e-4dc0-a459-a990a487454e",
     "provenance_summary": {
@@ -4507,6 +4510,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 10.0,
     "color_identity": [
       "G"
@@ -4529,7 +4533,7 @@
     "is_dfc": false,
     "mana_cost": "{8}{G}{G}",
     "name": "Primal Surge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "44b12ccc-81cb-4ec1-891e-4bf706e53aa4",
     "provenance_summary": {},
@@ -5603,6 +5607,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5616,17 +5621,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Dazzling Reflection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "44db1ff5-7082-4da4-8f4f-4a2d2e3d7666",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain life equal to target creature's power.",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5936,6 +5952,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -5954,7 +5971,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5969,13 +5987,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "The Eldest Reborn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "44ed4c0c-a012-4895-a547-b04150553bba",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put target creature or planeswalker card from a graveyard onto the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Enchantment — Saga",
     "wants": []

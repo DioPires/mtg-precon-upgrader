@@ -830,6 +830,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -849,7 +850,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Amphibian Downpour",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a4280cea-386b-450d-a7e9-29c7aa58ce5a",
     "provenance_summary": {},
@@ -1060,6 +1061,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "W"
@@ -1073,17 +1075,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{W}{W}",
     "name": "Roar of Reclamation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a4372c4c-3577-43ca-a801-1f2bd1488a2f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "returns all artifact cards from their graveyard to the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -2609,6 +2622,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -2630,7 +2644,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{B}{G}",
     "name": "Doran, the Siege Tower",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a46d96d9-8e59-4777-8208-7730b9e33240",
     "provenance_summary": {},

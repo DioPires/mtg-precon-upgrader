@@ -148,3 +148,35 @@ stage2`.
 
 **Next**: FE sign-off on DEC-492 (reviewer ≠ implementer) → merge → Wave 3 (348
 Spellbook-participating `needs_llm` remain, then the non-combo long tail).
+
+## 2026-08-15 — Stage-2 Wave 3 (final Spellbook-participating slice, +348)
+
+Wave 3 = the **remaining 348 Spellbook-participating `needs_llm` cards** (variant-
+membership rank 501…end, membership 4…1) on branch `dec-488-combo-kb-phase1-stage2`.
+
+- **Selection**: ranked still-`needs_llm` cards by Commander Spellbook variant-
+  membership (`matcher-index.json` `variants[].u`); took every card with membership
+  ≥ 1 not yet classified = 348. Targeted via `--names-file` (348 oracle_ids).
+  Classified offline against v1.0.1 by 7 parallel build-time classifier operators
+  (7 slices of 50/48), `--apply`-ed.
+- **Results**: `needs_llm` 6,010 → **5,662** (−348 exact); `llm_classified` 691 →
+  **1,039**; **83 feature items across 71 cards** (all `llm` → Tier-C capped),
+  **277/348 empty** by design; `check_kb_coverage.py --stage full` **PASS**;
+  sampling QA 100% (KB-7 100%); vocab integrity 100% (0 OOV, 0 mis-bucket, 0
+  economy/magnitude/length faults); **evidence grounding 348/348 (100%) verbatim**
+  (independently machine-validated vs the fenced text each classifier saw); 66 QE-3
+  gaps logged (log 353 → 419).
+- **Gate intact**: 0 of 249 `llm` items Tier-B-eligible (verified via `tier_b_view`
+  sweep); deterministic prov (86,417) untouched. Tests **22/22**. QA doc:
+  `prompts/phase-1/P1.7-wave3-qa.md`.
+- **MILESTONE**: all Spellbook-participating `needs_llm` cards are now classified —
+  **0 remain**. Every card that appears in any Spellbook combo has KB signal
+  (deterministic ∪ llm). The remaining 5,662 `needs_llm` are the non-combo long tail
+  (cards in no Spellbook variant), deferred to bulk long-tail waves before the
+  `phase1-full-acceptance` gate.
+- **QE-3 (Wave 3)**: clone/copy (most common), damage/counter/life doubler, free-cast,
+  type-changer (Slivers), storm, steal/threaten, animate-lands — reinforces the v1.1
+  candidate set from Waves 1–2.
+
+**Next**: FE sign-off on Wave 3 (reviewer ≠ implementer) → merge. Then long-tail bulk
+waves to drain the remaining 5,662 non-combo `needs_llm` → `phase1-full-acceptance`.

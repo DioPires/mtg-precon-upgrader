@@ -2173,6 +2173,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "B",
@@ -2191,23 +2192,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Woodland Chasm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bf5482b6-dd3e-4fb7-bc62-29e23b417a5f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "{T}: Add {B} or {G}.",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Snow Land — Swamp Forest",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R",
@@ -2228,7 +2241,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{R}",
     "name": "Firemind's Foresight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bf5765e0-def0-4ddf-9cd7-083feae71660",
     "provenance_summary": {},

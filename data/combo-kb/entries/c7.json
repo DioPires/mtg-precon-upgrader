@@ -202,6 +202,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -227,7 +228,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Calming Verse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c70ae479-0bd1-481c-885f-16bfa096cf58",
     "provenance_summary": {
@@ -357,6 +358,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -371,7 +373,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -382,13 +385,22 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{U}",
     "name": "Lay Claim",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c7111365-b96b-4d6a-8c3c-73a0d8baf641",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Enchantment — Aura",
     "wants": []
@@ -745,6 +757,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -768,7 +781,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -779,16 +793,25 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{G}",
     "name": "Woodwraith Strangler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c72ab66b-2011-449c-93a6-1808669653f0",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Plant Zombie",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile a creature card from your graveyard: Regenerate this creature.",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -1487,6 +1510,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1506,7 +1530,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{W}",
     "name": "Grand Abolisher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c749f23c-40c0-4159-b84c-a70cbb062c14",
     "provenance_summary": {},

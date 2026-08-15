@@ -1350,6 +1350,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1369,7 +1370,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Inviolability",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f336198-2425-447a-88b4-9be21ef7e90a",
     "provenance_summary": {},
@@ -6276,6 +6277,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -6292,17 +6294,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Ancient Imperiosaur",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3fe95820-cd7f-4f28-82bf-eb4350ea4179",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with two +1/+1 counters on it for each creature that convoked it",
+        "feature": "counter_add",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Dinosaur",
     "wants": []

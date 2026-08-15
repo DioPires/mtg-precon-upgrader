@@ -251,6 +251,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -273,7 +274,7 @@
     "is_dfc": true,
     "mana_cost": null,
     "name": "Mourning Patrol // Morning Apparition",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "600db821-4210-4996-a3f7-e05a143e50c2",
     "provenance_summary": {},
@@ -3976,6 +3977,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -3998,7 +4000,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Reverence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "60963292-2dee-4b1c-9c1c-c35cf8ea3496",
     "provenance_summary": {},
@@ -4989,6 +4991,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5002,17 +5005,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Hallow",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "60b6a31f-043e-4de3-ad37-67eec02114f8",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain life equal to the damage prevented this way",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -6157,6 +6171,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6176,7 +6191,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Sulfur Elemental",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "60e6a140-c7fb-4fbe-bd74-6bbb925080e7",
     "provenance_summary": {},

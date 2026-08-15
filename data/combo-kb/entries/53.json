@@ -1849,6 +1849,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1868,7 +1869,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Battle-Rage Blessing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "533d6b9f-a145-44c4-9d16-74fcd9c0ae2f",
     "provenance_summary": {},
@@ -4139,6 +4140,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -4156,7 +4158,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4171,13 +4174,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Dearly Departed",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "539be0f3-0863-4d44-87ee-5912dd003475",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "each Human creature you control enters with an additional +1/+1 counter on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit",
     "wants": []
@@ -5302,6 +5314,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -5318,23 +5331,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Demonic Collusion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "53cbc12d-e182-4cde-8967-9b2664daa817",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Buyback—Discard two cards",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -5357,7 +5382,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Elephant Grass",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "53cc4b93-538d-4193-8bbb-5b73d3ce9d79",
     "provenance_summary": {},
@@ -5978,6 +6003,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5997,7 +6023,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Rule of Law",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "53e88e64-6f82-4154-a66e-6aeb0154b368",
     "provenance_summary": {},

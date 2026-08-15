@@ -505,6 +505,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -525,7 +526,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{R}",
     "name": "Rain of Gore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d12b4b66-9453-4494-9547-c737f48277ed",
     "provenance_summary": {},
@@ -890,6 +891,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -903,17 +905,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Congregate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d139294c-36bb-4a1e-800d-50c4a4ae9877",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "Target player gains 2 life for each creature on the battlefield.",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1451,6 +1464,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1470,7 +1484,7 @@
     "is_dfc": false,
     "mana_cost": "{G}{G}",
     "name": "Nissa's Chosen",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d14c9d2b-41c7-4c9a-a66a-cda34d29c7ba",
     "provenance_summary": {},

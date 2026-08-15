@@ -4806,6 +4806,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -4821,7 +4822,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4832,13 +4834,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{G/W}",
     "name": "Huatli, the Sun's Heart",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1a13723-a6b1-4160-8eb5-f7a4860898a3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain life equal to the greatest toughness",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Planeswalker — Huatli",
     "wants": []
@@ -5215,6 +5226,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5234,7 +5246,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Ephemeral Shields",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1a89535-7126-48e0-b335-b732a677b157",
     "provenance_summary": {},

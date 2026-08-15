@@ -1144,6 +1144,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -1163,7 +1164,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Red Elemental Blast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb329a5c-b9f9-4973-a53f-090024146325",
     "provenance_summary": {},
@@ -2593,6 +2594,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2615,7 +2617,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Mogis's Warhound",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb87917f-33fb-4024-9317-0992c2f8f55e",
     "provenance_summary": {},
@@ -3206,6 +3208,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -3219,17 +3222,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{6}{U}",
     "name": "Supreme Exemplar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb9ed5c8-0437-4705-9133-9863786e6af8",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "ltb",
+        "evidence": "When this leaves the battlefield, that card returns to the battlefield.",
+        "feature": "ltb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Elemental",
     "wants": []

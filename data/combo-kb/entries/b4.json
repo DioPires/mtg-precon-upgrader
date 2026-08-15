@@ -1045,6 +1045,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -1064,7 +1065,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Dread of Night",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b431a73b-cf4c-4154-810f-82b7c6099e66",
     "provenance_summary": {},
@@ -3378,6 +3379,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "B"
@@ -3395,7 +3397,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -3406,13 +3409,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}{B}",
     "name": "Necromantic Selection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b48a149c-aead-43b2-a99e-c964d6d28aa0",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "return a creature card put into a graveyard this way to the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

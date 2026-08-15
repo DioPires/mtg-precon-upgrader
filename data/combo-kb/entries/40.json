@@ -1091,6 +1091,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -1108,7 +1109,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -1119,16 +1121,25 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Mizzix's Mastery",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Sorcery",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile target card that's an instant or sorcery from your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

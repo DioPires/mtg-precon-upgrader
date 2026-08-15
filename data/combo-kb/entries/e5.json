@@ -2629,6 +2629,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U",
@@ -2643,17 +2644,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{W}{U}",
     "name": "Officious Interrogation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e57e448b-1186-4662-a6b0-01a9ce33b961",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Investigate X times",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -2791,6 +2803,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -2825,7 +2838,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Topan Ascetic",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e5868cf5-9fdc-442d-95cb-3bc5e2727981",
     "provenance_summary": {
@@ -4394,6 +4407,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4413,7 +4427,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Sudden Substitution",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e5ddacfb-e5a8-4885-a4c9-fa117f321293",
     "provenance_summary": {},

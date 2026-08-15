@@ -764,6 +764,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -777,20 +778,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Immolating Souleater",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fb260f5a-b937-435b-ab18-dcc57d6845df",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Artifact Creature — Phyrexian Dog",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R/P}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -4859,6 +4871,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -4879,7 +4892,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{G}",
     "name": "Thromok the Insatiable",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fbb6ec41-3017-4d8d-bca0-c93040f1b291",
     "provenance_summary": {},

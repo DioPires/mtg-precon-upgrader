@@ -215,6 +215,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -234,7 +235,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Spellshift",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "640fc475-5708-4ee6-a1a9-8f0722e22b48",
     "provenance_summary": {},
@@ -1550,6 +1551,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -1563,17 +1565,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Darkblast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "64446130-46d0-4129-a718-ed6a04218100",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "you may mill three cards instead",
+        "feature": "self_mill",
+        "magnitude": 3,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1898,6 +1911,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1917,7 +1931,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Thoughtlace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6452b6a6-6235-46a3-a712-a26592450438",
     "provenance_summary": {},
@@ -3215,7 +3229,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "cost_reduction",
+        "evidence": "Affinity for artifacts",
+        "feature": "cost_reduction",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -3234,22 +3257,33 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "ambient": "llm",
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{R}{R}",
     "name": "Furnace Hellkite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "647980b2-088c-43a4-bdc4-5865f03a4fc4",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
     "provides": [],
     "triggers": [],
     "type_line": "Artifact Creature — Dragon",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

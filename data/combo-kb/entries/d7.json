@@ -4727,6 +4727,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -4755,7 +4756,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -4766,16 +4768,25 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{B}",
     "name": "Psychatog",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d7c4da85-d1a5-4a27-812d-65d8ee1494dd",
     "provenance_summary": {
-      "deterministic": 3
+      "deterministic": 3,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Atog",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile two cards from your graveyard: This creature gets +1/+1",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
