@@ -1118,6 +1118,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -1137,7 +1138,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Cut Down",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b30210d-10e9-4703-8967-032063bb4f26",
     "provenance_summary": {},
@@ -1452,6 +1453,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -1471,7 +1473,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Nimbus Naiad",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b3b14b9-088d-48df-8d21-54ee68989ac0",
     "provenance_summary": {},
@@ -1534,6 +1536,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1553,7 +1556,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Flamekin Herald",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b3d7411-7a25-4353-83c0-d09525a4fa08",
     "provenance_summary": {},
@@ -1878,6 +1881,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -1892,7 +1896,9 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -1903,16 +1909,33 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Abzan Battle Priest",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b44fe0a-4a99-4166-b0b3-102b36b54ffa",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter on this creature.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Cleric",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Each creature you control with a +1/+1 counter on it has lifelink.",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -1975,6 +1998,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1986,23 +2010,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Monk's Fist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b524149-340e-4f94-9520-6a5258fabb00",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a 1/1 colorless Hero creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2022,7 +2058,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Gimli's Fury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b550c27-14b0-45fb-b17e-fcb061dc6ad0",
     "provenance_summary": {},
@@ -2793,6 +2829,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2818,7 +2855,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Expedition Skulker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b6e0d65-202e-4fd3-861e-8d2eaffe3269",
     "provenance_summary": {
@@ -3017,6 +3054,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3030,17 +3068,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Dissenter's Deliverance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b73639b-2b07-4e82-b990-ca7721074e43",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -3362,6 +3411,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3381,7 +3431,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Tragic Fall",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b7e325d-24ee-42e3-b06f-6c91ec5280c3",
     "provenance_summary": {},
@@ -4150,6 +4200,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4169,7 +4220,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Order of Succession",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b95970c-e7eb-41c4-a8d2-9889b64b3c63",
     "provenance_summary": {},
@@ -4230,6 +4281,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4252,7 +4304,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Cry of the Carnarium",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b9a5170-39c0-4cbf-a041-f3c15f1359ae",
     "provenance_summary": {},
@@ -4263,6 +4315,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -4282,7 +4335,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Stream of Acid",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b9c9083-62c3-46fd-a2a0-6de7de88a3c3",
     "provenance_summary": {},
@@ -4293,6 +4346,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4321,7 +4375,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Telekinesis",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1b9dd2b6-d14d-4c1e-9885-00ab2c0bf8da",
     "provenance_summary": {
@@ -4609,6 +4663,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -4634,7 +4689,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Planar Despair",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1ba36042-8902-4abb-a4ae-a8d26d81a0de",
     "provenance_summary": {
@@ -5154,6 +5209,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -5181,7 +5237,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Pardic Lancer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1bb2b090-19a4-40d9-823a-671f6eaca9f9",
     "provenance_summary": {
@@ -5307,6 +5363,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -5326,7 +5383,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Feint",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1bb8fe05-abb3-40a8-9e80-5d99ed0e4284",
     "provenance_summary": {},
@@ -5337,6 +5394,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5350,20 +5408,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Chilling Shade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1bbcfbad-c4c5-4818-b73c-26d83f7fa22c",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Snow Creature — Shade",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{S}: This creature gets +1/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -5721,6 +5790,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5735,7 +5805,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5746,13 +5817,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Put Away",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1bc9a89c-7831-4c08-8934-896286d63e7c",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "shuffle up to one target card from your graveyard into your library.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5897,6 +5977,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -5916,7 +5997,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Whiplash Trap",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1bd26692-c030-4493-883e-2d26b3a1d025",
     "provenance_summary": {},
@@ -6061,6 +6142,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -6075,7 +6157,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -6086,19 +6169,29 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Renewing Touch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1bd5fd97-f898-4e17-9e8f-5fa93b9eef71",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "target creature cards from your graveyard into your library.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -6118,7 +6211,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Gift of Estates",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1bd70be6-752c-4ecb-a3e8-2bacec4b94fc",
     "provenance_summary": {},
@@ -6129,6 +6222,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -6148,7 +6242,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Balduvian War-Makers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1bda7f60-f986-455b-9d56-bbd494e27c17",
     "provenance_summary": {},
@@ -6289,6 +6383,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -6311,7 +6406,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Final Death",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1be3eea4-eaff-469c-9689-abadac1e848c",
     "provenance_summary": {},
@@ -6366,6 +6461,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -6385,7 +6481,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Shrivel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1be478ee-87f3-4265-94d7-08521703c888",
     "provenance_summary": {},

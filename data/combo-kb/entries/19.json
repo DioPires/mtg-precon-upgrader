@@ -122,6 +122,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -139,7 +140,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Agent of Acquisitions",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19047c4b-0106-455d-ab71-68cabfae7404",
     "provenance_summary": {},
@@ -1085,6 +1086,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1104,7 +1106,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Telling Time",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "192f3c8a-1120-4f7f-ae0f-fe9bde59cd08",
     "provenance_summary": {},
@@ -1617,6 +1619,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -1636,7 +1639,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Foggy Swamp Hunters",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1941cf7a-ad53-4bce-beea-104951619a30",
     "provenance_summary": {},
@@ -1719,6 +1722,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1744,7 +1748,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Kor Blademaster",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "194260af-aba5-4d18-a69b-eedb97ed4a4b",
     "provenance_summary": {
@@ -2139,6 +2143,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2163,7 +2168,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Vector Asp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1950067a-cc57-42a8-b1ee-f03e1b50591b",
     "provenance_summary": {
@@ -2863,6 +2868,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -2885,7 +2891,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Vantress Paladin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1965ca0e-1357-4437-82d3-1a78353ab5f1",
     "provenance_summary": {},
@@ -2896,6 +2902,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -2915,7 +2922,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "So Tiny",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "196948c7-7386-4b5f-ad2f-ec9e3aef26fe",
     "provenance_summary": {},
@@ -3677,6 +3684,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -3702,7 +3710,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Minotaur Tactician",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "197fd850-0a08-4e82-9249-a8d719436f77",
     "provenance_summary": {
@@ -3870,6 +3878,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -3884,7 +3893,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -3895,19 +3905,29 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}",
     "name": "Sapphire Drake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1987bb61-a31b-4d5a-910f-88e9cbc6c8b3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Drake",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Each creature you control with a +1/+1 counter on it has flying.",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -3927,25 +3947,36 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}{U}",
     "name": "Kaseto, Orochi Archmage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "198b6c6f-a480-4672-9d87-b0cb5d8ed1c0",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Legendary Creature — Snake Wizard",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{G}{U}: Target creature can't be blocked this turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -3965,7 +3996,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Clash of Titans",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "198c05ca-fb2d-4f15-a28f-1dad36466a4f",
     "provenance_summary": {},
@@ -4033,6 +4064,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -4047,7 +4079,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4062,19 +4095,29 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Command the Dreadhorde",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "198d31e4-1ae1-4bf9-a05a-7fa45c0aeddb",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put them onto the battlefield under your control.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4097,7 +4140,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Reject",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "198fed4c-297e-41c0-a172-e471c7401fbb",
     "provenance_summary": {},
@@ -4401,6 +4444,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -4423,7 +4467,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Stain the Mind",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1994d563-8726-49c9-a18a-6ba2604a8cb7",
     "provenance_summary": {},
@@ -4434,6 +4478,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -4453,7 +4498,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Defensive Stance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19959b6d-eb8f-4273-94c8-65210e1998ab",
     "provenance_summary": {},
@@ -4972,6 +5017,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -4992,7 +5038,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{B}",
     "name": "Tidehollow Strix",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19a39cc5-2134-4dee-932c-81389806c57b",
     "provenance_summary": {},
@@ -5003,6 +5049,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5020,7 +5067,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Lore Seeker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19a3c505-b180-47cc-bef3-9e807a8a4a3d",
     "provenance_summary": {},
@@ -5144,6 +5191,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -5166,7 +5214,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Devouring Rage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19a8c2d3-b06e-4a76-bb28-8928ce84186c",
     "provenance_summary": {},
@@ -5177,6 +5225,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5199,7 +5248,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Act on Impulse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19ad338a-c89f-406d-ad1a-222c22044e1b",
     "provenance_summary": {},
@@ -6338,6 +6387,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6363,7 +6413,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Granite Grip",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19e09405-3294-4f98-a18f-60cf0a8a2e4e",
     "provenance_summary": {
@@ -6769,6 +6819,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -6788,7 +6839,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Wall of Razors",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19ed5429-5631-4a36-a69c-ab35860160b6",
     "provenance_summary": {},
@@ -6851,6 +6902,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -6870,7 +6922,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Merfolk Raiders",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19edc98c-edc2-47bf-b2da-00f536d7c158",
     "provenance_summary": {},
@@ -7162,6 +7214,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -7181,7 +7234,7 @@
     "is_dfc": false,
     "mana_cost": "{7}",
     "name": "Blitz Automaton",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
     "provenance_summary": {},
@@ -7354,6 +7407,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -7373,7 +7427,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Cooperation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "19f7a0f2-aa3f-4253-be44-b08056918a26",
     "provenance_summary": {},
