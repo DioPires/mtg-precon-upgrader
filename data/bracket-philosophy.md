@@ -111,6 +111,23 @@ When pushing a deck toward B4 reliability, these are the rungs in approximate co
 
 Higher tiers don't replace lower ones — they stack.
 
+### Tier R — redundancy web (DEC-474 / DEC-482)
+
+Added 2026-08-15 from the DEC-474 video review (board vote, interaction `5151f0e1`; amended framing per defect D2). Tier R is a budget path to B4 payoff that sits beside the ladder above, not on it. It replaces the **premium** tutors of Tiers Y/Z (Demonic/Vampiric, $30–180) with per-slot redundancy plus budget tutors. It reduces premium-tutor dependence; it does not eliminate tutoring — the $27 source deck still runs Demonic Bargain, Final Parting, and a transmute creature.
+
+The pattern has three parts:
+
+1. **Command-zone assembly anchor.** The commander is a combo piece, so one slot of the combo is always available.
+2. **≥5–7 interchangeable pieces per combo slot.** Each remaining slot accepts any of several cheap cards, so the deck draws into the combo instead of paying premium-tutor prices for consistency.
+3. **Graveyard as second hand.** Self-mill fills the yard, and graveyard-castable recursion pieces replace tutor spend.
+
+**Caveats (record these on any build that uses this pattern):**
+
+- The sole performance evidence is the creator's n=10 unopposed goldfish (±~31pp CI at p=0.5). The direction is credible; the point estimate is not.
+- Graveyard hate is the known failure mode.
+- Any build on this pattern must get a real KEY_COMBOS-tagged 100k-sim readout before any bracket claim.
+- Rules-layer verification is on record (DEC-474 second soundness pass): all 7 death-return pieces close infinite same-turn loops with Sun Titan + Bartolome del Presidio, and the payoffs verified are 4 each-opponent drains plus 1 mill converter.
+
 ### Caveats
 
 The comboLethal proxy is a FLOOR. Real-game readiness is higher because the proxy doesn't model:
