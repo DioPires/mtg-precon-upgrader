@@ -1,0 +1,82 @@
+{
+  "project": "mtg-precon-upgrader",
+  "package": "combo-lab-tier-c",
+  "issue": "DEC-491",
+  "parent": "DEC-476",
+  "phase": 2,
+  "phase_title": "Tier C synergy engine: provides/wants graph, pair/triple/4-cycle candidates, ranking v1 (reduced-signal)",
+  "contract": "DEC-476 Laço / Combo Lab build plan (v2), revision 21d448a4; Laco Prd",
+  "prompt_size_default_pct": 50,
+  "note": "Phase-2 tracking is kept self-contained under prompts/phase-2/ (its own manifest + progress) because the root prompts/manifest.json is owned by the still-in-progress DEC-488 (Phase 1) and the working tree is shared with parallel DEC-488 wave runs.",
+  "prompts": [
+    {
+      "id": "P2.1",
+      "title": "Provides/wants graph + feature-index",
+      "file": "phase-2/P2.1-graph-and-feature-index.md",
+      "requirements": ["DC-1", "DC-3", "DC-6", "TX-1", "TX-2"],
+      "deliverables": ["scripts/combo_synergy_lib.py", "scripts/build_synergy_index.py", "data/combo-kb/feature-index.json", "data/combo-kb/feature-index.meta.json"],
+      "status": "done"
+    },
+    {
+      "id": "P2.2",
+      "title": "Candidate generation — pairs, triples, 4-cycles",
+      "file": "phase-2/P2.2-candidate-generation.md",
+      "requirements": ["DC-2", "DC-5", "NF-3"],
+      "deliverables": ["scripts/combo_synergy_lib.py (enumerate_candidates)"],
+      "status": "done"
+    },
+    {
+      "id": "P2.3",
+      "title": "Ranking v1 (reduced-signal) + coarse bands",
+      "file": "phase-2/P2.3-ranking-v1.md",
+      "requirements": ["RK-1", "RK-2", "RK-5", "RK-6", "DC-4"],
+      "deliverables": ["scripts/combo_synergy_lib.py (score/rank/band)"],
+      "status": "done"
+    },
+    {
+      "id": "P2.4",
+      "title": "Fleet precompute + EDHREC crowd prior (21 decks)",
+      "file": "phase-2/P2.4-fleet-precompute.md",
+      "requirements": ["RK-2", "DR-4"],
+      "deliverables": ["scripts/build_synergy_candidates.py", "data/commanders/{id}/synergy-candidates.json (21)", "priv_data/edhrec/*.json (21, gitignored)"],
+      "status": "done"
+    },
+    {
+      "id": "P2.5",
+      "title": "Web Tier-C surface + deep-scan",
+      "file": "phase-2/P2.5-web-tier-c.md",
+      "requirements": ["DC-4", "TX-1", "TX-2", "EI-1", "EI-4", "RK-5", "RK-6"],
+      "deliverables": ["web/src/data/synergy.ts", "web/src/lib/synergyMatch.ts", "web/src/routes/ComboLab.tsx (Tier-C section)", "web/src/styles/combo-lab.css", "STORAGE_PREFIX bump"],
+      "status": "done"
+    },
+    {
+      "id": "P2.6",
+      "title": "KB-gap caveat (uncovered cards)",
+      "file": "phase-2/P2.6-kb-gap-caveat.md",
+      "requirements": ["DC-6"],
+      "deliverables": ["uncovered[] surfaced in engine output + report (distinct from IN-6 unresolvable)"],
+      "status": "done"
+    },
+    {
+      "id": "P2.7",
+      "title": "QE-1a regression + parity + unit tests",
+      "file": "phase-2/P2.7-qe1a-regression.md",
+      "requirements": ["QE-1"],
+      "deliverables": ["scripts/qe1a_synergy_regression.py", "tests/test_combo_synergy.py", "web/src/lib/synergyMatch.test.ts"],
+      "status": "done"
+    }
+  ],
+  "gate": {
+    "definition": "phase-validate evidence posted; independent review by Simulation Engineer; CEO accepts before merge.",
+    "reviewer": "Simulation Engineer (6ba3ac88-12e8-41a7-834f-98e3d92dae78)",
+    "validation": {
+      "python_tests": "tests/test_combo_synergy.py — 12 passed",
+      "web_tests": "web/src/lib/synergyMatch.test.ts — 10 passed (Python↔TS parity)",
+      "typecheck": "web tsc -b — clean",
+      "qe1a_recall": "25% overall / 38% among featureful (tracked metric; misses = QE-2 ontology-gap diagnostics)",
+      "fleet_coverage": "21/21 decks built, 0 uncovered",
+      "engine_latency": "<1.2s deep / 4ms pairs-only per 100-card deck (NF-3)"
+    },
+    "status": "evidence posted; in_review with CEO for routing to Simulation Engineer"
+  }
+}

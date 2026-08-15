@@ -8,12 +8,15 @@
 // Spellbook: fleet mode reads a committed per-deck file, paste mode matches a
 // committed index in memory (NF-9). Tier B/C arrive in later phases.
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { deckLoader } from '../data/loader';
 import { loadMatcherIndex } from '../data/spellbook';
+import { loadFeatureIndex, loadSynergyConfig } from '../data/synergy';
+import type { FeatureIndex, SynergyCandidate, SynergyConfig } from '../data/synergy';
 import type { RawDeckIndex, RawDeckBundle } from '../data/types';
 import type { SpellbookCombo } from '../data/spellbook';
+import { analyze as analyzeSynergy } from '../lib/synergyMatch';
 import { matchDecklist, parseDecklist } from '../lib/spellbookMatch';
 import {
   bracketLabel,
@@ -22,9 +25,11 @@ import {
   isTwoCardInfinite,
   isWinCombo,
   type ComboReport,
+  type SynergyReport,
 } from '../lib/spellbookReport';
 
 const NEAR_MISS_COLLAPSE_THRESHOLD = 12;
+const SYNERGY_COLLAPSE_THRESHOLD = 10;
 
 export function ComboLab() {
   const [params, setParams] = useSearchParams();
@@ -129,6 +134,20 @@ function FleetMode({
     const sc = bundle?.spellbookCombos;
     if (!bundle || !sc) return null;
     const deckSize = bundle.deck.decklist?.length ?? 0;
+    const syn = bundle.synergyCandidates;
+    const synergy: SynergyReport | undefined = syn
+      ? {
+          crowdPriorApplied: syn.meta.crowdPriorApplied,
+          deepFocused: syn.meta.deepFocused,
+          counts: syn.counts,
+          uncovered: syn.uncovered,
+          pairs: syn.pairs,
+          triples: syn.triples,
+          cycles: syn.cycles,
+          // Fleet precompute always ships triples/cycles — no deep scan needed.
+          deepAvailable: true,
+        }
+      : undefined;
     return {
       mode: 'fleet',
       deckLabel: bundle.deck.name,
@@ -140,6 +159,7 @@ function FleetMode({
       cardsAnalyzed: deckSize,
       cardsTotal: deckSize,
       unresolved: [],
+      synergy,
     };
   }, [bundle]);
 
@@ -198,10 +218,17 @@ function PasteMode() {
   const [phase, setPhase] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [error, setError] = useState<string>();
   const [timingMs, setTimingMs] = useState<number | null>(null);
+  const [deepScanning, setDeepScanning] = useState(false);
+  // Inputs cached from the last Analyze so the deep scan can re-run the engine
+  // without re-parsing or refetching the 3.3 MB feature index.
+  const synergyInput = useRef<{ names: string[]; fi: FeatureIndex; cfg: SynergyConfig } | null>(
+    null,
+  );
 
   const analyze = async () => {
     setPhase('loading');
     setError(undefined);
+    synergyInput.current = null;
     try {
       const t0 = performance.now();
       const index = await loadMatcherIndex();
@@ -211,6 +238,30 @@ function PasteMode() {
         for (const line of parseDecklist(commander).cardNames) parsed.commanderNames.push(line);
       }
       const result = matchDecklist(parsed, index);
+
+      // Tier-C synergy engine (paste mode = no crowd prior). Default deep:false —
+      // pairs only, instant; triples/cycles arrive behind the deep-scan action.
+      const [featureIndex, synergyConfig] = await Promise.all([
+        loadFeatureIndex(),
+        loadSynergyConfig(),
+      ]);
+      let synergy: SynergyReport | undefined;
+      if (featureIndex && synergyConfig) {
+        const names = [...parsed.cardNames, ...parsed.commanderNames];
+        synergyInput.current = { names, fi: featureIndex, cfg: synergyConfig };
+        const syn = analyzeSynergy(names, featureIndex, synergyConfig, { deep: false });
+        synergy = {
+          crowdPriorApplied: syn.crowdPriorApplied,
+          deepFocused: syn.truncated.deepFocused,
+          counts: syn.counts,
+          uncovered: syn.uncovered,
+          pairs: syn.pairs,
+          triples: syn.triples,
+          cycles: syn.cycles,
+          deepAvailable: false,
+        };
+      }
+
       const elapsed = performance.now() - t0;
       setTimingMs(elapsed);
       // NF-3 mobile budget: log if the cold parse+match blows the 1.5 s target.
@@ -229,11 +280,42 @@ function PasteMode() {
         cardsAnalyzed: resolved,
         cardsTotal: resolved + parsed.unresolved.length,
         unresolved: parsed.unresolved,
+        synergy,
       });
       setPhase('ready');
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
       setPhase('error');
+    }
+  };
+
+  // OQ-3 — deep scan: re-run the engine with deep:true to enumerate triples &
+  // 4-cycles, then fold them into the existing report.
+  const runDeepScan = async () => {
+    const inp = synergyInput.current;
+    if (!inp || deepScanning) return;
+    setDeepScanning(true);
+    // Yield a frame so the spinner paints before the synchronous enumeration.
+    await new Promise((r) => setTimeout(r, 0));
+    try {
+      const syn = analyzeSynergy(inp.names, inp.fi, inp.cfg, { deep: true });
+      setReport((prev) =>
+        prev && prev.synergy
+          ? {
+              ...prev,
+              synergy: {
+                ...prev.synergy,
+                deepFocused: syn.truncated.deepFocused,
+                counts: syn.counts,
+                triples: syn.triples,
+                cycles: syn.cycles,
+                deepAvailable: true,
+              },
+            }
+          : prev,
+      );
+    } finally {
+      setDeepScanning(false);
     }
   };
 
@@ -281,14 +363,24 @@ function PasteMode() {
           <p className="gv1-mono-xs gv1-dim">Could not analyze: {error}</p>
         </div>
       )}
-      {report && <ComboReportView report={report} />}
+      {report && (
+        <ComboReportView report={report} onDeepScan={runDeepScan} deepScanning={deepScanning} />
+      )}
     </div>
   );
 }
 
 // ─── Report ────────────────────────────────────────────────────────────────────
 
-function ComboReportView({ report }: { report: ComboReport }) {
+function ComboReportView({
+  report,
+  onDeepScan,
+  deepScanning,
+}: {
+  report: ComboReport;
+  onDeepScan?: () => void;
+  deepScanning?: boolean;
+}) {
   const disc = useMemo(() => buildBracketDisclosure(report.included), [report.included]);
   const [showAllNear, setShowAllNear] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -408,6 +500,16 @@ function ComboReportView({ report }: { report: ComboReport }) {
           </>
         )}
       </section>
+
+      {/* Tier-C synergies (RT-2 order: after Tier A, before bracket). */}
+      {report.synergy && (
+        <SynergySection
+          report={report}
+          synergy={report.synergy}
+          onDeepScan={onDeepScan}
+          deepScanning={deepScanning}
+        />
+      )}
 
       {/* Bracket / Rule-0 disclosure (BR-1..BR-4) — RT-2 order: after findings. */}
       <section className="gv1-cl-section" aria-label="Bracket disclosure">
@@ -548,4 +650,215 @@ function FindingCard({ combo, kind }: { combo: SpellbookCombo; kind: 'included' 
  * empty and rely on the permalink. */
 function hasCuratedDetail(c: SpellbookCombo): boolean {
   return Boolean(c.steps || c.prerequisites.easy || c.prerequisites.notable || c.manaNeeded);
+}
+
+// ─── Tier-C synergies (DEC-491) ──────────────────────────────────────────────────
+
+/** Heuristic synergy layer. Everything here is Tier C — speculative signals, NOT
+ * verified combos (EI-1/EI-4). Coarse bands only, never a numeric score (RK-5).
+ * Default view: pairs only; a deep scan reveals triples & 4-cycles (OQ-3). */
+function SynergySection({
+  report,
+  synergy,
+  onDeepScan,
+  deepScanning,
+}: {
+  report: ComboReport;
+  synergy: SynergyReport;
+  onDeepScan?: () => void;
+  deepScanning?: boolean;
+}) {
+  const [showAllPairs, setShowAllPairs] = useState(false);
+  const [showDeep, setShowDeep] = useState(false);
+  // Auto-reveal deep results the moment they arrive from a paste-mode deep scan
+  // (fleet mode ships them pre-loaded, so we must NOT auto-reveal there).
+  const prevDeep = useRef(synergy.deepAvailable);
+  useEffect(() => {
+    if (!prevDeep.current && synergy.deepAvailable) setShowDeep(true);
+    prevDeep.current = synergy.deepAvailable;
+  }, [synergy.deepAvailable]);
+
+  const pairsShown = showAllPairs
+    ? synergy.pairs
+    : synergy.pairs.slice(0, SYNERGY_COLLAPSE_THRESHOLD);
+
+  const deepReveal = () => {
+    if (synergy.deepAvailable) setShowDeep((v) => !v);
+    else if (onDeepScan) onDeepScan();
+  };
+
+  const deepCount = synergy.counts.triples + synergy.counts.cycles;
+  const deepButtonLabel = deepScanning
+    ? '◇ scanning couplings …'
+    : synergy.deepAvailable
+      ? showDeep
+        ? 'Hide triples & 4-cycles'
+        : `Show triples & 4-cycles (${deepCount})`
+      : 'Deep scan (triples & 4-cycles)';
+
+  return (
+    <section className="gv1-cl-section" aria-label="Tier-C synergies">
+      <h2 className="gv1-cl-h2 gv1-mono-xs">
+        Synergies <span className="gv1-dim">({synergy.counts.pairs})</span>
+      </h2>
+
+      {/* Epistemic framing (EI-1/EI-4) — Tier C is heuristic, never verified. */}
+      <p className="gv1-cl-framing gv1-cl-framing-c gv1-mono-xs">
+        <span className="gv1-cl-tier gv1-cl-tier-c">Tier C · Heuristic</span> Speculative synergy
+        signals from a provides/wants graph — <strong>not verified combos</strong>. Each finding is
+        justified by its matched couplings below; bands are coarse and unvalidated.
+      </p>
+
+      {/* Crowd-prior note (plan decision 4). */}
+      <p className="gv1-mono-xs gv1-dim gv1-cl-synergy-note">
+        {report.mode === 'paste'
+          ? 'Crowd-prior ranking (EDHREC) is applied in fleet mode only; this pasted-deck ranking omits it.'
+          : synergy.crowdPriorApplied
+            ? 'Ranking includes an EDHREC crowd prior.'
+            : 'Ranking uses magnitude + deck-fit signals only.'}
+      </p>
+
+      {/* KB-gap caveat (DC-6) — distinct wording from the IN-6 unresolved warning. */}
+      {synergy.uncovered.length > 0 && (
+        <div className="gv1-cl-warn gv1-mono-xs" role="status">
+          {synergy.uncovered.length} card{synergy.uncovered.length > 1 ? 's have' : ' has'} no
+          knowledge-base entry yet and {synergy.uncovered.length > 1 ? 'were' : 'was'} skipped for
+          synergy analysis: <span className="gv1-dim">{synergy.uncovered.join(' · ')}</span>
+        </div>
+      )}
+
+      {synergy.pairs.length === 0 ? (
+        <p className="gv1-cl-empty gv1-mono-xs gv1-dim">No heuristic synergy pairs surfaced.</p>
+      ) : (
+        <>
+          <ul className="gv1-cl-list">
+            {pairsShown.map((c, i) => (
+              <SynergyFinding key={`p-${i}-${c.cards.join('|')}`} cand={c} shape="pair" />
+            ))}
+          </ul>
+          {synergy.pairs.length > SYNERGY_COLLAPSE_THRESHOLD && (
+            <button
+              type="button"
+              className="gv1-chip gv1-cl-more"
+              onClick={() => setShowAllPairs((v) => !v)}
+            >
+              {showAllPairs ? 'Show fewer' : `Show all ${synergy.pairs.length} pairs`}
+            </button>
+          )}
+        </>
+      )}
+
+      {/* Deep scan (OQ-3) — triples & 4-cycles behind an explicit action. */}
+      <div className="gv1-cl-synergy-deep">
+        <button
+          type="button"
+          className="gv1-chip gv1-cl-more"
+          onClick={deepReveal}
+          disabled={deepScanning}
+          aria-busy={deepScanning}
+        >
+          {deepButtonLabel}
+        </button>
+        {synergy.deepFocused && (showDeep || synergy.deepAvailable) && (
+          <span className="gv1-mono-xs gv1-dim">
+            Deep scan focused on the strongest couplings.
+          </span>
+        )}
+      </div>
+
+      {showDeep && synergy.deepAvailable && (
+        <>
+          <div className="gv1-cl-synergy-group">
+            <h3 className="gv1-cl-h3 gv1-mono-xs">
+              Triples <span className="gv1-dim">({synergy.counts.triples})</span>
+            </h3>
+            {synergy.triples.length === 0 ? (
+              <p className="gv1-cl-empty gv1-mono-xs gv1-dim">No triples surfaced.</p>
+            ) : (
+              <ul className="gv1-cl-list">
+                {synergy.triples.map((c, i) => (
+                  <SynergyFinding key={`t-${i}-${c.cards.join('|')}`} cand={c} shape="triple" />
+                ))}
+              </ul>
+            )}
+          </div>
+          <div className="gv1-cl-synergy-group">
+            <h3 className="gv1-cl-h3 gv1-mono-xs">
+              4-cycles <span className="gv1-dim">({synergy.counts.cycles})</span>
+            </h3>
+            {synergy.cycles.length === 0 ? (
+              <p className="gv1-cl-empty gv1-mono-xs gv1-dim">No 4-cycles surfaced.</p>
+            ) : (
+              <ul className="gv1-cl-list">
+                {synergy.cycles.map((c, i) => (
+                  <SynergyFinding key={`c-${i}-${c.cards.join('|')}`} cand={c} shape="cycle" />
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+const SYNERGY_SHAPE_LABEL: Record<'pair' | 'triple' | 'cycle', string> = {
+  pair: '2-card',
+  triple: '3-card',
+  cycle: '4-cycle',
+};
+
+function SynergyFinding({
+  cand,
+  shape,
+}: {
+  cand: SynergyCandidate;
+  shape: 'pair' | 'triple' | 'cycle';
+}) {
+  return (
+    <li className="gv1-cl-finding">
+      <div className="gv1-cl-finding-head">
+        <span className="gv1-cl-tier gv1-cl-tier-c">Tier C</span>
+        <span
+          className={[
+            'gv1-cl-band',
+            cand.band === 'strong' ? 'gv1-cl-band-strong' : 'gv1-cl-band-spec',
+          ].join(' ')}
+        >
+          {cand.band}
+        </span>
+        <span className="gv1-mono-xs gv1-dim gv1-cl-shape">{SYNERGY_SHAPE_LABEL[shape]}</span>
+      </div>
+
+      <div className="gv1-cl-finding-cards">
+        {cand.cards.map((n, i) => (
+          <span key={`${n}-${i}`} className="gv1-cl-cardname" data-card-name={n}>
+            {n}
+          </span>
+        ))}
+      </div>
+
+      {/* DC-3 / TX-1 — every synergy is explained by its matched couplings. */}
+      <ul className="gv1-cl-edges">
+        {cand.edges.map((e, i) => (
+          <li key={`${e.from}-${e.to}-${e.fromFeature}-${e.toFeature}-${i}`} className="gv1-cl-edge">
+            <span className="gv1-cl-edge-pair">
+              {e.from} → {e.to}
+            </span>
+            <span className="gv1-cl-edge-label">{e.label}</span>
+          </li>
+        ))}
+      </ul>
+
+      {cand.economies.length > 0 && (
+        <div className="gv1-cl-produces">
+          {cand.economies.map((eco) => (
+            <span key={eco} className="gv1-cl-result">
+              {eco}
+            </span>
+          ))}
+        </div>
+      )}
+    </li>
+  );
 }
