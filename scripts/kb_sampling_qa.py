@@ -31,6 +31,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from combo_kb_lib import ALL_PROVENANCES, ITEM_FIELDS  # noqa: E402
+from build_combo_kb import _REMINDER_RE  # noqa: E402  (grounding must match the extractor)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 MIRROR_FILE = PROJECT_ROOT / "priv_data" / "scryfall-oracle.json"
@@ -55,7 +56,12 @@ def evidence_core(ev: str) -> str:
 def check_entry(entry: dict, oracle: str) -> list[str]:
     """Return a list of failure codes for this entry (empty = clean)."""
     fails = []
-    onorm = norm(oracle)
+    # Ground evidence against the reminder-stripped body — the same text the
+    # deterministic extractor reads (DEC-489 B1). This makes the check a genuine
+    # reminder-vs-body test: evidence must occur in real rules text, not in a
+    # parenthetical. Comparing against raw oracle would false-fail any evidence
+    # snippet that straddles a stripped reminder (e.g. cycling/channel costs).
+    onorm = norm(_REMINDER_RE.sub("", oracle))
     for field in ITEM_FIELDS:
         for item in entry.get(field) or []:
             if item.get("provenance") not in ALL_PROVENANCES:

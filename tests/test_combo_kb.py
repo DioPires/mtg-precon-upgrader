@@ -145,6 +145,32 @@ def test_vanilla_creature_not_flagged_needs_llm():
     assert e["needs_llm"] is False
 
 
+def test_reminder_text_does_not_manufacture_features():
+    """DEC-489 B1: parenthetical reminder text must not produce phantom
+    deterministic features/triggers. Soulbond's reminder mentions "when either
+    enters" but the card has no real ETB."""
+    e = build.build_entry(
+        _card("Soulbonder", "Creature — Human",
+              "Soulbond (You may pair this creature with another unpaired "
+              "creature when either enters. They remain paired for as long as "
+              "you control both of them.)", "{2}{U}", 3.0),
+        _ONT, "v")
+    feats = {i["feature"] for i in e["provides"]}
+    assert "etb_trigger" not in feats                 # reminder ETB is phantom
+    assert e["triggers"] == []                         # no real trigger
+
+
+def test_untap_up_to_n_lands_extracted():
+    """DEC-489 B2: canonical infinite-mana untappers say 'untap up to five/seven
+    lands' — must surface untap_permanent."""
+    for text in ("When this creature enters, untap up to five lands.",
+                 "When this creature enters, untap up to seven lands."):
+        e = build.build_entry(
+            _card("Untapper", "Creature — Whale", text, "{5}{U}", 6.0), _ONT, "v")
+        feats = {i["feature"] for i in e["provides"]}
+        assert "untap_permanent" in feats, text
+
+
 def test_all_extracted_items_are_deterministic():
     e = build.build_entry(
         _card("Test Altar", "Artifact", "Sacrifice a creature: Add {C}{C}.", "{3}", 3.0),

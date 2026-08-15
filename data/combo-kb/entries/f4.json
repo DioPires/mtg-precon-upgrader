@@ -12,46 +12,27 @@
       "mana_value": 1.0
     },
     "events_emitted": [
-      "counter_add",
       "damage",
-      "sacrifice",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic",
       "provides": "deterministic",
       "wants": "deterministic"
     },
-    "guards": [
-      {
-        "guard": "timing_sorcery",
-        "provenance": "deterministic"
-      },
-      {
-        "guard": "summoning_sick",
-        "provenance": "deterministic"
-      }
-    ],
+    "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{R}",
     "name": "Shellshock",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f406630b-d9f1-4fc5-b3f3-5327384b2901",
     "provenance_summary": {
-      "deterministic": 9
+      "deterministic": 4
     },
     "provides": [
-      {
-        "economy": "sacrifice",
-        "evidence": "Sacrifice this token:",
-        "feature": "sac_outlet",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      },
       {
         "economy": "sacrifice",
         "evidence": "create a Mutagen token",
@@ -63,13 +44,6 @@
         "economy": "token",
         "evidence": "create a Mutagen token",
         "feature": "token_create",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      },
-      {
-        "economy": "counters",
-        "evidence": "Put a +1/+1 counter",
-        "feature": "counter_add",
         "magnitude": 1,
         "provenance": "deterministic"
       },
@@ -86,15 +60,8 @@
     "wants": [
       {
         "economy": "mana",
-        "evidence": "{1}, {T}, Sacrifice this token:",
+        "evidence": "X damage",
         "feature": "mana_sink",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      },
-      {
-        "economy": "untap",
-        "evidence": "{T}, Sacrifice this token:",
-        "feature": "tap_ability",
         "magnitude": 1,
         "provenance": "deterministic"
       }
@@ -118,7 +85,7 @@
       "lifegain",
       "lifeloss"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -136,7 +103,7 @@
     "mana_cost": "{W}{B}",
     "name": "MacCready, Lamplight Mayor",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f40a1a41-d340-4256-8f97-77499cd511a8",
     "provenance_summary": {
       "deterministic": 5
@@ -187,7 +154,7 @@
     "events_emitted": [
       "attack"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -204,7 +171,7 @@
     "mana_cost": "{2}{G}",
     "name": "Hazardroot Herbalist",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f40cb1af-3db6-4e90-830f-86ff4b60e239",
     "provenance_summary": {
       "deterministic": 2
@@ -238,7 +205,7 @@
       "dies",
       "tap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -250,7 +217,7 @@
     "mana_cost": null,
     "name": "Vincent Valentine // Galian Beast",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f40e6bbf-1fed-4ec5-869d-18c2dd396d14",
     "provenance_summary": {
       "deterministic": 6
@@ -325,7 +292,7 @@
       "tap",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -351,7 +318,7 @@
     "mana_cost": "",
     "name": "Great Arashin City",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f40f374b-acaf-459d-9ccd-b0b22d1a3f28",
     "provenance_summary": {
       "deterministic": 10
@@ -410,15 +377,11 @@
       "mana_cost": "{1}{G}",
       "mana_value": 2.0
     },
-    "events_emitted": [
-      "damage"
-    ],
-    "extractor_version": "det-1.0.0",
+    "events_emitted": [],
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic",
-      "guards": "deterministic",
-      "provides": "deterministic"
+      "guards": "deterministic"
     },
     "guards": [
       {
@@ -429,21 +392,13 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Pounce",
-    "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "needs_llm": true,
+    "ontology_version": "1.0.1",
     "oracle_id": "f4126dac-add4-4d5f-bf52-6f74c7c6aa67",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 1
     },
-    "provides": [
-      {
-        "economy": "damage",
-        "evidence": "deals damage equal to",
-        "feature": "damage",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      }
-    ],
+    "provides": [],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -465,38 +420,23 @@
       "etb",
       "tap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic",
-      "provides": "deterministic",
       "wants": "deterministic"
     },
-    "guards": [
-      {
-        "guard": "summoning_sick",
-        "provenance": "deterministic"
-      }
-    ],
+    "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Temple Garden",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f413a83d-a40d-434c-b20a-4c707c0527fa",
     "provenance_summary": {
-      "deterministic": 4
+      "deterministic": 1
     },
-    "provides": [
-      {
-        "economy": "mana",
-        "evidence": "Add {G} or {W",
-        "feature": "mana_add",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      }
-    ],
+    "provides": [],
     "triggers": [],
     "type_line": "Land — Forest Plains",
     "wants": [
@@ -504,13 +444,6 @@
         "economy": "mana",
         "evidence": "pay 2",
         "feature": "mana_sink",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      },
-      {
-        "economy": "untap",
-        "evidence": "{T}:",
-        "feature": "tap_ability",
         "magnitude": 1,
         "provenance": "deterministic"
       }
@@ -532,7 +465,7 @@
       "etb",
       "lifegain"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -551,7 +484,7 @@
     "mana_cost": "{4}{G}",
     "name": "Kraul Foragers",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f414f997-06f3-4741-a9a5-9753c182e862",
     "provenance_summary": {
       "deterministic": 5
@@ -606,7 +539,7 @@
       "etb",
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -618,7 +551,7 @@
     "mana_cost": "{2}{G}{G}{G}",
     "name": "Primeval Force",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4170db0-3adf-4744-b0ec-e889c713bb93",
     "provenance_summary": {
       "deterministic": 2
@@ -655,7 +588,7 @@
       "mana_value": 5.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -671,7 +604,7 @@
     "mana_cost": "{4}{B}",
     "name": "Masked Gorgon",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f41b1a5b-bc99-4c51-9665-e251f04ad83f",
     "provenance_summary": {
       "deterministic": 2
@@ -711,7 +644,7 @@
       "sacrifice",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -730,7 +663,7 @@
     "mana_cost": "{1}{W}",
     "name": "Spirit Bonds",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f41ea1b5-2c31-43fa-b142-244add1efd35",
     "provenance_summary": {
       "deterministic": 8
@@ -798,7 +731,7 @@
     "events_emitted": [
       "etb"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -815,7 +748,7 @@
     "mana_cost": "{1}{W}",
     "name": "Ondu Cleric",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4232466-dd6a-49bf-be6c-95905c3ded17",
     "provenance_summary": {
       "deterministic": 2
@@ -852,7 +785,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "ambient": "deterministic",
       "costs": "deterministic"
@@ -862,7 +795,7 @@
     "mana_cost": "{2}{U}",
     "name": "Warden of Evos Isle",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f424b5e9-8f02-4491-a7d8-c7e088611c6a",
     "provenance_summary": {
       "deterministic": 1
@@ -889,7 +822,7 @@
       "exile",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -902,7 +835,7 @@
     "mana_cost": "{2}{R}{R}",
     "name": "Manaform Hellkite",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f426aa1a-e1dc-4563-b450-2e23d6bd980b",
     "provenance_summary": {
       "deterministic": 6
@@ -968,7 +901,7 @@
     "events_emitted": [
       "damage"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -980,7 +913,7 @@
     "mana_cost": "{R}",
     "name": "Spark Mage",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f427a1ed-d7ca-40e5-a759-a1096bad166d",
     "provenance_summary": {
       "deterministic": 2
@@ -1023,10 +956,9 @@
     },
     "events_emitted": [
       "counter_add",
-      "etb",
-      "exile"
+      "etb"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1036,10 +968,6 @@
       "wants": "deterministic"
     },
     "guards": [
-      {
-        "guard": "zone_graveyard",
-        "provenance": "deterministic"
-      },
       {
         "guard": "timing_sorcery",
         "provenance": "deterministic"
@@ -1057,10 +985,10 @@
     "mana_cost": null,
     "name": "Lodestone Needle // Guidestone Compass",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f429ca15-c578-4c1d-a604-fd5509c92dba",
     "provenance_summary": {
-      "deterministic": 10
+      "deterministic": 9
     },
     "provides": [
       {
@@ -1089,7 +1017,7 @@
     "wants": [
       {
         "economy": "mana",
-        "evidence": "{2}{U} ({2}{U}, Exile this artifact, Exile another artifact you control or an a…",
+        "evidence": "{2}{U} {1}, {T}:",
         "feature": "mana_sink",
         "magnitude": 1,
         "provenance": "deterministic"
@@ -1119,7 +1047,7 @@
       "cast",
       "counter_add"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1131,7 +1059,7 @@
     "mana_cost": "{1}{G}",
     "name": "Quirion Dryad",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f42b6510-7322-4733-85ea-7ae6bd6ca8fc",
     "provenance_summary": {
       "deterministic": 3
@@ -1183,7 +1111,7 @@
     "events_emitted": [
       "cast"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1196,7 +1124,7 @@
     "mana_cost": "{2}{B}{R}",
     "name": "Exterminator Magmarch",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f42c0b5b-7a86-4f79-a5d3-859ec25ed870",
     "provenance_summary": {
       "deterministic": 5
@@ -1250,7 +1178,7 @@
     "events_emitted": [
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic"
@@ -1260,7 +1188,7 @@
     "mana_cost": "{W}",
     "name": "Isolate",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f42d4556-5be2-4861-9f88-1b630b43eff2",
     "provenance_summary": {},
     "provides": [],
@@ -1283,7 +1211,7 @@
     "events_emitted": [
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1299,7 +1227,7 @@
     "mana_cost": "{3}{B}{B}",
     "name": "Secret Salvage",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f42fa525-dd17-448a-b0c3-29b90db2e30e",
     "provenance_summary": {
       "deterministic": 1
@@ -1324,7 +1252,7 @@
     "events_emitted": [
       "damage"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1342,7 +1270,7 @@
     "mana_cost": "{X}{2}{R}{R}",
     "name": "Nova Flame",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4310dfd-52eb-4c1f-b1ad-bfbc9b50fe7b",
     "provenance_summary": {
       "deterministic": 3
@@ -1384,7 +1312,7 @@
       "etb",
       "tap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1400,7 +1328,7 @@
     "mana_cost": "{1}{B}",
     "name": "Embraal Bruiser",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f432998f-7737-4f41-86b5-a4372bc5db2b",
     "provenance_summary": {
       "deterministic": 1
@@ -1433,7 +1361,7 @@
       "etb",
       "tap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1456,7 +1384,7 @@
     "mana_cost": "",
     "name": "Oscorp Industries",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f432eb6a-f1bf-4ce7-b915-1488dccb4bb9",
     "provenance_summary": {
       "deterministic": 7
@@ -1511,7 +1439,7 @@
       "damage",
       "discard"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1524,7 +1452,7 @@
     "mana_cost": "{2}{R}{R}",
     "name": "Mount Velus Manticore",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f434590f-3a5d-47dd-8ed0-d2a43a521f86",
     "provenance_summary": {
       "deterministic": 4
@@ -1574,7 +1502,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -1583,7 +1511,7 @@
     "mana_cost": "{1}{U}",
     "name": "Imposter Mech",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f434e266-d9d6-4058-96ff-a1bd4029d8dc",
     "provenance_summary": {},
     "provides": [],
@@ -1604,7 +1532,7 @@
     "events_emitted": [
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1615,7 +1543,7 @@
     "mana_cost": "{4}",
     "name": "Grafted Exoskeleton",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4350c4e-7e53-4401-b889-14bed27bee9c",
     "provenance_summary": {
       "deterministic": 1
@@ -1644,7 +1572,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -1653,7 +1581,7 @@
     "mana_cost": "{3}{W}",
     "name": "On Serra's Wings",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f43584de-4f60-46e6-9e6b-e704bc3ecd59",
     "provenance_summary": {},
     "provides": [],
@@ -1676,7 +1604,7 @@
     "events_emitted": [
       "draw"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1693,7 +1621,7 @@
     "mana_cost": "{2}{B}",
     "name": "Recover",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4361602-63da-430b-adbb-36d74e987aa6",
     "provenance_summary": {
       "deterministic": 3
@@ -1733,7 +1661,7 @@
     "events_emitted": [
       "counter_add"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1751,7 +1679,7 @@
     "mana_cost": "{5}{B}",
     "name": "Acid-Spewer Dragon",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4378682-359f-48b0-adb7-b996b8d972db",
     "provenance_summary": {
       "deterministic": 3
@@ -1791,7 +1719,7 @@
       "damage",
       "discard"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1802,7 +1730,7 @@
     "mana_cost": "{R}",
     "name": "Sonic Seizure",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f43c68f1-97ac-47a4-82d3-a41277259388",
     "provenance_summary": {
       "deterministic": 1
@@ -1841,7 +1769,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "ambient": "deterministic",
       "costs": "deterministic",
@@ -1857,7 +1785,7 @@
     "mana_cost": "{1}{G}",
     "name": "Squirrel Sovereign",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f43d1ea5-8127-4b64-a87b-ee5cc9b9e9fa",
     "provenance_summary": {
       "deterministic": 2
@@ -1881,7 +1809,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -1890,7 +1818,7 @@
     "mana_cost": "{G}{U}",
     "name": "Quandrix Charm",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f43e36ea-6bf5-45bd-a4ad-cc507ae45641",
     "provenance_summary": {},
     "provides": [],
@@ -1915,7 +1843,7 @@
       "attack",
       "lifeloss"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -1933,7 +1861,7 @@
     "mana_cost": "{1}{W}{B}",
     "name": "Eriette of the Charmed Apple",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f43f5855-f297-4433-984b-18263b734cfc",
     "provenance_summary": {
       "deterministic": 3
@@ -1978,7 +1906,7 @@
       "counter_add",
       "etb"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2001,7 +1929,7 @@
     "mana_cost": "{2}{B}",
     "name": "Along the Crooked Way",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4437cb3-85f7-49b5-bb41-6a948549d987",
     "provenance_summary": {
       "deterministic": 9
@@ -2071,7 +1999,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "wants": "deterministic"
@@ -2081,7 +2009,7 @@
     "mana_cost": "{2}{B}",
     "name": "Phyrexian Infiltrator",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f444a0f8-32d8-4748-af58-51a1a8ed72b4",
     "provenance_summary": {
       "deterministic": 2
@@ -2112,7 +2040,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -2133,7 +2061,7 @@
     "mana_cost": "{1}{R}",
     "name": "Bloodfeather Phoenix",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4490b09-dc55-47ed-a573-4ae0b95725b1",
     "provenance_summary": {
       "deterministic": 5
@@ -2179,7 +2107,7 @@
     "events_emitted": [
       "untap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2196,7 +2124,7 @@
     "mana_cost": "{2}{R}",
     "name": "Unexpected Request",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4497af5-8b81-46b3-bb52-eaed1999809b",
     "provenance_summary": {
       "deterministic": 2
@@ -2231,7 +2159,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -2240,7 +2168,7 @@
     "mana_cost": "{3}{R}",
     "name": "Ordruun Commando",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f44a8a72-2c51-429e-8447-7bd8155b6f72",
     "provenance_summary": {
       "deterministic": 1
@@ -2265,7 +2193,7 @@
     "events_emitted": [
       "counter_add"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2283,7 +2211,7 @@
     "mana_cost": "{3}{G}",
     "name": "Training Regimen",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f44bde8b-43e9-4719-ac60-b8f0cee8df9b",
     "provenance_summary": {
       "deterministic": 3
@@ -2323,7 +2251,7 @@
       "counter_add",
       "dies"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2335,7 +2263,7 @@
     "mana_cost": "{1}{W}",
     "name": "Paladin of Atonement",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f44dc71d-d08a-45ed-ac7c-f6d1ef811d96",
     "provenance_summary": {
       "deterministic": 4
@@ -2384,7 +2312,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "triggers": "deterministic"
@@ -2394,7 +2322,7 @@
     "mana_cost": "{2}{R}{R}",
     "name": "Barreling Attack",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f44eab45-8ff9-40eb-9919-28fe5203fc48",
     "provenance_summary": {
       "deterministic": 1
@@ -2425,7 +2353,7 @@
     "events_emitted": [
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2442,7 +2370,7 @@
     "mana_cost": "{4}{B}",
     "name": "Treacherous Urge",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f44f2d2d-7899-4cf4-baf0-64d5bef60006",
     "provenance_summary": {
       "deterministic": 2
@@ -2471,7 +2399,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -2480,7 +2408,7 @@
     "mana_cost": "{1}{G}{G}",
     "name": "Terravore",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f44fb61a-9aa5-4178-b958-5115d62a7f50",
     "provenance_summary": {},
     "provides": [],
@@ -2511,7 +2439,7 @@
       "counter_add",
       "damage"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2524,7 +2452,7 @@
     "mana_cost": "{G}{W}",
     "name": "Catti-brie of Mithral Hall",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f44ffa35-bd88-4996-8b20-46329565df9b",
     "provenance_summary": {
       "deterministic": 6
@@ -2597,7 +2525,7 @@
       "tap",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2620,7 +2548,7 @@
     "mana_cost": "",
     "name": "Den of the Bugbear",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f451b8f0-1ff5-4e8d-9f30-9352d83ed687",
     "provenance_summary": {
       "deterministic": 10
@@ -2686,7 +2614,7 @@
       "mana_value": 5.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -2695,7 +2623,7 @@
     "mana_cost": "{4}{G}",
     "name": "Nema Siltlurker",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4542dff-1ba1-4b15-beaf-51a7a42782cf",
     "provenance_summary": {},
     "provides": [],
@@ -2717,11 +2645,10 @@
       "mana_value": 4.0
     },
     "events_emitted": [
-      "etb",
       "sacrifice",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2738,7 +2665,7 @@
     "mana_cost": "{2}{U}{R}",
     "name": "The Apprentice's Folly",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f45542a0-0d49-4b56-9c3e-663ff8d0529a",
     "provenance_summary": {
       "deterministic": 3
@@ -2779,7 +2706,7 @@
       "tap",
       "untap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2791,7 +2718,7 @@
     "mana_cost": "{2}{U}{U}",
     "name": "Breaking Wave",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f455b731-6ff9-4acb-9447-f524faa49b27",
     "provenance_summary": {
       "deterministic": 2
@@ -2840,7 +2767,7 @@
       "draw",
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -2862,7 +2789,7 @@
     "mana_cost": "{3}",
     "name": "Scarecrone",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f45716dc-c613-4b14-865d-419395fb02f6",
     "provenance_summary": {
       "deterministic": 9
@@ -2922,7 +2849,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -2931,7 +2858,7 @@
     "mana_cost": "{2}{U}",
     "name": "Hinterland Drake",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f457f182-69d0-468d-9bf0-7170363bac26",
     "provenance_summary": {},
     "provides": [],
@@ -2954,7 +2881,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic"
@@ -2969,7 +2896,7 @@
     "mana_cost": "{1}{B}{R}{G}",
     "name": "Madrush Cyclops",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f45a2a66-04cc-4622-9c70-f2dfc1391bb1",
     "provenance_summary": {
       "deterministic": 1
@@ -2993,7 +2920,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "wants": "deterministic"
@@ -3003,7 +2930,7 @@
     "mana_cost": "{U}{B}",
     "name": "Warped Physique",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f45fdef0-15b1-472b-9485-465c49a48a85",
     "provenance_summary": {
       "deterministic": 1
@@ -3039,10 +2966,9 @@
     "events_emitted": [
       "discard",
       "draw",
-      "sacrifice",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3060,26 +2986,12 @@
     "mana_cost": "{2}",
     "name": "Collector's Vault",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f460ff80-8175-43f7-9810-540cf3817085",
     "provenance_summary": {
-      "deterministic": 9
+      "deterministic": 7
     },
     "provides": [
-      {
-        "economy": "mana",
-        "evidence": "Add one mana",
-        "feature": "mana_add",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      },
-      {
-        "economy": "sacrifice",
-        "evidence": "Sacrifice this token:",
-        "feature": "sac_outlet",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      },
       {
         "economy": "sacrifice",
         "evidence": "Create a Treasure token",
@@ -3145,7 +3057,7 @@
       "etb",
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3172,7 +3084,7 @@
     "mana_cost": null,
     "name": "Joshua, Phoenix's Dominant // Phoenix, Warden of Fire",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4629329-a79b-4460-a1bc-9ae0f59adf5a",
     "provenance_summary": {
       "deterministic": 12
@@ -3252,7 +3164,7 @@
       "mana_value": 5.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic"
@@ -3267,7 +3179,7 @@
     "mana_cost": "{3}{W}{W}",
     "name": "Liu Bei, Lord of Shu",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f46416cc-0c3d-4d90-bdcb-910c5d4a2014",
     "provenance_summary": {
       "deterministic": 1
@@ -3297,7 +3209,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -3314,7 +3226,7 @@
     "mana_cost": "{3}",
     "name": "Mana Prism",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4669822-716b-45c7-a7f2-040062509fe9",
     "provenance_summary": {
       "deterministic": 6
@@ -3362,7 +3274,7 @@
     "events_emitted": [
       "damage"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3380,7 +3292,7 @@
     "mana_cost": "{X}{R}{R}",
     "name": "Torrent of Lava",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f467ec85-ffe2-4963-82e0-509a7873fd63",
     "provenance_summary": {
       "deterministic": 4
@@ -3436,7 +3348,7 @@
     "events_emitted": [
       "damage"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "ambient": "deterministic",
       "costs": "deterministic",
@@ -3448,7 +3360,7 @@
     "mana_cost": "{3}{R}",
     "name": "Witchstalker Frenzy",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f46befcb-6a7f-4f5e-8634-393cbf4b3308",
     "provenance_summary": {
       "deterministic": 2
@@ -3488,7 +3400,7 @@
       "etb",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3511,7 +3423,7 @@
     "mana_cost": "{G}",
     "name": "Swarm Shambler",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f46c72b8-e2e8-42e6-a2e7-ffa5810a9bf3",
     "provenance_summary": {
       "deterministic": 9
@@ -3577,7 +3489,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -3586,7 +3498,7 @@
     "mana_cost": "{3}{R}",
     "name": "Viashino Warrior",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f46e06e2-1658-4bec-b94e-91935cc667fb",
     "provenance_summary": {},
     "provides": [],
@@ -3610,7 +3522,7 @@
       "damage",
       "tap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3622,7 +3534,7 @@
     "mana_cost": "{2}{R}",
     "name": "Spireside Infiltrator",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f46e9fa0-2ed7-4a94-8ad4-031e87a6da45",
     "provenance_summary": {
       "deterministic": 2
@@ -3667,7 +3579,7 @@
     "events_emitted": [
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3679,7 +3591,7 @@
     "mana_cost": "{3}{R/G}",
     "name": "Impromptu Raid",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f46fe37f-c552-44e6-9657-ff63dbbd0ccf",
     "provenance_summary": {
       "deterministic": 3
@@ -3716,7 +3628,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -3725,7 +3637,7 @@
     "mana_cost": "{2}{W}",
     "name": "Farbog Explorer",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f474c1f8-43bb-4e56-8131-27c71b3193d2",
     "provenance_summary": {},
     "provides": [],
@@ -3749,7 +3661,7 @@
       "damage",
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3760,7 +3672,7 @@
     "mana_cost": "{3}{R}",
     "name": "Feed the Flames",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f474d244-d9be-4580-bf62-f97660e9c1a3",
     "provenance_summary": {
       "deterministic": 1
@@ -3791,11 +3703,9 @@
       "mana_value": 2.0
     },
     "events_emitted": [
-      "discard",
-      "draw",
       "etb"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3807,23 +3717,16 @@
     "mana_cost": "{1}{B}",
     "name": "Poet's Quill",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f474d421-5fd0-4d76-95cb-4824a2381a29",
     "provenance_summary": {
-      "deterministic": 3
+      "deterministic": 2
     },
     "provides": [
       {
         "economy": "etb",
         "evidence": "When this Equipment enters",
         "feature": "etb_trigger",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      },
-      {
-        "economy": "draw",
-        "evidence": "draw a card",
-        "feature": "draw",
         "magnitude": 1,
         "provenance": "deterministic"
       }
@@ -3851,7 +3754,7 @@
     "events_emitted": [
       "dies"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3863,7 +3766,7 @@
     "mana_cost": "{5}",
     "name": "Lifeline",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f475b636-eb7f-4dd7-bc87-a1af07064ffe",
     "provenance_summary": {
       "deterministic": 4
@@ -3915,7 +3818,7 @@
       "dies",
       "draw"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3933,7 +3836,7 @@
     "mana_cost": "{B}{B}{B}",
     "name": "Dark Prophecy",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f47659b5-d834-4153-b9fc-6a0702c503d9",
     "provenance_summary": {
       "deterministic": 4
@@ -3979,7 +3882,7 @@
     "events_emitted": [
       "counter_add"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -3997,7 +3900,7 @@
     "mana_cost": "{1}{G}",
     "name": "Sphere Grid",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4770345-f15e-4e31-b6ef-4c2608df9644",
     "provenance_summary": {
       "deterministic": 3
@@ -4043,7 +3946,7 @@
       "counter_add",
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4054,7 +3957,7 @@
     "mana_cost": "{W}{B}",
     "name": "Bartolomé del Presidio",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f47e4c56-0a0b-422d-bf3d-7a20ee289f15",
     "provenance_summary": {
       "deterministic": 3
@@ -4097,7 +4000,7 @@
       "mana_value": 1.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -4113,7 +4016,7 @@
     "mana_cost": "{R}",
     "name": "Dwarven Pony",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f47f1c96-0b09-4277-8d61-cffa56d81be7",
     "provenance_summary": {
       "deterministic": 4
@@ -4156,7 +4059,7 @@
       "mana_value": 0.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -4173,7 +4076,7 @@
     "mana_cost": "",
     "name": "Great Furnace",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4819061-b0b5-48ab-af7b-6525c3d2eab7",
     "provenance_summary": {
       "deterministic": 4
@@ -4214,7 +4117,7 @@
     "events_emitted": [
       "discard"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4225,7 +4128,7 @@
     "mana_cost": "{1}{B}{B}",
     "name": "Oppression",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f488f679-f5d5-4e61-b0c8-0b0eb622df0d",
     "provenance_summary": {
       "deterministic": 1
@@ -4256,7 +4159,7 @@
     "events_emitted": [
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4268,7 +4171,7 @@
     "mana_cost": "{1}{B}",
     "name": "Morgul-Knife Wound",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f48b2349-797e-4e79-aea7-2413e78129e1",
     "provenance_summary": {
       "deterministic": 2
@@ -4303,7 +4206,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -4312,7 +4215,7 @@
     "mana_cost": "{3}",
     "name": "Halo Hopper",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f48d30ee-bba6-4449-8c50-caf0d7f06528",
     "provenance_summary": {},
     "provides": [],
@@ -4336,7 +4239,7 @@
       "counter_add",
       "mill"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4349,7 +4252,7 @@
     "mana_cost": "{1}{U}",
     "name": "Cephalid Vandal",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f48dae33-ebf9-41ee-a61e-7573a2733db2",
     "provenance_summary": {
       "deterministic": 4
@@ -4405,7 +4308,7 @@
       "damage",
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4427,7 +4330,7 @@
     "mana_cost": "{2}{R} // {1}{R}",
     "name": "Gandalf, Goblins' Bane // Flameshape",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f48f2a9b-4ba5-4984-8180-3950889bba65",
     "provenance_summary": {
       "deterministic": 5
@@ -4473,7 +4376,7 @@
     "events_emitted": [
       "draw"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4490,7 +4393,7 @@
     "mana_cost": "{2}{W}",
     "name": "Your Temple Is Under Attack",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f48f69c0-cca8-4f44-84cc-71e7cbbb9208",
     "provenance_summary": {
       "deterministic": 2
@@ -4525,7 +4428,7 @@
       "tap",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4537,7 +4440,7 @@
     "mana_cost": "",
     "name": "Hanweir, the Writhing Township",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4905c40-003e-4992-b8d7-3f07ba09c686",
     "provenance_summary": {
       "deterministic": 3
@@ -4583,7 +4486,7 @@
     "events_emitted": [
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4594,7 +4497,7 @@
     "mana_cost": "{1}{U}{U}",
     "name": "Phantasmal Abomination",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4925e05-1332-4466-b2ea-9f6f4ccf7db4",
     "provenance_summary": {
       "deterministic": 1
@@ -4625,7 +4528,7 @@
     "events_emitted": [
       "untap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4641,7 +4544,7 @@
     "mana_cost": "{X}{U}",
     "name": "Icy Blast",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f49302c5-8510-4360-841c-a59f53f87e0b",
     "provenance_summary": {
       "deterministic": 1
@@ -4673,7 +4576,7 @@
       "etb",
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4686,7 +4589,7 @@
     "mana_cost": "{2}{R}",
     "name": "Fires of Mount Doom",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4944fde-2066-4aed-85c0-6e5e00a4bfe6",
     "provenance_summary": {
       "deterministic": 6
@@ -4746,7 +4649,7 @@
     "events_emitted": [
       "counter_add"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4758,7 +4661,7 @@
     "mana_cost": "{2}{R/G}{R/G}",
     "name": "Furious Spinesplitter",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4964f74-07c0-4edc-984d-57722fb16961",
     "provenance_summary": {
       "deterministic": 2
@@ -4794,14 +4697,10 @@
       "mana_cost": "{1}{B}",
       "mana_value": 2.0
     },
-    "events_emitted": [
-      "counter_add"
-    ],
-    "extractor_version": "det-1.0.0",
+    "events_emitted": [],
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic",
-      "provides": "deterministic",
       "triggers": "deterministic"
     },
     "guards": [],
@@ -4809,20 +4708,12 @@
     "mana_cost": "{1}{B}",
     "name": "Silumgar Assassin",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f496e8cb-1d79-4a78-be15-fdb7e3d0de71",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 1
     },
-    "provides": [
-      {
-        "economy": "counters",
-        "evidence": "put a +1/+1 counter",
-        "feature": "counter_add",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      }
-    ],
+    "provides": [],
     "triggers": [
       {
         "guarded": false,
@@ -4851,7 +4742,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -4876,7 +4767,7 @@
     "mana_cost": "{2}{W}",
     "name": "Codsworth, Handy Helper",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f496ff42-3644-494a-9f21-27f781ee880b",
     "provenance_summary": {
       "deterministic": 6
@@ -4918,7 +4809,7 @@
       "etb",
       "tap"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -4940,7 +4831,7 @@
     "mana_cost": "{4}",
     "name": "Mjölnir, Storm Hammer",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f497e9a5-0ad3-4aec-8422-14be8e0dba4c",
     "provenance_summary": {
       "deterministic": 6
@@ -4990,7 +4881,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -5006,7 +4897,7 @@
     "mana_cost": "{2}{R}{G}",
     "name": "General Marhault Elsdragon",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f49b31ce-910e-446a-b7a7-4274d71e961d",
     "provenance_summary": {
       "deterministic": 2
@@ -5038,7 +4929,7 @@
       "counter_add",
       "dies"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5050,7 +4941,7 @@
     "mana_cost": "{4}{B}{B}",
     "name": "Sengir, the Dark Baron",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f49f84f9-616e-495b-8d87-4de7941f230e",
     "provenance_summary": {
       "deterministic": 4
@@ -5104,7 +4995,7 @@
       "mana_value": 1.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -5121,7 +5012,7 @@
     "mana_cost": "{G}",
     "name": "Vineweft",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4a2d9eb-7f2b-4ee6-b38e-cf6e3a837b49",
     "provenance_summary": {
       "deterministic": 5
@@ -5169,7 +5060,7 @@
     "events_emitted": [
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5190,7 +5081,7 @@
     "mana_cost": "{3}{W}",
     "name": "Against All Odds",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4a73cde-58bf-4719-8eb0-e039fdde4f62",
     "provenance_summary": {
       "deterministic": 5
@@ -5243,7 +5134,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "ambient": "deterministic",
       "costs": "deterministic",
@@ -5259,7 +5150,7 @@
     "mana_cost": "{1}{W}",
     "name": "In Oketra's Name",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4a8756d-94df-40bc-a363-2938ada0a808",
     "provenance_summary": {
       "deterministic": 2
@@ -5284,7 +5175,7 @@
     "events_emitted": [
       "mill"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5296,7 +5187,7 @@
     "mana_cost": "{1}{U}{U}",
     "name": "Memory Erosion",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4a96881-586d-44ad-b427-5cdf8988f9a1",
     "provenance_summary": {
       "deterministic": 2
@@ -5339,7 +5230,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -5355,7 +5246,7 @@
     "mana_cost": "{1}{W}{U}",
     "name": "Sokrates, Athenian Teacher",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4a9d567-513b-487e-afed-c6e6513a7862",
     "provenance_summary": {
       "deterministic": 3
@@ -5388,7 +5279,7 @@
     "events_emitted": [
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic"
@@ -5398,7 +5289,7 @@
     "mana_cost": "{X}{R}{R}",
     "name": "Commune with Lava",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4aa0f64-d202-42a1-af62-0e53bbe87782",
     "provenance_summary": {},
     "provides": [],
@@ -5419,7 +5310,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -5428,7 +5319,7 @@
     "mana_cost": "{1}{W}",
     "name": "Absolute Law",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4aa8391-34d5-4ad2-a981-9aa08f8229db",
     "provenance_summary": {},
     "provides": [],
@@ -5451,7 +5342,7 @@
     "events_emitted": [
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5463,7 +5354,7 @@
     "mana_cost": "{8}",
     "name": "It of the Horrid Swarm",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4ad190a-6c82-4923-af54-b4cce8d6465f",
     "provenance_summary": {
       "deterministic": 3
@@ -5517,7 +5408,7 @@
       "draw",
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5534,7 +5425,7 @@
     "mana_cost": "{2}{U}{B}",
     "name": "Soul Ransom",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4ae18b5-2cf1-4720-8237-40a0c7b040ae",
     "provenance_summary": {
       "deterministic": 3
@@ -5565,7 +5456,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -5574,7 +5465,7 @@
     "mana_cost": "{3}{G}",
     "name": "Bristling Boar",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4aed3d2-04f5-49a4-a6be-d3cf097903f8",
     "provenance_summary": {},
     "provides": [],
@@ -5598,7 +5489,7 @@
       "attack",
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5615,7 +5506,7 @@
     "mana_cost": "{1}{R}",
     "name": "Tempered in Solitude",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4aedfd3-4414-493c-bbba-75db301c0737",
     "provenance_summary": {
       "deterministic": 2
@@ -5646,7 +5537,7 @@
     "events_emitted": [
       "damage"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5658,7 +5549,7 @@
     "mana_cost": "{B}{B}",
     "name": "Warp Artifact",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4b18451-1f40-48bd-8ca9-eec784ad5dd7",
     "provenance_summary": {
       "deterministic": 2
@@ -5699,7 +5590,7 @@
       "draw",
       "etb"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5717,7 +5608,7 @@
     "mana_cost": "{G}{U}",
     "name": "Ice-Fang Coatl",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4b1bbd1-f1b2-4c7d-bafd-9d2857f92a89",
     "provenance_summary": {
       "deterministic": 4
@@ -5763,7 +5654,7 @@
       "mana_value": 3.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -5772,7 +5663,7 @@
     "mana_cost": "{G}{U}{R}",
     "name": "Guided Passage",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4b30f6c-09ac-407e-9c72-da64d212ce93",
     "provenance_summary": {},
     "provides": [],
@@ -5796,20 +5687,15 @@
       "attack",
       "draw"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
       "guards": "deterministic",
       "provides": "deterministic",
-      "triggers": "deterministic",
-      "wants": "deterministic"
+      "triggers": "deterministic"
     },
     "guards": [
-      {
-        "guard": "timing_sorcery",
-        "provenance": "deterministic"
-      },
       {
         "guard": "control_requirement",
         "provenance": "deterministic"
@@ -5819,10 +5705,10 @@
     "mana_cost": "{1}{W}",
     "name": "Stormbeacon Blade",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4b3ee43-fc01-425f-8322-29bf6d16cb3f",
     "provenance_summary": {
-      "deterministic": 5
+      "deterministic": 3
     },
     "provides": [
       {
@@ -5841,15 +5727,7 @@
       }
     ],
     "type_line": "Artifact — Equipment",
-    "wants": [
-      {
-        "economy": "mana",
-        "evidence": "{2} ({2}:",
-        "feature": "mana_sink",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      }
-    ]
+    "wants": []
   },
   {
     "ambient": [],
@@ -5863,43 +5741,21 @@
       "mana_cost": "{2}{R}",
       "mana_value": 3.0
     },
-    "events_emitted": [
-      "attack",
-      "counter_add"
-    ],
-    "extractor_version": "det-1.0.0",
+    "events_emitted": [],
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic",
-      "events_emitted": "deterministic",
-      "provides": "deterministic",
-      "triggers": "deterministic"
+      "costs": "deterministic"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Enraged Revolutionary",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4b8e856-17a9-44db-bce6-312a6bd2af32",
-    "provenance_summary": {
-      "deterministic": 2
-    },
-    "provides": [
-      {
-        "economy": "counters",
-        "evidence": "put a +1/+1 counter",
-        "feature": "counter_add",
-        "magnitude": 1,
-        "provenance": "deterministic"
-      }
-    ],
-    "triggers": [
-      {
-        "guarded": false,
-        "provenance": "deterministic",
-        "trigger": "Whenever this creature attacks the player with the most life or tied for most life"
-      }
-    ],
+    "provenance_summary": {},
+    "provides": [],
+    "triggers": [],
     "type_line": "Creature — Human Warrior",
     "wants": []
   },
@@ -5921,7 +5777,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -5937,7 +5793,7 @@
     "mana_cost": "{3}{W}",
     "name": "Oracle's Attendants",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4bc6674-8586-4dd9-ad3a-87ba704fda7a",
     "provenance_summary": {
       "deterministic": 3
@@ -5977,7 +5833,7 @@
       "draw",
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -5989,7 +5845,7 @@
     "mana_cost": "{1}",
     "name": "Implement of Combustion",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4bd26d5-4448-451f-9909-b6dea1551af7",
     "provenance_summary": {
       "deterministic": 5
@@ -6043,7 +5899,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic",
@@ -6059,7 +5915,7 @@
     "mana_cost": "{2}",
     "name": "Liquimetal Coating",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4bdc551-c2eb-4a34-a3e3-b4a017c925af",
     "provenance_summary": {
       "deterministic": 3
@@ -6093,7 +5949,7 @@
     "events_emitted": [
       "counter_add"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6110,7 +5966,7 @@
     "mana_cost": "{4}{G}{U}",
     "name": "Oko, the Trickster",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
     "provenance_summary": {
       "deterministic": 2
@@ -6141,31 +5997,23 @@
       "mana_value": 5.0
     },
     "events_emitted": [
-      "draw",
-      "exile"
+      "draw"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic",
-      "provides": "deterministic",
-      "triggers": "deterministic"
+      "provides": "deterministic"
     },
-    "guards": [
-      {
-        "guard": "zone_exile",
-        "provenance": "deterministic"
-      }
-    ],
+    "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Decorum Dissertation",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4c57454-d36f-4f38-b7ac-76477a516c3e",
     "provenance_summary": {
-      "deterministic": 3
+      "deterministic": 1
     },
     "provides": [
       {
@@ -6176,13 +6024,7 @@
         "provenance": "deterministic"
       }
     ],
-    "triggers": [
-      {
-        "guarded": false,
-        "provenance": "deterministic",
-        "trigger": "at the beginning of each of your first main phases"
-      }
-    ],
+    "triggers": [],
     "type_line": "Sorcery — Lesson",
     "wants": []
   },
@@ -6199,7 +6041,7 @@
       "mana_value": 5.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "guards": "deterministic"
@@ -6214,7 +6056,7 @@
     "mana_cost": "{3}{W}{W}",
     "name": "Endure",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4cd32f0-d6aa-4497-b8db-a0bf4c3c31de",
     "provenance_summary": {
       "deterministic": 1
@@ -6241,7 +6083,7 @@
       "exile",
       "ltb"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6259,7 +6101,7 @@
     "mana_cost": "{4}{W}{W}{W}",
     "name": "Angel of Serenity",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4ce6078-8c7b-4f68-b324-13130c63a983",
     "provenance_summary": {
       "deterministic": 5
@@ -6308,7 +6150,7 @@
       "mana_value": 4.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "triggers": "deterministic"
@@ -6318,7 +6160,7 @@
     "mana_cost": "{3}{R}",
     "name": "Viashino Weaponsmith",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4d17f41-efd6-4173-ab6e-28b6fbcee10d",
     "provenance_summary": {
       "deterministic": 1
@@ -6346,39 +6188,21 @@
       "mana_cost": "{4}{B}",
       "mana_value": 5.0
     },
-    "events_emitted": [
-      "exile"
-    ],
-    "extractor_version": "det-1.0.0",
+    "events_emitted": [],
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic",
-      "events_emitted": "deterministic",
-      "guards": "deterministic",
-      "triggers": "deterministic"
+      "costs": "deterministic"
     },
-    "guards": [
-      {
-        "guard": "control_requirement",
-        "provenance": "deterministic"
-      }
-    ],
+    "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Shadow Slice",
-    "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "needs_llm": true,
+    "ontology_version": "1.0.1",
     "oracle_id": "f4d2eca4-4645-4044-b75f-442cd726cedf",
-    "provenance_summary": {
-      "deterministic": 2
-    },
+    "provenance_summary": {},
     "provides": [],
-    "triggers": [
-      {
-        "guarded": false,
-        "provenance": "deterministic",
-        "trigger": "Whenever that creature deals combat damage to a player"
-      }
-    ],
+    "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
@@ -6404,7 +6228,7 @@
       "sacrifice",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6416,7 +6240,7 @@
     "mana_cost": "{1}{G}",
     "name": "Transluminant",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4d54a89-8409-4fbc-b01f-3b03f352820f",
     "provenance_summary": {
       "deterministic": 5
@@ -6469,7 +6293,7 @@
     "events_emitted": [
       "damage"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6481,7 +6305,7 @@
     "mana_cost": "{3}{R}{R}",
     "name": "Chandra Nalaar",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4da7a43-e9d5-47ea-b2f0-3cf55a156f4a",
     "provenance_summary": {
       "deterministic": 2
@@ -6525,7 +6349,7 @@
       "etb",
       "token_create"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6537,7 +6361,7 @@
     "mana_cost": "{3}{W}{U}{B}",
     "name": "Tivit, Seller of Secrets",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e0b557-4f80-4b7c-bfcc-6d4c468faf2e",
     "provenance_summary": {
       "deterministic": 4
@@ -6593,7 +6417,7 @@
       "mana_value": 6.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "wants": "deterministic"
@@ -6603,7 +6427,7 @@
     "mana_cost": "{4}{W}{W}",
     "name": "Pearl Dragon",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e0e2e0-8d64-40a3-92da-3951a696b5f3",
     "provenance_summary": {
       "deterministic": 2
@@ -6636,7 +6460,7 @@
     "events_emitted": [
       "etb"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6654,7 +6478,7 @@
     "mana_cost": "{3}{B}",
     "name": "Ubul Sar Gatekeepers",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e15575-2277-4cb1-a343-e9407c050eb1",
     "provenance_summary": {
       "deterministic": 3
@@ -6693,7 +6517,7 @@
     "events_emitted": [
       "exile"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic"
@@ -6703,7 +6527,7 @@
     "mana_cost": "{2}{B}{B}",
     "name": "Leyline of the Void",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
     "provenance_summary": {},
     "provides": [],
@@ -6724,7 +6548,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -6733,7 +6557,7 @@
     "mana_cost": "{1}{U}",
     "name": "Buoyancy",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e4060d-bfff-4991-9ae5-8f848304cd1e",
     "provenance_summary": {},
     "provides": [],
@@ -6758,7 +6582,7 @@
       "counter_add",
       "etb"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6777,7 +6601,7 @@
     "mana_cost": "{2}{G}",
     "name": "Wildwood Mentor",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e61b03-e6c8-4751-9720-b91fdecd57da",
     "provenance_summary": {
       "deterministic": 6
@@ -6836,7 +6660,7 @@
     "events_emitted": [
       "lifegain"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6854,7 +6678,7 @@
     "mana_cost": "{2}{W}",
     "name": "Abiding Grace",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e7bc58-336d-4670-84cb-a46ca1f48671",
     "provenance_summary": {
       "deterministic": 4
@@ -6898,7 +6722,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic"
     },
@@ -6907,7 +6731,7 @@
     "mana_cost": "{1}{R}",
     "name": "Antagonize",
     "needs_llm": true,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e860f1-e637-4640-b257-57c2e42793ce",
     "provenance_summary": {},
     "provides": [],
@@ -6931,7 +6755,7 @@
       "cast",
       "counter_add"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -6943,7 +6767,7 @@
     "mana_cost": "{1}{W}",
     "name": "Akroan Skyguard",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4e8be6f-2a1f-47b2-a4d8-7e576e25ab60",
     "provenance_summary": {
       "deterministic": 3
@@ -6992,7 +6816,7 @@
       "lifegain",
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -7003,7 +6827,7 @@
     "mana_cost": "{1}{R}{W}",
     "name": "Foundry Helix",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4f66558-3c99-4488-ad2d-90626a922042",
     "provenance_summary": {
       "deterministic": 2
@@ -7041,7 +6865,7 @@
       "mana_value": 2.0
     },
     "events_emitted": [],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "triggers": "deterministic"
@@ -7051,7 +6875,7 @@
     "mana_cost": "{1}{W}",
     "name": "Serenity",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4f751c0-02dc-45a2-a4b0-980592509944",
     "provenance_summary": {
       "deterministic": 1
@@ -7088,7 +6912,7 @@
       "attack",
       "sacrifice"
     ],
-    "extractor_version": "det-1.0.0",
+    "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
@@ -7099,7 +6923,7 @@
     "mana_cost": "{1}{U}",
     "name": "Volrath's Curse",
     "needs_llm": false,
-    "ontology_version": "1.0.0",
+    "ontology_version": "1.0.1",
     "oracle_id": "f4ff3efb-c9ed-4451-a7f2-5ff52ffb6cab",
     "provenance_summary": {
       "deterministic": 2

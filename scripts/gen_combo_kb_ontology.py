@@ -27,9 +27,24 @@ OUT = PROJECT_ROOT / "data" / "combo-kb" / "ontology.json"
 # Version. Semantic: MAJOR = incompatible entry-schema change; MINOR = features
 # added; PATCH = pattern tuning that does not change the feature set.
 # ---------------------------------------------------------------------------
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 CHANGELOG = [
+    {
+        "version": "1.0.1",
+        "date": "2026-08-15",
+        "note": (
+            "PATCH (DEC-489): (B2) widen untap_permanent vocabulary to cover "
+            "'untap up to N/all/each' where N is any digit or one..ten — v1.0.0 "
+            "only matched 'up to one/two/three', silently missing canonical "
+            "infinite-mana untappers (Palinchron, Peregrine Drake, Great Whale, "
+            "Treachery — 'untap up to five/seven lands'). (B1 follow-on) re-ground "
+            "self_mill in the body imperative ('Mill N cards' at a clause "
+            "boundary) instead of the keyword reminder, which build_combo_kb now "
+            "strips; recovers 214 self-mill cards (was 100, all reminder-grounded) "
+            "with no opponent-mill false positives. No feature set change."
+        ),
+    },
     {
         "version": "1.0.0",
         "date": "2026-08-15",
@@ -190,7 +205,7 @@ FEATURES = [
     # --- Blink handled above; Untap / tap-ability --------------------------
     {"id": "untap_permanent", "kind": "provides", "economy": "untap",
      "label": "Untaps a permanent", "role_hint": "engine",
-     "patterns": [r"untap (?:target|another target|up to (?:one|two|three)|all)[^.]*?(?:permanent|creature|land|artifact)",
+     "patterns": [r"untap (?:target|another target|up to (?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)|all|each)[^.]*?(?:permanent|creature|land|artifact)",
                   r"untap [^.]*?\bit\b"],
      "pairs_with": ["tap_ability", "mana_add"]},
     {"id": "tap_ability", "kind": "wants", "economy": "untap",
@@ -303,7 +318,14 @@ FEATURES = [
     # --- Self-mill (recursion enabler) -------------------------------------
     {"id": "self_mill", "kind": "provides", "economy": "mill",
      "label": "Self-mill", "role_hint": "engine",
-     "patterns": [r"mill(?:s)? (?:yourself|\d+)", r"put the top [^.]*?of your library into your graveyard"],
+     # Ground in the BODY imperative ("Mill N cards" at a clause boundary) rather
+     # than the keyword reminder (DEC-489). Clause-boundary anchoring keeps
+     # opponent-directed "target player/each opponent mills N" out (verb carries a
+     # subject, so no preceding punctuation). Word-numbers are enumerated because
+     # feature patterns run pre-normalisation.
+     "patterns": [r"(?:^|[.\n:,]\s*)mill(?:s)? (?:a|an|one|two|three|four|five|six|seven|eight|nine|ten|\d+)\b",
+                  r"mill(?:s)? yourself",
+                  r"put the top [^.]*?of your library into your graveyard"],
      "pairs_with": ["recursion", "graveyard_payoff"]},
 ]
 

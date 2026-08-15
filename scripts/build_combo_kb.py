@@ -43,7 +43,8 @@ KB_DIR = PROJECT_ROOT / "data" / "combo-kb"
 ENTRIES_DIR = KB_DIR / "entries"
 META_FILE = KB_DIR / "meta.json"
 
-EXTRACTOR_VERSION = "det-1.0.0"
+# det-1.0.1 (DEC-489 B1): strip reminder text before pattern extraction.
+EXTRACTOR_VERSION = "det-1.0.1"
 
 _WORD_NUM = {
     "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
@@ -237,7 +238,14 @@ def is_vanilla(card: dict, combined_text: str) -> bool:
 
 def build_entry(card: dict, ontology: dict, corpus_version: str) -> dict:
     faces = card_faces(card)
-    combined = "\n".join(f["oracle_text"] for f in faces)
+    raw_combined = "\n".join(f["oracle_text"] for f in faces)
+    # Strip parenthetical reminder text before pattern extraction (DEC-489 B1).
+    # Reminder text only restates keyword rules — it must not manufacture phantom
+    # deterministic (Tier-B-eligible) features/triggers/events: e.g. Soulbond's
+    # "(...when either enters...)" is not a real ETB, and parenthetical ninjutsu/
+    # flashback/escape costs are not real mana sinks. extract_costs already strips
+    # reminder text per line; the pattern extractors need the same treatment.
+    combined = _REMINDER_RE.sub("", raw_combined)
     norm = normalise_numbers(combined)
 
     provides, wants, ambient = extract_features(combined, norm, ontology)

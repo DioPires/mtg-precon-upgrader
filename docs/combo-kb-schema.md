@@ -85,8 +85,8 @@ Each entry is one card:
   "field_provenance": { "provides": "deterministic", "costs": "deterministic", ... },  // KB-4
   "provenance_summary": { "deterministic": 3 },
   "needs_llm": false,                          // true → awaits offline classifier
-  "ontology_version": "1.0.0",
-  "extractor_version": "det-1.0.0",
+  "ontology_version": "1.0.1",
+  "extractor_version": "det-1.0.1",
   "corpus_version": "2026-08-15T09:01:55.591+00:00"
 }
 ```
@@ -123,7 +123,7 @@ ordering; EI-4 tier inflation is release-blocking). The rule is unit-tested in
 
 | Step | Script | Output |
 |---|---|---|
-| 1. Author ontology | `gen_combo_kb_ontology.py` | `ontology.json` (v1.0.0) |
+| 1. Author ontology | `gen_combo_kb_ontology.py` | `ontology.json` (v1.0.1) |
 | 2. Deterministic extraction | `build_combo_kb.py` | `entries/*.json`, `meta.json` |
 | 3. Offline LLM enrichment (`needs_llm`) | `classify_combo_kb.py --emit-batch` / `--apply` | enriched entries + `ontology-gaps.json` |
 | 4. Sampling QA | `kb_sampling_qa.py` | pass rates + human-review worksheet |

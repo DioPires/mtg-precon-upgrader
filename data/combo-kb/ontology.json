@@ -1,6 +1,6 @@
 {
   "schema": "combo-kb-ontology",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "comment": "Combo Lab knowledge-base ontology (DEC-476 Phase 1 / DEC-488). Source of truth for deterministic feature extraction. Patterns are case-insensitive Python regex matched against oracle_text (per face for DFCs), after word-number normalisation. See docs/combo-kb-schema.md.",
   "resources": [
     {
@@ -313,7 +313,7 @@
       "label": "Untaps a permanent",
       "role_hint": "engine",
       "patterns": [
-        "untap (?:target|another target|up to (?:one|two|three)|all)[^.]*?(?:permanent|creature|land|artifact)",
+        "untap (?:target|another target|up to (?:\\d+|one|two|three|four|five|six|seven|eight|nine|ten)|all|each)[^.]*?(?:permanent|creature|land|artifact)",
         "untap [^.]*?\\bit\\b"
       ],
       "pairs_with": [
@@ -619,7 +619,8 @@
       "label": "Self-mill",
       "role_hint": "engine",
       "patterns": [
-        "mill(?:s)? (?:yourself|\\d+)",
+        "(?:^|[.\\n:,]\\s*)mill(?:s)? (?:a|an|one|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\b",
+        "mill(?:s)? yourself",
         "put the top [^.]*?of your library into your graveyard"
       ],
       "pairs_with": [
@@ -629,6 +630,11 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-08-15",
+      "note": "PATCH (DEC-489): (B2) widen untap_permanent vocabulary to cover 'untap up to N/all/each' where N is any digit or one..ten — v1.0.0 only matched 'up to one/two/three', silently missing canonical infinite-mana untappers (Palinchron, Peregrine Drake, Great Whale, Treachery — 'untap up to five/seven lands'). (B1 follow-on) re-ground self_mill in the body imperative ('Mill N cards' at a clause boundary) instead of the keyword reminder, which build_combo_kb now strips; recovers 214 self-mill cards (was 100, all reminder-grounded) with no opponent-mill false positives. No feature set change."
+    },
     {
       "version": "1.0.0",
       "date": "2026-08-15",
