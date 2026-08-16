@@ -1172,6 +1172,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1191,7 +1192,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Eyeblight's Ending",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9f3e1eef-31db-4e1a-b5a9-ac835f6a3eab",
     "provenance_summary": {},
@@ -1286,6 +1287,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -1305,7 +1307,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Immolation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9f40ad89-3767-4837-a078-f2dcfaf368df",
     "provenance_summary": {},
@@ -1361,6 +1363,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1378,7 +1381,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Wrecking Ball Arm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9f48cb32-46be-4c47-b558-2ea359efdd9b",
     "provenance_summary": {},
@@ -2150,7 +2153,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Each other Human you control gets +1/+0 and has ward {1}.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2164,6 +2176,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -2176,11 +2189,12 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Coppercoat Vanguard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9f6fc734-4935-42d9-93a0-1b5ad8d8d277",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -2567,6 +2581,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2588,22 +2603,32 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Necratog",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9f820f1e-3cd1-4a3e-8d00-194c8a80b296",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Atog",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile the top creature card of your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2895,6 +2920,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2915,7 +2941,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{C}{C}",
     "name": "Selective Obliteration",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9f95027a-5f04-48b4-99a0-8913be3a520a",
     "provenance_summary": {},
@@ -3180,6 +3206,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -3205,7 +3232,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Upriser Renegade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9f9b3ef8-e0ce-4906-96b3-a7727d7cc662",
     "provenance_summary": {
@@ -3218,6 +3245,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3237,7 +3265,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Early Frost",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9f9cdbc2-d2f2-4390-8506-350fabf3f89a",
     "provenance_summary": {},
@@ -3648,6 +3676,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3661,23 +3690,44 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Golgari Decoy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9fb2eb66-d33b-40e8-9d0d-06d73650a9ac",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a number of +1/+1 counters equal to this card's power on target creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Elf Rogue",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile this card from your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -3697,7 +3747,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Wildwood Geist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9fb4aa2d-6414-4176-9070-e5230e100c6a",
     "provenance_summary": {},
@@ -3848,6 +3898,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -3870,7 +3921,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Transforming Flourish",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9fb7e7ca-ad2f-4677-859c-7a9adf8fb5fd",
     "provenance_summary": {},
@@ -3881,6 +3932,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G",
@@ -3901,7 +3953,7 @@
     "is_dfc": false,
     "mana_cost": "{R/G}",
     "name": "Guttural Response",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9fb80575-9c8e-4745-9a8f-d48cdcbbb868",
     "provenance_summary": {},
@@ -4634,6 +4686,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4653,7 +4706,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Tricks of the Trade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9fd288d6-445e-4605-b206-aab43e300dde",
     "provenance_summary": {},
@@ -4903,6 +4956,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "B",
@@ -4920,17 +4974,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}{R}{R}",
     "name": "Mutinous Massacre",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9fdd445a-c8e1-4309-9d74-374676fcac1d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap them.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -5007,6 +5072,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R",
@@ -5027,7 +5093,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}{R}",
     "name": "Double Negative",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9fe57d74-0394-4263-a1b1-da9773b485a6",
     "provenance_summary": {},

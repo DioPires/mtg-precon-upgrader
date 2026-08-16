@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -20,7 +21,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Heavy Fog",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2006755-8812-4aad-8567-e8df6e8923da",
     "provenance_summary": {},
@@ -381,6 +382,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -400,7 +402,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}{U}",
     "name": "Hurkyl's Final Meditation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2099033-42d9-47ac-90c7-b41b55b7dadd",
     "provenance_summary": {},
@@ -411,6 +413,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -436,7 +439,7 @@
     "is_dfc": false,
     "mana_cost": "{R/G}{R/G}",
     "name": "Vexing Shusher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a20a7cf8-2075-47ad-9229-36264b112e61",
     "provenance_summary": {
@@ -911,6 +914,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -927,23 +931,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Limits of Solidarity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2184c37-ee92-40f2-b7d1-97c39ce5f277",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap that creature.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -963,7 +979,7 @@
     "is_dfc": true,
     "mana_cost": "{4}{G} // {1}{G}",
     "name": "Beanstalk Wurm // Plant Beans",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2192c80-c48f-44e2-807c-2f9ee1aa1152",
     "provenance_summary": {},
@@ -1507,6 +1523,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1532,7 +1549,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Bearded Axe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a231319d-5d72-4aa6-8868-5987694791cd",
     "provenance_summary": {
@@ -1545,6 +1562,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1564,7 +1582,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{R}",
     "name": "Fear of Being Hunted",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a23293cf-4352-4ce6-8a68-3b30f908e137",
     "provenance_summary": {},
@@ -2146,6 +2164,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2159,17 +2178,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Assimilate Essence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a24d3d60-2bd7-40cb-8002-b092943f61fe",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Create an Incubator token with two +1/+1 counters on it",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -2855,6 +2885,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2878,7 +2909,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Tonberry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a26f3cbb-39b5-4688-92f7-26534613a9f3",
     "provenance_summary": {},
@@ -3079,6 +3110,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3096,7 +3128,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Hewed Stone Retainers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a27938d2-9a15-4a87-9e77-dea37347cf62",
     "provenance_summary": {},
@@ -3107,6 +3139,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3132,7 +3165,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Override",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2845761-7e43-4a88-8fc2-2d95d471b00c",
     "provenance_summary": {
@@ -3793,6 +3826,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -3807,17 +3841,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{G/W}{G/W}",
     "name": "Sundering Growth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2a380d8-4df7-4357-862c-ed3fb795db6c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Create a token that's a copy of a creature token you control.",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -4008,6 +4053,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4027,7 +4073,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Vanishment",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2ae1a1b-5c4f-46ed-90da-bd50ca914e7c",
     "provenance_summary": {},
@@ -4159,6 +4205,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4178,7 +4225,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Ether Well",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2b6faca-3321-45d2-a027-ff3a8ae61f10",
     "provenance_summary": {},
@@ -4696,6 +4743,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4715,7 +4763,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Volunteer Reserves",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2dabd52-0b75-42d7-a07d-0df7b38646e2",
     "provenance_summary": {},
@@ -4892,6 +4940,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -4911,7 +4960,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Daybreak Chimera",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2ea435c-5a61-4c98-bb76-8ff4ef0a0da9",
     "provenance_summary": {},
@@ -5367,6 +5416,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5392,7 +5442,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Howlpack Wolf",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2fb7d03-d6bf-4716-9ca4-bd7dbcf9ae66",
     "provenance_summary": {
@@ -5449,6 +5499,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5468,7 +5519,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Hoodwink",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2fe10b8-857e-4881-85ef-24a0f96a3d79",
     "provenance_summary": {},
@@ -5479,6 +5530,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5503,7 +5555,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}{B}",
     "name": "Murderous Betrayal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "a2fe1e2b-b621-4406-b5e0-f2eebd12c2ba",
     "provenance_summary": {
