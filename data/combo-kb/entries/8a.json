@@ -218,6 +218,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -243,7 +244,7 @@
     "is_dfc": true,
     "mana_cost": "{W} // {1}{W}",
     "name": "Bofur, Reliable Guardian // Concerted Care",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a0e35ac-6c03-4922-b3b4-e419419fe3d7",
     "provenance_summary": {
@@ -776,6 +777,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -794,25 +796,36 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Marble Gargoyle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a1fd464-760c-43d9-829a-424945d91eb9",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Artifact Creature — Gargoyle",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{W}: This creature gets +0/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -832,7 +845,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Akroan Sergeant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a206c6f-4f6f-4c31-9dab-d73a57db989c",
     "provenance_summary": {},
@@ -1201,6 +1214,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -1223,7 +1237,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Tragic Arrogance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a29bd35-33ef-4317-9fe5-8aaff5d7d64d",
     "provenance_summary": {},
@@ -1275,6 +1289,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -1294,7 +1309,7 @@
     "is_dfc": true,
     "mana_cost": "{4}{G}{G} // {1}{G}",
     "name": "Stormkeld Vanguard // Bear Down",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a31c49f-5b3f-4f84-a08e-58b30a6bff7c",
     "provenance_summary": {},
@@ -1667,6 +1682,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -1692,7 +1708,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Teferi's Honor Guard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a3a8a02-b7da-4648-a772-c9efb7c332da",
     "provenance_summary": {
@@ -1785,7 +1801,16 @@
     ]
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Each creature you control with a +1/+1 counter on it has first strike.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1799,8 +1824,10 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1811,13 +1838,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Ainok Bond-Kin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a4028cd-6004-4fb0-a044-0bee662a78e1",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter on this creature.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Dog Soldier",
     "wants": []
@@ -1883,6 +1919,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -1902,7 +1939,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Rootwater Shaman",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a449915-8bd7-4a9c-abb1-a95852f33695",
     "provenance_summary": {},
@@ -2087,6 +2124,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -2106,7 +2144,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Plunder",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a515f67-f868-494b-8bd7-de63fe14477b",
     "provenance_summary": {},
@@ -2266,6 +2304,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2279,17 +2318,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Gibbering Kami",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a5610bd-5f04-43f3-9e2e-d6c728ee899b",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies, you may return target Spirit card",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "return target Spirit card with mana value 3 or less from your graveyard",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit",
     "wants": []
@@ -2596,6 +2653,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2624,7 +2682,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Incite War",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a640369-59ab-4506-b473-1f804721414c",
     "provenance_summary": {
@@ -2890,6 +2948,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G",
@@ -2908,7 +2967,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2919,13 +2979,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{W}",
     "name": "Ajani Unyielding",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a70ddc5-bb51-45eb-96f2-8ecaecac0cc2",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put five +1/+1 counters on each creature you control",
+        "feature": "counter_add",
+        "magnitude": 5,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Planeswalker — Ajani",
     "wants": []
@@ -3438,6 +3507,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -3457,7 +3527,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Siege Wurm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a802eae-abfb-47fd-8458-1689055531ef",
     "provenance_summary": {},
@@ -3468,6 +3538,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -3487,7 +3558,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "About Face",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a810017-06ac-4824-bc2f-a7d303d58ad7",
     "provenance_summary": {},
@@ -4069,6 +4140,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4088,7 +4160,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Temporal Fissure",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8a9525f4-74a6-44f0-a1b1-d57937d7783b",
     "provenance_summary": {},
@@ -4531,6 +4603,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4550,7 +4623,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Trapmaker's Snare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8aa0125c-29fe-4f31-985c-de2da3dbc602",
     "provenance_summary": {},
@@ -4614,6 +4687,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -4636,7 +4710,7 @@
     "is_dfc": false,
     "mana_cost": "{R}{R}",
     "name": "Smoke",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8aa97d25-cd51-4ceb-b7eb-af64f0914a8c",
     "provenance_summary": {},
@@ -4647,6 +4721,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4672,7 +4747,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "Scion of the Wild",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8aaa2217-012e-4e34-ba44-4986d7ee9ece",
     "provenance_summary": {
@@ -5162,6 +5237,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -5181,7 +5257,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}",
     "name": "Sea God's Revenge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ab71a49-ce81-44f7-b940-50e7aba64df9",
     "provenance_summary": {},
@@ -5657,6 +5733,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -5676,7 +5753,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Consign to Dust",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ac493f2-9519-44d7-b6ac-8c020ad2cede",
     "provenance_summary": {},
@@ -5687,6 +5764,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -5706,7 +5784,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Petrified Plating",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ace3c6b-b2b3-4cd1-9828-dcb9ba5b71ae",
     "provenance_summary": {},
@@ -5717,6 +5795,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -5745,7 +5824,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Slimefoot's Survey",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ace9425-fcdd-45b0-abf0-1a7d601de25e",
     "provenance_summary": {
@@ -6197,6 +6276,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -6219,7 +6299,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{1}{B}",
     "name": "Abandon Hope",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8adbba6e-03ef-4278-aec5-8a4496b377a8",
     "provenance_summary": {},
@@ -6280,7 +6360,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "other creatures you control have melee",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6294,6 +6383,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -6306,11 +6396,12 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Skyhunter Strike Force",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ade0824-9fd0-417d-94dd-ac399e35b582",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -6689,6 +6780,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -6708,7 +6800,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}{G}",
     "name": "Masumaro, First to Live",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8af347b8-89fa-499e-8e5a-77463edd6773",
     "provenance_summary": {},

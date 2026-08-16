@@ -266,6 +266,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -285,7 +286,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Claim the Precious",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b0a0991-2327-45ea-b47f-c31db367fa1d",
     "provenance_summary": {},
@@ -636,6 +637,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -661,7 +663,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Croakid Amphibonaut",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b1796d2-5b19-48ab-8699-01f45d427498",
     "provenance_summary": {
@@ -890,6 +892,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -909,7 +912,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Boing!",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b1fc306-0d8f-4edb-b197-2e99f10c599e",
     "provenance_summary": {},
@@ -1757,6 +1760,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -1779,7 +1783,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Somberwald Spider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b3526c4-efc8-42be-a0ab-de10c4cc986d",
     "provenance_summary": {},
@@ -1790,6 +1794,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1809,7 +1814,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Soul Parry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b36335b-119b-4f90-a5d7-b77d8f47f55f",
     "provenance_summary": {},
@@ -2307,6 +2312,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2335,7 +2341,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Diplomacy of the Wastes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b4670b9-6701-4ca6-afd7-256742267e86",
     "provenance_summary": {
@@ -2453,6 +2459,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "B"
@@ -2471,7 +2478,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -2482,19 +2490,29 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}{B}",
     "name": "Sutured Ghoul",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b4715b0-63d9-4ff8-a667-21a762518687",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Zombie",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "exile any number of creature cards from your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2518,7 +2536,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Glimmerdust Nap",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b476e35-77df-4332-b29d-8bf6f1bbbc3e",
     "provenance_summary": {},
@@ -2620,6 +2638,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "U"
@@ -2633,23 +2652,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{6}{U}{U}",
     "name": "Cognivore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b4aae48-be01-4b42-8d32-45071650da03",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Lhurgoyf",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "equal to the number of instant cards in all graveyards",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2669,7 +2700,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Nightcreep",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b4b677e-3b18-454c-b385-b3ffb65f916e",
     "provenance_summary": {},
@@ -2777,6 +2808,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2790,17 +2822,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Torii Watchward",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b52c2ed-c1a1-4abc-a33b-223c3d0e229d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies, you may return target Spirit card",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "return target Spirit card with mana value 4 or less from your graveyard",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit",
     "wants": []
@@ -2868,6 +2918,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2893,7 +2944,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Pack's Disdain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b5659bd-a272-44cd-811f-9feec7d9825f",
     "provenance_summary": {
@@ -3221,6 +3272,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -3245,7 +3297,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Will-o'-the-Wisp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b60fcfe-fb90-4a00-a708-25b59bfc9b5a",
     "provenance_summary": {
@@ -3387,6 +3439,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -3406,7 +3459,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Goblin Blast-Runner",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b69da01-3ba5-4a61-9e26-e879b6d8b63e",
     "provenance_summary": {},
@@ -3857,6 +3910,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -3879,7 +3933,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Winnowing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b834f83-951b-4b5c-b9f1-3d860baa3c0e",
     "provenance_summary": {},
@@ -4333,6 +4387,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -4355,7 +4410,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Scarab Feast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b9043d3-a1c6-4f49-9c49-ef78bbfbd4ac",
     "provenance_summary": {},
@@ -4576,7 +4631,16 @@
     ]
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Each creature you control with a +1/+1 counter on it has flying.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4590,8 +4654,10 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4602,13 +4668,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Abzan Falconer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8b972819-507a-40a9-ab1f-1a674ea56083",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter on this creature.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Soldier",
     "wants": []
@@ -5310,6 +5385,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -5329,7 +5405,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}{U}",
     "name": "Blatant Thievery",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8bb51dd2-cc62-48ea-ae8e-52351073a8c9",
     "provenance_summary": {},
@@ -5340,6 +5416,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -5365,7 +5442,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Huatli's Spurring",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8bba7c7d-6110-4d7f-8b28-3c5b9d3448df",
     "provenance_summary": {
@@ -5378,6 +5455,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5397,7 +5475,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{B}{B}",
     "name": "Word of Binding",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8bbc9f21-2b4d-4d03-aef1-f5bf0b79257c",
     "provenance_summary": {},
@@ -5408,6 +5486,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5427,7 +5506,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Blood Ogre",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8bbe3f0d-41d0-4c58-ad65-6675a234cad3",
     "provenance_summary": {},
@@ -5884,6 +5963,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5906,7 +5986,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Helica Glider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8bcdb107-3827-4280-9e5e-7f1e771ef0c5",
     "provenance_summary": {},
@@ -6552,6 +6632,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6570,22 +6651,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Stonehands",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8beccaff-d30f-4164-a264-cb7119cee4f1",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Enchantment — Aura",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: Enchanted creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [

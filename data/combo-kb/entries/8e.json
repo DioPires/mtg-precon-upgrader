@@ -239,6 +239,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -261,7 +262,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Mana Vapors",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e082c95-cdc4-4f29-9915-05f83298f14d",
     "provenance_summary": {},
@@ -1004,7 +1005,16 @@
     ]
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Creatures you control that entered this turn have double strike.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -1019,6 +1029,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -1031,11 +1042,12 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{G}",
     "name": "Deathleaper, Terror Weapon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e22495d-a921-4c91-ada3-79098851e5d4",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -2117,6 +2129,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -2136,7 +2149,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Smog Elemental",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e51a07d-8618-4908-8798-bd28bc9b5bbb",
     "provenance_summary": {},
@@ -2333,6 +2346,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -2352,7 +2366,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Timely Ward",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e589dca-d31e-4d2f-81b1-18e5f9198795",
     "provenance_summary": {},
@@ -2363,6 +2377,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2385,7 +2400,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Festival",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e594801-4a8d-4dcd-b328-7eb3de65cf90",
     "provenance_summary": {},
@@ -3306,6 +3321,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -3319,17 +3335,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{B}",
     "name": "Bond of Agony",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e7bd5ae-005a-47d8-90bc-69f48cd8793d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Each other player loses X life.",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3430,6 +3457,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3449,7 +3477,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Bathe in Light",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e862a8e-7954-43ad-9bc0-09ce7b9859f0",
     "provenance_summary": {},
@@ -3460,6 +3488,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -3485,7 +3514,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Orthodoxy Enforcer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e8875dc-72a4-47a4-bb99-ca817c177b82",
     "provenance_summary": {
@@ -3622,6 +3651,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -3641,7 +3671,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "You Cannot Pass!",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8e94ccdb-5978-440b-b7cd-11c7ca6b2c98",
     "provenance_summary": {},
@@ -4450,6 +4480,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4469,7 +4500,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Reave Soul",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8eb328e6-332e-435c-9733-4c5336f17824",
     "provenance_summary": {},
@@ -5338,6 +5369,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5357,7 +5389,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Jace's Defeat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ed8e27b-2137-4e19-99bb-5e0d6d32e3af",
     "provenance_summary": {},

@@ -557,6 +557,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -576,7 +577,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Geist Trappers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7116da4a-96c1-4183-b123-29c6b70ef543",
     "provenance_summary": {},
@@ -841,6 +842,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -859,22 +861,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Shivan Dragon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "711eea87-0fa3-46e0-a42b-fa5a86455f04",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Dragon",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -1400,6 +1412,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1419,7 +1432,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "An-Havva Constable",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7131cdb6-15d0-407e-a7e2-b2a0deef9363",
     "provenance_summary": {},
@@ -1474,6 +1487,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -1488,17 +1502,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{B}{G}",
     "name": "Dreg Mangler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "71358110-4e28-4794-befa-ea6e27e720ef",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a number of +1/+1 counters equal to this card's power on target creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Plant Zombie",
     "wants": []
@@ -1569,6 +1594,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 9.0,
     "color_identity": [
       "U",
@@ -1589,7 +1615,7 @@
     "is_dfc": false,
     "mana_cost": "{7}{W}{U}",
     "name": "Ethersworn Sphinx",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "71366469-04ea-4526-bf24-7abc02fdc5ab",
     "provenance_summary": {},
@@ -1942,6 +1968,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -1963,7 +1990,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{U}{B}",
     "name": "Void Rend",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "713f16db-95ec-479e-a48c-7a69f7668d7f",
     "provenance_summary": {},
@@ -2160,6 +2187,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -2179,7 +2207,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Bedhead Beastie",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7143d82a-931a-4918-bb14-37bc5b9a4d99",
     "provenance_summary": {},
@@ -2292,6 +2320,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2309,7 +2338,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Myr Adapter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "714f916a-10ac-4c54-b1c7-a97b7ad8b9e5",
     "provenance_summary": {},
@@ -2412,6 +2441,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2431,7 +2461,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Candlelight Vigil",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7153bf15-53f8-445e-acbb-35b4f4b3d551",
     "provenance_summary": {},
@@ -2728,6 +2758,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2747,7 +2778,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Kjeldoran Skycaptain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7160ebce-ee3f-42ac-a3f7-b55f17f2c49f",
     "provenance_summary": {},
@@ -3148,6 +3179,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -3166,25 +3198,36 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{R}",
     "name": "Chartooth Cougar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "717152c3-2082-49aa-9274-a1a6abe54b65",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Cat Beast",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -3204,7 +3247,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Dissension in the Ranks",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "717266b6-2bbc-4a04-8f30-e3eaf0283acd",
     "provenance_summary": {},
@@ -4699,6 +4742,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4718,7 +4762,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Tightening Coils",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "71af7e54-e22d-4354-a35c-80e4e5f4031c",
     "provenance_summary": {},
@@ -5815,6 +5859,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5842,7 +5887,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Seal of Doom",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "71d54ba3-91fe-4a14-8b99-c284b4c75013",
     "provenance_summary": {
@@ -5954,6 +5999,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -5968,17 +6014,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{W}{U}{U}",
     "name": "Sphinx's Revelation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "71d83fca-e40e-4d0e-956d-d0d6da9cc472",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "You gain X life and draw X cards.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "You gain X life and draw X cards.",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -6037,6 +6101,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -6056,7 +6121,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Pay No Heed",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "71da5acb-78bc-453a-ae28-d22faa5a4e43",
     "provenance_summary": {},
@@ -6331,6 +6396,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -6350,7 +6416,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Spellweaver Eternal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "71f3d3d3-3f82-43f6-b2a9-d21afbdd7739",
     "provenance_summary": {},
@@ -6361,6 +6427,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -6383,7 +6450,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Unexplained Absence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "71faaee5-70ff-449c-85c8-560eb189a0a7",
     "provenance_summary": {},

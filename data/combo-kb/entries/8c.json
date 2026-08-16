@@ -359,6 +359,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -376,17 +377,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "The Akroan War",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c0b9596-c44f-44fb-89c9-056da0db33d3",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "Each tapped creature deals damage to itself equal to its power.",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Enchantment — Saga",
     "wants": []
@@ -770,6 +782,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -795,7 +808,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Chelonian Tackle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c1c519a-6edd-4204-b825-b0feca5afa42",
     "provenance_summary": {
@@ -807,7 +820,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Attacking creatures you control have double strike.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -821,6 +843,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -833,11 +856,12 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Raphael, the Nightwatcher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c1e5b25-ee5a-4ea9-a715-08dd1a4f51c4",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -1062,7 +1086,16 @@
     ]
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Red creatures you control have first strike.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1076,6 +1109,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -1088,11 +1122,12 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Bloodmark Mentor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c22b218-cf40-47af-8c11-73c581a43390",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -1101,6 +1136,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "R",
@@ -1125,7 +1161,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Alpine Meadow",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c281ebe-d9a1-48af-b58b-19c55aa4625b",
     "provenance_summary": {},
@@ -1136,6 +1172,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1155,7 +1192,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Crystal Slipper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c2d2888-38be-41f9-aaf2-8337e87d2aed",
     "provenance_summary": {},
@@ -1218,6 +1255,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -1240,7 +1278,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Dreams of Steel and Oil",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c308ebf-df5e-4f47-9b97-5c31944fe91c",
     "provenance_summary": {},
@@ -1470,6 +1508,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -1489,7 +1528,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Carnage Tyrant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c411f4e-a091-447c-9450-d895b10b4985",
     "provenance_summary": {},
@@ -1722,6 +1761,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -1741,7 +1781,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}{R}",
     "name": "Furyborn Hellkite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c4aba38-7fbd-463e-8454-21037090c71e",
     "provenance_summary": {},
@@ -1884,6 +1924,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -1912,7 +1953,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Voices from the Void",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c5264d2-8544-4e83-8ebc-7261dde80f01",
     "provenance_summary": {
@@ -1925,6 +1966,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1946,22 +1988,32 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Zombie Scavengers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c5298da-6759-444e-8870-6c96d226c940",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Zombie",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile the top creature card of your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2031,6 +2083,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -2050,7 +2103,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Ramosian Greatsword",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c53a177-c8c8-4b9f-a221-f205da67daa5",
     "provenance_summary": {},
@@ -2061,6 +2114,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -2086,7 +2140,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Swift Kick",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c54fd75-e89f-490e-90dd-788f22b6e316",
     "provenance_summary": {
@@ -2753,6 +2807,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -2772,7 +2827,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Vandalize",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c71cbb3-e900-4ea3-aced-8439b5803654",
     "provenance_summary": {},
@@ -2832,6 +2887,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -2845,20 +2901,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Tenacious Hunter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c7436fa-4802-405b-ba45-4e14f14a3d8e",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Crocodile",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "As long as a creature has a -1/-1 counter on it",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2995,6 +3062,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3014,7 +3082,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Beastbreaker of Bala Ged",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c77f436-81ab-4200-b76d-58b1f91fc3d0",
     "provenance_summary": {},
@@ -3025,6 +3093,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -3047,7 +3116,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{R}",
     "name": "Harness by Force",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
     "provenance_summary": {},
@@ -3301,6 +3370,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3320,7 +3390,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Blessed Respite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c888122-9d05-4641-931c-83f771ba9d09",
     "provenance_summary": {},
@@ -3411,6 +3481,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3430,7 +3501,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Daring Demolition",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c8a3962-42a5-4070-8719-00d7483c7dbe",
     "provenance_summary": {},
@@ -3441,6 +3512,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3460,7 +3532,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Equestrian Skill",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c8c12ff-24ff-4279-9bde-da8899d2c2d5",
     "provenance_summary": {},
@@ -3530,6 +3602,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3558,7 +3631,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Deification",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c8f93d7-d89a-401b-8764-76be71ad16e3",
     "provenance_summary": {
@@ -3632,6 +3705,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -3654,7 +3728,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Specter's Shriek",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c9164b5-10ed-4cad-af33-7d4b5d3d6bf2",
     "provenance_summary": {},
@@ -3665,6 +3739,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3681,17 +3756,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Exile",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c91d50b-bf58-4d06-b3b7-4b6db867bfce",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain life equal to its toughness.",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -3785,6 +3871,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3804,7 +3891,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Filter Out",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c95d823-6bbd-4484-8f38-b1bb20403085",
     "provenance_summary": {},
@@ -3815,6 +3902,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R",
@@ -3835,7 +3923,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}{R}",
     "name": "Counterflux",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8c983da8-1436-4c06-af9c-91b72cab48c1",
     "provenance_summary": {},
@@ -3884,7 +3972,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Sliver creatures you control have first strike.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3898,6 +3995,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -3910,11 +4008,12 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Lancer Sliver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ca33b31-4707-40d0-b4ed-cbe625793122",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -5238,6 +5337,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5257,7 +5357,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Freewind Falcon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8cdda36f-5e82-4c2f-8eaa-75b9bbc93a02",
     "provenance_summary": {},
@@ -5413,6 +5513,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5426,17 +5527,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{B}{B}",
     "name": "Cut of the Profits",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8ce63f60-0211-46c7-8fb6-c5484ebfa029",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "You draw X cards and you lose X life.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -6089,6 +6201,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -6111,22 +6224,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Knight of Stromgald",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8cf57287-21b0-4194-8da3-62d00160234f",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Human Knight",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}{B}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

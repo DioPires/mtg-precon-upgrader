@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -15,7 +16,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -26,16 +28,25 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Battlefront Krushok",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a003988-f126-4309-9166-50f3fbf0f30c",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Beast",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Each creature you control with a +1/+1 counter on it can't be blocked",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -310,6 +321,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -335,7 +347,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Falthis, Shadowcat Familiar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
     "provenance_summary": {
@@ -348,6 +360,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -367,7 +380,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Haldan, Avid Arcanist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a0b78fb-3838-47d9-8d1a-b6b0c0e8927d",
     "provenance_summary": {},
@@ -470,7 +483,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Sliver creatures you control have first strike.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -484,6 +506,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -496,11 +519,12 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Striking Sliver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a15599d-8b00-4e0f-ac0c-d05f07c1e50d",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -1161,6 +1185,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -1180,7 +1205,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Venomous Vines",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a3052a1-7a0b-4364-883d-cd2abca39c06",
     "provenance_summary": {},
@@ -1321,6 +1346,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1346,7 +1372,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Disturbed Slumber",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a381297-ebce-403c-b1dc-b7405fa6902c",
     "provenance_summary": {
@@ -1390,6 +1416,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1409,7 +1436,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Flight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a4068b0-fb4f-429c-a94e-47849f3eb7ef",
     "provenance_summary": {},
@@ -1686,6 +1713,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -1706,7 +1734,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{R}",
     "name": "Ghostly Flame",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a461ca3-7923-4df4-9f15-4072545da117",
     "provenance_summary": {},
@@ -2061,6 +2089,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -2086,7 +2115,7 @@
     "is_dfc": false,
     "mana_cost": "{G}{G}",
     "name": "Frenzied Baloth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a4ef075-9254-4d36-9572-622833fae54e",
     "provenance_summary": {
@@ -2381,6 +2410,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -2397,17 +2427,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Momentous Fall",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a5ce1b0-ac78-4a74-9eb7-4064e1687bf1",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "You draw cards equal to the sacrificed creature's power",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "you gain life equal to its toughness",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -2479,6 +2527,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2493,17 +2542,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}",
     "name": "Rancorous Archaic",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a68fcaf-b1e8-451d-8e1c-b47db55c83cc",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with a +1/+1 counter on it for each color of mana spent to cast it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Avatar",
     "wants": []
@@ -3100,6 +3160,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -3119,7 +3180,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Deadfall",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a7d6bb7-d6ad-48a4-8923-4083e0c90786",
     "provenance_summary": {},
@@ -3363,7 +3424,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Each non-Human creature you control gets +1/+1 for each of its creature types",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3377,6 +3447,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -3389,11 +3460,12 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Diligent Zookeeper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a84a8a4-c8b0-45ce-af6f-605fcffc395b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -3657,6 +3729,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3674,7 +3747,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Watchdog",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6a951d2d-fc5a-4f41-bd77-3e301b76cf47",
     "provenance_summary": {},
@@ -4026,6 +4099,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -4045,7 +4119,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Ceremonious Rejection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6aa5aa3d-fb46-47e5-bcf1-51a28e0f9974",
     "provenance_summary": {},
@@ -4746,6 +4820,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4765,7 +4840,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Chameleon Blur",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6ac8ac31-02ce-48e0-98b9-1c5858e1f593",
     "provenance_summary": {},
@@ -5236,6 +5311,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R",
@@ -5256,7 +5332,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{W}",
     "name": "Highspire Mantis",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6adff11d-5126-4a4b-b182-e2700d406995",
     "provenance_summary": {},
@@ -5267,6 +5343,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -5286,7 +5363,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Kyren Glider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6ae3a901-9f9a-4a99-94db-22c38fda7aef",
     "provenance_summary": {},
@@ -5297,6 +5374,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5316,7 +5394,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Acid Rain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6ae3c3a2-bd17-4fea-ae27-9d2d1eaf8cc0",
     "provenance_summary": {},

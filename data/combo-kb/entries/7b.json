@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -20,7 +21,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Fathom Trawl",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b002cae-ee7d-400d-af9c-445eb10f1f0c",
     "provenance_summary": {},
@@ -85,6 +86,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -114,7 +116,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{R}",
     "name": "Suicidal Charge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b052ce1-ee82-4335-bc1d-9563bc59b948",
     "provenance_summary": {
@@ -413,6 +415,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -432,7 +435,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Witch's Vengeance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b0d9139-b3ad-4065-9b55-aeeda8950bee",
     "provenance_summary": {},
@@ -508,6 +511,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -527,7 +531,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Luminesce",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b0f482d-35a3-47f1-8283-0fd47e30cc31",
     "provenance_summary": {},
@@ -538,6 +542,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -557,7 +562,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Broken Concentration",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b0fa80e-6b16-4a4a-9776-6a91f145fc63",
     "provenance_summary": {},
@@ -927,6 +932,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -946,7 +952,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Divide by Zero",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b1c1a0c-f443-4eb5-a430-9eea886361ca",
     "provenance_summary": {},
@@ -1406,6 +1412,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -1425,7 +1432,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "End Hostilities",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b2e2c4b-b8fd-440c-8a79-de6532022745",
     "provenance_summary": {},
@@ -2203,6 +2210,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2222,7 +2230,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{B}",
     "name": "Killing Glare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b47891f-130a-4d76-b262-53f5e3bb6b95",
     "provenance_summary": {},
@@ -2233,6 +2241,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2246,23 +2255,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Ruinous Path",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b4aa101-3c8a-44b3-9d87-91a4fe4fbae4",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put four +1/+1 counters on target land you control",
+        "feature": "counter_add",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2282,7 +2303,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Wanderlight Spirit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b4c2dcf-86f4-409d-90c3-8fe83966cac0",
     "provenance_summary": {},
@@ -2543,6 +2564,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2562,7 +2584,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Knight of Grace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b51a979-47e0-4b98-8ec5-8064c83422e1",
     "provenance_summary": {},
@@ -2573,6 +2595,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2592,7 +2615,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Artful Maneuver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b58920e-3e90-44ed-a0e9-4cb1b7359a5b",
     "provenance_summary": {},
@@ -2647,6 +2670,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2660,17 +2684,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Pieces of the Puzzle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b599b4d-95bc-4ed2-a167-84a697944747",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "the rest into your graveyard",
+        "feature": "self_mill",
+        "magnitude": 3,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3057,6 +3092,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -3076,7 +3112,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{G}",
     "name": "Enshrined Memories",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b77fb85-a6d8-4f3e-8493-99ec5b5a6d67",
     "provenance_summary": {},
@@ -3399,6 +3435,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3423,7 +3460,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Kjeldoran Outrider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7b8559a7-e11f-430d-8a7a-785a7005c4c4",
     "provenance_summary": {
@@ -4474,6 +4511,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4496,7 +4534,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Distress",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7bb1b48b-aa6b-4064-9355-c43b0f509388",
     "provenance_summary": {},
@@ -4635,6 +4673,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4654,7 +4693,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Swat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7bb5c5af-6943-4958-a666-0c322d5b9f33",
     "provenance_summary": {},
@@ -5211,6 +5250,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5234,7 +5274,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Smallpox",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7bd22c98-0782-447f-a5fa-4281585a3eab",
     "provenance_summary": {},
@@ -5416,6 +5456,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -5435,7 +5476,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Jokulhaups",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7bdfe368-353c-4f8d-851f-05b7ea9f905d",
     "provenance_summary": {},
@@ -5784,6 +5825,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5803,7 +5845,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Mistform Ultimus",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7bf0e628-06b5-4e12-a526-a2bce08844f2",
     "provenance_summary": {},
@@ -5814,6 +5856,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5833,7 +5876,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Moaning Wall",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7bf22390-a6c0-4da6-9f05-e66628f72079",
     "provenance_summary": {},

@@ -55,6 +55,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -89,7 +90,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Diversionary Tactics",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "880367e4-50b9-49d0-b596-d462d9b42855",
     "provenance_summary": {
@@ -420,6 +421,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -439,7 +441,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Mindstatic",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "880e0177-f1d2-4bdc-83b4-cae6a0706ef9",
     "provenance_summary": {},
@@ -720,6 +722,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -743,7 +746,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Hew the Entwood",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8818bbf8-58ec-4070-a81a-c7ce248057ab",
     "provenance_summary": {},
@@ -1159,6 +1162,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -1172,20 +1176,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Magnivore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "882da1c6-7b86-4de0-9161-ce7c50f9c90c",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Lhurgoyf",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "equal to the number of sorcery cards in all graveyards",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -1288,6 +1303,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R",
@@ -1311,7 +1327,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{W}",
     "name": "Suspend Aggression",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "883267f0-be7e-43c3-b7f8-82981f6d8c23",
     "provenance_summary": {},
@@ -1322,6 +1338,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1341,7 +1358,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Crash the Ramparts",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8832b76b-58b7-41b2-b2f6-842563b55b36",
     "provenance_summary": {},
@@ -1678,6 +1695,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -1700,7 +1718,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Extortion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8841fdb9-0565-4ef5-814c-293c14242741",
     "provenance_summary": {},
@@ -1966,6 +1984,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R",
@@ -1984,7 +2003,9 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -1999,16 +2020,40 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{R}",
     "name": "Beacon Bolt",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "884686dd-515c-4484-a324-e7d126903a42",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 3
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target creature equal to the total number of",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "cast",
+        "evidence": "You may cast this card from your graveyard by discarding a card",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "instant and sorcery cards you own in exile and in your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2761,6 +2806,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2783,7 +2829,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Funeral Charm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8866272d-89cb-478c-82ae-20e1d510eab7",
     "provenance_summary": {},
@@ -2794,6 +2840,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2819,7 +2866,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Rhox Pikemaster",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8866d33e-8159-4e10-8b11-914c12a0918f",
     "provenance_summary": {
@@ -3055,6 +3102,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3074,7 +3122,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Brago's Representative",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8877b896-8458-4828-9ff6-9e0ecc180cf7",
     "provenance_summary": {},
@@ -3158,6 +3206,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3182,7 +3231,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Tangle Angler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "887a9f2f-17b4-4a20-a464-9665cde6f293",
     "provenance_summary": {
@@ -4419,6 +4468,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4438,7 +4488,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Ice Magic",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88b0bd3b-d832-4059-b0d9-04630917ae94",
     "provenance_summary": {},
@@ -4657,6 +4707,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4676,7 +4727,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Disallow",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88b51e15-6630-4e14-a6b8-db0aa12e34ef",
     "provenance_summary": {},
@@ -4791,6 +4842,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -4810,7 +4862,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R/P}",
     "name": "Ruthless Invasion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88bbbc00-0704-4dc0-897f-93184b2e1eed",
     "provenance_summary": {},
@@ -5042,6 +5094,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -5061,7 +5114,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Sadistic Shell Game",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88c3fc46-f2f5-440c-80a6-fed5b42cd340",
     "provenance_summary": {},
@@ -5531,6 +5584,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5545,7 +5599,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5556,13 +5611,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Sunder the Gateway",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88d49309-e7d7-486d-8696-cd66bec2fe33",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Create an Incubator token with two +1/+1 counters on it",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -5628,6 +5692,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -5647,7 +5712,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Gigantic Big Bear",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88d7bd11-7b1d-426c-8552-01448531c6ad",
     "provenance_summary": {},
@@ -5738,6 +5803,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5757,7 +5823,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Thought Eater",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88e18dc9-8b11-4369-9860-a687925cdcb4",
     "provenance_summary": {},
@@ -6123,6 +6189,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6147,7 +6214,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Spin Engine",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88e98269-fe0e-42f8-830d-776aa06a58dc",
     "provenance_summary": {
@@ -6289,6 +6356,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -6314,7 +6382,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Scoria Cat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88ef3413-21bc-428a-9803-d275e437c4bd",
     "provenance_summary": {
@@ -6327,6 +6395,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -6347,7 +6416,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U/B}",
     "name": "Ghost, Spectral Saboteur",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88f34d15-c338-40a7-b56c-c5b650847430",
     "provenance_summary": {},
@@ -6415,6 +6484,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -6434,7 +6504,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{R}",
     "name": "Magma Hellion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88f6575d-a6cb-4b2c-90dd-c6239f3c6e4d",
     "provenance_summary": {},
@@ -6606,6 +6676,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -6628,7 +6699,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Goblin Cohort",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "88f9a7e3-0b35-43e4-b16a-19c54a1e4e2c",
     "provenance_summary": {},
