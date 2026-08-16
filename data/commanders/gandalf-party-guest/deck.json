@@ -36,7 +36,7 @@
       "type": "edhrec",
       "name": "EDHREC — Gandalf, Party Guest",
       "url": "https://edhrec.com/commanders/gandalf-party-guest",
-      "detail": "Commander released 2026-08-14; page near-empty at build time. DEC-402 closing diff ran on thin data; census + first principles carried the build."
+      "detail": "Commander released 2026-08-14; page near-empty at build time, so census + first principles carried the build. Swap round 2 (2026-08-16) revisited the filled page (273 rated cards): Gandalf, Goblins' Bane 69.2%, Call Forth the Tempest 65.1%, Mana Sculpt 59.4% added; Urza's Ruinous Blast 47.2% rejected (exiles our own storm engine)."
     }
   ],
   "guideContent": {
@@ -54,7 +54,7 @@
       },
       {
         "name": "The Wizard Council",
-        "description": "Nineteen legendary Wizards, most at three mana or less, each raising Gandalf's X by two while doing real work: cost reduction (Baral, Stenn, Kaza, Vadrik, Mizzix), card flow (Raff, Jori En, Hurkyl), and pressure (Adeliz, Balmor, Vivi).",
+        "description": "Nineteen legendary Wizards, most at three mana or less, each raising Gandalf's X by two while doing real work: cost reduction (Baral, Stenn, Kaza, Vadrik, Mizzix), card flow (Raff, Hurkyl), and pressure (Adeliz, Balmor, Vivi, and Gandalf, Goblins' Bane — one damage to each opponent per noncreature spell).",
         "cards": [
           "Baral, Chief of Compliance",
           "Stenn, Paranoid Partisan",
@@ -65,7 +65,7 @@
           "Vivi Ornitier",
           "Adeliz, the Cinder Wind",
           "Vadrik, Astral Archmage",
-          "Jori En, Ruin Diver",
+          "Gandalf, Goblins' Bane",
           "Hurkyl, Master Wizard",
           "Vendilion Clique",
           "Venser, Shaper Savant",
@@ -76,7 +76,7 @@
       },
       {
         "name": "Free-Cast Payoffs",
-        "description": "Marquee spells Gandalf casts for free once the council assembles: Jeskai Revelation at X=8, Sublime Epiphany at X=6, and extra-turn haymakers that untap the whole board.",
+        "description": "Marquee spells Gandalf casts for free once the council assembles: Jeskai Revelation at X=8, Call Forth the Tempest at X=8 (double cascade still triggers on the free cast), Sublime Epiphany at X=6, and extra-turn haymakers that untap the whole board.",
         "cards": [
           "Jeskai Revelation",
           "Sublime Epiphany",
@@ -114,30 +114,28 @@
       },
       {
         "name": "Interaction & Protection",
-        "description": "Five counterspells (two free on the combo turn: Fierce Guardianship, and Muddle's counter mode), spot removal on every relevant permanent type — including the artifact/enchantment hosers that target this deck — and two free-cast board protectors.",
+        "description": "Five counterspells (Mana Sculpt refunds the countered spell's mana with a Wizard out; Fierce Guardianship and Muddle's counter mode are free on the combo turn), spot removal on every relevant permanent type — including the artifact/enchantment hosers that target this deck — three wipes (Olórin's Searing Light, Blasphemous Act, and the opponent-only Call Forth the Tempest), and Clever Concealment phasing the whole board out of danger.",
         "cards": [
           "Counterspell",
-          "Wizard's Retort",
+          "Mana Sculpt",
           "Dovin's Veto",
           "Mystic Confluence",
           "Fierce Guardianship",
           "Swords to Plowshares",
           "Generous Gift",
           "Chaos Warp",
-          "Erode",
           "Prismari Command",
           "Wear // Tear",
           "Flame of Anor",
           "Olórin's Searing Light",
           "Blasphemous Act",
-          "Raise the Palisade",
-          "Unbreakable Formation",
+          "Call Forth the Tempest",
           "Clever Concealment"
         ]
       },
       {
         "name": "Mana Engine",
-        "description": "Seven rocks headlined by Mox Amber (21 legends keep it live) and Ancient Tomb for explosive starts, on a 36-land base tuned to the 55U/23R/13W pip census.",
+        "description": "Seven rocks headlined by Mox Amber (21 legends keep it live) and Ancient Tomb for explosive starts, on a 38-land base tuned to the 55U/23R/13W pip census. Spire of Industry taps for any color off the artifact suite, and Baxter Building converts {4} into four colored pips for the big payoff turns.",
         "cards": [
           "Sol Ring",
           "Arcane Signet",
@@ -146,7 +144,9 @@
           "Mox Amber",
           "Talisman of Creativity",
           "Talisman of Progress",
-          "Ancient Tomb"
+          "Ancient Tomb",
+          "Spire of Industry",
+          "Baxter Building"
         ]
       }
     ]
@@ -191,6 +191,10 @@
     {
       "name": "Wizard's Staff",
       "type": "Artifact — Equipment"
+    },
+    {
+      "name": "Call Forth the Tempest",
+      "type": "Sorcery"
     }
   ],
   "synergies": [
@@ -309,6 +313,27 @@
         {
           "type": "ai-inferred",
           "name": "Oracle-verified interactions, DEC-472 draft review"
+        }
+      ]
+    },
+    {
+      "title": "Call Forth the Tempest rides the free cast",
+      "cards": [
+        "Gandalf, Party Guest",
+        "Call Forth the Tempest",
+        "Storm-Kiln Artist"
+      ],
+      "description": "With four legendary Wizards out, Gandalf's X reaches 8 and casts the Tempest free at combat. It is still a cast, so both cascade triggers fire — two extra free spells — and every spell that turn (free casts included, at their full mana value) grows the sweep. The damage hits only opponents' creatures; the council and the magecraft shell survive.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Gandalf, Party Guest (65.1% inclusion)",
+          "url": "https://edhrec.com/commanders/gandalf-party-guest",
+          "detail": "Swap round 2 revisit of the filled EDHREC page (273 rated cards, fetched 2026-08-16)"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Oracle-verified 2026-08-16 — cascade fires on free casts (cast trigger)"
         }
       ]
     },
@@ -525,9 +550,10 @@
       "secondary_role": "engine"
     },
     {
-      "name": "Jori En, Ruin Diver",
-      "type": "Legendary Creature — Merfolk Wizard",
-      "primary_role": "card-draw"
+      "name": "Gandalf, Goblins' Bane",
+      "type": "Legendary Creature — Avatar Wizard // Sorcery — Adventure",
+      "primary_role": "payoff",
+      "secondary_role": "card-draw"
     },
     {
       "name": "Hurkyl, Master Wizard",
@@ -670,9 +696,10 @@
       "primary_role": "counterspell"
     },
     {
-      "name": "Wizard's Retort",
+      "name": "Mana Sculpt",
       "type": "Instant",
-      "primary_role": "counterspell"
+      "primary_role": "counterspell",
+      "secondary_role": "ramp"
     },
     {
       "name": "Dovin's Veto",
@@ -733,19 +760,10 @@
       "primary_role": "removal-board"
     },
     {
-      "name": "Erode",
-      "type": "Instant",
-      "primary_role": "removal-spot"
-    },
-    {
-      "name": "Raise the Palisade",
+      "name": "Call Forth the Tempest",
       "type": "Sorcery",
-      "primary_role": "removal-board"
-    },
-    {
-      "name": "Unbreakable Formation",
-      "type": "Instant",
-      "primary_role": "protection"
+      "primary_role": "removal-board",
+      "secondary_role": "payoff"
     },
     {
       "name": "Clever Concealment",
@@ -912,6 +930,16 @@
     },
     {
       "name": "Ancient Tomb",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Spire of Industry",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Baxter Building",
       "type": "Land",
       "primary_role": "land"
     },

@@ -121,12 +121,26 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], turn: int) -> bo
     return False
 
 
-def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozenset]:
+def compute_land_sources(name: str, battlefield_lands: list[str],
+                         battlefield_rocks: list[str] | None = None) -> list[frozenset]:
     """Return mana sources (frozensets of producible colors) for a single untapped land.
 
     Each frozenset in the returned list represents one mana atom.
     Most lands return a single atom; Ancient Tomb returns two.
     """
+    # Spire of Industry: any color for 1 life with an artifact out (life not
+    # modeled, matching the pain lands); {C} floor with no artifact. Rocks are
+    # the only artifacts the mana engine tracks.
+    if name == "Spire of Industry":
+        if battlefield_rocks:
+            return [frozenset({"U", "R", "W"})]
+        return [frozenset({"C"})]
+
+    # Baxter Building: {C} atom. The {4},{T}: four-any-color conversion adds no
+    # net mana and is not modeled — this is the land's floor.
+    if name == "Baxter Building":
+        return [frozenset({"C"})]
+
     # Basics
     if name == "Island":
         return [frozenset({"U"})]
@@ -361,7 +375,8 @@ class GameState:
         base = 0 if tapped else 10
 
         # More colors produced = higher priority
-        sources = compute_land_sources(name, self.battlefield_lands)
+        sources = compute_land_sources(name, self.battlefield_lands,
+                                       self.battlefield_rocks)
         if sources:
             n_colors = sum(1 for c in "URW" if c in sources[0])
             base += n_colors * 2
@@ -379,7 +394,8 @@ class GameState:
         for i, land in enumerate(self.battlefield_lands):
             if i in self.tapped_lands:
                 continue
-            sources = compute_land_sources(land, self.battlefield_lands)
+            sources = compute_land_sources(land, self.battlefield_lands,
+                                           self.battlefield_rocks)
             pool_sources.extend(sources)
 
         for rock in self.battlefield_rocks:
