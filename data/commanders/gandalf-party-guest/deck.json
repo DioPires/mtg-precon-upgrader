@@ -6,7 +6,7 @@
   "subtitle": "A Council of Legendary Wizards",
   "commander": "Gandalf, Party Guest",
   "bracket": "4-",
-  "gameChangers": 4,
+  "gameChangers": 3,
   "lastUpdatedSet": "The Hobbit Eternal",
   "archetypes": [
     "spellslinger"
@@ -44,12 +44,13 @@
     "deckCategories": [
       {
         "name": "Commander Engine",
-        "description": "Gandalf free-casts one instant or sorcery per combat at MV up to 2x your legendary Wizards. Wizard's Staff doubles his trigger; the free spell is cast, so every cast-trigger in the deck fires.",
+        "description": "Gandalf free-casts one instant or sorcery per combat at MV up to 2x your legendary Wizards. Wizard's Staff doubles his trigger; the free spell is cast, so every cast-trigger in the deck fires. Whirlwind of Thought turns every noncreature cast — including Gandalf's free ones — into a card.",
         "cards": [
           "Gandalf, Party Guest",
           "Wizard's Staff",
           "Harmonic Prodigy",
-          "Veyran, Voice of Duality"
+          "Veyran, Voice of Duality",
+          "Whirlwind of Thought"
         ]
       },
       {
@@ -76,17 +77,15 @@
       },
       {
         "name": "Free-Cast Payoffs",
-        "description": "Marquee spells Gandalf casts for free once the council assembles: Jeskai Revelation at X=8, Call Forth the Tempest at X=8 (double cascade still triggers on the free cast), Sublime Epiphany at X=6, and extra-turn haymakers that untap the whole board.",
+        "description": "Marquee spells Gandalf casts for free once the council assembles: Jeskai Revelation at X=8, Call Forth the Tempest at X=8 (double cascade still triggers on the free cast), and Sublime Epiphany at X=6.",
         "cards": [
           "Jeskai Revelation",
-          "Sublime Epiphany",
-          "Temporal Mastery",
-          "Alrund's Epiphany"
+          "Sublime Epiphany"
         ]
       },
       {
         "name": "Combo Package",
-        "description": "Two-card kills and the loops behind them. Dualcaster + Twinflame swings the same turn; Naru Meha loops Ghostly Flicker or Displace for infinite magecraft; Fury Storm goes infinite with any magecraft payoff after one commander re-cast; Panoptic Mirror locks the turn cycle.",
+        "description": "Two-card kills and the loops behind them. Dualcaster + Twinflame swings the same turn; Naru Meha loops Ghostly Flicker or Displace for infinite magecraft; Fury Storm goes infinite with any magecraft payoff after one commander re-cast.",
         "cards": [
           "Dualcaster Mage",
           "Twinflame",
@@ -94,7 +93,6 @@
           "Ghostly Flicker",
           "Displace",
           "Fury Storm",
-          "Panoptic Mirror",
           "Storm-Kiln Artist",
           "Archmage Emeritus",
           "Deekah, Fractal Theorist"
@@ -114,7 +112,7 @@
       },
       {
         "name": "Interaction & Protection",
-        "description": "Five counterspells (Mana Sculpt refunds the countered spell's mana with a Wizard out; Fierce Guardianship and Muddle's counter mode are free on the combo turn), spot removal on every relevant permanent type — including the artifact/enchantment hosers that target this deck — three wipes (Olórin's Searing Light, Blasphemous Act, and the opponent-only Call Forth the Tempest), and Clever Concealment phasing the whole board out of danger.",
+        "description": "Five counterspells (Mana Sculpt refunds the countered spell's mana with a Wizard out; Fierce Guardianship and Muddle's counter mode are free on the combo turn), spot removal on every relevant permanent type — including the artifact/enchantment hosers that target this deck — three wipes (Olórin's Searing Light, Blasphemous Act, and the opponent-only Call Forth the Tempest), and Clever Concealment phasing the whole board out of danger. Guardian of Faith flashes in to phase the council out of a wipe, and Sevinne's Reclamation rebuys any fallen MV-3-or-less piece — combo starters included — twice thanks to flashback.",
         "cards": [
           "Counterspell",
           "Mana Sculpt",
@@ -130,7 +128,9 @@
           "Olórin's Searing Light",
           "Blasphemous Act",
           "Call Forth the Tempest",
-          "Clever Concealment"
+          "Clever Concealment",
+          "Guardian of Faith",
+          "Sevinne's Reclamation"
         ]
       },
       {
@@ -171,10 +171,6 @@
     {
       "name": "Jeskai Revelation",
       "type": "Instant"
-    },
-    {
-      "name": "Panoptic Mirror",
-      "type": "Artifact"
     },
     {
       "name": "Mystical Tutor",
@@ -281,21 +277,6 @@
           "type": "commanderspellbook",
           "name": "Commander Spellbook — Fury Storm lines",
           "detail": "Confirmed via find-my-combos on the final 99, 2026-08-15"
-        }
-      ]
-    },
-    {
-      "title": "Panoptic Mirror locks the turn cycle",
-      "cards": [
-        "Panoptic Mirror",
-        "Temporal Mastery",
-        "Alrund's Epiphany"
-      ],
-      "description": "Imprint either extra-turn spell and cast it free every upkeep: consecutive extra turns while the council attacks. Both spells are also honest one-shot free-casts off Gandalf before the Mirror lands.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "DEC-472 power-package iteration (comment 92844c53)"
         }
       ]
     },
@@ -446,27 +427,6 @@
           "type": "commanderspellbook",
           "name": "Commander Spellbook — Fury Storm lines",
           "detail": "Confirmed via find-my-combos on the final 99, 2026-08-15"
-        }
-      ]
-    },
-    {
-      "title": "Panoptic Mirror extra-turn lock",
-      "kind": "combo",
-      "pieces": [
-        "Panoptic Mirror",
-        "Temporal Mastery"
-      ],
-      "cards": [
-        "Panoptic Mirror",
-        "Temporal Mastery",
-        "Alrund's Epiphany"
-      ],
-      "mana_cost": 5,
-      "description": "Imprint Temporal Mastery or Alrund's Epiphany on the Mirror and take every turn: the council plus Epiphany's birds attack each extra turn while opponents never untap. Wins through combat inside the lock.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "DEC-472 power package, board-accepted (comment df22d8be)"
         }
       ]
     },
@@ -640,14 +600,15 @@
       "wincon_style": "combo"
     },
     {
-      "name": "Temporal Mastery",
-      "type": "Sorcery",
-      "primary_role": "payoff"
+      "name": "Whirlwind of Thought",
+      "type": "Enchantment",
+      "primary_role": "card-draw",
+      "secondary_role": "engine"
     },
     {
-      "name": "Alrund's Epiphany",
+      "name": "Sevinne's Reclamation",
       "type": "Sorcery",
-      "primary_role": "payoff"
+      "primary_role": "recursion"
     },
     {
       "name": "Fury Storm",
@@ -664,11 +625,9 @@
       "wincon_style": "combo"
     },
     {
-      "name": "Panoptic Mirror",
-      "type": "Artifact",
-      "primary_role": "wincon",
-      "secondary_role": "engine",
-      "wincon_style": "combo"
+      "name": "Guardian of Faith",
+      "type": "Creature",
+      "primary_role": "protection"
     },
     {
       "name": "Mystical Tutor",
@@ -979,21 +938,6 @@
   ],
   "tokens": [
     {
-      "name": "Bird",
-      "type_line": "Token Creature — Bird",
-      "oracle_text": "Flying",
-      "power": "1",
-      "toughness": "1",
-      "colors": [
-        "U"
-      ],
-      "scryfall_id": "1a0cb299-057d-4c39-9d73-3a3512526e4a",
-      "image_uri": "https://cards.scryfall.io/normal/front/1/a/1a0cb299-057d-4c39-9d73-3a3512526e4a.jpg?1783928081",
-      "produced_by": [
-        "Alrund's Epiphany"
-      ]
-    },
-    {
       "name": "Day",
       "type_line": "Card",
       "oracle_text": "(If it becomes day or night or if a daybound permanent enters the battlefield, track day/night for the rest of the game.)\nAs it becomes day, transform all nightbound permanents.\nIf a player casts no spells during their own turn, it becomes night next turn.",
@@ -1032,19 +976,6 @@
       "image_uri": "https://cards.scryfall.io/normal/front/e/d/edf99449-b176-460b-afb3-14a35e3ae35a.jpg?1783906791",
       "produced_by": [
         "Mizzix of the Izmagnus"
-      ]
-    },
-    {
-      "name": "Foretell",
-      "type_line": "Card",
-      "oracle_text": "(After you foretell a card, you can place the exiled card here. You may cast it on a later turn for its foretell cost.)",
-      "power": null,
-      "toughness": null,
-      "colors": [],
-      "scryfall_id": "fb02637f-1385-4d3d-8dc0-de513db7633a",
-      "image_uri": "https://cards.scryfall.io/normal/front/f/b/fb02637f-1385-4d3d-8dc0-de513db7633a.jpg?1783928074",
-      "produced_by": [
-        "Alrund's Epiphany"
       ]
     },
     {
