@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+"""Build the committed card-price derivative for Combo Lab near-miss filtering.
+
+DEC-516 (DEC-476 Phase 4). NM-5 requires completion suggestions to be filterable
+by price with currency selection including EUR (Cardmarket) and USD; DR-5 sets the
+data requirement (EUR + USD, freshness on the order of days).
+
+The Scryfall oracle mirror (`priv_data/scryfall-oracle.json`) deliberately DROPS
+prices, so this script fetches the Scryfall bulk `oracle_cards` export fresh —
+which DOES carry per-card `prices` — filters to Commander-legal, and emits a
+compact name-keyed derivative committed under `data/spellbook/`:
+
+  - data/spellbook/price-index.json       { "<normalized name>": [eur, usd], ... }
+  - data/spellbook/price-index.meta.json  provenance + freshness
+
+Prices are the non-foil Cardmarket EUR (`prices.eur`) and TCGplayer USD
+(`prices.usd`); a missing price is stored as null. Names are normalized with the
+same casefold+strip rules the Combo Lab matcher/synergy engines use, and every
+`//`-face is aliased (first-wins) so a completer card resolves whichever face the
+feature index names it by.
+
+All generation is LOCAL; the committed JSON deploys via the Vercel `cp -R ../data`
+step. The runtime never calls Scryfall (NF-1/NF-9). Idempotent on a stable corpus.
+
+Usage:
+    uv run python scripts/build_price_index.py [--force] [--source jsonl.gz|-]
+"""
+
+from __future__ import annotations
+
+import argparse
+import gzip
+import json
+import sys
+import unicodedata
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+OUT_DIR = PROJECT_ROOT / "data" / "spellbook"
+INDEX_FILE = OUT_DIR / "price-index.json"
+META_FILE = OUT_DIR / "price-index.meta.json"
+BULK_DATA_URL = "https://api.scryfall.com/bulk-data"
+USER_AGENT = "mtg-precon-upgrader/1.0 (DEC-516 price index)"
+
+
+def normalize_name(name: str) -> str:
+    """Casefold + strip accents/punctuation. Mirror of normalize_name() in
+    scripts/sync_spellbook_combos.py and normalizeName() in the TS engines."""
+    if not name:
+        return ""
+    ascii_name = "".join(
+        ch for ch in unicodedata.normalize("NFKD", name) if not unicodedata.combining(ch)
+    )
+    out = []
+    for ch in ascii_name.lower():
+        out.append(ch if (ch.isalnum() or ch == " ") else " ")
+    return " ".join("".join(out).split())
+
+
+def name_keys(name: str) -> list[str]:
+    """Normalized full name plus every ``//``-split face key (order-preserving)."""
+    keys: list[str] = []
+    full = normalize_name(name)
+    if full:
+        keys.append(full)
+    if "//" in name:
+        for face in name.split("//"):
+            fk = normalize_name(face)
+            if fk and fk not in keys:
+                keys.append(fk)
+    return keys
+
+
+def fetch_json(url: str, timeout: int = 60) -> dict:
+    req = urllib.request.Request(
+        url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"}
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.loads(resp.read())
+
+
+def find_oracle_cards_entry(bulk_data: dict) -> dict:
+    for item in bulk_data.get("data", []):
+        if item.get("type") == "oracle_cards":
+            return item
+    raise RuntimeError("No oracle_cards entry in Scryfall bulk-data response")
+
+
+def _price(raw: dict, key: str) -> float | None:
+    """Parse a Scryfall price string to a float, or None when absent/blank."""
+    val = (raw or {}).get(key)
+    if val in (None, "", "0", "0.0"):
+        return None
+    try:
+        f = float(val)
+    except (TypeError, ValueError):
+        return None
+    return f if f > 0 else None
+
+
+def build_index(cards: list[dict]) -> dict[str, list]:
+    """Name-key → [eur, usd]. First-wins per key so a face alias never clobbers
+    the primary card. Cards with neither price are skipped entirely."""
+    index: dict[str, list] = {}
+    for c in cards:
+        eur = _price(c.get("prices"), "eur")
+        usd = _price(c.get("prices"), "usd")
+        if eur is None and usd is None:
+            continue
+        for k in name_keys(c.get("name", "")):
+            if k and k not in index:
+                index[k] = [eur, usd]
+    return index
+
+
+def load_source_cards(source: str | None, force: bool) -> tuple[list[dict], str, str]:
+    """Return (cards, remote_updated_at, source_uri). ``source`` may be a local
+    path or "-" for stdin (jsonl / jsonl.gz / json), else Scryfall bulk is used."""
+    if source and source != "-":
+        p = Path(source)
+        raw = p.read_bytes()
+        if p.suffix == ".gz":
+            raw = gzip.decompress(raw)
+        cards = _parse_cards(raw, p.name.endswith((".jsonl", ".jsonl.gz")))
+        return cards, "local", str(p)
+
+    print("Querying Scryfall bulk-data API...", file=sys.stderr)
+    bulk = fetch_json(BULK_DATA_URL)
+    oracle = find_oracle_cards_entry(bulk)
+    remote_updated_at = oracle["updated_at"]
+    download_uri = oracle.get("jsonl_download_uri") or oracle.get("download_uri")
+    if not download_uri:
+        raise RuntimeError("Scryfall oracle_cards entry exposes no download URI.")
+
+    if not force and META_FILE.exists() and INDEX_FILE.exists():
+        try:
+            local = json.loads(META_FILE.read_text())
+            if local.get("scryfall_updated_at") == remote_updated_at:
+                print(f"Price index is current ({remote_updated_at}).", file=sys.stderr)
+                return [], remote_updated_at, download_uri
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    print(f"Downloading {download_uri}...", file=sys.stderr)
+    req = urllib.request.Request(download_uri, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=300) as resp:
+        raw = resp.read()
+    if download_uri.endswith(".gz"):
+        raw = gzip.decompress(raw)
+    cards = _parse_cards(raw, download_uri.endswith((".jsonl", ".jsonl.gz")))
+    return cards, remote_updated_at, download_uri
+
+
+def _parse_cards(raw: bytes, is_jsonl: bool) -> list[dict]:
+    if is_jsonl:
+        return [json.loads(line) for line in raw.splitlines() if line.strip()]
+    return json.loads(raw)
+
+
+def main(argv: list[str]) -> int:
+    ap = argparse.ArgumentParser(description="Build the Combo Lab card-price index")
+    ap.add_argument("--force", action="store_true", help="Rebuild even if current")
+    ap.add_argument("--source", help="Local jsonl(.gz)/json file or '-' for stdin")
+    args = ap.parse_args(argv)
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    cards, remote_updated_at, source_uri = load_source_cards(args.source, args.force)
+    if not cards:
+        return 0  # already current
+
+    print(f"Downloaded {len(cards):,} cards. Filtering to commander-legal...", file=sys.stderr)
+    legal = [c for c in cards if c.get("legalities", {}).get("commander") == "legal"]
+    index = build_index(legal)
+    print(
+        f"Filtered to {len(legal):,} commander-legal; {len(index):,} price keys.",
+        file=sys.stderr,
+    )
+
+    tmp = INDEX_FILE.with_suffix(".json.tmp")
+    # Compact + stable key order so the weekly git diff delta-compresses.
+    tmp.write_text(
+        json.dumps(index, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    )
+    tmp.replace(INDEX_FILE)
+
+    priced_eur = sum(1 for v in index.values() if v[0] is not None)
+    priced_usd = sum(1 for v in index.values() if v[1] is not None)
+    META_FILE.write_text(
+        json.dumps(
+            {
+                "schema": "combo-lab-price-index",
+                "source": "scryfall-bulk-oracle-cards",
+                "sourceUrl": source_uri,
+                "scryfall_updated_at": remote_updated_at,
+                "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "currencies": ["eur", "usd"],
+                "keyCount": len(index),
+                "pricedEur": priced_eur,
+                "pricedUsd": priced_usd,
+                "note": (
+                    "Name-key → [eur, usd] (non-foil; eur=Cardmarket, usd=TCGplayer). "
+                    "null = no price. Keys are normalize_name()-folded with //-faces "
+                    "aliased first-wins. Cards with no price are omitted."
+                ),
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+
+    size_mb = INDEX_FILE.stat().st_size / (1024 * 1024)
+    print(
+        f"Wrote {INDEX_FILE.relative_to(PROJECT_ROOT)} ({size_mb:.1f} MB, "
+        f"{len(index):,} keys; eur {priced_eur:,} / usd {priced_usd:,}).",
+        file=sys.stderr,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
