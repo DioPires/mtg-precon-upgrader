@@ -269,6 +269,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -292,7 +293,7 @@
     "is_dfc": false,
     "mana_cost": "{G}{U}",
     "name": "Neoform",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "420c6dcf-966d-4a4c-a0ef-23037ab8b325",
     "provenance_summary": {},
@@ -1245,6 +1246,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1264,7 +1266,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Enthusiastic Study",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4233334d-bb19-41e4-a203-2b7bb0c48f52",
     "provenance_summary": {},
@@ -1419,6 +1421,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1441,7 +1444,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Mogg Jailer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "423659f1-1b48-4a2b-a1dc-f39fd62c6b6a",
     "provenance_summary": {},
@@ -1452,6 +1455,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -1471,7 +1475,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Bloodchief's Thirst",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4236851b-5366-43a1-bde4-f525b4fbcbce",
     "provenance_summary": {},
@@ -1514,6 +1518,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1538,7 +1543,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Wall of Tanglecord",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "423bebcc-8fa0-49c4-aa22-728bf51a535b",
     "provenance_summary": {
@@ -1888,6 +1893,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -1910,7 +1916,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Glacial Crasher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42441362-d638-423a-8928-ab3fd9b2d4f2",
     "provenance_summary": {},
@@ -1921,6 +1927,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -1940,7 +1947,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Devastation Tide",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4245ee98-2d4c-49d1-8d07-80760cae2bf9",
     "provenance_summary": {},
@@ -2157,6 +2164,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R",
@@ -2177,7 +2185,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{W}",
     "name": "Solar Blaze",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "424f3d53-47e7-4212-8267-53279ea8900a",
     "provenance_summary": {},
@@ -2188,6 +2196,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R",
@@ -2212,22 +2221,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Kavu Glider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "425050a7-41d2-4850-bb45-3a83275d3c50",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Kavu",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{W}: This creature gets +0/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2356,6 +2375,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -2379,7 +2399,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{R}",
     "name": "Hurl Through Hell",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4254c048-7207-4ca0-bd20-ebb418d9ed1a",
     "provenance_summary": {},
@@ -3004,6 +3024,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -3029,7 +3050,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Spur Grappler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42784364-719a-49ca-b515-64146a8f82e8",
     "provenance_summary": {
@@ -3239,6 +3260,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3258,7 +3280,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Flitterstep Eidolon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4280191f-e2cb-4cee-a3b4-660b3efd62e9",
     "provenance_summary": {},
@@ -3590,6 +3612,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 10.0,
     "color_identity": [
       "U"
@@ -3615,7 +3638,7 @@
     "is_dfc": false,
     "mana_cost": "{8}{U}{U}",
     "name": "Broodstar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "428cc1cb-a491-4cc4-9436-28ee8acc37d6",
     "provenance_summary": {
@@ -3628,6 +3651,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3650,7 +3674,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Cut Short",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "428d131c-b0fa-4e96-9c02-e2e6714357b9",
     "provenance_summary": {},
@@ -3786,6 +3810,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3815,7 +3840,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Weight of Conscience",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42989c6d-75d9-4ddd-bb9f-f18c0eb005fe",
     "provenance_summary": {
@@ -4021,6 +4046,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4043,7 +4069,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}{U}",
     "name": "Reshape",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42a3855d-25ab-45b3-9e5d-9a0f3da35a05",
     "provenance_summary": {},
@@ -4634,6 +4660,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4650,23 +4677,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Undergrowth Scavenger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42b17f78-d290-40ed-afac-f9362e526999",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Fungus Horror",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "equal to the number of creature cards in all graveyards",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4695,7 +4734,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Guardians of Oboro",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42b28dfb-de4d-4005-b0d7-1db3917cf159",
     "provenance_summary": {
@@ -4708,6 +4747,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -4727,7 +4767,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Mwonvuli Ooze",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42b2c6d0-e0da-41b0-8876-f17dbe5db79a",
     "provenance_summary": {},
@@ -4738,6 +4778,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4757,7 +4798,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Enfeeblement",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42b2db4c-4a1d-436f-9eeb-53a04db46c58",
     "provenance_summary": {},
@@ -4956,6 +4997,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4975,7 +5017,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Dauthi Warlord",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42bb6537-fa54-43b7-84f2-dea41adc35fd",
     "provenance_summary": {},
@@ -5776,6 +5818,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5805,7 +5848,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Edge of Autumn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42d86827-6459-42fc-86b6-6eb055604c36",
     "provenance_summary": {
@@ -6000,6 +6043,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -6023,7 +6067,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Remorseless Punishment",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42e07167-b490-46ad-9b5c-b483a4bb64e3",
     "provenance_summary": {},
@@ -6034,6 +6078,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -6053,7 +6098,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Leeching Bite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42e4a55b-12c8-4ad0-a27d-28bbdbb06940",
     "provenance_summary": {},
@@ -6280,6 +6325,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -6299,7 +6345,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Michelangelo's Technique",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "42f12942-9ac1-497e-a8b7-9f66a5afd0ae",
     "provenance_summary": {},

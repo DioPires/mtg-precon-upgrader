@@ -108,6 +108,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -125,7 +126,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Nemesis Mask",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34062d79-457f-4af3-b9c6-cab2e4d17581",
     "provenance_summary": {},
@@ -328,6 +329,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -350,7 +352,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Witness the End",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "340d2261-9454-4ab0-827c-49c7e76c7781",
     "provenance_summary": {},
@@ -361,6 +363,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -380,7 +383,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Mana Chains",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "340d27c6-2e8e-472a-85f5-9b36d9cc3e42",
     "provenance_summary": {},
@@ -391,6 +394,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -404,17 +408,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Sunhome Stalwart",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "340d6218-d351-4b2e-80da-7d4afa77190a",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on target attacking creature with lesser power",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Soldier",
     "wants": []
@@ -1181,6 +1196,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1200,7 +1216,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Confidence from Strength",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "341f75a5-df02-48e9-8997-1938148ad89a",
     "provenance_summary": {},
@@ -1413,6 +1429,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1430,7 +1447,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Gate Smasher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3425598f-d51c-4f92-8fda-42e96e4c537a",
     "provenance_summary": {},
@@ -1471,6 +1488,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -1485,7 +1503,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1496,13 +1515,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Rush of Knowledge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34282c99-68ef-4855-b683-7bb205fa6374",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw cards equal to the greatest mana value among permanents you control.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -2731,6 +2759,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2756,7 +2785,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Exotic Curse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "344476b1-8710-4c7c-826d-efb7d13ceaa7",
     "provenance_summary": {
@@ -2769,6 +2798,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2786,7 +2816,9 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -2797,16 +2829,33 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Ruthless Radrat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "344671d1-8abf-4be1-93c9-ef917e88e6c9",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create that many tokens that are copies of it",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Rat Mutant",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile four cards from your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3043,6 +3092,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3060,7 +3110,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Ovalchase Dragster",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "345de988-4d26-4400-8202-225968db370f",
     "provenance_summary": {},
@@ -3614,6 +3664,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -3633,7 +3684,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Abundant Harvest",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34841228-31ac-48ac-b6d6-486b5e1e07dd",
     "provenance_summary": {},
@@ -4371,6 +4422,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -4393,7 +4445,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Uphill Battle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "349a18bf-5c61-4fe6-a5e5-5e7cad6b4ba6",
     "provenance_summary": {},
@@ -4917,6 +4969,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B",
@@ -4937,7 +4990,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{R}",
     "name": "Carnival Hellsteed",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34ae5b49-f8bf-4aa8-bb62-92d6d3118b26",
     "provenance_summary": {},
@@ -5383,6 +5436,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5408,7 +5462,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Gaelicat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34bdeca4-b1e0-4fa3-afe4-bec743a080b8",
     "provenance_summary": {
@@ -5421,6 +5475,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -5453,7 +5508,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Viashino Slaughtermaster",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34bdf2f1-0cc9-4588-9a3e-5cfe5cde815d",
     "provenance_summary": {
@@ -5880,6 +5935,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5899,7 +5955,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Mowu, Loyal Companion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34ceb733-0329-4c1b-8d75-25c34fd4400f",
     "provenance_summary": {},
@@ -6256,6 +6312,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "W"
@@ -6278,7 +6335,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}{W}",
     "name": "Angelic Arbiter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34dd789c-4d80-4ccc-a4f7-2e5388a9689d",
     "provenance_summary": {},
@@ -7310,6 +7367,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -7329,7 +7387,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Gift of the Gargantuan",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "34f9c2a9-ca7c-4a02-aec5-e8f407d09580",
     "provenance_summary": {},

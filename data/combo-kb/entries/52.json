@@ -167,6 +167,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -186,7 +187,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Sicken",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5208a5f2-eebe-4adc-8f29-543b60116817",
     "provenance_summary": {},
@@ -520,6 +521,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "W"
@@ -539,7 +541,7 @@
     "is_dfc": false,
     "mana_cost": "{7}{W}",
     "name": "Flight of Equenauts",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5212e707-b487-46b6-aa51-cea3be8cbe00",
     "provenance_summary": {},
@@ -1554,6 +1556,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -1576,7 +1579,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Dwarven Landslide",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5231a7d6-b6cf-4fa8-8da8-f0ecf023e054",
     "provenance_summary": {},
@@ -2157,6 +2160,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -2172,7 +2176,9 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -2183,16 +2189,33 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{R}",
     "name": "Exava, Rakdos Blood Witch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "524249cd-68d9-472a-89cd-5872641ca6de",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "You may have this creature enter with a +1/+1 counter on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Creature — Human Cleric",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Each other creature you control with a +1/+1 counter on it has haste.",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2238,6 +2261,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2260,7 +2284,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Haste Magic",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5249dd0d-3bda-452e-ac6e-774c0ebc2e41",
     "provenance_summary": {},
@@ -2701,6 +2725,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -2726,7 +2751,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Tail Swipe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "525d98d6-b117-44f4-b19c-3dd26e7c9fd4",
     "provenance_summary": {
@@ -3121,6 +3146,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -3146,7 +3172,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Seven Dwarves",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "526ca4a9-3f50-4f7a-8169-2bda95792401",
     "provenance_summary": {
@@ -3853,6 +3879,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3876,7 +3903,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Helm of the Gods",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52804094-47b9-40b9-999d-7c050d220e63",
     "provenance_summary": {
@@ -4200,6 +4227,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -4223,7 +4251,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G/U}{G/U}",
     "name": "Mikey & Don, Party Planners",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "529178e8-425e-4d59-948c-ca7d0663f6ff",
     "provenance_summary": {},
@@ -4345,6 +4373,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -4370,7 +4399,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Hooded Kavu",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52934f16-eb9b-4d0a-b372-155461660f6e",
     "provenance_summary": {
@@ -4496,6 +4525,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -4515,7 +4545,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Foriysian Interceptor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52989a30-773d-4daf-aea3-8dbee2a947fa",
     "provenance_summary": {},
@@ -4619,6 +4649,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -4638,7 +4669,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Crux of Fate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52a0dae4-2a95-487e-acd4-eabdb2d031e2",
     "provenance_summary": {},
@@ -5093,6 +5124,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5127,7 +5159,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Soul Snare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52bd4331-67b6-4eb8-9566-e00359889fc6",
     "provenance_summary": {
@@ -6049,6 +6081,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -6068,7 +6101,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Moonlace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52d4dc8a-2799-4b4e-9c20-f14bb75c2279",
     "provenance_summary": {},
@@ -6295,6 +6328,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -6314,7 +6348,7 @@
     "is_dfc": true,
     "mana_cost": null,
     "name": "Hookhand Mariner // Riphook Raider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52def237-0374-4ab0-8c01-d0d00aaa324f",
     "provenance_summary": {},
@@ -6379,6 +6413,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -6398,7 +6433,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Nyx Infusion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52e3bcc0-0c1f-4846-bf52-4af66b7abd6f",
     "provenance_summary": {},
@@ -6409,6 +6444,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -6428,7 +6464,7 @@
     "is_dfc": true,
     "mana_cost": "{1}{R} // {R}",
     "name": "Embereth Shieldbreaker // Battle Display",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52e439d0-a263-4d53-9ae3-fa1f8aa8293e",
     "provenance_summary": {},
@@ -6735,6 +6771,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -6754,7 +6791,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Debilitating Injury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52eab77d-9a07-4e14-8872-72681d3b3d0e",
     "provenance_summary": {},
@@ -7262,6 +7299,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -7281,7 +7319,7 @@
     "is_dfc": true,
     "mana_cost": "{5}{U} // {1}{U}",
     "name": "Beluna's Gatekeeper // Entry Denied",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "52fd9309-b849-419a-8d19-5882c00a72b4",
     "provenance_summary": {},

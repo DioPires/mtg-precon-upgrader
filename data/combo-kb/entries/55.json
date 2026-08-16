@@ -261,6 +261,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -280,7 +281,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Untamed Hunger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "550abd9b-9aae-4812-9bc0-7f131d6dcde8",
     "provenance_summary": {},
@@ -338,6 +339,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -358,7 +360,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -369,16 +372,25 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{G}{U}",
     "name": "The Mimeoplasm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55123455-d435-46d4-b0cd-0c1614343be2",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Legendary Creature — Ooze",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "exile two creature cards from graveyards",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -484,6 +496,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -508,7 +521,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "Still Life",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55159adc-36f0-4088-8930-5d9b45f76365",
     "provenance_summary": {
@@ -521,6 +534,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -540,7 +554,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Vestige of Emrakul",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55187899-c445-48e9-80b9-235eaf42f803",
     "provenance_summary": {},
@@ -551,6 +565,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -564,23 +579,44 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Korozda Monitor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55195474-c7ea-4c0a-b504-af15e64ec7e9",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a number of +1/+1 counters equal to this card's power on target creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Lizard",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile this card from your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -600,7 +636,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Sheltering Light",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "551ac58e-3a27-4ee3-ac91-16873562c0bc",
     "provenance_summary": {},
@@ -783,6 +819,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -817,7 +854,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{U}",
     "name": "Plumes of Peace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5526dcae-90e8-4102-808d-56c89027898c",
     "provenance_summary": {
@@ -1198,6 +1235,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -1223,7 +1261,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Hope Against Hope",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "553b9606-0519-4b85-b6ae-acc126e537e1",
     "provenance_summary": {
@@ -1634,6 +1672,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -1653,7 +1692,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Psychic Transfer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5554d422-6513-4c7e-866d-9d5f0403fc80",
     "provenance_summary": {},
@@ -1752,6 +1791,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1771,7 +1811,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Pikemen",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5556a897-8947-4b78-81ce-a829508a4f11",
     "provenance_summary": {},
@@ -1832,6 +1872,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1856,7 +1897,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Break Through the Line",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "555c571e-ccfc-4a8e-8a40-7b1eab0fbbef",
     "provenance_summary": {
@@ -2410,6 +2451,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2429,7 +2471,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Skittish Kavu",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55722e42-a729-4289-895f-be913398c434",
     "provenance_summary": {},
@@ -2440,6 +2482,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2462,7 +2505,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Trapped in the Tower",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55746bf4-86e0-489b-b9dc-eba5f5b401dd",
     "provenance_summary": {},
@@ -2701,6 +2744,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2726,7 +2770,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Spare from Evil",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "557cc9a7-c8cc-4823-b108-2dfe648c789d",
     "provenance_summary": {
@@ -2929,6 +2973,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2948,7 +2993,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Boon of Erebos",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55821968-baf2-4fa6-8376-9ec305e27b3b",
     "provenance_summary": {},
@@ -3192,6 +3237,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3208,17 +3254,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Dai Li Indoctrination",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5591efbc-1b2c-489a-b4f3-935c9b6bd71a",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put two +1/+1 counters on it",
+        "feature": "counter_add",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery — Lesson",
     "wants": []
@@ -3520,6 +3577,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -3539,7 +3597,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Blood Lust",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55a253f9-f44d-4898-af83-fea68b7b279d",
     "provenance_summary": {},
@@ -3614,6 +3672,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3625,17 +3684,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}",
     "name": "Strandwalker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55a4b186-c6d4-4b08-bf45-481429693948",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a 0/0 black Phyrexian Germ creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []
@@ -3865,6 +3935,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -3884,7 +3955,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Darkwatch Elves",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55ad9924-f217-4844-8a82-48746186bc53",
     "provenance_summary": {},
@@ -4874,6 +4945,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4893,7 +4965,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Frazzle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55c4df81-9513-424b-aa58-10190797bba7",
     "provenance_summary": {},
@@ -4934,6 +5006,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4961,7 +5034,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Declaration of Naught",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55c71732-6ba1-401d-8759-4d64dae22133",
     "provenance_summary": {
@@ -5259,6 +5332,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5282,7 +5356,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{W}",
     "name": "Vengeful Dreams",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55d01851-2669-4552-b580-088e445ac30c",
     "provenance_summary": {},
@@ -5347,6 +5421,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -5366,7 +5441,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Wingcrafter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55d1f44f-8554-49e7-b36f-92682926e6d0",
     "provenance_summary": {},
@@ -5708,6 +5783,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5727,7 +5803,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Inquisitor's Snare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55e3dfcb-0999-401a-ae59-9804e12f4cfe",
     "provenance_summary": {},
@@ -6009,6 +6085,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -6028,7 +6105,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Nissa's Encouragement",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "55e897e9-5c70-4e32-8f24-3e0fefa319cd",
     "provenance_summary": {},

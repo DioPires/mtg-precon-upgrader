@@ -1736,6 +1736,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1755,7 +1756,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Armory Veteran",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2b51bbb3-1514-4a79-861f-b9cec9f0ec1b",
     "provenance_summary": {},
@@ -1809,6 +1810,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1834,7 +1836,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Boreal Centaur",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2b548f9a-c160-427d-9bb4-1fe940f8ab28",
     "provenance_summary": {
@@ -2317,6 +2319,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U",
@@ -2337,7 +2340,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{U}",
     "name": "Deft Duelist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2b6aaa8b-b90d-459f-95d4-9e00ee134f8e",
     "provenance_summary": {},
@@ -2498,6 +2501,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -2521,7 +2525,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Wood Elemental",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2b6da458-e075-4696-a74f-c8846e0cc370",
     "provenance_summary": {},
@@ -3185,6 +3189,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -3204,7 +3209,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "War Elephant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2b7c9fe0-5a23-4172-b31f-b0d85cd465f6",
     "provenance_summary": {},
@@ -3293,6 +3298,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "R"
@@ -3311,22 +3317,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{R}{R}{R}",
     "name": "Akroma, Angel of Fury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Legendary Creature — Angel",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: Akroma gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3481,6 +3497,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -3494,23 +3511,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Earth's Mightiest Heroes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2b87bcac-ec64-4012-9e75-f459d3640eb3",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "Put the rest into your graveyard.",
+        "feature": "self_mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3530,7 +3559,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Nausea",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2b8abae2-dd15-41ee-81ae-6a463723b43e",
     "provenance_summary": {},
@@ -4096,6 +4125,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -4115,7 +4145,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Searing Light",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2bad07d2-6284-4f87-9e2e-2e9ec5d2dd57",
     "provenance_summary": {},
@@ -4471,6 +4501,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4488,7 +4519,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Unstable Molecule Suit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2bc0821a-5a8f-465d-8532-3fb5c5d11d8f",
     "provenance_summary": {},
@@ -5012,6 +5043,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5037,7 +5069,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Kavu Scout",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2bd91ce8-1797-4dd7-8150-0d4caa7dad61",
     "provenance_summary": {
@@ -5388,6 +5420,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5407,7 +5440,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Giltgrove Stalker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2be3969b-a427-47be-a49c-47b98e3d6b5f",
     "provenance_summary": {},
@@ -5475,6 +5508,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R",
@@ -5496,7 +5530,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{R}{W}",
     "name": "Lightning Angel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2be85439-4606-4e1e-8be7-56d9e31f77c4",
     "provenance_summary": {},
@@ -5664,6 +5698,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5677,23 +5712,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Give In to Violence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2bf4811f-3462-4542-acb0-101e772bfec9",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "gains lifelink until end of turn",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -5707,17 +5754,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Sudden Impact",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2bf65e7d-6d31-4ad6-93cd-623612d3175d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target player",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []

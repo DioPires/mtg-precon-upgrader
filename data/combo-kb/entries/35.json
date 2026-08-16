@@ -504,6 +504,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -517,17 +518,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}",
     "name": "Primal Command",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "350f5c0a-563f-41c5-8f7b-10f409bb4d3b",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "Target player gains 7 life.",
+        "feature": "lifegain",
+        "magnitude": 7,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -649,6 +661,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "G",
@@ -673,7 +686,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Highland Forest",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35137378-6754-4bb1-a38e-5940890ccab1",
     "provenance_summary": {},
@@ -684,6 +697,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -698,7 +712,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -709,13 +724,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Seismic Strike",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3513d862-ef0d-4949-b33a-3fa9437cc444",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target creature equal to the number of Mountains",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1437,7 +1461,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "gets +1/+1 and has vigilance.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -1452,6 +1485,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -1464,11 +1498,12 @@
     "is_dfc": false,
     "mana_cost": "{1}{G/W}{G/W}",
     "name": "Kaheera, the Orphanguard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35428c77-9731-4d4d-8f75-e939a491cf86",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -1549,6 +1584,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -1569,7 +1605,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B/G}",
     "name": "Gift of the Deity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3548489b-053e-4f81-a0be-07422cbe357d",
     "provenance_summary": {},
@@ -1678,6 +1714,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1697,7 +1734,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Hyena Umbra",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "354affb3-1be7-4a9e-91da-2989eb54f62d",
     "provenance_summary": {},
@@ -1708,6 +1745,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1736,7 +1774,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Backstreet Bruiser",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "354d9db1-18a6-4701-be3c-c4ded900e2ff",
     "provenance_summary": {
@@ -1895,6 +1933,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -1920,7 +1959,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Mirran Mettle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35506b6b-6476-4830-9baa-4051c18322f0",
     "provenance_summary": {
@@ -1933,6 +1972,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -1952,7 +1992,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Narwhal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3552eea9-aee9-4555-b3cb-8e4fc5b728cc",
     "provenance_summary": {},
@@ -2115,6 +2155,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2134,7 +2175,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Fear",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "355bbe9b-59bf-470f-8600-410af4c7fe18",
     "provenance_summary": {},
@@ -2192,6 +2233,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2211,7 +2253,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Damning Verdict",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "355ed7ef-bfa6-4538-99fb-a2d203eb7005",
     "provenance_summary": {},
@@ -3211,6 +3253,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3231,7 +3274,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Damping Engine",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3584a055-5220-4721-89f8-de33f779122f",
     "provenance_summary": {},
@@ -3389,6 +3432,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -3408,7 +3452,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}",
     "name": "Plea for Guidance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "358cfcf3-8ad0-4877-a59a-76ee269169fb",
     "provenance_summary": {},
@@ -3709,6 +3753,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3728,7 +3773,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Fatal Fumes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "359ceca4-7063-4089-8088-ba54bc6fb7cf",
     "provenance_summary": {},
@@ -3842,6 +3887,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3861,7 +3907,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Monstrous Growth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35a05836-38d7-45c7-ac9a-996a682c2129",
     "provenance_summary": {},
@@ -3925,6 +3971,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3944,7 +3991,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Soothing of Sméagol",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35a17b42-9d3f-49ef-8218-2780c5ef5f08",
     "provenance_summary": {},
@@ -3955,6 +4002,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3977,7 +4025,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Nameless Race",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35a717ea-bd32-4714-b402-de7f15398e52",
     "provenance_summary": {},
@@ -4337,6 +4385,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4356,7 +4405,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Axebane Ferox",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35b3ae1c-4116-49b0-89a9-7332fe9bbff0",
     "provenance_summary": {},
@@ -4474,6 +4523,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4499,7 +4549,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Eerie Interference",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35ba0e70-da7c-4ed9-b8ec-7dd5c5ce110e",
     "provenance_summary": {
@@ -4907,6 +4957,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -4932,7 +4983,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Wild Nacatl",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35d3d96a-d303-4bf5-b972-f311331ec07a",
     "provenance_summary": {
@@ -5093,6 +5144,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -5112,7 +5164,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Viper's Kiss",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35dead9a-20ab-45e9-be3e-36857c928ab9",
     "provenance_summary": {},
@@ -5282,6 +5334,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5309,7 +5362,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Kithkin Armor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35e2730e-b3aa-4080-aae8-7b3ad1e59848",
     "provenance_summary": {
@@ -5459,6 +5512,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -5478,7 +5532,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Fervent Strike",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35efb1e6-6be2-4a38-969a-199524d48e02",
     "provenance_summary": {},
@@ -5489,6 +5543,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5508,7 +5563,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Stonewood Invocation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35f09a11-1d9b-4dfd-9695-b809c871f10d",
     "provenance_summary": {},
@@ -5559,6 +5614,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "R"
@@ -5581,7 +5637,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{R}{R}",
     "name": "Scrambleverse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "35fe3c61-8eaa-465d-ac34-63efda72fef2",
     "provenance_summary": {},

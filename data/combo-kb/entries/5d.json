@@ -281,6 +281,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -298,7 +299,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Marauder's Axe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d0e49fa-5dfb-48c2-af97-fdfb788d5f40",
     "provenance_summary": {},
@@ -366,6 +367,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -379,17 +381,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Sewer Shambler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d111adc-a91a-437d-8aac-3b246e980bd8",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a number of +1/+1 counters equal to this card's power on target creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Zombie",
     "wants": []
@@ -488,6 +501,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -507,7 +521,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Street Savvy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d13386e-faac-4440-96c3-11c60872ceec",
     "provenance_summary": {},
@@ -1456,6 +1470,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -1486,7 +1501,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{G}",
     "name": "Mind Roots",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d32dbf3-c157-4543-8813-da88f463de0e",
     "provenance_summary": {
@@ -1499,6 +1514,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "U",
@@ -1523,7 +1539,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Glacial Floodplain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d3563dd-a2c1-463c-a0ed-5ac22388bdbe",
     "provenance_summary": {},
@@ -1534,6 +1550,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1548,7 +1565,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1559,13 +1577,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Crash Landing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d36e5ee-1e23-48fe-ad13-081cc153342b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to that creature equal to the number of Forests you control",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -2454,6 +2481,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2478,7 +2506,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Weldfast Monitor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d604aff-ba60-4064-b025-b1f3d1c0254e",
     "provenance_summary": {
@@ -2642,6 +2670,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "W"
@@ -2667,7 +2696,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}{W}",
     "name": "Seraph of the Masses",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d6f75f1-dd9c-4d94-aea8-3bdec41eaa29",
     "provenance_summary": {
@@ -2826,6 +2855,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2845,7 +2875,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Vengeful Reaper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d776be0-cece-4496-a3b0-b7424eca77fd",
     "provenance_summary": {},
@@ -3774,6 +3804,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -3794,7 +3825,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{G}",
     "name": "Moldering Karok",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d95db27-53bb-4a20-9fb8-24998b03e767",
     "provenance_summary": {},
@@ -3895,6 +3926,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3911,17 +3943,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Blind Obedience",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d998c09-7d89-4265-ada4-6d80cbf56dae",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "each opponent loses 1 life and you gain that much life",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a spell",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Enchantment",
     "wants": []
@@ -3985,6 +4035,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4007,7 +4058,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Coming Attraction",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5d9c7ca4-f735-4bee-b03f-4c0c76ee48ed",
     "provenance_summary": {},
@@ -4018,6 +4069,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4036,22 +4088,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "Killer Bees",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5da1f1af-d2e5-4e14-914b-d93f15626636",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Insect",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{G}: This creature gets +1/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -4603,6 +4665,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4622,7 +4685,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Frantic Strength",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5dbe4648-f4c9-4d26-98f5-58a7e53b149d",
     "provenance_summary": {},
@@ -4633,6 +4696,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -4652,7 +4716,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Blind Fury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5dbfd316-a0a9-4caa-99b1-069931d2aaa4",
     "provenance_summary": {},
@@ -4772,6 +4836,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "R",
@@ -4802,7 +4867,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Radiant Summit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5dd0cc44-4647-4857-ad3b-22494099d08a",
     "provenance_summary": {
@@ -4912,6 +4977,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4931,7 +4997,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Bloated Toad",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5ddcc7a5-c869-49fd-baa1-ab5f5f456f90",
     "provenance_summary": {},

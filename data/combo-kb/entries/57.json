@@ -397,6 +397,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U",
@@ -411,23 +412,42 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{W}{U}",
     "name": "Reviving Vapors",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57104a79-cfb6-4330-8ea1-7726534ada56",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain life equal to that card's mana value",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "mill",
+        "evidence": "Put all other cards revealed this way into your graveyard",
+        "feature": "self_mill",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -441,17 +461,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Cragsmasher Yeti",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57120486-0316-4591-abca-438ab8283d3f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters, put two +1/+1 counters on target creature",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put two +1/+1 counters on target creature",
+        "feature": "counter_add",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Yeti",
     "wants": []
@@ -1399,6 +1437,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1418,7 +1457,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Mephitic Vapors",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5731ecb5-6ddc-4452-990c-b69986367f25",
     "provenance_summary": {},
@@ -1429,6 +1468,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1457,7 +1497,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Don't Blink",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5733c3fb-c533-456c-b30e-5d2b9e206b6b",
     "provenance_summary": {
@@ -1632,6 +1672,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -1651,7 +1692,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Giant Growth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
     "provenance_summary": {},
@@ -1711,6 +1752,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1730,7 +1772,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Trip Wire",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5751df7a-aa9a-4a27-b7ab-445ec4bcbdee",
     "provenance_summary": {},
@@ -2383,6 +2425,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -2397,7 +2440,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2408,13 +2452,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Stonefury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "577554de-78c3-4fa2-a866-06b80280bc97",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target creature equal to the number of lands you control",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -2668,6 +2721,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2688,7 +2742,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Wirecat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57828973-df3d-4288-988d-147a3016120e",
     "provenance_summary": {},
@@ -3072,6 +3126,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -3091,7 +3146,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Wu Admiral",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "578c5b92-9f7e-4645-9624-f2c1a16b6aaf",
     "provenance_summary": {},
@@ -3197,6 +3252,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3221,7 +3277,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Walking Dead",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5791456c-7b3c-4e93-a6d1-94ab01858816",
     "provenance_summary": {
@@ -3234,6 +3290,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3253,7 +3310,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Dread Warlock",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5791710d-c718-4f64-9c14-3668154716f1",
     "provenance_summary": {},
@@ -3322,6 +3379,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -3335,17 +3393,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{R}",
     "name": "Timecrafting",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57939644-6f9a-4653-920b-f2d28559a9ca",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put X time counters on target permanent",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -3458,6 +3527,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -3477,7 +3547,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Thwart the Enemy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5799baed-3457-4bf2-adf3-239a41dcc1c8",
     "provenance_summary": {},
@@ -3726,6 +3796,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3745,7 +3816,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Hanna's Custody",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57b0205d-ad9d-45b7-8556-0733aa7a4987",
     "provenance_summary": {},
@@ -3756,6 +3827,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3779,7 +3851,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Rusted Relic",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57b22bc3-23e8-4632-b10a-495fac5c77c7",
     "provenance_summary": {
@@ -3792,6 +3864,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3811,7 +3884,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Bring the Ending",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57b37690-0fb6-4e78-9210-4a529a6ade7c",
     "provenance_summary": {},
@@ -4305,6 +4378,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -4324,7 +4398,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Staggering Size",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57bda813-ad4b-40ab-aa35-3f8343ff8668",
     "provenance_summary": {},
@@ -4456,6 +4530,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -4481,7 +4556,7 @@
     "is_dfc": false,
     "mana_cost": "{G}{G}",
     "name": "Vintara Snapper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57c5cbd6-432d-4d48-9fc6-5b8a6eb223f1",
     "provenance_summary": {
@@ -4494,6 +4569,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -4514,7 +4590,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{R}",
     "name": "Get the Point",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57c704bc-8dff-4b90-b4e1-38d12e41b3d1",
     "provenance_summary": {},
@@ -4525,6 +4601,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4544,7 +4621,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Idyllic Tutor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57c9ff89-dd30-467b-bb3e-499eeea8cb94",
     "provenance_summary": {},
@@ -4897,6 +4974,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4917,7 +4995,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Halls of Mist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57d7deaf-ee08-49ab-b239-1c77a1f65225",
     "provenance_summary": {},
@@ -4958,6 +5036,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -4981,7 +5060,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{B}",
     "name": "Urborg Drake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57d93683-8739-49ef-856a-5a70f92d8763",
     "provenance_summary": {},
@@ -5533,6 +5612,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G",
@@ -5553,7 +5633,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}{G}{G}",
     "name": "Livonya Silone",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57f2aa02-f5f3-42a5-939d-5cc94200951e",
     "provenance_summary": {},
@@ -5734,6 +5814,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -5753,7 +5834,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Natural Selection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57f90b30-bcb0-447e-8788-5c5ded187207",
     "provenance_summary": {},
@@ -5824,6 +5905,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5837,23 +5919,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Parting Thoughts",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57fd34d3-3e30-4467-bace-3f4dc2a85c80",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "You draw X cards and you lose X life",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -5874,7 +5968,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Twisted Reflection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "57fdf496-c31e-4a3b-a8a6-4f053b808267",
     "provenance_summary": {},

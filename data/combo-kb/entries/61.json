@@ -107,6 +107,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -126,7 +127,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Kitesail Corsair",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6103f294-f920-4307-af80-d44cc71167fd",
     "provenance_summary": {},
@@ -343,6 +344,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -370,7 +372,7 @@
     "is_dfc": false,
     "mana_cost": "{G/U}{W}",
     "name": "Bant Sureblade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "610adb2b-9d52-4b70-92d1-0c7adeb93552",
     "provenance_summary": {
@@ -476,6 +478,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -501,7 +504,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Fated Clash",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "610d9f58-4182-49cb-855c-9b6030e7f714",
     "provenance_summary": {
@@ -953,6 +956,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -972,7 +976,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{B}",
     "name": "Public Execution",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6125f993-970c-469a-b557-23d4dc6684f4",
     "provenance_summary": {},
@@ -983,6 +987,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1005,7 +1010,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Planar Disruption",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6128679e-7e54-41e4-ab6e-25aeeffed49f",
     "provenance_summary": {},
@@ -1062,6 +1067,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1075,17 +1081,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Practiced Tactics",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "612c9079-adae-4fe5-9a72-8efc09ddfe5c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to that creature equal to twice the number of creatures",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1429,6 +1446,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1448,7 +1466,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Index",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "613b824e-39d1-4c6e-a19c-c915abdc860b",
     "provenance_summary": {},
@@ -1753,7 +1771,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Each creature you control that's a Wolf or a Werewolf gets +1/+1",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1767,6 +1794,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -1779,11 +1807,12 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Howlpack Resurgence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "614c3f71-e231-4c12-9e6b-cb8ea1d100bf",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -2303,6 +2332,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2325,7 +2355,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Soul Shatter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "615927c2-3fb0-4e64-a1a7-55fb56de1423",
     "provenance_summary": {},

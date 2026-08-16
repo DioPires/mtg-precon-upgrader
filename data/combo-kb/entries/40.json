@@ -165,6 +165,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -184,7 +185,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Harmonic Convergence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "400adeec-11b4-4a9c-9466-dcab524d87ea",
     "provenance_summary": {},
@@ -195,6 +196,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -217,7 +219,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Academic Probation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "400b2e17-ee48-4e22-a8a6-a607c215d1a2",
     "provenance_summary": {},
@@ -424,6 +426,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -438,7 +441,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -449,13 +453,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Telemin Performance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4014f665-08a6-4ae0-b4d7-5a69d043af6a",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "puts all noncreature cards revealed this way into their graveyard",
+        "feature": "mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -893,6 +906,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -915,7 +929,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Anoint with Affliction",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "402c3afe-7041-41a3-8fcd-64a060c12d4a",
     "provenance_summary": {},
@@ -1256,6 +1270,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1275,7 +1290,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Built to Last",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "403e554b-72a5-48b3-acea-0b4062ffb913",
     "provenance_summary": {},
@@ -1456,6 +1471,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -1485,7 +1501,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{G}",
     "name": "Binding the Old Gods",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4050e5b3-07c2-461c-9852-a2c081c0198d",
     "provenance_summary": {
@@ -2016,6 +2032,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -2035,7 +2052,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}",
     "name": "Enlarge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "405cd74a-6b44-4a80-b53c-ff1406d8ff45",
     "provenance_summary": {},
@@ -2087,6 +2104,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -2105,25 +2123,45 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Darwin, Adaptive Mutant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4061572b-b7ff-4d06-9f71-9e66e064593d",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on this creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Creature — Mutant Hero",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Remove two +1/+1 counters from Darwin: He gains indestructible",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2149,7 +2187,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Shardmage's Rescue",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "406247ee-2b86-4068-b5fa-65cdc83a82f4",
     "provenance_summary": {
@@ -2162,6 +2200,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2181,7 +2220,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Twisted Experiment",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4066d4df-d98f-44cd-bf25-ebb5e9d9ddeb",
     "provenance_summary": {},
@@ -2250,6 +2289,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2278,7 +2318,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "War Falcon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "406bccb6-6602-4486-a556-e0b550650253",
     "provenance_summary": {
@@ -2291,6 +2331,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2313,7 +2354,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Auntie's Sentence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "406e6db7-6e31-44b9-a793-57ee10688f71",
     "provenance_summary": {},
@@ -2526,6 +2567,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -2545,7 +2587,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Fire of Orthanc",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "407021e2-4072-4961-95be-f9309c341677",
     "provenance_summary": {},
@@ -2909,6 +2951,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2928,7 +2971,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Flaring Flame-Kin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40832734-fa83-4c02-9fbf-4614ce2919b7",
     "provenance_summary": {},
@@ -2939,6 +2982,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2964,7 +3008,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Nezumi Bladeblesser",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "408512c7-5016-4df4-b708-b7467bcdf0ae",
     "provenance_summary": {
@@ -3452,6 +3496,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3469,7 +3514,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Sharpened Pitchfork",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "409b44fc-fae2-4804-83a7-78cf95038f58",
     "provenance_summary": {},
@@ -3662,6 +3707,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -3681,7 +3727,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}",
     "name": "Cyclops Tyrant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40ac0cb0-bdf7-447d-9875-0eb3cc5d0adc",
     "provenance_summary": {},
@@ -3811,6 +3857,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -3833,7 +3880,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Audacious Swap",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40b0b93d-4075-42d6-bcd8-b2f9910cc7d2",
     "provenance_summary": {},
@@ -3844,6 +3891,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -3863,7 +3911,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Sulfuric Vapors",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40b14aaa-f29e-4e84-9bdc-bc2ac9762ce9",
     "provenance_summary": {},
@@ -3946,6 +3994,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3979,7 +4028,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Inner Demons Gangsters",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40b43763-3fbf-4ecd-8187-5d2c2c9cda82",
     "provenance_summary": {
@@ -4238,6 +4287,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -4260,7 +4310,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Furor of the Bitten",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40be0923-5d57-46fd-84ef-7f1a1fd5da42",
     "provenance_summary": {},
@@ -4375,6 +4425,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "B",
@@ -4399,7 +4450,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Ice Tunnel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40c5d6fe-854a-436d-9f80-13eb5f1f8f68",
     "provenance_summary": {},
@@ -4468,6 +4519,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -4487,7 +4539,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{R}",
     "name": "Collision of Realms",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40cbf2c0-041a-44df-a775-580012caab67",
     "provenance_summary": {},
@@ -4498,6 +4550,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B",
@@ -4518,7 +4571,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{B}",
     "name": "Jhessian Zombies",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40cc8ac6-114f-439d-816d-f65cd52bbbd2",
     "provenance_summary": {},
@@ -4529,6 +4582,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4547,22 +4601,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Nantuko Shade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40d02b8c-fb0e-4607-855f-49fbcec2e209",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Insect Shade",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}: This creature gets +1/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -4800,6 +4864,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -4825,7 +4890,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Skirk Outrider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40e52554-74e9-4d15-9a38-fc945f7d7ab8",
     "provenance_summary": {
@@ -5370,6 +5435,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -5389,7 +5455,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Arcane Flight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "40eee955-bec6-455a-addf-68cdb84c76b9",
     "provenance_summary": {},

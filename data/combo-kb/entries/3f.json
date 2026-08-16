@@ -134,6 +134,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -153,7 +154,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Deep Wood",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f01f627-9fbd-470b-8001-974784ccf421",
     "provenance_summary": {},
@@ -282,6 +283,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -301,7 +303,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Goblin Furrier",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f086b72-6e7c-40d4-b995-d5f94c494462",
     "provenance_summary": {},
@@ -554,6 +556,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -573,7 +576,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Quiet Purity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f16dc14-3d3f-4ffa-90bc-9abc67db75cf",
     "provenance_summary": {},
@@ -1818,6 +1821,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -1837,7 +1841,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Mystic Repeal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f453aca-e14f-4460-9334-f0c3f4256a0e",
     "provenance_summary": {},
@@ -1848,6 +1852,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1865,7 +1870,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Ace's Baseball Bat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f47ec32-4ee9-4bc0-96f2-310a939cb973",
     "provenance_summary": {},
@@ -1876,6 +1881,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -1895,7 +1901,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Rescind",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f487c8e-a923-4031-b0a7-04f778544fe0",
     "provenance_summary": {},
@@ -1906,6 +1912,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1924,25 +1931,36 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Dragon Hatchling",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f48f6a7-906d-4287-8440-06bfabc93b89",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Dragon",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1967,7 +1985,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Gust-Skimmer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f49dfa6-d0d4-4b58-8417-ed11c062e220",
     "provenance_summary": {
@@ -2463,6 +2481,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -2485,7 +2504,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Cragplate Baloth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f599e15-cbc5-4170-b6b4-efd16aa222ac",
     "provenance_summary": {},
@@ -2555,6 +2574,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -2574,7 +2594,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Yavimaya Ants",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f5bbfaa-cbd7-47af-9aa2-abb49d672734",
     "provenance_summary": {},
@@ -2933,6 +2953,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2952,7 +2973,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Righteousness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f6b2f76-0364-415e-a6a2-e9e5bf31b745",
     "provenance_summary": {},
@@ -3159,6 +3180,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -3187,7 +3209,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Evil Eye of Orms-by-Gore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f79780a-accd-4782-94a8-a6e71fb3ada7",
     "provenance_summary": {
@@ -3435,6 +3457,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R",
@@ -3455,7 +3478,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{R}",
     "name": "Zaffai and the Tempests",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f8a8650-0e38-4926-8f48-526351e6a863",
     "provenance_summary": {},
@@ -3791,6 +3814,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3810,7 +3834,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Wild Might",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f8fa982-73ee-410a-8873-0afc8a6f11fc",
     "provenance_summary": {},
@@ -4063,6 +4087,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -4082,7 +4107,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Dust Corona",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3f9ab49b-81fc-487e-8613-e30afcae164d",
     "provenance_summary": {},
@@ -4210,6 +4235,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4229,7 +4255,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Nyxborn Wolf",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3fa11a6a-a760-45db-8341-f83a0f69c17f",
     "provenance_summary": {},
@@ -5178,6 +5204,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B",
@@ -5204,7 +5231,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{B}",
     "name": "Tezzeret, Master of Metal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3fba19a9-44c6-4771-9587-9d2c4009e996",
     "provenance_summary": {
@@ -5586,6 +5613,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5611,7 +5639,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Dauntless Dourbark",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3fd25479-b65c-48f7-bb74-95d49af65ac1",
     "provenance_summary": {
@@ -6322,6 +6350,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -6339,7 +6368,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Skyblinder Staff",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3fea3d1a-067b-4eae-8433-f7e1e7b724a3",
     "provenance_summary": {},
