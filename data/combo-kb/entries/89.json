@@ -2760,6 +2760,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2779,7 +2780,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Eye Gouge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "89661ef9-cb42-401a-ae45-b57bb8dac033",
     "provenance_summary": {},
@@ -2790,6 +2791,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2809,7 +2811,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Gaseous Form",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "896af9a9-12a2-4dd6-957c-e52150b5f3a2",
     "provenance_summary": {},
@@ -2820,6 +2822,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -2839,7 +2842,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Force Spike",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "896ea218-3019-47e4-b0a0-2487335872bb",
     "provenance_summary": {},
@@ -3081,6 +3084,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3098,7 +3102,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Vorrac Battlehorns",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "89750d72-d1c0-4c8a-aa72-fdd48570aa92",
     "provenance_summary": {},
@@ -3764,6 +3768,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -3786,7 +3791,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}",
     "name": "Rhox Pummeler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "898c8415-8769-48c4-ad16-a4ba8c3d5d7d",
     "provenance_summary": {},
@@ -3990,6 +3995,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4009,7 +4015,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Arctic Foxes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "898f0824-cf4c-4e34-8407-9a32fdae6dcb",
     "provenance_summary": {},
@@ -4322,6 +4328,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -4341,7 +4348,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Vines of Vastwood",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "8998d211-5ca6-41d2-bc64-f51f70bd41e5",
     "provenance_summary": {},
@@ -4615,6 +4622,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -4633,22 +4641,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}{R}",
     "name": "Flowstone Overseer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "89a3a6a3-e5f9-4e28-8372-99219db3f976",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Beast",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}{R}: Target creature gets +1/-1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -5266,6 +5284,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B",
@@ -5283,17 +5302,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{U}{B}",
     "name": "Twisted Justice",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "89c5dec1-cefe-4ce3-a9df-b5cb9fa73b35",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "You draw cards equal to that creature's power.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -6097,6 +6127,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -6116,7 +6147,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Zombie Musher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "89f87341-c18f-4dc7-ba2e-81305383231e",
     "provenance_summary": {},

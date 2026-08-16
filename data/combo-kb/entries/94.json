@@ -1125,6 +1125,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -1144,7 +1145,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Uncovered Clues",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "942d550d-4823-4db8-8197-cbf15045f4f5",
     "provenance_summary": {},
@@ -1812,6 +1813,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -1846,7 +1848,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}",
     "name": "Shieldmage Elder",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "943bbe5b-76cd-478d-a1fe-d4e557df3469",
     "provenance_summary": {
@@ -2506,6 +2508,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2525,7 +2528,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Black Knight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9456c5b6-946d-403a-8ed0-dff9f921d98c",
     "provenance_summary": {},
@@ -3266,6 +3269,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3285,7 +3289,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Shimmering Barrier",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "94674840-c73c-4659-80b9-11140d1deaa3",
     "provenance_summary": {},
@@ -3417,6 +3421,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -3444,7 +3449,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Pardic Swordsmith",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "946d770f-0a59-415b-b334-8f7353b96046",
     "provenance_summary": {
@@ -3533,6 +3538,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3561,7 +3567,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Benevolent Blessing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9472c96a-2827-4af6-a6a1-b6749a5e9069",
     "provenance_summary": {
@@ -3990,6 +3996,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -4009,7 +4016,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Brand of Ill Omen",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "947bd180-ee95-4db4-b5d9-432428018eb8",
     "provenance_summary": {},
@@ -4079,6 +4086,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -4093,7 +4101,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4104,19 +4113,36 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Exotic Disease",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9480e142-289a-439d-b6a5-2666fb0e5be3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Target player loses X life and you gain X life",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "Target player loses X life and you gain X life",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -4136,7 +4162,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Mana Tithe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "948217ac-289e-455f-8c7c-519aa75fa345",
     "provenance_summary": {},
@@ -4542,6 +4568,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4555,17 +4582,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Hungry Graffalon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9494c499-6ead-491f-aeb0-6dbfac4d960c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a spell",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on this creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Giraffe",
     "wants": []
@@ -5426,7 +5471,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Creatures you control have flying.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5440,6 +5494,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -5452,11 +5507,12 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Levitation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "94b703c4-5584-4913-8365-7e9f2f535c2d",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -5465,6 +5521,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5490,7 +5547,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{R}",
     "name": "Claws of Valakut",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "94b86278-bfa6-4be4-8114-09b6c6c85724",
     "provenance_summary": {
@@ -5729,6 +5786,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -5752,7 +5810,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Unhallowed Phalanx",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "94c98a3b-9c3e-497f-b954-8f2248ca01ac",
     "provenance_summary": {},
@@ -5763,6 +5821,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -5782,7 +5841,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Red Tiger Mechan",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "94c9aea7-564d-4fc8-ae14-7b22cba18b95",
     "provenance_summary": {},
@@ -7009,6 +7068,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -7028,7 +7088,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Blood Moon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "94fac5fe-97d5-4c12-a80c-8efff9d853ae",
     "provenance_summary": {},
