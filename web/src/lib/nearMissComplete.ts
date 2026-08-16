@@ -380,16 +380,20 @@ export function analyzeCompletions(
         if (d.shortfall == null || d.shortfall <= 0) continue; // KB-gap abstentions skipped
         const closerFeatures = RESOURCE_CLOSERS[d.resource];
         if (!closerFeatures) continue;
-        const closerSet = new Set(closerFeatures);
         const loopKeys = new Set<string>();
         for (const cn of eng.cards) for (const k of nameKeys(cn)) loopKeys.add(k);
         const dist = distanceToClosure(0, d.shortfall);
         const seen = new Set<string>();
         for (const [oid, row] of Object.entries(index.cards)) {
           if (deckOids.has(oid)) continue;
-          const feats = toFeatureMap(row);
-          let closer: string | null = null;
-          for (const cf of closerFeatures) if (feats.has(cf)) { closer = cf; break; }
+          // A closer must SUPPLY the feature (provides or ambient — doublers
+          // and cost reducers are ambient/static effects in the KB). A card
+          // that merely WANTS the feature does not close the leak, so `w` is
+          // excluded. closerFeatures is strongest-first; take the strongest.
+          const supplies = new Set(
+            [...(row.p ?? []), ...(row.a ?? [])].map(([f]) => f),
+          );
+          const closer = closerFeatures.find((cf) => supplies.has(cf));
           if (!closer) continue;
           // Filters.
           if (!ciWithin(row.ci, deckCi)) continue;
@@ -400,19 +404,16 @@ export function analyzeCompletions(
           const key = normalizeName(row.n);
           if (loopKeys.has(key) || seen.has(key)) continue;
           seen.add(key);
-          // closerFeatures is strongest-first; take the strongest closer the card has.
-          const bestCloser = closerFeatures.find((cf) => feats.has(cf) && closerSet.has(cf)) ?? closer;
-          const pri = closerFeatures.indexOf(bestCloser);
           tierBAll.push({
             sort: dist,
-            pri: pri < 0 ? closerFeatures.length : pri,
+            pri: closerFeatures.indexOf(closer),
             b: {
               card: { name: row.n, ci: row.ci, price, owned },
               loopCards: eng.cards,
               resource: d.resource,
               shortfall: d.shortfall,
-              closerFeature: bestCloser,
-              closerLabel: config.labels[bestCloser] ?? bestCloser,
+              closerFeature: closer,
+              closerLabel: config.labels[closer] ?? closer,
               distance: dist,
             },
           });
