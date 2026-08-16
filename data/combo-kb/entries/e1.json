@@ -507,6 +507,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -526,7 +527,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Indestructible Aura",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e10e8d56-bba6-412d-970e-c24969f32b5b",
     "provenance_summary": {},
@@ -1015,6 +1016,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G",
@@ -1036,7 +1038,7 @@
     "is_dfc": true,
     "mana_cost": "{1}{R}{G} // {1}{G}{W}",
     "name": "Pure // Simple",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e119ba58-85e4-49ec-a2f8-3d094187c99d",
     "provenance_summary": {},
@@ -1047,6 +1049,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -1062,7 +1065,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1073,13 +1077,29 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{U}",
     "name": "First Family",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e119c709-bf9d-451e-827b-9787d455029a",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "You draw X cards",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "gain X life",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1338,6 +1358,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1357,7 +1378,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Goldmeadow Dodger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e120f341-4445-4b96-9777-2290471832bf",
     "provenance_summary": {},
@@ -1368,6 +1389,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G",
@@ -1388,7 +1410,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}{G}",
     "name": "Riftburst Hellion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e121f9cb-ed25-4be1-9822-b68cce2f2623",
     "provenance_summary": {},
@@ -3727,6 +3749,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -3746,7 +3769,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Illusionary Forces",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e17e3bda-75cb-47a1-9f60-f50705a46a1e",
     "provenance_summary": {},
@@ -3757,6 +3780,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -3776,7 +3800,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Deploy the Gatewatch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e17ea7eb-362e-4c61-97cd-537f3921bced",
     "provenance_summary": {},
@@ -4107,6 +4131,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -4120,23 +4145,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{W}",
     "name": "Winged Shepherd",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e18c93bc-2073-4bb6-83b4-c5c70f2d8a82",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Discard this card: Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Angel",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4156,7 +4193,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Squeeze",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e18d8326-c3c3-43c2-ac13-6861c0ef3888",
     "provenance_summary": {},
@@ -4472,6 +4509,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R",
@@ -4492,7 +4530,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{R}",
     "name": "Reinterpret",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e197104f-5382-4cb2-8afe-5ca0594629c2",
     "provenance_summary": {},
@@ -4614,6 +4652,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4627,17 +4666,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Cruel Fate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e199e183-e857-4dc7-87f4-36b32c4dac96",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "Put one of those cards into that player's graveyard",
+        "feature": "mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -5357,6 +5407,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5376,7 +5427,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Gift of Granite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1abac67-ae07-4bb2-a048-7e41e0fc0371",
     "provenance_summary": {},
@@ -5470,6 +5521,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -5489,7 +5541,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Super Strength",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1b577ad-1488-43b5-83d9-e40bd60c74be",
     "provenance_summary": {},
@@ -5624,6 +5676,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5643,7 +5696,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Rhox Charger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1b7db10-58a1-46fc-ac6c-287393ed96c2",
     "provenance_summary": {},
@@ -6262,6 +6315,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6275,17 +6329,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Gryff Rider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1ca5c24-bbd8-4eed-bb2b-17163f90e72b",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on this creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Knight",
     "wants": []
@@ -6357,6 +6422,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6376,7 +6442,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Kill Shot",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1ce32c7-a882-4d3a-9fd6-e5e2943382fb",
     "provenance_summary": {},
@@ -6967,6 +7033,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -6989,7 +7056,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Hyperion's Atomic Vision",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1e82283-01ec-447f-b0d4-5bd4619ab3d8",
     "provenance_summary": {},
@@ -7262,6 +7329,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -7281,7 +7349,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Enraged Ceratok",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e1f3f377-c7b1-474c-aed6-78b061d138c1",
     "provenance_summary": {},

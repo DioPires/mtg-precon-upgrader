@@ -6251,6 +6251,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 10.0,
     "color_identity": [
       "W"
@@ -6270,7 +6271,7 @@
     "is_dfc": false,
     "mana_cost": "{8}{W}{W}",
     "name": "Organic Extinction",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d9e24d7c-0907-45c1-b5d3-9fb16a929868",
     "provenance_summary": {},
@@ -6496,6 +6497,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6510,7 +6512,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -6521,13 +6524,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Barrel Down Sokenzan",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d9ecb346-7745-4106-a3e1-c467a3b91ec7",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "Barrel Down Sokenzan deals damage to target creature",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant — Arcane",
     "wants": []

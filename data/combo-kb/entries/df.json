@@ -126,6 +126,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -146,7 +147,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{R}",
     "name": "Phyrexian Purge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df032801-fccf-4bff-aa88-d01650b6c81e",
     "provenance_summary": {},
@@ -528,6 +529,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -544,23 +546,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Kavu Titan",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df166d0e-f944-404d-83b9-8cf53e220774",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "it enters with three +1/+1 counters on it",
+        "feature": "counter_add",
+        "magnitude": 3,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Kavu",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -586,7 +600,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Ensnare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df197279-ddb2-4237-8bb1-8df41d3bed9e",
     "provenance_summary": {
@@ -1294,6 +1308,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "B"
@@ -1313,7 +1328,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{B}{B}",
     "name": "Tresserhorn Skyknight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df344469-1177-4168-91af-3621b2a65182",
     "provenance_summary": {},
@@ -1499,6 +1514,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1524,7 +1540,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Kargan Dragonrider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df366871-8ed7-4183-8b0c-414ca361a711",
     "provenance_summary": {
@@ -1790,6 +1806,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1806,17 +1823,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Rob the Archives",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df45a344-5937-4a3f-a80f-581ea456ea05",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "you may sacrifice a creature with power 1 or greater",
+        "feature": "sac_outlet",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -2246,6 +2274,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2265,7 +2294,7 @@
     "is_dfc": true,
     "mana_cost": "{2}{R} // {1}{R}",
     "name": "Minecart Daredevil // Ride the Rails",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df555f60-2164-49dc-be67-00aca9eb0d45",
     "provenance_summary": {},
@@ -2780,6 +2809,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2799,7 +2829,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Phobian Phantasm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df680ccd-7e76-4a05-9bdf-4f437b4bfbb3",
     "provenance_summary": {},
@@ -3336,6 +3366,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -3356,7 +3387,7 @@
     "is_dfc": true,
     "mana_cost": "{B/G} // {2}{B}{G}",
     "name": "Status // Statue",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "df7d4964-35a2-42f7-a4f5-05122f78cbba",
     "provenance_summary": {},
@@ -4435,6 +4466,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "G",
@@ -4454,7 +4486,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4465,13 +4498,22 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Cinder Glade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dfac0258-e148-4d7d-8ded-fc2466d9caa6",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "mana",
+        "evidence": "{T}: Add {R} or {G}.",
+        "feature": "mana_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Land — Mountain Forest",
     "wants": []
@@ -5085,6 +5127,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -5098,17 +5141,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Sandbenders' Storm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dfc8b8de-be1d-4f7f-bb21-4761a0e7db4e",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put three +1/+1 counters on it.",
+        "feature": "counter_add",
+        "magnitude": 3,
+        "provenance": "llm"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "return it to the battlefield tapped",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5955,6 +6016,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -5974,7 +6036,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Primal Whisperer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dfe51046-12db-4be8-a4b4-ffa6359cac15",
     "provenance_summary": {},
@@ -5985,6 +6047,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -5998,17 +6061,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{R}",
     "name": "Galvanizing Sawship",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dfe8f77a-cc26-438b-92ae-2ca7a91f813b",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put charge counters equal to its power on this Spacecraft.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Spacecraft",
     "wants": []
@@ -6791,6 +6865,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -6813,7 +6888,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Kuldotha Ringleader",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dff72513-b67a-4732-a8fc-269cbf21ae99",
     "provenance_summary": {},
@@ -6871,6 +6946,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -6891,7 +6967,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{G}",
     "name": "Security Rhox",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dffc6785-31b0-487c-b9a0-980bca39753d",
     "provenance_summary": {},
@@ -6962,6 +7038,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -6984,7 +7061,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Piracy Charm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "dffde884-15bc-4985-90e2-a0888ef4cb48",
     "provenance_summary": {},
