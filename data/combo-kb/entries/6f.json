@@ -58,6 +58,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -80,7 +81,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Ancient Vendetta",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f053f0d-c9c7-4fcd-b218-a29d1d080104",
     "provenance_summary": {},
@@ -91,6 +92,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -110,7 +112,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Bounty of Might",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f067bfd-1c59-463f-99e1-61161b43b405",
     "provenance_summary": {},
@@ -264,7 +266,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Other creatures you control with counters on them have flying and haste.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R",
@@ -279,8 +290,10 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -291,16 +304,25 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{R}",
     "name": "Winged Hive Tyrant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f0d8900-8460-4b31-8b67-eb4e470c3317",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Tyranid",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "with counters on them have flying and haste",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -799,6 +821,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -823,7 +846,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Rune of Protection: White",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f214a42-e38f-4923-8afc-832efdde7975",
     "provenance_summary": {
@@ -1242,6 +1265,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -1261,7 +1285,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{U}",
     "name": "Scrapdiver Serpent",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f45ac24-e153-4ec1-a41f-989f9547d409",
     "provenance_summary": {},
@@ -1390,6 +1414,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1403,20 +1428,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Lightwalker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f4848d4-a5dc-4c71-955c-ad2b1cbb7ede",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Human Warrior",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "flying as long as it has a +1/+1 counter on it",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -1745,6 +1781,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -1768,7 +1805,7 @@
     "is_dfc": false,
     "mana_cost": "{U/B}{U/B}{U/B}{U/B}",
     "name": "Covetous Urge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f52008f-3365-4cf9-9cae-8e761d657902",
     "provenance_summary": {},
@@ -2214,6 +2251,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -2233,7 +2271,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Boots of Speed",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f6601bc-cb12-4054-9027-e4a0ebdae1a3",
     "provenance_summary": {},
@@ -2244,6 +2282,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -2263,7 +2302,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Imposing Visage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f67058b-ed14-4e3c-9af3-d61570870e36",
     "provenance_summary": {},
@@ -2787,6 +2826,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2806,7 +2846,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Anti-Magic Aura",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f78c1e2-e38f-431b-8864-8aad982e9912",
     "provenance_summary": {},
@@ -3491,6 +3531,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -3510,7 +3551,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Kiora's Dismissal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f866b14-dcdd-4c7d-b935-6db431d83b86",
     "provenance_summary": {},
@@ -3521,6 +3562,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -3540,7 +3582,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Desert Twister",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f880348-6dc8-4cf8-9313-9893c41a70a3",
     "provenance_summary": {},
@@ -3793,6 +3835,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -3810,7 +3853,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -3821,13 +3865,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}{R}",
     "name": "Storm of Memories",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f8ca795-d6fd-4e3e-911c-c621a942acbb",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "You may cast it without paying its mana cost.",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3899,6 +3952,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -3913,7 +3967,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -3924,13 +3979,22 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}",
     "name": "Procrastinate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f8fa68e-e961-4ae1-b27d-22d87e90f26b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put twice X stun counters on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4070,6 +4134,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -4089,7 +4154,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Castle Raptors",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f967951-99d3-4cce-bb26-b60b22bb99b0",
     "provenance_summary": {},
@@ -4162,6 +4227,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -4176,7 +4242,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4187,13 +4254,29 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{R}",
     "name": "Molten Psyche",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6f98c1eb-0f52-4d21-a266-e8d52f98c1b3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to each opponent equal to the number of cards",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "draw",
+        "evidence": "then draws that many cards",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4724,6 +4807,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -4743,7 +4827,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{B}",
     "name": "Disembowel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6fa90258-3c9f-4723-880f-31871c0772e0",
     "provenance_summary": {},
@@ -4933,6 +5017,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4960,7 +5045,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Homarid Warrior",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6facb0f6-fa49-4ce6-9f95-15bb3ce4bcf2",
     "provenance_summary": {
@@ -5024,6 +5109,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 9.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5041,7 +5127,7 @@
     "is_dfc": false,
     "mana_cost": "{9}",
     "name": "Teeka's Dragon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6fb6e37e-d774-4a50-8ea3-b955535c2065",
     "provenance_summary": {},
@@ -5093,6 +5179,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -5112,7 +5199,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Quaketusk Boar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6fbaa853-48d4-4a3b-b22d-27415cc266d7",
     "provenance_summary": {},
@@ -5181,6 +5268,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -5200,7 +5288,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Yellow Scarves General",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6fbade4d-502d-45d7-a79e-3fd9e3e7ccdf",
     "provenance_summary": {},
@@ -5472,6 +5560,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5491,7 +5580,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Sporeback Wolf",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6fd5f773-e53e-4a7d-9093-dddd9b2e741f",
     "provenance_summary": {},
@@ -5762,6 +5851,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5781,7 +5871,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Mnemonic Nexus",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6fe302f2-5594-478c-a66b-89b4b96e3611",
     "provenance_summary": {},
@@ -5932,6 +6022,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -5954,7 +6045,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Locthwain Paladin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6fea3c95-9663-4857-983e-eaf522efa1a8",
     "provenance_summary": {},
@@ -6067,6 +6158,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -6086,7 +6178,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Curfew",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "6ff1e793-1569-4887-b6bb-d9855c5e8a26",
     "provenance_summary": {},

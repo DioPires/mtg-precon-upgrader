@@ -157,6 +157,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -177,7 +178,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{B}",
     "name": "Auditore Ambush",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "72075231-e3b3-46cc-b994-2d95b24cf904",
     "provenance_summary": {},
@@ -187,7 +188,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "a Barbarian, a Warrior, or a Berserker gets +2/+2 and has haste",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -201,16 +211,19 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Lovisa Coldeyes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "720879dc-7593-41c0-ab3d-936069f26930",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Legendary Creature — Human",
@@ -1001,6 +1014,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1020,7 +1034,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{R}",
     "name": "Vulshok Refugee",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7220769a-9d63-4211-9365-9feaf4d9a518",
     "provenance_summary": {},
@@ -1093,6 +1107,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -1106,17 +1121,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Weight of Spires",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "722324de-3e77-4a22-aa07-7f8a21be76c2",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target creature equal to the number of nonbasic lands",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1414,6 +1440,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -1433,7 +1460,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Return to the Earth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "722f2965-a1ec-4b97-a4bd-b99364f58b1e",
     "provenance_summary": {},
@@ -2344,6 +2371,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -2366,7 +2394,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Fugue",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "724c8a20-bfb3-4c63-8cfa-5ad4c72ebe2f",
     "provenance_summary": {},
@@ -2407,6 +2435,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2429,7 +2458,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Ecstatic Beauty",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "724d933c-6e5f-458c-9b39-83b4662693ea",
     "provenance_summary": {},
@@ -2440,6 +2469,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2457,7 +2487,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Signal Pest",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "724f3d2f-0513-4efd-961f-56a7ea7b5731",
     "provenance_summary": {},
@@ -2591,6 +2621,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -2613,7 +2644,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Elemental Teachings",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7255705c-b788-4bb1-824a-9262f4a0864e",
     "provenance_summary": {},
@@ -2834,6 +2865,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -2853,7 +2885,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{U}",
     "name": "Striped Riverwinder",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "725972de-4816-44cf-a2a5-4326c3bc1b4b",
     "provenance_summary": {},
@@ -3015,6 +3047,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -3034,7 +3067,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Foriysian Brigade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7261dc6d-7669-4682-977b-1304f57a201d",
     "provenance_summary": {},
@@ -4022,6 +4055,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4039,7 +4073,7 @@
     "is_dfc": false,
     "mana_cost": "{5}",
     "name": "Dusk Legion Dreadnought",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7278f382-8249-4981-9d87-47cef7dc13dd",
     "provenance_summary": {},
@@ -4094,6 +4128,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -4113,7 +4148,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Green Ward",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "727ab7f2-741e-4442-b5cb-e3032549fa87",
     "provenance_summary": {},
@@ -4529,6 +4564,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -4548,7 +4584,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Abyssal Persecutor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7282f643-191b-41be-9f6f-82360c915d6d",
     "provenance_summary": {},
@@ -4598,6 +4634,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4611,17 +4648,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Tidings",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "72897780-094d-4a21-8b1c-419a9defd2fb",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw four cards.",
+        "feature": "draw",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4978,6 +5026,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -4994,23 +5043,42 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Fateful Showdown",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "729b7ce8-7e7f-4db9-b3ce-67aba46a7b0d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to any target equal to the number of cards in your hand",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "draw",
+        "evidence": "draw that many cards",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -5030,7 +5098,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Airship Crash",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "72a0e0f1-e8be-441a-bcaf-029fb1bd1fd2",
     "provenance_summary": {},
@@ -5247,6 +5315,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5266,7 +5335,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Transmutation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "72a75113-4ddf-460d-8d9b-03931c2788da",
     "provenance_summary": {},
@@ -5720,6 +5789,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -5742,7 +5812,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Rigging Runner",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "72b600e3-d671-4279-8ca6-9a3d6e774b53",
     "provenance_summary": {},
@@ -5753,6 +5823,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -5772,7 +5843,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Goblin Glider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "72bce821-46f0-40eb-abdb-575d4305b8fd",
     "provenance_summary": {},
@@ -6092,6 +6163,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -6111,7 +6183,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Rain of Tears",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "72cecab3-519e-4a23-9623-b423a5c5a251",
     "provenance_summary": {},
@@ -6464,6 +6536,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6483,7 +6556,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Griffin Sentinel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "72df0b70-5c9f-44f3-96d5-81c95abc0065",
     "provenance_summary": {},

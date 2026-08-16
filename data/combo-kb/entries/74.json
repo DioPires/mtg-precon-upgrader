@@ -505,6 +505,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -522,7 +523,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -537,13 +539,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Yawgmoth's Vile Offering",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "740f9ab2-fc94-4abc-82b4-6b53116bf1a4",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "creature or planeswalker card from a graveyard onto the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Sorcery",
     "wants": []
@@ -1016,6 +1027,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -1035,7 +1047,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Boiling Seas",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7421b711-81a4-4042-b024-f55bf9ff203f",
     "provenance_summary": {},
@@ -1139,6 +1151,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1164,7 +1177,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Sejiri Merfolk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74231a46-7e2d-497f-ae66-b40f8989551c",
     "provenance_summary": {
@@ -1336,6 +1349,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1355,7 +1369,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Mist-Cloaked Herald",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74255add-2894-4c31-81c1-d38873fa325f",
     "provenance_summary": {},
@@ -1683,6 +1697,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1700,17 +1715,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{U}",
     "name": "Read the Runes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74316be1-041f-4a2e-a296-0b496f90ca25",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw X cards.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1809,6 +1835,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -1828,7 +1855,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Final Punishment",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74344ca9-b057-4864-a374-3b399389765f",
     "provenance_summary": {},
@@ -1913,6 +1940,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -1941,7 +1969,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}{U}{U}",
     "name": "Secret of Bloodbending",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "743fa824-18cb-4225-ba7b-5b0bbc3c8d41",
     "provenance_summary": {
@@ -2195,6 +2223,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2214,7 +2243,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Expel the Interlopers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "744b7e93-c893-4770-a3bb-6a45b7f8e4f7",
     "provenance_summary": {},
@@ -2225,6 +2254,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -2247,7 +2277,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}",
     "name": "Reweave",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "744d6daa-2f93-43e1-88c0-0d9d5f9d111b",
     "provenance_summary": {},
@@ -2342,6 +2372,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B",
@@ -2367,7 +2398,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Dutiful Thrull",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "744fcf77-b597-48a0-92ec-f3a617c03df1",
     "provenance_summary": {
@@ -2380,6 +2411,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2404,7 +2436,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Unworthy Dead",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7454e2cf-5ef2-4623-bac7-c375fd230595",
     "provenance_summary": {
@@ -2980,6 +3012,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2999,7 +3032,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Drag to the Underworld",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "746dc1d8-f245-47be-abd5-50ca6ac0d1af",
     "provenance_summary": {},
@@ -3122,6 +3155,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -3144,7 +3178,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Frontline Rebel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7471e445-4655-4336-9769-3debd197b77c",
     "provenance_summary": {},
@@ -3187,6 +3221,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -3206,7 +3241,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Thornado",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "7476a14a-611e-4f81-b603-fd600e88568f",
     "provenance_summary": {},
@@ -3311,6 +3346,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3336,7 +3372,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Sun-Crested Pterodon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "747dbf0c-dcea-49d1-ab6c-d74016d580a4",
     "provenance_summary": {
@@ -3920,6 +3956,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3939,7 +3976,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Talon Sliver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74910702-e385-48f7-a6b3-064ebed08be7",
     "provenance_summary": {},
@@ -4304,6 +4341,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "B",
@@ -4328,7 +4366,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Snowfield Sinkhole",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "749c2c8e-9588-4e83-b07f-3c37eb63338b",
     "provenance_summary": {},
@@ -4706,6 +4744,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4725,7 +4764,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Redirect",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74a7d880-5a49-412b-af4d-0b4cdb8453ee",
     "provenance_summary": {},
@@ -4880,6 +4919,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -4899,7 +4939,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Streetwise Negotiator",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340",
     "provenance_summary": {},
@@ -4941,6 +4981,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4963,7 +5004,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "End of the Hunt",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74b8182e-54be-444a-97b1-84fc5fd3c290",
     "provenance_summary": {},
@@ -5075,6 +5116,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5094,7 +5136,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Turn to Frog",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
     "provenance_summary": {},
@@ -5105,6 +5147,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -5130,7 +5173,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Viashino Grappler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74c5bfb0-1375-46e9-9a6c-1b9fada2913b",
     "provenance_summary": {
@@ -5194,6 +5237,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5226,7 +5270,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Hypochondria",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74c90ddc-4c6e-479d-ad68-b444d3109258",
     "provenance_summary": {
@@ -5239,6 +5283,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5255,17 +5300,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": true,
     "mana_cost": null,
     "name": "Beloved Beggar // Generous Soul",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74c9cc13-c03f-4322-82af-b7bce1f2a0d8",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "You may cast this card from your graveyard transformed for its disturb cost",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Peasant // Creature — Spirit",
     "wants": []
@@ -5605,6 +5661,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -5624,7 +5681,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Wind-Kin Raiders",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74dcff4f-c126-4bbb-b6f0-3f3315bc95fe",
     "provenance_summary": {},
@@ -5748,6 +5805,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -5770,7 +5828,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{U}",
     "name": "Slipstream Eel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74e6dd0f-2866-4d45-a214-8b09b837bc02",
     "provenance_summary": {},
@@ -5984,6 +6042,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -6011,7 +6070,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Escape Artist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74f4d505-e114-47be-be27-a7949e8abdc7",
     "provenance_summary": {
@@ -6139,6 +6198,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -6156,7 +6216,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Haunted Cloak",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "74fc88d5-19c3-4516-9a06-e9573d659caa",
     "provenance_summary": {},
