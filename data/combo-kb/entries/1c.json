@@ -548,6 +548,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -570,7 +571,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Jaheira's Respite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c19b04d-b307-4f70-b89e-af306374b9db",
     "provenance_summary": {},
@@ -901,6 +902,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -920,7 +922,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Voyage's End",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c2829b7-f73f-4023-95f3-9cd40b4125d7",
     "provenance_summary": {},
@@ -995,6 +997,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -1017,7 +1020,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Discover the Impossible",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c2a3f13-6bcb-42ad-98f6-642151ad54f1",
     "provenance_summary": {},
@@ -1162,6 +1165,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1181,7 +1185,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Asphyxiate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c2ce0d0-8c3e-48e8-b1fd-54658bdb9af9",
     "provenance_summary": {},
@@ -1192,6 +1196,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1208,17 +1213,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Virtus's Maneuver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c2d6b55-653a-41fd-8a5e-6463a992640b",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Each friend returns a creature card from their graveyard to their hand.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1690,6 +1706,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -1707,7 +1724,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -1726,16 +1744,25 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Psionic Ritual",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c3e6980-97fe-4e15-93a0-368280da8608",
     "provenance_summary": {
-      "deterministic": 3
+      "deterministic": 3,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Sorcery",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile target instant or sorcery card from a graveyard and copy it.",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -1832,6 +1859,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1850,25 +1878,36 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Armor of Faith",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c482b20-b423-48ef-b162-53960d43b4f7",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Enchantment — Aura",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{W}: Enchanted creature gets +0/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1882,17 +1921,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Riveteers Decoy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c4918e6-3810-458e-a11b-949bbc43e7cc",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies, draw a card.",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Warrior",
     "wants": []
@@ -1986,6 +2036,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2005,7 +2056,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Melesse Spirit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c4bd85b-03c2-4235-aea1-76c48520adf3",
     "provenance_summary": {},
@@ -2422,6 +2473,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -2441,7 +2493,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Journey of Discovery",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c586d8a-9d1a-48a7-bb3e-9b2c0c329f8d",
     "provenance_summary": {},
@@ -2653,6 +2705,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2672,7 +2725,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Shield of Duty and Reason",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c64ab87-1da1-4b07-a3f2-73631ae3d501",
     "provenance_summary": {},
@@ -2984,6 +3037,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3003,7 +3057,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Rhystic Tutor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c6da9a9-6395-460b-8150-ea46d7299dc2",
     "provenance_summary": {},
@@ -3131,6 +3185,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -3151,7 +3206,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{G}",
     "name": "Abrupt Decay",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c747fe2-289e-492a-a846-aa77707e2dc3",
     "provenance_summary": {},
@@ -3302,6 +3357,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -3315,17 +3371,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Villainous Wrath",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c7c1867-20cb-4035-bb2a-42760edf0a55",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Target opponent loses life equal to the number of creatures they control.",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3763,6 +3830,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "B",
@@ -3778,17 +3846,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{W}{U}{B}",
     "name": "Sphinx of the Steel Wind",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1c96772b-463c-4655-836b-cf6e9dc6319f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "lifelink",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact Creature — Sphinx",
     "wants": []
@@ -4222,6 +4301,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -4241,7 +4321,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}",
     "name": "Argivian Phalanx",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1ca8d2cb-58ba-476b-a4f2-1bf273a54cf3",
     "provenance_summary": {},
@@ -4722,6 +4802,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -4747,7 +4828,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Masterful Flourish",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1cb419cc-d8e4-4676-987f-089cebccc374",
     "provenance_summary": {
@@ -5069,6 +5150,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5087,22 +5169,41 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Wicked Akuba",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1cc00abb-b130-48a2-95f9-f1f986cd75d4",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "{B}: Target player dealt damage by this creature this turn loses 1 life.",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}: Target player dealt damage by this creature this turn loses 1 life.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -5371,6 +5472,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5391,7 +5493,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Silent Arbiter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1cdf30de-d88c-421a-80df-4917bbd2f09e",
     "provenance_summary": {},
@@ -5607,6 +5709,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5626,7 +5729,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Lose Focus",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1cea6439-7ae5-4887-8c33-7da9fb36e2d4",
     "provenance_summary": {},

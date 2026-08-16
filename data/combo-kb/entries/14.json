@@ -458,6 +458,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "B",
@@ -479,7 +480,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{B}{G}",
     "name": "Duneblast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14104a52-c4e8-4755-8196-7fa5c5a35f36",
     "provenance_summary": {},
@@ -590,6 +591,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -603,17 +605,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{U}",
     "name": "Spell Burst",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "141d9b88-5326-4e3d-8f16-5293246fab88",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Buyback {3}",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -742,6 +755,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -762,7 +776,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{U}",
     "name": "Cytoshape",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
     "provenance_summary": {},
@@ -1057,6 +1071,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1070,17 +1085,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "In the Presence of Ages",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "142a960c-4d8e-4b3b-a0db-435c22df8f92",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "Put the rest into your graveyard.",
+        "feature": "self_mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1221,6 +1247,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R",
@@ -1241,7 +1268,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R/W}",
     "name": "Fresh-Faced Recruit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14319020-faf2-49c4-a808-c39650203383",
     "provenance_summary": {},
@@ -1299,6 +1326,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1316,7 +1344,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Night Brushwagg Ringmaster",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1436370f-baf0-4659-804e-90aad871b05b",
     "provenance_summary": {},
@@ -2271,6 +2299,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2290,7 +2319,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Hulking Goblin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1451b623-8214-4d81-9436-62dbe8b79539",
     "provenance_summary": {},
@@ -2681,7 +2710,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Warriors your team controls have haste.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -2696,16 +2734,19 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}{R}",
     "name": "Rushblade Commander",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14613521-a939-426e-9bd5-183186b51583",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Azra Warrior",
@@ -2744,6 +2785,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -2760,17 +2802,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Skitter of Lizards",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14646c85-12ad-4b99-a2af-e4a790e034ef",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with a +1/+1 counter on it for each time it was kicked.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Lizard",
     "wants": []
@@ -2841,6 +2894,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2858,7 +2912,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Bronze Sword",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14691783-1246-45ed-a439-c86d7b5eef62",
     "provenance_summary": {},
@@ -3757,6 +3811,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -3777,7 +3832,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B/R}{B/R}",
     "name": "Sootwalkers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1492e778-b85e-4675-b48c-bc0a2eb1d105",
     "provenance_summary": {},
@@ -4006,6 +4061,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4019,17 +4075,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Deadbridge Goliath",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1498f5a1-6df7-4f80-9470-c93528b64a9c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a number of +1/+1 counters equal to this card's power on target creature.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Insect",
     "wants": []
@@ -4332,6 +4399,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4351,7 +4419,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Jawbone Duelist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14af3ec5-d90a-4560-a70a-8645765f1253",
     "provenance_summary": {},
@@ -4597,6 +4665,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4619,7 +4688,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Reach the Horizon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14bc29ee-4f84-4e62-8ede-5741b99414c9",
     "provenance_summary": {},
@@ -5116,6 +5185,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5138,7 +5208,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Root Cage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14c3a43c-cdb1-45d1-8eba-8e6d16bd7643",
     "provenance_summary": {},
@@ -5441,6 +5511,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5463,7 +5534,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{W}",
     "name": "Runed Halo",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14cefb15-d833-4c70-80c9-f2d34b6c846b",
     "provenance_summary": {},
@@ -6473,6 +6544,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -6493,7 +6565,7 @@
     "is_dfc": false,
     "mana_cost": "{W/U}{W/U}{W/U}",
     "name": "Plumeveil",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "14fa0771-cf2b-4563-98b2-ff4ee24bce21",
     "provenance_summary": {},

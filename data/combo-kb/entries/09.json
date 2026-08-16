@@ -162,6 +162,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R",
@@ -177,7 +178,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -188,13 +190,22 @@
     "is_dfc": false,
     "mana_cost": "{U}{R}",
     "name": "Corporeal Projection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09038989-3c1f-4426-a150-e0a9374f34c3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a token copy that's tapped and attacking",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -241,6 +252,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -260,7 +272,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Blessing of the Nephilim",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0904cc0e-e2c9-4a85-89c7-4254fd423bf8",
     "provenance_summary": {},
@@ -400,6 +412,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -414,7 +427,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -425,13 +439,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Rumbling Rockslide",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0909cbce-b4a0-42bb-8a97-47eeb99606c0",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target creature equal to the number of lands you control",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -548,6 +571,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -567,7 +591,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Unholy Strength",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "090d88a9-7f2d-4bd1-a30a-7c48d05068be",
     "provenance_summary": {},
@@ -578,6 +602,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -594,23 +619,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Freestrider Commando",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09117016-5fd1-4590-9867-aad65d3097e3",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with two +1/+1 counters on it",
+        "feature": "counter_add",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Centaur Mercenary",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -626,7 +663,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -637,13 +675,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{G/W}{G/W}",
     "name": "Sumala Rumblers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09189f67-b33f-4775-bfd5-862154da7526",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a token copy that's tapped and attacking",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Wurm",
     "wants": []
@@ -804,6 +851,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -829,7 +877,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Mogg Salvage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0923ad85-2ea4-4463-8f71-b7d0a162b486",
     "provenance_summary": {
@@ -1133,6 +1181,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1157,7 +1206,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Rune of Protection: Blue",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "092dd5be-da62-4198-b7fa-0813f075047c",
     "provenance_summary": {
@@ -1200,6 +1249,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1219,7 +1269,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Baleful Eidolon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0930a976-f69e-44a8-8b19-72095f20ed13",
     "provenance_summary": {},
@@ -1749,6 +1799,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1768,7 +1819,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Robe of Mirrors",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "093a20e5-ff14-41c7-b16c-1f745ddf6942",
     "provenance_summary": {},
@@ -1995,6 +2046,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2017,7 +2069,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Swooping Protector",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "094689cc-617a-426e-beb9-3f8de692cd5b",
     "provenance_summary": {},
@@ -2089,6 +2141,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -2108,7 +2161,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}",
     "name": "Elvish Bard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "094b778f-95a0-436f-a9d0-20a46a674486",
     "provenance_summary": {},
@@ -2414,6 +2467,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -2430,17 +2484,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Kavu Primarch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09537e9f-6c8e-4849-9d35-d4f3950a64d7",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with four +1/+1 counters on it",
+        "feature": "counter_add",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Kavu",
     "wants": []
@@ -3352,6 +3417,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3369,7 +3435,7 @@
     "is_dfc": false,
     "mana_cost": "{5}",
     "name": "Skybox Ferry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09726c3d-f700-4bf4-a9e7-326fe41b0a4a",
     "provenance_summary": {},
@@ -5517,6 +5583,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5534,7 +5601,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Sphere of Resistance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
     "provenance_summary": {},
@@ -5655,6 +5722,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5674,7 +5742,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Stalwart Aven",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09cc2cda-14d1-424e-a688-1b49b1b4c392",
     "provenance_summary": {},
@@ -5895,6 +5963,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5919,7 +5988,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Ghost Ship",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09de1136-8a8f-4539-92a2-611dcdd0790b",
     "provenance_summary": {
@@ -6095,6 +6164,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6114,7 +6184,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Kree Commandos",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09eb988a-e2eb-42e1-a786-01be63d2263f",
     "provenance_summary": {},
@@ -6269,6 +6339,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -6288,7 +6359,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Misleading Motes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09eec5a2-7835-4b24-9dd1-594612ee9152",
     "provenance_summary": {},
@@ -6628,6 +6699,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -6647,7 +6719,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Sunder from Within",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09f75f28-09b9-4a6e-a1b0-671208d274d3",
     "provenance_summary": {},
@@ -6843,6 +6915,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6862,7 +6935,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Rock Jockey",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "09fff6a3-6a54-4101-a587-55d7113b9639",
     "provenance_summary": {},

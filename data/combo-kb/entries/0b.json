@@ -58,6 +58,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -77,7 +78,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Jwari Shapeshifter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b0c02eb-4d9e-4fea-bad6-9ef5d7bb5295",
     "provenance_summary": {},
@@ -145,6 +146,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -170,7 +172,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Grand Ball Guest",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b0fdb28-f7b1-4c30-9f2c-14a9074da22d",
     "provenance_summary": {
@@ -242,6 +244,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -261,7 +264,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{R}",
     "name": "Pillage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b137853-7cb9-424b-8285-12938991eafb",
     "provenance_summary": {},
@@ -532,6 +535,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -547,7 +551,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -558,13 +563,22 @@
     "is_dfc": true,
     "mana_cost": "{2}{R} // {1}{G}",
     "name": "Struggle // Survive",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b1f2522-960c-405f-9622-4cadbc7ba545",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "Struggle deals damage to target creature equal to the number of lands",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant // Sorcery",
     "wants": []
@@ -1444,6 +1458,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -1463,7 +1478,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{W}{W}",
     "name": "Healer's Flock",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b3b2fb1-d5fe-4d14-985a-85f13cd60d9c",
     "provenance_summary": {},
@@ -1474,6 +1489,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1493,7 +1509,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Tread Upon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b3bdbc6-cde7-4187-b13c-82fd02ae4037",
     "provenance_summary": {},
@@ -1615,6 +1631,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -1637,7 +1654,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{U}",
     "name": "Zhou Yu, Chief Commander",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b4742b7-e769-4354-beaf-6b4d18768ec1",
     "provenance_summary": {},
@@ -1717,6 +1734,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -1731,7 +1749,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1742,13 +1761,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Monumental Corruption",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b49924b-cf83-46d9-b665-9c718a40e16c",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Target player draws X cards and loses X life",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3072,6 +3100,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -3091,7 +3120,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Skymarcher Aspirant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b6db929-1b6a-4372-8146-aa047258b552",
     "provenance_summary": {},
@@ -3308,6 +3337,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3327,7 +3357,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Cloud Elemental",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b751cc7-3a19-4207-9e64-83e18d279588",
     "provenance_summary": {},
@@ -3419,6 +3449,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3438,7 +3469,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Sneaky Homunculus",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b76bb3b-1ada-4c78-bd13-3464371d4fa0",
     "provenance_summary": {},
@@ -3563,6 +3594,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3585,7 +3617,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Patched Plaything",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b7e950a-89e1-4ec4-94af-5af2f1252b12",
     "provenance_summary": {},
@@ -3648,6 +3680,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3667,7 +3700,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Bloodline Culling",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b7fabe8-bc44-47b1-93bb-b895a1bd0aa9",
     "provenance_summary": {},
@@ -4376,6 +4409,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4395,7 +4429,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Surging Sentinels",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b98ae2a-56ac-485d-b064-a06e1e8d4055",
     "provenance_summary": {},
@@ -4406,6 +4440,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "B",
@@ -4421,7 +4456,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4432,13 +4468,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}{B}{B}",
     "name": "Soulquake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b9a477b-f2dd-47b2-8493-eb63f44a2688",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "all creature cards in graveyards to their owners' hands.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4504,6 +4549,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -4527,7 +4573,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}{B}",
     "name": "Sealed Fate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0b9b5856-9396-4a55-8675-58cd171df708",
     "provenance_summary": {},
@@ -4748,6 +4794,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4771,7 +4818,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Liliana of the Veil",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0ba134d8-ee7d-48ec-8dc6-57942b8e9261",
     "provenance_summary": {},
@@ -5228,6 +5275,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5247,7 +5295,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Wings of Velis Vel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0bb2b3cc-d3e6-40e9-a5da-d589e8e8f0bd",
     "provenance_summary": {},
@@ -5969,6 +6017,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5988,7 +6037,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Student of Warfare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0bc2875b-3a5a-4885-86b9-16ab7330ac10",
     "provenance_summary": {},
@@ -5999,6 +6048,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -6018,7 +6068,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Wasteland Scorpion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0bc418c3-ebde-4e52-9284-65d7e3433f27",
     "provenance_summary": {},
@@ -6029,6 +6079,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -6054,7 +6105,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Mire Kavu",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0bc58096-7925-4870-bb95-58cce51ea8e7",
     "provenance_summary": {
@@ -6655,6 +6706,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -6669,23 +6721,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}{U}",
     "name": "Vigean Intuition",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0be157fa-b2d3-415e-acb0-173fd1603fde",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "and the rest into your graveyard",
+        "feature": "self_mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -6703,7 +6767,7 @@
     "is_dfc": false,
     "mana_cost": "{8}",
     "name": "Breaker of Armies",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0be1ace3-2b3d-4465-b63a-be523f73df36",
     "provenance_summary": {},
@@ -6714,6 +6778,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -6733,7 +6798,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Timber Paladin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0be44c76-9e3f-45c2-9b2c-6a5f00678780",
     "provenance_summary": {},

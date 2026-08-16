@@ -73,6 +73,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -87,7 +88,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -98,19 +100,29 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Bushmaster, Coiled Henchman",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21067a25-f749-4b79-bc6d-820a91af2834",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Legendary Creature — Snake Human Villain",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Each other creature you control with a +1/+1 counter on it has deathtouch.",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -130,7 +142,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Kor Scythemaster",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21083222-12b6-4892-8078-1859140b7cc3",
     "provenance_summary": {},
@@ -550,6 +562,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -569,7 +582,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Mesa Lynx",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "211add65-b63d-43ad-8d69-b0598e003fef",
     "provenance_summary": {},
@@ -580,6 +593,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B",
@@ -604,7 +618,7 @@
     "is_dfc": false,
     "mana_cost": "{2/W}{2/B}{2/G}",
     "name": "Kin-Tree Severance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "211d1c59-0111-48dd-9ff6-d03e7ff2ad5c",
     "provenance_summary": {},
@@ -1106,6 +1120,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -1119,17 +1134,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{G}",
     "name": "The Crowd Goes Wild",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21302f37-0632-4202-9823-f08c5aec016e",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter on each of up to X target creatures",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1471,6 +1497,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -1490,7 +1517,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Volcanic Awakening",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2145329d-49df-4f4a-b7d7-3cc2f64639d3",
     "provenance_summary": {},
@@ -1655,6 +1682,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1674,7 +1702,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Mask of Law and Grace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21474195-5d91-466d-8874-4818c900dea7",
     "provenance_summary": {},
@@ -2222,6 +2250,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R",
@@ -2242,7 +2271,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{W}",
     "name": "Reflect Damage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21565b0d-f814-49ca-8613-f40040c4ba6c",
     "provenance_summary": {},
@@ -2989,6 +3018,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3008,7 +3038,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Defeat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21645448-ecbd-4036-b9ed-47cd903079e4",
     "provenance_summary": {},
@@ -3262,6 +3292,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -3287,7 +3318,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Joraga Invocation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "216d3eed-cb07-40c5-869a-962e074e757d",
     "provenance_summary": {
@@ -3334,6 +3365,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3356,7 +3388,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Demonic Torment",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2172b724-9004-488e-88d3-a5fc48c50e41",
     "provenance_summary": {},
@@ -3543,6 +3575,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R",
@@ -3569,7 +3602,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{W}",
     "name": "Rem Karolus, Stalwart Slayer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21971c8b-ff9b-40f8-8c9a-93d26c2615b7",
     "provenance_summary": {
@@ -3582,6 +3615,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B",
@@ -3602,7 +3636,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Rona's Vortex",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21989fad-9672-46d4-b7d5-101906e7aed2",
     "provenance_summary": {},
@@ -4037,6 +4071,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -4059,7 +4094,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Sea Monster",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21b07ce7-b4f9-438c-8c09-e624557d62d2",
     "provenance_summary": {},
@@ -4240,6 +4275,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4262,7 +4298,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Shape Anew",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21b7cf4f-1c86-4700-be71-68c974d143b0",
     "provenance_summary": {},
@@ -4803,6 +4839,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4822,7 +4859,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Forceful Denial",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21d3db6b-58cc-435c-bfd6-8320f6efcbbe",
     "provenance_summary": {},
@@ -4953,6 +4990,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4975,7 +5013,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Whimwader",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21d9ce2c-eb6a-4f43-a79b-0b99b3dc4a00",
     "provenance_summary": {},
@@ -5258,6 +5296,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -5277,7 +5316,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Daru Lancer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21edfe1a-2c53-44b3-b0d1-3dba8fb3346d",
     "provenance_summary": {},
@@ -5354,6 +5393,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5373,7 +5413,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{W}{W}",
     "name": "Wrath of the Skies",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "21efa6f2-3e7c-4576-b5a3-0b75b2843442",
     "provenance_summary": {},

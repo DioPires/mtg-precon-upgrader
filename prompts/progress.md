@@ -180,3 +180,35 @@ membership rank 501…end, membership 4…1) on branch `dec-488-combo-kb-phase1-
 
 **Next**: FE sign-off on Wave 3 (reviewer ≠ implementer) → merge. Then long-tail bulk
 waves to drain the remaining 5,662 non-combo `needs_llm` → `phase1-full-acceptance`.
+
+## 2026-08-16 — Stage-2 Waves 4–6 (long-tail bulk, non-Spellbook; +900) + evidence backfill
+
+Waves 4–6 are the first 900 cards of the **non-combo long tail** — cards in no Commander
+Spellbook variant, drained in deterministic oracle_id order (mirror has no `edhrec_rank`).
+They were committed (`67f26f5`, `bdf10ba`, `5dfc577`) with full detail in the commit messages
+but **without the per-wave QA docs** every prior wave carried. This entry + the consolidated
+`prompts/phase-1/P1.7-waves4-6-qa.md` backfill that evidence gap and record an independent
+re-verification of the committed tip.
+
+- **Deltas (Σ over `67f26f5..5dfc577`)**: `needs_llm` **5,662 → 4,762** (−900 exact);
+  `llm_classified` 1,039 → **1,939** (+900); **189 feature items across 168 cards**
+  (all `llm` → Tier-C capped); **732/900 empty by design** (long-tail mechanics fall outside
+  the v1.0.1 combo-economy ontology → logged as QE-3 gaps, not forced); **50 QE-3 gaps**
+  (log 419 → 469).
+- **Per-wave machine validation (at commit)**: 300/300 oracle_id match each wave, 0 OOV,
+  0 kind-mismatch (Wave 5 fixed 2 firebreathing `mana_sink` mis-bucketed under `provides`
+  before apply), 0 non-verbatim evidence.
+- **Re-verification of `5dfc577`**: `check_kb_coverage.py --stage full` **PASS**
+  (fleet 1,144/1,144; pool 33,462/33,462); tests **22/22**; sampling QA **100%** overall
+  (31,830) and KB-7 **100%** (7,269). Cumulative `llm` histogram 438 items / 388 cards =
+  `meta.provenance_histogram.llm` (no stray stamps).
+- **Gate intact**: 0 of 438 `llm` items Tier-B-eligible (`'llm' ∉ {deterministic,
+  human-reviewed}`); deterministic prov **86,417** and signal count **25,810** untouched
+  (0 deterministic deletions across all three waves).
+- **QE-3 (Waves 4–6)**: free-cast (Ripple/Cascade/pitch), tutor/search (Transmute, wish,
+  landcycling), cheat-into-play (Genesis Ultimatum), damage amplifier, land-ramp-to-battlefield,
+  clone/copy, storm — reinforces the v1.1 ontology candidate set.
+
+**Next**: FE sign-off on Waves 4–6 (`67f26f5..5dfc577`, reviewer ≠ implementer) → merge to
+main. Then continue long-tail bulk waves to drain the remaining **4,762** non-combo `needs_llm`
+→ `phase1-full-acceptance`.

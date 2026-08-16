@@ -103,6 +103,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -121,22 +122,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Darkling Stalker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0103b2f2-05dd-40af-954d-303c144edb04",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Shade Spirit",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}: This creature gets +1/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -362,6 +373,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -381,7 +393,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Welkin Tern",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "010c660a-a67b-48f0-a63a-15470eb89f69",
     "provenance_summary": {},
@@ -862,6 +874,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R",
@@ -879,23 +892,42 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}{W}",
     "name": "Heartwarming Redemption",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "011af4c1-e8ed-44bf-b7b5-dfdc18524cd0",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Discard all the cards in your hand, then draw that many cards plus one.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "You gain life equal to the number of cards in your hand.",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -915,7 +947,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Soul of the Rapids",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "011b2243-b8be-471f-9d8f-824a40e599df",
     "provenance_summary": {},
@@ -1359,6 +1391,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -1377,25 +1410,36 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Dirtwater Wraith",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0126f620-1dbf-405c-b5cf-f48b7ef02d32",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Wraith",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1418,7 +1462,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Strategic Betrayal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0127c13f-7b0f-44c3-8b35-97f306c5f239",
     "provenance_summary": {},
@@ -1754,6 +1798,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -1774,7 +1819,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G/U}",
     "name": "Square Up",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "013a465b-7034-45fe-bf62-c3d273131ec5",
     "provenance_summary": {},
@@ -1990,6 +2035,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -2009,7 +2055,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Bull Rush",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0140cf53-71ef-4d37-9197-48aab35ca4a2",
     "provenance_summary": {},
@@ -2181,6 +2227,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2203,7 +2250,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Deny the Divine",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0146de73-29bf-415a-b450-11074553f715",
     "provenance_summary": {},
@@ -2664,6 +2711,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -2688,22 +2736,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Stone Kavu",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01565f61-a3c8-42ca-99f3-07cfc64034a2",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Kavu",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3111,6 +3169,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -3139,7 +3198,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Reckless Cohort",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "015b1006-decb-4d94-940e-bca550e0ad5b",
     "provenance_summary": {
@@ -3677,6 +3736,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3702,7 +3762,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Summit Apes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01799149-4bca-417b-9e89-14493fd46c79",
     "provenance_summary": {
@@ -4358,6 +4418,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -4377,7 +4438,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Throttle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01823ab7-b9f6-48bc-b45c-9b0fabc6f657",
     "provenance_summary": {},
@@ -4464,6 +4525,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4491,7 +4553,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Vampire Hounds",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0184d74b-e9aa-4b5a-8db0-b15cecbc17fb",
     "provenance_summary": {
@@ -4626,6 +4688,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -4648,7 +4711,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}{R}",
     "name": "Ashen Monstrosity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01906aae-fc53-40b0-a386-dae43e4f437f",
     "provenance_summary": {},
@@ -4659,6 +4722,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -4678,7 +4742,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Leafcrown Dryad",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01914751-af8e-4aea-a254-6fa4f9fd3457",
     "provenance_summary": {},
@@ -4843,6 +4907,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -4862,7 +4927,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Rhox Maulers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "019461d9-63ae-43d3-a9d4-bd745d0cf46c",
     "provenance_summary": {},
@@ -4873,6 +4938,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -4891,22 +4957,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Spitfire Handler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01990628-12b4-49c9-af3d-03120891efc4",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Goblin",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -5537,6 +5613,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -5556,7 +5633,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Misfortune's Gain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01b778d7-0965-48ab-a81f-e29f8a233d07",
     "provenance_summary": {},
@@ -5794,6 +5871,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5817,7 +5895,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Pir's Whim",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01c2b66a-66d1-4282-a078-b1fa737c57f4",
     "provenance_summary": {},
@@ -6500,6 +6578,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -6520,7 +6599,7 @@
     "is_dfc": false,
     "mana_cost": "{G}{W}",
     "name": "Valeron Outlander",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01d70534-7c26-4a54-9eca-d0ebbefc2159",
     "provenance_summary": {},
@@ -6804,6 +6883,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -6823,7 +6903,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}",
     "name": "Sulam Djinn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01e311d2-8fe6-4e64-9575-3ef266985f0b",
     "provenance_summary": {},
@@ -7384,6 +7464,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -7409,7 +7490,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Comeuppance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01f29158-2dc9-4b9d-b726-add5d3fd5782",
     "provenance_summary": {
@@ -7585,6 +7666,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -7615,7 +7697,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Flooded Shoreline",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "01fd889f-1839-44b9-b936-0e62c8f8a730",
     "provenance_summary": {

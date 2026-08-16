@@ -280,6 +280,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -305,7 +306,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Leonin Abunas",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10064324-34a0-47eb-a58e-01db10234ed9",
     "provenance_summary": {
@@ -434,6 +435,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -453,7 +455,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Mire's Grasp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1009d2a2-a145-46e1-ba14-7a42735062fc",
     "provenance_summary": {},
@@ -519,6 +521,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -532,23 +535,42 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Hundred-Talon Kami",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "100b4440-c588-423e-93d2-23c9b595614d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies, you may return target Spirit card",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "return target Spirit card with mana value 4 or less from your graveyard",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -560,23 +582,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Skinwing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "100c877d-4cce-4b96-8f21-a4f8a43e7d84",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a 0/0 black Phyrexian Germ creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -596,7 +630,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Horses of the Bruinen",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "100d1c9e-15aa-4bab-9fb3-76c2cd6abc2f",
     "provenance_summary": {},
@@ -821,6 +855,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -843,7 +878,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Stomped by the Foot",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10185447-a13f-40d8-a8b6-39ce801f2fc0",
     "provenance_summary": {},
@@ -1276,6 +1311,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -1304,7 +1340,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Floodtide Serpent",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1031bc78-7eca-44aa-9ea8-47fa67b4ce62",
     "provenance_summary": {
@@ -1675,6 +1711,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -1695,7 +1732,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{B}{B}{G}",
     "name": "Gaze of Granite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "103d9ad0-d655-4bd5-a899-e9f8869e333d",
     "provenance_summary": {},
@@ -2080,6 +2117,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2102,7 +2140,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Cowed by Wisdom",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10495c22-2456-4b93-afa9-0c3c53075efe",
     "provenance_summary": {},
@@ -2168,6 +2206,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "U"
@@ -2187,7 +2226,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{U}{U}",
     "name": "Tidal Kraken",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "104a8f76-d178-4a33-bb59-e8767da3d982",
     "provenance_summary": {},
@@ -2472,6 +2511,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -2491,7 +2531,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Vanish from Sight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1056b27c-125c-4daa-a0c8-533efc9ccc32",
     "provenance_summary": {},
@@ -2668,6 +2708,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2693,7 +2734,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Deprive",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "1065eceb-9150-4ea4-bd6d-acaabda14e00",
     "provenance_summary": {
@@ -2706,6 +2747,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2725,7 +2767,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Truth or Tale",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10674c2f-7920-4505-b8d5-e96f3da1cda3",
     "provenance_summary": {},
@@ -2844,6 +2886,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -2869,7 +2912,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{G}",
     "name": "Groundshaker Sliver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "106e343f-c6f4-4155-ad01-63e482d4d38e",
     "provenance_summary": {
@@ -3479,6 +3522,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -3498,7 +3542,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Legerdemain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "107d5f67-1395-444f-b612-c5cc770df956",
     "provenance_summary": {},
@@ -3575,6 +3619,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "W"
@@ -3594,7 +3639,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}{W}{W}",
     "name": "Akroma, Angel of Wrath",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "107f204c-9fd3-490d-8887-be63d14fc6a4",
     "provenance_summary": {},
@@ -4475,6 +4520,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -4497,7 +4543,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Faerie Squadron",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "109f7a7d-dc08-4c8f-8065-93c620a9194e",
     "provenance_summary": {},
@@ -5193,6 +5239,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5212,7 +5259,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Knight of Glory",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10b8fd4d-1696-4b0d-b791-7bd3de504457",
     "provenance_summary": {},
@@ -5317,6 +5364,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -5337,7 +5385,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{U}",
     "name": "Daring Leap",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10bc00f7-d501-46e3-9f23-af1ddc3f6c4c",
     "provenance_summary": {},
@@ -5348,6 +5396,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -5372,7 +5421,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Goblin Balloon Brigade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10bc98b0-3fdc-46d1-8d3b-6d160e9dd62f",
     "provenance_summary": {
@@ -5463,6 +5512,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5482,7 +5532,7 @@
     "is_dfc": true,
     "mana_cost": null,
     "name": "Shady Traveler // Stalking Predator",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10be1b27-bc9f-4c6e-ac85-f1fa8b2a34d6",
     "provenance_summary": {},
@@ -5793,6 +5843,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5815,7 +5866,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Cruel Edict",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10c585c4-bf5b-4d8f-94a9-e9a5036a688f",
     "provenance_summary": {},
@@ -5826,6 +5877,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5845,7 +5897,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Swarm, Being of Bees",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10c8cf3b-2530-49e7-b38e-95cdaae8a6e7",
     "provenance_summary": {},
@@ -6741,6 +6793,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -6755,7 +6808,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -6766,13 +6820,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Dredge the Mire",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10e286b0-7245-4c30-a7a9-6d4a9c49b0a7",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put those cards onto the battlefield under your control.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -6986,6 +7049,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -7009,7 +7073,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{U}",
     "name": "Lawmage's Binding",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "10f0e797-3887-4c2b-9cff-80f110b952e1",
     "provenance_summary": {},

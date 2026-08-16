@@ -437,6 +437,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -457,7 +458,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Storage Matrix",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "03136fe1-17e2-4b1c-860a-dc6373c8fdb5",
     "provenance_summary": {},
@@ -960,6 +961,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -981,7 +983,7 @@
     "is_dfc": false,
     "mana_cost": "{B/G}{R}",
     "name": "Sangrite Backlash",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "03220765-8a9d-4d4a-88d5-98df975ce13c",
     "provenance_summary": {},
@@ -992,6 +994,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1006,7 +1009,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1017,13 +1021,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{R}",
     "name": "Massive Raid",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "032367fd-e869-463e-aa0f-65e3c6567e60",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to any target equal to the number of creatures you control.",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1329,6 +1342,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -1354,7 +1368,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}{G}",
     "name": "Aggressive Mammoth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "032b5fc4-5aca-41b6-9bf6-2c1ed0018968",
     "provenance_summary": {
@@ -2154,6 +2168,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2165,17 +2180,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{6}",
     "name": "Arcbound Wanderer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "03436524-197a-4941-a2a1-c7c4b71c4709",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "This creature enters with a +1/+1 counter on it for each color of mana spent",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "dies",
+        "evidence": "When it dies, you may put its +1/+1 counters on target artifact creature.",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact Creature — Golem",
     "wants": []
@@ -2475,6 +2508,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2494,7 +2528,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Bog Rats",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "035d61a9-5ca2-4275-b8df-fcfa9f5c1b31",
     "provenance_summary": {},
@@ -2681,6 +2715,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -2700,7 +2735,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Pompous Gadabout",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0361b9b7-9097-4aae-aa06-c63a5fb47a76",
     "provenance_summary": {},
@@ -3444,6 +3479,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3466,7 +3502,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Reaver Ambush",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0385be55-8e8e-4e7d-b6b7-51adc6eb98fa",
     "provenance_summary": {},
@@ -3719,6 +3755,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -3738,7 +3775,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}{U}",
     "name": "Inundate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0390a3dc-386c-402f-a89c-b94867bfb0a2",
     "provenance_summary": {},
@@ -3749,6 +3786,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -3768,7 +3806,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Polymorph",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "039115f2-6322-4674-bc64-f21883ed375a",
     "provenance_summary": {},
@@ -3895,6 +3933,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3912,7 +3951,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Rover Blades",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "0394846e-bc27-4d67-988e-b08a389690de",
     "provenance_summary": {},
@@ -4508,6 +4547,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -4533,7 +4573,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Spider-Punk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "03bf7a90-78c1-4e83-8553-e22d85e49876",
     "provenance_summary": {
@@ -4983,6 +5023,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5005,7 +5046,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Bonds of Quicksilver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "03ce87f1-cdda-4121-8c0a-988642053055",
     "provenance_summary": {},
@@ -5288,6 +5329,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -5307,7 +5349,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Misinformation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "03dc8820-ec10-42c1-8200-d323cfcbf2b0",
     "provenance_summary": {},
@@ -6077,6 +6119,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -6102,7 +6145,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Autumn's Veil",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "03f5946b-e000-4b39-a49f-1c31668b51bd",
     "provenance_summary": {
@@ -6260,6 +6303,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -6285,7 +6329,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Rage Reflection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "03fb26b1-6d9c-455b-9b2f-a052a9222db7",
     "provenance_summary": {
