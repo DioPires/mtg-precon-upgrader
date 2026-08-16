@@ -212,3 +212,34 @@ re-verification of the committed tip.
 **Next**: FE sign-off on Waves 4–6 (`67f26f5..5dfc577`, reviewer ≠ implementer) → merge to
 main. Then continue long-tail bulk waves to drain the remaining **4,762** non-combo `needs_llm`
 → `phase1-full-acceptance`.
+
+## 2026-08-16 — Stage-2 Bundle 1 / Waves 7–10 (long-tail bulk, non-Spellbook; +1,200) [DEC-506]
+
+DEC-506 continues the long-tail drain. Per the issue, waves are now bundled ~1,200–1,600 cards
+per review handback (≈4 waves) to cut review round-trips. Bundle 1 = **Waves 7–10 = the next
+1,200 `needs_llm` cards** (all non-Spellbook long tail; deterministic oracle_id order). Branch
+`dec-506-stage2-waves7plus` off origin/main (`28d7fbf`).
+
+| Wave | Commit    | needs_llm     | items/cards | empty     |
+|------|-----------|---------------|-------------|-----------|
+| 7    | `68d70ce` | 4,762 → 4,462 | 43 / 39     | 261 / 300 |
+| 8    | `4066e43` | 4,462 → 4,162 | 39 / 36     | 264 / 300 |
+| 9    | `8a0b651` | 4,162 → 3,862 | 60 / 51     | 249 / 300 |
+| 10   | `a21b878` | 3,862 → 3,562 | 41 / 33     | 267 / 300 |
+| Σ    | `68d70ce..a21b878` | 4,762 → 3,562 (−1,200) | 183 / 159 | 1,041 / 1,200 |
+
+- Per-wave machine validation: 300/300 oracle_id match, 0 OOV, 0 kind-mismatch, 0 non-verbatim
+  evidence, magnitudes int ≥ 1. Mechanical normalization caught 1 `graveyard_payoff` mis-bucketed
+  under `provides` (→ `wants`) and 1 over-length (89-char) evidence (→ verbatim 80-char prefix);
+  0 items dropped, 0 feature ids or evidence changed.
+- Gate intact: deterministic provenance 86,417 untouched at every wave boundary;
+  deterministic_signal_count 25,810; 621 cumulative `llm` items, 0 Tier-B-eligible.
+- Tip (`a21b878`): coverage --stage full PASS (1,185/1,185 fleet; 33,462/33,462 pool),
+  tests 22/22, sampling QA 100% (KB-7 100%).
+- **QE-3 (Waves 7–10)**: free-cast (cascade/ripple/pitch), tutor/search, cheat-into-play,
+  clone/copy, storm/gravestorm, damage-doubling, extra-land-drop (gap-log 469 → 542, +73).
+- Full evidence packet: `prompts/phase-1/P1.7-waves7-10-qa.md`.
+
+**Next**: FE sign-off on Bundle 1 (`68d70ce..a21b878`, reviewer ≠ implementer) → merge to main.
+Then continue bundles to drain the remaining **3,562** non-combo `needs_llm` →
+`phase1-full-acceptance`.
