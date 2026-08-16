@@ -700,10 +700,10 @@
       "economy": "exile_return",
       "label": "ETB exile-until-leaves creature — re-establishes its target on death (DEC-526)",
       "role_hint": "engine",
-      "comment": "A creature that exiles another CREATURE until it leaves the battlefield (or, via a paired ETB-exile / LTB-return, returns the exiled creature on its own LTB — Fiend Hunter). The exiled object must be a creature: in the loop this piece exiles the reanimator (a creature), so a warder that only exiles artifacts/enchantments (Leonin Relic-Warder) is deliberately excluded. Sacrificing this piece returns the reanimator, whose ETB re-fetches this creature from the graveyard (mv <= bound).",
+      "comment": "A creature that exiles another CREATURE until it leaves the battlefield (or, via a paired ETB-exile / LTB-return, returns the exiled creature on its own LTB — Fiend Hunter). The exiled object must be a creature: in the loop this piece exiles the reanimator (a creature), so a warder that only exiles artifacts/enchantments (Leonin Relic-Warder) is deliberately excluded. The exile must also be able to hit a creature YOU control: the leading negative lookahead drops opponent-restricted exilers ('an opponent controls' / 'defending player controls' / 'another player controls' — Fairgrounds Warden, Banisher Priest, Colossal Whale, …) since they can never exile the loop's own reanimator (DEC-530 F1). Sacrificing this piece returns the reanimator, whose ETB re-fetches this creature from the graveyard (mv <= bound).",
       "patterns": [
-        "exile [^.]*?\\bcreature\\b[^.]*?until (?:this creature|this permanent|it) leaves the battlefield",
-        "exile [^.]*?\\bcreature\\b[^.]*?\\.[^.]*?return the exiled cards? to the battlefield"
+        "exile (?![^.]*?(?:an opponent controls|defending player controls|another player controls))[^.]*?\\bcreature\\b[^.]*?until (?:this creature|this permanent|it) leaves the battlefield",
+        "exile (?![^.]*?(?:an opponent controls|defending player controls|another player controls))[^.]*?\\bcreature\\b[^.]*?\\.[^.]*?return the exiled cards? to the battlefield"
       ],
       "pairs_with": [
         "etb_reanimate"

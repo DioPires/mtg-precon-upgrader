@@ -17,7 +17,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import build_combo_kb as build  # noqa: E402
 import combo_verifier_lib as V  # noqa: E402
+
+_ONT = build.load_ontology()
 
 
 # --------------------------------------------------------------------------- #
@@ -442,6 +445,59 @@ def test_free_creature_sac_excludes_mana_tap_and_non_creature():
     # None of these complete a graveyard-return loop for the reanimator + aura pair.
     for bad in (mana_sac, tap_sac, artifact_sac):
         v = V.verify_candidate([_reanimator(), _death_aura(), bad], in_curated=False)
+        assert v is None or not v.closes
+
+
+def _extract(name, type_line, oracle, mana_cost, cmc):
+    """Real deterministic extraction (build_combo_kb) → a full KB entry, so the
+    extraction-level fixes (DEC-530 F1) are exercised end-to-end through
+    verify_candidate, not hand-waved with a pre-shaped synthetic entry."""
+    card = {"name": name, "type_line": type_line, "oracle_text": oracle,
+            "mana_cost": mana_cost, "cmc": cmc, "oracle_id": name,
+            "color_identity": []}
+    return build.build_entry(card, _ONT, "v")
+
+
+def test_graveyard_return_opponent_restricted_exiler_never_closes():  # DEC-530 F1
+    # Fairgrounds Warden exiles only a creature AN OPPONENT controls — it can never
+    # exile the loop's own reanimator, so the extractor must not tag it and the loop
+    # must not close. (Repro: Sun Titan + Fairgrounds Warden + Viscera Seer.)
+    warden = _extract(
+        "Fairgrounds Warden", "Creature — Human Soldier",
+        "When this creature enters, exile target creature an opponent controls "
+        "until this creature leaves the battlefield.", "{2}{W}", 3.0)
+    assert not any(i["feature"] == "exile_until_leaves" for i in warden["provides"])
+    v = V.verify_candidate([_reanimator(), warden, _free_sac()], in_curated=False)
+    assert v is None or not v.closes
+    # An any-target exiler (Fiend Hunter) with the SAME structure still closes.
+    hunter = _extract(
+        "Fiend Hunter", "Creature — Human Cleric",
+        "When this creature enters, you may exile another target creature.\n"
+        "When this creature leaves the battlefield, return the exiled card to the "
+        "battlefield under its owner's control.", "{1}{W}{W}", 3.0)
+    v2 = V.verify_candidate([_reanimator(), hunter, _free_sac()], in_curated=False)
+    assert v2 is not None and v2.closes and v2.template == "graveyard_return"
+
+
+def test_free_creature_sac_excludes_self_only_saccers():  # DEC-530 F2
+    # 'Sacrifice this creature' can fire once on the outlet itself — it cannot be the
+    # loop's repeatable free outlet for the OTHER creatures. (Repro: Sun Titan +
+    # Fiend Hunter + Children of Korlis.)
+    korlis = _gr("korlis", "Children of Korlis", "Creature — Human Rebel", 3,
+                 activated=["Sacrifice this creature"],
+                 provides=[("sac_outlet", 1, "sacrifice",
+                            "Sacrifice this creature:", "deterministic")])
+    elder = _gr("elder", "Sakura-Tribe Elder", "Creature — Snake Shaman", 2,
+                activated=["Sacrifice this creature"],
+                provides=[("sac_outlet", 1, "sacrifice",
+                           "Sacrifice this creature:", "deterministic")])
+    assert not V.MemberModel(korlis).free_creature_sac()
+    assert not V.MemberModel(elder).free_creature_sac()
+    # A generic 'Sacrifice a creature' outlet is still accepted.
+    assert V.MemberModel(_free_sac()).free_creature_sac()
+    # Neither self-saccer completes a graveyard-return loop.
+    for bad in (korlis, elder):
+        v = V.verify_candidate([_reanimator(), _exile_creature(), bad], in_curated=False)
         assert v is None or not v.closes
 
 

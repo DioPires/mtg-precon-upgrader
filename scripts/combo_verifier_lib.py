@@ -284,9 +284,17 @@ class MemberModel:
         ``{…}`` token at all, which excludes both a mana cost (would leak mana) AND a
         ``{T}`` tap (would cap the outlet at once per turn → k>0, not infinite). It must
         reference a creature/permanent (not an artifact-only outlet like Krark-Clan
-        Ironworks, which cannot sacrifice the loop's creature)."""
+        Ironworks, which cannot sacrifice the loop's creature).
+
+        Self-only saccers are rejected (DEC-530 F2): a cost of ``Sacrifice this
+        creature`` / ``Sacrifice this permanent`` (or ``Sacrifice <own name>``) can
+        sacrifice only the outlet itself, once — it is not a repeatable outlet for the
+        loop's OTHER creatures (Children of Korlis, Sakura-Tribe Elder, and ~120 more
+        one-shot self-saccers corpus-wide). A generic ``Sacrifice a/another
+        creature|permanent`` is required."""
         if not self.has_feature("sac_outlet"):
             return False
+        own_name = (self.name or "").lower()
         for c in self.activated:
             if not c:
                 continue
@@ -295,7 +303,17 @@ class MemberModel:
                 continue
             if "{" in c:
                 continue  # mana- or tap-gated → not free / not arbitrarily repeatable
-            if "creature" in cl or "permanent" in cl:
+            # Self-only sacrifice can fire once on the outlet itself — not a loop outlet.
+            if re.search(r"sacrifice this (?:creature|permanent)", cl):
+                continue
+            if own_name and f"sacrifice {own_name}" in cl:
+                continue
+            # Require a generic sacrifice of a/another creature or permanent.
+            if re.search(
+                r"sacrifice (?:a|an|another|other|two|three|x|any number of|one or more)\b"
+                r"[^:]*?\b(?:creature|permanent)",
+                cl,
+            ):
                 return True
         return False
 

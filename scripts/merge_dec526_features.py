@@ -11,7 +11,11 @@ the real extractor, and appends any match to the existing entry — preserving e
 existing item (llm included), the corpus version, and needs_llm. It bumps
 ontology_version to 1.1.0 fleet-wide and refreshes the meta histograms.
 
-Idempotent: a feature already present on an entry is never re-added.
+Idempotent + reconciling: a feature already present on an entry is never re-added, and
+a DEC-526 new-feature the (current) extractor no longer yields is PRUNED (DEC-530 F1
+tightened exile_until_leaves to drop opponent-restricted exilers — re-running this path
+removes the now-stale tags and fixes up field_provenance when provides empties out).
+Only the four new-features + coven guard are touched; every other item is preserved.
 
 Usage: uv run python scripts/merge_dec526_features.py
 """
@@ -44,7 +48,7 @@ def main() -> int:
     prov_hist: Counter = Counter()
     feat_hist: Counter = Counter()
     n = n_needs_llm = 0
-    n_reanim = n_aura = n_death = n_exile = n_coven = 0
+    n_reanim = n_aura = n_death = n_exile = n_coven = n_pruned = 0
 
     for shard_path in sorted(glob.glob(os.path.join(ENTRIES_DIR, "*.json"))):
         entries = json.load(open(shard_path))
@@ -53,25 +57,44 @@ def main() -> int:
             card = mirror.get(ce.get("oracle_id"))
             if card is not None:
                 fresh = B.build_entry(card, ont, ce.get("corpus_version") or "")
+                # Reconcile the DEC-526 new-features against the (current) extractor:
+                # add any the extractor now yields, and PRUNE any the entry carries that
+                # the extractor no longer yields (DEC-530: F1 tightened exile_until_leaves
+                # to drop opponent-restricted exilers). Only the four NEW_FEATURES are
+                # touched — every existing item (LLM included) is preserved in place.
+                fresh_new = {it["feature"]: it for it in fresh["provides"]
+                             if it["feature"] in NEW_FEATURES}
+                pruned = [it for it in ce.get("provides", [])
+                          if it["feature"] in NEW_FEATURES and it["feature"] not in fresh_new]
+                if pruned:
+                    ce["provides"] = [it for it in ce.get("provides", [])
+                                      if it not in pruned]
+                    for it in pruned:
+                        n_pruned += 1
                 have = {it["feature"] for it in ce.get("provides", [])}
-                for it in fresh["provides"]:
-                    if it["feature"] in NEW_FEATURES and it["feature"] not in have:
+                for fid, it in fresh_new.items():
+                    if fid not in have:
                         ce.setdefault("provides", []).append(it)
-                        have.add(it["feature"])
-                        n_reanim += it["feature"] == "etb_reanimate"
-                        n_aura += it["feature"] == "aura_fetch"
-                        n_death += it["feature"] == "death_return"
-                        n_exile += it["feature"] == "exile_until_leaves"
+                        have.add(fid)
+                        n_reanim += fid == "etb_reanimate"
+                        n_aura += fid == "aura_fetch"
+                        n_death += fid == "death_return"
+                        n_exile += fid == "exile_until_leaves"
                 gnames = {g["guard"] for g in ce.get("guards", [])}
                 for g in fresh["guards"]:
                     if g["guard"] == "coven" and "coven" not in gnames:
                         ce.setdefault("guards", []).append(g)
                         gnames.add("coven")
                         n_coven += 1
+                fp = ce.setdefault("field_provenance", {})
                 if ce.get("provides"):
-                    ce.setdefault("field_provenance", {})["provides"] = "deterministic"
+                    fp["provides"] = "deterministic"
+                else:
+                    fp.pop("provides", None)  # last new-feature pruned → no provides field
                 if ce.get("guards"):
-                    ce.setdefault("field_provenance", {})["guards"] = "deterministic"
+                    fp["guards"] = "deterministic"
+                else:
+                    fp.pop("guards", None)
                 ce["provenance_summary"] = KB.provenance_summary(ce)
             # meta tallies
             for p, c in (ce.get("provenance_summary") or {}).items():
@@ -96,6 +119,7 @@ def main() -> int:
     print(f"merged {n} entries → ontology {NEW_ONT_VERSION}; corpus {meta.get('corpus_version')}")
     print(f"  new-feature adds: etb_reanimate={n_reanim} aura_fetch={n_aura} "
           f"death_return={n_death} exile_until_leaves={n_exile} coven_guard={n_coven}")
+    print(f"  new-feature prunes (stale, extractor no longer yields): {n_pruned}")
     print(f"  needs_llm={n_needs_llm}  provenance={dict(prov_hist)}")
     return 0
 

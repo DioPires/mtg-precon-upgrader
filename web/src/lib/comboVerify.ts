@@ -210,15 +210,31 @@ export class MemberModel {
   /** A repeatable, mana-free sacrifice outlet that can sacrifice a CREATURE — the
    * loop's per-iteration kill. The sac cost must contain no `{…}` token (excludes
    * mana AND `{T}`, keeping the outlet arbitrarily repeatable → k=0) and reference a
-   * creature/permanent (not an artifact-only outlet). */
+   * creature/permanent (not an artifact-only outlet).
+   *
+   * Self-only saccers are rejected (DEC-530 F2): a cost of `Sacrifice this creature`
+   * / `Sacrifice this permanent` (or `Sacrifice <own name>`) can sacrifice only the
+   * outlet itself, once — not a repeatable outlet for the loop's OTHER creatures
+   * (Children of Korlis, Sakura-Tribe Elder, …). A generic `Sacrifice a/another
+   * creature|permanent` is required. */
   freeCreatureSac(): boolean {
     if (!this.hasFeature('sac_outlet')) return false;
+    const ownName = (this.name || '').toLowerCase();
     for (const c of this.activated) {
       if (!c) continue;
       const cl = c.toLowerCase();
       if (!cl.includes('sacrifice')) continue;
       if (c.includes('{')) continue;
-      if (cl.includes('creature') || cl.includes('permanent')) return true;
+      // Self-only sacrifice can fire once on the outlet itself — not a loop outlet.
+      if (/sacrifice this (?:creature|permanent)/.test(cl)) continue;
+      if (ownName && cl.includes(`sacrifice ${ownName}`)) continue;
+      // Require a generic sacrifice of a/another creature or permanent.
+      if (
+        /sacrifice (?:a|an|another|other|two|three|x|any number of|one or more)\b[^:]*?\b(?:creature|permanent)/.test(
+          cl,
+        )
+      )
+        return true;
     }
     return false;
   }
