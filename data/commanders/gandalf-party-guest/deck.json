@@ -6,7 +6,7 @@
   "subtitle": "A Council of Legendary Wizards",
   "commander": "Gandalf, Party Guest",
   "bracket": "4-",
-  "gameChangers": 3,
+  "gameChangers": 4,
   "lastUpdatedSet": "The Hobbit Eternal",
   "archetypes": [
     "spellslinger"
@@ -37,6 +37,11 @@
       "name": "EDHREC — Gandalf, Party Guest",
       "url": "https://edhrec.com/commanders/gandalf-party-guest",
       "detail": "Commander released 2026-08-14; page near-empty at build time, so census + first principles carried the build. Swap round 2 (2026-08-16) revisited the filled page (273 rated cards): Gandalf, Goblins' Bane 69.2%, Call Forth the Tempest 65.1%, Mana Sculpt 59.4% added; Urza's Ruinous Blast 47.2% rejected (exiles our own storm engine)."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Swap round 3 — card-draw package (DEC-472 V7, board-amended)",
+      "detail": "Board accepted 2026-08-16: add Mystic Remora (board substitution for proposed Rhystic Study), The One Ring, Archmage of Runes; cut Chaos Warp, Lotus Petal, Mystic Confluence. Unconstrained (power-first) draw analysis; all adds oracle-verified via Scryfall. Game Changers 3 -> 4 (The One Ring; Mystic Remora is not a GC)."
     }
   ],
   "guideContent": {
@@ -111,17 +116,24 @@
         ]
       },
       {
+        "name": "Draw Engines",
+        "description": "Three engines close the card-draw gap (swap round 3). Mystic Remora taxes every opponent noncreature spell from turn 1 — strongest in the turn 1–4 combo-assembly window, then sacrifices itself to cumulative upkeep. The One Ring is an indestructible legendary artifact (22nd legend for Mox Amber): protection from everything on cast shields the combo turn, then it draws 1, 2, 3... cards per turn for escalating life. Archmage of Runes draws on every instant or sorcery we cast — Gandalf's free cast included, doubled by Harmonic Prodigy — and discounts each one by {1}.",
+        "cards": [
+          "Mystic Remora",
+          "The One Ring",
+          "Archmage of Runes"
+        ]
+      },
+      {
         "name": "Interaction & Protection",
-        "description": "Five counterspells (Mana Sculpt refunds the countered spell's mana with a Wizard out; Fierce Guardianship and Muddle's counter mode are free on the combo turn), spot removal on every relevant permanent type — including the artifact/enchantment hosers that target this deck — three wipes (Olórin's Searing Light, Blasphemous Act, and the opponent-only Call Forth the Tempest), and Clever Concealment phasing the whole board out of danger. Guardian of Faith flashes in to phase the council out of a wipe, and Sevinne's Reclamation rebuys any fallen MV-3-or-less piece — combo starters included — twice thanks to flashback.",
+        "description": "Four counterspells (Mana Sculpt refunds the countered spell's mana with a Wizard out; Fierce Guardianship and Muddle's counter mode are free on the combo turn), spot removal on every relevant permanent type — including the artifact/enchantment hosers that target this deck — three wipes (Olórin's Searing Light, Blasphemous Act, and the opponent-only Call Forth the Tempest), and Clever Concealment phasing the whole board out of danger. Guardian of Faith flashes in to phase the council out of a wipe, and Sevinne's Reclamation rebuys any fallen MV-3-or-less piece — combo starters included — twice thanks to flashback.",
         "cards": [
           "Counterspell",
           "Mana Sculpt",
           "Dovin's Veto",
-          "Mystic Confluence",
           "Fierce Guardianship",
           "Swords to Plowshares",
           "Generous Gift",
-          "Chaos Warp",
           "Prismari Command",
           "Wear // Tear",
           "Flame of Anor",
@@ -135,11 +147,10 @@
       },
       {
         "name": "Mana Engine",
-        "description": "Seven rocks headlined by Mox Amber (21 legends keep it live) and Ancient Tomb for explosive starts, on a 38-land base tuned to the 55U/23R/13W pip census. Spire of Industry taps for any color off the artifact suite, and Baxter Building converts {4} into four colored pips for the big payoff turns.",
+        "description": "Six rocks headlined by Mox Amber (22 legends keep it live) and Ancient Tomb for explosive starts, on a 38-land base tuned to the 55U/23R/13W pip census. Spire of Industry taps for any color off the artifact suite, and Baxter Building converts {4} into four colored pips for the big payoff turns.",
         "cards": [
           "Sol Ring",
           "Arcane Signet",
-          "Lotus Petal",
           "Izzet Signet",
           "Mox Amber",
           "Talisman of Creativity",
@@ -582,6 +593,12 @@
       "secondary_role": "payoff"
     },
     {
+      "name": "Archmage of Runes",
+      "type": "Creature — Giant Wizard",
+      "primary_role": "card-draw",
+      "secondary_role": "engine"
+    },
+    {
       "name": "Storm-Kiln Artist",
       "type": "Creature — Dwarf Shaman",
       "primary_role": "ramp",
@@ -604,6 +621,11 @@
       "type": "Enchantment",
       "primary_role": "card-draw",
       "secondary_role": "engine"
+    },
+    {
+      "name": "Mystic Remora",
+      "type": "Enchantment",
+      "primary_role": "card-draw"
     },
     {
       "name": "Sevinne's Reclamation",
@@ -666,12 +688,6 @@
       "primary_role": "counterspell"
     },
     {
-      "name": "Mystic Confluence",
-      "type": "Instant",
-      "primary_role": "counterspell",
-      "secondary_role": "card-draw"
-    },
-    {
       "name": "Fierce Guardianship",
       "type": "Instant",
       "primary_role": "counterspell"
@@ -683,11 +699,6 @@
     },
     {
       "name": "Generous Gift",
-      "type": "Instant",
-      "primary_role": "removal-spot"
-    },
-    {
-      "name": "Chaos Warp",
       "type": "Instant",
       "primary_role": "removal-spot"
     },
@@ -735,12 +746,12 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Arcane Signet",
-      "type": "Artifact",
-      "primary_role": "ramp"
+      "name": "The One Ring",
+      "type": "Legendary Artifact",
+      "primary_role": "card-draw"
     },
     {
-      "name": "Lotus Petal",
+      "name": "Arcane Signet",
       "type": "Artifact",
       "primary_role": "ramp"
     },

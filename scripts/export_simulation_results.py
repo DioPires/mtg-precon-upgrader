@@ -564,6 +564,27 @@ COMMANDER_DEPLOY_ENGINE = {
     },
 }
 
+# DEC-472 — opponent-independent activated draw engines. The goldfish credits
+# draw only on cast resolution (immediateDraw), so a repeatable tap engine like
+# The One Ring reads as a one-shot cantrip: its oracle parse credits the
+# cast-turn activation (draw 1) and nothing after. Model: each turn a
+# configured permanent is on the battlefield, activate it once — the counter
+# total grows by one and that many cards are drawn (activation n draws n).
+# The cast-turn activation stays on the immediateDraw path, so per-turn
+# escalation starts at 2 the following turn. `maxActivations` is the honest
+# stopping rule for The One Ring's upkeep life loss (the goldfish tracks no
+# life total): after n activations the pilot loses n life per upkeep, so a
+# real pilot stops tapping around 4 — activations 1+2+3+4 = 10 cards, then 0.
+# Floors, not ceilings: the on-cast protection turn and opponent-dependent
+# engines (Rhystic Study / Mystic Remora taxes) are not modeled.
+# Config keys (per card name):
+#   maxActivations — total activations including the cast turn (One Ring: 4)
+PERMANENT_DRAW_ENGINE = {
+    "gandalf-party-guest": {
+        "The One Ring": {"maxActivations": 4},
+    },
+}
+
 
 def combo_slot_lists(combo: dict) -> list[list[str]]:
     """Return a combo's slots as lists of interchangeable member card names.
@@ -1366,6 +1387,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "copyEngine": COMMANDER_COPY_ENGINE.get(deck_id),
         "tokenEngine": COMMANDER_TOKEN_ENGINE.get(deck_id),
         "deployEngine": COMMANDER_DEPLOY_ENGINE.get(deck_id),
+        "drawEngines": PERMANENT_DRAW_ENGINE.get(deck_id),
     }
 
 
@@ -1985,6 +2007,10 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     copy_engine = context.get("copyEngine")
     token_engine = context.get("tokenEngine")
     deploy_engine = context.get("deployEngine")
+    draw_engines = context.get("drawEngines")
+    # DEC-472 activated-draw bookkeeping: activations so far per engine name.
+    # The cast-turn activation is credited by immediateDraw, so it seeds at 1.
+    draw_engine_activations: dict[str, int] = {}
     library, hand = commander_mulligan_goldfish(decklist, profiles)
     permanents = []
     battlefield_lands = []
@@ -2031,6 +2057,23 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         swarm_tokens_new = 0
         if turn > 1 and library:
             hand.append(library.pop())
+
+        # DEC-472 activated draw engines: an engine cast on an earlier turn
+        # activates again — counter total +1, draw that many — until its
+        # maxActivations stopping rule (life-loss proxy) is reached.
+        if draw_engines:
+            for permanent in permanents:
+                engine = draw_engines.get(permanent["name"])
+                if engine is None:
+                    continue
+                activations = draw_engine_activations.setdefault(permanent["name"], 1)
+                if activations >= engine["maxActivations"]:
+                    continue
+                activations += 1
+                draw_engine_activations[permanent["name"]] = activations
+                for _ in range(activations):
+                    if library:
+                        hand.append(library.pop())
 
         land_name = choose_land_to_play(hand, profiles, metadata, battlefield_lands, commander_colors)
         if land_name:
@@ -2517,6 +2560,21 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "exists in the sim). Floors: the front-face artifact dig, Nexus of "
             "Becoming's second deploy stream, backup attachers, and paid equips are "
             "not modeled."
+        )
+    draw_engines = context.get("drawEngines")
+    if draw_engines:
+        engine_list = ", ".join(
+            f"{name} (max {cfg['maxActivations']} activations)"
+            for name, cfg in sorted(draw_engines.items())
+        )
+        section["methodology"] += (
+            f" Activated draw engines modeled (DEC-472): {engine_list}. Each turn on the "
+            "battlefield the engine activates once — its counter total grows by one and "
+            "that many cards are drawn (the cast-turn draw stays on the immediateDraw "
+            "path). maxActivations is the stopping rule standing in for The One Ring's "
+            "upkeep life loss, which the goldfish does not track. Floors: the on-cast "
+            "protection turn and opponent-dependent draw taxes (Rhystic Study / Mystic "
+            "Remora class) are not modeled."
         )
     return section, combo_assembly
 
