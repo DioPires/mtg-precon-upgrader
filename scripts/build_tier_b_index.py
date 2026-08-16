@@ -121,6 +121,15 @@ def project_items(raw_list: list[dict] | None) -> list[dict]:
         rec: dict = {"f": feat, "p": it.get("provenance", "")}
         mag = it.get("magnitude", 1)
         if mag not in (1, None):
+            # featureMagnitude truncation guard (DEC-522 item 4): magnitudes must be
+            # integral so the TS mirror's Math.floor / `|| 1` math (comboVerify
+            # .featureMagnitude, deriveFiniteBound) stays byte-identical to Python.
+            if isinstance(mag, float) and not mag.is_integer():
+                raise SystemExit(
+                    f"ERROR: non-integral feature magnitude {mag!r} on feature "
+                    f"{feat!r} — the Tier-B verifier assumes integral magnitudes; "
+                    "update the schema before shipping."
+                )
             rec["m"] = mag
         eco = it.get("economy", "")
         if eco:

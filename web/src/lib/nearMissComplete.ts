@@ -57,6 +57,33 @@ const RESOURCE_CLOSERS: Record<string, string[]> = {
   mana: ['trigger_doubler', 'cost_reduction'],
 };
 
+/** Every feature that closes SOME resource — the union of RESOURCE_CLOSERS values.
+ * Used to pre-filter the Tier-B pool to cards that could close a leak (F4/DEC-522). */
+const ALL_CLOSER_FEATURES = new Set<string>(Object.values(RESOURCE_CLOSERS).flat());
+
+interface TierBPoolCard {
+  name: string;
+  ci: string;
+  /** Features this card SUPPLIES (provides ∪ ambient), intersected to closers. */
+  supplies: Set<string>;
+}
+
+/** Walk the index ONCE, keeping non-deck cards that supply ≥1 closer feature with
+ * their (closer-only) supplies set. Order-preserving so downstream output is stable. */
+function buildTierBPool(index: FeatureIndex, deckOids: Set<string>): TierBPoolCard[] {
+  const pool: TierBPoolCard[] = [];
+  for (const [oid, row] of Object.entries(index.cards)) {
+    if (deckOids.has(oid)) continue;
+    const supplies = new Set<string>();
+    for (const field of [row.p, row.a]) {
+      if (!field) continue;
+      for (const [f] of field) if (ALL_CLOSER_FEATURES.has(f)) supplies.add(f);
+    }
+    if (supplies.size > 0) pool.push({ name: row.n, ci: row.ci, supplies });
+  }
+  return pool;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────────
 
 export interface CompletionFilters {
@@ -375,6 +402,14 @@ export function analyzeCompletions(
   const tierBAvailable = engines != null;
   const tierBAll: { b: TierBCompletion; sort: number; pri: number }[] = [];
   if (engines) {
+    // Pre-index the pool ONCE by closer capability (F4/DEC-522): the previous code
+    // rebuilt each card's SUPPLIES set and rescanned all ~14k rows on every
+    // engine×deficit. A closer must SUPPLY the feature (provides or ambient —
+    // doublers and cost reducers are ambient/static effects in the KB). A card that
+    // merely WANTS the feature does not close the leak, so `w` is excluded. Filtering
+    // to closer-supplying cards is a pure optimization (a non-supplier never matched
+    // closerFeatures.find); iteration order is preserved so output is byte-identical.
+    const tierBPool = buildTierBPool(index, deckOids);
     for (const eng of engines) {
       for (const d of eng.deficit) {
         if (d.shortfall == null || d.shortfall <= 0) continue; // KB-gap abstentions skipped
@@ -384,31 +419,24 @@ export function analyzeCompletions(
         for (const cn of eng.cards) for (const k of nameKeys(cn)) loopKeys.add(k);
         const dist = distanceToClosure(0, d.shortfall);
         const seen = new Set<string>();
-        for (const [oid, row] of Object.entries(index.cards)) {
-          if (deckOids.has(oid)) continue;
-          // A closer must SUPPLY the feature (provides or ambient — doublers
-          // and cost reducers are ambient/static effects in the KB). A card
-          // that merely WANTS the feature does not close the leak, so `w` is
-          // excluded. closerFeatures is strongest-first; take the strongest.
-          const supplies = new Set(
-            [...(row.p ?? []), ...(row.a ?? [])].map(([f]) => f),
-          );
-          const closer = closerFeatures.find((cf) => supplies.has(cf));
+        for (const pc of tierBPool) {
+          // closerFeatures is strongest-first; take the strongest supplied.
+          const closer = closerFeatures.find((cf) => pc.supplies.has(cf));
           if (!closer) continue;
           // Filters.
-          if (!ciWithin(row.ci, deckCi)) continue;
-          const price = priceFromRow(prices?.[normalizeName(row.n)], currency);
+          if (!ciWithin(pc.ci, deckCi)) continue;
+          const price = priceFromRow(prices?.[normalizeName(pc.name)], currency);
           if (!passesPrice(price, filters.maxPrice)) continue;
-          const owned = ownedFlag(row.n, filters);
+          const owned = ownedFlag(pc.name, filters);
           if (filters.ownedOnly && owned === false) continue;
-          const key = normalizeName(row.n);
+          const key = normalizeName(pc.name);
           if (loopKeys.has(key) || seen.has(key)) continue;
           seen.add(key);
           tierBAll.push({
             sort: dist,
             pri: closerFeatures.indexOf(closer),
             b: {
-              card: { name: row.n, ci: row.ci, price, owned },
+              card: { name: pc.name, ci: pc.ci, price, owned },
               loopCards: eng.cards,
               resource: d.resource,
               shortfall: d.shortfall,

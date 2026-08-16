@@ -187,7 +187,6 @@ class Verdict {
   finiteZoneBound: TierBFinding['finiteZoneBound'] = null;
   resultTypes: string[] = [];
   accumulators: string[] = [];
-  ledger: Record<string, number> = {};
   deficit: TierBDeficit[] = [];
   trace: string[] = [];
   prerequisites: TierBPrerequisites = { minInitialMana: 0, ordering: [], guards: [], note: '' };
@@ -250,7 +249,6 @@ function templateUntapMana(members: MemberModel[]): Verdict | null {
   let amp = 0;
   for (const m of members) if (m !== rock && isManaAmplifier(m)) amp += m.manaProduced();
   const net = p + amp - u;
-  v.ledger = { mana: net };
   v.trace = [`${rock.name}: {T} → add ${p} mana`];
   for (const m of members) {
     if (m !== rock && m.manaProduced() > 0) v.trace.push(`${m.name}: +${m.manaProduced()} mana amplifier`);
@@ -302,7 +300,6 @@ function templateBlinkValue(members: MemberModel[]): Verdict | null {
         v.loopClass = 'infinite';
         v.accumulators = ['mana'];
         v.resultTypes = [`infinite_mana:${colorTag(members)}`];
-        v.ledger = { mana: lands - blinkCost };
         v.trace = [
           `${blink.name}: pay ${blinkCost} → blink ${e.name}`,
           `${e.name}: ETB → untap ${lands} land(s)`,
@@ -336,7 +333,6 @@ function templateBlinkValue(members: MemberModel[]): Verdict | null {
     v.loopClass = 'infinite';
     v.accumulators = [eco || fid];
     v.resultTypes = [etbResultType(fid)];
-    v.ledger = {};
     v.trace.push('blink is free → infinite ETB triggers');
   } else if (blinkCost === null) {
     v.closes = false;
