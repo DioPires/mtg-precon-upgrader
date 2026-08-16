@@ -158,7 +158,7 @@ import type { DeckTierBLoops } from './tierB';
 // verdicts: verified/corroborated loops, near-misses, provenance-gate caps).
 // Bump invalidates the persisted deck envelope so returning users pick up the new
 // member (guards the "no dark period" regression — see DEC-491 B1 lesson).
-const STORAGE_PREFIX = 'gv1-deck-data-v112:';
+const STORAGE_PREFIX = 'gv1-deck-data-v113:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

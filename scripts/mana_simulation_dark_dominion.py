@@ -2,7 +2,8 @@
 """Monte Carlo mana base simulation for Dark Dominion (Sauron, the Dark Lord).
 
 Simulates 100,000 games measuring mana production, color balance, and curve
-efficiency turns 1-10 for the Bracket 4 Grixis decklist.
+efficiency turns 1-10 for the Grixis amass + Ring-temptation decklist
+(DEC-533 remake, bracket 4-).
 
 Commander: Sauron, the Dark Lord ({3}{U}{B}{R}, CMC 6)
 """
@@ -61,28 +62,28 @@ def parse_mana_cost(mana_cost: str) -> dict:
 ROCK_DEFS = {
     "Sol Ring":               {"cmc": 1, "colors": frozenset({"C"}), "count": 2, "burst": False},
     "Arcane Signet":          {"cmc": 2, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
-    "Dimir Signet":           {"cmc": 2, "colors": frozenset({"U", "B"}), "count": 1, "burst": False},
-    "Rakdos Signet":          {"cmc": 2, "colors": frozenset({"B", "R"}), "count": 1, "burst": False},
-    "Izzet Signet":           {"cmc": 2, "colors": frozenset({"U", "R"}), "count": 1, "burst": False},
     "Talisman of Indulgence": {"cmc": 2, "colors": frozenset({"B", "R"}), "count": 1, "burst": False},
     "Talisman of Dominance":  {"cmc": 2, "colors": frozenset({"U", "B"}), "count": 1, "burst": False},
-    "Talisman of Creativity": {"cmc": 2, "colors": frozenset({"U", "R"}), "count": 1, "burst": False},
-    "Relic of Sauron":        {"cmc": 4, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
+    "Relic of Sauron":        {"cmc": 4, "colors": frozenset({"U", "B", "R"}), "count": 2, "burst": False},
     "Mind Stone":             {"cmc": 2, "colors": frozenset({"C"}), "count": 1, "burst": False},
+    "Thought Vessel":         {"cmc": 2, "colors": frozenset({"C"}), "count": 1, "burst": False},
+    # Inherited Envelope: any color (ETB Ring-temptation not mana-relevant)
+    "Inherited Envelope":     {"cmc": 3, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
 }
 
 # --- Land subtype definitions (for check lands and fetch targets) ---
 
-ISLAND_TYPED_LANDS = {"Island", "Watery Grave", "Steam Vents", "Sunken Hollow", "Turbulent Springs"}
+ISLAND_TYPED_LANDS = {"Island", "Watery Grave", "Steam Vents", "Sunken Hollow"}
 SWAMP_TYPED_LANDS = {"Swamp", "Watery Grave", "Blood Crypt", "Sunken Hollow", "Smoldering Marsh"}
-MOUNTAIN_TYPED_LANDS = {"Blood Crypt", "Steam Vents", "Smoldering Marsh", "Turbulent Springs"}
+MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Steam Vents", "Smoldering Marsh"}
 
 FETCH_LANDS = {"Bloodstained Mire", "Polluted Delta"}
 
 ALWAYS_TAPPED = {
-    "Crumbling Necropolis", "Bojuka Bog",
+    "Bojuka Bog", "Goblin-town",
     "Minas Morgul, Dark Fortress",
-    "Barad-dûr", "The Black Gate",  # tapped w/o legendary creature (not tracked)
+    "Barad-dûr",  # tapped w/o legendary creature (not tracked — conservative)
+    # The Black Gate: pay 3 life to enter untapped — this deck always pays.
 }
 
 
@@ -92,31 +93,31 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         return True
 
     # Check lands (need matching basic land type on board)
-    if name == "Smoldering Marsh":
-        basics = sum(1 for l in battlefield_lands if l in {"Swamp", "Island"})
-        return basics < 2
-    if name == "Turbulent Springs":
-        return len(battlefield_lands) < 2
     if name == "Drowned Catacomb":
         return not any(l in ISLAND_TYPED_LANDS or l in SWAMP_TYPED_LANDS
                        for l in battlefield_lands)
-    # Darkslick Shores: fast land — untapped if ≤2 lands on battlefield
-    if name == "Darkslick Shores":
+    if name == "Dragonskull Summit":
+        return not any(l in SWAMP_TYPED_LANDS or l in MOUNTAIN_TYPED_LANDS
+                       for l in battlefield_lands)
+    if name == "Sulfur Falls":
+        return not any(l in ISLAND_TYPED_LANDS or l in MOUNTAIN_TYPED_LANDS
+                       for l in battlefield_lands)
+    # Fast lands: untapped if ≤2 lands on battlefield
+    if name in {"Darkslick Shores", "Blackcleave Cliffs"}:
         return len(battlefield_lands) > 2
+    # Slow land: untapped with two or more other lands
+    if name == "Stormcarved Coast":
+        return len(battlefield_lands) < 2
 
-    # Battle land (need 2+ basics)
-    if name == "Sunken Hollow":
-        basics = sum(1 for l in battlefield_lands if l in {"Swamp", "Island"})
+    # Battle lands (need 2+ basics with the right types)
+    if name == "Smoldering Marsh":
+        basics = sum(1 for l in battlefield_lands
+                     if l in SWAMP_TYPED_LANDS or l in MOUNTAIN_TYPED_LANDS)
         return basics < 2
-
-    # Rivendell: tapped unless you control a legendary creature.
-    # We don't track creatures on board — conservatively always tapped.
-    if name == "Rivendell":
-        return True
-
-    # Agna Qel'a: tapped unless you control a basic land
-    if name == "Agna Qel'a":
-        return not any(l in {"Swamp", "Island"} for l in battlefield_lands)
+    if name == "Sunken Hollow":
+        basics = sum(1 for l in battlefield_lands
+                     if l in ISLAND_TYPED_LANDS or l in SWAMP_TYPED_LANDS)
+        return basics < 2
 
     # Gloomlake Verge: always enters untapped (color production is conditional, not ETB)
     # Shock lands (Watery Grave, Blood Crypt, Steam Vents): always untapped (pay 2 life)
@@ -136,11 +137,11 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
         return [frozenset({"B"})]
     if name == "Island":
         return [frozenset({"U"})]
-    if name == "Turbulent Springs":
-        return [frozenset({"U", "R"})]
+    if name == "Mountain":
+        return [frozenset({"R"})]
 
     # Tri-color lands
-    if name in {"Command Tower", "Exotic Orchard", "Crumbling Necropolis"}:
+    if name in {"Command Tower", "Exotic Orchard"}:
         return [frozenset({"U", "B", "R"})]
 
     # UB duals
@@ -149,11 +150,14 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
         return [frozenset({"U", "B"})]
 
     # BR duals
-    if name in {"Blood Crypt", "Luxury Suite", "Smoldering Marsh", "Sulfurous Springs"}:
+    if name in {"Blood Crypt", "Luxury Suite", "Smoldering Marsh", "Sulfurous Springs",
+                "Dragonskull Summit", "Blackcleave Cliffs", "Goblin-town"}:
         return [frozenset({"B", "R"})]
 
-    # UR duals
-    if name in {"Steam Vents", "Training Center"}:
+    # UR duals (Cascade Bluffs filters colored mana — nearly always usable with
+    # 20+ colored sources in the base; the T1-only-land corner is optimistic)
+    if name in {"Steam Vents", "Training Center", "Sulfur Falls", "Shivan Reef",
+                "Stormcarved Coast", "Cascade Bluffs"}:
         return [frozenset({"U", "R"})]
 
     # Gloomlake Verge: {U} always; {B} only with Island or Swamp in play
@@ -165,11 +169,10 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
         return [frozenset({"U"})]
 
     # Single-color lands
-    if name == "Rivendell":
-        return [frozenset({"U"})]
-    if name == "Agna Qel'a":
-        return [frozenset({"U"})]
     if name == "Bojuka Bog":
+        return [frozenset({"B"})]
+    # Urborg makes every land a Swamp; itself taps for {B}
+    if name == "Urborg, Tomb of Yawgmoth":
         return [frozenset({"B"})]
 
     # LotR legendary lands — produce colored mana
@@ -493,9 +496,9 @@ class GameState:
         """Try to cast mana rocks from hand, priority order (lowest CMC first)."""
         priority_order = [
             "Sol Ring",
-            "Arcane Signet", "Mind Stone",
-            "Dimir Signet", "Rakdos Signet", "Izzet Signet",
-            "Talisman of Dominance", "Talisman of Indulgence", "Talisman of Creativity",
+            "Arcane Signet", "Mind Stone", "Thought Vessel",
+            "Talisman of Dominance", "Talisman of Indulgence",
+            "Inherited Envelope",
             "Relic of Sauron",
         ]
 

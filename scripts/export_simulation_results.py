@@ -155,20 +155,11 @@ NUMBER_WORDS = {
 # with a bare "pieces" list is read as one 1-card slot per piece. The commander,
 # when named in a slot, fills it from the command zone automatically.
 KEY_COMBOS = {
-    "dark-dominion": [
-        {
-            # DEC-370: replaced stale Worldgorger Loop (Worldgorger Dragon cut in
-            # the DEC-205 retune) with the tutored Oracle lines the deck actually runs.
-            "name": "Oracle Consultation",
-            "slots": [
-                ["Thassa's Oracle", "Jace, Wielder of Mysteries", "Laboratory Maniac"],
-                ["Demonic Consultation", "Tainted Pact"],
-            ],
-            "requiresCommander": False,
-            "description": "Library-exile instant + empty-library win permanent — six "
-                           "Spellbook-confirmed 2-card lines (3 finishers x 2 exilers).",
-        }
-    ],
+    # dark-dominion: Oracle Consultation removed in the DEC-533 remake — the
+    # Thoracle/Consultation shell was cut with the strategy change. Commander
+    # Spellbook finds zero included combos on the amass/Ring-temptation 99
+    # (2026-08-16); the deck deliberately has NO entry (combat/attrition deck,
+    # mirrors the exponential-growth precedent).
     "eternal-agony": [
         {
             "name": "Hidetsugu Lethal",
@@ -582,6 +573,75 @@ COMMANDER_DEPLOY_ENGINE = {
 PERMANENT_DRAW_ENGINE = {
     "gandalf-party-guest": {
         "The One Ring": {"maxActivations": 4},
+    },
+    # DEC-533: same One Ring stopping rule as gandalf-party-guest.
+    "dark-dominion": {
+        "The One Ring": {"maxActivations": 4},
+    },
+}
+
+# DEC-533 — commander amass-Army engine (sequel to DEC-385/393/404/405).
+# Sauron, the Dark Lord: "Whenever an opponent casts a spell, amass Orcs 1."
+# The goldfish is a solitaire — it can see neither opponent casts nor the
+# single growing Army token, so the deck's primary clock reads zero. Model:
+# one Army creature tracked as a counter total.
+#  * Opponent casts: credit a floor of one spell per opponent per turn cycle
+#    (3 batches/turn, vanilla 4-player model per DEC-477) while the commander
+#    is on the battlefield.
+#  * amassOnResolve: one-shot amass credited when the named card is cast
+#    (X-spells credited at a floor of X=2; Book of Mazarbul's chapter I+II
+#    credited once on cast).
+#  * amassPerTurn: repeatable attack/begin-of-combat/connect triggers, credited
+#    each turn starting the turn AFTER the permanent lands (no haste). March
+#    from the Black Gate additionally requires a combat-ready Army (its
+#    trigger is "whenever an Army you control attacks").
+#  * batchBonusName (Mauhur): replacement effect, +1 counter per batch.
+#  * batchDamageName (The Great Goblin): 2 noncombat damage per batch while
+#    on the battlefield.
+#  * The Army swings every turn from the turn after it was created (amass
+#    onto an existing Army never resets readiness); combat damage = counter
+#    total.
+#  * Ring-temptation draw: each tempt with Sauron out may discard the hand
+#    and draw four. Floor: only Call of the Ring's guaranteed upkeep tempt
+#    plus one Army-connect tempt per attacking turn are converted, and only
+#    when hand size <= temptDrawHandMax (net +2 or better); discarded cards
+#    are simply lost (no graveyard re-buy credit).
+# Floors, not ceilings: Saruman's ward, Nazgul/In the Darkness Bind Them/
+# Soothing of Smeagol tempts, Witch-king sacrifice punisher, Gorbag/Moria
+# Marauder connect draws, Barad-dur activations, and all graveyard re-buys
+# (Reanimate/Gathering of Darkness/Along the Crooked Way) are unmodeled.
+AMASS_ARMY_ENGINE = {
+    "dark-dominion": {
+        "opponentCastsPerTurn": 3,
+        "amassOnResolve": {
+            "Gothmog, Morgul Lieutenant": 1,
+            "Grishn\u00e1kh, Brash Instigator": 2,
+            "The Mouth of Sauron": 2,
+            "Great Goblin, Foul-Hearted": 3,
+            "Sauron, Lord of the Rings": 5,
+            "March from the Black Gate": 1,
+            "Book of Mazarbul": 3,
+            "Treason of Isengard": 2,
+            "Summons of Saruman": 2,
+            "Swarming of Moria": 2,
+            "Gathering of Darkness": 3,
+            "Assault on Osgiliath": 2,
+            "Foray of Orcs": 2,
+            "Orcish Medicine": 1,
+        },
+        "amassPerTurn": {
+            "March from the Black Gate": 1,
+            "Warg Rider": 2,
+            "Great Goblin, Foul-Hearted": 3,
+            "Corsairs of Umbar": 3,
+        },
+        # Saruman, the White Hand: amass Orcs X per own noncreature cast (X = MV)
+        "perNoncreatureCastMV": "Saruman, the White Hand",
+        "batchBonusName": "Mauh\u00far, Uruk-hai Captain",
+        "batchDamageName": "The Great Goblin",
+        "batchDamage": 2,
+        "temptPermanents": ["Call of the Ring"],
+        "temptDrawHandMax": 2,
     },
 }
 
@@ -1388,6 +1448,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "tokenEngine": COMMANDER_TOKEN_ENGINE.get(deck_id),
         "deployEngine": COMMANDER_DEPLOY_ENGINE.get(deck_id),
         "drawEngines": PERMANENT_DRAW_ENGINE.get(deck_id),
+        "amassEngine": AMASS_ARMY_ENGINE.get(deck_id),
     }
 
 
@@ -2008,6 +2069,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     token_engine = context.get("tokenEngine")
     deploy_engine = context.get("deployEngine")
     draw_engines = context.get("drawEngines")
+    amass_engine = context.get("amassEngine")
     # DEC-472 activated-draw bookkeeping: activations so far per engine name.
     # The cast-turn activation is credited by immediateDraw, so it seeds at 1.
     draw_engine_activations: dict[str, int] = {}
@@ -2025,6 +2087,28 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     # they migrate to the ready pool at the start of the next turn.
     swarm_tokens_ready = 0
     swarm_tokens_new = 0
+    # DEC-533 amass-Army ledger: one Army creature as a counter total. The
+    # Army is combat-ready the turn after it was first created; amassing onto
+    # an existing Army never resets readiness. amass_perm_entry records when a
+    # repeatable amass permanent landed (its trigger starts the next turn).
+    army_counters = 0
+    army_ready_turn = None
+    amass_perm_entry: dict[str, int] = {}
+    amass_ping_damage = 0.0
+
+    def apply_amass(n: int, current_turn: int) -> None:
+        """Credit one amass batch of n counters (Mauhur adds 1 per batch)."""
+        nonlocal army_counters, army_ready_turn, amass_ping_damage
+        if amass_engine is None or n <= 0:
+            return
+        names_on_board = {permanent["name"] for permanent in permanents}
+        if amass_engine["batchBonusName"] in names_on_board:
+            n += 1
+        if army_ready_turn is None:
+            army_ready_turn = current_turn + 1
+        army_counters += n
+        if amass_engine["batchDamageName"] in names_on_board:
+            amass_ping_damage += amass_engine["batchDamage"]
     # DEC-405 transform/free-deploy bookkeeping: the back face comes online
     # when the transform activation is paid; engine-deployed Equipment with a
     # configured bonus count as attached from then on.
@@ -2057,6 +2141,23 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         swarm_tokens_new = 0
         if turn > 1 and library:
             hand.append(library.pop())
+
+        # DEC-533 — opponent-cast amass floor (3 opponent spells per turn
+        # cycle) plus the Call of the Ring upkeep tempt. A tempt converts to
+        # Sauron's discard-hand-draw-four only at hand size <= temptDrawHandMax.
+        if amass_engine is not None and commander_in_play:
+            for _ in range(amass_engine["opponentCastsPerTurn"]):
+                apply_amass(1, turn)
+            has_tempt_permanent = any(
+                permanent["name"] in amass_engine["temptPermanents"]
+                for permanent in permanents
+            )
+            if (has_tempt_permanent
+                    and len(hand) <= amass_engine["temptDrawHandMax"]):
+                hand.clear()
+                for _ in range(4):
+                    if library:
+                        hand.append(library.pop())
 
         # DEC-472 activated draw engines: an engine cast on an earlier turn
         # activates again — counter total +1, draw that many — until its
@@ -2175,6 +2276,22 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if copy_engine is not None:
                 token_creatures += chosen_profile["tokenCreatures"]
 
+            # DEC-533 — cast/ETB amass credits, Saruman's per-noncreature-cast
+            # amass X (X = mana value), and entry tracking for the repeatable
+            # amass permanents (their triggers start the next turn).
+            if amass_engine is not None:
+                on_resolve = amass_engine["amassOnResolve"].get(chosen, 0)
+                if on_resolve:
+                    apply_amass(on_resolve, turn)
+                saruman = amass_engine["perNoncreatureCastMV"]
+                if (chosen != commander_name
+                        and "Creature" not in chosen_profile["typeLine"]
+                        and any(permanent["name"] == saruman
+                                for permanent in permanents)):
+                    apply_amass(chosen_profile["manaCost"].get("total", 0), turn)
+                if chosen in amass_engine["amassPerTurn"]:
+                    amass_perm_entry.setdefault(chosen, turn)
+
             # DEC-404 — token-swarm engine fires on cast (commander already on
             # the battlefield; the commander's own cast never triggers). Mint
             # one token per configured pip in the spell's printed mana cost.
@@ -2248,6 +2365,35 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             deploy_combat = float(attack)
             cumulative_damage += deploy_combat
 
+        # DEC-533 — repeatable amass triggers fire from the turn after their
+        # permanent landed; March from the Black Gate also needs a combat-ready
+        # Army (its trigger is "whenever an Army you control attacks"). Then
+        # the Army swings for its counter total, and a connecting Army tempts
+        # once more (converted under the same hand-size gate).
+        army_combat = 0.0
+        if amass_engine is not None:
+            army_attacks = (army_ready_turn is not None
+                            and turn >= army_ready_turn
+                            and army_counters > 0)
+            for name, entry_turn in amass_perm_entry.items():
+                if turn <= entry_turn:
+                    continue
+                if name == "March from the Black Gate" and not army_attacks:
+                    continue
+                if any(permanent["name"] == name for permanent in permanents):
+                    apply_amass(amass_engine["amassPerTurn"][name], turn)
+            if army_attacks:
+                army_combat = float(army_counters)
+                cumulative_damage += army_combat
+                if (commander_in_play
+                        and len(hand) <= amass_engine["temptDrawHandMax"]):
+                    hand.clear()
+                    for _ in range(4):
+                        if library:
+                            hand.append(library.pop())
+            cumulative_damage += amass_ping_damage
+            amass_ping_damage = 0.0
+
         cumulative_damage += sum(
             permanent["combat"] for permanent in permanents
             if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
@@ -2302,7 +2448,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             cumulative_damage=cumulative_damage,
             meaningful_threshold=meaningful_threshold,
             combo_ready_ever=combo_ready_ever,
-            extra_combat=swarm_combat + deploy_combat,
+            extra_combat=swarm_combat + deploy_combat + army_combat,
         )
 
     return by_turn, assembly_turn
