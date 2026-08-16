@@ -102,6 +102,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -127,7 +128,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Auriok Sunchaser",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e07d314-119f-4918-9105-77543ccae7e6",
     "provenance_summary": {
@@ -214,6 +215,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -233,7 +235,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Skyhunter Prowler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e0d13b0-d5d0-4c5f-945e-5cda7d980670",
     "provenance_summary": {},
@@ -796,6 +798,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B",
@@ -821,7 +824,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Twilight Panther",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e19aa52-5b76-40d7-ba9c-0e5d64f2b773",
     "provenance_summary": {
@@ -1600,6 +1603,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1619,7 +1623,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Broken Wings",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e316864-d55c-496f-8f46-773567896864",
     "provenance_summary": {},
@@ -2248,6 +2252,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -2262,7 +2267,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -2273,16 +2279,25 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Bloodfire Enforcers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e4facd9-d416-4ade-ba71-6da32b12a891",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Human Monk",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "as long as an instant card and a sorcery card are in your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2344,6 +2359,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2369,7 +2385,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Scorpion Sentinel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e53fe9f-9995-47ff-85e9-f09b70d7af15",
     "provenance_summary": {
@@ -2484,6 +2500,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -2512,7 +2529,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Take into Custody",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e5f92b3-204b-42a3-b86f-8e2a1d263d1d",
     "provenance_summary": {
@@ -3453,6 +3470,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3472,7 +3490,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Illusionary Informant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e8c6894-c9ad-4a50-af13-c2d95395c71e",
     "provenance_summary": {},
@@ -3555,6 +3573,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -3568,17 +3587,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Roiling Terrain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e90f187-42fe-4f32-ad75-302e6709192d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to that land's controller equal to the number of land cards",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3767,6 +3797,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3786,7 +3817,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Feral Ferocity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5e968bf3-8d83-480b-81a4-98883cafd04f",
     "provenance_summary": {},
@@ -3979,6 +4010,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3998,7 +4030,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Short Circuit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5ea0e3a5-9c38-4da4-98a6-41c14be512d9",
     "provenance_summary": {},
@@ -4009,6 +4041,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4028,7 +4061,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Pyrrhic Strike",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5ea1d89c-8650-4373-9835-e369587020ef",
     "provenance_summary": {},
@@ -4039,6 +4072,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4058,7 +4092,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Nullify",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5ea295af-e117-49cc-836b-da16b5d5bbdf",
     "provenance_summary": {},
@@ -4467,6 +4501,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -4486,7 +4521,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}{B}",
     "name": "Ihsan's Shade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5eb29367-4ec3-4bd2-887e-13eeeecae8fa",
     "provenance_summary": {},
@@ -5063,6 +5098,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -5083,7 +5119,7 @@
     "is_dfc": false,
     "mana_cost": "{R/G}{R/G}{R/G}{R/G}",
     "name": "Rampart Smasher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5ece1778-fb19-40d5-8bcc-f23033e1d5c0",
     "provenance_summary": {},
