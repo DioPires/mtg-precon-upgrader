@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -21,7 +22,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{U}",
     "name": "Tempest Drake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff0086e0-706f-4474-9b5e-a1591235bf9b",
     "provenance_summary": {},
@@ -63,6 +64,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -76,17 +78,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}{U}",
     "name": "Overflowing Insight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff03a063-9634-4746-a208-9dbcde5c6bdb",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "draws seven cards",
+        "feature": "draw",
+        "magnitude": 7,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -142,6 +155,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -180,7 +194,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Gateway Shade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff0647bc-87d1-45f0-ad5c-63c29174f404",
     "provenance_summary": {
@@ -258,6 +272,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -280,7 +295,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Death Wish",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff0ca1a4-da67-407c-a5c0-998a35eb7d8d",
     "provenance_summary": {},
@@ -291,6 +306,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -304,17 +320,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Planar Outburst",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff0d05b9-0c9c-4217-abd2-7e7757a0c4c9",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put four +1/+1 counters on target land you control",
+        "feature": "counter_add",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -372,6 +399,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -395,7 +423,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Undersea Invader",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff12dfee-7140-44bd-a62e-5f8ab98e93c6",
     "provenance_summary": {},
@@ -988,6 +1016,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1002,7 +1031,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1013,13 +1043,22 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Reinforcements",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff27ff96-afd2-45df-b799-3046179e27c6",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "three target creature cards from your graveyard on top of your library",
+        "feature": "recursion",
+        "magnitude": 3,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1583,6 +1622,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U",
@@ -1603,7 +1643,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{U}",
     "name": "Sanctum Plowbeast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff3fae6e-d8a1-46b3-a6cc-fb4e8800ee68",
     "provenance_summary": {},
@@ -2098,6 +2138,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2120,7 +2161,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Pollen Remedy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff52f955-98de-4f12-9ec7-f1d73e3edae9",
     "provenance_summary": {},
@@ -2387,6 +2428,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2400,17 +2442,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Glimpse the Future",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff5a2bcf-efd0-4bdb-af52-21a93447c54c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "the rest into your graveyard",
+        "feature": "self_mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -2838,6 +2891,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2861,7 +2915,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Elspeth's Nightmare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff768016-67f8-409e-8359-9ed05bcb46d2",
     "provenance_summary": {},
@@ -3689,6 +3743,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -3713,7 +3768,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{W}",
     "name": "Reclamation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff942899-a70d-4fca-b125-9712aa635fff",
     "provenance_summary": {},
@@ -3770,6 +3825,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -3789,7 +3845,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}",
     "name": "Lu Bu, Master-at-Arms",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff959f1f-0982-4761-a6b0-3044dff1d617",
     "provenance_summary": {},
@@ -3916,6 +3972,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3935,7 +3992,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Disempower",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ff9f4bfe-1585-4eaa-943c-1e85ed79a820",
     "provenance_summary": {},
@@ -4069,6 +4126,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4088,7 +4146,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Living Terrain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ffa40f10-4efb-48d8-b16e-8a5711fcfad1",
     "provenance_summary": {},
@@ -5755,6 +5813,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5768,17 +5827,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Temporary Truce",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ffe6371c-d137-4062-8c6e-6e9794ab25bc",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "may draw up to two cards",
+        "feature": "draw",
+        "magnitude": 2,
+        "provenance": "llm"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "that player gains 2 life",
+        "feature": "lifegain",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -6128,6 +6205,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -6153,7 +6231,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Without Weakness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fffa9334-3576-4f70-9605-2ad062cdbc69",
     "provenance_summary": {

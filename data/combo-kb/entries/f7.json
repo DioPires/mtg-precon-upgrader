@@ -193,6 +193,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -210,7 +211,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Hero's Heirloom",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f707dfb5-dfa9-471b-ac29-5435c30069cc",
     "provenance_summary": {},
@@ -602,6 +603,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -618,17 +620,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Launch Party",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f713a6b4-bd9c-4bc3-9e00-26ecf16e4a92",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "As an additional cost to cast this spell, sacrifice a creature",
+        "feature": "sac_outlet",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1109,6 +1122,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1132,7 +1146,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Seafarer's Quay",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f71f01bc-caae-426b-a25a-bfbfeb9feb67",
     "provenance_summary": {
@@ -1903,6 +1917,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -1928,7 +1943,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Might of the Masses",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f73416a8-40e5-4791-948f-147ef2221ee7",
     "provenance_summary": {
@@ -2061,6 +2076,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -2089,7 +2105,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Dubious Challenge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f73bf7c5-e43d-4684-8588-2fb400f2ca31",
     "provenance_summary": {
@@ -2212,6 +2228,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2231,7 +2248,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Jackhammer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f73d89ec-05c9-4998-a24b-bc675b04ec16",
     "provenance_summary": {},
@@ -3291,6 +3308,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -3310,7 +3328,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Jump",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7518456-45ed-41d4-bd3c-5aacea28eb35",
     "provenance_summary": {},
@@ -3493,6 +3511,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -3506,17 +3525,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}",
     "name": "Natural Spring",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7571a2e-aaf3-4148-ab76-2a2e35273c70",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "Target player gains 8 life.",
+        "feature": "lifegain",
+        "magnitude": 8,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3949,6 +3979,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3973,7 +4004,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Frozen Shade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f75f9006-217d-4ec8-9c35-ceefe1c5ae4e",
     "provenance_summary": {
@@ -4826,6 +4857,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4845,7 +4877,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Lone Wolf",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f77dfcb6-72b0-4d50-8177-6f6c57a034b9",
     "provenance_summary": {},
@@ -5665,6 +5697,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B",
@@ -5685,7 +5718,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{R}",
     "name": "Plague Spores",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f79f5cb7-d238-41ab-85f0-eb21cc6bf561",
     "provenance_summary": {},
@@ -5696,6 +5729,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -5709,17 +5743,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Meditate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f79f84c9-2023-4348-863b-a3b4bc382904",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw four cards.",
+        "feature": "draw",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5898,6 +5943,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5911,17 +5957,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Controvert",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7ad79e3-d128-4aee-8542-99fd3527f9d3",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "return this card from your graveyard to your hand",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -6546,6 +6603,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -6565,7 +6623,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}{U}",
     "name": "Thassa's Intervention",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7c89d03-606e-4284-90dd-64b1fbebfb4d",
     "provenance_summary": {},
@@ -6907,6 +6965,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -6923,17 +6982,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{U}",
     "name": "Wingfold Pteron",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7db3bd9-ef67-4d64-a503-08a3c03404b2",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with your choice of a flying counter or a hexproof counter on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Dinosaur",
     "wants": []
@@ -7141,6 +7211,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -7154,17 +7225,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Gilded Light",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7e7b2aa-9fd2-41dd-b11e-3a233530dc83",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -7351,6 +7433,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -7370,7 +7453,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Experimental Armor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7ed3cd6-d138-4c12-93bb-91629492a5fa",
     "provenance_summary": {},
@@ -7714,6 +7797,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -7736,7 +7820,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Kumano's Pupils",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f7f8a186-313e-4a29-bf4e-b6a200dfd1ed",
     "provenance_summary": {},
