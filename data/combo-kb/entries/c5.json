@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -26,7 +27,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Nishoba Brawler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c501e577-5137-4dd6-b923-95408b78258a",
     "provenance_summary": {
@@ -294,7 +295,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Other creatures you control have vigilance.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -308,6 +318,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -320,11 +331,12 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Serra's Guardian",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c50cd7e7-8d53-44af-ac96-3e104587bdb3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -744,6 +756,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -763,7 +776,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Shard Convergence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c51fc4f2-76a6-4337-ab8f-1b3e84f82019",
     "provenance_summary": {},
@@ -805,6 +818,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -821,23 +835,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Dark Deal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c527eb80-ccac-40b8-8377-c31121613128",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "draws that many cards minus one",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -857,7 +883,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "River's Rebuke",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c52cfb41-18f3-4e73-b5e7-d75baf74e578",
     "provenance_summary": {},
@@ -2086,6 +2112,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -2109,7 +2136,7 @@
     "is_dfc": false,
     "mana_cost": "{W/B}{W/B}{W/B}",
     "name": "Unmake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c551ba63-2a74-439d-8996-d566e2efbd5f",
     "provenance_summary": {},
@@ -2588,6 +2615,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -2607,7 +2635,7 @@
     "is_dfc": true,
     "mana_cost": "{4}{G}{G} // {2}{G}",
     "name": "Emerald Dragon // Dissonant Wave",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5632f18-7904-4a29-82be-6a6ef8e85e18",
     "provenance_summary": {},
@@ -2758,6 +2786,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2786,7 +2815,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Arctic Merfolk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c56671e1-28a6-40c3-bad5-b5e617ddb7da",
     "provenance_summary": {
@@ -3230,6 +3259,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3249,7 +3279,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Befoul",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c573c59a-5a79-4fe1-a6d8-5e0153b5c059",
     "provenance_summary": {},
@@ -3376,6 +3406,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -3395,7 +3426,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Nightshade Stinger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c57edca9-b71e-4ec1-84d5-4b178969ccb7",
     "provenance_summary": {},
@@ -3406,6 +3437,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -3419,17 +3451,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Balance of Power",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c57ee68e-6832-4d4c-b710-fc03a2c10a9c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "draw cards equal to the difference.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3644,6 +3687,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -3657,23 +3701,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{U}",
     "name": "Prosperity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c586312d-d04a-4bfb-bbb2-b41186ca178e",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Each player draws X cards.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -3699,7 +3755,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}",
     "name": "Predatory Focus",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5866507-ef3b-446a-99ea-d31d974bdb01",
     "provenance_summary": {
@@ -3774,6 +3830,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -3794,7 +3851,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R/G}{R/G}",
     "name": "Giant Solifuge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c590c1bd-430c-4515-9343-ba818c02bc5f",
     "provenance_summary": {},
@@ -3805,6 +3862,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -3818,17 +3876,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Wing Storm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c593f66d-0e9a-4d46-a9c6-ac7a70bf17ea",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "Wing Storm deals damage to each player",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4238,6 +4307,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4251,23 +4321,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{U}{U}{U}",
     "name": "Universal Surveillance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5a5c17d-d1e4-4d23-9d2b-1c2febdcb0e7",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw X cards.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4287,7 +4369,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Gaea's Bounty",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5a61e61-d5fe-41ef-afd6-ba5e0399b986",
     "provenance_summary": {},
@@ -4819,6 +4901,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4844,7 +4927,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Battlefield Improvisation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5b85aa7-6a76-4fe2-a63e-4f376b6c9af7",
     "provenance_summary": {
@@ -4857,6 +4940,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -4876,7 +4960,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Warning",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5ba0f0f-65c5-4ffa-987a-f320b401ec8f",
     "provenance_summary": {},
@@ -4887,6 +4971,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4906,7 +4991,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Aegis of the Gods",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5bfc1b9-a55d-4608-a6f7-bb62cb8dc3c6",
     "provenance_summary": {},
@@ -5226,6 +5311,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5239,23 +5325,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Invigorating Falls",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5c98759-e009-4340-9326-9f5ff70a86bc",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain life equal to the number of creature cards in all graveyards.",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5275,7 +5373,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Green Scarab",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5ca2df3-6fd9-478d-9bc6-48695a4600fb",
     "provenance_summary": {},
@@ -5286,6 +5384,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -5308,7 +5407,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Hostile Negotiations",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5cbd852-c42f-4592-a0bb-a8bffa2dd2f4",
     "provenance_summary": {},
@@ -5541,6 +5640,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -5566,7 +5666,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Shore Snapper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5e2ed91-edd2-47ec-809e-3e4a4245e2ce",
     "provenance_summary": {
@@ -5786,6 +5886,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -5811,7 +5912,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Sivvi's Ruse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5edfaae-3ecd-41ad-970f-8cecb09bf1e4",
     "provenance_summary": {
@@ -5987,6 +6088,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "W"
@@ -6015,7 +6117,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{W}{W}",
     "name": "Akron Legionnaire",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c5f50a78-9dc4-4f3c-aa11-b41c8278bc16",
     "provenance_summary": {

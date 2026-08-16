@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -24,7 +25,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Exalted Dragon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c901805e-c196-4b9d-8d5a-e17367fb37bc",
     "provenance_summary": {},
@@ -441,6 +442,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -460,7 +462,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Reckless Wurm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9159396-81d3-4f81-88b4-dda163ff4b74",
     "provenance_summary": {},
@@ -471,6 +473,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -488,7 +491,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -499,19 +503,29 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Fleeting Reflection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c915f815-77d7-4e08-b178-82b29a58bb03",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap that creature.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "U"
@@ -534,7 +548,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{U}{U}",
     "name": "Aminatou's Augury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9160997-0305-47f5-9a2f-77588d167da0",
     "provenance_summary": {},
@@ -594,6 +608,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -607,17 +622,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}",
     "name": "Forked-Branch Garami",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c918baa5-0e7c-4df2-8567-64a7fbef4df8",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies, you may return up to two target Spirit cards",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "from your graveyard to your hand",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit",
     "wants": []
@@ -847,6 +880,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -872,7 +906,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Ember Weaver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c92221f7-76e8-483a-9d68-b19ff4d0baaf",
     "provenance_summary": {
@@ -1377,6 +1411,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1402,7 +1437,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Timberpack Wolf",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9375dca-2b32-4185-b88a-4bd5dde9a5d6",
     "provenance_summary": {
@@ -1687,6 +1722,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -1706,7 +1742,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Wrack with Madness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c93c647e-0b9e-4a50-a519-42862d21a0f1",
     "provenance_summary": {},
@@ -2135,6 +2171,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2154,7 +2191,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Coalition Honor Guard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c95cebf7-c28c-4453-b5e4-e895d621f290",
     "provenance_summary": {},
@@ -2578,6 +2615,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2600,7 +2638,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Beyond the Quiet",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c96424e7-63c4-4f07-959f-6ad09f91279a",
     "provenance_summary": {},
@@ -2661,6 +2699,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2686,7 +2725,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Invisible Force Field",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c96d67fb-359c-4439-aa1b-598d9bca2880",
     "provenance_summary": {
@@ -3256,6 +3295,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -3275,7 +3315,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Crude Rampart",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9823e5f-d0f8-4d28-8b3b-55f94ea9d76f",
     "provenance_summary": {},
@@ -3528,6 +3568,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3547,7 +3588,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Enchanted Being",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c98b725e-ca16-4576-bf53-653d4028d861",
     "provenance_summary": {},
@@ -3558,6 +3599,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -3577,7 +3619,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Goblin Striker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c991d1b8-3adb-4854-9fd3-83f06aeb3941",
     "provenance_summary": {},
@@ -3588,6 +3630,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -3607,7 +3650,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Inner Struggle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c993ebf8-972f-41c7-9870-d7f8aa9a69d9",
     "provenance_summary": {},
@@ -3885,6 +3928,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3904,7 +3948,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Blitzball Shot",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c99779b7-a271-416e-bdc2-0f9ba6ceb144",
     "provenance_summary": {},
@@ -4410,6 +4454,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -4429,7 +4474,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Ultima",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9a45c28-826e-4e6e-8adc-1368ea1af11a",
     "provenance_summary": {},
@@ -4611,6 +4656,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4636,7 +4682,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Herald of Hoofbeats",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9b40f24-c08e-4e05-a141-0a8a670d37c9",
     "provenance_summary": {
@@ -5766,6 +5812,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -5785,7 +5832,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Armageddon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9ed8b01-959a-47d6-891e-0abbdccf6e4f",
     "provenance_summary": {},
@@ -5842,6 +5889,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -5858,17 +5906,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Imposing Grandeur",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9ef02d6-717d-4f2a-aa10-0af717d6360f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "draw cards equal to the greatest mana value of a commander",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -6082,6 +6141,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -6101,7 +6161,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Midnight Mangler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c9f8651a-4118-4d80-902e-60473e81d3a9",
     "provenance_summary": {},

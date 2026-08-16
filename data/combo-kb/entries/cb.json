@@ -151,6 +151,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -164,20 +165,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Baloth Pup",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb06cf58-3cc6-429a-9bb0-be4b1c53de30",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Beast",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "as long as it has a +1/+1 counter on it",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -584,6 +596,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -603,7 +616,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "It'll Quench Ya!",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb184995-700f-4900-994a-4ce7fd12f942",
     "provenance_summary": {},
@@ -829,6 +842,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -856,7 +870,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Resilient Wanderer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb1e5b14-e440-4ca9-b3f4-e770e158bf69",
     "provenance_summary": {
@@ -1154,6 +1168,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -1167,17 +1182,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{X}{G}",
     "name": "Full Flowering",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb3328b5-a759-4c30-8b1f-202980bb6f6d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a token that's a copy of a creature token you control",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1659,6 +1685,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -1675,17 +1702,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Davriel's Shadowfugue",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb490f3f-74ed-4d38-8eda-9948c095f3bc",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "discards two cards and loses 2 life.",
+        "feature": "drain",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1921,6 +1959,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1940,7 +1979,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Awe for the Guilds",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb50ec2e-cb27-4ee5-a7de-64ab93619cea",
     "provenance_summary": {},
@@ -2186,6 +2225,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2205,7 +2245,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Temporal Isolation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb5ab978-d9b1-4f2f-bf3a-5e28e96b9e2e",
     "provenance_summary": {},
@@ -2267,6 +2307,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2286,7 +2327,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Spectral Interference",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb5ed146-5079-46ef-a3e0-e584fa4467f6",
     "provenance_summary": {},
@@ -2804,6 +2845,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -2823,7 +2865,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}",
     "name": "Inescapable Brute",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb69e07c-c831-4992-8089-3a3a1278c45b",
     "provenance_summary": {},
@@ -3016,6 +3058,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -3038,7 +3081,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Null Chamber",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb75aca6-dfc7-460d-b90c-80b7988f39a8",
     "provenance_summary": {},
@@ -3049,6 +3092,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3065,23 +3109,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Life's Legacy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb7baa46-7963-4d45-9a6e-e3c34db3c0e6",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw cards equal to the sacrificed creature's power.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -3102,7 +3158,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{R}",
     "name": "Ghostflame Sliver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb7d65f7-003f-46db-af71-7b575c713c6b",
     "provenance_summary": {},
@@ -3482,6 +3538,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -3501,7 +3558,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Intrepid Ace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb8889c8-8ee3-4e27-9f47-ad1021ff61bb",
     "provenance_summary": {},
@@ -3512,6 +3569,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -3531,19 +3589,29 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}{R}",
     "name": "Rix Maadi Guildmage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb88ada9-d3bf-4f0a-817a-c41f0ea9cc78",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Target player who lost life this turn loses 1 life.",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Shaman",
     "wants": []
@@ -3654,6 +3722,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3678,7 +3747,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Sun Clasp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb8f5ee4-285a-4c37-adcb-514b3e4bdad3",
     "provenance_summary": {
@@ -4382,6 +4451,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "B"
@@ -4404,7 +4474,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{B}{B}",
     "name": "Heartless Conscription",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cb9b317b-bb31-4c19-8b78-0fb9a61324b3",
     "provenance_summary": {},
@@ -4567,6 +4637,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -4593,7 +4664,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{G}{G}",
     "name": "Spellbreaker Behemoth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cba07472-7212-4411-a9f9-38a48870ad69",
     "provenance_summary": {
@@ -4657,6 +4728,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -4676,7 +4748,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Magical Hack",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cba229fa-9035-405b-b091-3798898a37ee",
     "provenance_summary": {},
@@ -4753,6 +4825,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -4775,7 +4848,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Fumiko the Lowblood",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cba58942-b98c-45aa-8651-7dc666e31c93",
     "provenance_summary": {},
@@ -4889,6 +4962,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -4912,7 +4986,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{B}",
     "name": "Utter End",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cba94732-1f1f-4ffd-9aba-45db990043fa",
     "provenance_summary": {},
@@ -5830,6 +5904,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -5849,7 +5924,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{U}",
     "name": "Marauding Brinefang",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cbbd507e-06da-4b47-befc-61db8c92539e",
     "provenance_summary": {},
@@ -6123,6 +6198,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -6142,7 +6218,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Coat with Venom",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cbc808dd-8d50-4f42-b0f1-d4e45d0462a2",
     "provenance_summary": {},
@@ -6450,6 +6526,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -6476,7 +6553,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{W}",
     "name": "Qasali Ambusher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cbd106fb-c9c5-4c5e-8801-619b7c8ff5a6",
     "provenance_summary": {
@@ -6937,6 +7014,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6956,7 +7034,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Thermal Glider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cbe5c74b-1006-4c63-8b46-e06b61e6fe02",
     "provenance_summary": {},
@@ -7445,6 +7523,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -7464,7 +7543,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Root Snare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cbf743a5-123f-4747-826d-7f8bb929a52c",
     "provenance_summary": {},
