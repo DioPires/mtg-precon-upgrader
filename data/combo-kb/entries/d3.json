@@ -167,6 +167,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -186,7 +187,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Reverberation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d3088e1d-62c9-4478-9ef7-fc3c9e5cfadb",
     "provenance_summary": {},
@@ -442,6 +443,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -461,7 +463,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Nimana Skitter-Sneak",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d3168d01-12ea-4a93-9519-82a3544b5bf6",
     "provenance_summary": {},
@@ -542,6 +544,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -567,7 +570,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Serpent of Yawning Depths",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d31c6043-e005-4efe-9aa7-d82cb122eebe",
     "provenance_summary": {
@@ -1332,6 +1335,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1351,7 +1355,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Cloud Pirates",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d334aa85-3470-4f5d-9cbc-b88bf991a5af",
     "provenance_summary": {},
@@ -1472,6 +1476,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1491,7 +1496,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Camel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d33b3591-c01f-4ac4-8626-7cbfdabaf90d",
     "provenance_summary": {},
@@ -2359,6 +2364,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2378,7 +2384,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Swift Justice",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d363e135-0a76-4d0e-b3b7-3293944f392c",
     "provenance_summary": {},
@@ -2849,6 +2855,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -2874,7 +2881,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Shrewd Negotiation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d36fea45-d8aa-469a-bcfc-5c0e4a0e807b",
     "provenance_summary": {
@@ -3019,6 +3026,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3038,7 +3046,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Angelic Blessing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d3758fca-0522-4b5a-a1cc-3b2b3ab299ba",
     "provenance_summary": {},
@@ -4162,6 +4170,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -4175,17 +4184,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Golden-Scale Aeronaut",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d388080d-5ad4-4e27-b361-340f410423a7",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters, put a +1/+1 counter on target creature",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on target creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Dwarf Pilot",
     "wants": []
@@ -4384,6 +4411,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4403,7 +4431,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Whirlwind",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d3946df7-cb24-47c0-a8b0-1bdf95d99926",
     "provenance_summary": {},
@@ -4414,6 +4442,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -4427,17 +4456,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Granitic Titan",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d398868b-7574-40d5-8915-6393ee489067",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Elemental",
     "wants": []
@@ -4742,6 +4782,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4755,17 +4796,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Relentless Pursuit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d39c378b-f0a2-400f-af40-a632e24b6d72",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "Put the rest into your graveyard.",
+        "feature": "self_mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4920,6 +4972,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "B"
@@ -4939,7 +4992,7 @@
     "is_dfc": false,
     "mana_cost": "{7}",
     "name": "Phyrexian Fleshgorger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d3a5a830-cd14-49da-9412-c50049c74c92",
     "provenance_summary": {},
@@ -6745,6 +6798,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -6764,7 +6818,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Dark Betrayal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d3ebe9ae-108f-4d23-a236-35d632889cf8",
     "provenance_summary": {},
@@ -7148,6 +7202,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -7167,7 +7222,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Ronom Hulk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d3fb83af-8fc4-4f26-b2df-be5dd3ac56b2",
     "provenance_summary": {},

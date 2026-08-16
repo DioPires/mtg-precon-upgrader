@@ -5599,6 +5599,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -5618,7 +5619,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Forced Retreat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ccf1336c-2ea5-4582-84a5-0b29b3cca6c2",
     "provenance_summary": {},
@@ -5940,6 +5941,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -5959,7 +5961,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5970,13 +5973,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Kytheon's Irregulars",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ccfddb1a-1b7f-44f9-89c4-1907e27e1c4a",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Soldier",
     "wants": []
