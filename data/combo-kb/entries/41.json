@@ -52,6 +52,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -71,7 +72,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Captivating Gyre",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41011f09-ad8a-4eea-aa52-d20a219bc94c",
     "provenance_summary": {},
@@ -82,6 +83,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B",
@@ -101,25 +103,36 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{B}{R}",
     "name": "Pavel Maliki",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41026872-3c7b-40c7-8d0b-9d2f9b6c3e91",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Legendary Creature — Human",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}{R}: Pavel Maliki gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -137,7 +150,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Vectis Gloves",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41074ef0-8686-41b5-9b99-7103192da915",
     "provenance_summary": {},
@@ -308,6 +321,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -328,7 +342,7 @@
     "is_dfc": false,
     "mana_cost": "{6}",
     "name": "Alloy Golem",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "410b7faf-365c-4b73-a64d-bddbe49cfded",
     "provenance_summary": {},
@@ -515,6 +529,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G",
@@ -536,7 +551,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{U}{R}",
     "name": "Karakyk Guardian",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41129dc1-be88-4198-94f9-032817a79bc7",
     "provenance_summary": {},
@@ -547,6 +562,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -561,7 +577,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -576,16 +593,25 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Filth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "411484ac-a87d-49e8-a7ef-0cd055a872b6",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Incarnation",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "As long as this card is in your graveyard and you control a Swamp",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -885,6 +911,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -904,7 +931,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}{G}",
     "name": "Plated Crusher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "411f3ea6-36ad-4bbc-8cde-e79662a08ee9",
     "provenance_summary": {},
@@ -1146,6 +1173,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -1169,7 +1197,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{U}",
     "name": "Make Your Own Luck",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41246140-4b44-40c4-b92b-501e49c50bf7",
     "provenance_summary": {},
@@ -1245,6 +1273,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -1264,7 +1293,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Conclave Equenaut",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4127794b-84d1-4efb-b0e9-543a02b07fa8",
     "provenance_summary": {},
@@ -1453,6 +1482,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -1477,7 +1507,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{B}",
     "name": "Flooded Woodlands",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "413172aa-b508-4e67-b68e-6a749d2e8130",
     "provenance_summary": {},
@@ -1938,6 +1968,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -1957,7 +1988,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}",
     "name": "Spitting Gourna",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "413e8f01-4ee0-48df-8647-c614db38681e",
     "provenance_summary": {},
@@ -2343,6 +2374,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2362,7 +2394,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -2373,16 +2406,25 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Deepwood Legate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "414eb407-dd39-41d2-bf25-a7a77ff35cb4",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Shade",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}: This creature gets +1/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2482,6 +2524,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -2501,7 +2544,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}{W}",
     "name": "Aysen Highway",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "415bc26d-60fb-41ac-8006-7dd861671c14",
     "provenance_summary": {},
@@ -2571,6 +2614,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2590,7 +2634,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Cast into Darkness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4160e621-3f13-486b-af17-728ce85f7ea5",
     "provenance_summary": {},
@@ -3421,6 +3465,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3438,7 +3483,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "No-Dachi",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "417312f8-16ca-47a7-b991-906788691700",
     "provenance_summary": {},
@@ -3836,6 +3881,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -3863,7 +3909,7 @@
     "is_dfc": false,
     "mana_cost": "{G}{U}{R}",
     "name": "Temur Charm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "418bc6c8-972b-4f07-aac0-8d003b9c1b17",
     "provenance_summary": {
@@ -4103,6 +4149,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4128,7 +4175,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Dominaria's Judgment",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41998d4d-ca01-4a9c-8bd6-399e4c3e25b1",
     "provenance_summary": {
@@ -4352,6 +4399,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -4371,7 +4419,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}",
     "name": "Plasma Elemental",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "419c501f-c107-4166-b56d-631672f2a5cc",
     "provenance_summary": {},
@@ -4691,6 +4739,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4713,7 +4762,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Check for Traps",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41b2ea88-b3b9-44f0-8886-7b2f37b22ebf",
     "provenance_summary": {},
@@ -4724,6 +4773,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -4749,7 +4799,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Kyren Legate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41b46aa5-6091-4bc4-8d17-d2c6b5fe1c5e",
     "provenance_summary": {
@@ -5437,6 +5487,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -5456,7 +5507,7 @@
     "is_dfc": false,
     "mana_cost": "{R}{R}",
     "name": "Wild Magic Surge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41d16975-d6c0-4343-bea2-4f360ead9a1c",
     "provenance_summary": {},
@@ -6328,6 +6379,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -6352,7 +6404,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Fog of Gnats",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "41f58e06-5ce0-4b2d-a280-5bb3b6c56dfe",
     "provenance_summary": {

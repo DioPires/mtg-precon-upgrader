@@ -422,6 +422,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -443,7 +444,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{G}{W}",
     "name": "Uril, the Miststalker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4308a020-48cf-45fe-8074-dd5d0ac6d12d",
     "provenance_summary": {},
@@ -709,6 +710,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U",
@@ -729,7 +731,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{U}",
     "name": "Ascended Lawmage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4317f4f1-d339-4940-b46e-659641035595",
     "provenance_summary": {},
@@ -921,6 +923,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -940,7 +943,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Out of Bounds",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "431b2e52-1290-47b1-920d-2c1817553d96",
     "provenance_summary": {},
@@ -1303,6 +1306,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1328,7 +1332,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Turn Aside",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4325ae73-af43-4a7d-a552-9909f0dc77db",
     "provenance_summary": {
@@ -1871,6 +1875,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -1894,7 +1899,7 @@
     "is_dfc": true,
     "mana_cost": "{B} // {3}{R}",
     "name": "Pain // Suffering",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "433fcba3-06b8-4f1a-a709-300838251439",
     "provenance_summary": {},
@@ -2563,6 +2568,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -2582,7 +2588,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Bend or Break",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4362efe4-339d-40e1-bd72-3cc9e41bf93f",
     "provenance_summary": {},
@@ -2721,6 +2727,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -2745,7 +2752,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Femeref Knight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4365521e-996d-4eca-bbc9-b0988fa973ae",
     "provenance_summary": {
@@ -2862,6 +2869,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -2881,7 +2889,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Reign of Chaos",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "436b5989-9b8c-4e03-a82e-046837c891ca",
     "provenance_summary": {},
@@ -3009,6 +3017,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3022,23 +3031,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Herald of the Host",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4371d5bc-1760-477b-822e-6d4999fb0a6b",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "you may create a token copy that's tapped and attacking that player",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Angel",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3052,17 +3073,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}{B}{B}",
     "name": "Infernal Contract",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4372205f-45e6-49c7-b1fd-13a41e20d4de",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw four cards.",
+        "feature": "draw",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3460,6 +3492,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3482,7 +3515,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Flare of Denial",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "437cfd16-94bc-43ba-afd8-e9e9d028a4ca",
     "provenance_summary": {},
@@ -3826,6 +3859,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3849,7 +3883,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Weathered Runestone",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4386ae4e-560a-4251-942c-0f84ba7448fa",
     "provenance_summary": {
@@ -4233,6 +4267,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -4255,7 +4290,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Ostracize",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "43975c07-103c-4664-b7e6-55bb29d85183",
     "provenance_summary": {},
@@ -4312,6 +4347,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4332,7 +4368,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Iron Golem",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "43990801-ed4a-49ff-a96e-03faa302214f",
     "provenance_summary": {},
@@ -4632,6 +4668,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B",
@@ -4652,7 +4689,7 @@
     "is_dfc": false,
     "mana_cost": "{U/B}",
     "name": "Oona's Gatewarden",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "439f7ac8-19f0-4227-82a7-48294adc2114",
     "provenance_summary": {},
@@ -4743,6 +4780,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -4762,7 +4800,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Price of Betrayal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "43a2bfe4-9705-4d0f-901a-21f9803b50f1",
     "provenance_summary": {},
@@ -5121,6 +5159,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5140,7 +5179,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Aerie Bowmasters",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "43ace4d5-9006-4bad-bd17-3d368c20564d",
     "provenance_summary": {},
@@ -5151,6 +5190,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5170,7 +5210,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Moment of Silence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "43af5041-a4bd-4b61-b1a1-bdea916afc59",
     "provenance_summary": {},
@@ -6217,6 +6257,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -6234,7 +6275,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Myr Superion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "43dac6fa-4cdf-49ec-9e11-2e5e8f9f928b",
     "provenance_summary": {},
@@ -6597,6 +6638,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -6620,7 +6662,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Snapsail Glider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "43e2e1ed-5c6a-49b4-8ab8-57861c02fc3e",
     "provenance_summary": {
@@ -7277,6 +7319,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -7296,7 +7339,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Jötun Grunt",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "43fbfeec-bcaf-48b8-befe-b7346fec5a3a",
     "provenance_summary": {},
