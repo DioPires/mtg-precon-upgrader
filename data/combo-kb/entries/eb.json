@@ -236,6 +236,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -255,7 +256,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Wall of Swords",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb098958-50d3-4476-ba74-382033703ff9",
     "provenance_summary": {},
@@ -693,6 +694,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -715,7 +717,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Crack the Earth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb107601-f4ff-4504-9e3f-3de63b0d9e6b",
     "provenance_summary": {},
@@ -1388,6 +1390,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -1405,7 +1408,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1416,13 +1420,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}{R}",
     "name": "Burn at the Stake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb23bbb0-dd12-44f1-8645-d92f46cbe8ff",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to any target equal to three times the number of creatures tapped",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1723,6 +1736,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -1746,7 +1760,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{W}",
     "name": "Dueling Grounds",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb2df4a1-6b63-4f6a-a830-e9487afe59f8",
     "provenance_summary": {},
@@ -1757,6 +1771,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -1779,7 +1794,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}",
     "name": "Silburlind Snapper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb2fe2f7-60f7-44d3-8d4a-4e102012435d",
     "provenance_summary": {},
@@ -2191,6 +2206,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2204,17 +2220,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Vacuumelt",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb421a1b-147f-422b-bb8d-483a182a4096",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "copy it for each time you paid its replicate cost",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -2421,6 +2448,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2439,22 +2467,41 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{R}{R}",
     "name": "Kargan Dragonlord",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb4e6d97-f5df-4290-b193-912f44f43a67",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a level counter on this",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Warrior",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: Put a level counter on this.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2679,6 +2726,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -2698,7 +2746,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}{U}",
     "name": "Subjugate the Hobbits",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb56141a-eb43-40e9-8ff1-e0ef5424f6a4",
     "provenance_summary": {},
@@ -3964,6 +4012,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3983,7 +4032,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Fog Patch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb8ff6c1-f9b4-4dae-8f46-0f1ad4c05355",
     "provenance_summary": {},
@@ -4182,6 +4231,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R",
@@ -4202,7 +4252,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{W}",
     "name": "Relic Sloth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eb9b0655-3ca3-4d12-8665-54ef0c2c4de2",
     "provenance_summary": {},
@@ -4926,6 +4976,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4943,7 +4994,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4954,13 +5006,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}{U}",
     "name": "Reenact the Crime",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ebb88893-427f-496c-82a8-94d2bafb5e4c",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Copy it. You may cast the copy without paying its mana cost.",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5248,6 +5309,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -5262,17 +5324,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}{U}",
     "name": "Roil Spout",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ebc1d343-26f1-4d85-ac3a-610da24c990e",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put four +1/+1 counters on target land you control",
+        "feature": "counter_add",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -5993,6 +6066,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -6018,7 +6092,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Duskmourn's Domination",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ebdace8f-8e8e-411b-b1d5-5b27cca7d9fb",
     "provenance_summary": {
@@ -6086,6 +6160,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -6108,7 +6183,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Reciprocate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ebdd29c0-2c33-4410-a05c-80ced58c7b81",
     "provenance_summary": {},
@@ -6119,6 +6194,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -6133,20 +6209,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}{G}",
     "name": "Hazardous Conditions",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ebdd2ac6-5159-4e71-9a12-3005c843686b",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Sorcery",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Creatures with no counters on them get -2/-2 until end of turn",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -6336,6 +6423,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -6353,7 +6441,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Warlord's Axe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ebe43cc6-42fe-44f6-b198-ef0212bf82cb",
     "provenance_summary": {},
@@ -6474,6 +6562,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -6496,7 +6585,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Petrify",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ebec110e-aff3-48aa-abf6-309dd2ffb478",
     "provenance_summary": {},
@@ -6678,6 +6767,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -6697,7 +6787,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Kindled Fury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ebeee06e-3345-4f02-896f-cb0b2cfa5548",
     "provenance_summary": {},

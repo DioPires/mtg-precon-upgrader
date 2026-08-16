@@ -179,6 +179,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -196,7 +197,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Cogwork Librarian",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec0d964e-ca2c-4252-8551-cf1916576653",
     "provenance_summary": {},
@@ -357,6 +358,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -374,7 +376,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -385,13 +388,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Sheriff of Safe Passage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec16008f-18d6-4461-b99c-0a504f211618",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with a +1/+1 counter on it plus an additional +1/+1 counter",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Knight",
     "wants": []
@@ -702,6 +714,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -724,7 +737,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Celestial Purge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec1f6188-2516-46ac-8a03-7b7285b23a62",
     "provenance_summary": {},
@@ -807,6 +820,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -832,7 +846,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Angelic Overseer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec22386d-42fd-40f9-b800-a043e80faabe",
     "provenance_summary": {
@@ -1096,6 +1110,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -1115,7 +1130,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Nylea's Emissary",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec30e221-ffc8-4867-ba9c-f39712b3aa93",
     "provenance_summary": {},
@@ -1400,7 +1415,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Green creatures you control have trample.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -1414,6 +1438,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -1426,11 +1451,12 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}",
     "name": "Roughshod Mentor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec43fb64-122d-4fc5-9fe0-b7913373f7a4",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -1836,6 +1862,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1858,7 +1885,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Never Happened",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec4a1a8d-4071-40e9-812e-42c746180d99",
     "provenance_summary": {},
@@ -2051,6 +2078,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "G"
@@ -2070,7 +2098,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{G}{G}",
     "name": "Wolf Pack",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec58a82f-8c78-4f88-90d5-e32d83be7a48",
     "provenance_summary": {},
@@ -2212,6 +2240,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -2232,7 +2261,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B/G}",
     "name": "Gaze of the Gorgon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec62aed5-b59b-4ba0-b265-a9c2a798ffb3",
     "provenance_summary": {},
@@ -2466,6 +2495,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -2494,7 +2524,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Harvest Season",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec6d52f9-1c8f-48da-951c-be8d7813c7be",
     "provenance_summary": {
@@ -2734,6 +2764,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2751,7 +2782,7 @@
     "is_dfc": false,
     "mana_cost": "{C}",
     "name": "Null Elemental Blast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec7699e3-ce56-46e4-9e4d-5ed2bd5fca83",
     "provenance_summary": {},
@@ -2867,6 +2898,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -2895,7 +2927,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{G}",
     "name": "Ghor-Clan Rampager",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec7a9e7f-742b-4344-983e-73372c6a1760",
     "provenance_summary": {
@@ -2908,6 +2940,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -2927,7 +2960,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Deflection",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec7ae9ed-dc5b-47ed-a4ad-086f3c7c377c",
     "provenance_summary": {},
@@ -2938,6 +2971,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -2951,20 +2985,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Analyze the Pollen",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec7d550b-9e13-4249-89c7-6ad43f71ea11",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Sorcery",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "you may collect evidence 8",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3836,6 +3881,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -3855,7 +3901,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Rush of Adrenaline",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec9975f4-dfff-4b72-9da8-8f2025f0524a",
     "provenance_summary": {},
@@ -3866,6 +3912,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R",
@@ -3880,17 +3927,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}{W}",
     "name": "Thor Odinson",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec9b74d0-e4fe-4764-b628-992a62f2a1cf",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "you cast a noncreature spell, this creature gets +1/+1 until end of turn",
+        "feature": "cast_trigger",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Creature — God Warrior Hero",
     "wants": []
@@ -3958,6 +4016,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -3977,7 +4036,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "White Scarab",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec9c3906-8628-48c6-96a7-8c6748cba816",
     "provenance_summary": {},
@@ -3988,6 +4047,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4007,7 +4067,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Empyrial Armor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ec9e8611-e785-4d5d-b6e1-bf63daf408df",
     "provenance_summary": {},
@@ -4070,6 +4130,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -4090,7 +4151,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{U}",
     "name": "Imoti, Celebrant of Bounty",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eca32dcd-6845-433e-a631-ed1f0ee78f25",
     "provenance_summary": {},
@@ -4636,6 +4697,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -4658,7 +4720,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Crush Contraband",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecbc234d-e1d3-4bcc-81d4-fffc2c7ea16a",
     "provenance_summary": {},
@@ -4773,6 +4835,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4786,23 +4849,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Ojutai Interceptor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecc42076-5cce-4e00-a21b-34846ea41df2",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Bird Soldier",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -4822,7 +4897,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Pyroblast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecc435e2-deb1-420a-a79f-01dd08747314",
     "provenance_summary": {},
@@ -5090,6 +5165,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5107,7 +5183,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Cloak of the Bat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecd28e2a-e172-4f4c-8416-b9a0d97ee497",
     "provenance_summary": {},
@@ -5118,6 +5194,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -5144,7 +5221,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{G}",
     "name": "Zendikar Incarnate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecd307e6-9096-401f-bd82-ad190532d389",
     "provenance_summary": {
@@ -5519,6 +5596,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -5538,7 +5616,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Rollick of Abandon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecda721d-ec5d-484b-a834-f4de96083b08",
     "provenance_summary": {},
@@ -5549,6 +5627,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -5571,7 +5650,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Gruesome Discovery",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecdae60b-c594-4e70-909b-83483104a42c",
     "provenance_summary": {},
@@ -5818,6 +5897,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "G",
@@ -5832,23 +5912,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{6}{R}{G}",
     "name": "Treacherous Terrain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "eced76b8-b29a-4c89-b77a-cbae99f56cb7",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to each opponent equal to the number of lands",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5862,17 +5954,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Lightshield Parry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecef9e3d-dce8-405f-bba3-14732444258f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5941,6 +6044,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5960,7 +6064,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Leap of Faith",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecf0b5ad-5989-4b99-9552-c5a24504f983",
     "provenance_summary": {},
@@ -5971,6 +6075,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5990,7 +6095,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Aether Gust",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ecf1e378-d6bc-4ee0-800e-eb8a955d781f",
     "provenance_summary": {},

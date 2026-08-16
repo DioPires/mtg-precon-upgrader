@@ -6195,6 +6195,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -6211,17 +6212,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Stronghold Confessor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e7c200a9-4793-44c8-ba8d-6298dc83bbac",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with two +1/+1 counters on it",
+        "feature": "counter_add",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Cleric",
     "wants": []
@@ -6488,6 +6500,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -6512,7 +6525,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Ogre Menial",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e7c879fa-a34b-42d9-8edf-29254380c1f7",
     "provenance_summary": {
@@ -7401,6 +7414,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -7428,7 +7442,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Fledgling Imp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e7eaffd5-bdaf-4f72-9c88-8196b3411894",
     "provenance_summary": {
@@ -7799,6 +7813,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -7826,7 +7841,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Aura of Silence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e7faf8eb-e829-4109-8dfe-42865a23ba86",
     "provenance_summary": {
@@ -7951,6 +7966,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -7965,7 +7981,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -7976,13 +7993,29 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Machinist's Arsenal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "e7fff34e-9b80-4a67-a917-fd9efddb5a1f",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this Equipment enters, create a 1/1 colorless Hero creature token",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 1/1 colorless Hero creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []
