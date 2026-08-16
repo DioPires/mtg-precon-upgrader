@@ -846,6 +846,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -865,7 +866,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Seismic Shift",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b81894bc-d5ca-44ee-b837-bdb8fec32881",
     "provenance_summary": {},
@@ -1084,6 +1085,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -1103,7 +1105,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}",
     "name": "Graxiplon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b81ed78a-1bcc-4a98-8d06-6c9fdff0a8d3",
     "provenance_summary": {},
@@ -1114,6 +1116,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1133,7 +1136,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Terror",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b81f041d-98db-4408-9472-c483e4a502bc",
     "provenance_summary": {},
@@ -1144,6 +1147,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1161,7 +1165,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Barbed Battlegear",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b81fed36-07c4-4903-b5b4-24e62d2ce239",
     "provenance_summary": {},
@@ -1172,6 +1176,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -1191,7 +1196,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Skysnare Spider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b820c29e-2428-4074-a024-9502848484d6",
     "provenance_summary": {},
@@ -1371,6 +1376,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "B",
@@ -1391,7 +1397,7 @@
     "is_dfc": true,
     "mana_cost": "{3}{U} // {3}{B}",
     "name": "Spite // Malice",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b829de81-04cd-498e-9f31-074f23e2a488",
     "provenance_summary": {},
@@ -1441,6 +1447,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -1460,7 +1467,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}{R}",
     "name": "Over the Top",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b82d8bdf-e292-490a-aee7-d830cc2c29df",
     "provenance_summary": {},
@@ -1701,6 +1708,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -1720,7 +1728,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Show and Tell",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b83a3ba0-249e-4c39-bbf0-cb005413f7d2",
     "provenance_summary": {},
@@ -1731,6 +1739,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1747,17 +1756,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Map the Wastes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b845e69b-5d49-40ff-9cf7-d5cf2ccec7be",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -2437,6 +2457,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -2456,7 +2477,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Welcome to the Fold",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b8647f54-f50b-4bc6-bd44-fda25ef189fa",
     "provenance_summary": {},
@@ -2637,6 +2658,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2656,7 +2678,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Fury Charm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b86b1878-65a9-48df-9727-1e80683d7e86",
     "provenance_summary": {},
@@ -2700,6 +2722,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -2719,22 +2742,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Firescreamer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b86c0c23-bb29-4af0-bbd4-50b3ae634375",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Kavu",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2936,6 +2969,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -2950,17 +2984,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}{U}",
     "name": "Elusive Krasis",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b876101b-7b18-48d7-9c8c-aaa6b1b5c199",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on this creature.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Fish Mutant",
     "wants": []
@@ -3011,6 +3056,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -3036,7 +3082,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}{G}",
     "name": "Molimo, Maro-Sorcerer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b87a2d20-4e9f-4256-9d24-80c38515119e",
     "provenance_summary": {
@@ -3365,6 +3411,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -3392,7 +3439,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Carapace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b893b554-9156-4d79-aca8-6e09c523760b",
     "provenance_summary": {
@@ -3685,6 +3732,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3704,7 +3752,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Knight of Malice",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b89d912a-65a0-4bc9-9e1d-ff8317458a72",
     "provenance_summary": {},
@@ -4092,6 +4140,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -4111,7 +4160,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Neck Snap",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b8ad4276-759d-4d22-a47e-bd27edb34bff",
     "provenance_summary": {},
@@ -4725,6 +4774,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G",
@@ -4748,7 +4798,7 @@
     "is_dfc": false,
     "mana_cost": "{G/W}",
     "name": "Dryad Militant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b8ca5877-ac9e-4b15-8c23-c70f61b01895",
     "provenance_summary": {},
@@ -4824,6 +4874,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4843,7 +4894,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Arcanum Wings",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b8cc7a78-a627-4e56-b1fc-0b2bd844ef68",
     "provenance_summary": {},
@@ -4936,6 +4987,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4958,7 +5010,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Bound in Silence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b8cee34a-710d-4c09-b475-0e4754eccd66",
     "provenance_summary": {},
@@ -5249,6 +5301,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -5268,7 +5321,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Seedling Charm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b8d66cd6-15db-41ff-bae3-60f1aad3ea23",
     "provenance_summary": {},
@@ -5279,6 +5332,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -5301,7 +5355,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Blazing Hope",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b8d87d15-0ab4-46e3-8258-8ca267f354fd",
     "provenance_summary": {},
@@ -5537,6 +5591,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -5565,7 +5620,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "The Wandering Rescuer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b8ef65df-f8e7-44e3-9864-9c127232a2b6",
     "provenance_summary": {
