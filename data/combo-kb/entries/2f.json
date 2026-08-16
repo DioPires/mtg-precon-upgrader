@@ -83,6 +83,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -99,7 +100,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -110,19 +112,29 @@
     "is_dfc": false,
     "mana_cost": "{W}{U}{B}",
     "name": "Windwright Mage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f051ee4-9f2e-414d-b763-5fd78f2d4e1b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "also causes you to gain that much life",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact Creature — Human Wizard",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -142,7 +154,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Flesh to Dust",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f05f3ed-e3b7-4225-b3f2-c12eda335237",
     "provenance_summary": {},
@@ -153,6 +165,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -172,7 +185,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Dissolve",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f0741f9-802b-4761-8094-7b1f3ea1a424",
     "provenance_summary": {},
@@ -788,6 +801,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -807,7 +821,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{R}",
     "name": "Macetail Hystrodon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f1e2742-d7df-4893-abc8-cb927c500569",
     "provenance_summary": {},
@@ -1616,6 +1630,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1640,7 +1655,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Darting Merfolk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f33e684-a4e4-4528-9a20-3df902bc2cde",
     "provenance_summary": {
@@ -2270,6 +2285,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -2292,7 +2308,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Root Maze",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f4abc5e-5aad-455e-b1ec-137d7ac4a10c",
     "provenance_summary": {},
@@ -2523,6 +2539,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2547,7 +2564,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "River Merfolk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f503ee5-9180-438e-8af5-2af7f8f08a3a",
     "provenance_summary": {
@@ -2685,6 +2702,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2703,22 +2721,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Mortivore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f554218-2072-4d9b-b4d4-34f161f1f2a9",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Lhurgoyf",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "equal to the number of creature cards in all graveyards",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3034,6 +3062,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3056,22 +3085,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Order of the Ebon Hand",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f65f16f-c6c2-48f0-b556-63cf7d162000",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Cleric Knight",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}{B}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3141,6 +3180,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -3154,17 +3194,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Sylvok Battle-Chair",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f6c21a1-d618-497c-bfde-c0f2e1014d99",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this Equipment enters, create a 2/2 red Rebel creature token",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 2/2 red Rebel creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []
@@ -3893,6 +3951,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3907,7 +3966,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -3918,13 +3978,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Revive the Fallen",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f857ef6-c1e5-4b85-b3fb-8163be4895b5",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Return target creature card from a graveyard to its owner's hand.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4026,6 +4095,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4045,7 +4115,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Urgent Exorcism",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f87ebc6-68b0-4121-bfaf-b412b077d75b",
     "provenance_summary": {},
@@ -4164,6 +4234,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4183,7 +4254,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Zephid's Embrace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f8b07ef-9d00-4eb6-a395-b5033aa3f80e",
     "provenance_summary": {},
@@ -4194,6 +4265,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -4217,19 +4289,29 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{W/B}{W/B}{W/B}{W/B}",
     "name": "Resolute Rider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f8b2bca-991c-4dee-829b-c1cc7deaadfb",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "This creature gains lifelink until end of turn.",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Knight",
     "wants": []
@@ -4622,6 +4704,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4647,7 +4730,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Enthralling Hold",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f94cb83-1f48-4293-b219-67830c074aeb",
     "provenance_summary": {
@@ -4708,6 +4791,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -4733,7 +4817,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Dive Down",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f990b54-fbf3-4949-85bb-9ba39710e72a",
     "provenance_summary": {
@@ -4853,6 +4937,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4876,7 +4961,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Carrion Crow",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2f9de785-a80a-4356-a4b4-0e0243e8ea2d",
     "provenance_summary": {},
@@ -4939,6 +5024,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -4958,7 +5044,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Graceblade Artisan",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fa4e241-6b2f-4372-8bb6-a876e5ae7c50",
     "provenance_summary": {},
@@ -5094,6 +5180,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -5113,7 +5200,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Regress",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fa763ad-4d94-4c3a-a099-13ac22c09ce4",
     "provenance_summary": {},
@@ -5124,6 +5211,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5143,7 +5231,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Spearpoint Oread",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fa7bb26-18eb-4ff0-8558-f6f3981a84ce",
     "provenance_summary": {},
@@ -5374,6 +5462,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -5393,7 +5482,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Peri Brown",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fadf4aa-1b7e-4e72-ad20-809a59ddccf8",
     "provenance_summary": {},
@@ -5982,6 +6071,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -6004,7 +6094,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}",
     "name": "Aether Tide",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fbf95b4-bcf4-4b5e-b5dc-0294f2b48d3e",
     "provenance_summary": {},
@@ -6161,6 +6251,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -6186,7 +6277,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Glint",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fc07680-3ffb-4507-a1e1-b9580f5ce878",
     "provenance_summary": {
@@ -6296,6 +6387,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -6310,7 +6402,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -6321,19 +6414,29 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Feedback Bolt",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fc5ebd9-e4af-4e2b-a2cc-a13fe051c5cb",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target player or planeswalker equal to the number of",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -6359,7 +6462,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Yuan Shao, the Indecisive",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fc5fffa-2eb1-4a3c-af47-3ff8c7df608d",
     "provenance_summary": {
@@ -6372,6 +6475,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "R"
@@ -6394,7 +6498,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{R}{R}",
     "name": "Avatar of Slaughter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fc6305e-e75e-478a-826b-49f655ed832c",
     "provenance_summary": {},
@@ -6815,6 +6919,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -6840,7 +6945,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Scale Up",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fd025ef-14f5-4621-831d-dd12b7c604dd",
     "provenance_summary": {
@@ -7191,6 +7296,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -7210,7 +7316,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Uktabi Efreet",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fd9a37f-151a-4501-9d8e-bc67cc902592",
     "provenance_summary": {},
@@ -7412,6 +7518,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -7437,7 +7544,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Temur Battle Rage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fdc0d17-b683-4263-949e-4f74ec76badf",
     "provenance_summary": {
@@ -7502,6 +7609,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -7521,7 +7629,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{W}",
     "name": "Duskrider Peregrine",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fdde5f7-a235-43a4-88a5-2faaf5900bd6",
     "provenance_summary": {},
@@ -7563,6 +7671,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -7586,7 +7695,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Ultimate Nullification",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fe0ebf5-52ed-4e92-9b93-81e9ae564439",
     "provenance_summary": {},
@@ -7597,6 +7706,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -7610,20 +7720,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Stonewright",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2fe2e0c4-6e02-4f5a-b2b2-920bf912a2bd",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Human Shaman",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

@@ -110,6 +110,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -129,7 +130,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Deface",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "390290b3-77cc-4180-8e6c-9cb808f6ac7a",
     "provenance_summary": {},
@@ -140,6 +141,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -153,23 +155,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Fowl Strike",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "390320f7-11b8-4b61-8316-36c396470a09",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put two +1/+1 counters on target creature.",
+        "feature": "counter_add",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -190,7 +204,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{W}",
     "name": "Kjeldoran Frostbeast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "39050823-ccda-43c0-818d-d5db15d82b99",
     "provenance_summary": {},
@@ -404,6 +418,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -423,7 +438,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Tahngarth's Glare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "390cbc61-6291-4e7d-b262-4de57c827702",
     "provenance_summary": {},
@@ -488,6 +503,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -501,17 +517,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Venerable Kumo",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3910a155-89dc-45fe-98ec-762e8e42f052",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "dies",
+        "evidence": "When this creature dies, you may return target Spirit card",
+        "feature": "dies_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "recursion",
+        "evidence": "return target Spirit card with mana value 4 or less from your graveyard",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit",
     "wants": []
@@ -1538,6 +1572,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "B"
@@ -1555,17 +1590,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "",
     "name": "Living End",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3939fbe0-3be4-41ef-828d-c93f2cb33b4f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "puts all cards they exiled this way onto the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1800,6 +1846,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -1816,7 +1863,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1827,13 +1875,22 @@
     "is_dfc": false,
     "mana_cost": "{R}{W}{B}",
     "name": "Zurgo, Thunder's Decree",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "393d0bf8-5f2e-4eaa-91a1-9132429a7371",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create two tapped and attacking 1/1 red Warrior creature tokens",
+        "feature": "token_create",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Legendary Creature — Orc Warrior",
     "wants": []
@@ -2047,6 +2104,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -2066,7 +2124,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}",
     "name": "Power Sink",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "39412e6d-2837-4729-abf9-e64a5ba87e40",
     "provenance_summary": {},
@@ -2194,6 +2252,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -2213,7 +2272,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Dazzling Lights",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "394709f0-2d29-4a2d-be05-7b22fec57763",
     "provenance_summary": {},
@@ -2289,6 +2348,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2306,7 +2366,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Trusty Machete",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "394fae8f-3757-4e08-b97c-5d7c451f4e72",
     "provenance_summary": {},
@@ -2317,6 +2377,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -2336,7 +2397,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Sphinx of Jwar Isle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3951f13e-f6dd-4d67-a088-23925baaf99b",
     "provenance_summary": {},
@@ -2347,6 +2408,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2364,7 +2426,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Thran Power Suit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3952c288-5633-4e40-abe6-18940d079644",
     "provenance_summary": {},
@@ -2431,6 +2493,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2453,7 +2516,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Inquisition of Kozilek",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "395611fa-aec2-4c9e-92c3-70cf95cc00f4",
     "provenance_summary": {},
@@ -2811,6 +2874,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -2831,7 +2895,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{U}{U}",
     "name": "Render Silent",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3966bd03-a98e-43b6-a0c0-10d4d81c173c",
     "provenance_summary": {},
@@ -3006,6 +3070,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -3025,7 +3090,7 @@
     "is_dfc": true,
     "mana_cost": "{4}{U} // {1}{U}",
     "name": "Obyra's Attendants // Desperate Parry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "396b088d-f9af-4ee1-843f-dbe1633f9cc8",
     "provenance_summary": {},
@@ -3168,6 +3233,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3187,7 +3253,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Amrou Seekers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "396efb56-7a54-4d91-b2ce-7f3c62c3238b",
     "provenance_summary": {},
@@ -4760,6 +4826,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -4779,7 +4846,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Spike-Tailed Ceratops",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "399ea8a4-55f5-4f14-ad7a-7af306959496",
     "provenance_summary": {},
@@ -4849,6 +4916,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -4874,7 +4942,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Empty-Shrine Kannushi",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "39a32629-8b05-4539-9ce7-1a6e467d0064",
     "provenance_summary": {
@@ -4953,6 +5021,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -4975,7 +5044,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Battle-Mad Ronin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "39a7c52d-0b89-47c1-a376-5004c94c2e0f",
     "provenance_summary": {},

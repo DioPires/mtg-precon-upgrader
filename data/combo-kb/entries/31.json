@@ -476,6 +476,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -501,7 +502,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Epic Confrontation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31123cb5-2dd5-4f2b-a2fd-8f87095972c6",
     "provenance_summary": {
@@ -1400,6 +1401,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -1414,7 +1416,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1429,13 +1432,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Endless Obedience",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "312a831a-5da9-4a22-9974-f2d90ae3eb75",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put target creature card from a graveyard onto the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1788,6 +1800,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -1810,7 +1823,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Harsh Scrutiny",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31338e24-a437-4587-acab-cec46be021e7",
     "provenance_summary": {},
@@ -2167,6 +2180,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R",
@@ -2193,7 +2207,7 @@
     "is_dfc": false,
     "mana_cost": "{R/W}{R/W}{R/W}{R/W}",
     "name": "Blade Historian",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "314f0a96-5e91-42a3-9d75-3f641f22a9ee",
     "provenance_summary": {
@@ -2293,6 +2307,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R",
@@ -2316,22 +2331,32 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{U}{R}",
     "name": "Dracoplasm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3155c833-8170-4166-8f47-c3c1fad1575a",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Shapeshifter",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2376,6 +2401,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2395,7 +2421,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Qilin's Blessing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31585036-cdc3-47f5-9fc7-913212826f2a",
     "provenance_summary": {},
@@ -2759,6 +2785,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -2779,7 +2806,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}{B}",
     "name": "Clutch of the Undercity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "316cae8b-31b0-4b76-8b72-8122005e1b4e",
     "provenance_summary": {},
@@ -3282,6 +3309,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -3301,7 +3329,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Tithe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "318304f5-0929-4cd3-97e6-08ac1ac48aa6",
     "provenance_summary": {},
@@ -3543,6 +3571,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -3565,7 +3594,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}",
     "name": "Syncopate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "318f7f70-e374-40ef-8afb-3389c10461d8",
     "provenance_summary": {},
@@ -3663,6 +3692,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3685,7 +3715,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Last Rites",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "3196e1f4-7f94-4eb6-ae2b-ed11ba392552",
     "provenance_summary": {},
@@ -3696,6 +3726,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -3720,7 +3751,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Wayward Soul",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "319b4715-c3eb-49bf-b8d2-4d41e601ebe4",
     "provenance_summary": {
@@ -3733,6 +3764,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -3752,7 +3784,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Stern Dismissal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "319d5cf8-ab72-401e-b04e-c13a7a6c1aac",
     "provenance_summary": {},
@@ -3832,6 +3864,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3851,7 +3884,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Brightspear Zealot",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31a0c9a2-c9bd-47f7-872b-a43fb64d873c",
     "provenance_summary": {},
@@ -3862,6 +3895,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -3876,7 +3910,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -3887,19 +3922,29 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "False Mourning",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31a331a0-3065-4ecb-9e6a-ab11e241833b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put target card from your graveyard on top of your library.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -3919,7 +3964,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Essence Fracture",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31a49fb9-1081-46c3-a352-0444869afdc9",
     "provenance_summary": {},
@@ -4158,6 +4203,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -4180,7 +4226,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Putrid Raptor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31b43ad8-a20b-4948-bfd2-56d7fe1a78f0",
     "provenance_summary": {},
@@ -5144,6 +5190,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -5169,7 +5216,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Retract",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31cefc9d-cc13-4b32-a1f8-edbcaf35aa3b",
     "provenance_summary": {
@@ -5642,6 +5689,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -5661,7 +5709,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Chaos Imps",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31e99241-592d-4be4-9ef3-6dde522b1885",
     "provenance_summary": {},
@@ -5672,6 +5720,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -5694,7 +5743,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Gathan Raiders",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "31ea0a21-9c47-4917-9df9-3469b6e5243d",
     "provenance_summary": {},

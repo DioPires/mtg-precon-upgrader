@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -23,7 +24,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Steam Frigate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e00598c-4f06-45aa-87a7-c63b5e8e92f3",
     "provenance_summary": {},
@@ -332,6 +333,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -354,7 +356,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Encrust",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e056743-78ff-45b6-80df-7486d52d5df6",
     "provenance_summary": {},
@@ -424,6 +426,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -446,7 +449,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Demon of Catastrophes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e0b838d-c858-4aa5-999e-c4ef9d29571b",
     "provenance_summary": {},
@@ -457,6 +460,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U",
@@ -477,7 +481,7 @@
     "is_dfc": true,
     "mana_cost": "{2}{W} // {1}{U}",
     "name": "Protect // Serve",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
     "provenance_summary": {},
@@ -684,6 +688,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -697,17 +702,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Vampire Cutthroat",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e163679-7303-4e05-9d20-86b76dfa1407",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "also causes you to gain that much life",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Vampire Rogue",
     "wants": []
@@ -904,6 +920,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -920,17 +937,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Merciless Repurposing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e1b5ae6-a29d-4f37-a380-eebee6cdcbd2",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Create an Incubator token with three +1/+1 counters on it",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -978,6 +1006,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1005,7 +1034,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Skinbrand Goblin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e1d5873-50e6-432a-b7a9-9f8d2632a0b9",
     "provenance_summary": {
@@ -1129,6 +1158,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -1152,7 +1182,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{R}",
     "name": "Monstrous Carabid",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e29025e-6954-4fbd-933f-81c2309c704e",
     "provenance_summary": {},
@@ -1311,6 +1341,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -1333,7 +1364,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Viewpoint Synchronization",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e338e09-5758-4cc2-9143-21f050a28677",
     "provenance_summary": {},
@@ -2850,6 +2881,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -2869,7 +2901,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Sea Legs",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e66dc2f-44f3-44f1-8ed7-7f991b3718be",
     "provenance_summary": {},
@@ -3296,6 +3328,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3315,7 +3348,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Psychic Barrier",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e712090-2284-4325-8ee8-38cd0e2bedd8",
     "provenance_summary": {},
@@ -3941,6 +3974,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3963,7 +3997,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Split Up",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2e82520a-9da3-49ae-b5c8-37e7ac8853fe",
     "provenance_summary": {},
@@ -5185,6 +5219,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5204,7 +5239,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Open the Armory",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2ecf7771-8061-4710-ad2e-80b092ae0b4b",
     "provenance_summary": {},
@@ -5351,6 +5386,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5364,20 +5400,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Cantivore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2ed5083e-1c58-48c0-8413-390971021d94",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Lhurgoyf",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "equal to the number of enchantment cards in all graveyards",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -5881,6 +5928,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -5906,7 +5954,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Double Trouble",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2ef063d2-8702-43a3-a7d0-fc255f8512d3",
     "provenance_summary": {
@@ -6008,6 +6056,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -6027,7 +6076,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Cloud Crusader",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2ef481fa-ff20-426a-af16-fbf761ea5eaf",
     "provenance_summary": {},
@@ -6331,6 +6380,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -6350,7 +6400,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Tiger Claws",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "2ef8ebc9-4f95-42f8-86e6-85eff0b8f021",
     "provenance_summary": {},
