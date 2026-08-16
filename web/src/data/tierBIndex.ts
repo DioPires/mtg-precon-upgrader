@@ -61,6 +61,10 @@ export interface TBRecord {
   uo?: boolean;
   /** tier_b_capped — exact provenance-gate cap over the FULL entry. */
   cap?: string[];
+  /** type_line — graveyard-return template (DEC-526): is_creature / is_aura tests. */
+  tl?: string;
+  /** mana_value (cmc) — graveyard-return partner mv vs the reanimator bound. */
+  mv?: number;
 }
 
 export interface TierBIndexMeta {

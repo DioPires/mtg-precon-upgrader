@@ -73,8 +73,17 @@ LOOP_FEATURES = frozenset(
         "damage",
         "self_mill",
         "untap_permanent",
+        # graveyard-return loop features (DEC-526)
+        "etb_reanimate",
+        "aura_fetch",
+        "death_return",
+        "exile_until_leaves",
     }
 )
+
+# The graveyard-return feature subset — cards carrying one of these are the only
+# records that need `tl` / `mv` (they can be a reanimator or partner; DEC-526).
+_GR_FEATURES = frozenset({"etb_reanimate", "aura_fetch", "death_return", "exile_until_leaves"})
 
 NOTE = (
     "Loop-relevant raw KB projection for the paste-mode Tier-B verifier "
@@ -106,6 +115,12 @@ def is_candidate_member(m: V.MemberModel) -> bool:
         or m.has_feature("sac_fodder")
         or m.has_feature("dies_trigger")
         or m.has_feature("drain")
+        # graveyard-return seeds (DEC-526): most already carry etb_trigger, but a bare
+        # death_return enchantment (Angelic Renewal) has no other loop feature.
+        or m.has_feature("etb_reanimate")
+        or m.has_feature("aura_fetch")
+        or m.has_feature("death_return")
+        or m.has_feature("exile_until_leaves")
     )
 
 
@@ -155,6 +170,21 @@ def build_record(entry: dict) -> dict:
     ci = entry.get("color_identity") or []
     if ci:
         rec["ci"] = ci
+    # type_line + mana_value: the graveyard-return template (DEC-526) reads is_creature /
+    # is_aura (from tl) and the partner mana value (mv) against the reanimator bound —
+    # but ONLY on cards carrying a graveyard-return feature (a non-GR card is never a
+    # reanimator/partner, so the verifier never consults its tl/mv). Ship them only
+    # there, keeping the index lean (build_tier_b_index's ship-only-what-is-needed rule).
+    if any(
+        it.get("feature") in _GR_FEATURES
+        for it in (entry.get("provides") or [])
+    ):
+        tl = entry.get("type_line")
+        if tl:
+            rec["tl"] = tl
+        mv = entry.get("cmc")
+        if mv is not None:
+            rec["mv"] = mv
     # FULL trigger text, never truncated: _is_mana_amplifier runs a regex over it.
     tr = [
         {"t": t.get("trigger") or "", "p": t.get("provenance", "")}

@@ -320,3 +320,131 @@ def test_no_template_returns_none():
     plain = _entry("x", "Vanilla Bear",
                    provides=[("draw", 1, "draw", "draw a card", "deterministic")])
     assert V.verify_candidate([plain], in_curated=False) is None
+
+
+# --------------------------------------------------------------------------- #
+# Graveyard-return loop template (DEC-526)                                     #
+# --------------------------------------------------------------------------- #
+def _gr(oid, name, type_line, mv, *, provides=(), activated=(), guards=()):
+    e = _entry(oid, name, provides=provides, activated=activated, guards=guards)
+    e["type_line"] = type_line
+    e["costs"]["mana_value"] = mv
+    return e
+
+
+def _reanimator(oid="suntitan", name="Sun Titan", bound=3, coven=False):
+    return _gr(oid, name, "Creature — Giant", 6, guards=(["coven"] if coven else []),
+               provides=[("etb_trigger", 1, "etb", "When this creature enters", "deterministic"),
+                         ("etb_reanimate", bound, "reanimate",
+                          "return target permanent card with mana value %d or less" % bound,
+                          "deterministic")])
+
+
+def _aura_fetcher(oid="boon", name="Boonweaver Giant", bound=99):
+    return _gr(oid, name, "Creature — Giant Monk", 7,
+               provides=[("etb_trigger", 1, "etb", "When this creature enters", "deterministic"),
+                         ("aura_fetch", bound, "aura_fetch",
+                          "search your library for an Aura card and put it onto the battlefield attached",
+                          "deterministic")])
+
+
+def _death_aura(oid="necro", name="Necrogen Communion", mv=2, aura=True):
+    return _gr(oid, name, "Enchantment — Aura" if aura else "Enchantment", mv,
+               provides=[("death_return", 1, "death_return",
+                          "When enchanted creature dies, return that card to the battlefield",
+                          "deterministic")])
+
+
+def _exile_creature(oid="werefox", name="Werefox Bodyguard", mv=3):
+    return _gr(oid, name, "Creature — Elf Fox Knight", mv,
+               provides=[("etb_trigger", 1, "etb", "When this creature enters", "deterministic"),
+                         ("exile_until_leaves", 1, "exile_return",
+                          "exile up to one other target non-Fox creature until this creature leaves",
+                          "deterministic")])
+
+
+def _free_sac(oid="viscera", name="Viscera Seer"):
+    return _gr(oid, name, "Creature — Vampire Wizard", 1,
+               activated=["Sacrifice a creature"],
+               provides=[("sac_outlet", 1, "sacrifice", "Sacrifice a creature:", "deterministic")])
+
+
+def test_graveyard_return_closes_infinite_death_triggers():
+    v = V.verify_candidate([_reanimator(), _death_aura(), _free_sac()], in_curated=False)
+    assert v is not None and v.closes
+    assert v.template == "graveyard_return"
+    assert v.loop_class == "infinite" and v.k == 0
+    assert v.result_types == ["infinite_death_triggers"]
+    assert v.accumulators == ["death_triggers"]
+    assert v.novel_eligible  # not curated + CLOSE_SAFE + strict gain + no deficit
+
+
+def test_graveyard_return_respects_mv_bound():
+    # Shepherd-class bound 2 cannot re-fetch a mana-value-3 partner ⇒ no close.
+    v = V.verify_candidate(
+        [_reanimator("shep", "Shepherd of the Cosmos", bound=2),
+         _death_aura("gift", "Gift of Immortality", mv=3), _free_sac()],
+        in_curated=False)
+    assert not (v and v.closes)
+
+
+def test_graveyard_return_needs_free_sac_outlet():
+    # No free creature-sac outlet ⇒ the loop cannot iterate ⇒ no verdict.
+    v = V.verify_candidate([_reanimator(), _death_aura()], in_curated=False)
+    assert v is None
+
+
+def test_graveyard_return_exile_creature_loop_closes():
+    v = V.verify_candidate([_reanimator(), _exile_creature(), _free_sac()], in_curated=False)
+    assert v is not None and v.closes and v.template == "graveyard_return"
+
+
+def test_aura_fetcher_requires_aura_partner():
+    # An aura-fetch reanimator closes with a death-return AURA …
+    v = V.verify_candidate([_aura_fetcher(), _death_aura(aura=True), _free_sac()], in_curated=False)
+    assert v is not None and v.closes
+    # … but NOT with a plain (non-Aura) enchantment death-return (Angelic Renewal class) …
+    v2 = V.verify_candidate(
+        [_aura_fetcher(), _death_aura("ang", "Angelic Renewal", mv=2, aura=False), _free_sac()],
+        in_curated=False)
+    assert not (v2 and v2.closes)
+    # … and NOT with an exile-until-leaves creature (it can only re-fetch an Aura).
+    v3 = V.verify_candidate([_aura_fetcher(), _exile_creature(), _free_sac()], in_curated=False)
+    assert not (v3 and v3.closes)
+
+
+def test_coven_reanimator_abstains():
+    v = V.verify_candidate(
+        [_reanimator("redemption", "Redemption Choir", bound=3, coven=True),
+         _death_aura(), _free_sac()],
+        in_curated=False)
+    assert v is not None and v.template == "graveyard_return"
+    assert not v.closes and v.loop_class == "engine"
+    assert v.deficit and v.deficit[0]["shortfall"] is None  # guarded abstain (QE-4)
+    assert not v.novel_eligible
+
+
+def test_free_creature_sac_excludes_mana_tap_and_non_creature():
+    # Mana-gated, tap-gated, or artifact-only sac outlets are NOT free creature sacs.
+    mana_sac = _gr("ms", "Costly Sac", "Creature — Zombie", 2,
+                   activated=["{1}, Sacrifice a creature"],
+                   provides=[("sac_outlet", 1, "sacrifice", "Sacrifice a creature:", "deterministic")])
+    tap_sac = _gr("ts", "Tap Sac", "Creature — Zombie", 2,
+                  activated=["{T}, Sacrifice a creature"],
+                  provides=[("sac_outlet", 1, "sacrifice", "Sacrifice a creature:", "deterministic")])
+    artifact_sac = _gr("as", "Ironworks", "Artifact", 2,
+                       activated=["Sacrifice an artifact"],
+                       provides=[("sac_outlet", 1, "sacrifice", "Sacrifice an artifact:", "deterministic")])
+    assert not V.MemberModel(mana_sac).free_creature_sac()
+    assert not V.MemberModel(tap_sac).free_creature_sac()
+    assert not V.MemberModel(artifact_sac).free_creature_sac()
+    assert V.MemberModel(_free_sac()).free_creature_sac()
+    # None of these complete a graveyard-return loop for the reanimator + aura pair.
+    for bad in (mana_sac, tap_sac, artifact_sac):
+        v = V.verify_candidate([_reanimator(), _death_aura(), bad], in_curated=False)
+        assert v is None or not v.closes
+
+
+def test_graveyard_return_corroboration_not_novel():
+    v = V.verify_candidate([_reanimator(), _death_aura(), _free_sac()], in_curated=True)
+    assert v.closes and not v.novel_eligible

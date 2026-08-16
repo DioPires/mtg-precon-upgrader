@@ -62,6 +62,7 @@ single backstop is the primary guard against QE-4.1.
 | **`blink_untap_mana`** | A `blink` piece + an `etb_trigger` piece whose ETB untaps ≥ `blink_cost` lands ⇒ infinite mana. | **Yes**, but only when both the blink cost and the untap count are priced (rare; usually abstains). |
 | **`blink_value`** | `blink` + `etb_trigger` value payoff. | **No** — the blink's activation cost cannot be reliably attributed from the KB (Deadeye Navigator grants its blink to a *paired* creature). Detects structure, abstains. |
 | **`sac_recursion`** | Aristocrats: `sac_outlet` + `sac_fodder` + death payoff. | **No** — the fodder's return cost and which activated ability is the outlet are not captured deterministically; pricing them fabricates numbers. Detects structure, abstains (a QE-2 diagnostic). |
+| **`graveyard_return`** (DEC-526) | Death-return reanimator loop: a free creature-sac outlet + a bounded ETB reanimator (`etb_reanimate`, or `aura_fetch`) + a compatible partner (`death_return` attachment, or `exile_until_leaves` creature) with `partner.mv ≤ reanimator bound`. Every return is a triggered ability (0 mana) and the free outlet is arbitrarily repeatable ⇒ k=0 infinite death triggers; no finite zone is net-consumed. Worked example: **Sun Titan** (ETB return mv ≤ 3) + **Necrogen Communion** (aura, mv 2; returns Sun Titan on death, self-buries) + **Viscera Seer** (free "Sacrifice a creature:") ⇒ sac Sun Titan → Necrogen returns it → Sun Titan ETB re-fetches Necrogen → repeat. | **Yes** — the reanimation bound (feature magnitude), the partner mana value, the aura type, and the free-outlet cost (no `{…}` token) are all deterministic. A **coven-/condition-gated** reanimator (Redemption Choir) cannot be guaranteed under the goldfish model, so it ABSTAINS (guarded engine + null-shortfall deficit → routed to the kb-gap abstention path, never a false near-miss). |
 
 ### The Basalt + Thran non-example (the QE-4 regression guard)
 
@@ -71,6 +72,43 @@ Reflection). A second standalone mana rock (Thran Dynamo, Mana Vault) taps **onc
 and is then tapped — it is not an amplifier. Summing it would make every deck with
 two rocks falsely report infinite mana. `tests/test_combo_verifier.py::
 test_basalt_plus_thran_is_NOT_infinite` pins this.
+
+### The graveyard-return family (DEC-526) and its soundness gates
+
+The death-return reanimator archetype is the most common budget combo family, and
+before v1.1 the verifier abstained on all of it (its cards carried only generic
+`etb_trigger` / `dies_trigger` / `drain` features — no loop-closing signal). Ontology
+v1.1 adds four deterministic provides features — `etb_reanimate` (MV-bounded ETB
+graveyard→battlefield reanimation; magnitude = the bound), `aura_fetch` (ETB aura
+fetch-and-attach), `death_return` (an attachment that returns the dead creature and
+self-buries), `exile_until_leaves` (a creature that exiles another creature until it
+leaves) — plus a `coven` guard. `template_graveyard_return` closes on these under four
+gates, each a pure function of the coarse KB fields, so a verified verdict stays sound:
+
+1. **Free, arbitrarily-repeatable kill.** The sac outlet's cost must contain **no
+   `{…}` token at all** — that single test excludes a mana cost (would leak mana) AND
+   a `{T}` tap (would cap the outlet at once per turn → k>0, not infinite). It must
+   also reference a creature/permanent, so an artifact-only outlet (Krark-Clan
+   Ironworks) that cannot sacrifice the loop's creature is excluded.
+2. **Bound covers the partner.** `partner.mv ≤ reanimator bound`, so the reanimator's
+   ETB can genuinely re-fetch the partner each cycle (Shepherd of the Cosmos, bound 2,
+   does *not* close with a mv-3 Gift of Immortality).
+3. **Aura-fetch is Aura-restricted.** A card carrying both `etb_reanimate` and
+   `aura_fetch` (Brotherhood Outcast: "return target **Aura or Equipment** card …") can
+   only re-fetch an Aura, so it is treated as aura-fetch — never generic — and never
+   pairs with a plain-Enchantment death-return (Angelic Renewal) or an exile creature.
+4. **Conditional reanimation abstains.** A `coven`/board-state gate (Redemption Choir)
+   cannot be guaranteed under the goldfish model, so the template returns a *guarded
+   engine* with a null-shortfall deficit — routed to the kb-gap abstention path, never
+   a verified loop and never a false near-miss.
+
+`exile_until_leaves` requires the exiled object to be a **creature** (the loop exiles
+the reanimator, a creature), so a warder that only exiles artifacts/enchantments
+(Leonin Relic-Warder) is excluded at extraction. Acceptance evidence — the 80-card
+Bartolomé del Presidio deck from video `1Yusxsud5BE` — lives in
+`web/src/lib/bartolomeVideo.test.ts` (41 distinct cores verified via the exact
+matchDecklist + verifyDeck paste-mode pipeline). Python unit coverage:
+`tests/test_combo_verifier.py::test_graveyard_return_*`.
 
 ## 3. Mana parsing (strictly pure-mana)
 
@@ -151,6 +189,14 @@ and extractor deepen (QE-3, DEC-488's domain) — never by loosening the closure
 model, which would trade the product's core promise for a bigger number. This is the
 deliberate DC-6 / QE-4 posture: "Phase 1 is the dominant cost; the knowledge base is
 the real project; phases 2–4 consume it."
+
+**DEC-526 worked example of that growth.** Ontology v1.1 (the graveyard-return family
+above) closed the largest single "no modelled loop template" miss class — the
+death-return reanimator archetype. On the Bartolomé del Presidio fixture the B-layer
+went from 0 verified to 41 distinct verified cores, driven entirely by four new
+deterministic features feeding one new closure template — recall grew by deepening the
+KB, not by loosening closure. The remaining QE-3 gap classes (clone, doublers,
+free-cast, type-changer, storm) are still abstained and await the same treatment.
 
 ## 9. Epistemic surface (EI-1/EI-2/EI-4)
 

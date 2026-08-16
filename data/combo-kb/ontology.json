@@ -1,6 +1,6 @@
 {
   "schema": "combo-kb-ontology",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "comment": "Combo Lab knowledge-base ontology (DEC-476 Phase 1 / DEC-488). Source of truth for deterministic feature extraction. Patterns are case-insensitive Python regex matched against oracle_text (per face for DFCs), after word-number normalisation. See docs/combo-kb-schema.md.",
   "resources": [
     {
@@ -124,6 +124,14 @@
         "once (?:each|per) turn",
         "only once each turn",
         "for the first time each turn"
+      ]
+    },
+    {
+      "id": "coven",
+      "label": "Coven / conditional board-state gate (DEC-526)",
+      "patterns": [
+        "\\bcoven\\b",
+        "three or more creatures with different powers"
       ]
     }
   ],
@@ -627,9 +635,87 @@
         "recursion",
         "graveyard_payoff"
       ]
+    },
+    {
+      "id": "etb_reanimate",
+      "kind": "provides",
+      "economy": "reanimate",
+      "label": "ETB reanimation with a mana-value bound (DEC-526)",
+      "role_hint": "engine",
+      "comment": "A creature whose enter-the-battlefield trigger returns a permanent/creature card from the graveyard to the BATTLEFIELD, with the MV cap captured as magnitude. The 'this creature enters' anchor keeps it bound to a true ETB trigger (a period barrier excludes a death-triggered reanimator like Body Snatcher whose ETB clause is a different sentence). magnitude = the MV cap the graveyard-return loop compares the partner's mana value against (default 99 = unbounded creature-only).",
+      "patterns": [
+        "when(?:ever)? this creature enters[^.]*?return target [^.]*?card with mana value (\\d+) or less from your graveyard to the battlefield",
+        "when(?:ever)? this creature enters[^.]*?return target creature card[^.]*?from your graveyard to the battlefield"
+      ],
+      "magnitude": {
+        "pattern": "return target [^.]*?card with mana value (\\d+) or less from your graveyard to the battlefield",
+        "group": 1,
+        "default": 99
+      },
+      "pairs_with": [
+        "death_return",
+        "exile_until_leaves"
+      ]
+    },
+    {
+      "id": "aura_fetch",
+      "kind": "provides",
+      "economy": "aura_fetch",
+      "label": "ETB aura fetch-and-attach (DEC-526)",
+      "role_hint": "engine",
+      "comment": "A creature whose ETB fetches an Aura from the graveyard (or hand/library) and attaches it to itself — the graveyard-return loop re-fetches a death-return aura each cycle. magnitude = the MV cap on a bounded fetch (Brotherhood Outcast 3), default 99 = unbounded (Boonweaver Giant / Danitha search or from-hand).",
+      "patterns": [
+        "when(?:ever)? [^.,]{0,30}? enters[^.]*?search your [^.]*?for an aura card and put it onto the battlefield attached",
+        "when(?:ever)? this creature enters[^.]*?return target aura[^.]*?with mana value (\\d+) or less from your graveyard to the battlefield",
+        "when(?:ever)? [^.,]{0,30}? enters[^.]*?put an aura or equipment card from your hand[^.]*?onto the battlefield attached"
+      ],
+      "magnitude": {
+        "pattern": "aura[^.]*?with mana value (\\d+) or less",
+        "group": 1,
+        "default": 99
+      },
+      "pairs_with": [
+        "death_return"
+      ]
+    },
+    {
+      "id": "death_return",
+      "kind": "provides",
+      "economy": "death_return",
+      "label": "Death-return attachment — returns the dead creature and self-buries (DEC-526)",
+      "role_hint": "engine",
+      "comment": "An Aura/Enchantment that, when the (enchanted) creature dies, returns that creature to the battlefield while the attachment itself goes to the graveyard — the recurring half of the graveyard-return loop, re-fetched by an etb_reanimate/aura_fetch partner. Pattern 2 covers the Angelic Renewal / Enduring-Renewal-to-battlefield shape (one intervening sentence).",
+      "patterns": [
+        "when enchanted (?:creature|permanent) dies[^.]*?return (?:it|that card|that permanent)[^.]*?to the battlefield",
+        "whenever a creature is put into your graveyard from the battlefield[^.]*?\\.[^.]*?return that card to the battlefield"
+      ],
+      "pairs_with": [
+        "etb_reanimate",
+        "aura_fetch"
+      ]
+    },
+    {
+      "id": "exile_until_leaves",
+      "kind": "provides",
+      "economy": "exile_return",
+      "label": "ETB exile-until-leaves creature — re-establishes its target on death (DEC-526)",
+      "role_hint": "engine",
+      "comment": "A creature that exiles another CREATURE until it leaves the battlefield (or, via a paired ETB-exile / LTB-return, returns the exiled creature on its own LTB — Fiend Hunter). The exiled object must be a creature: in the loop this piece exiles the reanimator (a creature), so a warder that only exiles artifacts/enchantments (Leonin Relic-Warder) is deliberately excluded. Sacrificing this piece returns the reanimator, whose ETB re-fetches this creature from the graveyard (mv <= bound).",
+      "patterns": [
+        "exile [^.]*?\\bcreature\\b[^.]*?until (?:this creature|this permanent|it) leaves the battlefield",
+        "exile [^.]*?\\bcreature\\b[^.]*?\\.[^.]*?return the exiled cards? to the battlefield"
+      ],
+      "pairs_with": [
+        "etb_reanimate"
+      ]
     }
   ],
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-08-16",
+      "note": "MINOR (DEC-526): graveyard-return loop primitives — the death-return reanimator family the Tier-B verifier previously abstained on (all generic etb/dies/drain features, no loop-closing signal). Adds four provides features — etb_reanimate (MV-bounded ETB graveyard→battlefield reanimation, magnitude = the bound), aura_fetch (ETB aura fetch-and-attach), death_return (attachment that returns the dead creature and self-buries), exile_until_leaves (exile-until-leaves creature that re-establishes its target on death) — and one guard, coven (conditional board-state gate). These feed the new combo_verifier_lib.template_graveyard_return closure class (+ its comboVerify.ts mirror): a free creature-sac outlet + an etb_reanimate/aura_fetch creature + a compatible death_return/exile_until_leaves partner with partner MV <= reanimator bound closes to k=0 infinite death triggers. coven-gated reanimators (Redemption Choir) abstain. Deterministic-only; no extractor code change (build_combo_kb is ontology-driven)."
+    },
     {
       "version": "1.0.1",
       "date": "2026-08-15",
