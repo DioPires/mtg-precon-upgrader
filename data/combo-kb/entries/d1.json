@@ -167,6 +167,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -186,7 +187,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Nature's Ruin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d119ca9a-ee82-42c2-81e6-684205ca5183",
     "provenance_summary": {},
@@ -475,6 +476,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -494,7 +496,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Spectral Flight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d127d1e6-f3a6-4f68-bea5-d7b4123476e5",
     "provenance_summary": {},
@@ -581,6 +583,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -600,7 +603,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Angel of Light",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d12cf640-ff60-4935-a2c7-28ab788de42c",
     "provenance_summary": {},
@@ -663,6 +666,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -685,7 +689,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Tajuru Preserver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d12d4b54-a13a-46ba-b176-3aaa453ce3e2",
     "provenance_summary": {},
@@ -1037,6 +1041,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1059,7 +1064,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Pilfer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d13f0907-de39-4a90-940a-831740d7aa9b",
     "provenance_summary": {},
@@ -1166,7 +1171,7 @@
     "provides": [
       {
         "economy": "cast",
-        "evidence": "search library for a red or white instant mv<=4 and cast without paying",
+        "evidence": "cast that card without paying its mana cost",
         "feature": "spell_source",
         "magnitude": 1,
         "provenance": "llm"
@@ -1772,6 +1777,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -1785,17 +1791,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Dragon-Style Twins",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d150f456-c33a-4b19-ac73-b1d818d5db8f",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a noncreature spell, this creature gets +1/+1",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Monk",
     "wants": []
@@ -2673,6 +2690,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2690,7 +2708,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Brotherhood Regalia",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d169738e-af0b-4488-a399-3aa1d1933aa1",
     "provenance_summary": {},
@@ -3016,6 +3034,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3041,7 +3060,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Burden of Proof",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d1767573-713d-4f63-a09d-e94150655093",
     "provenance_summary": {
@@ -3054,6 +3073,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3079,7 +3099,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Bellowing Elk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d17a1109-3a7f-4a39-b602-155da819235f",
     "provenance_summary": {
@@ -3445,6 +3465,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3464,7 +3485,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Dense Canopy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d182ab7d-77bd-49d1-9001-9b4016350181",
     "provenance_summary": {},
@@ -3808,6 +3829,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -3827,7 +3849,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Celestial Judgment",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d18c40cd-0f38-498b-8882-10381a831751",
     "provenance_summary": {},
@@ -3949,6 +3971,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -3968,7 +3991,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Talruum Piper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d18e60ed-ab6e-4b73-88f6-caa3f8e9c78e",
     "provenance_summary": {},
@@ -4406,6 +4429,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4423,7 +4447,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Squishy Sphinx Ninja",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d198b39d-2c5f-4150-8c54-a00d33d74a28",
     "provenance_summary": {},
@@ -4569,6 +4593,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -4594,7 +4619,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Disciple of the Old Ways",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d19d69c5-9f11-4ac1-9fc7-1636689f23a0",
     "provenance_summary": {
@@ -5154,6 +5179,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -5173,7 +5199,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Okina Nightwatch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d1c222fe-0ca7-415b-a28a-3b704df53d66",
     "provenance_summary": {},
@@ -5479,6 +5505,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5504,7 +5531,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Barroom Brawl",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d1ce7fcf-42f8-4b35-9ba1-55033c65c43e",
     "provenance_summary": {
@@ -6066,6 +6093,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -6085,7 +6113,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Long-Term Plans",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d1dfb359-d8f9-491e-88f7-95193b220200",
     "provenance_summary": {},
@@ -6096,6 +6124,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -6109,23 +6138,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Greater Sandwurm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d1dfed64-6e88-44c2-b479-9a2d072e4be7",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Wurm",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6151,7 +6192,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Militant Inquisitor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d1e326e8-6e9e-4dbd-8c2f-0bef90db2bb7",
     "provenance_summary": {
@@ -6646,6 +6687,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -6673,7 +6715,7 @@
     "is_dfc": false,
     "mana_cost": "{R/W}{G}",
     "name": "Naya Hushblade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d1f986dc-e0f0-4cc6-9dc4-fe97608da332",
     "provenance_summary": {

@@ -299,6 +299,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -324,7 +325,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Saprazzan Legate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d20b62fc-e248-4c84-87ac-7319b92531d4",
     "provenance_summary": {
@@ -428,6 +429,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -441,17 +443,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Redcap Heelslasher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2134b68-d73f-4090-aaec-b2ee5c9f9f04",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters, put a +1/+1 counter on target creature",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on target creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Goblin Rogue",
     "wants": []
@@ -510,6 +530,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -530,7 +551,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{B}",
     "name": "Dimir Infiltrator",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d215127b-5f1d-4d3c-935b-c228c9c7f874",
     "provenance_summary": {},
@@ -1317,6 +1338,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1330,17 +1352,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Triton Wavebreaker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2309fba-4273-4084-b206-642a43975c34",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a noncreature spell, this creature gets +1/+1",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Enchantment Creature — Merfolk Wizard",
     "wants": []
@@ -1412,6 +1445,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -1431,7 +1465,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Infuriate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d23119ca-73d1-4a48-a8d0-dab8919d891f",
     "provenance_summary": {},
@@ -1981,6 +2015,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -2000,7 +2035,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Sea God's Scorn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2497a5e-ff2b-4024-9b14-634304d583fe",
     "provenance_summary": {},
@@ -2541,6 +2576,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2560,7 +2596,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Akroma's Devoted",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d264903b-d23e-48c8-95f1-cb1606a705a2",
     "provenance_summary": {},
@@ -2910,6 +2946,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -2929,7 +2966,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Wilson, Refined Grizzly",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2766fd7-5cf9-4037-9f34-9ae3982c613a",
     "provenance_summary": {},
@@ -3604,6 +3641,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3623,7 +3661,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Veteran Bodyguard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d29078c0-1fb8-437a-81d1-bb319f646941",
     "provenance_summary": {},
@@ -3679,6 +3717,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -3692,17 +3731,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Zephyrim",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters, create that many tokens that are copies of it",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "token",
+        "evidence": "create that many tokens that are copies of it",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Warrior",
     "wants": []
@@ -3767,6 +3824,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -3793,7 +3851,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{B}",
     "name": "Kunoros, Hound of Athreos",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d297ce39-da98-4351-be9d-24f4d09bee7f",
     "provenance_summary": {
@@ -4244,6 +4302,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4263,7 +4322,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Necrobite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2a3e219-08f3-4c05-b239-abf80a1c1c6b",
     "provenance_summary": {},
@@ -4359,6 +4418,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -4372,17 +4432,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Thorned Moloch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2a49109-6db8-4f08-828c-da7a456a78a7",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a noncreature spell, this creature gets +1/+1",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Lizard",
     "wants": []
@@ -4951,6 +5022,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -4970,7 +5042,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Celestial Archon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2b29bb0-9fb5-46cd-a546-fa6c4ff6113c",
     "provenance_summary": {},
@@ -5097,6 +5169,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5116,7 +5189,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Marsh Casualties",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2bd182c-532f-4c77-adb8-754f2c2fcd82",
     "provenance_summary": {},
@@ -5127,6 +5200,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -5146,7 +5220,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Mystic Denial",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2bd23a6-4f77-4d6e-bf8f-339cb7a4184d",
     "provenance_summary": {},
@@ -5219,6 +5293,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5232,17 +5307,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Break Asunder",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2c53737-c265-46e3-a779-52c6b4f82d7d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -5380,6 +5466,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5399,7 +5486,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Soltari Lancer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2cbd71a-841b-4ff2-a794-247a030e0233",
     "provenance_summary": {},
@@ -5588,6 +5675,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -5607,7 +5695,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Skyclave Plunder",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2d5f9b8-7caf-42c8-934b-3f4b81468914",
     "provenance_summary": {},
@@ -5618,6 +5706,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -5634,17 +5723,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": true,
     "mana_cost": null,
     "name": "Gutter Skulker // Gutter Shortcut",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2d753d4-3bb7-4503-8cc0-8f948b7a461e",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "You may cast this card from your graveyard transformed for its disturb cost",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Spirit // Enchantment — Aura",
     "wants": []
@@ -5955,6 +6055,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -5974,7 +6075,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Telepathy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2e647ac-717f-46e6-baa8-6a793e7bdc32",
     "provenance_summary": {},
@@ -6354,6 +6455,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -6383,7 +6485,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{G}",
     "name": "Warden of the Chained",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d2f33d3a-afc6-4d15-9049-ecd33f85eb94",
     "provenance_summary": {

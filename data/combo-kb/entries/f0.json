@@ -477,6 +477,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -490,17 +491,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Haze of Pollen",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0140f00-5414-493b-962d-33312d49f6ea",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -812,6 +824,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -831,7 +844,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "Mirri, Cat Warrior",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f01efb04-ad2b-46fb-852c-dfb7e523e1b7",
     "provenance_summary": {},
@@ -900,6 +913,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -919,7 +933,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Fragmentize",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f025c1da-734e-4cbb-99d8-9d700d6edbde",
     "provenance_summary": {},
@@ -1412,6 +1426,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1431,7 +1446,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Smashing Spree",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0371d3d-ca11-432a-bebd-684caad5781f",
     "provenance_summary": {},
@@ -1442,6 +1457,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -1464,7 +1480,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Permafrost Trap",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f037b319-e559-42ad-bcfe-d43d07ce05e7",
     "provenance_summary": {},
@@ -1475,6 +1491,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1492,7 +1509,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Veteran's Sidearm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f038c11e-b070-40fd-9d0f-e031f7bc2bd2",
     "provenance_summary": {},
@@ -2046,6 +2063,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2074,7 +2092,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Shipwreck Sentry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f05575f8-4961-4780-83fc-3584d9146a14",
     "provenance_summary": {
@@ -2087,6 +2105,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -2100,17 +2119,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Fearless Skald",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f055a941-8b83-464e-a57f-8f188dc69aaa",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this creature enters, put a +1/+1 counter on target creature.",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on target creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Dwarf Berserker",
     "wants": []
@@ -2366,6 +2403,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -2382,17 +2420,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Thousand Moons Infantry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f064a39e-ebb3-47b5-bd06-f39b02b95eaf",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap this creature during each other player's untap step.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Soldier",
     "wants": []
@@ -2757,6 +2806,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -2772,7 +2822,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2787,19 +2838,29 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{W}",
     "name": "Hymn of Rebirth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f06fca68-593b-4fbd-a5a9-618060311172",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put target creature card from a graveyard onto the battlefield",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -2819,7 +2880,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Storm Strike",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0748ff2-94b1-45a9-8d56-8459bd86704a",
     "provenance_summary": {},
@@ -2957,6 +3018,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2976,7 +3038,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Weakness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f07a24c0-bf3c-4733-9473-c6be3b16950e",
     "provenance_summary": {},
@@ -3218,6 +3280,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3237,7 +3300,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Final-Word Phantom",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f07db0f7-7d25-4395-9af3-6b0ca9197b61",
     "provenance_summary": {},
@@ -3892,6 +3955,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -3914,7 +3978,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{R}",
     "name": "Divergent Transformations",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f08e835a-7827-4fdc-8dcf-ae74507da052",
     "provenance_summary": {},
@@ -4393,6 +4457,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -4406,17 +4471,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Sanguimancy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0a85525-b174-41d9-8871-870af29d3480",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "You draw X cards",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4475,6 +4551,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -4501,7 +4578,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{G}",
     "name": "Golgari Charm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0ab7166-9fcf-46e5-af2c-b7f628db4789",
     "provenance_summary": {
@@ -4628,6 +4705,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -4653,7 +4731,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Rescue",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0ae687a-7222-4521-a514-ba10373fed7e",
     "provenance_summary": {
@@ -5401,6 +5479,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -5421,7 +5500,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{R}",
     "name": "Molten Collapse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0d1636e-6f80-44fe-869a-1749ab249815",
     "provenance_summary": {},
@@ -6092,6 +6171,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -6111,7 +6191,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Yare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0f24c6d-80fb-4e99-a74d-6ed9d349ed3d",
     "provenance_summary": {},
@@ -6122,6 +6202,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -6147,7 +6228,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Gray Harbor Merfolk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0f79389-95f1-4110-9d3d-91779bc71604",
     "provenance_summary": {
@@ -6287,6 +6368,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -6321,7 +6403,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{R}",
     "name": "Karplusan Giant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f0fac3bc-a566-448e-a9a2-10927a49f182",
     "provenance_summary": {

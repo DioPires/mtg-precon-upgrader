@@ -172,6 +172,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -197,7 +198,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Magnetic Flux",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d50f756d-9ab6-4597-86ae-80beb70879ac",
     "provenance_summary": {
@@ -362,6 +363,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -381,7 +383,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Frenzy Sliver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d512d4ae-5db3-4fe5-8017-6a942004712d",
     "provenance_summary": {},
@@ -1101,6 +1103,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1124,7 +1127,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Dolmen Gate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d53d000f-c92f-4d70-ae60-8be3791da8a2",
     "provenance_summary": {
@@ -1311,6 +1314,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1324,17 +1328,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Lull",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d53f4c24-8deb-485a-b03a-945211fdf10d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1605,6 +1620,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1624,7 +1640,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Fledgling Osprey",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d5482ccf-7c3f-45b8-aaa8-8f6686fe584d",
     "provenance_summary": {},
@@ -1635,6 +1651,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1652,7 +1669,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Chitinous Cloak",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d5487098-fd24-49af-9634-4827a5c2eac4",
     "provenance_summary": {},
@@ -1663,6 +1680,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1682,7 +1700,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Noble Quarry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d549abd0-fea5-417f-93f9-255cb87ec989",
     "provenance_summary": {},
@@ -1692,7 +1710,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Multicolored creatures you control have trample.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -1706,6 +1733,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -1718,11 +1746,12 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}",
     "name": "Maze Behemoth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d54c258f-1914-449a-857d-11f9478bff63",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -1962,6 +1991,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1981,7 +2011,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Karametra's Blessing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d553ae4d-b2a9-47eb-8c2e-ffab8cc31b26",
     "provenance_summary": {},
@@ -2595,6 +2625,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -2614,7 +2645,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Apostle of Invasion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d56f1543-2b2d-4ce3-bcfe-41224a0cece4",
     "provenance_summary": {},
@@ -2821,6 +2852,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2845,7 +2877,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{U}",
     "name": "Mistfolk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d57409dc-22fa-40c1-a043-cab94d5f3b5f",
     "provenance_summary": {
@@ -3376,6 +3408,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "W"
@@ -3395,7 +3428,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{W}",
     "name": "Crisis of Conscience",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d5862292-9ef9-4bf2-b468-45bfe0d70f7a",
     "provenance_summary": {},
@@ -3448,6 +3481,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3470,7 +3504,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Detained by Legionnaires",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d59488b5-1118-4276-b862-11e860c7c32a",
     "provenance_summary": {},
@@ -3571,6 +3605,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3590,7 +3625,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -3601,16 +3637,25 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Rhystic Deluge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d59cfff9-2bce-439a-9456-ae68eabbf67d",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Enchantment",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{U}: Tap target creature unless its controller pays {1}.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -4137,6 +4182,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R",
@@ -4163,7 +4209,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{R}",
     "name": "Teleportal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d5b4876f-d28d-40dc-be7f-2c4f4c0bd6b3",
     "provenance_summary": {
@@ -4428,6 +4474,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4461,7 +4508,7 @@
     "is_dfc": true,
     "mana_cost": null,
     "name": "Heir of Falkenrath // Heir to the Night",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d5b9c62d-fe98-4cbc-b4b6-012702bf6657",
     "provenance_summary": {
@@ -4856,6 +4903,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "G",
@@ -4882,7 +4930,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}{U}{U}",
     "name": "Yavimaya's Embrace",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d5cb0370-a6f0-40c0-8b8f-553fca23778d",
     "provenance_summary": {
@@ -5812,6 +5860,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5828,17 +5877,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Woodland Wanderer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d5f3c711-edfa-4105-9844-e3f444942a03",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with a +1/+1 counter on it for each color of mana spent to cast it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Elemental",
     "wants": []

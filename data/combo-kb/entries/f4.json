@@ -367,6 +367,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -381,7 +382,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -392,13 +394,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Pounce",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4126dac-add4-4d5f-bf52-6f74c7c6aa67",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "Each deals damage equal to its power to the other.",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1165,6 +1176,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1187,7 +1199,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Isolate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f42d4556-5be2-4861-9f88-1b630b43eff2",
     "provenance_summary": {},
@@ -1299,6 +1311,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1328,7 +1341,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Embraal Bruiser",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f432998f-7737-4f41-86b5-a4372bc5db2b",
     "provenance_summary": {
@@ -1492,6 +1505,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1511,7 +1525,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Imposter Mech",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f434e266-d9d6-4058-96ff-a1bd4029d8dc",
     "provenance_summary": {},
@@ -1799,6 +1813,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -1819,7 +1834,7 @@
     "is_dfc": false,
     "mana_cost": "{G}{U}",
     "name": "Quandrix Charm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f43e36ea-6bf5-45bd-a4ad-cc507ae45641",
     "provenance_summary": {},
@@ -2144,6 +2159,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R",
@@ -2169,7 +2185,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Ordruun Commando",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f44a8a72-2c51-429e-8447-7bd8155b6f72",
     "provenance_summary": {
@@ -2390,6 +2406,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -2403,20 +2420,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "Terravore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f44fb61a-9aa5-4178-b958-5115d62a7f50",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Lhurgoyf",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "equal to the number of land cards in all graveyards",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2840,6 +2868,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2859,7 +2888,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Hinterland Drake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f457f182-69d0-468d-9bf0-7170363bac26",
     "provenance_summary": {},
@@ -3156,6 +3185,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3181,7 +3211,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Liu Bei, Lord of Shu",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f46416cc-0c3d-4d90-bdcb-910c5d4a2014",
     "provenance_summary": {
@@ -4518,6 +4548,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -4546,7 +4577,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}",
     "name": "Icy Blast",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f49302c5-8510-4360-841c-a59f53f87e0b",
     "provenance_summary": {
@@ -5269,6 +5300,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -5291,7 +5323,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{R}{R}",
     "name": "Commune with Lava",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4aa0f64-d202-42a1-af62-0e53bbe87782",
     "provenance_summary": {},
@@ -5302,6 +5334,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5321,7 +5354,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Absolute Law",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4aa8391-34d5-4ad2-a981-9aa08f8229db",
     "provenance_summary": {},
@@ -5448,6 +5481,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5467,7 +5501,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Bristling Boar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4aed3d2-04f5-49a4-a6be-d3cf097903f8",
     "provenance_summary": {},
@@ -5644,6 +5678,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -5665,7 +5700,7 @@
     "is_dfc": false,
     "mana_cost": "{G}{U}{R}",
     "name": "Guided Passage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4b30f6c-09ac-407e-9c72-da64d212ce93",
     "provenance_summary": {},
@@ -6033,6 +6068,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -6058,7 +6094,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Endure",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4cd32f0-d6aa-4497-b8db-a0bf4c3c31de",
     "provenance_summary": {
@@ -6181,6 +6217,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -6194,17 +6231,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Shadow Slice",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4d2eca4-4645-4044-b75f-442cd726cedf",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Target opponent loses 3 life.",
+        "feature": "drain",
+        "magnitude": 3,
+        "provenance": "llm"
+      },
+      {
+        "economy": "cast",
+        "evidence": "cast a copy of the encoded card without paying its mana cost",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -6541,6 +6596,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -6560,7 +6616,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Buoyancy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4e4060d-bfff-4991-9ae5-8f848304cd1e",
     "provenance_summary": {},
@@ -6715,6 +6771,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -6734,7 +6791,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Antagonize",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f4e860f1-e637-4640-b257-57c2e42793ce",
     "provenance_summary": {},

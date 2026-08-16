@@ -421,6 +421,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -439,25 +440,36 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Barbed-Back Wurm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d60cbdf0-f20f-4306-be6b-eed90d2a2f77",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Wurm",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "Target green creature blocking this creature gets -1/-1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "U"
@@ -477,7 +489,7 @@
     "is_dfc": true,
     "mana_cost": "{5}{U}{U} // {1}{U}",
     "name": "Sword Coast Serpent // Capsizing Wave",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d60e14b4-f750-40cc-85b5-17c87ae8a584",
     "provenance_summary": {},
@@ -488,6 +500,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -513,7 +526,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Roar of Jukai",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d611c594-dd2d-4f4b-a958-1f05f22f7f36",
     "provenance_summary": {
@@ -1152,6 +1165,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1176,7 +1190,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Uthden Troll",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6329dcc-b450-482a-8ee3-45449f7a4b3d",
     "provenance_summary": {
@@ -1189,6 +1203,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -1208,7 +1223,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Skywatcher Adept",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d63725af-be6d-4f91-b5c8-04df82d6f805",
     "provenance_summary": {},
@@ -1438,7 +1453,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Creatures you control have trample.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1452,6 +1476,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -1464,11 +1489,12 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Primal Rage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6464ee4-23fc-4d68-bbda-3b53772015d1",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -1969,6 +1995,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -1991,7 +2018,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "By Invitation Only",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d64e96bf-6815-462c-93b4-c9c22dc43eda",
     "provenance_summary": {},
@@ -2287,6 +2314,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2300,17 +2328,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Soul Reap",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d65f701d-31a1-4275-a580-3e1799ebf8b9",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Its controller loses 3 life",
+        "feature": "drain",
+        "magnitude": 3,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -2379,6 +2418,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R",
@@ -2399,7 +2439,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{R}",
     "name": "Fell Beast's Shriek",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d660f6a0-3642-4445-b877-fda2a2950680",
     "provenance_summary": {},
@@ -2454,6 +2494,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2471,7 +2512,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Shield of the Realm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d669ed30-efe9-4455-813a-c747b123333f",
     "provenance_summary": {},
@@ -2595,6 +2636,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -2614,7 +2656,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Flowstone Strike",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d67048eb-eaf1-4b5b-a8e3-a004bab438f3",
     "provenance_summary": {},
@@ -2625,6 +2667,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2651,7 +2694,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Ramroller",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d670d937-aaa7-4a96-9c6a-916ff7a6b935",
     "provenance_summary": {
@@ -2969,6 +3012,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2988,7 +3032,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Infest",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6850616-7db5-4141-9ab0-ae8d1f08114f",
     "provenance_summary": {},
@@ -2999,6 +3043,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -3019,7 +3064,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{R}",
     "name": "Dreadbore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d685799f-cc1a-40d6-9df6-d05b8b1f5b13",
     "provenance_summary": {},
@@ -3097,6 +3142,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -3116,7 +3162,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}{G}{G}",
     "name": "Terra Stomper",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d688baac-0574-4d88-b7eb-a7384c298ef5",
     "provenance_summary": {},
@@ -3127,6 +3173,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R",
@@ -3152,7 +3199,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Towering Thunderfist",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d68adf9b-57b1-4c14-97b1-c5906dc5d29b",
     "provenance_summary": {
@@ -3165,6 +3212,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3184,7 +3232,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Phytoburst",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d68d175f-f59c-4995-84d4-fc593280194b",
     "provenance_summary": {},
@@ -4197,6 +4245,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4216,7 +4265,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Araba Mothrider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6b54f58-7775-4180-b2e5-1b57da65a409",
     "provenance_summary": {},
@@ -4354,6 +4403,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U",
@@ -4377,22 +4427,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{W}{U}",
     "name": "Windreaver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6b6c27e-8028-49b1-90c6-ae0907159f85",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Elemental",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{W}: This creature gets +0/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -4455,6 +4515,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -4474,7 +4535,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Burrowing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6b9b88b-e31b-4b88-9d53-3df5687804ba",
     "provenance_summary": {},
@@ -4485,6 +4546,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U",
@@ -4505,7 +4567,7 @@
     "is_dfc": false,
     "mana_cost": "{W/U}{W/U}",
     "name": "Skyward Spider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6ba76fa-441c-4a74-bfea-8ae2a2c9e391",
     "provenance_summary": {},
@@ -4612,6 +4674,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4632,7 +4695,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Disruptor Flute",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6c46906-1339-4440-8cd0-2bb9890d4975",
     "provenance_summary": {},
@@ -4998,6 +5061,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5020,7 +5084,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Abolish",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6d7faa8-ecc9-408b-9c46-a0f62c74f567",
     "provenance_summary": {},
@@ -5250,6 +5314,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -5269,7 +5334,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{G}",
     "name": "Great Sable Stag",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6dbb83d-3215-4446-8480-8f1bf8cf2938",
     "provenance_summary": {},
@@ -5855,6 +5920,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5874,7 +5940,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Blastoderm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6ee8bd6-0207-46ee-9892-c1d1b23b934e",
     "provenance_summary": {},
@@ -6033,6 +6099,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -6052,7 +6119,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Awesome Presence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6efff61-2087-4f48-a8a8-6c465190dad9",
     "provenance_summary": {},
@@ -6249,6 +6316,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6263,7 +6331,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -6274,19 +6343,29 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Zurgo's Vanguard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6fdfd94-cef5-482c-83ed-11c5ba40abe9",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a tapped and attacking 1/1 red Warrior creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Dog Soldier",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -6303,17 +6382,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Goblin Lore",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "d6fe945c-b561-4e35-8c8e-7dcaa2ec45ab",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw four cards",
+        "feature": "draw",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []

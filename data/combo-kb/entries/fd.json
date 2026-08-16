@@ -869,6 +869,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -891,7 +892,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{R}",
     "name": "Scorched Earth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd1ce3e0-9c2d-48b6-9a14-4e71921cdfa4",
     "provenance_summary": {},
@@ -1200,6 +1201,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1217,7 +1219,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Space Fungus Snickerdoodle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd29fdbd-b4c5-4d23-9388-df0a798fbbba",
     "provenance_summary": {},
@@ -1530,6 +1532,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1560,7 +1563,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{R}",
     "name": "Fire Drake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd3bcc9b-7d84-478e-aef5-2e44610107c7",
     "provenance_summary": {
@@ -1948,6 +1951,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -1964,17 +1968,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{R}{R}",
     "name": "Improvisation Capstone",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd4f0315-567a-4cc5-bc7e-88a9d2cee910",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "you may cast a copy of it from exile without paying its mana cost",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery — Lesson",
     "wants": []
@@ -2020,6 +2035,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2040,7 +2056,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Damping Sphere",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd50d76c-7654-47b9-a5b6-d075874e4357",
     "provenance_summary": {},
@@ -2467,6 +2483,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2486,7 +2503,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Command of Unsummoning",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd57dfa5-f29d-4b79-8748-c34a73efb7f0",
     "provenance_summary": {},
@@ -2497,6 +2514,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2516,7 +2534,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Demystify",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd591199-9f7a-4147-a150-13279dbb4498",
     "provenance_summary": {},
@@ -2643,6 +2661,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2664,22 +2683,32 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "War Tax",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd5ff6ad-f3f1-470f-adef-fb4ce6536365",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Enchantment",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{X}{U}: This turn, creatures can't attack unless their controller pays {X}",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2766,6 +2795,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G",
@@ -2785,22 +2815,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Shambling Strider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd65468c-d75a-4be2-8a0c-9c4e808e3dd0",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Yeti",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}{G}: This creature gets +1/-1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2950,6 +2990,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2963,23 +3004,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Searing Rays",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd6730e2-3904-43cf-90c6-e3d9fe210bc5",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to each player equal to the number of creatures of that color",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -3000,7 +3053,7 @@
     "is_dfc": false,
     "mana_cost": "{R}{G}",
     "name": "Signal the Clans",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd68ae3c-52cd-4b20-b015-bd31378d972e",
     "provenance_summary": {},
@@ -3282,6 +3335,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -3301,7 +3355,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B/P}{B/P}",
     "name": "Dismember",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd74f8eb-0253-42dd-8277-186d4934da38",
     "provenance_summary": {},
@@ -3354,6 +3408,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3368,7 +3423,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -3379,13 +3435,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Minions' Murmurs",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd755ec1-6727-4165-a7fd-5d9b59754ada",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "You draw X cards",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3667,6 +3732,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3686,7 +3752,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Paladin en-Vec",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd8722e1-9c41-4037-ab7e-47e2aa9858a0",
     "provenance_summary": {},
@@ -3973,6 +4039,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -3998,7 +4065,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{B}",
     "name": "Vectis Agents",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fd9bb758-a763-46bf-9e56-4be26e271741",
     "provenance_summary": {
@@ -4737,6 +4804,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -4760,7 +4828,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{B}",
     "name": "Psychic Intrusion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fdb10291-b5e0-4da8-a103-8e7ac7f8177b",
     "provenance_summary": {},
@@ -4771,6 +4839,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -4791,7 +4860,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{G}",
     "name": "Outland Boar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fdb109f6-d185-4d1e-92b9-768e77562f55",
     "provenance_summary": {},
@@ -4802,6 +4871,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -4825,7 +4895,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}{R}",
     "name": "Void",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fdb28fd3-70fb-43c3-b367-9cf0d2c46e06",
     "provenance_summary": {},
@@ -5343,6 +5413,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -5362,7 +5433,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Granulate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fdcec649-6651-4ba0-bd3f-84f16e65397d",
     "provenance_summary": {},
@@ -5373,6 +5444,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -5386,17 +5458,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{6}{G}",
     "name": "Battering Wurm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fdcfa49a-70ed-48a4-b424-527a1698fd85",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with a +1/+1 counter on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Wurm",
     "wants": []
@@ -5448,6 +5531,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5467,7 +5551,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Mystic Subdual",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fdd423d5-f19b-4bb2-98ca-75cc3c058d32",
     "provenance_summary": {},
@@ -5644,6 +5728,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -5663,7 +5748,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Evacuation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fdd94383-b573-439a-8e1c-925af887c5a6",
     "provenance_summary": {},
@@ -5739,6 +5824,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -5758,7 +5844,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Sunder",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fddc93a2-912e-402a-9d0e-34f778e659ea",
     "provenance_summary": {},
@@ -6005,6 +6091,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -6029,7 +6116,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Tin Street Dodger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fde3c8df-cc57-4e64-b78b-301e103d8487",
     "provenance_summary": {
@@ -6155,6 +6242,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -6168,17 +6256,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Druid's Deliverance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fde7645a-5f02-4d5f-b38c-8390f325899e",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Create a token that's a copy of a creature token you control.",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -6466,6 +6565,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -6492,7 +6592,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{B}",
     "name": "Blood-Cursed Knight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "fdf51294-6270-4c94-a2a9-8df37dfcaa0d",
     "provenance_summary": {

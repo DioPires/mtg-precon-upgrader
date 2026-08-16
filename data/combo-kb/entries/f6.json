@@ -699,6 +699,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -715,17 +716,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Forsake the Worldly",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f60fb81a-969a-476c-a227-5231bbed4ad4",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Draw a card.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -1222,6 +1234,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1241,7 +1254,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Heroic Defiance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6209f18-9f40-44b4-9a8c-3445eda89928",
     "provenance_summary": {},
@@ -1485,6 +1498,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1507,7 +1521,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Tangle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f627e125-15af-4e53-b34e-82b60e4ec87b",
     "provenance_summary": {},
@@ -1733,6 +1747,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -1752,7 +1767,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Treetop Scout",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f62d4910-4547-43f6-909c-fc6a86ecc922",
     "provenance_summary": {},
@@ -1763,6 +1778,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -1782,7 +1798,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Predator's Strike",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f62e9a9f-9989-4a62-b063-cca32e21fe8b",
     "provenance_summary": {},
@@ -1924,6 +1940,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1943,7 +1960,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Lizard Blades",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
     "provenance_summary": {},
@@ -2762,6 +2779,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -2778,17 +2796,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Cinder Cloud",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f64ea1a7-0e10-4549-8056-25ebc2ce0175",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to that creature's controller equal to the creature's power",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -2928,7 +2957,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Sliver creatures you control have exalted.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2942,6 +2980,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -2954,11 +2993,12 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "First Sliver's Chosen",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f664596a-9ad1-4db3-95b0-457698ad2f66",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -2967,6 +3007,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -2986,7 +3027,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Seize the Initiative",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6653d90-cd30-4b2b-9592-97d5769dc3d8",
     "provenance_summary": {},
@@ -3098,6 +3139,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R",
@@ -3123,7 +3165,7 @@
     "is_dfc": false,
     "mana_cost": "{U/R}{U/R}",
     "name": "Frostburn Weird",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f667b4b6-c97f-47fa-9146-c5c1f3f47e92",
     "provenance_summary": {
@@ -3251,6 +3293,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -3274,7 +3317,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U/B}",
     "name": "River's Grasp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f671583f-bd22-4d3e-bf19-fb740c607f8f",
     "provenance_summary": {},
@@ -4370,6 +4413,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -4401,7 +4445,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G/U}",
     "name": "Groundling Pouncer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f695a073-7235-45c8-bc42-f1e29bb086ee",
     "provenance_summary": {
@@ -4414,6 +4458,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -4447,7 +4492,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Glade Watcher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f696b727-083e-4825-80d9-4bac35289958",
     "provenance_summary": {
@@ -4554,6 +4599,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4576,7 +4622,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Summary Dismissal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f69d65e0-4d8a-4e27-b4dd-dd8c50acb8eb",
     "provenance_summary": {},
@@ -5024,6 +5070,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -5049,7 +5096,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "For the Family",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6abd7e5-8c52-4b36-98c5-a4df8b5b6863",
     "provenance_summary": {
@@ -5302,6 +5349,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5321,7 +5369,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Impulse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6bd2902-7f8b-419e-bbc7-bcab0c1b7e01",
     "provenance_summary": {},
@@ -5332,6 +5380,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5351,7 +5400,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Command Performance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6c079cd-69c2-4da4-ba41-91844a4d2f06",
     "provenance_summary": {},
@@ -5639,6 +5688,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -5658,7 +5708,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Saddle of the Cavalier",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6cd939e-6b45-4d47-b251-7a09a149dedd",
     "provenance_summary": {},
@@ -5977,6 +6027,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6002,7 +6053,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Rampaging Soulrager",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6d8e6cb-0878-4f2c-9a89-ce84cb4f5bbc",
     "provenance_summary": {
@@ -6548,6 +6599,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -6570,7 +6622,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Orgg",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6ea2b1b-1403-4ccd-a23c-48e0e81ceb91",
     "provenance_summary": {},
@@ -6703,6 +6755,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -6728,7 +6781,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}",
     "name": "Maze Rusher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "f6ef6ac6-bf1f-41ed-bd3f-a3806a76a336",
     "provenance_summary": {
