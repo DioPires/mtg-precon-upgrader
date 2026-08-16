@@ -1,6 +1,7 @@
 [
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -20,7 +21,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Seeker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca00eb17-e5c3-42c8-a665-431f5f95b67f",
     "provenance_summary": {},
@@ -134,6 +135,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R",
@@ -157,7 +159,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}{W}",
     "name": "Judoon Enforcers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca04089c-24b6-465e-9303-ea28c0d6f3c7",
     "provenance_summary": {},
@@ -913,6 +915,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -926,23 +929,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Bubble Smuggler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca22fa33-5460-4d31-a9c8-4115d35b994c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put four +1/+1 counters on it.",
+        "feature": "counter_add",
+        "magnitude": 4,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Octopus Fish",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -968,7 +983,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Domineer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca283839-864f-4252-8452-480e3ba29b20",
     "provenance_summary": {
@@ -981,6 +996,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -1003,7 +1019,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Blessed Reincarnation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca29588c-f117-418e-be9e-fa2ee89862ca",
     "provenance_summary": {},
@@ -2249,6 +2265,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -2271,7 +2288,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Bound in Gold",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca597a0d-b510-4b25-9a83-4d4e613546f5",
     "provenance_summary": {},
@@ -3034,6 +3051,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "W"
@@ -3057,7 +3075,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Restore Balance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca79d130-6387-47b0-bde8-f45dd93f9221",
     "provenance_summary": {},
@@ -3295,6 +3313,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -3320,7 +3339,7 @@
     "is_dfc": true,
     "mana_cost": "{4}{B}{B} // {1}{B}",
     "name": "Topaz Dragon // Entropic Cloud",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca8535f2-1f96-4836-bd32-5e952f9bee72",
     "provenance_summary": {
@@ -3501,6 +3520,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3520,7 +3540,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Terrifying Presence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca8f6e19-6ef3-4d77-8312-867767ffeda6",
     "provenance_summary": {},
@@ -3530,7 +3550,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "Other creatures you control have trample and ward {2}.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "G"
@@ -3544,6 +3573,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -3556,11 +3586,12 @@
     "is_dfc": false,
     "mana_cost": "{6}{G}{G}",
     "name": "Giant Ankheg",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ca905672-50c2-4e19-9d08-2d3f8e3debfd",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -4193,6 +4224,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4212,7 +4244,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Copy Land",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "caa208bd-92e9-40ec-95c0-86e89d4facbb",
     "provenance_summary": {},
@@ -4222,7 +4254,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "other than this Vehicle gets +1/+1.",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4236,6 +4277,7 @@
     ],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "events_emitted": "deterministic",
       "guards": "deterministic"
@@ -4249,11 +4291,12 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Lifecraft Engine",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "caa69b51-1efd-4d0e-803b-914a83ccb836",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -4531,6 +4574,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4553,7 +4597,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Dimir Machinations",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cab67380-4e1a-4210-a98b-d2a21022b4b7",
     "provenance_summary": {},
@@ -4678,6 +4722,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -4702,7 +4747,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Eron the Relentless",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cabcc2b7-0cdb-4ec2-b6a3-47644335abff",
     "provenance_summary": {
@@ -4836,6 +4881,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4859,7 +4905,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Tezzeret's Strider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cac79a2b-1de3-4461-95ac-fa0f1129cd6b",
     "provenance_summary": {
@@ -4929,6 +4975,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R",
@@ -4946,17 +4993,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": true,
     "mana_cost": "{2}{U} // {2}{R}",
     "name": "Reduce // Rubble",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cac993d5-28a1-48b6-9c2f-f216cb5f521d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Cast this spell only from your graveyard.",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant // Sorcery",
     "wants": []
@@ -5196,6 +5254,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5219,7 +5278,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Pallimud",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cad0f865-62e0-47ba-84ae-8e97cb52bbd1",
     "provenance_summary": {},
@@ -5274,6 +5333,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -5287,17 +5347,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Goblin Glory Chaser",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cad1cd10-4810-495e-9305-0ae812596f6a",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put a +1/+1 counter on it and it becomes renowned",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Goblin Warrior",
     "wants": []
@@ -5534,6 +5605,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -5559,7 +5631,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Siege Behemoth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cadf7be1-4a74-4163-bb2f-6bfbbb557973",
     "provenance_summary": {
@@ -5572,6 +5644,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5589,7 +5662,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Commander's Plate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cae166de-e681-40a0-83a8-3c17cf40e2fc",
     "provenance_summary": {},
@@ -5600,6 +5673,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 9.0,
     "color_identity": [
       "B"
@@ -5629,7 +5703,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{B}{B}{B}",
     "name": "Valgavoth, Terror Eater",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "cae3ec72-436d-4086-9dcb-17b3d92ad5c4",
     "provenance_summary": {
@@ -6270,6 +6344,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -6289,7 +6364,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Defenestrate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "caf840e8-c1d3-4570-8542-432a765c09ff",
     "provenance_summary": {},

@@ -438,6 +438,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -458,7 +459,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{U}{B}",
     "name": "Extract Brain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb0eb9c2-c26d-452d-9e02-fc0bec2655c4",
     "provenance_summary": {},
@@ -1403,6 +1404,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -1422,7 +1424,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Nightguard Patrol",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb482f90-5624-4e2c-9916-85fb09a3639a",
     "provenance_summary": {},
@@ -1433,6 +1435,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1458,7 +1461,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Nature's Cloak",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb493c95-5f6d-405b-aac6-c56fe6b6f42f",
     "provenance_summary": {
@@ -1527,6 +1530,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1546,7 +1550,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Call to Serve",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb4be6b2-507c-4d7c-bea4-010670dce3da",
     "provenance_summary": {},
@@ -1658,6 +1662,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1674,17 +1679,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Voidpouncer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb4ebe30-2501-48aa-879a-2402a9eb1be7",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "enters with two +1/+1 counters and a trample counter on it",
+        "feature": "counter_add",
+        "magnitude": 2,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Eldrazi",
     "wants": []
@@ -1950,6 +1966,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -1964,20 +1981,40 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}{G}",
     "name": "Sluiceway Scorpion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb5ea7c7-741a-4edd-9696-b9881b70afe0",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a number of +1/+1 counters equal to this card's power on target creature",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Scorpion",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile this card from your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3001,6 +3038,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -3026,7 +3064,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}{U}",
     "name": "Spectral Deluge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb9bb65e-504f-4edd-8d47-d0efa03e7d17",
     "provenance_summary": {
@@ -3134,6 +3172,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -3156,7 +3195,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}{R}",
     "name": "Thoughts of Ruin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb9e1d12-ebcc-4a8a-baef-9f69638a51cd",
     "provenance_summary": {},
@@ -3167,6 +3206,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3195,7 +3235,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Masako the Humorless",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bb9e77c0-eb94-4bba-9b71-1935be280b75",
     "provenance_summary": {
@@ -3280,6 +3320,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -3305,7 +3346,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Mind Harness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bba30360-c54a-4906-8b2e-84bb1209c43d",
     "provenance_summary": {
@@ -3615,6 +3656,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3640,7 +3682,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Waxing Moon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bbb4f08f-3016-40c2-ae7c-afc720eeb27a",
     "provenance_summary": {
@@ -3813,6 +3855,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -3838,7 +3881,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{W}",
     "name": "Charging Troll",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bbc1b96d-5a63-4091-a2c7-08bd289e0bf2",
     "provenance_summary": {
@@ -4550,6 +4593,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4572,7 +4616,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Faerie Trickery",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bbe370ba-412b-4052-89d9-2d0ae4928118",
     "provenance_summary": {},
@@ -5084,6 +5128,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -5109,7 +5154,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{B}",
     "name": "Kathari Remnant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bbf07946-33d0-48fe-85af-022e9b0b834c",
     "provenance_summary": {
@@ -5173,6 +5218,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5192,7 +5238,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Argothian Pixies",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bbf183bc-d502-4432-8202-f29f60c08396",
     "provenance_summary": {},
@@ -5559,6 +5605,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5573,7 +5620,9 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -5584,16 +5633,33 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Sunbringer's Touch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bbfced8f-0f83-4cc9-9143-aa2473828b48",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "put X +1/+1 counters on it",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Each creature you control with a +1/+1 counter on it gains trample",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -5674,6 +5740,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U",
@@ -5694,7 +5761,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}{U}",
     "name": "Azorius Skyguard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bbfdb5eb-2140-4d50-a667-1b4ac75d03a5",
     "provenance_summary": {},

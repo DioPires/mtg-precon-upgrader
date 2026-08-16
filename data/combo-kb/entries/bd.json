@@ -288,6 +288,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -307,7 +308,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Giant Cindermaw",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
     "provenance_summary": {},
@@ -708,6 +709,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -731,7 +733,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{B}",
     "name": "Despark",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd16434d-55ea-4c5a-a9ef-752971a4af16",
     "provenance_summary": {},
@@ -1117,6 +1119,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -1131,7 +1134,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -1142,13 +1146,22 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Kemba's Banner",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd31c248-8b3f-4fa5-a639-19b0e37b15c3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "create a 2/2 red Rebel creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []
@@ -1418,6 +1431,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -1434,17 +1448,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Flesh Allergy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd3ce6a2-9efc-4dab-a357-9f2aa0a4c0c6",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "loses life equal to the number of creatures that died this turn",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -1615,6 +1640,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -1634,7 +1660,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Mammoth Growth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd433a27-1f3f-4d69-8b7e-97239fdf165b",
     "provenance_summary": {},
@@ -1951,6 +1977,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -1968,7 +1995,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Strider Harness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd4ad383-8c40-4dda-bc9c-ba8a001d6882",
     "provenance_summary": {},
@@ -2029,6 +2056,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -2056,7 +2084,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}",
     "name": "Centaur Veteran",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd4c9726-c7bb-4da4-99e5-e98d174d6a52",
     "provenance_summary": {
@@ -2168,6 +2196,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -2195,7 +2224,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Slithering Shade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd50ba7a-e360-4074-99dc-e3d4c6824d77",
     "provenance_summary": {
@@ -2419,6 +2448,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -2449,7 +2479,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Drake Hatchling",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd55bcc4-f0c5-4c09-8b3b-2e25e9fbd9ee",
     "provenance_summary": {
@@ -2510,6 +2540,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U",
@@ -2533,7 +2564,7 @@
     "is_dfc": true,
     "mana_cost": "{3}{U} // {2}{W}",
     "name": "Threadbind Clique // Rip the Seams",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd575e82-99e7-44c7-ab93-d33f5678e1ad",
     "provenance_summary": {},
@@ -2544,6 +2575,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -2563,7 +2595,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Turn the Tables",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd5ad7c3-4477-4278-9875-d2ffbb0e8089",
     "provenance_summary": {},
@@ -2638,6 +2670,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2657,7 +2690,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Butcher's Glee",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd637245-52bc-4cc9-810d-253e69dc3394",
     "provenance_summary": {},
@@ -2941,6 +2974,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -2966,7 +3000,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Peer Pressure",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd6b02f9-277e-4f6a-b0a4-d893a939cf73",
     "provenance_summary": {
@@ -3212,6 +3246,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U",
@@ -3232,7 +3267,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{U}",
     "name": "Hussar Patrol",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd73581c-c4bd-46cb-8004-75aeafa24288",
     "provenance_summary": {},
@@ -3294,6 +3329,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -3313,7 +3349,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Stolen Vitality",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd7454f3-57bc-44f4-bd58-54e883c699fd",
     "provenance_summary": {},
@@ -3614,6 +3650,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3633,7 +3670,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Barrin's Unmaking",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd7ad427-11d9-40d1-b292-71f985711665",
     "provenance_summary": {},
@@ -3813,6 +3850,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3832,7 +3870,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Nyxborn Eidolon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd7fd82f-154a-4001-bb8f-7fb50ac77b6b",
     "provenance_summary": {},
@@ -4137,6 +4175,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4159,7 +4198,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Trusty Companion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd8c633c-ba99-47ac-a1d1-9e15aa948933",
     "provenance_summary": {},
@@ -4170,6 +4209,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4189,7 +4229,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Nameless One",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd8d0498-53f9-484c-a59a-78daca468859",
     "provenance_summary": {},
@@ -4431,6 +4471,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -4450,7 +4491,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Human Frailty",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd95c832-9ae9-404a-a2bc-0760a5b9ff56",
     "provenance_summary": {},
@@ -4461,6 +4502,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -4481,7 +4523,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{B}",
     "name": "Executioner's Swing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd9ab645-d8ed-4cdd-8d8e-53383b5501ba",
     "provenance_summary": {},
@@ -4608,6 +4650,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4633,7 +4676,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Hideous Visage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd9c5b53-9666-45ee-8f9d-ee1ae74111b6",
     "provenance_summary": {
@@ -4833,6 +4876,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -4852,7 +4896,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Skyshroud Elite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd9f2c84-0589-4ffe-9bff-ea74be4f77a4",
     "provenance_summary": {},
@@ -4863,6 +4907,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4882,7 +4927,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Dreadful as the Storm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bd9f4f20-cdef-4a20-b4cb-4f25c137a786",
     "provenance_summary": {},
@@ -4983,6 +5028,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -5002,7 +5048,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Illusory Wrappings",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bda363b6-4be1-4415-8b3e-92882df1f630",
     "provenance_summary": {},
@@ -5458,6 +5504,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5477,7 +5524,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Naturalize",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
     "provenance_summary": {},
@@ -6378,6 +6425,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -6400,7 +6448,7 @@
     "is_dfc": true,
     "mana_cost": null,
     "name": "Weary Prisoner // Wrathful Jailbreaker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bdcf0af3-3976-400d-a8b7-15e959e2b255",
     "provenance_summary": {},
@@ -6411,6 +6459,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -6430,7 +6479,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Ghastbark Twins",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bdd0d01d-b9f2-4c3f-9b3b-04e122013de5",
     "provenance_summary": {},
@@ -6441,6 +6490,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R",
@@ -6467,7 +6517,7 @@
     "is_dfc": false,
     "mana_cost": "{R}{W}",
     "name": "Thorin Oakenshield",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bdd41af0-bbd1-4ecd-a699-99f006f5e5ce",
     "provenance_summary": {
@@ -7558,6 +7608,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -7577,7 +7628,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Muzzle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bdf497b5-166f-46a7-8e18-ae0b8f97768c",
     "provenance_summary": {},
@@ -7712,6 +7763,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -7734,7 +7786,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Cunning Wish",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bdf80a55-b524-4d17-9be8-a0005403a0e7",
     "provenance_summary": {},

@@ -49,6 +49,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -74,7 +75,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Crossbow Ambush",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c10fd7a6-360f-43d6-a4ef-d990c97cb2f6",
     "provenance_summary": {
@@ -902,6 +903,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -921,7 +923,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Uktabi Drake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c12b4b1a-fab0-4e9f-8e04-d8a409a965bc",
     "provenance_summary": {},
@@ -1093,6 +1095,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 9.0,
     "color_identity": [
       "R"
@@ -1112,7 +1115,7 @@
     "is_dfc": false,
     "mana_cost": "{7}{R}{R}",
     "name": "Blast-Furnace Hellkite",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c13079d5-6749-43e5-a8ee-ef3af31ff679",
     "provenance_summary": {},
@@ -1123,6 +1126,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1142,7 +1146,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Panic Attack",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1346677-d89e-49d0-9819-08805f00bb64",
     "provenance_summary": {},
@@ -1242,6 +1246,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1264,7 +1269,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Shatter Assumptions",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1372f18-9b33-40e8-bfe2-dc4ca3b3ef55",
     "provenance_summary": {},
@@ -1424,6 +1429,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -1446,7 +1452,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Crumble to Dust",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c13da0f4-917f-4e07-b484-21cb4bec4da6",
     "provenance_summary": {},
@@ -1488,6 +1494,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -1510,7 +1517,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Paralyzing Grasp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1459d75-2bc2-4dae-8c7e-4e759a4dffc9",
     "provenance_summary": {},
@@ -1777,6 +1784,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -1799,7 +1807,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Vanish into Eternity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c14e422b-6412-45ce-8e82-d47ba61557a0",
     "provenance_summary": {},
@@ -2057,6 +2065,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -2071,7 +2080,9 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -2082,16 +2093,33 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Longshot Squad",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c153e202-1d93-4044-b457-b8ebd5b36ec3",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter on this creature.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Dog Archer",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Each creature you control with a +1/+1 counter on it has reach.",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2331,6 +2359,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2350,7 +2379,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Arms of Hadar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c15e5cb8-b94c-4157-9327-410e66606b82",
     "provenance_summary": {},
@@ -2411,6 +2440,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2430,7 +2460,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Sphere of Duty",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1612eef-5059-46fd-a5fd-c8ebf6779a6e",
     "provenance_summary": {},
@@ -2556,6 +2586,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -2575,7 +2606,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}",
     "name": "Streaking Oilgorger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c163a95e-9414-4b8c-b5a2-1e7674530404",
     "provenance_summary": {},
@@ -3279,6 +3310,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -3298,7 +3330,7 @@
     "is_dfc": false,
     "mana_cost": "{G/P}",
     "name": "Mutagenic Growth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c17b9e5b-58b6-4ccf-8283-945ba77429e7",
     "provenance_summary": {},
@@ -3682,6 +3714,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3706,7 +3739,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Drudge Skeletons",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c180ed02-07f4-4538-9bea-8c249234a8e2",
     "provenance_summary": {
@@ -4210,6 +4243,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4232,7 +4266,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Stupor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c19e3560-d304-4d91-aa2a-463d7dbb35bb",
     "provenance_summary": {},
@@ -4921,6 +4955,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4940,7 +4975,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Spin Out",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1b6795a-1ac6-4edb-bcee-4db1f1fbe8ea",
     "provenance_summary": {},
@@ -5529,6 +5564,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5551,7 +5587,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Dauthi Slayer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1d0537b-954f-4d3b-b9fe-1dd7ffaa1197",
     "provenance_summary": {},
@@ -5562,6 +5598,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5576,7 +5613,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -5591,13 +5629,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Grim Return",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1d54d0c-53fc-474c-ba89-2aa1be3bf27d",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put that card onto the battlefield under your control.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5918,6 +5965,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U",
@@ -5938,7 +5986,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{U}",
     "name": "Wings of Hope",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1df6359-edf4-48cf-b8d1-6240ac291cf7",
     "provenance_summary": {},
@@ -6190,6 +6238,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -6209,7 +6258,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Kindled Heroism",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1ed20c0-f75d-4aca-8874-6955bd9fb21b",
     "provenance_summary": {},
@@ -6460,6 +6509,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -6479,7 +6529,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Covert Operative",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1f33eac-0f85-4f0f-8562-1737b5f6b23a",
     "provenance_summary": {},
@@ -6541,6 +6591,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -6560,7 +6611,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Ground Rift",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "c1f7d451-ca70-403d-81bf-8822876d1a54",
     "provenance_summary": {},

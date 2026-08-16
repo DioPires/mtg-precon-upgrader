@@ -271,3 +271,33 @@ Then continue bundles to drain the remaining **3,562** non-combo `needs_llm` →
 **Next**: FE sign-off on Bundle 2 (`ea5ae32..2bc5718`, reviewer ≠ implementer) → merge to main.
 Then continue bundles to drain the remaining **2,362** non-combo `needs_llm` →
 `phase1-full-acceptance`.
+
+## 2026-08-16 — DEC-506 stage-2 Bundle 3 (Waves 15–18): long-tail drain (1,200)
+
+`dec-506-stage2-waves15plus` off main (`d74a14c`, Bundle 2 merge).
+
+| Wave | Commit    | needs_llm     | items/cards | empty     |
+|------|-----------|---------------|-------------|-----------|
+| 15   | `4aea4cf` | 2,362 → 2,062 | 49 / 47     | 253 / 300 |
+| 16   | `fae2008` | 2,062 → 1,762 | 31 / 26     | 274 / 300 |
+| 17   | `3672f2e` | 1,762 → 1,462 | 35 / 32     | 268 / 300 |
+| 18   | `1f3122b` | 1,462 → 1,162 | 51 / 46     | 254 / 300 |
+| Σ    | `4aea4cf..1f3122b` | 2,362 → 1,162 (−1,200) | 166 / 151 | 1,049 / 1,200 |
+
+- Per-wave machine validation: 1,200/1,200 oracle_id match, 0 OOV, 0 kind-mismatch,
+  0 economy-mismatch, 0 non-verbatim evidence (0 truncations, 0 drops, 0 empty), magnitudes
+  int ≥ 1. Validator gates on coverage (exits non-zero on any missing card) — all four waves
+  returned 0 missing.
+- Gate intact: deterministic provenance 86,417 untouched at every wave boundary;
+  deterministic_signal_count 25,810; 974 cumulative `llm` items across 864 cards,
+  0 Tier-B-eligible.
+- Tip (`1f3122b`): coverage --stage full PASS (1,185/1,185 fleet; 33,462/33,462 pool),
+  tests 22/22, sampling QA 100% (seed 51; KB-7 100%).
+- **QE-3 (Waves 15–18)**: free-cast (cascade/suspend/pitch/discover), tutor/search (transmute,
+  landcycling), cheat-into-play (polymorph/cloak), clone/copy, storm, theft/gain-control, energy,
+  impulse draw, effect doublers (gap-log 642 → 771, +129).
+- Full evidence packet: `prompts/phase-1/P1.8-waves15-18-qa.md`.
+
+**Next**: FE sign-off on Bundle 3 (`4aea4cf..1f3122b`, reviewer ≠ implementer) → merge to main.
+Then continue bundles to drain the remaining **1,162** non-combo `needs_llm` →
+`phase1-full-acceptance`.

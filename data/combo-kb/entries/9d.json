@@ -433,6 +433,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R",
@@ -453,7 +454,7 @@
     "is_dfc": false,
     "mana_cost": "{R}{W}",
     "name": "Ride Down",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d136448-7331-4a61-b2ad-cfeb23dfa464",
     "provenance_summary": {},
@@ -1188,6 +1189,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -1207,7 +1209,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Selvala's Stampede",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d2aea05-f55c-4355-950f-bfdc4e985e80",
     "provenance_summary": {},
@@ -2163,6 +2165,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -2190,7 +2193,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Briar Shield",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d437391-d476-4976-8714-6a1d3185ab52",
     "provenance_summary": {
@@ -2233,6 +2236,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -2251,22 +2255,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Scion of Glaciers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d49cef5-8f9c-46cd-aa5e-7861fc1dcaa4",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Elemental",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{U}: This creature gets +1/-1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2531,6 +2545,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2555,7 +2570,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Ironclaw Buzzardiers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d546a53-5beb-40f5-b358-377810c8a75d",
     "provenance_summary": {
@@ -2674,6 +2689,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -2699,7 +2715,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Seismic Sense",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d586c74-b1dd-4fcb-a24a-c703d250fa63",
     "provenance_summary": {
@@ -3043,6 +3059,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -3062,7 +3079,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Long Goodbye",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d63ba8a-a5cd-4fdb-bba3-95612be0077c",
     "provenance_summary": {},
@@ -3445,6 +3462,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -3470,7 +3488,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Brave the Elements",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d73a51a-1c8e-40cd-8124-aeff406a0884",
     "provenance_summary": {
@@ -3483,6 +3501,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -3499,17 +3518,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{R/P}{R/P}",
     "name": "Act of Aggression",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap that creature.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -3568,6 +3598,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -3593,7 +3624,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Roar of Challenge",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d83a1d3-ef0f-4134-a38b-c992d396592b",
     "provenance_summary": {
@@ -3606,6 +3637,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3631,7 +3663,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Threads of Disloyalty",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d86735c-12e5-457a-beb4-057ab220d18b",
     "provenance_summary": {
@@ -3745,6 +3777,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3764,7 +3797,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Disperse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9d8fe3f8-5027-4f9e-999e-e277caa96478",
     "provenance_summary": {},
@@ -4176,6 +4209,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4203,7 +4237,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Phantom Wings",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9da74f0f-143d-4db2-81eb-c7873744a2d0",
     "provenance_summary": {
@@ -4264,6 +4298,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -4277,20 +4312,31 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Ulna Alley Shopkeep",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9da7f9ec-872a-471d-8d60-5f4213f0204f",
-    "provenance_summary": {},
+    "provenance_summary": {
+      "llm": 1
+    },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Goblin Warlock",
-    "wants": []
+    "wants": [
+      {
+        "economy": "lifegain",
+        "evidence": "as long as you gained life this turn",
+        "feature": "lifegain_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -4807,6 +4853,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -4832,7 +4879,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "You're Not Alone",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9dbc2fc8-ed42-4534-9676-bf0695cd518c",
     "provenance_summary": {
@@ -5650,6 +5697,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -5668,22 +5716,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Viscerid Deepwalker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9dea848b-d758-46d0-829d-b096061fd460",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Homarid Warrior",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{U}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],

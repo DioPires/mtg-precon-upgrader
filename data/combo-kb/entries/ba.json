@@ -231,6 +231,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -248,7 +249,7 @@
     "is_dfc": false,
     "mana_cost": "{1}",
     "name": "Spider-Suit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba08b4cf-9a13-40fd-8522-9504d2ff1a19",
     "provenance_summary": {},
@@ -259,6 +260,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -278,7 +280,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{G}",
     "name": "Celestial Reunion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba0a815c-1dfe-47c1-890f-496c670124f3",
     "provenance_summary": {},
@@ -412,6 +414,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -434,7 +437,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Tribute to the Wild",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba0fc2ca-7084-454a-9d4e-5cbca945a7ca",
     "provenance_summary": {},
@@ -536,6 +539,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -558,7 +562,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Stasis Cocoon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba11db54-149d-427e-b9ff-d1e29bbcbb11",
     "provenance_summary": {},
@@ -1058,6 +1062,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1080,7 +1085,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Doomfall",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba2c2a65-256a-46db-bf2b-b02b7d114a42",
     "provenance_summary": {},
@@ -1564,6 +1569,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -1583,7 +1589,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Ironfist Crusher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba4c9337-4cdf-44d8-849b-ffd808e5407d",
     "provenance_summary": {},
@@ -1979,6 +1985,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1998,7 +2005,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Repel Calamity",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba58f508-8036-496c-8a2f-c1e410165e93",
     "provenance_summary": {},
@@ -2009,6 +2016,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -2031,7 +2039,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -2042,16 +2051,25 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Earthrumbler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba5982a9-e8c1-4e7c-9a73-c4caad0f7336",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Artifact — Vehicle",
-    "wants": []
+    "wants": [
+      {
+        "economy": "recursion",
+        "evidence": "Exile an artifact or creature card from your graveyard",
+        "feature": "graveyard_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2763,6 +2781,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -2782,7 +2801,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Treetop Bracers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba71eb8a-f9f8-4608-88d8-963a1770d8d4",
     "provenance_summary": {},
@@ -3075,6 +3094,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3088,17 +3108,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Living Destiny",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba7be3e9-d240-4fed-943d-a405409b13b5",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain life equal to the revealed card's mana value.",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -3245,6 +3276,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3264,7 +3296,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Slash the Ranks",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba7f1b09-5727-484d-a502-3dcf4d618c56",
     "provenance_summary": {},
@@ -3459,6 +3491,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -3475,17 +3508,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": true,
     "mana_cost": null,
     "name": "Galedrifter // Waildrifter",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba88575a-4b9a-40cd-abbc-4539912c9455",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "You may cast this card from your graveyard",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Hippogriff // Creature — Hippogriff Spirit",
     "wants": []
@@ -3621,6 +3665,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3638,7 +3683,7 @@
     "is_dfc": false,
     "mana_cost": "{6}",
     "name": "Molecule Man",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba944437-0b55-47cb-92dc-2477ce6726c3",
     "provenance_summary": {},
@@ -3971,6 +4016,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -3984,17 +4030,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Nissa's Revelation",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "ba9cd7bc-846f-4b5c-a1dc-9763a60dafc9",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "you draw cards equal to its power",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "lifegain",
+        "evidence": "you gain life equal to its toughness",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4486,6 +4550,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4507,7 +4572,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Rusted Sentinel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bab28608-b388-4c48-92a4-689943bbbf4a",
     "provenance_summary": {},
@@ -4790,6 +4855,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4813,7 +4879,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "Become Anonymous",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bac0fcee-9c1a-46b7-86c8-ffbfcc1e96de",
     "provenance_summary": {},
@@ -4824,6 +4890,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -4843,7 +4910,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Trip Up",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bac52ae6-24ee-4c4f-a32c-3eb9859dc025",
     "provenance_summary": {},
@@ -5012,6 +5079,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -5031,7 +5099,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Hookblade Veteran",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bad2385b-6981-46fa-a012-d3992c3bc118",
     "provenance_summary": {},
@@ -5371,6 +5439,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -5399,7 +5468,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Realmwright",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bad869dd-e844-46ca-be53-73c4bc19d09c",
     "provenance_summary": {
@@ -5472,6 +5541,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -5491,7 +5561,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Give No Ground",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "bae18a46-00e0-4b3e-8fdb-44cc61f30f8e",
     "provenance_summary": {},
@@ -5890,6 +5960,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G",
@@ -5910,7 +5981,7 @@
     "is_dfc": false,
     "mana_cost": "{G/W}",
     "name": "Barkshell Blessing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "baf3d4d9-0590-4d94-8f4e-1e726194b920",
     "provenance_summary": {},
@@ -6213,6 +6284,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G",
@@ -6236,7 +6308,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{W}",
     "name": "Archon of Valor's Reach",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "baff00b8-b109-4e31-942b-38aeb1e45ab2",
     "provenance_summary": {},

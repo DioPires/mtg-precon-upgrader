@@ -199,6 +199,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -224,7 +225,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Eldrazi Aggressor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa0c6fea-c90c-4b65-aa1e-18e5b34ea6e3",
     "provenance_summary": {
@@ -237,6 +238,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -259,7 +261,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Repel the Vile",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa108554-f1a0-45b6-aa15-597d42be7a8a",
     "provenance_summary": {},
@@ -371,6 +373,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -385,7 +388,9 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [
       {
@@ -396,16 +401,33 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Tuskguard Captain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa149597-087a-4e1f-953c-2cd04e90a93b",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 2
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "Put a +1/+1 counter on this creature.",
+        "feature": "counter_add",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Human Warrior",
-    "wants": []
+    "wants": [
+      {
+        "economy": "counters",
+        "evidence": "Each creature you control with a +1/+1 counter on it has trample.",
+        "feature": "counter_payoff",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -460,6 +482,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -480,7 +503,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}{G}",
     "name": "Windreaper Falcon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa17782b-d8e7-423b-9f03-01ccb600f69a",
     "provenance_summary": {},
@@ -978,6 +1001,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -997,7 +1021,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Messenger's Speed",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa21315d-4da9-4bbd-9604-c406b83c0db2",
     "provenance_summary": {},
@@ -1161,6 +1185,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -1181,7 +1206,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{R}",
     "name": "Gobhobbler Rats",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa254e74-583d-4681-8169-5ac0dbdb10e5",
     "provenance_summary": {},
@@ -1192,6 +1217,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -1211,7 +1237,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "War Oracle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa26fb50-1b53-488e-90d1-b0c7af273622",
     "provenance_summary": {},
@@ -2244,6 +2270,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U",
@@ -2267,7 +2294,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Runic Shot",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa597788-4149-48b8-9f43-8c0de063eb68",
     "provenance_summary": {},
@@ -2278,6 +2305,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2297,7 +2325,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Marked by Honor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa5a7940-976d-4d96-9ddf-1c3891885c7e",
     "provenance_summary": {},
@@ -2431,6 +2459,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [
       "U"
@@ -2456,7 +2485,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Inevitable Betrayal",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa5e9269-b1db-4bf0-a548-24f999f60e44",
     "provenance_summary": {
@@ -3166,6 +3195,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3185,7 +3215,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Sandstorm Charger",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa7a9689-e79a-4562-a621-eadc45966ce8",
     "provenance_summary": {},
@@ -3247,6 +3277,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3266,7 +3297,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{W}",
     "name": "Silver Knight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa7cd6e6-35a6-4c18-9d66-dc2a95206401",
     "provenance_summary": {},
@@ -3442,6 +3473,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -3461,7 +3493,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "The Whizzer, Classic Speedster",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa86bce1-9cde-44d8-9455-24502221f31d",
     "provenance_summary": {},
@@ -3692,6 +3724,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -3720,7 +3753,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Lay Down Arms",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa91d092-7f4a-4e4d-85db-e200692f3d9d",
     "provenance_summary": {
@@ -4024,6 +4057,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B",
@@ -4047,7 +4081,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{2}{U}{B}",
     "name": "Reap Intellect",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa97eb3d-8b8d-418b-8615-839812d60fe0",
     "provenance_summary": {},
@@ -4058,6 +4092,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -4075,17 +4110,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Undercity Plague",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aa997e63-be19-4b1a-8972-eebc8a720ded",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "drain",
+        "evidence": "Target player loses 1 life",
+        "feature": "drain",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "cast",
+        "evidence": "cast a copy of the encoded card without paying its mana cost",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4315,6 +4368,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G",
@@ -4340,7 +4394,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}",
     "name": "Rampant Elephant",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aaaaf370-6486-4e17-9a93-92e05ebcf29f",
     "provenance_summary": {
@@ -4660,6 +4714,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -4686,7 +4741,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W/U}{W/U}",
     "name": "Jubilant Skybonder",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aab55af7-8084-47b6-910f-75a75a6313a4",
     "provenance_summary": {
@@ -4832,6 +4887,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -4845,17 +4901,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Death's Caress",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aac711d1-2fa0-42f9-9eda-a1642f3ff016",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "you gain life equal to its toughness",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -5026,6 +5093,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -5048,7 +5116,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Valley Dasher",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aad16b50-a866-4871-843f-ec8813ad5dfd",
     "provenance_summary": {},
@@ -5157,6 +5225,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -5176,7 +5245,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Skyhunter Patrol",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aadcff6f-9207-4d90-a12d-4913c96867e2",
     "provenance_summary": {},
@@ -5634,6 +5703,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G",
@@ -5648,17 +5718,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{X}{G}{W}",
     "name": "Vitalizing Cascade",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aaf176ff-646f-4182-a546-fe648498587d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "You gain X plus 3 life",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -5859,6 +5940,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -5878,7 +5960,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Step Right Up",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aaf6b3ed-2396-46d7-a32d-7d24cc2eb449",
     "provenance_summary": {},
@@ -5940,6 +6022,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -5959,7 +6042,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Glowrider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "aaf825b0-af0f-47a0-8b00-85f0614cef5d",
     "provenance_summary": {},

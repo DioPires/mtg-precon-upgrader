@@ -373,6 +373,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -398,7 +399,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Chase Inspiration",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c055ef0-1164-4a9f-80de-23405423aed5",
     "provenance_summary": {
@@ -937,6 +938,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -956,7 +958,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{R}",
     "name": "Incorrigible Youths",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c239027-c5cb-43c6-b4f3-93c269a1d853",
     "provenance_summary": {},
@@ -1165,6 +1167,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1187,7 +1190,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Dispossess",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c2bbab4-97a9-4aad-96ea-31d7ef9e28fe",
     "provenance_summary": {},
@@ -1616,6 +1619,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1639,7 +1643,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Crooked Custodian",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c39bc53-52d3-4610-920e-5607a625b01f",
     "provenance_summary": {},
@@ -1973,6 +1977,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -1996,22 +2001,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W/B}{W/B}",
     "name": "Stillmoon Cavalier",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c430b5a-83b6-4f4f-b1d3-5737e1f61947",
     "provenance_summary": {
-      "deterministic": 2
+      "deterministic": 2,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Zombie Knight",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{W/B}{W/B}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2782,6 +2797,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -2799,7 +2815,7 @@
     "is_dfc": false,
     "mana_cost": "{6}",
     "name": "Oxidda Golem",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c51d843-d155-44ed-ab1f-dfa2ff848f53",
     "provenance_summary": {},
@@ -3298,6 +3314,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -3311,17 +3328,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Healing Leaves",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c675e7a-1d68-44b2-9c1a-543b73782437",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "Target player gains 3 life.",
+        "feature": "lifegain",
+        "magnitude": 3,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -3620,6 +3648,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3639,7 +3668,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{U}",
     "name": "Horizon Drake",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c724912-5afd-4813-affb-4dbda64fd4ee",
     "provenance_summary": {},
@@ -3812,6 +3841,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3831,7 +3861,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Manifold Insights",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c793037-6ba8-400a-b24d-6032141e8dae",
     "provenance_summary": {},
@@ -4419,6 +4449,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4441,7 +4472,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Pulling Teeth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c966ba3-3408-4bdd-a4cf-97c9183e1115",
     "provenance_summary": {},
@@ -4452,6 +4483,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4471,7 +4503,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Blood Burglar",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9c975fda-471a-4d41-9bb6-ea42edc6a0e6",
     "provenance_summary": {},
@@ -4726,6 +4758,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4745,7 +4778,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Frost Raptor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9ca01d83-7794-4952-8cd8-c2ecb32cffd5",
     "provenance_summary": {},
@@ -4756,6 +4789,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4775,7 +4809,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Inspire Awe",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9ca539cd-9876-4c13-b220-d553c17f2378",
     "provenance_summary": {},
@@ -5007,6 +5041,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5029,7 +5064,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Horribly Awry",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9cac23a1-a0b3-490c-aea2-dc2928f6dc9e",
     "provenance_summary": {},
@@ -5438,6 +5473,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -5458,7 +5494,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{U}",
     "name": "Wall of Denial",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9cc092f9-e8f0-40ea-847d-813b70f889db",
     "provenance_summary": {},
@@ -5587,6 +5623,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -5612,7 +5649,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "Gigadrowse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9cc64a91-82d2-4be1-812f-531863e99801",
     "provenance_summary": {
@@ -6086,6 +6123,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -6105,7 +6143,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Search for Tomorrow",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9cdc9f99-c6fa-40cd-90b0-e47d43a8cc3c",
     "provenance_summary": {},
@@ -6116,6 +6154,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -6135,7 +6174,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Thorn Elemental",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9cdf840d-314e-46ef-9c04-74f145d9e65b",
     "provenance_summary": {},
@@ -6443,6 +6482,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G",
@@ -6463,7 +6503,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{G}",
     "name": "Wildsear, Scouring Maw",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9ceac4c6-e62e-4445-852c-b2c621e4a83b",
     "provenance_summary": {},
@@ -6474,6 +6514,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -6491,7 +6532,7 @@
     "is_dfc": false,
     "mana_cost": "{7}",
     "name": "Thundersteel Colossus",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9cef3013-6a84-4edd-9a47-e842df2200e3",
     "provenance_summary": {},
@@ -6653,6 +6694,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -6672,7 +6714,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Camouflage",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "9cf44db4-627a-4197-9588-6da72e41f03d",
     "provenance_summary": {},

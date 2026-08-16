@@ -118,6 +118,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -132,7 +133,8 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -143,13 +145,22 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "See the Unwritten",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0060b32-b856-4ff7-a113-cec2dc8f8dc6",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "mill",
+        "evidence": "Put the rest into your graveyard",
+        "feature": "self_mill",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -412,6 +423,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -432,7 +444,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{R}",
     "name": "Last One Standing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b01465ea-cab9-4a59-81a6-8db4648b89f4",
     "provenance_summary": {},
@@ -443,6 +455,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -465,7 +478,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Mogg Conscripts",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b015686d-07e1-46c7-8e51-2bec646860d6",
     "provenance_summary": {},
@@ -826,6 +839,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -854,7 +868,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Mutual Destruction",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b01cd710-3906-486b-8bb5-8c4efa46e4d9",
     "provenance_summary": {
@@ -1096,6 +1110,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -1115,7 +1130,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Titan's Strength",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0206b34-68b4-4b1f-ae79-6e2d0432ad4b",
     "provenance_summary": {},
@@ -1126,6 +1141,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -1150,7 +1166,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Rune of Protection: Black",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b027302f-80c2-441d-a9fd-bbe64bf5cf8a",
     "provenance_summary": {
@@ -1367,6 +1383,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R",
@@ -1393,7 +1410,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}{R}",
     "name": "Dragonshift",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b02d24fd-62b4-4f78-96af-57f88c98c5c8",
     "provenance_summary": {
@@ -1405,7 +1422,16 @@
     "wants": []
   },
   {
-    "ambient": [],
+    "ambient": [
+      {
+        "economy": "token",
+        "evidence": "other historic creatures you control have double strike",
+        "feature": "anthem",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R",
@@ -1420,6 +1446,7 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
+      "ambient": "llm",
       "costs": "deterministic",
       "guards": "deterministic"
     },
@@ -1432,11 +1459,12 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{W}",
     "name": "Bayek of Siwa",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0322e2e-e9f9-4fe2-a7a5-3e49665ad177",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
@@ -1502,6 +1530,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -1521,7 +1550,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Second Guess",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b036eac6-60db-48ca-b6e1-b42afac959bd",
     "provenance_summary": {},
@@ -1582,6 +1611,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -1601,7 +1631,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Empty City Ruse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0391ea4-e37d-48c9-91df-79aefe376bcc",
     "provenance_summary": {},
@@ -2061,6 +2091,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "W"
@@ -2083,7 +2114,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}{W}",
     "name": "Cataclysm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0479ca4-e925-4aa7-a4fa-f7e01f899ac5",
     "provenance_summary": {},
@@ -3002,6 +3033,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -3026,7 +3058,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Emerald Dragonfly",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b067aa04-5977-4371-85d1-78d2884df03f",
     "provenance_summary": {
@@ -3186,6 +3218,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3205,7 +3238,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Kjeldoran Skyknight",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b06db20f-84c4-4e2e-a184-3cd70ea0d10d",
     "provenance_summary": {},
@@ -3470,6 +3503,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G"
@@ -3489,7 +3523,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{G}",
     "name": "Galewind Moose",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0747a4f-d041-4750-aef5-a5d101696f65",
     "provenance_summary": {},
@@ -3500,6 +3534,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3525,7 +3560,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Spirit of Resistance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b075b645-2e5a-4d91-9440-02db4e6f5d08",
     "provenance_summary": {
@@ -3538,6 +3573,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3555,7 +3591,7 @@
     "is_dfc": false,
     "mana_cost": "{2}",
     "name": "Kitesail",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b079f9db-974d-4525-a894-57b754ba9dcc",
     "provenance_summary": {},
@@ -3768,6 +3804,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -3795,7 +3832,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Ghostly Wings",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b07d8095-c5e2-4bf8-b055-af97ce5df4a4",
     "provenance_summary": {
@@ -3982,6 +4019,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -4001,7 +4039,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Stymied Hopes",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b081726f-0ed6-4ab0-833e-f510ac6fbeaa",
     "provenance_summary": {},
@@ -4263,6 +4301,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -4276,17 +4315,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Divine Retribution",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b08b348c-cf74-4aea-ab88-38201e04e42c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "damage",
+        "evidence": "deals damage to target attacking creature equal to the number of",
+        "feature": "damage",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
@@ -4490,6 +4540,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B",
@@ -4510,7 +4561,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{R}",
     "name": "Demonic Dread",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b090f1e5-1f7e-4492-9928-c5911a8ef95b",
     "provenance_summary": {},
@@ -5738,6 +5789,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -5755,7 +5807,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Bounce Chamber",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0b9d116-6776-40eb-8191-50fa570419eb",
     "provenance_summary": {},
@@ -5882,6 +5934,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -5904,7 +5957,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Complete Disregard",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0bd842c-d518-42b3-850c-22a70f7f1436",
     "provenance_summary": {},
@@ -6623,6 +6676,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -6642,7 +6696,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Lurking Crocodile",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0df3389-5959-4ee2-a921-9324732f7ce8",
     "provenance_summary": {},
@@ -7450,6 +7504,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -7472,7 +7527,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Peace Talks",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "b0f87e25-6604-4723-9467-1e4fedc1157a",
     "provenance_summary": {},
