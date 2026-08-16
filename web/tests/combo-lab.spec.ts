@@ -86,17 +86,25 @@ test('computed near-miss completion surfaces Tier-B + Tier-C completers (NM-1)',
   await expect(panel.locator('.gv1-cl-tier-c').first()).toBeVisible();
 });
 
-test('paste mode Tier-B completion is disclosed as deferred', async ({ page }) => {
+test('paste mode runs the Tier-B verifier and surfaces a known loop (DEC-516)', async ({
+  page,
+}) => {
   await page.goto('/combos?mode=paste');
+  // A known 2-card infinite-mana loop: the client-side verifier should surface it
+  // (corroborated if matched as a curated combo, novel if only enumerated).
   await page
     .locator('.gv1-cl-textarea')
     .first()
-    .fill('1 Blood Artist\n1 Viscera Seer\n1 Gravecrawler\n1 Carrion Feeder');
+    .fill('1 Basalt Monolith\n1 Forsaken Monument');
   await page.getByRole('button', { name: /^analyze$/i }).click();
+  const tierB = page.getByRole('region', { name: /tier-b verified loops/i });
+  await expect(tierB).toBeVisible();
+  await expect(tierB).toContainText(/Basalt Monolith/);
+  await expect(tierB).toContainText(/Forsaken Monument/);
+  // The completion panel no longer discloses the old fleet-only deferral.
   const panel = page.getByRole('region', { name: /computed near-miss completions/i });
-  await expect(panel).toBeVisible();
   await panel.getByRole('button', { name: /find completions/i }).click();
-  await expect(panel).toContainText(/not available for pasted decks/i);
+  await expect(panel).not.toContainText(/not available for pasted decks/i);
 });
 
 test('deck-URL input degrades with an actionable message when blocked (IN-2)', async ({ page }) => {

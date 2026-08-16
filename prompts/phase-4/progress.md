@@ -71,3 +71,43 @@ merge follows review approval (reviewer = Design System Engineer, matrix P4).
 `npm run lint` reports 2 errors in files this phase did not touch
 (`web/src/data/normalize.ts:153` `_q` unused; `web/tests/dec184-visual-qa.spec.ts:84`
 `any`) — both present on `origin/main`. All Phase-4 files lint clean.
+
+## P4.7 — Paste-mode Tier-B verifier mirror (board INCLUDE, DEC-516 relay)
+
+Board reversed the paste-mode Tier-B deferral (INCLUDE, DEC-476 `851b18d5`); CEO
+relayed on DEC-516. Shipped:
+
+- `scripts/build_tier_b_index.py` → committed `data/combo-kb/tier-b-index.json`
+  (13,950 records: 9,899 seeds + 4,051 Spellbook bystanders; 14,843 name keys;
+  5.42 MB, gzips to ~1 MB). Loop-relevant raw KB projection; provenance-carrying
+  items + precomputed `tier_b_capped` + `untaps_other`. Pure function of the corpus.
+- `web/src/data/tierBIndex.ts` — loader (in-memory, localStorage-bypass, shared
+  corpus-version buster).
+- `web/src/lib/comboVerify.ts` — full TS mirror of `combo_verifier_lib.py` +
+  `build_deck` driver. Runs client-side; NF-1 holds (no query-path generation).
+- `web/src/lib/comboVerify.test.ts` — **byte-parity vs every fleet deck's committed
+  `tier-b-loops.json`** + per-template unit tests over real KB cards (27 tests).
+- ComboLab paste flow: runs `verifyDeck`, renders the Tier-B verified-loops section,
+  and feeds computed engine deficits to `analyzeCompletions` (paste Tier-B
+  completion no longer deferred). Deferral disclosures updated in UI + exports.
+
+### Gate evidence (P4.7)
+
+- `uv run python scripts/build_tier_b_index.py` — byte-stable (function of corpus).
+- `cd web && npm run typecheck` — clean.
+- `cd web && npm run test` — 311/311 (was 284; +27 `comboVerify.test.ts` incl. full
+  fleet parity across all 21 decks).
+- `cd web && npm run build` — green (JS 383.63 kB / 113.79 gz).
+- `npx playwright test tests/combo-lab.spec.ts --project=chromium` — 9/9 (real
+  browser; the paste-mode Tier-B test surfaces a known loop from a pasted decklist).
+- NF-4 latency: `verifyDeck` over an 88-card deck = p50 0.36 ms / max 2.44 ms (Node);
+  the one-time 5.42 MB index fetch dominates, not the verification.
+
+Design note (soundness): the tier-b-index stores FULL loop-relevant records for
+Spellbook bystanders (not name-only stubs) because the prerequisite math reads a
+bystander's activated costs + guards (e.g. Voltaic Construct's `pay 2` + `zone_exile`
+in the Basalt + Karn + Voltaic Construct engine). Byte-parity would break otherwise.
+
+Judgment-call #3 above (paste-mode Tier-B deferred) is now RESOLVED by the board's
+INCLUDE decision and this slice; the deferral text in the UI/exports is replaced by
+an "index unavailable" fallback (fires only if the derivative fails to load).

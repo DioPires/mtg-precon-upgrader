@@ -9,12 +9,13 @@
 //     card forms the coupling the Tier-C synergy engine would then display, so the
 //     completion is consistent with synergyMatch.ts by construction.
 //   • Tier B (computed) — a candidate loop that fails closure by a concrete numeric
-//     deficit (from the Phase-3 verifier's precomputed deficit vectors), paired with
-//     pool cards whose contribution closes that resource leak (NM-2 is honoured
-//     upstream: the deficit IS the verifier's event-trace-aware output; here we cover
-//     it with features known to supply the leaked resource). Tier-B deficits only
-//     exist for FLEET decks (the paste-mode verifier is a deferred slice), so paste
-//     mode surfaces Tier-C completions only.
+//     deficit (from the Phase-3 verifier's deficit vectors), paired with pool cards
+//     whose contribution closes that resource leak (NM-2 is honoured upstream: the
+//     deficit IS the verifier's event-trace-aware output; here we cover it with
+//     features known to supply the leaked resource). Tier-B deficits are supplied by
+//     the caller: fleet mode reads the precomputed tier-b-loops.json engines; paste
+//     mode computes them live via comboVerify.verifyDeck (DEC-516). When the caller
+//     passes no engines (index unavailable) Tier-B completion is skipped.
 //
 // The search runs client-side over the committed full-coverage KB feature index
 // (the deployed KB projection): per-hole cost linear in pool size, pure precomputed-
@@ -127,7 +128,8 @@ export interface CompletionReport {
   currency: Currency;
   tierC: TierCCompletion[];
   tierB: TierBCompletion[];
-  /** True only in fleet mode, where precomputed deficit vectors exist. */
+  /** True when the caller supplied engine deficits (fleet precompute or the paste
+   * verifier); false only when the Tier-B verifier data is unavailable. */
   tierBAvailable: boolean;
   counts: CompletionCounts;
   elapsedMs: number;
@@ -136,7 +138,8 @@ export interface CompletionReport {
 export interface CompletionOptions {
   filters: CompletionFilters;
   prices: PriceIndex | null;
-  /** Fleet-mode engine deficits (from tier-b-loops.json). Absent ⇒ Tier-B deferred. */
+  /** Engine deficits: fleet reads tier-b-loops.json; paste computes them via
+   * comboVerify.verifyDeck (DEC-516). Absent/null ⇒ Tier-B completion skipped. */
   engines?: TierBFinding[] | null;
   /** Result caps (NF-4). */
   tierCCap?: number;
@@ -366,7 +369,8 @@ export function analyzeCompletions(
   const tierCTotal = tierCScored.length;
   const tierC = tierCScored.slice(0, opts.tierCCap ?? TIER_C_CAP).map((s) => s.c);
 
-  // ── Tier-B completion: cover precomputed deficit vectors (fleet only) ──
+  // ── Tier-B completion: cover the verifier's deficit vectors (fleet precompute
+  // or paste-mode comboVerify.verifyDeck) ──
   const engines = opts.engines ?? null;
   const tierBAvailable = engines != null;
   const tierBAll: { b: TierBCompletion; sort: number; pri: number }[] = [];

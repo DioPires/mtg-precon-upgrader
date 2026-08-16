@@ -5,7 +5,7 @@
   "parent": "DEC-476",
   "phase": 4,
   "phase_title": "Computed near-miss + polish: deficit/half-edge completion, color/legality/price filters, deck-URL input, export/share polish, latency budget",
-  "contract": "DEC-476 Laço / Combo Lab build plan (v2), revision 21d448a4 (Phase-4 row); Laco Prd",
+  "contract": "DEC-476 La\u00e7o / Combo Lab build plan (v2), revision 21d448a4 (Phase-4 row); Laco Prd",
   "prompt_size_default_pct": 50,
   "note": "Phase-4 tracking is self-contained under prompts/phase-4/ (own manifest + progress), matching the Phase-2/3 packages: the root prompts/manifest.json is owned by DEC-488 (Phase 1), the working tree is shared. Implementation built directly and mirrored here as the lifecycle artifact (accepted Phase-0/3 precedent); /phase-validate run at the gate. FINAL phase of the DEC-476 plan. The paste-mode Tier-B verifier TS mirror stays DEFERRED (pending board decision on DEC-476); computed Tier-B completion consumes precomputed fleet deficit vectors only, so it is not touched.",
   "prompts": [
@@ -13,7 +13,10 @@
       "id": "P4.1",
       "title": "Price data derivative (DR-5)",
       "file": "phase-4/P4.1-price-index.md",
-      "requirements": ["DR-5", "NM-5"],
+      "requirements": [
+        "DR-5",
+        "NM-5"
+      ],
       "deliverables": [
         "scripts/build_price_index.py",
         "data/spellbook/price-index.json",
@@ -27,7 +30,16 @@
       "id": "P4.2",
       "title": "Computed near-miss completion engine (NM-1..NM-7)",
       "file": "phase-4/P4.2-near-miss-engine.md",
-      "requirements": ["NM-1", "NM-2", "NM-3", "NM-4", "NM-5", "NM-6", "NM-7", "NF-4"],
+      "requirements": [
+        "NM-1",
+        "NM-2",
+        "NM-3",
+        "NM-4",
+        "NM-5",
+        "NM-6",
+        "NM-7",
+        "NF-4"
+      ],
       "deliverables": [
         "web/src/lib/nearMissComplete.ts",
         "web/src/lib/nearMissComplete.test.ts"
@@ -38,15 +50,23 @@
       "id": "P4.3",
       "title": "Deck-URL input (IN-2 / IN-4)",
       "file": "phase-4/P4.3-deck-url.md",
-      "requirements": ["IN-2", "IN-4"],
-      "deliverables": ["web/src/lib/deckUrl.ts", "web/src/lib/deckUrl.test.ts"],
+      "requirements": [
+        "IN-2",
+        "IN-4"
+      ],
+      "deliverables": [
+        "web/src/lib/deckUrl.ts",
+        "web/src/lib/deckUrl.test.ts"
+      ],
       "status": "done"
     },
     {
       "id": "P4.4",
       "title": "Export/share polish (RT-4)",
       "file": "phase-4/P4.4-export-polish.md",
-      "requirements": ["RT-4"],
+      "requirements": [
+        "RT-4"
+      ],
       "deliverables": [
         "web/src/lib/spellbookReport.ts (buildMarkdownExport + completion sections)",
         "web/src/__tests__/lib/spellbookReport.test.ts"
@@ -57,7 +77,15 @@
       "id": "P4.5",
       "title": "UI wiring + filters + deck-URL field + latency (NM-5 / NF-4)",
       "file": "phase-4/P4.5-ui-filters.md",
-      "requirements": ["NM-5", "IN-2", "NF-4", "OQ-1", "EI-1", "EI-2", "EI-4"],
+      "requirements": [
+        "NM-5",
+        "IN-2",
+        "NF-4",
+        "OQ-1",
+        "EI-1",
+        "EI-2",
+        "EI-4"
+      ],
       "deliverables": [
         "web/src/routes/ComboLab.tsx (CompletionPanel, filters, deck-URL, Markdown export)",
         "web/src/styles/combo-lab.css",
@@ -70,7 +98,33 @@
       "title": "Lifecycle artifacts + /phase-validate + build/test + handoff",
       "file": "phase-4/P4.6-validate-handoff.md",
       "requirements": [],
-      "deliverables": ["prompts/phase-4/*", "prompts/phase-4/progress.md"],
+      "deliverables": [
+        "prompts/phase-4/*",
+        "prompts/phase-4/progress.md"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "P4.7",
+      "title": "Paste-mode Tier-B verifier mirror (board INCLUDE)",
+      "file": "phase-4/P4.7-paste-tier-b.md",
+      "requirements": [
+        "paste-mode-tier-b",
+        "NM-1",
+        "NF-1",
+        "NF-4",
+        "EI-1",
+        "EI-2",
+        "EI-4",
+        "provenance-gate-6b"
+      ],
+      "deliverables": [
+        "scripts/build_tier_b_index.py",
+        "data/combo-kb/tier-b-index.json",
+        "web/src/data/tierBIndex.ts",
+        "web/src/lib/comboVerify.ts",
+        "web/src/lib/comboVerify.test.ts"
+      ],
       "status": "done"
     }
   ],

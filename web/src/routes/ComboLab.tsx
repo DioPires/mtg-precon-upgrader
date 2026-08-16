@@ -39,6 +39,8 @@ import {
   type CompletionReport,
 } from '../lib/nearMissComplete';
 import { resolveDeckUrl, DeckUrlError } from '../lib/deckUrl';
+import { loadTierBIndex } from '../data/tierBIndex';
+import { verifyDeck } from '../lib/comboVerify';
 
 const NEAR_MISS_COLLAPSE_THRESHOLD = 12;
 const SYNERGY_COLLAPSE_THRESHOLD = 10;
@@ -269,6 +271,9 @@ function PasteMode() {
   const [urlMsg, setUrlMsg] = useState<string>();
   const [report, setReport] = useState<ComboReport | null>(null);
   const [pasteNames, setPasteNames] = useState<string[]>([]);
+  // Computed Tier-B engine deficits from the last Analyze; feed the near-miss
+  // completion engine. null ⇒ verifier index unavailable (completion falls back).
+  const [pasteEngines, setPasteEngines] = useState<TierBFinding[] | null>(null);
   const [phase, setPhase] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [error, setError] = useState<string>();
   const [timingMs, setTimingMs] = useState<number | null>(null);
@@ -344,6 +349,32 @@ function PasteMode() {
         };
       }
 
+      // Tier-B verified loops (DEC-516): run the Phase-3 deterministic verifier
+      // client-side over the pasted deck. The matched Tier-A `included` combos are
+      // the curated corpus for corroboration (DB-7). No crowd prior (decision 4).
+      const tierBIndex = await loadTierBIndex();
+      let tierB: TierBReport | undefined;
+      if (tierBIndex) {
+        const curatedCardSets = result.included.map((c) => c.cards.map((x) => x.name));
+        const vres = verifyDeck([...parsed.cardNames, ...parsed.commanderNames], tierBIndex, {
+          curatedCardSets,
+          commanderNames: parsed.commanderNames,
+        });
+        tierB = {
+          counts: vres.counts,
+          corroborated: vres.corroborated,
+          novel: vres.novel,
+          engines: vres.engines,
+          capped: vres.capped,
+          crowdPriorApplied: false,
+        };
+        // Feed the computed engine deficits to the near-miss completion engine so
+        // paste mode gets Tier-B completions too (no longer deferred).
+        setPasteEngines(vres.engines);
+      } else {
+        setPasteEngines(null);
+      }
+
       setPasteNames([...parsed.cardNames, ...parsed.commanderNames]);
       const elapsed = performance.now() - t0;
       setTimingMs(elapsed);
@@ -364,6 +395,7 @@ function PasteMode() {
         cardsTotal: resolved + parsed.unresolved.length,
         unresolved: parsed.unresolved,
         synergy,
+        tierB,
       });
       setPhase('ready');
     } catch (e) {
@@ -477,7 +509,7 @@ function PasteMode() {
           report={report}
           onDeepScan={runDeepScan}
           deepScanning={deepScanning}
-          completionInputs={{ names: pasteNames, engines: null }}
+          completionInputs={{ names: pasteNames, engines: pasteEngines }}
         />
       )}
     </div>
@@ -1352,8 +1384,8 @@ function CompletionPanel({
             </h3>
             {!result.tierBAvailable ? (
               <p className="gv1-cl-empty gv1-mono-xs gv1-dim">
-                Computed completions run on a deck's verified loop deficits, a fleet-mode step — not
-                available for pasted decks.
+                Computed completions run on this deck's verified loop deficits — the Tier-B verifier
+                index is currently unavailable.
               </p>
             ) : result.tierB.length === 0 ? (
               <p className="gv1-cl-empty gv1-mono-xs gv1-dim">

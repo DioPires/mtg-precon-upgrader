@@ -160,3 +160,31 @@ A; novel loops at Tier B; capped loops are disclosed but never labelled verified
 Tier labels and the model-conditional qualifier survive every export path (EI-4);
 `web/src/__tests__/lib/tierBReport.test.ts` pins that. The verifier never claims
 exhaustiveness (EI-3).
+
+## 10. Paste-mode mirror (DEC-516, Phase 4)
+
+Fleet mode precomputes verdicts into per-deck `tier-b-loops.json`; paste mode cannot
+(the deck is unknown at build time). `web/src/lib/comboVerify.ts` re-implements this
+verifier **and** the `build_tier_b_candidates.build_deck` driver (candidate
+enumeration + curated corroboration + superset suppression + bucketing) in
+TypeScript, run client-side on a pasted decklist. NF-1 holds — no generative call on
+the query path; it is pure computation over a committed derivative.
+
+The verifier needs loop-relevant raw KB fields the lean feature index drops
+(per-item provenance, `events_emitted`, activated costs, triggers, guards). Those
+ship in `data/combo-kb/tier-b-index.json` (`scripts/build_tier_b_index.py`): one
+full loop-relevant record per KB card that is either a candidate-member seed
+(gate=True closure-template seed) or a card that appears in a Spellbook combo (so a
+curated combo resolves with its non-seed bystanders — e.g. Rings of Brighthearth /
+Voltaic Construct, whose activated costs + guards the prerequisite math reads). Items
+carry provenance so the TS mirror applies the provenance gate itself; the exact
+`tier_b_view` cap is precomputed per card. The enumerator gates seeds by feature
+exactly as Python does, so a bystander never forms a fresh candidate group — it only
+ever joins a curated one.
+
+Paste mode has no EDHREC crowd prior (decision 4); ranking is display-order only and
+never shipped, so it does not affect the verdict. `web/src/lib/comboVerify.test.ts`
+pins **byte-parity** of the closure verdicts against every fleet deck's committed
+`tier-b-loops.json` output, plus targeted per-template unit tests over real KB cards.
+Paste-mode Tier-B near-miss completion (near-miss cover over the computed engine
+deficits) rides on the same output — the fleet-only deferral is removed.

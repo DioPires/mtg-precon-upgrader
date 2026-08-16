@@ -167,10 +167,10 @@ describe('buildPlainTextExport', () => {
     expect(txt).toMatch(/TIER B · COMPUTED COMPLETIONS \(1 of 2\)/);
   });
 
-  it('discloses Tier-B deferral for pasted decks', () => {
+  it('discloses when the Tier-B verifier index is unavailable', () => {
     const paste = { ...completions, tierBAvailable: false, tierB: [] };
     const txt = buildPlainTextExport({ ...report, mode: 'paste' }, paste);
-    expect(txt).toContain('Not available for pasted decks');
+    expect(txt).toContain('the Tier-B verifier index could not be loaded');
   });
 });
 

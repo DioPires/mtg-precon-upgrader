@@ -265,7 +265,7 @@ function pushCompletionText(lines: string[], c: CompletionReport): void {
     `— TIER B · COMPUTED COMPLETIONS (${c.tierB.length}${ofNote(c.tierB.length, c.counts.tierBTotal)}) —`,
   );
   if (!c.tierBAvailable) {
-    lines.push('  Not available for pasted decks (the computed verifier is a fleet-mode step).');
+    lines.push('  Unavailable — the Tier-B verifier index could not be loaded.');
   } else if (!c.tierB.length) {
     lines.push('  No computed loop deficits to complete.');
   }
@@ -373,7 +373,7 @@ export function buildMarkdownExport(report: ComboReport, completions?: Completio
     out.push('');
     out.push(`### Tier B · Computed completions (${completions.tierB.length})`);
     if (!completions.tierBAvailable) {
-      out.push('_Not available for pasted decks (the computed verifier is a fleet-mode step)._');
+      out.push('_Unavailable — the Tier-B verifier index could not be loaded._');
     } else if (!completions.tierB.length) {
       out.push('_No computed loop deficits to complete._');
     }
