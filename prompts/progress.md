@@ -301,3 +301,34 @@ Then continue bundles to drain the remaining **2,362** non-combo `needs_llm` →
 **Next**: FE sign-off on Bundle 3 (`4aea4cf..1f3122b`, reviewer ≠ implementer) → merge to main.
 Then continue bundles to drain the remaining **1,162** non-combo `needs_llm` →
 `phase1-full-acceptance`.
+
+## 2026-08-16 — DEC-506 stage-2 Bundle 4 (Waves 19–22): FINAL long-tail drain (1,162 → 0)
+
+`dec-506-stage2-waves19plus` off main (`7cbe7fc`, Bundle 3 merge). **`needs_llm_count` reaches 0 —
+FULL COVERAGE.**
+
+| Wave | Commit    | needs_llm     | items/cards | empty     |
+|------|-----------|---------------|-------------|-----------|
+| 19   | `5518724` | 1,162 → 862   | 65 / 58     | 242 / 300 |
+| 20   | `b600a53` | 862 → 562     | 67 / 59     | 241 / 300 |
+| 21   | `1ec27bd` | 562 → 262     | 68 / 63     | 237 / 300 |
+| 22   | `38c6749` | 262 → **0**   | 62 / 56     | 206 / 262 |
+| Σ    | `5518724..38c6749` | 1,162 → 0 (−1,162) | 262 / 236 | 926 / 1,162 |
+
+- Per-wave machine validation: 1,162/1,162 oracle_id match, 0 OOV, 0 kind-mismatch,
+  0 economy-mismatch, 0 non-verbatim evidence (0 truncations, 0 drops, 0 empty), magnitudes
+  int ≥ 1. Validator gates on coverage (exits non-zero on any missing card) — all four waves
+  returned 0 missing.
+- Gate intact: deterministic provenance 86,417 untouched at every wave boundary;
+  deterministic_signal_count 25,810; **1,236 cumulative `llm` items across 1,100 cards**,
+  0 Tier-B-eligible. `llm_classified_count` 5,539 → 6,701.
+- Tip (`38c6749`): coverage --stage full PASS (1,185/1,185 fleet; 33,462/33,462 pool),
+  tests 22/22, sampling QA 100% (seed 51; KB-7 100%).
+- **QE-3 (Waves 19–22)**: free-cast, tutor/search, cheat-into-play (library-to-battlefield),
+  clone/copy (replicate/spell-copy), storm, theft/gain-control (threaten/auction/converge),
+  energy, impulse draw, effect doublers, ingest/exile-mill (gap-log 771 → 870, +99).
+- Full evidence packet: `prompts/phase-1/P1.9-waves19-22-qa.md`.
+
+**Next**: FE sign-off on Bundle 4 (`5518724..38c6749`, reviewer ≠ implementer) → merge to main.
+Stage-2 long tail is empty (`needs_llm_count = 0`); on merge the CEO runs the DEC-488
+`phase1-full-acceptance` ceremony.
