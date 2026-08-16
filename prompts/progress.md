@@ -243,3 +243,31 @@ per review handback (≈4 waves) to cut review round-trips. Bundle 1 = **Waves 7
 **Next**: FE sign-off on Bundle 1 (`68d70ce..a21b878`, reviewer ≠ implementer) → merge to main.
 Then continue bundles to drain the remaining **3,562** non-combo `needs_llm` →
 `phase1-full-acceptance`.
+
+## 2026-08-16 — DEC-506 stage-2 Bundle 2 (Waves 11–14): long-tail drain (1,200)
+
+`dec-506-stage2-waves11plus` off origin/main (`e1dc165`, Bundle 1 merge).
+
+| Wave | Commit    | needs_llm     | items/cards | empty     |
+|------|-----------|---------------|-------------|-----------|
+| 11   | `ea5ae32` | 3,562 → 3,262 | 41 / 38     | 262 / 300 |
+| 12   | `e77a1bd` | 3,262 → 2,962 | 39 / 34     | 266 / 300 |
+| 13   | `bdeb13f` | 2,962 → 2,662 | 43 / 39     | 261 / 300 |
+| 14   | `2bc5718` | 2,662 → 2,362 | 64 / 55     | 245 / 300 |
+| Σ    | `ea5ae32..2bc5718` | 3,562 → 2,362 (−1,200) | 187 / 166 | 1,034 / 1,200 |
+
+- Per-wave machine validation: 1,200/1,200 oracle_id match, 0 OOV, 0 kind-mismatch, 0 non-verbatim
+  evidence (0 truncations, 0 drops), magnitudes int ≥ 1. Validator gates on coverage (exits
+  non-zero on any missing card) — all four waves returned 0 missing.
+- Gate intact: deterministic provenance 86,417 untouched at every wave boundary;
+  deterministic_signal_count 25,810; 808 cumulative `llm` items, 0 Tier-B-eligible.
+- Tip (`2bc5718`): coverage --stage full PASS (1,185/1,185 fleet; 33,462/33,462 pool),
+  tests 22/22, sampling QA 100% (seed 47; KB-7 100%).
+- **QE-3 (Waves 11–14)**: free-cast (cascade/suspend/rebound/plot), tutor/search, cheat-into-play,
+  clone/copy (replicate/cipher/conspire), storm, theft/gain-control, energy, impulse draw
+  (gap-log 542 → 642, +100).
+- Full evidence packet: `prompts/phase-1/P1.8-waves11-14-qa.md`.
+
+**Next**: FE sign-off on Bundle 2 (`ea5ae32..2bc5718`, reviewer ≠ implementer) → merge to main.
+Then continue bundles to drain the remaining **2,362** non-combo `needs_llm` →
+`phase1-full-acceptance`.
