@@ -168,6 +168,24 @@ class MemberModel:
         self.triggers = view.get("triggers") or []
         self.guards = [g.get("guard") for g in (view.get("guards") or [])]
         self.events_emitted = list(entry.get("events_emitted") or [])  # structural
+        # Self-untap scope (N1, QE-4). A card whose untap is directed at ANOTHER
+        # permanent (Voltaic Key/Construct, Kiora's Follower, Vizier of Tumbling
+        # Sands) is NOT a self-untapping rock and must never seed the untap_mana
+        # loop. The deterministic signal is an ``untap_permanent`` feature (economy
+        # ``untap``, evidence "Untap target/another …"). Read from the RAW entry —
+        # like events_emitted — so an LLM-dropped untap_permanent can never make a
+        # target-untapper look self-scoped (a target-untapper is the unsafe
+        # direction, so the structural check must be provenance-blind here).
+        raw_items = (
+            (entry.get("provides") or [])
+            + (entry.get("wants") or [])
+            + (entry.get("ambient") or [])
+        )
+        self.untaps_other = any(
+            it.get("feature") == "untap_permanent"
+            or re.search(r"untap\b.*\b(target|another)\b", it.get("evidence") or "", re.I)
+            for it in raw_items
+        )
         costs = view.get("costs") or {}
         self.mana_cost = costs.get("mana_cost")
         self.mana_value = costs.get("mana_value")
@@ -199,22 +217,37 @@ class MemberModel:
         return self.feature_magnitude("mana_add")
 
     def untap_cost(self) -> Optional[int]:
-        """Generic-mana cost of a self-untap activated ability, or None if the card
-        does not self-untap or the untap cost is unpriceable. Detected by an
-        emitted ``untap`` event plus a pure-mana activated cost that is NOT the
-        mana-production tap ({T})."""
+        """Generic-mana cost of a *self-untap* activated ability, or None if the
+        card does not self-untap or the untap cost cannot be soundly attributed.
+
+        Soundness (N1 / QE-4). Two guards keep this from fabricating a self-untap:
+
+          1. **Self-scope.** A card that untaps another permanent (``untaps_other``)
+             is excluded outright — its ``untap`` event is a target-untap, not the
+             intrinsic recurrence the untap_mana template requires.
+          2. **Cost attribution.** We do NOT take the min pure-mana activated cost
+             blindly — an unrelated priced ability would understate ``u`` (the
+             unsafe direction) and could fabricate closure. The KB does not link an
+             activated cost to the untap effect, so we can only attribute the untap
+             cost when the card has exactly ONE priced (non-{T}) activated cost; on
+             a self-untapper that lone priced ability IS the untap. With two or more
+             distinct priced costs the attribution is ambiguous → abstain (None),
+             mirroring the blink_value abstain posture (see template_blink_value).
+        """
         if "untap" not in self.events_emitted:
             return None
-        best: Optional[int] = None
+        if self.untaps_other:
+            return None  # target-untap, not a self-untapping rock (N1 self-scope)
+        priced = set()
         for c in self.activated:
-            if c is None:
-                continue
-            if c.strip() == "{T}":
-                continue  # the tap-for-mana ability, not the untap
+            if c is None or c.strip() == "{T}":
+                continue  # the tap-for-mana ability, not a priced untap
             m = parse_mana(c)
             if m is not None:
-                best = m if best is None else min(best, m)
-        return best
+                priced.add(m)
+        if len(priced) != 1:
+            return None  # zero → no priced untap; ≥2 → unattributable (N1 abstain)
+        return next(iter(priced))
 
 
 # ─── Verdict container ───────────────────────────────────────────────────────────
@@ -393,8 +426,10 @@ def template_blink_value(members: list[MemberModel]) -> Optional[Verdict]:
             # bound it below by the count, so require count >= blink_cost to close.
             lands = e.feature_magnitude("untap_permanent")
             # magnitude here is often 1 (the KB does not always capture the N);
-            # be conservative — only close when a priced blink cost is provably met.
-            if blink_cost is not None and lands >= blink_cost and lands >= 1:
+            # be conservative — only close on a STRICT mana surplus (N2). Break-even
+            # (lands == blink_cost) nets 0 mana per cycle: a sustainable engine, not
+            # infinite mana. An infinite-mana claim needs lands > blink_cost.
+            if blink_cost is not None and lands > blink_cost:
                 v.closes = True
                 v.template = "blink_untap_mana"
                 v.k = 0
@@ -532,10 +567,22 @@ TEMPLATES = (
 
 
 # ─── Prerequisites (PR-3) ────────────────────────────────────────────────────────
-def compute_prerequisites(members: list[MemberModel], verdict: Verdict) -> dict:
+def compute_prerequisites(
+    members: list[MemberModel],
+    verdict: Verdict,
+    commander_oids: Optional[set] = None,
+) -> dict:
     """PR-3 Tier-B prerequisites: (a) minimal initial mana stock via ordering
     optimization, (b) the guard set (zone / timing / control / summoning-sickness /
     command-zone).
+
+    ``commander_oids`` (IN-4): the oracle_ids of the deck's commander(s). When a
+    loop member is the deck commander we emit a ``command_zone`` guard — a
+    commander is reliably castable from the command zone in a way a library card is
+    not, but a Darksteel-Mutation-class lock leaves it on the battlefield inert and
+    the command-zone return never fires (CR 903.3d: "controlling a commander" is the
+    battlefield only). Passed through by build_tier_b_candidates.py in fleet mode;
+    None (the default) elsewhere emits no command-zone guard.
 
     Ordering optimization: the same loop can need 3 floating mana under one action
     order and 0 under another (PR-3). We model each priced action as (produce,
@@ -589,6 +636,11 @@ def compute_prerequisites(members: list[MemberModel], verdict: Verdict) -> dict:
             if g and g not in seen:
                 seen.add(g)
                 guards.append(g)
+    # IN-4 command-zone guard: emitted when a loop member is the deck commander.
+    commander_oids = commander_oids or set()
+    if any(m.oracle_id in commander_oids for m in members) and "command_zone" not in seen:
+        seen.add("command_zone")
+        guards.append("command_zone")
     return {
         "minInitialMana": min_stock,
         "ordering": best_order,
@@ -617,11 +669,17 @@ def provenance_chain(members: list[MemberModel]) -> dict:
 
 
 # ─── Top-level verification ──────────────────────────────────────────────────────
-def verify_candidate(entries: list[dict], in_curated: bool = False) -> Optional[Verdict]:
+def verify_candidate(
+    entries: list[dict],
+    in_curated: bool = False,
+    commander_oids: Optional[set] = None,
+) -> Optional[Verdict]:
     """Verify one candidate loop. ``entries`` = the RAW KB entries for the members
     (verify_candidate applies the provenance gate). ``in_curated`` marks a loop
     already present in the curated corpus (DB-7) — its verdict is corroboration and
-    can never inflate the tier.
+    can never inflate the tier. ``commander_oids`` (IN-4) = the deck commander's
+    oracle_ids, so a command-zone guard is emitted when a loop member is the
+    commander (None elsewhere).
 
     Returns None when no closure template matches the structure at all (not a loop
     candidate under the model). Otherwise returns a Verdict; ``closes`` says whether
@@ -630,6 +688,12 @@ def verify_candidate(entries: list[dict], in_curated: bool = False) -> Optional[
     """
     if not entries or len(entries) > MAX_CYCLE_PIECES + 8:  # + ambient headroom
         return None
+    # Sort members by oracle_id (N4 / DB-5). Group construction iterates a frozenset
+    # of oracle_ids, so the incoming entry order varies with PYTHONHASHSEED; sorting
+    # here makes provenance.members and every member-order-dependent trace
+    # byte-identical across reruns in a default shell. Verdict content is
+    # order-invariant, so this only stabilises presentation.
+    entries = sorted(entries, key=lambda e: e.get("oracle_id", ""))
     members = [MemberModel(e, gate=True) for e in entries]
 
     verdict = _run_templates(members)
@@ -679,7 +743,7 @@ def verify_candidate(entries: list[dict], in_curated: bool = False) -> Optional[
                         "verified loop",
             }]
 
-    verdict.prerequisites = compute_prerequisites(members, verdict)
+    verdict.prerequisites = compute_prerequisites(members, verdict, commander_oids)
     verdict.provenance = provenance_chain(members)
 
     # (k, finite-zone bound) attribute — reported on both infinite and engine

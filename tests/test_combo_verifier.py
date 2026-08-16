@@ -98,6 +98,107 @@ def test_basalt_alone_is_near_miss_with_deficit():
 
 
 # --------------------------------------------------------------------------- #
+# N1 — untap_mana self-scope + cost attribution (DEC-511, QE-4)                #
+# --------------------------------------------------------------------------- #
+# A mana rock whose priced untap targets ANOTHER permanent (Voltaic Key /
+# Voltaic Construct / Kiora's Follower / Vizier of Tumbling Sands shape): it emits
+# an `untap` event and adds mana, but the untap is NOT self-scoped.
+def target_untap_rock():
+    return _entry("vtr", "Voltaic Target Rock",
+                  provides=[("mana_add", 3, "mana", "Add {C}{C}{C", "deterministic"),
+                            ("untap_permanent", 1, "untap", "Untap target artifact", "deterministic")],
+                  events=["untap"], activated=["{T}", "{2}"], mana_cost="{4}")
+
+
+def test_target_untap_rock_is_not_self_untap():
+    # Reviewer's synthetic N1 false positive: "adds 3 mana; {2}: untap target
+    # artifact" + an amplifier verified as infinite mana under the old code because
+    # untap_cost() never checked self-scope. It must now abstain (untap is directed
+    # at another permanent — no intrinsic recurrence).
+    m = V.MemberModel(target_untap_rock())
+    assert m.untaps_other is True
+    assert m.untap_cost() is None
+    v = V.verify_candidate([target_untap_rock(), forsaken()], in_curated=False)
+    assert not (v and v.closes), "a target-untapper must never seed infinite mana"
+
+
+def test_ambiguous_untap_cost_abstains():
+    # Cost-attribution gap (N1): a self-untapper with TWO distinct priced abilities
+    # (untap {3} + an unrelated {1}) must not have its untap cost read as the min
+    # ({1}) — that understates u and would fabricate closure (3 + amp - 1 > 0). With
+    # the untap cost unattributable, the verifier abstains.
+    ambiguous = _entry("asr", "Ambiguous Rock",
+                       provides=[("mana_add", 3, "mana", "Add {C}{C}{C", "deterministic")],
+                       events=["untap"], activated=["{T}", "{3}", "{1}"], mana_cost="{3}")
+    assert V.MemberModel(ambiguous).untap_cost() is None
+    v = V.verify_candidate([ambiguous, forsaken()], in_curated=False)
+    assert not (v and v.closes), "unattributable untap cost must abstain, not close"
+
+
+def test_single_priced_untap_still_attributes():
+    # The attribution guard must not over-fire: Basalt has exactly one priced
+    # (non-{T}) activated cost, {3}, so it is still read as the untap cost and the
+    # real Basalt + Forsaken loop still closes.
+    assert V.MemberModel(basalt()).untap_cost() == 3
+
+
+# --------------------------------------------------------------------------- #
+# N2 — blink_untap_mana requires a STRICT mana surplus (DEC-511, QE-4)         #
+# --------------------------------------------------------------------------- #
+def _blinker(cost):
+    return _entry("blk", "Cheap Blinker",
+                  provides=[("blink", 1, "blink", "exile then return it", "deterministic")],
+                  activated=[cost], mana_cost="{3}")
+
+
+def _etb_untap(n):
+    return _entry("dst", "Untapper Drake",
+                  provides=[("etb_trigger", 1, "etb", "when it enters", "deterministic"),
+                            ("untap_permanent", n, "untap", "untap up to %d land(s)" % n, "deterministic")],
+                  mana_cost="{4}")
+
+
+def test_blink_break_even_is_not_infinite_mana():
+    # Reviewer's synthetic N2 false positive: blink costs {1}, ETB untaps 1 land =>
+    # net 0 mana per cycle. Break-even is a sustainable engine, NOT infinite mana;
+    # the verifier must abstain (needs lands > blink_cost, not >=).
+    v = V.verify_candidate([_blinker("{1}"), _etb_untap(1)], in_curated=False)
+    assert not (v and v.closes), "break-even blink must never verify as infinite mana"
+
+
+def test_blink_strict_surplus_closes_infinite_mana():
+    # Boundary check: blink {1}, ETB untaps 2 lands => strict +1 mana per cycle =>
+    # genuine infinite mana. Locks the > boundary from the other side.
+    v = V.verify_candidate([_blinker("{1}"), _etb_untap(2)], in_curated=False)
+    assert v is not None and v.closes
+    assert v.template == "blink_untap_mana" and v.loop_class == "infinite"
+    assert v.ledger["mana"] == 1
+
+
+# --------------------------------------------------------------------------- #
+# N3 — command-zone guard (IN-4, DEC-511)                                      #
+# --------------------------------------------------------------------------- #
+def test_command_zone_guard_emitted_for_commander_member():
+    b = basalt()
+    v = V.verify_candidate([b, forsaken()], in_curated=False, commander_oids={b["oracle_id"]})
+    assert "command_zone" in v.prerequisites["guards"]
+
+
+def test_no_command_zone_guard_without_commander():
+    v = V.verify_candidate([basalt(), forsaken()], in_curated=False)
+    assert "command_zone" not in v.prerequisites["guards"]
+
+
+# --------------------------------------------------------------------------- #
+# N4 — member ordering is deterministic (DB-5, DEC-511)                        #
+# --------------------------------------------------------------------------- #
+def test_member_order_is_oracle_id_sorted_regardless_of_input_order():
+    a = V.verify_candidate([basalt(), forsaken()], in_curated=False).to_dict()
+    b = V.verify_candidate([forsaken(), basalt()], in_curated=False).to_dict()
+    assert a == b  # input order must not affect provenance.members or trace
+
+
+# --------------------------------------------------------------------------- #
 # Corroboration vs novel (DB-7 / DC-6)                                         #
 # --------------------------------------------------------------------------- #
 def test_corroboration_is_not_novel():

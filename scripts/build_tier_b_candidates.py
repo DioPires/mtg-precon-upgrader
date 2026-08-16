@@ -34,7 +34,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import datetime
 import json
 import os
 import sys
@@ -103,9 +102,16 @@ def build_deck(deck_id: str, ctx: dict) -> dict:
     names = [c["name"] for c in deck.get("decklist", [])]
     commander = deck.get("commander")
     commanders = []
+    commander_oids: set[str] = set()
     if commander:
         names.append(commander)
         commanders = [p.strip() for p in str(commander).split("//") if p.strip()]
+        # Resolve commander face(s) → oracle_ids for the IN-4 command-zone guard.
+        for cname in commanders:
+            for k in SYN.name_keys(cname):
+                if k in name_to_oid:
+                    commander_oids.add(name_to_oid[k])
+                    break
 
     # Resolve decklist → raw entries (deduped by oracle_id).
     entries: dict[str, dict] = {}
@@ -122,7 +128,10 @@ def build_deck(deck_id: str, ctx: dict) -> dict:
     groups: list[list[dict]] = []
     seen: set[frozenset] = set()
     for key in curated:
-        grp = [by_oid[o] for o in key if o in by_oid]
+        # sorted(key): a frozenset iterates in PYTHONHASHSEED-dependent order (N4);
+        # verify_candidate re-sorts by oracle_id too, but build the group ordered so
+        # everything downstream sees a stable member sequence.
+        grp = [by_oid[o] for o in sorted(key) if o in by_oid]
         if len(grp) == len(key):
             groups.append(grp)
             seen.add(key)
@@ -145,7 +154,7 @@ def build_deck(deck_id: str, ctx: dict) -> dict:
     kb_gap_abstentions = 0
     for grp in groups:
         key = frozenset(g["oracle_id"] for g in grp)
-        v = V.verify_candidate(grp, in_curated=(key in curated))
+        v = V.verify_candidate(grp, in_curated=(key in curated), commander_oids=commander_oids)
         if v is None:
             continue
         member_names = [g.get("name", "") for g in grp]
@@ -270,7 +279,10 @@ def main(argv: list[str]) -> int:
         "corpus_version": kb_meta.get("corpus_version"),
         "ontology_version": kb_meta.get("ontology_version"),
         "extractor_version": kb_meta.get("extractor_version"),
-        "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        # generatedAt is normalised to the KB corpus_version (N4 / DB-5), not a
+        # wall-clock stamp: the artifact is a pure function of the corpus, so reruns
+        # are byte-identical in a default shell. No consumer reads it as a build time.
+        "generated_at": kb_meta.get("corpus_version"),
     }
 
     for deck_id in ids:
