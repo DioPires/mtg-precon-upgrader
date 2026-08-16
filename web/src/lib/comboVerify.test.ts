@@ -122,6 +122,33 @@ describe('verifyDeck — titan-convergence known loops', () => {
   });
 });
 
+describe('DEC-530 — graveyard-return soundness holes stay closed', () => {
+  // Every card here is a real KB card in the committed tier-b-index, so these run
+  // the exact paste-mode closure path over the shipped artifact.
+  const closingGr = (names: string[]) =>
+    verifyDeck(names, index, {})
+      .corroborated.concat(verifyDeck(names, index, {}).novel)
+      .filter((f) => f.template === 'graveyard_return' && f.closes);
+
+  it('F1 — an opponent-restricted exiler (Fairgrounds Warden) never closes the loop', () => {
+    // Fairgrounds Warden can only exile a creature an opponent controls, so it can
+    // never exile the loop's own reanimator. It must not form a verified loop.
+    expect(closingGr(['Sun Titan', 'Fairgrounds Warden', 'Viscera Seer'])).toHaveLength(0);
+    // Positive control: swap in an any-target exiler (Fiend Hunter) — closes.
+    const ok = closingGr(['Sun Titan', 'Fiend Hunter', 'Viscera Seer']);
+    expect(ok.length).toBeGreaterThan(0);
+    expect(ok.every((f) => f.k === 0 && f.loopClass === 'infinite')).toBe(true);
+  });
+
+  it('F2 — a self-only saccer (Children of Korlis) is not the loop free outlet', () => {
+    // "Sacrifice this creature" fires once on the outlet itself — not a repeatable
+    // outlet for the loop's other creatures.
+    expect(closingGr(['Sun Titan', 'Fiend Hunter', 'Children of Korlis'])).toHaveLength(0);
+    // Positive control: a generic "Sacrifice a creature" outlet (Viscera Seer) closes.
+    expect(closingGr(['Sun Titan', 'Fiend Hunter', 'Viscera Seer']).length).toBeGreaterThan(0);
+  });
+});
+
 describe('verifyDeck — fleet parity vs committed tier-b-loops.json', () => {
   for (const id of fleetIds) {
     const tblPath = `data/commanders/${id}/tier-b-loops.json`;

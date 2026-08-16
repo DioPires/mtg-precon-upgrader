@@ -159,6 +159,7 @@ class MemberModel:
         self.gated = gate
         self.oracle_id: str = entry.get("oracle_id", "")
         self.name: str = entry.get("name", "")
+        self.type_line: str = entry.get("type_line", "") or ""
         self.color_identity = list(entry.get("color_identity", []) or [])
         self.tier_b_capped = set(KB.tier_b_view(entry).get("tier_b_capped", []))
         self.ontology_version = entry.get("ontology_version")
@@ -251,6 +252,70 @@ class MemberModel:
         if len(priced) != 1:
             return None  # zero → no priced untap; ≥2 → unattributable (N1 abstain)
         return next(iter(priced))
+
+    # -- graveyard-return loop helpers (DEC-526) ----------------------------------
+    def is_creature(self) -> bool:
+        return "creature" in self.type_line.lower()
+
+    def is_aura(self) -> bool:
+        return "aura" in self.type_line.lower()
+
+    def has_coven_guard(self) -> bool:
+        """A coven / conditional board-state gate on the reanimation trigger — the
+        reanimation only fires under a board condition the goldfish model cannot
+        guarantee, so the graveyard-return template abstains rather than close (QE-4)."""
+        return "coven" in self.guards
+
+    def reanimate_bound(self) -> Optional[int]:
+        """The mana-value cap of this member's ETB reanimation (etb_reanimate) or aura
+        fetch (aura_fetch), i.e. the largest partner mana value the graveyard-return
+        loop can re-fetch each cycle. None if the member does neither. Bounded cards
+        carry the cap as the feature magnitude; unbounded fetchers default to 99."""
+        best: Optional[int] = None
+        for fid in ("etb_reanimate", "aura_fetch"):
+            if self.has_feature(fid):
+                mag = self.feature_magnitude(fid)
+                best = mag if best is None else max(best, mag)
+        return best
+
+    def free_creature_sac(self) -> bool:
+        """A repeatable, mana-free sacrifice outlet that can sacrifice a CREATURE — the
+        loop's per-iteration kill. Soundness (QE-4): the sac cost must contain no
+        ``{…}`` token at all, which excludes both a mana cost (would leak mana) AND a
+        ``{T}`` tap (would cap the outlet at once per turn → k>0, not infinite). It must
+        reference a creature/permanent (not an artifact-only outlet like Krark-Clan
+        Ironworks, which cannot sacrifice the loop's creature).
+
+        Self-only saccers are rejected (DEC-530 F2): a cost of ``Sacrifice this
+        creature`` / ``Sacrifice this permanent`` (or ``Sacrifice <own name>``) can
+        sacrifice only the outlet itself, once — it is not a repeatable outlet for the
+        loop's OTHER creatures (Children of Korlis, Sakura-Tribe Elder, and ~120 more
+        one-shot self-saccers corpus-wide). A generic ``Sacrifice a/another
+        creature|permanent`` is required."""
+        if not self.has_feature("sac_outlet"):
+            return False
+        own_name = (self.name or "").lower()
+        for c in self.activated:
+            if not c:
+                continue
+            cl = c.lower()
+            if "sacrifice" not in cl:
+                continue
+            if "{" in c:
+                continue  # mana- or tap-gated → not free / not arbitrarily repeatable
+            # Self-only sacrifice can fire once on the outlet itself — not a loop outlet.
+            if re.search(r"sacrifice this (?:creature|permanent)", cl):
+                continue
+            if own_name and f"sacrifice {own_name}" in cl:
+                continue
+            # Require a generic sacrifice of a/another creature or permanent.
+            if re.search(
+                r"sacrifice (?:a|an|another|other|two|three|x|any number of|one or more)\b"
+                r"[^:]*?\b(?:creature|permanent)",
+                cl,
+            ):
+                return True
+        return False
 
 
 # ─── Verdict container ───────────────────────────────────────────────────────────
@@ -560,9 +625,153 @@ def template_sac_recursion(members: list[MemberModel]) -> Optional[Verdict]:
     return v
 
 
+def _gr_pick_pair(members: list[MemberModel]):
+    """Find a closing graveyard-return (reanimator R, partner P) pair among the
+    members, preferring an unconditional reanimator over a coven-gated one. Returns
+    ``(R, P, guarded)`` or None. Deterministic: members arrive sorted by oracle_id, so
+    the first qualifying pair is stable.
+
+    Closure families (docs/combo-verifier.md §2):
+      • generic reanimator (etb_reanimate, NOT aura-restricted) + death_return
+        attachment OR exile_until_leaves creature, partner mv ≤ bound;
+      • aura-fetch reanimator (aura_fetch) + death_return **Aura**, partner mv ≤ bound.
+    A card carrying BOTH etb_reanimate and aura_fetch (Brotherhood Outcast: "return
+    target Aura or Equipment card …") is aura-restricted — it can only re-fetch an
+    Aura, never a creature — so it is treated as aura-fetch, never generic (that keeps
+    it off the exile-creature loop, matching the card).
+    """
+    reanimators = [
+        m for m in members
+        if m.is_creature() and (m.has_feature("etb_reanimate") or m.has_feature("aura_fetch"))
+    ]
+    death_attach = [m for m in members if m.has_feature("death_return")]
+    exile_creatures = [
+        m for m in members if m.is_creature() and m.has_feature("exile_until_leaves")
+    ]
+    partners = death_attach + exile_creatures
+    if not reanimators or not partners:
+        return None
+    fallback = None  # a guarded (coven) pair, used only if no unguarded pair exists
+    for R in reanimators:
+        aura_restricted = R.has_feature("aura_fetch")
+        bound = R.reanimate_bound()
+        if bound is None:
+            continue
+        guarded = R.has_coven_guard()
+        for P in partners:
+            if P is R:
+                continue
+            pmv = int(P.mana_value or 0)
+            if pmv > bound:
+                continue
+            p_attach = P.has_feature("death_return")
+            p_exile = P.has_feature("exile_until_leaves") and P.is_creature()
+            if aura_restricted:
+                # aura-fetch reanimator can only re-fetch an Aura death-return partner.
+                if not (p_attach and P.is_aura()):
+                    continue
+            else:
+                # generic reanimator returns any permanent ≤ bound: a death-return
+                # attachment or an exile-until-leaves creature.
+                if not (p_attach or p_exile):
+                    continue
+            if not guarded:
+                return (R, P, False)
+            if fallback is None:
+                fallback = (R, P, True)
+    return fallback
+
+
+def template_graveyard_return(members: list[MemberModel]) -> Optional[Verdict]:
+    """T5 — death-return reanimator loop ⇒ infinite death triggers (k=0, DEC-526).
+
+    The budget death-return combo family (video 1Yusxsud5BE: Bartolomé del Presidio).
+    Three cycle pieces:
+
+      • **R** — a creature whose ETB reanimates a permanent from the graveyard to the
+        battlefield with a mana-value bound ``b_R`` (``etb_reanimate``), OR fetches an
+        Aura and attaches it (``aura_fetch``);
+      • **P** — a compatible partner: a ``death_return`` attachment (an Aura/Enchantment
+        that returns the dead creature and self-buries) OR an ``exile_until_leaves``
+        creature, with ``P.mv ≤ b_R``;
+      • **S** — a free creature sacrifice outlet (``free_creature_sac``: no mana, no tap).
+
+    Loop (aura case): S sacrifices R → R dies → P returns R and P falls to the graveyard
+    → R's ETB re-fetches P (``mv ≤ b_R``) and re-attaches → repeat. Exile case: P exiles
+    R; S sacrifices P → P dies → P's LTB returns R → R's ETB re-fetches P → P re-exiles R.
+    Every return is a triggered ability (0 mana) and the free outlet is arbitrarily
+    repeatable, so the loop is k=0 infinite; no finite zone is net-consumed (R and P
+    bounce battlefield↔graveyard, net 0). Strict gain: one creature death per iteration
+    ⇒ **infinite death triggers** (a drain payoff such as Zulaport Cutthroat / Bastion of
+    Remembrance converts it to a win — surfaced separately as the finisher).
+
+    Soundness (QE-4): every closure input is deterministic — the reanimation bound
+    (feature magnitude), the partner mana value, the aura type, and the free-outlet cost
+    (no ``{…}`` token). A coven-/condition-gated reanimator (Redemption Choir) cannot be
+    guaranteed under the goldfish model, so it ABSTAINS (k>0 engine + guard note) rather
+    than close.
+    """
+    free_sacs = [m for m in members if m.free_creature_sac()]
+    if not free_sacs:
+        return None
+    picked = _gr_pick_pair(members)
+    if picked is None:
+        return None
+    R, P, guarded = picked
+    S = min(free_sacs, key=lambda m: m.oracle_id)
+    v = Verdict()
+    v.template = "graveyard_return"
+    aura_restricted = R.has_feature("aura_fetch")
+    p_exile = P.has_feature("exile_until_leaves") and not P.has_feature("death_return")
+    if aura_restricted:
+        r_line = f"{R.name}: ETB → fetch + attach {P.name} (Aura) from graveyard"
+    else:
+        r_line = f"{R.name}: ETB → return {P.name} (mv ≤ {R.reanimate_bound()}) from graveyard"
+    if p_exile:
+        v.trace = [
+            f"{P.name}: ETB → exile {R.name} until {P.name} leaves",
+            f"{S.name}: sacrifice {P.name} (free)",
+            f"{P.name}: dies → leaves-the-battlefield → return {R.name}",
+            r_line,
+            f"{P.name}: ETB → re-exile {R.name}",
+        ]
+    else:
+        v.trace = [
+            f"{S.name}: sacrifice {R.name} (free)",
+            f"{R.name}: dies → {P.name} returns {R.name}; {P.name} → graveyard",
+            r_line,
+        ]
+    if guarded:
+        # coven / conditional reanimation — cannot be guaranteed by the goldfish model.
+        v.closes = False
+        v.loop_class = "engine"
+        v.k = 1
+        v.result_types = ["death_trigger_engine"]
+        v.trace.append(f"{R.name}: reanimation is coven/condition-gated → not guaranteed (abstain)")
+        v.deficit = [{
+            "resource": "recurrence",
+            "shortfall": None,
+            "note": f"{R.name}'s reanimation is gated by a coven/board-state condition the "
+                    "goldfish model cannot guarantee; structure surfaced as a value engine, "
+                    "not a verified loop (QE-4 abstain)",
+        }]
+        return v
+    v.closes = True
+    v.k = 0
+    v.loop_class = "infinite"
+    v.accumulators = ["death_triggers"]
+    v.result_types = ["infinite_death_triggers"]
+    v.trace.append(f"{S.name}: repeatable free sac ⇒ k=0 infinite death triggers")
+    return v
+
+
 # Template registry — order is deterministic; first template that matches the
-# structure wins (they are mutually exclusive by their gating features).
+# structure wins (they are mutually exclusive by their gating features). The
+# graveyard-return loop (DEC-526) runs FIRST: its members can also present as a
+# generic aristocrats structure (a death_return partner carries sac_fodder), so it
+# must claim them before template_sac_recursion abstains on the coarser reading.
 TEMPLATES = (
+    template_graveyard_return,
     template_untap_mana,
     template_blink_value,
     template_sac_recursion,
@@ -774,10 +983,13 @@ def verify_candidate(
     return verdict
 
 
-# Templates whose closure argument is fully derivable from the coarse KB features
-# (mana magnitudes + priced activated costs), so a verified verdict is sound. Any
-# other template may classify a value engine / near-miss but never assert closure.
-CLOSE_SAFE = frozenset({"untap_mana", "blink_untap_mana"})
+# Templates whose closure argument is fully derivable from the coarse KB features, so
+# a verified verdict is sound. Any other template may classify a value engine /
+# near-miss but never assert closure. ``graveyard_return`` (DEC-526) qualifies: its
+# closure inputs — reanimation bound (feature magnitude), partner mana value, aura
+# type, and free-outlet cost (no mana/tap token) — are all deterministic, and the
+# coven guard forces an abstain where the reanimation is conditional.
+CLOSE_SAFE = frozenset({"untap_mana", "blink_untap_mana", "graveyard_return"})
 NOVEL_SAFE = CLOSE_SAFE
 
 
@@ -907,6 +1119,16 @@ def enumerate_verification_candidates(
     outlets = gated(lambda m: m.has_feature("sac_outlet"))
     fodders = gated(lambda m: m.has_feature("sac_fodder"))
     payoffs = gated(lambda m: m.has_feature("dies_trigger") or m.has_feature("drain"))
+    # graveyard-return loop seeds (DEC-526)
+    gr_reanimators = gated(
+        lambda m: m.is_creature()
+        and (m.has_feature("etb_reanimate") or m.has_feature("aura_fetch"))
+    )
+    gr_partners = gated(
+        lambda m: m.has_feature("death_return")
+        or (m.is_creature() and m.has_feature("exile_until_leaves"))
+    )
+    gr_free_sacs = gated(lambda m: m.free_creature_sac())
 
     seen: set[frozenset] = set()
     out: list[list[dict]] = []
@@ -954,6 +1176,37 @@ def enumerate_verification_candidates(
                 if p is o or p is f:
                     continue
                 if not add([o, f, p]):
+                    return out
+    # graveyard-return triples [R, P, S_repr] (DEC-526). One triple per compatible
+    # (reanimator, partner): any free creature-sac completes every core, so we pair
+    # each core with a single representative free sac (smallest oracle_id) to keep the
+    # output one-finding-per-core. template_graveyard_return re-derives the same S.
+    if gr_reanimators and gr_partners and gr_free_sacs:
+        rep_sac = min(gr_free_sacs, key=lambda e: e.get("oracle_id", ""))
+        model_of = {id(e): m for e, m in models}
+        for re_e in gr_reanimators:
+            if re_e is rep_sac:
+                continue
+            R = model_of[id(re_e)]
+            aura_restricted = R.has_feature("aura_fetch")
+            bound = R.reanimate_bound()
+            if bound is None:
+                continue
+            for p_e in gr_partners:
+                if p_e is re_e or p_e is rep_sac:
+                    continue
+                P = model_of[id(p_e)]
+                if int(P.mana_value or 0) > bound:
+                    continue
+                p_attach = P.has_feature("death_return")
+                p_exile = P.has_feature("exile_until_leaves") and P.is_creature()
+                if aura_restricted:
+                    if not (p_attach and P.is_aura()):
+                        continue
+                else:
+                    if not (p_attach or p_exile):
+                        continue
+                if not add([re_e, p_e, rep_sac]):
                     return out
     return out
 

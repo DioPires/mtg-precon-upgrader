@@ -116,6 +116,47 @@ def test_extract_sac_outlet_and_mana():
     assert not e["needs_llm"]
 
 
+def test_exile_until_leaves_drops_opponent_restricted(  # DEC-530 F1
+):
+    """An exile-until-leaves clause restricted to a creature an opponent (or the
+    defending / another player) controls can never exile the loop's own reanimator,
+    so it must NOT be tagged exile_until_leaves. An any-target / you-control clause
+    still is."""
+    def feats(name, oracle, tl="Creature — Human"):
+        e = build.build_entry(_card(name, tl, oracle, "{2}{W}", 3.0), _ONT, "v")
+        return {i["feature"] for i in e["provides"]}
+
+    # Opponent-restricted (rejected) — the F1 soundness hole.
+    assert "exile_until_leaves" not in feats(
+        "Fairgrounds Warden",
+        "When this creature enters, exile target creature an opponent controls "
+        "until this creature leaves the battlefield.")
+    assert "exile_until_leaves" not in feats(
+        "Colossal Whale",
+        "Whenever this creature attacks, exile target creature defending player "
+        "controls until this creature leaves the battlefield.")
+    assert "exile_until_leaves" not in feats(
+        "Slithery Stalker",  # two-sentence (pattern 2) opponent-restricted form
+        "When this creature enters, exile target green or white creature an opponent "
+        "controls.\nWhen this creature leaves the battlefield, return the exiled card "
+        "to the battlefield.")
+
+    # Any-target / you-control (retained) — legal loop partners.
+    assert "exile_until_leaves" in feats(
+        "Fiend Hunter",
+        "When this creature enters, you may exile another target creature.\n"
+        "When this creature leaves the battlefield, return the exiled card to the "
+        "battlefield under its owner's control.")
+    assert "exile_until_leaves" in feats(
+        "Werefox Bodyguard",
+        "When this creature enters, exile up to one other target non-Fox creature "
+        "until this creature leaves the battlefield.")
+    assert "exile_until_leaves" in feats(
+        "Mardu Siegebreaker",  # 'you control' must not trip the opponent guard
+        "When this creature enters, exile up to one other target creature you "
+        "control until this creature leaves the battlefield.")
+
+
 def test_extract_scalar_magnitude_draw():
     e = build.build_entry(
         _card("Test Draw", "Sorcery", "Draw three cards.", "{2}{U}", 3.0), _ONT, "v")

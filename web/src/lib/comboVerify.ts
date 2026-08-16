@@ -95,6 +95,8 @@ function expandItems(raw: TBRecord['pr']): Item[] {
 export class MemberModel {
   oracleId: string;
   name: string;
+  typeLine: string;
+  manaValue: number;
   colorIdentity: string[];
   tierBCapped: Set<string>;
   provides: Item[];
@@ -109,6 +111,8 @@ export class MemberModel {
   constructor(oracleId: string, rec: TBRecord, gate: boolean) {
     this.oracleId = oracleId;
     this.name = rec.n;
+    this.typeLine = rec.tl ?? '';
+    this.manaValue = rec.mv ?? 0;
     this.colorIdentity = rec.ci ?? [];
     this.tierBCapped = new Set(rec.cap ?? []);
 
@@ -174,6 +178,65 @@ export class MemberModel {
     }
     if (priced.size !== 1) return null; // 0 → none; ≥2 → unattributable (N1 abstain)
     return [...priced][0];
+  }
+
+  // -- graveyard-return loop helpers (DEC-526) — mirror combo_verifier_lib ----------
+  isCreature(): boolean {
+    return this.typeLine.toLowerCase().includes('creature');
+  }
+
+  isAura(): boolean {
+    return this.typeLine.toLowerCase().includes('aura');
+  }
+
+  hasCovenGuard(): boolean {
+    return this.guards.includes('coven');
+  }
+
+  /** MV cap of this member's ETB reanimation (etb_reanimate) or aura fetch
+   * (aura_fetch); null if neither. Bounded cards carry the cap as the feature
+   * magnitude, unbounded fetchers default to 99. */
+  reanimateBound(): number | null {
+    let best: number | null = null;
+    for (const fid of ['etb_reanimate', 'aura_fetch']) {
+      if (this.hasFeature(fid)) {
+        const mag = this.featureMagnitude(fid);
+        best = best === null ? mag : Math.max(best, mag);
+      }
+    }
+    return best;
+  }
+
+  /** A repeatable, mana-free sacrifice outlet that can sacrifice a CREATURE — the
+   * loop's per-iteration kill. The sac cost must contain no `{…}` token (excludes
+   * mana AND `{T}`, keeping the outlet arbitrarily repeatable → k=0) and reference a
+   * creature/permanent (not an artifact-only outlet).
+   *
+   * Self-only saccers are rejected (DEC-530 F2): a cost of `Sacrifice this creature`
+   * / `Sacrifice this permanent` (or `Sacrifice <own name>`) can sacrifice only the
+   * outlet itself, once — not a repeatable outlet for the loop's OTHER creatures
+   * (Children of Korlis, Sakura-Tribe Elder, …). A generic `Sacrifice a/another
+   * creature|permanent` is required. */
+  freeCreatureSac(): boolean {
+    if (!this.hasFeature('sac_outlet')) return false;
+    const ownName = (this.name || '').toLowerCase();
+    for (const c of this.activated) {
+      if (!c) continue;
+      const cl = c.toLowerCase();
+      if (!cl.includes('sacrifice')) continue;
+      if (c.includes('{')) continue;
+      // Self-only sacrifice can fire once on the outlet itself — not a loop outlet.
+      if (/sacrifice this (?:creature|permanent)/.test(cl)) continue;
+      if (ownName && cl.includes(`sacrifice ${ownName}`)) continue;
+      // Require a generic sacrifice of a/another creature or permanent.
+      if (
+        /sacrifice (?:a|an|another|other|two|three|x|any number of|one or more)\b[^:]*?\b(?:creature|permanent)/.test(
+          cl,
+        )
+      )
+        return true;
+    }
+    return false;
   }
 }
 
@@ -399,8 +462,108 @@ function templateSacRecursion(members: MemberModel[]): Verdict | null {
   return v;
 }
 
-const TEMPLATES = [templateUntapMana, templateBlinkValue, templateSacRecursion];
-const CLOSE_SAFE = new Set(['untap_mana', 'blink_untap_mana']);
+/** Find a closing graveyard-return (reanimator R, partner P) pair among the members,
+ * preferring an unconditional reanimator over a coven-gated one. Mirror of
+ * combo_verifier_lib._gr_pick_pair. */
+function grPickPair(members: MemberModel[]): [MemberModel, MemberModel, boolean] | null {
+  const reanimators = members.filter(
+    (m) => m.isCreature() && (m.hasFeature('etb_reanimate') || m.hasFeature('aura_fetch')),
+  );
+  const deathAttach = members.filter((m) => m.hasFeature('death_return'));
+  const exileCreatures = members.filter(
+    (m) => m.isCreature() && m.hasFeature('exile_until_leaves'),
+  );
+  const partners = [...deathAttach, ...exileCreatures];
+  if (reanimators.length === 0 || partners.length === 0) return null;
+  let fallback: [MemberModel, MemberModel, boolean] | null = null;
+  for (const R of reanimators) {
+    const auraRestricted = R.hasFeature('aura_fetch');
+    const bound = R.reanimateBound();
+    if (bound === null) continue;
+    const guarded = R.hasCovenGuard();
+    for (const P of partners) {
+      if (P === R) continue;
+      const pmv = Math.trunc(P.manaValue || 0);
+      if (pmv > bound) continue;
+      const pAttach = P.hasFeature('death_return');
+      const pExile = P.hasFeature('exile_until_leaves') && P.isCreature();
+      if (auraRestricted) {
+        if (!(pAttach && P.isAura())) continue;
+      } else if (!(pAttach || pExile)) {
+        continue;
+      }
+      if (!guarded) return [R, P, false];
+      if (fallback === null) fallback = [R, P, true];
+    }
+  }
+  return fallback;
+}
+
+/** T5 — death-return reanimator loop ⇒ infinite death triggers (k=0, DEC-526). Mirror
+ * of combo_verifier_lib.template_graveyard_return. */
+function templateGraveyardReturn(members: MemberModel[]): Verdict | null {
+  const freeSacs = members.filter((m) => m.freeCreatureSac());
+  if (freeSacs.length === 0) return null;
+  const picked = grPickPair(members);
+  if (picked === null) return null;
+  const [R, P, guarded] = picked;
+  const S = freeSacs.reduce((a, b) => (b.oracleId < a.oracleId ? b : a));
+  const v = new Verdict();
+  v.template = 'graveyard_return';
+  const auraRestricted = R.hasFeature('aura_fetch');
+  const pExile = P.hasFeature('exile_until_leaves') && !P.hasFeature('death_return');
+  const rLine = auraRestricted
+    ? `${R.name}: ETB → fetch + attach ${P.name} (Aura) from graveyard`
+    : `${R.name}: ETB → return ${P.name} (mv ≤ ${R.reanimateBound()}) from graveyard`;
+  if (pExile) {
+    v.trace = [
+      `${P.name}: ETB → exile ${R.name} until ${P.name} leaves`,
+      `${S.name}: sacrifice ${P.name} (free)`,
+      `${P.name}: dies → leaves-the-battlefield → return ${R.name}`,
+      rLine,
+      `${P.name}: ETB → re-exile ${R.name}`,
+    ];
+  } else {
+    v.trace = [
+      `${S.name}: sacrifice ${R.name} (free)`,
+      `${R.name}: dies → ${P.name} returns ${R.name}; ${P.name} → graveyard`,
+      rLine,
+    ];
+  }
+  if (guarded) {
+    v.closes = false;
+    v.loopClass = 'engine';
+    v.k = 1;
+    v.resultTypes = ['death_trigger_engine'];
+    v.trace.push(`${R.name}: reanimation is coven/condition-gated → not guaranteed (abstain)`);
+    v.deficit = [
+      {
+        resource: 'recurrence',
+        shortfall: null,
+        note:
+          `${R.name}'s reanimation is gated by a coven/board-state condition the ` +
+          'goldfish model cannot guarantee; structure surfaced as a value engine, ' +
+          'not a verified loop (QE-4 abstain)',
+      },
+    ];
+    return v;
+  }
+  v.closes = true;
+  v.k = 0;
+  v.loopClass = 'infinite';
+  v.accumulators = ['death_triggers'];
+  v.resultTypes = ['infinite_death_triggers'];
+  v.trace.push(`${S.name}: repeatable free sac ⇒ k=0 infinite death triggers`);
+  return v;
+}
+
+const TEMPLATES = [
+  templateGraveyardReturn,
+  templateUntapMana,
+  templateBlinkValue,
+  templateSacRecursion,
+];
+const CLOSE_SAFE = new Set(['untap_mana', 'blink_untap_mana', 'graveyard_return']);
 const NOVEL_SAFE = CLOSE_SAFE;
 
 function runTemplates(members: MemberModel[]): Verdict | null {
@@ -625,6 +788,15 @@ function enumerateVerificationCandidates(deck: Member[], budget = ENUM_BUDGET): 
   const outlets = gated((m) => m.hasFeature('sac_outlet'));
   const fodders = gated((m) => m.hasFeature('sac_fodder'));
   const payoffs = gated((m) => m.hasFeature('dies_trigger') || m.hasFeature('drain'));
+  // graveyard-return loop seeds (DEC-526)
+  const modelOf = new Map<Member, MemberModel>(models.map(({ e, m }) => [e, m]));
+  const grReanimators = gated(
+    (m) => m.isCreature() && (m.hasFeature('etb_reanimate') || m.hasFeature('aura_fetch')),
+  );
+  const grPartners = gated(
+    (m) => m.hasFeature('death_return') || (m.isCreature() && m.hasFeature('exile_until_leaves')),
+  );
+  const grFreeSacs = gated((m) => m.freeCreatureSac());
 
   const seen = new Set<string>();
   const out: Member[][] = [];
@@ -663,6 +835,31 @@ function enumerateVerificationCandidates(deck: Member[], budget = ENUM_BUDGET): 
       for (const p of payoffs) {
         if (p === o || p === f) continue;
         if (!add([o, f, p])) return out;
+      }
+    }
+  }
+  // graveyard-return triples [R, P, S_repr] (DEC-526). One triple per compatible
+  // (reanimator, partner) with a single representative free sac (smallest oracleId).
+  if (grReanimators.length > 0 && grPartners.length > 0 && grFreeSacs.length > 0) {
+    const repSac = grFreeSacs.reduce((a, b) => (b.oracleId < a.oracleId ? b : a));
+    for (const reE of grReanimators) {
+      if (reE === repSac) continue;
+      const R = modelOf.get(reE)!;
+      const auraRestricted = R.hasFeature('aura_fetch');
+      const bound = R.reanimateBound();
+      if (bound === null) continue;
+      for (const pE of grPartners) {
+        if (pE === reE || pE === repSac) continue;
+        const P = modelOf.get(pE)!;
+        if (Math.trunc(P.manaValue || 0) > bound) continue;
+        const pAttach = P.hasFeature('death_return');
+        const pExile = P.hasFeature('exile_until_leaves') && P.isCreature();
+        if (auraRestricted) {
+          if (!(pAttach && P.isAura())) continue;
+        } else if (!(pAttach || pExile)) {
+          continue;
+        }
+        if (!add([reE, pE, repSac])) return out;
       }
     }
   }
