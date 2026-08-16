@@ -6,7 +6,7 @@ Usage:
 
 Example:
   python compute_purchase_list.py --owned Owned.csv --shop superfriends-esika \
-    --built dark-dominion titan-convergence eternal-agony eternal-harvest \
+    --built gathering-shadow titan-convergence eternal-agony eternal-harvest \
            the-white-forge verdant-tide mutant-multiplication creeping-corruption
 """
 

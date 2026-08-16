@@ -35,12 +35,12 @@ When auditing or adding a deck:
 | ID | Used by | Strategy in 1 line |
 |---|---|---|
 | `graveyard-reanimator` | eternal-harvest | Mill/sac into yard, return for value |
-| `aristocrats` | eternal-harvest, dark-dominion | Sacrifice + death-trigger payoffs |
-| `tokens-go-wide` | mutant-multiplication, dark-dominion | Many small tokens + anthems/doublers |
+| `aristocrats` | eternal-harvest, gathering-shadow | Sacrifice + death-trigger payoffs |
+| `tokens-go-wide` | mutant-multiplication, gathering-shadow | Many small tokens + anthems/doublers |
 | `plus-one-counters` | mutant-multiplication, creeping-corruption | Place, double, pay off counters |
 | `infect-poison` | creeping-corruption | Win via 10 poison counters |
 | `voltron` | (latent — none yet) | One creature stacked with auras/equipment |
-| `spellslinger` | dark-dominion | Cast many noncreature spells; cost reduction + copy |
+| `spellslinger` | gathering-shadow | Cast many noncreature spells; cost reduction + copy |
 | `group-slug` | eternal-agony | Trickle damage on every action |
 | `stax-control` | genesis-protocol | Asymmetric resource denial |
 | `artifacts-matter` | the-white-forge, genesis-protocol | Artifact density + flicker engines |

@@ -162,7 +162,7 @@ async def publish_deck(
 KNOWN_ARCHIDEKT_IDS: dict[str, int] = {
     "titan-convergence": 20760135,
     "eternal-agony": 20759936,
-    "dark-dominion": 20760109,
+    "gathering-shadow": 20760109,
     "mutant-multiplication": 20786495,
     "eternal-harvest": 20946261,
 }

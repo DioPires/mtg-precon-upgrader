@@ -34,7 +34,7 @@ mtg-precon-upgrader/
 │   └── commanders/         # Deck data per commander
 │       ├── titan-convergence/
 │       ├── eternal-agony/
-│       ├── dark-dominion/
+│       ├── gathering-shadow/
 │       └── ...
 └── scripts/                # Mana simulation scripts
 ```
@@ -53,7 +53,7 @@ mtg-precon-upgrader/
 - **Strategy:** Group Slug -- life manipulation and punishing opponents for their actions
 - **Bracket:** 4
 
-### Dark Dominion
+### Gathering Shadow
 - **Commander:** Sauron, the Dark Lord
 - **Colors:** Blue/Black/Red
 - **Strategy:** Amass / Orc Tribal -- build an army of Orcs and overwhelm opponents

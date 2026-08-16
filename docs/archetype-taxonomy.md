@@ -25,7 +25,7 @@ Then cross-referenced against standard EDH archetype conventions (Command Zone v
 | Deck | Archetypes |
 |---|---|
 | creeping-corruption | infect-poison, plus-one-counters |
-| dark-dominion | amass-orcs, amass-armies, tokens-go-wide |
+| gathering-shadow | amass-orcs, amass-armies, tokens-go-wide |
 | eternal-agony | group-slug |
 | eternal-harvest | graveyard-reanimator, aristocrats |
 | genesis-protocol | stax-control, artifacts-matter |
@@ -68,7 +68,7 @@ Then cross-referenced against standard EDH archetype conventions (Command Zone v
 | Deck | Currently tagged | Maps to (proposed) |
 |---|---|---|
 | creeping-corruption | infect-poison, plus-one-counters | infect-poison, counters-payoffs |
-| dark-dominion | amass-orcs, amass-armies, tokens-go-wide | tokens-go-wide (amass sub-recipes) |
+| gathering-shadow | amass-orcs, amass-armies, tokens-go-wide | tokens-go-wide (amass sub-recipes) |
 | eternal-agony | group-slug | group-slug |
 | eternal-harvest | graveyard-reanimator, aristocrats | graveyard-reanimator, aristocrats |
 | genesis-protocol | stax-control, artifacts-matter | stax-control, artifacts-matter |
@@ -79,7 +79,7 @@ Then cross-referenced against standard EDH archetype conventions (Command Zone v
 | verdant-tide | elf-tribal, ramp-big-mana | tribal (elf), ramp-bigmana |
 | witherbloom-the-balancer | aristocrats, tokens-go-wide, spellslinger | aristocrats, tokens-go-wide, spellslinger |
 
-No deck loses coverage. Some gain potential coverage via newly accessible sub-recipes (e.g., dark-dominion gains amass sub-recipes plus the broader tokens base).
+No deck loses coverage. Some gain potential coverage via newly accessible sub-recipes (e.g., gathering-shadow gains amass sub-recipes plus the broader tokens base).
 
 ## What this implies for `discovery-playbook.json`
 

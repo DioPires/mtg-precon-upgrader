@@ -89,7 +89,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 
 ## Deck Rules
 
-- **Display names should be strategic** (e.g., "Dark Dominion", not "Sauron Deck")
+- **Display names should be strategic** (e.g., "Gathering Shadow", not "Sauron Deck")
 - Every card recommendation must be attributed via `sources`
 - **Card pool**: All Commander-legal cards printed up to and including the current date of the analysis. There is no frozen cutoff — treat "the day this deck is being designed or reviewed" as the boundary. When in doubt about a recent printing, query Scryfall (`scryfall_search` with `released<=YYYY-MM-DD` if needed) rather than assuming a stale window.
 - **Card text validation**: ALWAYS verify card names and oracle text via the `scryfall_card_by_name` MCP tool before recommending cards. Never assume card text or abilities from memory — validate every card considered. For bulk validation, use `scryfall_collection`.

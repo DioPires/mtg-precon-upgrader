@@ -48,7 +48,7 @@ Cards are resolved from names → Scryfall IDs using:
 Hardcoded in `tools/decks.py:KNOWN_ARCHIDEKT_IDS`:
 - titan-convergence → 20760135
 - eternal-agony → 20759936
-- dark-dominion → 20760109
+- gathering-shadow → 20760109
 - mutant-multiplication → 20786495
 - eternal-harvest → 20946261
 

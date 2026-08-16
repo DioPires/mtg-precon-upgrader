@@ -29,7 +29,7 @@ import type { DeckTierBLoops } from './tierB';
 // Tutor/Mana Vault/Animate Dead/Entomb), bracket 5 -> 4, GCs 8 -> 10.
 // v5 -> v6: sim-fidelity follow-up (DEC-206) — Hidetsugu+Solphim tagged as
 // kind:combo, tutor_mode/extra_cost schema added; simulation.json values shift
-// for eternal-agony, dark-dominion, eternal-harvest.
+// for eternal-agony, gathering-shadow, eternal-harvest.
 // v6 -> v7 (DEC-226): added Witherbloom Balance deck + index reorder.
 // v7 -> v8 (DEC-235): card-metadata.json refreshed to cover all decks (was
 // missing ~80 cards including Vampiric Tutor, Demonic Consultation, Thassa's
@@ -158,7 +158,9 @@ import type { DeckTierBLoops } from './tierB';
 // verdicts: verified/corroborated loops, near-misses, provenance-gate caps).
 // Bump invalidates the persisted deck envelope so returning users pick up the new
 // member (guards the "no dark period" regression — see DEC-491 B1 lesson).
-const STORAGE_PREFIX = 'gv1-deck-data-v113:';
+// v113 -> v114 (DEC-533 2026-08-16): dark-dominion renamed to gathering-shadow;
+// cached envelopes under the old id would orphan the catalog entry.
+const STORAGE_PREFIX = 'gv1-deck-data-v114:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

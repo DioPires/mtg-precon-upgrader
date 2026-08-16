@@ -25,7 +25,7 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 
 import mana_simulation_titan_convergence as sim_titan
 import mana_simulation_eternal_agony as sim_rakdos
-import mana_simulation_dark_dominion as sim_grixis
+import mana_simulation_gathering_shadow as sim_grixis
 import mana_simulation_eternal_harvest as sim_golgari
 import mana_simulation_witherbloom_the_balancer as sim_witherbloom
 import mana_simulation_the_white_forge as sim_mono_white
@@ -155,7 +155,7 @@ NUMBER_WORDS = {
 # with a bare "pieces" list is read as one 1-card slot per piece. The commander,
 # when named in a slot, fills it from the command zone automatically.
 KEY_COMBOS = {
-    # dark-dominion: Oracle Consultation removed in the DEC-533 remake — the
+    # gathering-shadow: Oracle Consultation removed in the DEC-533 remake — the
     # Thoracle/Consultation shell was cut with the strategy change. Commander
     # Spellbook finds zero included combos on the amass/Ring-temptation 99
     # (2026-08-16); the deck deliberately has NO entry (combat/attrition deck,
@@ -575,7 +575,7 @@ PERMANENT_DRAW_ENGINE = {
         "The One Ring": {"maxActivations": 4},
     },
     # DEC-533: same One Ring stopping rule as gandalf-party-guest.
-    "dark-dominion": {
+    "gathering-shadow": {
         "The One Ring": {"maxActivations": 4},
     },
 }
@@ -611,7 +611,7 @@ PERMANENT_DRAW_ENGINE = {
 # Marauder connect draws, Barad-dur activations, and all graveyard re-buys
 # (Reanimate/Gathering of Darkness/Along the Crooked Way) are unmodeled.
 AMASS_ARMY_ENGINE = {
-    "dark-dominion": {
+    "gathering-shadow": {
         "opponentCastsPerTurn": 3,
         "amassOnResolve": {
             "Gothmog, Morgul Lieutenant": 1,
@@ -3425,11 +3425,11 @@ def export_rakdos(metadata: dict) -> dict:
 
 
 def export_grixis(metadata: dict) -> dict:
-    """Export Dark Dominion (Grixis) simulation."""
+    """Export Gathering Shadow (Grixis) simulation."""
     return _export_colored(
         sim_module=sim_grixis,
-        deck_id="dark-dominion",
-        deck_name="Dark Dominion",
+        deck_id="gathering-shadow",
+        deck_name="Gathering Shadow",
         commander_name="Sauron, the Dark Lord",
         commander_cmc=6,
         colors=["U", "B", "R"],
@@ -3836,7 +3836,7 @@ def export_verdant_tide(metadata: dict) -> dict:
 DECKS = [
     ("titan-convergence", "Titan Convergence", export_titan),
     ("eternal-agony", "Eternal Agony", export_rakdos),
-    ("dark-dominion", "Dark Dominion", export_grixis),
+    ("gathering-shadow", "Gathering Shadow", export_grixis),
     ("eternal-harvest", "Eternal Harvest", export_golgari),
     ("witherbloom-the-balancer", "Witherbloom Balance", export_witherbloom),
     ("the-white-forge", "The White Forge", export_mono_white),

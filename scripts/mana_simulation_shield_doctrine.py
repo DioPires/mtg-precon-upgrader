@@ -35,7 +35,7 @@ Manabase model (36 lands; lands round applied after v1.2 — DEC-421):
   you control 2+ other lands); Turbulent Steppe (RW, typed Mountain Plains —
   satisfies checkland conditions, Flooded Strand-fetchable) is tapped unless
   opponents control 8+ lands (~T3 in a pod). All three modeled honestly as
-  tapped while <2 lands on our battlefield (dark-dominion Turbulent Springs
+  tapped while <2 lands on our battlefield (gathering-shadow Turbulent Springs
   precedent).
 - Utility lands: Axgard Armory (W; enters tapped — the deck's only
   always-tapped land), Rogue's Passage (C), Buried Ruin (C).
@@ -170,7 +170,7 @@ LAND_COLORS: dict[str, frozenset] = {
     # Lands round (DEC-421): slowlands enter tapped with <2 other lands;
     # Turbulent Steppe enters tapped until opponents control 8+ lands
     # (~T3 in a pod) — both proxied as tapped while <2 lands on our
-    # battlefield (dark-dominion Turbulent Springs precedent), handled in
+    # battlefield (gathering-shadow Turbulent Springs precedent), handled in
     # land_enters_tapped.
     "Sundown Pass":       frozenset({"R", "W"}),
     "Stormcarved Coast":  frozenset({"U", "R"}),

@@ -15,7 +15,7 @@ class FetchCardMetadataHelperTests(unittest.TestCase):
         self.assertEqual(fetch_metadata.available_deck_ids(), expected)
 
     def test_collect_card_names_for_single_deck_matches_deck_file(self):
-        deck_id = "dark-dominion"
+        deck_id = "gathering-shadow"
         with open(PROJECT_ROOT / "data" / "commanders" / deck_id / "deck.json") as f:
             deck = json.load(f)
 

@@ -158,7 +158,7 @@ A deck at 50% comboLethal at T6 in the proxy will typically win the actual game 
 
 ### Case study
 
-DEC-205 Dark Dominion retune (commits [`4094952`](https://github.com/DioPires/mtg-precon-upgrader/commit/4094952) through [`a62d993`](https://github.com/DioPires/mtg-precon-upgrader/commit/a62d993)) — slow value-pile B5 (T8+ goldfish lethal, comboLethal not tracked) → tutored combo B4+ (comboLethal T6 48.2%, T7 53.3%, median combo-ready turn T7). DeckHealthScore C(65) → B(67.5), manabase_health 74 → 82, global_health 78 → 85. Total spend: $56. Six combo lines tagged (3 wincon-permanents × 2 finishers).
+DEC-205 Gathering Shadow retune (commits [`4094952`](https://github.com/DioPires/mtg-precon-upgrader/commit/4094952) through [`a62d993`](https://github.com/DioPires/mtg-precon-upgrader/commit/a62d993)) — slow value-pile B5 (T8+ goldfish lethal, comboLethal not tracked) → tutored combo B4+ (comboLethal T6 48.2%, T7 53.3%, median combo-ready turn T7). DeckHealthScore C(65) → B(67.5), manabase_health 74 → 82, global_health 78 → 85. Total spend: $56. Six combo lines tagged (3 wincon-permanents × 2 finishers).
 
 ### Shell-vs-payoff ceiling (DEC-309)
 
@@ -190,7 +190,7 @@ Computed across all 15 production decks. Columns: manaH = manabase_health, intD 
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---|
 | aziza-mage-tower-captain | 3 | combat (multi) | 75 | 120 | 75 | 18.4 | 23.6 | 18.9 | 23.6 | ok |
 | creeping-corruption | 3 | value-incremental | 82 | 120 | 82 | 0.0 | 0.0 | 46.8 | 46.8 | ok |
-| dark-dominion | 4+ | value-incremental | 82 | 118 | 82 | 46.2 | 57.4 | 19.0 | 57.4 | ok |
+| gathering-shadow | 4+ | value-incremental | 82 | 118 | 82 | 46.2 | 57.4 | 19.0 | 57.4 | ok |
 | eternal-agony | 4 | value-incremental | 75 | 120 | 75 | 5.4 | 8.2 | 42.0 | 42.0 | ok |
 | eternal-harvest | 4 | value-incremental | 69 | 104 | 69 | 0.0 | 0.0 | 29.2 | 29.2 | ok |
 | hidden-legion | 3 | combat (multi) | 64 | 120 | 64 | 0.1 | 0.3 | 26.6 | 26.6 | ok |
@@ -206,7 +206,7 @@ Computed across all 15 production decks. Columns: manaH = manabase_health, intD 
 
 **Threshold rationale:**
 
-- `shell_floor=80` clears the four decks that earn B4-shell scores (creeping-corruption 82, dark-dominion 82, silverquill 85, mutant-multiplication 86). Anything below isn't paying B4 tax in the first place, so shell-exceeds-payoff isn't the right diagnosis for it.
+- `shell_floor=80` clears the four decks that earn B4-shell scores (creeping-corruption 82, gathering-shadow 82, silverquill 85, mutant-multiplication 86). Anything below isn't paying B4 tax in the first place, so shell-exceeds-payoff isn't the right diagnosis for it.
 - `payoff_floor=15` leaves silverquill (22.4%) above the floor by ~7 points — the canonical multi-axis case that *should not* trigger. Mutant-multiplication (33.3%) and creeping-corruption (46.8%) are well clear.
 - `fast_payoff=50%` (CL@T5) and `weak_shell=60` form the opposite warning. No current deck triggers it — the closest is superfriends-esika at shell 62 / CL@T5 3.9%. The rule is forward-looking: it catches a future deck that adds a Thoracle line without strengthening its lands or interaction.
 

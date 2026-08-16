@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Monte Carlo mana base simulation for Dark Dominion (Sauron, the Dark Lord).
+"""Monte Carlo mana base simulation for Gathering Shadow (Sauron, the Dark Lord).
 
 Simulates 100,000 games measuring mana production, color balance, and curve
 efficiency turns 1-10 for the Grixis amass + Ring-temptation decklist
@@ -20,9 +20,9 @@ from collections import Counter
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "dark-dominion" / "deck.json"
+DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "gathering-shadow" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
-JSON_OUTPUT = PROJECT_ROOT / "data" / "commanders" / "dark-dominion" / "simulation.json"
+JSON_OUTPUT = PROJECT_ROOT / "data" / "commanders" / "gathering-shadow" / "simulation.json"
 
 NUM_GAMES = 100_000
 NUM_TURNS = 10
@@ -295,7 +295,7 @@ class ManaPool:
 
 
 def build_decklist(deck_data: dict) -> list[str]:
-    """Build 99-card decklist for Dark Dominion.
+    """Build 99-card decklist for Gathering Shadow.
 
     Reads the flat decklist array directly. Each entry has {name, type} with
     optional quantity field. Commander is in the command zone (not in decklist).
@@ -982,14 +982,14 @@ def export_enhanced_json(metadata: dict) -> dict:
     import export_simulation_results as exporter
 
     result = exporter.export_grixis(metadata)
-    if not exporter.validate_output(result, "dark-dominion"):
+    if not exporter.validate_output(result, "gathering-shadow"):
         raise ValueError("export_grixis produced invalid simulation output")
     return result
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Monte Carlo mana base simulation for Dark Dominion (Sauron)")
+        description="Monte Carlo mana base simulation for Gathering Shadow (Sauron)")
     parser.add_argument("--json", action="store_true",
                         help="Write simulation.json instead of console output")
     args = parser.parse_args()
@@ -999,7 +999,7 @@ def main():
     with open(METADATA_FILE) as f:
         metadata = json.load(f)
 
-    print("Building Dark Dominion decklist...")
+    print("Building Gathering Shadow decklist...")
     decklist = build_decklist(deck_data)
     print(f"Decklist: {len(decklist)} cards")
 

@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 
 
 EXPORT_CASES = [
-    ("scripts.mana_simulation_dark_dominion", "export_grixis", "dark-dominion"),
+    ("scripts.mana_simulation_gathering_shadow", "export_grixis", "gathering-shadow"),
     ("scripts.mana_simulation_eternal_agony", "export_rakdos", "eternal-agony"),
     ("scripts.mana_simulation_eternal_harvest", "export_golgari", "eternal-harvest"),
     ("scripts.mana_simulation_witherbloom_the_balancer", "export_witherbloom", "witherbloom-the-balancer"),

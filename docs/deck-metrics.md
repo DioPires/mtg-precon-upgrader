@@ -301,7 +301,7 @@ The normalized pass emits no gaps — `gaps[]` stays scored against the deck's o
 
 ```json
 {
-  "deck_id": "dark-dominion",
+  "deck_id": "gathering-shadow",
   "methodology": "deck-metrics-v2",
   "generated_at": "2026-05-29T12:00:00Z",
   "bracket": "4+",
@@ -362,7 +362,7 @@ The Vitals card on each deck page renders `global_health` as a letter grade. Pro
 | genesis-protocol | 84 | 80 | 97 | 82 | 120 | 11 | B |
 | the-white-forge | 84 | 69 | 103 | 87 | 120 | 14 | B |
 | mutant-multiplication | 82 | 84 | 66 | 90 | 118 | 57 | B |
-| dark-dominion | 78 | 74 | 72 | 96 | 114 | 29 | C |
+| gathering-shadow | 78 | 74 | 72 | 96 | 114 | 29 | C |
 | eternal-agony | 76 | 75 | 65 | 98 | 94 | 55 | C |
 | verdant-tide | 76 | 69 | 88 | 79 | 80 | 47 | C |
 | eternal-harvest | 73 | 71 | 60 | 98 | 93 | 46 | C |
@@ -384,7 +384,7 @@ Component scores (`mana`, `role`, `curve`, `int`, `cohesion`, `resilience`) are 
 | creeping-corruption | 82 | 94 | 92 | 120 | 47 | 70 | 88 | 88 | 87 | B | ±8 |
 | the-white-forge | 69 | 103 | 87 | 120 | 19 | 106 | 87 | 87 | 86 | B | ±2 |
 | zada-hedron-grinder | 69 | 104 | 88 | 102 | 38 | 106 | 86 | 87 | 86 | B | ±2 |
-| dark-dominion | 82 | 86 | 95 | 118 | 24 | 88 | 85 | 86 | 85 | B | ±5 |
+| gathering-shadow | 82 | 86 | 95 | 118 | 24 | 88 | 85 | 86 | 85 | B | ±5 |
 | hidden-legion | 64 | 100 | 95 | 120 | 32 | 85 | 85 | 85 | 84 | B | ±2 |
 | eternal-agony | 75 | 86 | 100 | 120 | 45 | 66 | 84 | 85 | 84 | B | ±5 |
 | superfriends-esika | 62 | 107 | 82 | 120 | 33 | 80 | 84 | 85 | 83 | B | ±2 |

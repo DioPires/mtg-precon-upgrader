@@ -67,7 +67,7 @@ DECK_META = {
         "wincon_style": "value-incremental",
         "commanderRoles": {"primary": "engine", "secondary": "threat"},
     },
-    "dark-dominion": {
+    "gathering-shadow": {
         "wincon_style": "value-incremental",
         "commanderRoles": {"primary": "engine", "secondary": "card-draw"},
     },

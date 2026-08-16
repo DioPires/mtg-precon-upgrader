@@ -238,13 +238,13 @@ describe('splitOwnership', () => {
       ],
     });
     const B = makeDeck({
-      slug: 'dark-dominion', deckName: 'Dark Dominion', commander: 'DD Cmd',
+      slug: 'gathering-shadow', deckName: 'Gathering Shadow', commander: 'DD Cmd',
       list: [
         group('Commander', ['DD Cmd']),
         { name: 'Tutors', cards: [{ n: 'Demonic Tutor', mv: '{1}{B}', type: 'Sorcery', price: '—', gc: false }] },
       ],
     });
-    const cardMap = aggregateCards(new Set(['eternal-agony', 'dark-dominion']), [A, B]);
+    const cardMap = aggregateCards(new Set(['eternal-agony', 'gathering-shadow']), [A, B]);
     const owned = new Map<string, number>([['Demonic Tutor', 1]]);
     const { buy, own } = splitOwnership(cardMap, owned);
     expect(buy.find((c) => c.name === 'Demonic Tutor')?.qty).toBe(1);
