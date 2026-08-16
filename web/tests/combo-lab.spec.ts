@@ -12,9 +12,10 @@ test('Combos nav link reaches the route with the tier framing', async ({ page })
 test('fleet mode renders a curated combo report for a real deck', async ({ page }) => {
   await page.goto('/combos');
   // Deck selector present; report renders with the Tier-A framing + attribution.
+  // (.first() = the Tier-A framing; later sections add their own framing blocks.)
   await expect(page.locator('.gv1-cl-select')).toBeVisible();
-  await expect(page.locator('.gv1-cl-framing')).toContainText(/tier a/i);
-  await expect(page.locator('.gv1-cl-framing')).toContainText(/goldfish/i);
+  await expect(page.locator('.gv1-cl-framing').first()).toContainText(/tier a/i);
+  await expect(page.locator('.gv1-cl-framing').first()).toContainText(/goldfish/i);
   // Bracket disclosure section + corpus-version indicator.
   await expect(page.getByRole('region', { name: /bracket disclosure/i })).toBeVisible();
   await expect(page.locator('.gv1-cl-report-bar')).toContainText(/corpus/i);
@@ -50,8 +51,66 @@ test('export copies a tier-labeled report to the clipboard', async ({ page, cont
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto('/combos?mode=fleet&deck=eternal-agony');
   await expect(page.locator('.gv1-cl-finding').first()).toBeVisible();
-  await page.getByRole('button', { name: /copy report/i }).click();
+  await page.getByRole('button', { name: /copy text/i }).click();
   const clip = await page.evaluate(() => navigator.clipboard.readText());
   expect(clip).toContain('TIER A — CURATED');
   expect(clip).toContain('Commander Spellbook');
+});
+
+// ─── Phase 4 (DEC-516) ────────────────────────────────────────────────────────
+
+test('Markdown export preserves tier labels + attribution (RT-4)', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/combos?mode=fleet&deck=eternal-agony');
+  await expect(page.locator('.gv1-cl-finding').first()).toBeVisible();
+  await page.getByRole('button', { name: /copy markdown/i }).click();
+  const clip = await page.evaluate(() => navigator.clipboard.readText());
+  expect(clip).toContain('# Combo Lab');
+  expect(clip).toContain('Tier A · Combos present');
+  expect(clip).toContain('Wizards of the Coast');
+});
+
+test('computed near-miss completion surfaces Tier-B + Tier-C completers (NM-1)', async ({
+  page,
+}) => {
+  await page.goto('/combos?mode=fleet&deck=titan-convergence');
+  const panel = page.getByRole('region', { name: /computed near-miss completions/i });
+  await expect(panel).toBeVisible();
+  await panel.getByRole('button', { name: /find completions/i }).click();
+  // Latency line proves the pool scan ran within budget (NF-4).
+  await expect(panel.locator('.gv1-cl-latency')).toContainText(/searched .* pool cards in .*ms/i);
+  // Filters (NM-5): currency + max price + owned toggle.
+  await expect(panel.locator('.gv1-cl-filters')).toContainText(/color identity/i);
+  await expect(panel.getByRole('combobox')).toBeVisible();
+  // At least one computed completion appears at Tier B or Tier C.
+  await expect(panel.locator('.gv1-cl-tier-c').first()).toBeVisible();
+});
+
+test('paste mode runs the Tier-B verifier and surfaces a known loop (DEC-516)', async ({
+  page,
+}) => {
+  await page.goto('/combos?mode=paste');
+  // A known 2-card infinite-mana loop: the client-side verifier should surface it
+  // (corroborated if matched as a curated combo, novel if only enumerated).
+  await page
+    .locator('.gv1-cl-textarea')
+    .first()
+    .fill('1 Basalt Monolith\n1 Forsaken Monument');
+  await page.getByRole('button', { name: /^analyze$/i }).click();
+  const tierB = page.getByRole('region', { name: /tier-b verified loops/i });
+  await expect(tierB).toBeVisible();
+  await expect(tierB).toContainText(/Basalt Monolith/);
+  await expect(tierB).toContainText(/Forsaken Monument/);
+  // The completion panel no longer discloses the old fleet-only deferral.
+  const panel = page.getByRole('region', { name: /computed near-miss completions/i });
+  await panel.getByRole('button', { name: /find completions/i }).click();
+  await expect(panel).not.toContainText(/not available for pasted decks/i);
+});
+
+test('deck-URL input degrades with an actionable message when blocked (IN-2)', async ({ page }) => {
+  await page.goto('/combos?mode=paste');
+  await page.getByPlaceholder(/moxfield\.com\/decks/i).fill('https://www.moxfield.com/decks/xxxxx');
+  await page.getByRole('button', { name: /^load$/i }).click();
+  // Either it resolves or (far more likely, CORS-blocked) it shows a paste-fallback message.
+  await expect(page.locator('.gv1-cl-url-msg')).toBeVisible({ timeout: 15000 });
 });

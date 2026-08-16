@@ -8,6 +8,8 @@
 import { BRACKET_TAG_LABELS, type SpellbookCombo } from '../data/spellbook';
 import type { SynergyCandidate, SynergyCounts } from '../data/synergy';
 import type { TierBFinding, TierBCounts } from '../data/tierB';
+import type { CompletionReport } from './nearMissComplete';
+import type { Currency } from '../data/prices';
 
 /**
  * DEC-491 — Tier-C heuristic synergy layer attached to a combo report. Never
@@ -141,7 +143,7 @@ function comboCardLine(c: SpellbookCombo): string {
  * corpus version + the goldfish/coverage caveats. Tier labels must survive every
  * export path (EI-4), so they are written inline, not just in a header.
  */
-export function buildPlainTextExport(report: ComboReport): string {
+export function buildPlainTextExport(report: ComboReport, completions?: CompletionReport | null): string {
   const lines: string[] = [];
   lines.push('COMBO LAB — combo report');
   lines.push(`Deck: ${report.deckLabel}`);
@@ -227,7 +229,176 @@ export function buildPlainTextExport(report: ComboReport): string {
     lines.push(`    ${c.permalink}`);
   }
   lines.push('');
+
+  // Computed near-miss completions (Phase 4 / NM-1). Tier labels survive the export
+  // (EI-4); each tier keeps its model-conditional / speculative framing.
+  if (completions) pushCompletionText(lines, completions);
+
   lines.push('Combo data © Commander Spellbook (CC-BY-SA). Card data © Scryfall.');
+  lines.push('Price data © Scryfall (Cardmarket EUR / TCGplayer USD).');
   lines.push('Not affiliated with or endorsed by Wizards of the Coast.');
   return lines.join('\n');
+}
+
+const CURRENCY_SYMBOL: Record<Currency, string> = { eur: '€', usd: '$' };
+
+/** Format a price in the report's currency, or a dash when unpriced. */
+function fmtPrice(price: number | null, currency: Currency): string {
+  if (price == null) return '—';
+  return `${CURRENCY_SYMBOL[currency]}${price.toFixed(2)}`;
+}
+
+function filterSummary(c: CompletionReport): string {
+  const parts = [`color identity ${c.deckColorIdentity}`, `prices in ${c.currency.toUpperCase()}`];
+  return parts.join(' · ');
+}
+
+/** Shared plain-text completion sections (also used by the copy path). */
+function pushCompletionText(lines: string[], c: CompletionReport): void {
+  lines.push('— COMPUTED NEAR-MISS COMPLETIONS (Phase 4) —');
+  lines.push(`Filters: ${filterSummary(c)}. Completion search over the full-coverage KB.`);
+  lines.push('');
+
+  const ofNote = (shown: number, total: number): string =>
+    total > shown ? ` of ${total}` : '';
+  lines.push(
+    `— TIER B · COMPUTED COMPLETIONS (${c.tierB.length}${ofNote(c.tierB.length, c.counts.tierBTotal)}) —`,
+  );
+  if (!c.tierBAvailable) {
+    lines.push('  Unavailable — the Tier-B verifier index could not be loaded.');
+  } else if (!c.tierB.length) {
+    lines.push('  No computed loop deficits to complete.');
+  }
+  for (const b of c.tierB) {
+    lines.push(
+      `• [Tier B · verified under the model] ${b.card.name} (${fmtPrice(b.card.price, c.currency)})`,
+    );
+    lines.push(
+      `    Closes the ${b.resource} leak on ${b.loopCards.join(' + ')} via ${b.closerLabel}.`,
+    );
+  }
+  lines.push('  "Verified under the model" is not a comprehensive-rules proof; verify the interaction.');
+  lines.push('');
+
+  lines.push(
+    `— TIER C · SPECULATIVE COMPLETIONS (${c.tierC.length}${ofNote(c.tierC.length, c.counts.tierCTotal)}) —`,
+  );
+  if (!c.tierC.length) lines.push('  No speculative half-edge completions surfaced.');
+  for (const t of c.tierC) {
+    lines.push(
+      `• [Tier C · ${t.band}] ${t.card.name} (${fmtPrice(t.card.price, c.currency)})`,
+    );
+    lines.push(`    Adds: ${t.couplings.map((e) => e.label).join('; ')}`);
+  }
+  lines.push('  Tier C is a speculative compatibility signal, NOT a verified combo.');
+  lines.push('');
+}
+
+/**
+ * RT-4 shareable rendering — a Markdown export. Renders cleanly on Reddit / Discord
+ * / GitHub while preserving every tier label + attribution (a shared report stripped
+ * of epistemic labels violates Section 10). Complements the plain-text path.
+ */
+export function buildMarkdownExport(report: ComboReport, completions?: CompletionReport | null): string {
+  const out: string[] = [];
+  const disc = buildBracketDisclosure(report.included);
+  out.push(`# Combo Lab — ${report.deckLabel}`);
+  if (report.commander.length) out.push(`**Commander:** ${report.commander.join(' + ')}`);
+  if (report.mode === 'paste' && report.cardsAnalyzed < report.cardsTotal) {
+    out.push(`_Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal} cards._`);
+  }
+  out.push('');
+  out.push(
+    '> Findings carry an **epistemic tier**. Tier A = curated (human-verified, Commander ' +
+      'Spellbook). Tier B = computed (verified under the model, not a rules proof). Tier C = ' +
+      'speculative. Analysis assumes a goldfish. Not exhaustive.',
+  );
+  out.push('');
+  out.push(`_Corpus version: ${report.corpusVersion}_`);
+  out.push('');
+
+  out.push('## Bracket / Rule-0 disclosure');
+  out.push(
+    `- **${disc.totalCombos}** curated combos · **${disc.twoCardInfinites}** two-card infinites · ` +
+      `**${disc.winCombos}** win-the-game`,
+  );
+  if (disc.byBracketTag.length) {
+    out.push(
+      `- Spellbook bracket tags: ${disc.byBracketTag.map((b) => `${b.label} ×${b.count}`).join(', ')}`,
+    );
+  }
+  out.push('');
+
+  out.push(`## Tier A · Combos present (${report.included.length})`);
+  if (!report.included.length) out.push('_None within corpus coverage._');
+  for (const c of report.included) {
+    const flags = [isTwoCardInfinite(c) ? '2-card infinite' : '', isWinCombo(c) ? 'WIN' : '']
+      .filter(Boolean)
+      .join(', ');
+    out.push(`- **[Tier A]** ${comboCardLine(c)}${flags ? ` _(${flags})_` : ''} — [combo](${c.permalink})`);
+    if (c.produces.length) out.push(`  - Produces: ${c.produces.join('; ')}`);
+  }
+  out.push('');
+
+  if (report.tierB) {
+    out.push(`## Tier B · Verified loops (${report.tierB.novel.length} novel)`);
+    if (!report.tierB.novel.length && !report.tierB.corroborated.length) {
+      out.push('_No loops verified under the model._');
+    }
+    for (const f of report.tierB.corroborated) {
+      out.push(`- **[Tier A · corroborated]** ${f.cards.join(' + ')} — ${loopClassLabel(f)}`);
+    }
+    for (const f of report.tierB.novel) {
+      out.push(`- **[Tier B]** ${f.cards.join(' + ')} — ${loopClassLabel(f)}`);
+    }
+    out.push('');
+  }
+
+  out.push(
+    `## Tier A · Near-misses (${report.nearMisses.length}` +
+      `${report.nearMissesTotal > report.nearMisses.length ? ` of ${report.nearMissesTotal}` : ''})`,
+  );
+  for (const c of report.nearMisses) {
+    const need = [
+      ...(c.missing?.cards ?? []),
+      ...(c.missing?.templates ?? []).map((t) => `a ${t.name}`),
+    ];
+    out.push(`- **[Tier A near-miss]** ${comboCardLine(c)} — needs ${need.join(', ')}`);
+  }
+  out.push('');
+
+  if (completions) {
+    out.push('## Computed near-miss completions (Phase 4)');
+    out.push(`_Filters: ${filterSummary(completions)}._`);
+    out.push('');
+    out.push(`### Tier B · Computed completions (${completions.tierB.length})`);
+    if (!completions.tierBAvailable) {
+      out.push('_Unavailable — the Tier-B verifier index could not be loaded._');
+    } else if (!completions.tierB.length) {
+      out.push('_No computed loop deficits to complete._');
+    }
+    for (const b of completions.tierB) {
+      out.push(
+        `- **[Tier B]** ${b.card.name} (${fmtPrice(b.card.price, completions.currency)}) — ` +
+          `closes the ${b.resource} leak on ${b.loopCards.join(' + ')} via ${b.closerLabel}`,
+      );
+    }
+    out.push('');
+    out.push(`### Tier C · Speculative completions (${completions.tierC.length})`);
+    for (const t of completions.tierC) {
+      out.push(
+        `- **[Tier C · ${t.band}]** ${t.card.name} (${fmtPrice(t.card.price, completions.currency)}) — ` +
+          `adds ${t.couplings.map((e) => e.label).join('; ')}`,
+      );
+    }
+    out.push('_Tier C is a speculative compatibility signal, not a verified combo._');
+    out.push('');
+  }
+
+  out.push('---');
+  out.push(
+    'Combo data © Commander Spellbook (CC-BY-SA). Card + price data © Scryfall ' +
+      '(Cardmarket EUR / TCGplayer USD). Not affiliated with or endorsed by Wizards of the Coast.',
+  );
+  return out.join('\n');
 }

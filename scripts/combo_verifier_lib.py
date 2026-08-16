@@ -31,12 +31,15 @@ does not close under the model. Two mechanisms enforce this:
      novel-eligibility flag; callers decide presentation.
 
 Everything here is pure computation over the cached KB (NF-1: no generative call
-on the query path). The TS mirror ``web/src/lib/comboVerify.ts`` re-implements the
-same closure rules for paste mode; ``web/src/lib/__fixtures__/verify-parity.json``
-+ ``tests/test_combo_verifier.py`` pin byte-parity.
+on the query path). The TS mirror ``web/src/lib/comboVerify.ts`` (DEC-516) re-
+implements the same closure rules + the build_tier_b_candidates.build_deck driver
+for paste mode, over the committed ``data/combo-kb/tier-b-index.json``
+(scripts/build_tier_b_index.py — the loop-relevant raw KB projection the lean
+feature index drops). ``web/src/lib/comboVerify.test.ts`` pins byte-parity of the
+verdicts against every fleet deck's committed ``tier-b-loops.json`` output.
 
-DEC-476 Phase 3 (DEC-501). See docs/combo-verifier.md for the closure model and
-the per-template soundness arguments.
+DEC-476 Phase 3 (DEC-501) + Phase 4 (DEC-516). See docs/combo-verifier.md for the
+closure model and the per-template soundness arguments.
 """
 
 from __future__ import annotations

@@ -21,6 +21,7 @@ import { matchDecklist, parseDecklist } from '../lib/spellbookMatch';
 import {
   bracketLabel,
   buildBracketDisclosure,
+  buildMarkdownExport,
   buildPlainTextExport,
   isTwoCardInfinite,
   isWinCombo,
@@ -30,6 +31,16 @@ import {
   type TierBReport,
 } from '../lib/spellbookReport';
 import type { TierBFinding } from '../data/tierB';
+import { loadPriceIndex, type Currency, type PriceIndex } from '../data/prices';
+import {
+  analyzeCompletions,
+  deriveColorIdentity,
+  parseOwnedCollection,
+  type CompletionReport,
+} from '../lib/nearMissComplete';
+import { resolveDeckUrl, DeckUrlError } from '../lib/deckUrl';
+import { loadTierBIndex } from '../data/tierBIndex';
+import { verifyDeck } from '../lib/comboVerify';
 
 const NEAR_MISS_COLLAPSE_THRESHOLD = 12;
 const SYNERGY_COLLAPSE_THRESHOLD = 10;
@@ -178,6 +189,19 @@ function FleetMode({
     };
   }, [bundle]);
 
+  // Completion inputs (Phase 4). Deck names + precomputed engine deficits + the
+  // declared color identity feed the client-side near-miss completion engine.
+  const completionInputs = useMemo(() => {
+    if (!bundle) return null;
+    const names = [
+      ...(bundle.deck.decklist ?? []).map((c) => c.name),
+      ...(bundle.spellbookCombos?.commander ?? []),
+    ];
+    const colors = index?.commanders.find((c) => c.id === selectedId)?.colors ?? [];
+    const ci = colors.filter((c) => c !== 'C').join('') || 'C';
+    return { names, engines: bundle.tierBLoops?.engines ?? [], colorIdentity: ci };
+  }, [bundle, index, selectedId]);
+
   if (status === 'error') {
     return (
       <div className="gv1-stub" role="alert">
@@ -219,7 +243,20 @@ function FleetMode({
           <code>scripts/sync_spellbook_combos.py</code>.
         </div>
       )}
-      {report && <ComboReportView report={report} />}
+      {report && (
+        <ComboReportView
+          report={report}
+          completionInputs={
+            completionInputs
+              ? {
+                  names: completionInputs.names,
+                  engines: completionInputs.engines,
+                  colorIdentity: completionInputs.colorIdentity,
+                }
+              : undefined
+          }
+        />
+      )}
     </div>
   );
 }
@@ -229,11 +266,46 @@ function FleetMode({
 function PasteMode() {
   const [text, setText] = useState('');
   const [commander, setCommander] = useState('');
+  const [deckUrl, setDeckUrl] = useState('');
+  const [urlBusy, setUrlBusy] = useState(false);
+  const [urlMsg, setUrlMsg] = useState<string>();
   const [report, setReport] = useState<ComboReport | null>(null);
+  const [pasteNames, setPasteNames] = useState<string[]>([]);
+  // Computed Tier-B engine deficits from the last Analyze; feed the near-miss
+  // completion engine. null ⇒ verifier index unavailable (completion falls back).
+  const [pasteEngines, setPasteEngines] = useState<TierBFinding[] | null>(null);
   const [phase, setPhase] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [error, setError] = useState<string>();
   const [timingMs, setTimingMs] = useState<number | null>(null);
   const [deepScanning, setDeepScanning] = useState(false);
+
+  // IN-2 — resolve a Moxfield/Archidekt deck URL into the paste fields. A static
+  // app cannot proxy, so a host that blocks browser access degrades to a message.
+  const resolveUrl = async () => {
+    if (!deckUrl.trim() || urlBusy) return;
+    setUrlBusy(true);
+    setUrlMsg(undefined);
+    try {
+      const deck = await resolveDeckUrl(deckUrl.trim());
+      setText(deck.cardNames.join('\n'));
+      setCommander(deck.commanderNames.join('\n'));
+      setUrlMsg(
+        `Loaded ${deck.cardNames.length} cards from ${deck.site}${
+          deck.name ? ` — “${deck.name}”` : ''
+        }. Review, then Analyze.`,
+      );
+    } catch (e) {
+      setUrlMsg(
+        e instanceof DeckUrlError
+          ? e.message
+          : e instanceof Error
+            ? e.message
+            : 'Could not resolve that URL.',
+      );
+    } finally {
+      setUrlBusy(false);
+    }
+  };
   // Inputs cached from the last Analyze so the deep scan can re-run the engine
   // without re-parsing or refetching the 3.3 MB feature index.
   const synergyInput = useRef<{ names: string[]; fi: FeatureIndex; cfg: SynergyConfig } | null>(
@@ -277,6 +349,33 @@ function PasteMode() {
         };
       }
 
+      // Tier-B verified loops (DEC-516): run the Phase-3 deterministic verifier
+      // client-side over the pasted deck. The matched Tier-A `included` combos are
+      // the curated corpus for corroboration (DB-7). No crowd prior (decision 4).
+      const tierBIndex = await loadTierBIndex();
+      let tierB: TierBReport | undefined;
+      if (tierBIndex) {
+        const curatedCardSets = result.included.map((c) => c.cards.map((x) => x.name));
+        const vres = verifyDeck([...parsed.cardNames, ...parsed.commanderNames], tierBIndex, {
+          curatedCardSets,
+          commanderNames: parsed.commanderNames,
+        });
+        tierB = {
+          counts: vres.counts,
+          corroborated: vres.corroborated,
+          novel: vres.novel,
+          engines: vres.engines,
+          capped: vres.capped,
+          crowdPriorApplied: false,
+        };
+        // Feed the computed engine deficits to the near-miss completion engine so
+        // paste mode gets Tier-B completions too (no longer deferred).
+        setPasteEngines(vres.engines);
+      } else {
+        setPasteEngines(null);
+      }
+
+      setPasteNames([...parsed.cardNames, ...parsed.commanderNames]);
       const elapsed = performance.now() - t0;
       setTimingMs(elapsed);
       // NF-3 mobile budget: log if the cold parse+match blows the 1.5 s target.
@@ -296,6 +395,7 @@ function PasteMode() {
         cardsTotal: resolved + parsed.unresolved.length,
         unresolved: parsed.unresolved,
         synergy,
+        tierB,
       });
       setPhase('ready');
     } catch (e) {
@@ -338,6 +438,32 @@ function PasteMode() {
     <div className="gv1-cl-body">
       <div className="gv1-cl-paste">
         <label className="gv1-cl-field">
+          <span className="gv1-mono-xs gv1-dim">Deck URL — Moxfield or Archidekt (optional)</span>
+          <div className="gv1-cl-url-row">
+            <input
+              className="gv1-cl-input"
+              value={deckUrl}
+              placeholder="https://moxfield.com/decks/… or https://archidekt.com/decks/…"
+              onChange={(e) => setDeckUrl(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  resolveUrl();
+                }
+              }}
+            />
+            <button
+              type="button"
+              className="gv1-chip"
+              disabled={urlBusy || !deckUrl.trim()}
+              onClick={resolveUrl}
+            >
+              {urlBusy ? 'Loading …' : 'Load'}
+            </button>
+          </div>
+          {urlMsg && <span className="gv1-mono-xs gv1-dim gv1-cl-url-msg">{urlMsg}</span>}
+        </label>
+        <label className="gv1-cl-field">
           <span className="gv1-mono-xs gv1-dim">Commander(s) — optional, comma or newline</span>
           <input
             className="gv1-cl-input"
@@ -379,7 +505,12 @@ function PasteMode() {
         </div>
       )}
       {report && (
-        <ComboReportView report={report} onDeepScan={runDeepScan} deepScanning={deepScanning} />
+        <ComboReportView
+          report={report}
+          onDeepScan={runDeepScan}
+          deepScanning={deepScanning}
+          completionInputs={{ names: pasteNames, engines: pasteEngines }}
+        />
       )}
     </div>
   );
@@ -387,41 +518,58 @@ function PasteMode() {
 
 // ─── Report ────────────────────────────────────────────────────────────────────
 
+interface CompletionInputs {
+  names: string[];
+  engines: TierBFinding[] | null;
+  colorIdentity?: string;
+}
+
 function ComboReportView({
   report,
   onDeepScan,
   deepScanning,
+  completionInputs,
 }: {
   report: ComboReport;
   onDeepScan?: () => void;
   deepScanning?: boolean;
+  completionInputs?: CompletionInputs;
 }) {
   const disc = useMemo(() => buildBracketDisclosure(report.included), [report.included]);
   const [showAllNear, setShowAllNear] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<'txt' | 'md' | null>(null);
+  const [completions, setCompletions] = useState<CompletionReport | null>(null);
+
+  // Drop stale completions when the underlying report changes (deck switch or a
+  // fresh paste analysis) so exports never carry another deck's suggestions.
+  useEffect(() => setCompletions(null), [report]);
 
   const nearShown = showAllNear
     ? report.nearMisses
     : report.nearMisses.slice(0, NEAR_MISS_COLLAPSE_THRESHOLD);
 
-  const doExport = async (download: boolean) => {
-    const txt = buildPlainTextExport(report);
-    if (download) {
-      const blob = new Blob([txt], { type: 'text/plain' });
+  const slug = report.deckLabel.replace(/\s+/g, '-').toLowerCase();
+  const doExport = async (kind: 'copy-txt' | 'download-txt' | 'copy-md' | 'download-md') => {
+    const md = kind.endsWith('md');
+    const txt = md
+      ? buildMarkdownExport(report, completions)
+      : buildPlainTextExport(report, completions);
+    if (kind.startsWith('download')) {
+      const blob = new Blob([txt], { type: md ? 'text/markdown' : 'text/plain' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `combo-report-${report.deckLabel.replace(/\s+/g, '-').toLowerCase()}.txt`;
+      a.download = `combo-report-${slug}.${md ? 'md' : 'txt'}`;
       a.click();
       URL.revokeObjectURL(url);
       return;
     }
     try {
       await navigator.clipboard.writeText(txt);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
+      setCopied(md ? 'md' : 'txt');
+      setTimeout(() => setCopied(null), 1600);
     } catch {
-      setCopied(false);
+      setCopied(null);
     }
   };
 
@@ -436,11 +584,17 @@ function ComboReportView({
           )}
         </div>
         <div className="gv1-cl-export">
-          <button type="button" className="gv1-chip" onClick={() => doExport(false)}>
-            {copied ? 'Copied ✓' : 'Copy report'}
+          <button type="button" className="gv1-chip" onClick={() => doExport('copy-txt')}>
+            {copied === 'txt' ? 'Copied ✓' : 'Copy text'}
           </button>
-          <button type="button" className="gv1-chip" onClick={() => doExport(true)}>
-            Download .txt
+          <button type="button" className="gv1-chip" onClick={() => doExport('copy-md')}>
+            {copied === 'md' ? 'Copied ✓' : 'Copy Markdown'}
+          </button>
+          <button type="button" className="gv1-chip" onClick={() => doExport('download-txt')}>
+            .txt
+          </button>
+          <button type="button" className="gv1-chip" onClick={() => doExport('download-md')}>
+            .md
           </button>
         </div>
       </div>
@@ -526,6 +680,16 @@ function ComboReportView({
           synergy={report.synergy}
           onDeepScan={onDeepScan}
           deepScanning={deepScanning}
+        />
+      )}
+
+      {/* Computed near-miss completions (Phase 4 / NM-1) — the mechanistic
+          recommendation engine, run on demand over the full-coverage KB. */}
+      {completionInputs && completionInputs.names.length > 0 && (
+        <CompletionPanel
+          key={completionInputs.names.join('|').slice(0, 80)}
+          inputs={completionInputs}
+          onResult={setCompletions}
         />
       )}
 
@@ -1019,5 +1183,309 @@ function SynergyFinding({
         </div>
       )}
     </li>
+  );
+}
+
+// ─── Computed near-miss completions (DEC-516, Phase 4) ────────────────────────────
+
+/** The mechanistic recommendation engine (NM-7). On demand, loads the full-coverage
+ * KB feature index + price index and searches the pool for cards that CLOSE the
+ * deck's near-misses: Tier-B deficit cover (fleet — precomputed loop deficits) and
+ * Tier-C half-edge cover (both modes). Filterable by color / legality / price /
+ * owned (NM-5 / OQ-1). Nothing here edits a deck (NG5); it is a report. */
+function CompletionPanel({
+  inputs,
+  onResult,
+}: {
+  inputs: CompletionInputs;
+  onResult: (r: CompletionReport | null) => void;
+}) {
+  const [currency, setCurrency] = useState<Currency>('eur');
+  const [maxPriceStr, setMaxPriceStr] = useState('');
+  const [ownedText, setOwnedText] = useState('');
+  const [ownedOnly, setOwnedOnly] = useState(false);
+  const [showOwned, setShowOwned] = useState(false);
+  const [result, setResult] = useState<CompletionReport | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
+  const [error, setError] = useState<string>();
+  const assets = useRef<{ fi: FeatureIndex; cfg: SynergyConfig; px: PriceIndex | null } | null>(
+    null,
+  );
+
+  const compute = (a: { fi: FeatureIndex; cfg: SynergyConfig; px: PriceIndex | null }) => {
+    const parsedMax = maxPriceStr.trim() ? Number(maxPriceStr) : NaN;
+    const maxPrice = Number.isFinite(parsedMax) && parsedMax > 0 ? parsedMax : null;
+    const ownedKeys = ownedText.trim() ? parseOwnedCollection(ownedText) : null;
+    const ci = inputs.colorIdentity ?? deriveColorIdentity(inputs.names, a.fi);
+    const rep = analyzeCompletions(inputs.names, a.fi, a.cfg, {
+      filters: {
+        deckColorIdentity: ci,
+        currency,
+        maxPrice,
+        ownedOnly: ownedOnly && !!ownedKeys,
+        ownedKeys,
+      },
+      prices: a.px,
+      engines: inputs.engines,
+    });
+    setResult(rep);
+    onResult(rep);
+  };
+
+  const run = async () => {
+    setStatus('loading');
+    setError(undefined);
+    try {
+      if (!assets.current) {
+        const [fi, cfg, px] = await Promise.all([
+          loadFeatureIndex(),
+          loadSynergyConfig(),
+          loadPriceIndex(),
+        ]);
+        if (!fi || !cfg) throw new Error('knowledge base unavailable');
+        assets.current = { fi, cfg, px };
+      }
+      setLoaded(true);
+      setStatus('ready');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setStatus('error');
+    }
+  };
+
+  // Recompute (no refetch — indices are cached) whenever a filter changes.
+  useEffect(() => {
+    if (!loaded || !assets.current) return;
+    compute(assets.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currency, maxPriceStr, ownedOnly, ownedText, loaded]);
+
+  return (
+    <section className="gv1-cl-section" aria-label="Computed near-miss completions">
+      <h2 className="gv1-cl-h2 gv1-mono-xs">
+        Complete a near-miss{' '}
+        {result && (
+          <span className="gv1-dim">({result.tierB.length + result.tierC.length})</span>
+        )}
+      </h2>
+
+      <p className="gv1-cl-framing gv1-cl-framing-b gv1-mono-xs">
+        The mechanistic recommendation engine — pool cards that would <strong>close</strong> this
+        deck's near-misses, computed over the full-coverage knowledge base (no AI at query time,
+        per-hole linear in the pool). A report only: it never edits your deck.
+      </p>
+
+      {status === 'idle' && (
+        <button type="button" className="gv1-chip gv1-chip-active gv1-cl-analyze" onClick={run}>
+          Find completions
+        </button>
+      )}
+      {status === 'loading' && (
+        <p className="gv1-mono-xs gv1-dim" aria-busy="true">
+          ◇ loading the knowledge base &amp; prices …
+        </p>
+      )}
+      {status === 'error' && (
+        <div className="gv1-stub" role="alert">
+          <p className="gv1-mono-xs gv1-dim">Could not run completion search: {error}</p>
+        </div>
+      )}
+
+      {status === 'ready' && result && (
+        <>
+          {/* Filters (NM-5) */}
+          <div className="gv1-cl-filters" role="group" aria-label="Completion filters">
+            <span className="gv1-mono-xs gv1-dim">
+              Color identity <span className="gv1-rune">{result.deckColorIdentity}</span> · legal in
+              Commander
+            </span>
+            <label className="gv1-cl-filter">
+              <span className="gv1-mono-xs gv1-dim">Currency</span>
+              <select
+                className="gv1-cl-select gv1-cl-select-sm"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as Currency)}
+              >
+                <option value="eur">EUR (Cardmarket)</option>
+                <option value="usd">USD (TCGplayer)</option>
+              </select>
+            </label>
+            <label className="gv1-cl-filter">
+              <span className="gv1-mono-xs gv1-dim">Max price</span>
+              <input
+                className="gv1-cl-input gv1-cl-input-sm"
+                type="number"
+                min="0"
+                step="0.5"
+                inputMode="decimal"
+                placeholder="any"
+                value={maxPriceStr}
+                onChange={(e) => setMaxPriceStr(e.target.value)}
+              />
+            </label>
+            <button
+              type="button"
+              className={['gv1-chip', showOwned ? 'gv1-chip-active' : ''].join(' ')}
+              aria-pressed={showOwned}
+              onClick={() => setShowOwned((v) => !v)}
+            >
+              Owned filter (optional)
+            </button>
+          </div>
+
+          {showOwned && (
+            <div className="gv1-cl-owned">
+              <label className="gv1-cl-field">
+                <span className="gv1-mono-xs gv1-dim">
+                  Paste your collection (ManaBox/decklist/CSV) — stays in your browser
+                </span>
+                <textarea
+                  className="gv1-cl-textarea gv1-cl-textarea-sm"
+                  rows={4}
+                  placeholder={'1 Sol Ring\nBlood Artist\n…'}
+                  value={ownedText}
+                  onChange={(e) => setOwnedText(e.target.value)}
+                />
+              </label>
+              <label className="gv1-cl-owned-toggle gv1-mono-xs">
+                <input
+                  type="checkbox"
+                  checked={ownedOnly}
+                  disabled={!ownedText.trim()}
+                  onChange={(e) => setOwnedOnly(e.target.checked)}
+                />
+                Only show cards I own
+              </label>
+            </div>
+          )}
+
+          <p className="gv1-mono-xs gv1-dim gv1-cl-latency">
+            Searched {result.poolSize.toLocaleString()} pool cards in {result.elapsedMs.toFixed(0)}ms
+            · {result.counts.droppedByColor.toLocaleString()} off-color
+            {result.counts.droppedByPrice > 0 && <> · {result.counts.droppedByPrice} over budget</>}
+            {ownedOnly && result.counts.droppedByOwned > 0 && (
+              <> · {result.counts.droppedByOwned} unowned</>
+            )}{' '}
+            filtered out.
+          </p>
+
+          {/* Tier B — computed deficit completions */}
+          <div className="gv1-cl-synergy-group">
+            <h3 className="gv1-cl-h3 gv1-mono-xs">
+              <span className="gv1-cl-tier gv1-cl-tier-b">Tier B</span> Computed completions{' '}
+              <span className="gv1-dim">
+                ({result.tierB.length}
+                {result.counts.tierBTotal > result.tierB.length
+                  ? ` of ${result.counts.tierBTotal}`
+                  : ''}
+                )
+              </span>
+            </h3>
+            {!result.tierBAvailable ? (
+              <p className="gv1-cl-empty gv1-mono-xs gv1-dim">
+                Computed completions run on this deck's verified loop deficits — the Tier-B verifier
+                index is currently unavailable.
+              </p>
+            ) : result.tierB.length === 0 ? (
+              <p className="gv1-cl-empty gv1-mono-xs gv1-dim">
+                No computed loop deficits to complete under the current filters.
+              </p>
+            ) : (
+              <ul className="gv1-cl-list">
+                {result.tierB.map((b, i) => (
+                  <li key={`tb-${i}-${b.card.name}`} className="gv1-cl-finding">
+                    <div className="gv1-cl-finding-head">
+                      <span className="gv1-cl-tier gv1-cl-tier-b">Tier B</span>
+                      <PriceChip card={b.card} currency={currency} />
+                    </div>
+                    <div className="gv1-cl-finding-cards">
+                      <span className="gv1-cl-cardname" data-card-name={b.card.name}>
+                        {b.card.name}
+                      </span>
+                    </div>
+                    <p className="gv1-cl-needs gv1-mono-xs">
+                      <span className="gv1-cl-needs-label">Closes</span> the {b.resource} leak on{' '}
+                      {b.loopCards.join(' + ')} via {b.closerLabel}.
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {result.tierBAvailable && result.tierB.length > 0 && (
+              <p className="gv1-mono-xs gv1-dim">
+                “Verified under the model”, not a comprehensive-rules proof — confirm the interaction.
+              </p>
+            )}
+          </div>
+
+          {/* Tier C — speculative half-edge completions */}
+          <div className="gv1-cl-synergy-group">
+            <h3 className="gv1-cl-h3 gv1-mono-xs">
+              <span className="gv1-cl-tier gv1-cl-tier-c">Tier C</span> Speculative completions{' '}
+              <span className="gv1-dim">
+                ({result.tierC.length}
+                {result.counts.tierCTotal > result.tierC.length
+                  ? ` of ${result.counts.tierCTotal}`
+                  : ''}
+                )
+              </span>
+            </h3>
+            {result.tierC.length === 0 ? (
+              <p className="gv1-cl-empty gv1-mono-xs gv1-dim">
+                No half-edge completions under the current filters.
+              </p>
+            ) : (
+              <ul className="gv1-cl-list">
+                {result.tierC.map((t, i) => (
+                  <li key={`tc-${i}-${t.card.name}`} className="gv1-cl-finding">
+                    <div className="gv1-cl-finding-head">
+                      <span className="gv1-cl-tier gv1-cl-tier-c">Tier C</span>
+                      <span
+                        className={[
+                          'gv1-cl-band',
+                          t.band === 'strong' ? 'gv1-cl-band-strong' : 'gv1-cl-band-spec',
+                        ].join(' ')}
+                      >
+                        {t.band}
+                      </span>
+                      <PriceChip card={t.card} currency={currency} />
+                    </div>
+                    <div className="gv1-cl-finding-cards">
+                      <span className="gv1-cl-cardname" data-card-name={t.card.name}>
+                        {t.card.name}
+                      </span>
+                    </div>
+                    <ul className="gv1-cl-edges">
+                      {t.couplings.map((e, j) => (
+                        <li key={`${e.deckFeature}-${e.completerFeature}-${j}`} className="gv1-cl-edge">
+                          <span className="gv1-cl-edge-label">{e.label}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+function PriceChip({
+  card,
+  currency,
+}: {
+  card: { price: number | null; owned: boolean | null };
+  currency: Currency;
+}) {
+  const sym = currency === 'eur' ? '€' : '$';
+  return (
+    <span className="gv1-mono-xs gv1-dim gv1-cl-price">
+      {card.price != null ? `${sym}${card.price.toFixed(2)}` : 'no price'}
+      {card.owned === true && <span className="gv1-cl-owned-tag"> · owned</span>}
+    </span>
   );
 }

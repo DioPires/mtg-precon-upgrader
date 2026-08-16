@@ -501,3 +501,82 @@
     gap: var(--gv1-space-4);
   }
 }
+
+/* ─── Phase 4 — deck-URL input + computed near-miss completions (DEC-516) ────── */
+
+.gv1-cl-url-row {
+  display: flex;
+  gap: var(--gv1-space-2);
+  align-items: stretch;
+}
+
+.gv1-cl-url-row .gv1-cl-input {
+  flex: 1 1 auto;
+}
+
+.gv1-cl-url-msg {
+  margin-top: var(--gv1-space-1);
+}
+
+.gv1-cl-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--gv1-space-3);
+  margin-bottom: var(--gv1-space-3);
+}
+
+.gv1-cl-filter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gv1-space-1);
+}
+
+.gv1-cl-select-sm,
+.gv1-cl-input-sm {
+  padding: var(--gv1-space-1) var(--gv1-space-2);
+  font-size: 12px;
+}
+
+.gv1-cl-input-sm {
+  width: 6.5rem;
+}
+
+.gv1-cl-owned {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gv1-space-2);
+  margin-bottom: var(--gv1-space-3);
+}
+
+.gv1-cl-textarea-sm {
+  font-size: 12px;
+}
+
+.gv1-cl-owned-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--gv1-space-2);
+  color: var(--gv1-ink-dim);
+}
+
+.gv1-cl-latency {
+  margin: var(--gv1-space-2) 0 var(--gv1-space-3);
+}
+
+.gv1-cl-price {
+  margin-left: auto;
+}
+
+.gv1-cl-owned-tag {
+  color: var(--gv1-accent, var(--gv1-ink));
+}
+
+@media (max-width: 640px) {
+  .gv1-cl-filters {
+    gap: var(--gv1-space-2);
+  }
+  .gv1-cl-price {
+    margin-left: 0;
+  }
+}

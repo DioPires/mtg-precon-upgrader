@@ -4,12 +4,14 @@ import { describe, it, expect } from 'vitest';
 import {
   buildBracketDisclosure,
   buildPlainTextExport,
+  buildMarkdownExport,
   isTwoCardInfinite,
   isWinCombo,
   pieceCount,
   type ComboReport,
 } from '../../lib/spellbookReport';
 import type { SpellbookCombo } from '../../data/spellbook';
+import type { CompletionReport } from '../../lib/nearMissComplete';
 
 function combo(over: Partial<SpellbookCombo>): SpellbookCombo {
   return {
@@ -105,5 +107,94 @@ describe('buildPlainTextExport', () => {
     expect(txt).toContain('Needs: Mindcrank');
     // Near-miss total surfaced when capped.
     expect(txt).toMatch(/NEAR-MISSES.*of 5/s);
+  });
+
+  const completions: CompletionReport = {
+    deckColorIdentity: 'BG',
+    poolSize: 31830,
+    currency: 'eur',
+    tierBAvailable: true,
+    tierB: [
+      {
+        card: { name: 'Panharmonicon', ci: '', price: 5.08, owned: null },
+        loopCards: ['Basalt Monolith', 'Rings of Brighthearth'],
+        resource: 'mana',
+        shortfall: 1,
+        closerFeature: 'trigger_doubler',
+        closerLabel: 'Trigger doubler (ambient)',
+        distance: 0.2,
+      },
+    ],
+    tierC: [
+      {
+        card: { name: 'Academy Manufactor', ci: '', price: 5.32, owned: null },
+        couplings: [
+          {
+            deckFeature: 'dies_trigger',
+            completerFeature: 'trigger_doubler',
+            label: 'Death payoff ↔ Trigger doubler (ambient)',
+            economy: 'dies',
+            magnitude: 1,
+            signal: 4,
+          },
+        ],
+        economies: ['dies'],
+        distance: 1,
+        band: 'strong',
+      },
+    ],
+    counts: {
+      tierCConsidered: 100,
+      tierCTotal: 3,
+      tierC: 1,
+      tierBTotal: 2,
+      tierB: 1,
+      droppedByColor: 10,
+      droppedByPrice: 2,
+      droppedByOwned: 0,
+    },
+    elapsedMs: 58,
+  };
+
+  it('appends computed completions preserving Tier B/C labels (NM-1 / EI-4)', () => {
+    const txt = buildPlainTextExport(report, completions);
+    expect(txt).toContain('COMPUTED NEAR-MISS COMPLETIONS');
+    expect(txt).toMatch(/\[Tier B · verified under the model\] Panharmonicon/);
+    expect(txt).toContain('Closes the mana leak on Basalt Monolith + Rings of Brighthearth');
+    expect(txt).toMatch(/\[Tier C · strong\] Academy Manufactor/);
+    expect(txt).toContain('€5.08');
+    expect(txt).toContain('color identity BG');
+    expect(txt).toMatch(/TIER B · COMPUTED COMPLETIONS \(1 of 2\)/);
+  });
+
+  it('discloses when the Tier-B verifier index is unavailable', () => {
+    const paste = { ...completions, tierBAvailable: false, tierB: [] };
+    const txt = buildPlainTextExport({ ...report, mode: 'paste' }, paste);
+    expect(txt).toContain('the Tier-B verifier index could not be loaded');
+  });
+});
+
+describe('buildMarkdownExport (RT-4 shareable rendering)', () => {
+  const report: ComboReport = {
+    mode: 'fleet',
+    deckLabel: 'Eternal Agony',
+    commander: ['Valgavoth, Harrower of Souls'],
+    corpusVersion: '2026-08-15T13:18:26+00:00',
+    included: [combo({ produces: ['Infinite mana'], bracketTag: 'P' })],
+    nearMisses: [combo({ id: 'nm', distance: 1, missing: { cards: ['Mindcrank'], templates: [] } })],
+    nearMissesTotal: 1,
+    cardsAnalyzed: 99,
+    cardsTotal: 99,
+    unresolved: [],
+  };
+
+  it('renders Markdown headings and preserves every tier label + attribution', () => {
+    const md = buildMarkdownExport(report);
+    expect(md).toMatch(/^# Combo Lab — Eternal Agony/m);
+    expect(md).toContain('## Tier A · Combos present');
+    expect(md).toMatch(/\*\*\[Tier A\]\*\*/);
+    expect(md).toContain('epistemic tier');
+    expect(md).toContain('Commander Spellbook');
+    expect(md).toContain('Wizards of the Coast');
   });
 });
