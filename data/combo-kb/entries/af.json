@@ -44,6 +44,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "G"
@@ -63,7 +64,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}",
     "name": "Monstrous Step",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af045109-ed00-469f-814b-c759c0c5357c",
     "provenance_summary": {},
@@ -571,6 +572,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -594,7 +596,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Mountain Stronghold",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af147bb6-aa46-4fc9-af96-de3740c19fd5",
     "provenance_summary": {
@@ -719,6 +721,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -741,7 +744,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Vedalken Squirrel-Whacker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af1779f8-790e-4606-a02d-9eb4589d58cf",
     "provenance_summary": {},
@@ -1384,6 +1387,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -1407,7 +1411,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Shimatsu the Bloodcloaked",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af24dc1c-6726-4788-8be8-609ee19ad2c8",
     "provenance_summary": {},
@@ -1789,6 +1793,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1811,7 +1816,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Specter's Wail",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af32ce11-c026-4135-b1e3-10c6aa15c72c",
     "provenance_summary": {},
@@ -2037,6 +2042,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2056,7 +2062,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{W}",
     "name": "Gossamer Chains",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af3936ab-0156-438d-9fef-a924d2fcffc3",
     "provenance_summary": {},
@@ -2362,6 +2368,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -2387,7 +2394,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Maraxus of Keld",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af4b67c5-53dc-4e4d-9ec4-fa51cc3cd49a",
     "provenance_summary": {
@@ -2400,6 +2407,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -2429,7 +2437,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}{R}",
     "name": "Hazoret's Undying Fury",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af4d3489-6bba-4538-928c-50c9a7073813",
     "provenance_summary": {
@@ -2812,6 +2820,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B"
@@ -2825,17 +2834,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}{B}",
     "name": "Weed Strangle",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af64ce09-b7d9-4db9-905e-c4356f242ced",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "you gain life equal to that creature's toughness",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3367,6 +3387,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -3386,7 +3407,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Dryad's Favor",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af740170-af87-487c-abab-a6ccdea82d97",
     "provenance_summary": {},
@@ -3773,6 +3794,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -3798,7 +3820,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Griffin Rider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af8aa11b-34be-42a3-a8a2-3cad38f29f66",
     "provenance_summary": {
@@ -3909,6 +3931,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3928,7 +3951,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Mark of the Vampire",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "af942d30-a191-4306-846d-6c26755ca3e6",
     "provenance_summary": {},
@@ -4539,6 +4562,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B",
@@ -4559,7 +4583,7 @@
     "is_dfc": false,
     "mana_cost": "{U}{B}",
     "name": "Tyrant's Scorn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "afb278f1-0e21-4f6d-96bb-c34aa3ef96b0",
     "provenance_summary": {},
@@ -4795,6 +4819,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "B"
@@ -4819,7 +4844,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{B}{B}",
     "name": "Toxic Nim",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "afc2a3a7-eb69-4fcb-b3a3-444dccb735d7",
     "provenance_summary": {
@@ -4832,6 +4857,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -4859,7 +4885,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Skywing Aven",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "afc3a65e-7a7a-4bd9-bca4-aa762b9bbbcb",
     "provenance_summary": {
@@ -5283,6 +5309,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -5302,7 +5329,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Nightshade Peddler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "afd6089a-38cc-4a0f-853b-94d6be2d4470",
     "provenance_summary": {},
