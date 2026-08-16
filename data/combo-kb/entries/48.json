@@ -471,6 +471,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 0.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -488,7 +489,7 @@
     "is_dfc": false,
     "mana_cost": "",
     "name": "Ancestral Hot Dog Minotaur",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "481c3bfe-2293-447d-aa03-3ea6ed9321aa",
     "provenance_summary": {},
@@ -774,6 +775,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -793,7 +795,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Mana Short",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48207d1c-448a-4e1b-974a-642dfea75933",
     "provenance_summary": {},
@@ -1287,6 +1289,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -1306,7 +1309,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Aetherspouts",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48369aec-a991-4bef-8554-01c84302b063",
     "provenance_summary": {},
@@ -1549,6 +1552,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "G"
@@ -1568,7 +1572,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{G}{G}",
     "name": "Deathcoil Wurm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48408f60-56bc-402f-ba19-c9dc53836765",
     "provenance_summary": {},
@@ -1682,6 +1686,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -1698,23 +1703,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Caught Red-Handed",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "484b3586-c0ed-4793-a3c0-e99f265e092d",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "untap",
+        "evidence": "Untap that creature.",
+        "feature": "untap_permanent",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Instant",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1737,7 +1754,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Wrench Mind",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "484eeb13-fe74-45fe-b089-7beec87cfcdb",
     "provenance_summary": {},
@@ -2117,6 +2134,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2136,7 +2154,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Biting Rain",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "485cfaca-9348-418b-a751-2ecb19f3f210",
     "provenance_summary": {},
@@ -2276,6 +2294,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -2294,22 +2313,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Fetid Horror",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4863e1cf-3ef2-4c2d-a0ea-b73ca60c660d",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Shade Horror",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{B}: This creature gets +1/+1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -3329,6 +3358,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "G",
@@ -3349,7 +3379,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{G}{W}",
     "name": "Pale Recluse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "488ca652-653b-4bb3-891c-874efdd418ff",
     "provenance_summary": {},
@@ -3492,6 +3522,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -3518,7 +3549,7 @@
     "is_dfc": false,
     "mana_cost": "{5}",
     "name": "Darksteel Juggernaut",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4893a301-29a8-4a0e-845c-8ddb5cb8db25",
     "provenance_summary": {
@@ -3715,6 +3746,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3739,7 +3771,7 @@
     "is_dfc": false,
     "mana_cost": "{5}",
     "name": "Bastion Mastodon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48a01671-da1f-4875-bcd5-ca99566ff399",
     "provenance_summary": {
@@ -4339,6 +4371,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4356,7 +4389,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -4367,13 +4401,22 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Split the Spoils",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48ad5bd6-9568-4813-be29-99aef8b9327a",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Put that pile into your hand",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4492,6 +4535,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -4508,17 +4552,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Step Between Worlds",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48b43d53-9a8a-47a2-8610-a54d276d7be7",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "Each player who does draws seven cards.",
+        "feature": "draw",
+        "magnitude": 7,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -4715,6 +4770,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -4737,7 +4793,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Gloom Surgeon",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48b8ab2d-9f3f-42b2-9c5d-7497bceae43e",
     "provenance_summary": {},
@@ -4964,6 +5020,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -4986,7 +5043,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Steely Resolve",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48c127f0-2857-4c36-97bc-1291b6fe4a82",
     "provenance_summary": {},
@@ -5897,6 +5954,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G",
@@ -5917,7 +5975,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}{W}",
     "name": "Radiant Essence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48e2f2c3-9d99-4535-915f-551fbb59ade5",
     "provenance_summary": {},
@@ -6052,6 +6110,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -6077,7 +6136,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Gods Willing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48e603a2-b965-4fbc-ad57-4388bce5ac8b",
     "provenance_summary": {
@@ -6470,6 +6529,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -6495,7 +6555,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Bristlebane Outrider",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48f7217e-ae11-44bd-ac42-7c8d9dd5dc36",
     "provenance_summary": {
@@ -6508,6 +6568,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -6535,7 +6596,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Torpid Moloch",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48f78611-13a7-4b5b-a52a-317ecf658ea3",
     "provenance_summary": {
@@ -6548,6 +6609,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -6567,7 +6629,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}{U}",
     "name": "All of History, All at Once",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48f80047-a4f9-4ebb-a97a-cad157b9bb64",
     "provenance_summary": {},
@@ -6578,6 +6640,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -6600,7 +6663,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Swaggering Corsair",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "48fa47c0-544e-4374-a0a6-ef8f65cdf0dd",
     "provenance_summary": {},

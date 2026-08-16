@@ -367,6 +367,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -380,17 +381,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Mistmeadow Skulk",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "490df3b5-ece2-45bb-af38-fcd7f83e37b0",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "Lifelink",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Kithkin Rogue",
     "wants": []
@@ -523,6 +535,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "U"
@@ -542,7 +555,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{U}",
     "name": "Cloud Djinn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4914d38d-ed6b-4531-b72c-06f0968c44e9",
     "provenance_summary": {},
@@ -631,6 +644,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -650,7 +664,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Cumber Stone",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49199997-65cd-4cb9-bdd6-74c93c1f6b5a",
     "provenance_summary": {},
@@ -867,6 +881,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -886,7 +901,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Turtle Tracks",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4921dac2-4adf-4ac4-b1f4-d53385afd802",
     "provenance_summary": {},
@@ -1433,6 +1448,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1452,7 +1468,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Temple Thief",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "493ecd11-e980-42da-a79e-cddd9a94cc7a",
     "provenance_summary": {},
@@ -1705,6 +1721,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -1723,22 +1740,32 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Flowstone Kavu",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49475268-be95-4670-a5ca-2f2b6c5cf005",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
     "provides": [],
     "triggers": [],
     "type_line": "Creature — Kavu",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R}: This creature gets +1/-1 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
@@ -2126,6 +2153,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2145,7 +2173,7 @@
     "is_dfc": false,
     "mana_cost": "{B}{B}",
     "name": "Grasp of Darkness",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "494c819d-7d73-432b-8c96-4cb9dcd31094",
     "provenance_summary": {},
@@ -2222,6 +2250,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2250,7 +2279,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Dust Animus",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "494f8c29-7626-43ed-b0b8-fb9afd4cd5d3",
     "provenance_summary": {
@@ -2483,6 +2512,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2499,23 +2529,35 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Declaration in Stone",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49554441-bb48-4829-b8d6-55e687a6c2e2",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "That player investigates",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -2535,7 +2577,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Fallen Askari",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4956008e-d912-48ba-9b82-176258281060",
     "provenance_summary": {},
@@ -2859,6 +2901,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -2878,7 +2921,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Yavimaya Enchantress",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "495fc654-7986-4d76-9d5c-bc1484e98de2",
     "provenance_summary": {},
@@ -2889,6 +2932,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -2906,7 +2950,8 @@
     "field_provenance": {
       "costs": "deterministic",
       "events_emitted": "deterministic",
-      "guards": "deterministic"
+      "guards": "deterministic",
+      "provides": "llm"
     },
     "guards": [
       {
@@ -2917,13 +2962,22 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Press for Answers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4960c3a0-77ca-48d8-b565-6c5f1e6522cf",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "token",
+        "evidence": "Investigate.",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -3033,6 +3087,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U"
@@ -3052,7 +3107,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{U}",
     "name": "Rebuild",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "496999a7-a82a-45ea-9c4e-1b6aabc781cd",
     "provenance_summary": {},
@@ -3138,6 +3193,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "B",
@@ -3158,7 +3214,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{U}{B}",
     "name": "Haunter of Nightveil",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "496c852b-ec62-4320-afbb-e19f534954c9",
     "provenance_summary": {},
@@ -3169,6 +3225,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -3188,7 +3245,7 @@
     "is_dfc": true,
     "mana_cost": "{3}{G} // {1}{G}",
     "name": "Garenbrig Carver // Shield's Might",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "496c9633-ff17-48df-9b24-1d8cbfd06126",
     "provenance_summary": {},
@@ -3650,6 +3707,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -3663,17 +3721,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{B}{B}",
     "name": "Fleshwrither",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49815e6d-b9c5-4e45-949e-34d34b3543e8",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "sacrifice",
+        "evidence": "Sacrifice this creature",
+        "feature": "sac_fodder",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Horror",
     "wants": []
@@ -3791,6 +3860,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -3815,7 +3885,7 @@
     "is_dfc": false,
     "mana_cost": "{5}",
     "name": "Saberclaw Golem",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4989d38e-332f-48f5-863b-1566921156c8",
     "provenance_summary": {
@@ -3993,6 +4063,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -4012,7 +4083,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Swashbuckling",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4992144f-7a36-4f30-9e8a-4355288b50c5",
     "provenance_summary": {},
@@ -4320,6 +4391,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -4339,7 +4411,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}{G}",
     "name": "Vine Mare",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "499c7ee3-08a3-4f40-809a-3f7087ab9b24",
     "provenance_summary": {},
@@ -4791,6 +4863,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "U",
@@ -4811,7 +4884,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{U}",
     "name": "Ardent Plea",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49a8ca54-30d3-42d3-b122-334d24805e1b",
     "provenance_summary": {},
@@ -4822,6 +4895,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "U"
@@ -4851,7 +4925,7 @@
     "is_dfc": false,
     "mana_cost": "{U}",
     "name": "You See a Guard Approach",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49aa87c7-034b-409d-b37f-50db6a42e533",
     "provenance_summary": {
@@ -5258,6 +5332,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -5277,7 +5352,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Rune Snag",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49bf3805-cc9e-4550-8a01-171282aa49c9",
     "provenance_summary": {},
@@ -5818,6 +5893,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -5843,7 +5919,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Serra's Blessing",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49cdd05c-feeb-4c24-9d88-069f5d2e08c3",
     "provenance_summary": {
@@ -5886,6 +5962,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -5910,7 +5987,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "War Cadence",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49d0fdd6-cc8f-4fe1-a6bd-4321dac18404",
     "provenance_summary": {
@@ -5982,6 +6059,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -6007,7 +6085,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Brave the Wilds",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49d189dd-9ce7-434f-931b-7110cd5255e7",
     "provenance_summary": {
@@ -6068,6 +6146,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -6087,7 +6166,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{G}{G}",
     "name": "Panglacial Wurm",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49d4aef7-d2d1-4f66-bc2a-79ec8cc96565",
     "provenance_summary": {},
@@ -6331,6 +6410,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -6356,7 +6436,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Defile",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49dddec0-d958-4810-8c6e-225fc8118c8f",
     "provenance_summary": {
@@ -6369,6 +6449,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -6382,17 +6463,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{B}",
     "name": "Empty the Catacombs",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49e0af9d-eb76-4ad6-b60a-430ae353728c",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "recursion",
+        "evidence": "Each player returns all creature cards from their graveyard to their hand.",
+        "feature": "recursion",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -6678,6 +6770,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "U"
@@ -6691,17 +6784,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{U}",
     "name": "Tales of the Ancestors",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49e3c192-862f-483e-abd1-e22863ea88dd",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "draw",
+        "evidence": "draws cards equal to the difference.",
+        "feature": "draw",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -7303,6 +7407,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R"
@@ -7328,7 +7433,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{R}",
     "name": "Cleaver Riot",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "49f42896-90cd-4a05-bcca-12b19f780446",
     "provenance_summary": {

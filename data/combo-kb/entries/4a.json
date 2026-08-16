@@ -357,6 +357,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "R"
@@ -376,7 +377,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}{R}",
     "name": "Goblin Game",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a10c945-ad8b-47b6-8cbd-7b4e2612a9b0",
     "provenance_summary": {},
@@ -387,6 +388,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R",
@@ -401,23 +403,44 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm",
+      "wants": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{R/W}",
     "name": "Scourge of the Nobilis",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a1126a3-f8ce-4790-aa51-1e3f4b63eb18",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "lifegain",
+        "evidence": "has lifelink",
+        "feature": "lifegain",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Enchantment — Aura",
-    "wants": []
+    "wants": [
+      {
+        "economy": "mana",
+        "evidence": "{R/W}: This creature gets +1/+0 until end of turn.",
+        "feature": "mana_sink",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ]
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -440,7 +463,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Oppressive Rays",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a17fb46-70db-4c9a-ac0e-dfc774345673",
     "provenance_summary": {},
@@ -528,6 +551,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "W"
@@ -547,7 +571,7 @@
     "is_dfc": false,
     "mana_cost": "{W}",
     "name": "Death Speakers",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a1db129-cc7c-410a-a41e-d633e30cfdad",
     "provenance_summary": {},
@@ -558,6 +582,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -577,7 +602,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Predator's Gambit",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a1f94c0-6858-4296-a4a6-27d2201ed7f4",
     "provenance_summary": {},
@@ -686,6 +711,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "G"
@@ -711,7 +737,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{G}",
     "name": "Display of Dominance",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a2233de-50bd-49be-ac49-4a3c0f02dd52",
     "provenance_summary": {
@@ -924,6 +950,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -943,7 +970,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Lightning Talons",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a2a7eca-3477-4858-9dab-ba80d4d704cd",
     "provenance_summary": {},
@@ -1327,6 +1354,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -1349,7 +1377,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{R}{R}",
     "name": "Tectonic Break",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a3c6d0e-6d77-4434-95f4-737879de026f",
     "provenance_summary": {},
@@ -1360,6 +1388,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -1379,7 +1408,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Vanquish the Weak",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a3cc4f6-037f-461d-a3b7-9f9e24c4b8cf",
     "provenance_summary": {},
@@ -1390,6 +1419,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -1409,7 +1439,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Lost Hours",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a3f1110-919c-4fd0-8154-9c9441a7d770",
     "provenance_summary": {},
@@ -1680,6 +1710,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "R",
@@ -1708,7 +1739,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}{W}",
     "name": "Basandra, Battle Seraph",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a480736-4cdc-4e3a-a8cb-d1c726982f9f",
     "provenance_summary": {
@@ -1824,6 +1855,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -1843,7 +1875,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{U}",
     "name": "Spin into Myth",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a4cf6e2-8673-45b8-bc21-cd030f312cd1",
     "provenance_summary": {},
@@ -2133,6 +2165,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -2158,7 +2191,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{B}",
     "name": "Scared Stiff",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a5d8acd-a460-43b2-816a-70f61d7831af",
     "provenance_summary": {
@@ -2590,6 +2623,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -2615,7 +2649,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Vile Aggregate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a6b254e-76fb-4712-ac34-5e26c311b2e4",
     "provenance_summary": {
@@ -3038,6 +3072,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -3060,7 +3095,7 @@
     "is_dfc": false,
     "mana_cost": "{4}{W}",
     "name": "Global Ruin",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a7b89b2-5fe9-4d39-9d42-3ca78bcf6d40",
     "provenance_summary": {},
@@ -3145,6 +3180,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -3167,7 +3203,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Ferocious Tigorilla",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a7fef1e-3f11-4350-86da-6f1315fedc53",
     "provenance_summary": {},
@@ -3178,6 +3214,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "W"
@@ -3212,7 +3249,7 @@
     "is_dfc": false,
     "mana_cost": "{6}{W}",
     "name": "Radiant, Serra Archangel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a8227ff-0ae4-4405-8e44-1f5187a7f9f5",
     "provenance_summary": {
@@ -3326,6 +3363,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "U"
@@ -3339,17 +3377,28 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{3}{U}{U}",
     "name": "Ringwarden Owl",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a8b3316-a01a-4206-bbed-d7aac6c834bd",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "Whenever you cast a noncreature spell",
+        "feature": "cast_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Bird",
     "wants": []
@@ -3749,6 +3798,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "R"
@@ -3768,7 +3818,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{R}",
     "name": "Madcap Skills",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a9dc9ef-a603-467a-aeed-32cc111394b0",
     "provenance_summary": {},
@@ -3779,6 +3829,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -3798,7 +3849,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Ulcerate",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4a9e73b7-8c8b-4489-b670-ce49c2c8a46a",
     "provenance_summary": {},
@@ -4407,6 +4458,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "R"
@@ -4426,7 +4478,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{R}",
     "name": "Goblin Brawler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4abb4fb0-f674-44b5-962c-c66219fb0deb",
     "provenance_summary": {},
@@ -4437,6 +4489,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 5.0,
     "color_identity": [
       "W"
@@ -4459,7 +4512,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{W}{W}",
     "name": "Stick Together",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4abda0ad-0a2b-4bd9-81c7-56329e62311d",
     "provenance_summary": {},
@@ -4595,6 +4648,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -4615,7 +4669,7 @@
     "is_dfc": false,
     "mana_cost": "{4}",
     "name": "Juggernaut",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4ac9116f-36bc-4d71-b696-d6ee064e1d58",
     "provenance_summary": {},
@@ -4821,6 +4875,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -4834,17 +4889,35 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Bard's Bow",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4aceb786-960d-4719-9de8-79dffd491a51",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 2
+    },
+    "provides": [
+      {
+        "economy": "etb",
+        "evidence": "When this Equipment enters, create a 1/1 colorless Hero creature token",
+        "feature": "etb_trigger",
+        "magnitude": 1,
+        "provenance": "llm"
+      },
+      {
+        "economy": "token",
+        "evidence": "create a 1/1 colorless Hero creature token",
+        "feature": "token_create",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Artifact — Equipment",
     "wants": []
@@ -5338,6 +5411,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "R"
@@ -5357,7 +5431,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{R}",
     "name": "Rivals' Duel",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4ade4e30-4008-4931-b88e-605776a96b58",
     "provenance_summary": {},
@@ -5368,6 +5442,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 6.0,
     "color_identity": [
       "R"
@@ -5387,7 +5462,7 @@
     "is_dfc": false,
     "mana_cost": "{5}{R}",
     "name": "Battering Sliver",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4adf959b-2e09-47ff-a1b1-b889348735b8",
     "provenance_summary": {},
@@ -5855,6 +5930,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "G"
@@ -5874,7 +5950,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{G}",
     "name": "Lurker",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4aedbbaf-b6ae-4bf0-84eb-31b0b28cfdfa",
     "provenance_summary": {},
@@ -5961,6 +6037,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "B"
@@ -5990,7 +6067,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}",
     "name": "Mind Swords",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4af20f8c-2ba0-49d5-a64e-d3668cec30cd",
     "provenance_summary": {
@@ -6070,6 +6147,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -6092,7 +6170,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}",
     "name": "Expel the Unworthy",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4af2e62f-150e-4fd0-98b0-c6e72f5f9a51",
     "provenance_summary": {},
@@ -6103,6 +6181,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "B"
@@ -6125,7 +6204,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{B}{B}",
     "name": "Grimdancer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "4afd88fa-f8bb-46d4-9ba7-09419e6f858c",
     "provenance_summary": {},

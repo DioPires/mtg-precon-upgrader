@@ -139,6 +139,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [],
     "corpus_version": "2026-08-15T09:01:55.591+00:00",
@@ -156,7 +157,7 @@
     "is_dfc": false,
     "mana_cost": "{3}",
     "name": "Greatsword",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "51024f9a-6c6e-4555-a156-92b32255a0c9",
     "provenance_summary": {},
@@ -439,6 +440,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "B"
@@ -461,7 +463,7 @@
     "is_dfc": false,
     "mana_cost": "{X}{3}{B}",
     "name": "Mind Warp",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5109aa76-ca40-44d1-abb4-5e7a23a2c274",
     "provenance_summary": {},
@@ -568,6 +570,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "U"
@@ -587,7 +590,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{U}",
     "name": "Gainsay",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "5115eb6b-efae-4561-912a-f7909cc75775",
     "provenance_summary": {},
@@ -1004,6 +1007,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -1028,7 +1032,7 @@
     "is_dfc": false,
     "mana_cost": "{1}{W}{W}",
     "name": "Knight of Dawn",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "51262155-f1be-45a8-a21f-94e920a93e55",
     "provenance_summary": {
@@ -1881,6 +1885,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 7.0,
     "color_identity": [
       "G"
@@ -1899,19 +1904,29 @@
     "events_emitted": [],
     "extractor_version": "det-1.0.1",
     "field_provenance": {
-      "costs": "deterministic"
+      "costs": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{6}{G}",
     "name": "Cytospawn Shambler",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "514c6831-63ac-4fc0-8950-526813591710",
     "provenance_summary": {
-      "deterministic": 1
+      "deterministic": 1,
+      "llm": 1
     },
-    "provides": [],
+    "provides": [
+      {
+        "economy": "counters",
+        "evidence": "This creature enters with six +1/+1 counters on it",
+        "feature": "counter_add",
+        "magnitude": 6,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Creature — Elemental Mutant",
     "wants": []
@@ -1989,6 +2004,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "R"
@@ -2014,7 +2030,7 @@
     "is_dfc": true,
     "mana_cost": "{1}{R} // {5}{R}",
     "name": "Boom // Bust",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
     "provenance_summary": {
@@ -2027,6 +2043,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 2.0,
     "color_identity": [
       "W"
@@ -2046,7 +2063,7 @@
     "is_dfc": false,
     "mana_cost": "{W}{W}",
     "name": "Longbow Archer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "51531db1-ba59-4ccc-9a91-54de2887fc8b",
     "provenance_summary": {},
@@ -2057,6 +2074,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 8.0,
     "color_identity": [
       "B",
@@ -2074,17 +2092,28 @@
     "extractor_version": "det-1.0.1",
     "field_provenance": {
       "costs": "deterministic",
-      "events_emitted": "deterministic"
+      "events_emitted": "deterministic",
+      "provides": "llm"
     },
     "guards": [],
     "is_dfc": false,
     "mana_cost": "{6}{B}{R}",
     "name": "Fevered Suspicion",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "51545f6e-d0e3-4b4c-bc73-c731f85e26b0",
-    "provenance_summary": {},
-    "provides": [],
+    "provenance_summary": {
+      "llm": 1
+    },
+    "provides": [
+      {
+        "economy": "cast",
+        "evidence": "you may cast this card from exile without paying its mana cost.",
+        "feature": "spell_source",
+        "magnitude": 1,
+        "provenance": "llm"
+      }
+    ],
     "triggers": [],
     "type_line": "Sorcery",
     "wants": []
@@ -2707,6 +2736,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "R"
@@ -2726,7 +2756,7 @@
     "is_dfc": false,
     "mana_cost": "{R}",
     "name": "Ironclaw Curse",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "51708bd1-23db-4597-84a7-f36abd93c537",
     "provenance_summary": {},
@@ -2978,6 +3008,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 3.0,
     "color_identity": [
       "W"
@@ -3003,7 +3034,7 @@
     "is_dfc": false,
     "mana_cost": "{2}{W}",
     "name": "Aven Trailblazer",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "518115c9-0f0f-4249-81ff-e79b27dda1be",
     "provenance_summary": {
@@ -3810,6 +3841,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "B"
@@ -3829,7 +3861,7 @@
     "is_dfc": false,
     "mana_cost": "{B}",
     "name": "Illness in the Ranks",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "51abc95c-bd92-46f7-a0a1-6e9f8e0dda87",
     "provenance_summary": {},
@@ -4717,6 +4749,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 1.0,
     "color_identity": [
       "G"
@@ -4736,7 +4769,7 @@
     "is_dfc": false,
     "mana_cost": "{G}",
     "name": "Wall of Vines",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "51ce0158-c9a5-4fa5-9704-46ab02f01b86",
     "provenance_summary": {},
@@ -5270,6 +5303,7 @@
   },
   {
     "ambient": [],
+    "classifier_version": "llm-classifier-v1",
     "cmc": 4.0,
     "color_identity": [
       "G"
@@ -5293,7 +5327,7 @@
     "is_dfc": false,
     "mana_cost": "{3}{G}",
     "name": "Entangling Vines",
-    "needs_llm": true,
+    "needs_llm": false,
     "ontology_version": "1.0.1",
     "oracle_id": "51e7405e-a714-4c76-8913-10d626d2361e",
     "provenance_summary": {},
