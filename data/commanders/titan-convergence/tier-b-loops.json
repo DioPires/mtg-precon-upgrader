@@ -1,0 +1,202 @@
+{
+  "capped": [],
+  "commander": [
+    "Zhulodok, Void Gorger"
+  ],
+  "counts": {
+    "candidatesConsidered": 46,
+    "capped": 0,
+    "curatedPresent": 12,
+    "engines": 2,
+    "kbGapAbstentions": 35,
+    "verifiedCorroborated": 1,
+    "verifiedNovel": 0
+  },
+  "engines": [
+    {
+      "band": "candidate",
+      "cards": [
+        "Basalt Monolith",
+        "Rings of Brighthearth"
+      ],
+      "closes": false,
+      "corroboration": true,
+      "deficit": [
+        {
+          "note": "loop nets +0 mana per iteration; needs a mana amplifier or cheaper untap to reach strict gain",
+          "resource": "mana",
+          "shortfall": 1
+        }
+      ],
+      "finiteZoneBound": null,
+      "k": null,
+      "loopClass": "",
+      "prerequisites": {
+        "guards": [
+          "summoning_sick"
+        ],
+        "minInitialMana": 0,
+        "note": "Correct under Laço's model; may be incomplete in comprehensive-rules edge cases (PR-5).",
+        "ordering": [
+          "Basalt Monolith: add 3",
+          "Basalt Monolith: untap (pay 3)"
+        ]
+      },
+      "provenance": {
+        "corpusVersion": "2026-08-15T09:01:55.591+00:00",
+        "extractorVersion": "det-1.0.1",
+        "gate": "deterministic|human-reviewed only (combo_kb_lib.TIER_B_PROVENANCES)",
+        "members": [
+          {
+            "name": "Basalt Monolith",
+            "oracleId": "6b8cf2a0-b045-4d91-9d91-c602d40c6237"
+          },
+          {
+            "name": "Rings of Brighthearth",
+            "oracleId": "bbf9494c-c4bb-4d36-98fe-8387846b342e"
+          }
+        ],
+        "ontologyVersion": "1.0.1"
+      },
+      "resultTypes": [],
+      "template": "untap_mana",
+      "tierCapped": null,
+      "trace": [
+        "Basalt Monolith: {T} → add 3 mana",
+        "Basalt Monolith: pay 3 → untap Basalt Monolith",
+        "net +0 mana per cycle"
+      ]
+    },
+    {
+      "band": "candidate",
+      "cards": [
+        "Basalt Monolith",
+        "Karn, the Great Creator",
+        "Voltaic Construct"
+      ],
+      "closes": false,
+      "corroboration": true,
+      "deficit": [
+        {
+          "note": "loop nets +0 mana per iteration; needs a mana amplifier or cheaper untap to reach strict gain",
+          "resource": "mana",
+          "shortfall": 1
+        }
+      ],
+      "finiteZoneBound": null,
+      "k": null,
+      "loopClass": "",
+      "prerequisites": {
+        "guards": [
+          "summoning_sick",
+          "zone_exile"
+        ],
+        "minInitialMana": 2,
+        "note": "Correct under Laço's model; may be incomplete in comprehensive-rules edge cases (PR-5).",
+        "ordering": [
+          "Basalt Monolith: add 3",
+          "Basalt Monolith: untap (pay 3)",
+          "Voltaic Construct: activate (pay 2)"
+        ]
+      },
+      "provenance": {
+        "corpusVersion": "2026-08-15T09:01:55.591+00:00",
+        "extractorVersion": "det-1.0.1",
+        "gate": "deterministic|human-reviewed only (combo_kb_lib.TIER_B_PROVENANCES)",
+        "members": [
+          {
+            "name": "Basalt Monolith",
+            "oracleId": "6b8cf2a0-b045-4d91-9d91-c602d40c6237"
+          },
+          {
+            "name": "Karn, the Great Creator",
+            "oracleId": "a20dd48d-d344-4db1-b0e9-a2b71c3cc9d1"
+          },
+          {
+            "name": "Voltaic Construct",
+            "oracleId": "f5677831-6ca9-4c7b-b02d-f44079c3f663"
+          }
+        ],
+        "ontologyVersion": "1.0.1"
+      },
+      "resultTypes": [],
+      "template": "untap_mana",
+      "tierCapped": null,
+      "trace": [
+        "Basalt Monolith: {T} → add 3 mana",
+        "Basalt Monolith: pay 3 → untap Basalt Monolith",
+        "net +0 mana per cycle"
+      ]
+    }
+  ],
+  "meta": {
+    "closureModel": "PRD 6.1-6.5 + (k, finite-zone bound) clarification",
+    "corpusVersion": "2026-08-15T09:01:55.591+00:00",
+    "crowdPriorApplied": true,
+    "deckId": "titan-convergence",
+    "enumBudgetHit": false,
+    "extractorVersion": "det-1.0.1",
+    "generatedAt": "2026-08-15T09:01:55.591+00:00",
+    "matchingModel": "tier-b-verifier-v1 (deterministic closure model, PRD 6.1-6.5)",
+    "note": "Tier B — machine-verified under Laço's game model (PRD 6.1-6.5), NOT a comprehensive-rules proof (EI-2). A goldfish is assumed (NG1). Verdicts consume only deterministic / human-reviewed KB items (provenance gate, plan 6b). Corroborated loops remain Tier A (Commander Spellbook); novel loops are rare by design (DC-6). Ranking is calibrated (RK-3) but presented as coarse bands only (RK-5).",
+    "ontologyVersion": "1.0.1",
+    "provenanceGate": "enforced (deterministic|human-reviewed only)",
+    "source": "Tier-B loop verifier (combo_verifier_lib), DEC-501"
+  },
+  "verifiedCorroborated": [
+    {
+      "band": "verified",
+      "cards": [
+        "Basalt Monolith",
+        "Forsaken Monument"
+      ],
+      "closes": true,
+      "corroboration": true,
+      "deficit": [],
+      "finiteZoneBound": null,
+      "k": 0,
+      "loopClass": "infinite",
+      "prerequisites": {
+        "guards": [
+          "control_requirement",
+          "summoning_sick"
+        ],
+        "minInitialMana": 0,
+        "note": "Correct under Laço's model; may be incomplete in comprehensive-rules edge cases (PR-5).",
+        "ordering": [
+          "Basalt Monolith: add 3",
+          "Basalt Monolith: untap (pay 3)",
+          "Forsaken Monument: add 1"
+        ]
+      },
+      "provenance": {
+        "corpusVersion": "2026-08-15T09:01:55.591+00:00",
+        "extractorVersion": "det-1.0.1",
+        "gate": "deterministic|human-reviewed only (combo_kb_lib.TIER_B_PROVENANCES)",
+        "members": [
+          {
+            "name": "Basalt Monolith",
+            "oracleId": "6b8cf2a0-b045-4d91-9d91-c602d40c6237"
+          },
+          {
+            "name": "Forsaken Monument",
+            "oracleId": "7777fab1-df3f-467f-b9e2-46dd2bd2166e"
+          }
+        ],
+        "ontologyVersion": "1.0.1"
+      },
+      "resultTypes": [
+        "infinite_mana:mana"
+      ],
+      "template": "untap_mana",
+      "tierCapped": null,
+      "trace": [
+        "Basalt Monolith: {T} → add 3 mana",
+        "Forsaken Monument: +1 mana amplifier",
+        "Basalt Monolith: pay 3 → untap Basalt Monolith",
+        "net +1 mana per cycle"
+      ]
+    }
+  ],
+  "verifiedNovel": []
+}
