@@ -166,7 +166,10 @@ import type { DeckTierBLoops } from './tierB';
 // v115 -> v116 (DEC-532 2026-08-17): grave-dividends manabase package — Fetid Heath,
 // Tainted Field, Shineshadow Snarl, Shattered Sanctum, Agadeem's Awakening, Emeria's Call
 // in; Redemption Choir, Sevinne's Reclamation, Corpse Augur out; deck moved to brewing.
-const STORAGE_PREFIX = 'gv1-deck-data-v116:';
+// v116 -> v117 (DEC-532 2026-08-17): grave-dividends brewing status was set in
+// index.json only; the web reads status from deck.json (normalize.ts) — add it there
+// and bust cached copies so the BREWING pill renders.
+const STORAGE_PREFIX = 'gv1-deck-data-v117:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
