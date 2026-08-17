@@ -169,7 +169,10 @@ import type { DeckTierBLoops } from './tierB';
 // v116 -> v117 (DEC-532 2026-08-17): grave-dividends brewing status was set in
 // index.json only; the web reads status from deck.json (normalize.ts) — add it there
 // and bust cached copies so the BREWING pill renders.
-const STORAGE_PREFIX = 'gv1-deck-data-v117:';
+// v117 -> v118 (DEC-541 2026-08-17): gandalf-party-guest swap round 5 — Azami, Magma Opus,
+// Harmonized Crescendo, Sakashima of a Thousand Faces in; Hurkyl, Vendilion Clique,
+// Dig Through Time, Blasphemous Act out.
+const STORAGE_PREFIX = 'gv1-deck-data-v118:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
