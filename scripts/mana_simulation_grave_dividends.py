@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Monte Carlo mana base simulation for Quill of Casualties (Silverquill, the Disputant).
+"""Monte Carlo mana base simulation for Grave Dividends (Bartolomé del Presidio).
 
 Simulates 100,000 games measuring mana production, color balance, and curve
-efficiency turns 1-10 for the Bracket 3 Orzhov token-aristocrats decklist.
+efficiency turns 1-10 for the Bracket 4 Orzhov aristocrats sacrifice-loop decklist.
 
-Commander: Silverquill, the Disputant ({2}{W}{B}, CMC 4); grants Casualty 1 to every
-instant and sorcery you cast. Casualty cost is a sac, not a mana discount — the
-simulation only models vanilla mana production and curve-out behavior.
+Commander: Bartolomé del Presidio ({W}{B}, CMC 2); a free, instant-speed, repeatable
+sacrifice outlet. The sacrifice ability costs no mana, so the simulation only models
+vanilla mana production and curve-out behavior (a 2-drop commander cast is the metric).
 """
 
 import argparse
@@ -21,9 +21,9 @@ from collections import Counter
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "silverquill-the-disputant" / "deck.json"
+DECK_FILE = PROJECT_ROOT / "data" / "commanders" / "grave-dividends" / "deck.json"
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
-JSON_OUTPUT = PROJECT_ROOT / "data" / "commanders" / "silverquill-the-disputant" / "simulation.json"
+JSON_OUTPUT = PROJECT_ROOT / "data" / "commanders" / "grave-dividends" / "simulation.json"
 
 NUM_GAMES = 100_000
 NUM_TURNS = 10
@@ -59,71 +59,62 @@ def parse_mana_cost(mana_cost: str) -> dict:
 
 
 # --- Rock definitions ---
-# From Silverquill deck.json: Sol Ring, Arcane Signet, Talisman of Hierarchy,
-# Orzhov Signet, Fellwar Stone. Skullclamp is equipment (card-draw, not mana).
-# Smothering Tithe is conditional treasure on opp draws and not modeled.
+# From Grave Dividends deck.json: Sol Ring, Arcane Signet, Talisman of Hierarchy,
+# Orzhov Signet. Skullclamp is equipment (card-draw, not mana). No mana dorks.
 
 ROCK_DEFS = {
     "Sol Ring":              {"cmc": 1, "B": 0, "W": 0, "C": 2, "burst": False},
     "Arcane Signet":         {"cmc": 2, "B": 1, "W": 1, "C": 0, "burst": False, "flexible": True},
     "Talisman of Hierarchy": {"cmc": 2, "B": 1, "W": 1, "C": 0, "burst": False, "flexible": True},
     "Orzhov Signet":         {"cmc": 2, "B": 1, "W": 1, "C": 0, "burst": False, "flexible": True},
-    "Fellwar Stone":         {"cmc": 2, "B": 1, "W": 1, "C": 0, "burst": False, "flexible": True},
 }
 
 # --- Mana dork definitions ---
-# No mana dorks in Silverquill.
+# No mana dorks in Grave Dividends.
 
 DORK_DEFS: dict = {}
 
 # --- Creature ramp definitions ---
-# No land-fetch creature ramp in Silverquill.
+# No land-fetch creature ramp in Grave Dividends.
 
 CREATURE_RAMP: dict = {}
 
-# Witherbloom sim used a "wight" placeholder. Silverquill has no such card.
+# Placeholder retained for interface parity with the shared engine.
 WIGHT_NAME = "__no_dork_placeholder__"
 
 # --- Land definitions ---
-# B-producing lands in Silverquill (excludes C-only):
+# B-producing lands (includes flexible duals + fetches that hit a B source):
 B_PRODUCING_LANDS = {
-    "Swamp", "Godless Shrine", "Bloodstained Mire", "Verdant Catacombs",
-    "Polluted Delta", "Isolated Chapel", "Concealed Courtyard", "Caves of Koilos",
-    "Shineshadow Snarl", "Tainted Field", "Silent Clearing", "Brightclimb Pathway",
-    "Reflecting Pool", "Hagra Mauling // Hagra Broodpit", "Bojuka Bog",
-    "Castle Locthwain", "Memorial to Folly", "Witch's Cottage",
-    "Crypt of Agadeem",
-    "Marsh Flats",  # fetch — color identity hits B
+    "Swamp", "Godless Shrine", "Command Tower", "Isolated Chapel",
+    "Concealed Courtyard", "Caves of Koilos", "Brightclimb Pathway",
+    "Silent Clearing", "Takenuma, Abandoned Mire", "Witch's Cottage",
+    "Bojuka Bog", "Castle Locthwain", "Dakmor Salvage", "Memorial to Folly",
+    "Marsh Flats", "Bloodstained Mire", "Verdant Catacombs", "Polluted Delta",
 }
 
-# W-producing lands in Silverquill (excludes C-only):
+# W-producing lands (includes flexible duals + Marsh Flats which can fetch Plains):
 W_PRODUCING_LANDS = {
-    "Plains", "Godless Shrine", "Marsh Flats", "Isolated Chapel",
-    "Concealed Courtyard", "Caves of Koilos", "Shineshadow Snarl",
-    "Tainted Field", "Silent Clearing", "Brightclimb Pathway",
-    "Reflecting Pool", "Castle Ardenvale", "Eiganjo, Seat of the Empire",
-    "Vault of the Archangel",
-    "Bloodstained Mire", "Verdant Catacombs", "Polluted Delta",  # fetches that can find Plains via Marsh Flats? No — only Marsh Flats fetches Plains. Leave only Marsh Flats above.
+    "Plains", "Godless Shrine", "Command Tower", "Isolated Chapel",
+    "Concealed Courtyard", "Caves of Koilos", "Brightclimb Pathway",
+    "Silent Clearing", "Marsh Flats",
 }
-# Tidy: remove fetches that don't actually fetch a Plains-typed dual.
-W_PRODUCING_LANDS -= {"Bloodstained Mire", "Verdant Catacombs", "Polluted Delta"}
 
+# Colorless-only utility lands:
 C_ONLY_LANDS = {
-    "High Market", "Volrath's Stronghold", "Takenuma, Abandoned Mire",
-    "Westvale Abbey // Ormendahl, Profane Prince",
+    "High Market", "Volrath's Stronghold", "Conduit Pylons", "Mariposa Military Base",
 }
 
-# Lands with Plains subtype (for Castle Ardenvale untap check, fetch targets)
-PLAINS_TYPED_LANDS = {"Plains", "Godless Shrine", "Brightclimb Pathway", "Tainted Field"}
-# Lands with Swamp subtype
-SWAMP_TYPED_LANDS = {"Swamp", "Godless Shrine", "Hagra Mauling // Hagra Broodpit", "Witch's Cottage", "Tainted Field"}
+# Lands with the Plains subtype (fetch targets, check-land untap conditions):
+PLAINS_TYPED_LANDS = {"Plains", "Godless Shrine"}
+# Lands with the Swamp subtype:
+SWAMP_TYPED_LANDS = {"Swamp", "Godless Shrine", "Witch's Cottage"}
 
 BASIC_PLAINS = {"Plains"}
 BASIC_SWAMPS = {"Swamp"}
 
 
 def build_decklist(deck_data: dict) -> list[str]:
-    """Build the 99-card decklist for Silverquill."""
+    """Build the 99-card decklist for Grave Dividends."""
     cards = []
     for card in deck_data["decklist"]:
         qty = card.get("quantity", 1)
@@ -143,7 +134,9 @@ def classify_cards(decklist: list[str], metadata: dict) -> dict:
         else:
             meta = metadata.get(name, {})
             type_line = meta.get("type_line", "")
-            if "Land" in type_line:
+            # Front-face land detection (Dusk // Dawn is a Sorcery, not a land).
+            front = type_line.split("//")[0]
+            if "Land" in front:
                 classified["lands"].append(name)
             else:
                 classified["spells"].append(name)
@@ -160,20 +153,9 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     """Determine if a land enters tapped given board + hand state."""
     other_count = len(battlefield_lands)
 
-    if name == "Bojuka Bog":
-        return True
-
-    if name == "Memorial to Folly":
-        return True
-
-    if name == "Witch's Cottage":
-        return True
-
-    if name == "Vault of the Archangel":
-        return True
-
-    if name == "Hagra Mauling // Hagra Broodpit":
-        # Back face (Swamp) is the land mode; per oracle "enters tapped".
+    # Unconditionally tapped utility / recursion lands.
+    if name in {"Bojuka Bog", "Dakmor Salvage", "Memorial to Folly", "Witch's Cottage"}:
+        # Witch's Cottage is untapped only with 3+ other Swamps — rare; model as tapped.
         return True
 
     if name == "Concealed Courtyard":
@@ -185,54 +167,14 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         has_p_or_s = any(l in PLAINS_TYPED_LANDS or l in SWAMP_TYPED_LANDS for l in battlefield_lands)
         return not has_p_or_s
 
-    if name == "Caves of Koilos":
-        return False  # painland, untapped
-
-    if name == "Shineshadow Snarl":
-        # Snarl — untapped if you control a Plains or Swamp.
-        has_p_or_s = any(l in PLAINS_TYPED_LANDS or l in SWAMP_TYPED_LANDS for l in battlefield_lands)
-        return not has_p_or_s
-
-    if name == "Tainted Field":
-        return False  # ETB untapped (taps for B only if you control a Swamp; handled in compute_land_mana)
-
-    if name == "Silent Clearing":
-        return False  # horizon land — untapped
-
-    if name == "Brightclimb Pathway":
-        return False  # Pathway — untapped
-
-    if name == "Reflecting Pool":
-        return False
-
-    if name == "Castle Ardenvale":
-        # Untapped only if you control a Plains.
-        has_plains = any(l in PLAINS_TYPED_LANDS for l in battlefield_lands)
-        return not has_plains
-
     if name == "Castle Locthwain":
+        # Untapped only if you control a Swamp.
         has_swamp = any(l in SWAMP_TYPED_LANDS for l in battlefield_lands)
         return not has_swamp
 
-    if name == "Eiganjo, Seat of the Empire":
-        return False
-
-    if name == "Takenuma, Abandoned Mire":
-        return False
-
-    if name == "Crypt of Agadeem":
-        return False
-
-    if name == "High Market":
-        return False
-
-    if name == "Volrath's Stronghold":
-        return False
-
-    if name == "Westvale Abbey // Ormendahl, Profane Prince":
-        return False
-
-    # Basics, shocks, and other unconditionally-untapped lands
+    # Godless Shrine (pay 2 life), Caves of Koilos, Silent Clearing, Brightclimb Pathway,
+    # Command Tower, Takenuma, Volrath's Stronghold, High Market, Conduit Pylons,
+    # Mariposa Military Base, basics: all enter untapped.
     return False
 
 
@@ -259,23 +201,19 @@ class ManaPool:
         avail_C = self.C
         avail_flex = self.flexible
 
-        # Assign fixed B sources to B pips
         used_B = min(avail_B, need_B)
         remaining_B = need_B - used_B
         avail_B -= used_B
 
-        # Assign fixed W sources to W pips
         used_W = min(avail_W, need_W)
         remaining_W = need_W - used_W
         avail_W -= used_W
 
-        # Use flexible for remaining colored needs
         remaining_colored = remaining_B + remaining_W
         if avail_flex < remaining_colored:
             return False
         avail_flex -= remaining_colored
 
-        # Remaining generic from leftover B, W, C, flexible
         leftover = avail_B + avail_W + avail_C + avail_flex
         return leftover >= need_generic
 
@@ -291,21 +229,17 @@ class ManaPool:
         need_W = pips["W"]
         need_generic = pips["generic"]
 
-        # Spend fixed B
         from_B = min(pool.B, need_B)
         pool.B -= from_B
         need_B -= from_B
 
-        # Spend fixed W
         from_W = min(pool.W, need_W)
         pool.W -= from_W
         need_W -= from_W
 
-        # Spend flexible on remaining colored
         flex_colored = need_B + need_W
         pool.flexible -= flex_colored
 
-        # Spend generic: C first, then leftover B/W, then flexible
         remaining = need_generic
         from_C = min(pool.C, remaining)
         pool.C -= from_C
@@ -329,67 +263,22 @@ def compute_land_mana(name: str, battlefield_lands: list[str]) -> tuple[int, int
     """Return (B, W, C, flexible) mana a single untapped land produces."""
 
     # C-only utility lands
-    if name == "High Market":
-        return (0, 0, 1, 0)
-    if name == "Volrath's Stronghold":
-        return (0, 0, 1, 0)
-    if name == "Takenuma, Abandoned Mire":
-        return (0, 0, 1, 0)
-    if name == "Westvale Abbey // Ormendahl, Profane Prince":
+    if name in {"High Market", "Volrath's Stronghold", "Conduit Pylons", "Mariposa Military Base"}:
         return (0, 0, 1, 0)
 
-    # B-only utility lands
-    if name == "Bojuka Bog":
+    # B-only lands
+    if name in {"Bojuka Bog", "Castle Locthwain", "Memorial to Folly",
+                "Witch's Cottage", "Dakmor Salvage", "Takenuma, Abandoned Mire"}:
         return (1, 0, 0, 0)
-    if name == "Castle Locthwain":
-        return (1, 0, 0, 0)
-    if name == "Memorial to Folly":
-        return (1, 0, 0, 0)
-    if name == "Witch's Cottage":
-        return (1, 0, 0, 0)
-    if name == "Crypt of Agadeem":
-        return (1, 0, 0, 0)
-    if name == "Hagra Mauling // Hagra Broodpit":
-        return (1, 0, 0, 0)
-
-    # W-only utility lands
-    if name == "Castle Ardenvale":
-        return (0, 1, 0, 0)
-    if name == "Eiganjo, Seat of the Empire":
-        return (0, 1, 0, 0)
-    if name == "Vault of the Archangel":
-        return (0, 1, 0, 0)
 
     # Fetches: should already be cracked; if somehow on board, treat as 0
     if name in {"Marsh Flats", "Bloodstained Mire", "Verdant Catacombs", "Polluted Delta"}:
         return (0, 0, 0, 0)
 
-    # Tainted Field: ETB untapped but only taps for B if you control a Swamp; W otherwise (mono-W "base").
-    # Per oracle, Tainted Field is a W base land that taps for B only with a Swamp in play.
-    if name == "Tainted Field":
-        has_swamp = any(l in SWAMP_TYPED_LANDS for l in battlefield_lands)
-        if has_swamp:
-            return (0, 0, 0, 1)  # flexible (can produce B or W via Swamp synergy)
-        return (0, 1, 0, 0)
-
-    # Reflecting Pool: produces mana matching any land you control. With Orzhov-only land set,
-    # in practice that's B or W (or both). Model as flexible.
-    if name == "Reflecting Pool":
-        has_b_source = any(l in B_PRODUCING_LANDS and l != "Reflecting Pool" for l in battlefield_lands)
-        has_w_source = any(l in W_PRODUCING_LANDS and l != "Reflecting Pool" for l in battlefield_lands)
-        if has_b_source and has_w_source:
-            return (0, 0, 0, 1)
-        if has_b_source:
-            return (1, 0, 0, 0)
-        if has_w_source:
-            return (0, 1, 0, 0)
-        return (0, 0, 1, 0)  # no other source — just colorless approximation
-
-    # Dual lands (produce B or W -> flexible)
+    # Dual / any-color lands (produce B or W -> flexible)
     if name in {
-        "Godless Shrine", "Isolated Chapel", "Concealed Courtyard",
-        "Caves of Koilos", "Shineshadow Snarl", "Silent Clearing",
-        "Brightclimb Pathway",
+        "Godless Shrine", "Command Tower", "Isolated Chapel", "Concealed Courtyard",
+        "Caves of Koilos", "Silent Clearing", "Brightclimb Pathway",
     }:
         return (0, 0, 0, 1)
 
@@ -478,21 +367,15 @@ class GameState:
         b_sources = sum(1 for l in self.battlefield_lands if l in B_PRODUCING_LANDS)
         w_sources = sum(1 for l in self.battlefield_lands if l in W_PRODUCING_LANDS)
 
-        # Fetch valid targets per fetch name. All four fetches in this deck pull dual-typed lands.
+        # Fetch valid targets per fetch name.
         # Marsh Flats: Plains or Swamp.  Bloodstained Mire: Swamp or Mountain (-> Swamp here).
         # Verdant Catacombs: Forest or Swamp (-> Swamp). Polluted Delta: Island or Swamp (-> Swamp).
-        fetchable = []
         if fetch_name == "Marsh Flats":
             valid = SWAMP_TYPED_LANDS | PLAINS_TYPED_LANDS
-        elif fetch_name in {"Bloodstained Mire", "Verdant Catacombs", "Polluted Delta"}:
+        else:  # Bloodstained Mire / Verdant Catacombs / Polluted Delta
             valid = SWAMP_TYPED_LANDS
-        else:
-            valid = SWAMP_TYPED_LANDS | PLAINS_TYPED_LANDS
 
-        for i, card in enumerate(self.library):
-            if card in valid:
-                fetchable.append((i, card))
-
+        fetchable = [(i, card) for i, card in enumerate(self.library) if card in valid]
         if not fetchable:
             return
 
@@ -551,7 +434,6 @@ class GameState:
                     pool.B += rdef.get("B", 0)
                     pool.W += rdef.get("W", 0)
 
-        # Active dorks (none in this deck — DORK_DEFS empty)
         for dork in self.dorks_active:
             if dork in DORK_DEFS:
                 ddef = DORK_DEFS[dork]
@@ -573,7 +455,6 @@ class GameState:
         for name in list(self.burst_rocks_active.keys()):
             self.burst_rocks_active[name] = False
 
-        # Activate dorks that were on battlefield last turn (n/a here)
         self.dorks_active = list(self.battlefield_dorks)
 
         # Play best land from hand
@@ -606,7 +487,6 @@ class GameState:
             ("rock", "Arcane Signet"),
             ("rock", "Talisman of Hierarchy"),
             ("rock", "Orzhov Signet"),
-            ("rock", "Fellwar Stone"),
         ]
 
         for ramp_type, name in priority_order:
@@ -679,7 +559,8 @@ def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAM
     land_set = set()
     for name in set(decklist):
         meta = metadata.get(name, {})
-        if "Land" in meta.get("type_line", ""):
+        front = meta.get("type_line", "").split("//")[0]
+        if "Land" in front:
             land_set.add(name)
 
     mana_by_turn = {t: [] for t in range(1, NUM_TURNS + 1)}
@@ -726,8 +607,8 @@ def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAM
             if w_avail == 0:
                 zero_w_by_turn[t] += 1
 
-            # Commander castable: Silverquill {2}{W}{B} = CMC 4, vanilla mana (no discount).
-            cmd_pips = {"generic": 2, "B": 1, "W": 1}
+            # Commander castable: Bartolomé del Presidio {W}{B} = CMC 2, vanilla mana.
+            cmd_pips = {"generic": 0, "B": 1, "W": 1}
             if cmd_cast_turn is None and pool.can_cast(cmd_pips):
                 cmd_cast_turn = t
                 commander_by_turn[t] += 1
@@ -800,15 +681,15 @@ def export_enhanced_json(metadata: dict) -> dict:
     """Reuse bulk exporter path so standalone JSON stays schema-compatible."""
     import export_simulation_results as exporter
 
-    result = exporter.export_orzhov(metadata)
-    if not exporter.validate_output(result, "silverquill-the-disputant"):
-        raise ValueError("export_orzhov produced invalid simulation output")
+    result = exporter.export_grave_dividends(metadata)
+    if not exporter.validate_output(result, "grave-dividends"):
+        raise ValueError("export_grave_dividends produced invalid simulation output")
     return result
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Monte Carlo mana base simulation for Silverquill, the Disputant")
+        description="Monte Carlo mana base simulation for Bartolomé del Presidio")
     parser.add_argument("--json", action="store_true",
                         help="Write simulation.json instead of console output")
     args = parser.parse_args()
@@ -818,7 +699,7 @@ def main():
     with open(METADATA_FILE) as f:
         metadata = json.load(f)
 
-    print("Building Silverquill decklist...")
+    print("Building Grave Dividends decklist...")
     decklist = build_decklist(deck_data)
     print(f"Decklist: {len(decklist)} cards")
 
@@ -849,7 +730,7 @@ def main():
     print(f"\nMana medians: " + ", ".join(
         f"T{t}={statistics.median(stats['mana_by_turn'][t]):.0f}" for t in range(1, NUM_TURNS + 1)
     ))
-    print(f"Commander by T4: {stats['commander_by_turn'][4]/total*100:.1f}%")
+    print(f"Commander by T2: {stats['commander_by_turn'][2]/total*100:.1f}%")
     print(f"Curve-out rate: {stats['curve_out_games']/total*100:.1f}%")
 
 

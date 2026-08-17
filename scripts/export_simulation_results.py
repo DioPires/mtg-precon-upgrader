@@ -31,7 +31,7 @@ import mana_simulation_witherbloom_the_balancer as sim_witherbloom
 import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
-import mana_simulation_silverquill_the_disputant as sim_silverquill
+import mana_simulation_grave_dividends as sim_grave_dividends
 import mana_simulation_pyre_and_panic as sim_mono_red
 import mana_simulation_hidden_legion as sim_hidden_legion
 import mana_simulation_superfriends_esika as sim_superfriends_esika
@@ -254,31 +254,45 @@ KEY_COMBOS = {
                            "Purphoros, or same-turn haste swing).",
         },
     ],
-    "silverquill-the-disputant": [
+    "grave-dividends": [
         {
-            "name": "Plunderer Skeleton Altar",
+            "name": "Recursive-ETB + Death-Return Aura + Free Outlet",
+            "slots": [
+                ["Sun Titan", "Angel of Indemnity", "Redemption Choir", "Shepherd of the Cosmos"],
+                ["Kaya's Ghostform", "Gift of Immortality", "Angelic Renewal", "Necrogen Communion"],
+                ["Viscera Seer", "Carrion Feeder", "Ashnod's Altar", "Umbral Collar Zealot"],
+                ["Blood Artist", "Zulaport Cutthroat", "Elas il-Kor, Sadistic Pilgrim",
+                 "Bastion of Remembrance", "Marionette Apprentice"],
+            ],
+            "requiresCommander": False,
+            "description": "Enchant a recursive-ETB creature with a cheap death-return aura it can "
+                           "rebuy on enter; sac to a free outlet — the aura returns the body, the "
+                           "body returns the aura. Infinite death + ETB; any drain payoff wins.",
+        },
+        {
+            "name": "Leonin Relic-Warder + Reanimation Aura",
+            "slots": [
+                ["Leonin Relic-Warder"],
+                ["Animate Dead", "Necromancy"],
+                ["Blood Artist", "Zulaport Cutthroat", "Elas il-Kor, Sadistic Pilgrim",
+                 "Bastion of Remembrance", "Marionette Apprentice"],
+            ],
+            "requiresCommander": False,
+            "description": "Reanimate Relic-Warder; its ETB exiles the aura, the aura leaving makes "
+                           "Relic-Warder be sacrificed, returning the aura to reanimate it again. "
+                           "Two-card infinite ETB/LTB — any drain payoff closes.",
+        },
+        {
+            "name": "Plunderer + Ashnod's Altar + Reassembling Skeleton",
             "slots": [
                 ["Pitiless Plunderer"],
-                ["Reassembling Skeleton"],
                 ["Ashnod's Altar"],
+                ["Reassembling Skeleton"],
                 ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance"],
             ],
             "requiresCommander": False,
             "description": "Sac Skeleton to Altar ({C}{C}) + Plunderer Treasure covers the "
-                           "{1}{B} rebuy — infinite death triggers drain the table.",
-        },
-        {
-            "name": "Plunderer Teysa Sacrifice",
-            "slots": [
-                ["Pitiless Plunderer"],
-                ["Reassembling Skeleton"],
-                ["Teysa Karlov"],
-                ["Viscera Seer", "Carrion Feeder", "Umbral Collar Zealot"],
-                ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance"],
-            ],
-            "requiresCommander": False,
-            "description": "Teysa doubles Plunderer's Treasure per Skeleton death — a free "
-                           "sac outlet loops the rebuy with any aristocrat drain.",
+                           "{1}{B} rebuy — infinite mana + infinite death triggers drain the table.",
         },
     ],
     "zada-hedron-grinder": [
@@ -3704,14 +3718,14 @@ def export_armory_protocol(metadata: dict) -> dict:
     )
 
 
-def export_orzhov(metadata: dict) -> dict:
-    """Export Quill of Casualties (Orzhov Silverquill aristocrats) simulation."""
+def export_grave_dividends(metadata: dict) -> dict:
+    """Export Grave Dividends (Orzhov Bartolomé aristocrats sacrifice-loop) simulation."""
     return _export_colored(
-        sim_module=sim_silverquill,
-        deck_id="silverquill-the-disputant",
-        deck_name="Quill of Casualties",
-        commander_name="Silverquill, the Disputant",
-        commander_cmc=4,
+        sim_module=sim_grave_dividends,
+        deck_id="grave-dividends",
+        deck_name="Grave Dividends",
+        commander_name="Bartolomé del Presidio",
+        commander_cmc=2,
         colors=["W", "B"],
         metadata=metadata,
     )
@@ -3842,7 +3856,7 @@ DECKS = [
     ("the-white-forge", "The White Forge", export_mono_white),
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
     ("creeping-corruption", "Creeping Corruption", export_wubg_poison),
-    ("silverquill-the-disputant", "Quill of Casualties", export_orzhov),
+    ("grave-dividends", "Grave Dividends", export_grave_dividends),
     ("pyre-and-panic", "Pyre & Panic", export_mono_red),
     ("hidden-legion", "Hidden Legion", export_hidden_legion),
     ("superfriends-esika", "Esika's Council", export_superfriends_esika),

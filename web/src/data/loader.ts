@@ -160,7 +160,10 @@ import type { DeckTierBLoops } from './tierB';
 // member (guards the "no dark period" regression — see DEC-491 B1 lesson).
 // v113 -> v114 (DEC-533 2026-08-16): dark-dominion renamed to gathering-shadow;
 // cached envelopes under the old id would orphan the catalog entry.
-const STORAGE_PREFIX = 'gv1-deck-data-v114:';
+// v114 -> v115 (DEC-538 2026-08-17): new deck grave-dividends (Bartolomé del Presidio
+// Orzhov aristocrats sacrifice-loop) added; Quill of Casualties (silverquill-the-disputant)
+// dismantled. Bump invalidates cached catalog + orphaned Quill envelope.
+const STORAGE_PREFIX = 'gv1-deck-data-v115:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
