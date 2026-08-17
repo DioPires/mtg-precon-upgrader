@@ -66,7 +66,7 @@ ROCK_DEFS = {
     "Talisman of Dominance":  {"cmc": 2, "colors": frozenset({"U", "B"}), "count": 1, "burst": False},
     "Relic of Sauron":        {"cmc": 4, "colors": frozenset({"U", "B", "R"}), "count": 2, "burst": False},
     "Mind Stone":             {"cmc": 2, "colors": frozenset({"C"}), "count": 1, "burst": False},
-    "Thought Vessel":         {"cmc": 2, "colors": frozenset({"C"}), "count": 1, "burst": False},
+    "Talisman of Creativity": {"cmc": 2, "colors": frozenset({"U", "R"}), "count": 1, "burst": False},
     # Inherited Envelope: any color (ETB Ring-temptation not mana-relevant)
     "Inherited Envelope":     {"cmc": 3, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
 }
@@ -496,8 +496,9 @@ class GameState:
         """Try to cast mana rocks from hand, priority order (lowest CMC first)."""
         priority_order = [
             "Sol Ring",
-            "Arcane Signet", "Mind Stone", "Thought Vessel",
-            "Talisman of Dominance", "Talisman of Indulgence",
+            "Arcane Signet", "Mind Stone",
+            "Talisman of Dominance", "Talisman of Indulgence", "Talisman of Creativity",
+
             "Inherited Envelope",
             "Relic of Sauron",
         ]
