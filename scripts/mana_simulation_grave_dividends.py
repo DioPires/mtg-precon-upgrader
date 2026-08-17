@@ -84,11 +84,21 @@ WIGHT_NAME = "__no_dork_placeholder__"
 
 # --- Land definitions ---
 # B-producing lands (includes flexible duals + fetches that hit a B source):
+# MDFC lands (front is a Sorcery, back is a land): played as land drops in this
+# mana model. Agadeem -> B, Emeria's Call -> W. Both enter tapped unless you pay
+# 3 life; modeled as tapped (conservative).
+MDFC_LAND_NAMES = {
+    "Agadeem's Awakening // Agadeem, the Undercrypt",
+    "Emeria's Call // Emeria, Shattered Skyclave",
+}
+
 B_PRODUCING_LANDS = {
     "Swamp", "Godless Shrine", "Command Tower", "Isolated Chapel",
     "Concealed Courtyard", "Caves of Koilos", "Brightclimb Pathway",
     "Silent Clearing", "Takenuma, Abandoned Mire", "Witch's Cottage",
-    "Bojuka Bog", "Castle Locthwain", "Dakmor Salvage", "Memorial to Folly",
+    "Castle Locthwain", "Dakmor Salvage",
+    "Fetid Heath", "Tainted Field", "Shineshadow Snarl", "Shattered Sanctum",
+    "Agadeem's Awakening // Agadeem, the Undercrypt",
     "Marsh Flats", "Bloodstained Mire", "Verdant Catacombs", "Polluted Delta",
 }
 
@@ -96,12 +106,15 @@ B_PRODUCING_LANDS = {
 W_PRODUCING_LANDS = {
     "Plains", "Godless Shrine", "Command Tower", "Isolated Chapel",
     "Concealed Courtyard", "Caves of Koilos", "Brightclimb Pathway",
-    "Silent Clearing", "Marsh Flats",
+    "Silent Clearing",
+    "Fetid Heath", "Tainted Field", "Shineshadow Snarl", "Shattered Sanctum",
+    "Emeria's Call // Emeria, Shattered Skyclave",
+    "Marsh Flats",
 }
 
 # Colorless-only utility lands:
 C_ONLY_LANDS = {
-    "High Market", "Volrath's Stronghold", "Conduit Pylons", "Mariposa Military Base",
+    "High Market", "Volrath's Stronghold", "Conduit Pylons",
 }
 
 # Lands with the Plains subtype (fetch targets, check-land untap conditions):
@@ -131,6 +144,10 @@ def classify_cards(decklist: list[str], metadata: dict) -> dict:
     for name in decklist:
         if name in ROCK_DEFS or name in DORK_DEFS:
             classified["rocks"].append(name)
+        elif name in MDFC_LAND_NAMES:
+            # MDFC spell//land: front face is a Sorcery, but played as a land drop
+            # in this mana model (DEC-470 land-capable handling).
+            classified["lands"].append(name)
         else:
             meta = metadata.get(name, {})
             type_line = meta.get("type_line", "")
@@ -153,14 +170,24 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     """Determine if a land enters tapped given board + hand state."""
     other_count = len(battlefield_lands)
 
-    # Unconditionally tapped utility / recursion lands.
-    if name in {"Bojuka Bog", "Dakmor Salvage", "Memorial to Folly", "Witch's Cottage"}:
+    # Unconditionally tapped utility / recursion lands. MDFC lands (Agadeem, Emeria's
+    # Call) enter tapped unless you pay 3 life — modeled as tapped (conservative).
+    if name in {"Dakmor Salvage", "Witch's Cottage"} or name in MDFC_LAND_NAMES:
         # Witch's Cottage is untapped only with 3+ other Swamps — rare; model as tapped.
         return True
 
     if name == "Concealed Courtyard":
         # Fast land — untapped if you have <= 2 other lands.
         return other_count > 2
+
+    if name == "Shattered Sanctum":
+        # Slow dual — untapped only if you control two or more other lands.
+        return other_count < 2
+
+    if name == "Shineshadow Snarl":
+        # Reveal land — untapped if you can reveal a Plains or Swamp card from hand.
+        can_reveal = any(l in PLAINS_TYPED_LANDS or l in SWAMP_TYPED_LANDS for l in hand)
+        return not can_reveal
 
     if name == "Isolated Chapel":
         # Check land — untapped if you control a Plains or Swamp.
@@ -174,7 +201,7 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
 
     # Godless Shrine (pay 2 life), Caves of Koilos, Silent Clearing, Brightclimb Pathway,
     # Command Tower, Takenuma, Volrath's Stronghold, High Market, Conduit Pylons,
-    # Mariposa Military Base, basics: all enter untapped.
+    # Fetid Heath, Tainted Field, basics: all enter untapped.
     return False
 
 
@@ -263,22 +290,28 @@ def compute_land_mana(name: str, battlefield_lands: list[str]) -> tuple[int, int
     """Return (B, W, C, flexible) mana a single untapped land produces."""
 
     # C-only utility lands
-    if name in {"High Market", "Volrath's Stronghold", "Conduit Pylons", "Mariposa Military Base"}:
+    if name in {"High Market", "Volrath's Stronghold", "Conduit Pylons"}:
         return (0, 0, 1, 0)
 
-    # B-only lands
-    if name in {"Bojuka Bog", "Castle Locthwain", "Memorial to Folly",
-                "Witch's Cottage", "Dakmor Salvage", "Takenuma, Abandoned Mire"}:
+    # B-only lands (incl. Agadeem MDFC land face)
+    if name in {"Castle Locthwain",
+                "Witch's Cottage", "Dakmor Salvage", "Takenuma, Abandoned Mire",
+                "Agadeem's Awakening // Agadeem, the Undercrypt"}:
         return (1, 0, 0, 0)
+
+    # W-only lands (Emeria's Call MDFC land face)
+    if name == "Emeria's Call // Emeria, Shattered Skyclave":
+        return (0, 1, 0, 0)
 
     # Fetches: should already be cracked; if somehow on board, treat as 0
     if name in {"Marsh Flats", "Bloodstained Mire", "Verdant Catacombs", "Polluted Delta"}:
         return (0, 0, 0, 0)
 
-    # Dual / any-color lands (produce B or W -> flexible)
+    # Dual / any-color lands (produce B or W -> flexible), incl. WB fixing lands
     if name in {
         "Godless Shrine", "Command Tower", "Isolated Chapel", "Concealed Courtyard",
         "Caves of Koilos", "Silent Clearing", "Brightclimb Pathway",
+        "Fetid Heath", "Tainted Field", "Shineshadow Snarl", "Shattered Sanctum",
     }:
         return (0, 0, 0, 1)
 
