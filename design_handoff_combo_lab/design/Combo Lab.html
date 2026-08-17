@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Combo Lab — design reference (standalone)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+DW+Pica:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gv1-tokens.css">
+<link rel="stylesheet" href="gv1-states.css">
+<link rel="stylesheet" href="gv1-styles.css">
+<link rel="stylesheet" href="gv1-combolab.css">
+<style>html,body{margin:0;padding:0;background:#0b1220}.ref-divider{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8a8674;padding:28px 72px 10px;border-top:2px dashed rgba(232,225,207,0.22)}</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="gv1-real-decks.js"></script>
+<script src="gv1-combo-data.js"></script>
+<script src="gv1-data.js"></script>
+<script src="gv1-cards.js"></script>
+<script src="gv1-game-changers.js"></script>
+<script type="text/babel" src="gv1-chrome.jsx"></script>
+<script type="text/babel" src="gv1-engine.jsx"></script>
+<script type="text/babel" src="gv1-cardhover.jsx"></script>
+<script type="text/babel" src="gv1-combolab-parts.jsx"></script>
+<script type="text/babel" src="gv1-combolab.jsx"></script>
+<script type="text/babel">
+// Standalone viewer: state 1 = fleet report (Titan Convergence), state 2 = paste
+// mode pre-analyzed with a classic combo pile. Fully interactive — switch modes,
+// pick decks, hover card names, use the export buttons.
+const PASTE = ['1 Gravecrawler','1 Phyrexian Altar','1 Blood Artist','1 Warren Soultrader','1 Basalt Monolith','1 Forsaken Monument','1 Rings of Brighthearth','1 Ashnod’s Altar','1 Nim Deathmantle','1 Sol Ring','1 Command Tower'].join('\n');
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.Fragment>
+    <GV1CardHoverLayer />
+    <GV1ComboLab initialSlug="titan-convergence" />
+    <div className="ref-divider">reference state 2 · paste mode, pre-analyzed</div>
+    <GV1ComboLab initialMode="paste" initialPaste={PASTE} initialCommander="Meren of Clan Nel Toth" />
+  </React.Fragment>
+);
+</script>
+</body>
+</html>
