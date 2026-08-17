@@ -163,7 +163,10 @@ import type { DeckTierBLoops } from './tierB';
 // v114 -> v115 (DEC-538 2026-08-17): new deck grave-dividends (Bartolomé del Presidio
 // Orzhov aristocrats sacrifice-loop) added; Quill of Casualties (silverquill-the-disputant)
 // dismantled. Bump invalidates cached catalog + orphaned Quill envelope.
-const STORAGE_PREFIX = 'gv1-deck-data-v115:';
+// v115 -> v116 (DEC-532 2026-08-17): grave-dividends manabase package — Fetid Heath,
+// Tainted Field, Shineshadow Snarl, Shattered Sanctum, Agadeem's Awakening, Emeria's Call
+// in; Redemption Choir, Sevinne's Reclamation, Corpse Augur out; deck moved to brewing.
+const STORAGE_PREFIX = 'gv1-deck-data-v116:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
