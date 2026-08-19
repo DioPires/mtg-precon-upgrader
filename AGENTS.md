@@ -211,6 +211,19 @@ Board-approved via the DEC-369 next-steps interaction. Fleet assessments are **e
 5. Run `uv run python scripts/compute_tokens.py --deck {new-id}` to populate `tokens[]`
 6. Run `uv run python scripts/validate_deck_json.py --deck {new-id}` before handing off the change
 
+### Card Versions / Printings (DEC-546)
+
+ManaBox is the system of record for which printing of a card sits in which physical deck. The board keeps each built deck as a ManaBox deck; `priv_data/Owned.csv` is a ManaBox collection export and already carries Set code, Collector number, Foil and Scryfall ID per copy. The repo stores no printing data by default, and the web app shows none.
+
+To pull printings into `deck.json` (optional — only needed when the online Archidekt copies must match the sleeved cards), export each ManaBox deck and run:
+
+```bash
+uv run python scripts/import_manabox_decks.py --dir exports/          # dry run, reports disagreements
+uv run python scripts/import_manabox_decks.py --dir exports/ --apply  # writes scryfall_id/set/collector_number/finish
+```
+
+Each file stem is the deck id (`exports/titan-convergence.csv` → `data/commanders/titan-convergence/deck.json`). CSV and plain-text exports both work. Exit code 1 means the export and `deck.json` disagree; fix that before applying.
+
 ### Research Deck Updates (with YouTube MCP)
 1. Search YouTube for relevant videos
 2. Fetch transcripts from top results
