@@ -32,6 +32,7 @@ import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
 import mana_simulation_grave_dividends as sim_grave_dividends
+import mana_simulation_hoard_and_bleed as sim_hoard_and_bleed
 import mana_simulation_pyre_and_panic as sim_mono_red
 import mana_simulation_hidden_legion as sim_hidden_legion
 import mana_simulation_superfriends_esika as sim_superfriends_esika
@@ -295,6 +296,66 @@ KEY_COMBOS = {
                            "{1}{B} rebuy — infinite mana + infinite death triggers drain the table.",
         },
     ],
+    # hoard-and-bleed (DEC-543): both lines are Commander Spellbook `included[]`
+    # entries on the committed 99, with manaNeeded "". The payoff slots differ
+    # between the two lines because the loops move different objects, so they are
+    # NOT interchangeable — see each slot's note.
+    "hoard-and-bleed": [
+        {
+            "name": "Plunderer + Ashnod's Altar + Reassembling Skeleton",
+            "slots": [
+                ["Pitiless Plunderer"],
+                ["Ashnod's Altar"],
+                ["Reassembling Skeleton"],
+                # Each iteration sacrifices the Skeleton, creates a Treasure,
+                # sacrifices that Treasure and returns the Skeleton. So every
+                # payoff below fires: creature death, artifact-to-graveyard,
+                # artifact entering, and token created/sacrificed all happen.
+                # Exsanguinate qualifies because the loop nets {C} per iteration
+                # (in {C}{C}{B}, out {1}{B}) and Treasures pay the {B}{B}.
+                [
+                    "Marionette Apprentice", "Marionette Master", "Mayhem Devil",
+                    "Mirkwood Bats", "Disciple of the Vault", "Reckless Fireweaver",
+                    "Ingenious Artillerist", "Weftstalker Ardent",
+                    "The Sackville-Bagginses", "Exsanguinate",
+                ],
+            ],
+            "requiresCommander": False,
+            "description": "Sacrifice Reassembling Skeleton to Ashnod's Altar for {C}{C}; "
+                           "Pitiless Plunderer makes a Treasure, which pays part of the "
+                           "{1}{B} rebuy. Nets {C} per loop, so infinite colorless mana plus "
+                           "infinite death, sacrifice and artifact triggers.",
+        },
+        {
+            "name": "Mycosynth Lattice free-loop",
+            "slots": [
+                ["Mycosynth Lattice"],
+                # Under Lattice the Skeleton is an artifact, so Krark-Clan
+                # Ironworks can eat it too; either outlet alone closes the loop.
+                ["Ashnod's Altar", "Krark-Clan Ironworks"],
+                ["Reassembling Skeleton"],
+                # No Treasure and no token in this loop, and it nets zero mana:
+                # {C}{C} in, {2} out (Lattice lets the {B} be paid with anything).
+                # So Mirkwood Bats, The Sackville-Bagginses and Exsanguinate are
+                # deliberately absent from this slot.
+                [
+                    "Marionette Apprentice", "Marionette Master", "Mayhem Devil",
+                    "Disciple of the Vault", "Reckless Fireweaver",
+                    "Ingenious Artillerist", "Weftstalker Ardent",
+                ],
+            ],
+            "requiresCommander": False,
+            "description": "Mycosynth Lattice makes the Skeleton an artifact and lets any mana "
+                           "pay its {1}{B}. Sacrifice it to either free outlet for {C}{C} and "
+                           "rebuy for {2} — a net-zero, infinitely repeatable death loop.",
+        },
+    ],
+    # hoard-and-bleed deliberately omits two other Spellbook `included[]` lines.
+    # Mycosynth Lattice + Hellkite Tyrant wins at upkeep but is combat-gated —
+    # Spellbook itself lists "An opponent cannot block Hellkite Tyrant" as a
+    # prerequisite, which a solitaire model cannot check. Mycosynth Lattice +
+    # Vandalblast is mass land denial, not a win, so it does not belong in a
+    # combo-assembly tracker.
     "zada-hedron-grinder": [
         {
             "name": "Reiterate Ritual Storm",
@@ -3731,6 +3792,19 @@ def export_grave_dividends(metadata: dict) -> dict:
     )
 
 
+def export_hoard_and_bleed(metadata: dict) -> dict:
+    """Export Hoard and Bleed (Rakdos Smaug Treasure-aristocrats) simulation."""
+    return _export_colored(
+        sim_module=sim_hoard_and_bleed,
+        deck_id="hoard-and-bleed",
+        deck_name="Hoard and Bleed",
+        commander_name="Smaug, Wicked Worm",
+        commander_cmc=5,
+        colors=["B", "R"],
+        metadata=metadata,
+    )
+
+
 def export_calculated_infinity(metadata: dict) -> dict:
     """Export Calculated Infinity (Simic Zimone X-spell combo) simulation."""
     return _export_colored(
@@ -3870,6 +3944,7 @@ DECKS = [
     ("armory-protocol", "Armory Protocol", export_armory_protocol),
     ("shield-doctrine", "Shield Doctrine", export_shield_doctrine),
     ("gandalf-party-guest", "Arcane Convocation", export_gandalf_party_guest),
+    ("hoard-and-bleed", "Hoard and Bleed", export_hoard_and_bleed),
 ]
 
 
