@@ -1,0 +1,1141 @@
+{
+  "id": "hoard-and-bleed",
+  "type": "commander",
+  "name": "Hoard and Bleed",
+  "subtitle": "Treasure Aristocrats",
+  "commander": "Smaug, Wicked Worm",
+  "cost": "$500-600",
+  "bracket": "4-",
+  "status": "brewing",
+  "gameChangers": 0,
+  "lastUpdatedSet": "The Hobbit",
+  "archetypes": [
+    "aristocrats",
+    "artifacts-matter",
+    "tokens-go-wide"
+  ],
+  "wincon_style": "combo",
+  "commanderRoles": {
+    "primary": "engine",
+    "secondary": "card-draw"
+  },
+  "sources": [
+    {
+      "type": "edhrec",
+      "name": "EDHREC — Smaug, Wicked Worm",
+      "url": "https://edhrec.com/commanders/smaug-wicked-worm",
+      "detail": "1,789 registered decks, fetched 2026-08-20. Used for the candidate sweep and for the closing diff against the final 99."
+    },
+    {
+      "type": "other",
+      "name": "Board-supplied Moxfield list",
+      "url": "https://moxfield.com/decks/lySFoKzhM0KzE3VXYQ6fAw",
+      "detail": "Pasted into DEC-543 by the board on 2026-08-20 after the Moxfield API returned HTTP 403. It supplied the corrected payoff gating and the artifacts-entering damage package."
+    },
+    {
+      "type": "other",
+      "name": "JLK's Smaug | Game Knights #87",
+      "url": "https://archidekt.com/decks/22677224/jlks_smaug_game_knights_87",
+      "detail": "Read in full through the Archidekt API on 2026-08-20. Reference list named in the DEC-543 brief."
+    },
+    {
+      "type": "commanderspellbook",
+      "name": "Commander Spellbook find-my-combos",
+      "url": "https://commanderspellbook.com/",
+      "detail": "Run against the final 99 on 2026-08-20. Four combos contained, 148 near-misses triaged."
+    },
+    {
+      "type": "scryfall",
+      "name": "Scryfall oracle verification",
+      "url": "https://scryfall.com/",
+      "detail": "Every one of the 99 cards was resolved through the Scryfall collection endpoint on 2026-08-20. Legality, color identity, mana cost and oracle text were all read from live data, not from memory."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "CEO strategy analysis, revision 2",
+      "detail": "agents/ceo/analysis/dec543-strategy-analysis-rev2.md. Board signed off strategy S1 on 2026-08-20."
+    }
+  ],
+  "guideContent": {
+    "strategyOverview": "Smaug, Wicked Worm turns Treasures into cards. Its second ability reads \"Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.\" The trigger fires once per spell, not once per Treasure. That single fact sets the whole build: the deck wants many cheap spells, not a few expensive ones. The average mana value of the 65 nonland cards is 2.71.\n\nSmaug draws cards. It does not win. This deck supplies the kill in three layers.\n\nLayer one is incidental damage. A Treasure pays twice in this list. It deals damage when it enters, through Reckless Fireweaver, Ingenious Artillerist and Weftstalker Ardent. It drains when it is sacrificed, through Marionette Apprentice, Marionette Master, Disciple of the Vault, Mirkwood Bats, Nadier's Nightblade and Mayhem Devil. Xorn and Academy Manufactor multiply the entering half, so the damage curve is steeply nonlinear rather than incremental.\n\nLayer two is the deterministic loop. Pitiless Plunderer plus Ashnod's Altar plus Reassembling Skeleton produces infinite colorless mana and infinite death triggers. Six different payoffs already in the deck convert that loop into a kill, so no single removal spell stops it.\n\nLayer three is the alternate win. Revel in Riches wins at ten Treasures. Hellkite Tyrant wins at twenty artifacts, and Mycosynth Lattice makes every land an artifact, so the twenty-artifact check becomes trivial once both are on the battlefield.\n\nThe cost of Smaug's trigger is real. Ten Treasure-cast spells cost ten life, and the trigger is not optional. Nadier's Nightblade is the only payoff in the list that gains life back, because Blood Artist, Zulaport Cutthroat and Bastion of Remembrance all trigger on creature death only and never fire on a sacrificed Treasure. That is why none of those three appear here."
+  },
+  "categories": [
+    {
+      "name": "Treasure Engines",
+      "description": "Repeatable Treasure production. These cards feed Smaug's cast trigger, the sacrifice payoffs and the mana base at the same time.",
+      "cards": [
+        "Pitiless Plunderer",
+        "Professional Face-Breaker",
+        "Black Market Connections",
+        "Goldspan Dragon",
+        "Smaug the Magnificent",
+        "Treasure Vault",
+        "The Misty Mountains Cold"
+      ]
+    },
+    {
+      "name": "Token Multipliers",
+      "description": "Replacement effects that turn one Treasure instruction into several tokens. They multiply the entering-damage half of the plan, not just the mana.",
+      "cards": [
+        "Xorn",
+        "Academy Manufactor"
+      ]
+    },
+    {
+      "name": "Sacrifice Outlets",
+      "description": "Free or near-free outlets that convert permanents into triggers. Ashnod's Altar and Krark-Clan Ironworks also add mana, which is what makes the loop work.",
+      "cards": [
+        "Ashnod's Altar",
+        "Krark-Clan Ironworks",
+        "Goblin Bombardment",
+        "High Market",
+        "Yawgmoth, Thran Physician"
+      ]
+    },
+    {
+      "name": "Drain and Damage Payoffs",
+      "description": "Every card here fires on artifact or token movement, not on creature death. That gating is the single correction that separates this list from a generic aristocrats build.",
+      "cards": [
+        "Mayhem Devil",
+        "Mirkwood Bats",
+        "Reckless Fireweaver",
+        "Ingenious Artillerist",
+        "Weftstalker Ardent",
+        "Marionette Apprentice",
+        "Marionette Master",
+        "Disciple of the Vault",
+        "Nadier's Nightblade",
+        "The Sackville-Bagginses",
+        "Crime Novelist"
+      ]
+    },
+    {
+      "name": "Rituals and Fast Mana",
+      "description": "Cheap acceleration that lets the deck deploy two spells in a turn. Every extra spell cast off Treasure mana is an extra card from Smaug.",
+      "cards": [
+        "Sol Ring",
+        "Arcane Signet",
+        "Talisman of Indulgence",
+        "Rakdos Signet",
+        "Fellwar Stone",
+        "Dark Ritual",
+        "Lotus Petal",
+        "Big Score",
+        "Seize the Spoils",
+        "Unexpected Windfall",
+        "Deadly Dispute"
+      ]
+    },
+    {
+      "name": "Card Advantage",
+      "description": "Draw that does not depend on Smaug being on the battlefield. Skullclamp and Idol of Oblivion both convert the token flood into cards.",
+      "cards": [
+        "Braids, Arisen Nightmare",
+        "Night's Whisper",
+        "Skullclamp",
+        "Black Market Connections"
+      ]
+    },
+    {
+      "name": "Tutors",
+      "description": "Four tutors, none of them a Game Changer. Diabolic Intent sacrifices a creature we were going to sacrifice anyway. Beseech the Mirror is the best of the four here: bargain by sacrificing a Treasure, then cast the found card for free if its mana value is 4 or less. Ashnod's Altar, Pitiless Plunderer and Krark-Clan Ironworks all clear that bar, so one Beseech assembles a third of the combo and deploys it in the same turn.",
+      "cards": [
+        "Diabolic Intent",
+        "Wishclaw Talisman",
+        "Beseech the Mirror",
+        "Grim Tutor"
+      ]
+    },
+    {
+      "name": "Interaction",
+      "description": "Eleven spot answers plus three sweepers. Deadly Rollick and Deflecting Swat are the free spells that Bracket 4 asks for in black and red. Feed the Swarm and Chaos Warp are the only two answers to an enchantment.",
+      "cards": [
+        "Terminate",
+        "Deadly Rollick",
+        "Deflecting Swat",
+        "Infernal Grasp",
+        "Fatal Push",
+        "Abrade",
+        "Bedevil",
+        "Chaos Warp",
+        "Feed the Swarm",
+        "Toxic Deluge",
+        "Fell the Profane",
+        "Spiteful Banditry",
+        "Blasphemous Act"
+      ]
+    },
+    {
+      "name": "Protection and Recursion",
+      "description": "Insurance against a board wipe, which is this deck's worst matchup because nine payoffs are creatures.",
+      "cards": [
+        "Lightning Greaves",
+        "Malakir Rebirth",
+        "Reanimate",
+        "Reassembling Skeleton",
+        "Deflecting Swat"
+      ]
+    },
+    {
+      "name": "Mana Base",
+      "description": "Thirty-seven lands. Great Furnace and Vault of Whispers are artifact lands, so they trigger the artifacts-entering payoffs and count toward Hellkite Tyrant. High Market is a free sacrifice outlet on a land. Mines of Moria enters untapped whenever Smaug or another legendary creature is out.",
+      "cards": [
+        "Command Tower",
+        "Blood Crypt",
+        "Dragonskull Summit",
+        "Smoldering Marsh",
+        "Sulfurous Springs",
+        "Luxury Suite",
+        "Foreboding Ruins",
+        "Shadowblood Ridge",
+        "Blackcleave Cliffs",
+        "Temple of Malice",
+        "Exotic Orchard",
+        "Spire of Industry",
+        "City of Brass",
+        "Mana Confluence",
+        "Bloodstained Mire",
+        "Prismatic Vista",
+        "Fabled Passage",
+        "Great Furnace",
+        "Vault of Whispers",
+        "Bojuka Bog",
+        "High Market",
+        "Treasure Vault",
+        "Mount Doom",
+        "Reflecting Pool",
+        "Mines of Moria"
+      ]
+    }
+  ],
+  "winConditions": [
+    {
+      "title": "Infinite loop into a drain payoff",
+      "kind": "combo",
+      "pieces": [
+        "Pitiless Plunderer",
+        "Ashnod's Altar",
+        "Reassembling Skeleton"
+      ],
+      "cards": [
+        "Pitiless Plunderer",
+        "Ashnod's Altar",
+        "Reassembling Skeleton",
+        "Mayhem Devil",
+        "Mirkwood Bats",
+        "Marionette Apprentice",
+        "Marionette Master",
+        "Disciple of the Vault",
+        "Nadier's Nightblade"
+      ],
+      "description": "Sacrifice Reassembling Skeleton to Ashnod's Altar. The Altar adds two colorless mana and Pitiless Plunderer creates a Treasure. Return the Skeleton for one generic and one black, paying with one colorless plus the Treasure. One colorless mana is left over, so the loop is mana-positive and repeats without limit. It produces infinite death triggers and infinite Treasure creations. Six payoffs already in the deck convert that into a kill, so removing any one of them does not stop it. Confirmed by Commander Spellbook combo 1580-2034-4871."
+    },
+    {
+      "title": "Treasure storm — entering damage plus sacrifice drain",
+      "kind": "damage",
+      "cards": [
+        "Xorn",
+        "Academy Manufactor",
+        "Reckless Fireweaver",
+        "Ingenious Artillerist",
+        "Mirkwood Bats",
+        "Weftstalker Ardent"
+      ],
+      "description": "One Treasure instruction with Xorn and Academy Manufactor both on the battlefield creates six tokens. Ordering matters: apply Xorn first, so one Treasure becomes two, then Academy Manufactor turns that into two Clues, two Foods and two Treasures. CR 616.1 lets us choose that order. With Reckless Fireweaver, Ingenious Artillerist and Mirkwood Bats also out, that single instruction deals eighteen to each opponent. State the basis plainly: that number needs five specific permanents. With only Fireweaver and Bats it is two to each opponent. This line is nonlinear, not incremental."
+    },
+    {
+      "title": "Alternate win — Revel in Riches or Hellkite Tyrant",
+      "kind": "alternate",
+      "cards": [
+        "Revel in Riches",
+        "Hellkite Tyrant",
+        "Mycosynth Lattice",
+        "Treasure Vault",
+        "Xorn",
+        "Academy Manufactor"
+      ],
+      "description": "Revel in Riches wins at the beginning of our upkeep with ten or more Treasures. Treasure Vault, Xorn and Academy Manufactor make that count reachable in one turn. Hellkite Tyrant wins at twenty or more artifacts; Mycosynth Lattice makes all permanents artifacts, so our thirty-four lands satisfy the check by themselves. Both checks happen at our upkeep, which gives the table a full turn cycle to answer them. Treat them as backup, not as the plan."
+    },
+    {
+      "title": "Exsanguinate off infinite mana",
+      "kind": "drain",
+      "cards": [
+        "Exsanguinate",
+        "Ashnod's Altar",
+        "Pitiless Plunderer",
+        "Reassembling Skeleton"
+      ],
+      "description": "The loop in win condition one makes unbounded colorless mana. Exsanguinate converts it directly, draining each opponent for X and gaining that much life. This is the clean out when every drain payoff has been removed but the loop pieces survive."
+    }
+  ],
+  "synergies": [
+    {
+      "title": "A Treasure pays twice",
+      "cards": [
+        "Reckless Fireweaver",
+        "Ingenious Artillerist",
+        "Weftstalker Ardent",
+        "Mirkwood Bats",
+        "Marionette Apprentice",
+        "Disciple of the Vault"
+      ],
+      "description": "Reckless Fireweaver, Ingenious Artillerist and Weftstalker Ardent all trigger when an artifact enters. Marionette Apprentice, Disciple of the Vault and Marionette Master trigger when an artifact is put into a graveyard. Mirkwood Bats covers both halves, because it reads \"Whenever you create or sacrifice a token.\" So the same Treasure deals damage on the way in and drains on the way out.",
+      "sources": [
+        {
+          "type": "other",
+          "name": "Board-supplied Moxfield list",
+          "url": "https://moxfield.com/decks/lySFoKzhM0KzE3VXYQ6fAw",
+          "detail": "The entering-damage package came from this list. Revision 1 of the analysis had valued Treasures as sacrifice fodder only."
+        }
+      ]
+    },
+    {
+      "title": "Xorn plus Academy Manufactor — replacement ordering",
+      "cards": [
+        "Xorn",
+        "Academy Manufactor"
+      ],
+      "description": "Both are replacement effects that apply to the same token-creation event, so CR 616.1 lets us choose the order. Apply Xorn first and one Treasure becomes two; Academy Manufactor then turns that into two Clues, two Foods and two Treasures, for six tokens. The reverse order yields four. The per-card texts and the Manufactor multiplication are printed rules; the choice of order is ours.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall ruling on Academy Manufactor",
+          "url": "https://scryfall.com/card/mh2/244/academy-manufactor",
+          "detail": "\"If you control one Academy Manufactor and would create some number of Clue, Food, or Treasure tokens, you will instead create that many Clue tokens, that many Food tokens, and that many Treasure tokens.\""
+        }
+      ]
+    },
+    {
+      "title": "Crime Novelist and Krark-Clan Ironworks price a Treasure at three mana",
+      "cards": [
+        "Crime Novelist",
+        "Krark-Clan Ironworks",
+        "Ashnod's Altar"
+      ],
+      "description": "Krark-Clan Ironworks reads \"Sacrifice an artifact: Add two colorless mana.\" Crime Novelist reads \"Whenever you sacrifice an artifact, put a plus-one plus-one counter on this creature and add one red mana.\" Sacrificing one Treasure through Ironworks with Crime Novelist out yields three mana, where the Treasure alone would have yielded one. Same inputs, three times the output.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "CEO derivation",
+          "detail": "Both oracle texts verified on Scryfall 2026-08-20. Arithmetic is ours."
+        }
+      ]
+    },
+    {
+      "title": "Artifact lands are free payoff triggers",
+      "cards": [
+        "Great Furnace",
+        "Vault of Whispers",
+        "Treasure Vault",
+        "Reckless Fireweaver",
+        "Ingenious Artillerist",
+        "Hellkite Tyrant",
+        "Krark-Clan Ironworks"
+      ],
+      "description": "Great Furnace, Vault of Whispers and Treasure Vault are artifact lands. Playing one triggers Reckless Fireweaver and Ingenious Artillerist, counts toward Hellkite Tyrant's twenty artifacts, and can be sacrificed to Krark-Clan Ironworks for two mana. They cost the deck nothing over a basic land except vulnerability to artifact sweepers.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "CEO analysis",
+          "detail": "Type lines verified on Scryfall 2026-08-20."
+        }
+      ]
+    },
+    {
+      "title": "Mycosynth Lattice widens Disciple of the Vault and Marionette Master",
+      "cards": [
+        "Mycosynth Lattice",
+        "Disciple of the Vault",
+        "Marionette Master",
+        "Reckless Fireweaver",
+        "Hellkite Tyrant"
+      ],
+      "description": "Mycosynth Lattice reads \"All permanents are artifacts in addition to their other types.\" With it out, every permanent we lose is an artifact hitting the graveyard, so Disciple of the Vault and Marionette Master trigger on creature and land deaths too, and every land we play triggers Reckless Fireweaver. It also makes Hellkite Tyrant's twenty-artifact check trivial. The cost is symmetry: our own board becomes vulnerable to any artifact sweeper.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Mycosynth Lattice + Hellkite Tyrant",
+          "url": "https://commanderspellbook.com/combo/523-3263/",
+          "detail": "Listed as a two-card win."
+        }
+      ]
+    },
+    {
+      "title": "Smaug's draw costs life and only Nadier's Nightblade pays it back",
+      "cards": [
+        "Smaug, Wicked Worm",
+        "Nadier's Nightblade",
+        "Exsanguinate",
+        "High Market"
+      ],
+      "description": "Smaug's trigger is mandatory and costs one life per Treasure-cast spell. Ten such spells cost ten life. Nadier's Nightblade reads \"Whenever a token you control leaves the battlefield, each opponent loses 1 life and you gain 1 life\" — it is the only life-positive payoff here. Exsanguinate and High Market are the other two sources of life gain. Blood Artist, Zulaport Cutthroat and Bastion of Remembrance are all creature-death gated and never fire on a sacrificed Treasure, so they are deliberately absent.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "CEO strategy analysis revision 2",
+          "detail": "agents/ceo/analysis/dec543-strategy-analysis-rev2.md section 4. Oracle text of all three excluded cards verified on Scryfall."
+        }
+      ]
+    },
+    {
+      "title": "Our own sweepers are drain triggers",
+      "cards": [
+        "Blasphemous Act",
+        "Spiteful Banditry",
+        "Toxic Deluge",
+        "Marionette Apprentice",
+        "Mayhem Devil",
+        "Mirkwood Bats",
+        "Pitiless Plunderer",
+        "Nadier's Nightblade"
+      ],
+      "description": "A board wipe is this deck's worst matchup, so the deck runs three of its own and turns them into reach. Every creature we lose to Blasphemous Act triggers Marionette Apprentice and Pitiless Plunderer, and every Treasure that Plunderer makes triggers Mirkwood Bats. Blasphemous Act costs one generic less for each creature on the battlefield, so in a full board state it costs one red mana. Spiteful Banditry is a scalable X-damage sweeper that also makes us a Treasure when opponents' creatures die, capped at one trigger per turn.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall oracle text",
+          "detail": "Blasphemous Act, Spiteful Banditry and Marionette Apprentice all verified 2026-08-20."
+        }
+      ]
+    },
+    {
+      "title": "Beseech the Mirror turns a Treasure into a free combo piece",
+      "cards": [
+        "Beseech the Mirror",
+        "Ashnod's Altar",
+        "Pitiless Plunderer",
+        "Krark-Clan Ironworks",
+        "Xorn",
+        "Academy Manufactor"
+      ],
+      "description": "Beseech the Mirror reads \"Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.) Search your library for a card, exile it face down, then shuffle. If this spell was bargained, you may cast the exiled card without paying its mana cost if that spell's mana value is 4 or less.\" This deck makes Treasures, so the bargain cost is free and it also triggers Mirkwood Bats and Nadier's Nightblade. Ashnod's Altar is mana value 3, Pitiless Plunderer is 4 and Krark-Clan Ironworks is 4, so all three can be found and cast for nothing off a single Beseech.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall oracle text",
+          "detail": "Beseech the Mirror verified 2026-08-20. Mana values read from the same lookup."
+        }
+      ]
+    }
+  ],
+  "highlights": [
+    {
+      "name": "Smaug, Wicked Worm",
+      "price": "owned",
+      "isGameChanger": false,
+      "reason": "The commander. Its cast trigger fires once per spell that used Treasure mana, so the deck is built around casting many cheap spells rather than a few large ones. It is a card-advantage engine, not a win condition.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall oracle text",
+          "detail": "Verified 2026-08-20."
+        }
+      ]
+    },
+    {
+      "name": "Pitiless Plunderer",
+      "price": "owned",
+      "isGameChanger": false,
+      "reason": "The hinge of the deterministic kill. It turns every creature death into a Treasure, which is both mana and a payoff trigger. Owned in the free pool, so the primary combo costs nothing to assemble.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook combo 1580-2034-4871",
+          "url": "https://commanderspellbook.com/combo/1580-2034-4871/"
+        }
+      ]
+    },
+    {
+      "name": "Ashnod's Altar",
+      "price": "owned",
+      "isGameChanger": false,
+      "reason": "The only free sacrifice outlet in the deck that adds more mana than the Treasure it consumes. That surplus is what makes the loop mana-positive. Krark-Clan Ironworks does the same job for artifacts.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "CEO analysis",
+          "detail": "Loop arithmetic derived from verified oracle text."
+        }
+      ]
+    },
+    {
+      "name": "Xorn",
+      "price": "$10.42",
+      "isGameChanger": false,
+      "reason": "Every Treasure instruction produces one extra Treasure. In a deck where a Treasure deals damage entering and drains leaving, that is two extra points of reach per instruction before any multiplication from Academy Manufactor. EDHREC inclusion 73 percent.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Smaug, Wicked Worm",
+          "url": "https://edhrec.com/commanders/smaug-wicked-worm",
+          "detail": "1,306 of 1,789 decks, fetched 2026-08-20."
+        }
+      ]
+    },
+    {
+      "name": "Mirkwood Bats",
+      "price": "owned",
+      "isGameChanger": false,
+      "reason": "The only payoff that fires on both halves of a token's life. Its text is \"Whenever you create or sacrifice a token, each opponent loses 1 life.\" A single Treasure that is made and then spent drains two from each opponent. EDHREC inclusion 77 percent.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Smaug, Wicked Worm",
+          "url": "https://edhrec.com/commanders/smaug-wicked-worm",
+          "detail": "1,369 of 1,789 decks."
+        }
+      ]
+    },
+    {
+      "name": "Mayhem Devil",
+      "price": "owned",
+      "isGameChanger": false,
+      "reason": "The bridge payoff. It triggers on \"a player sacrifices a permanent,\" so it fires on our Treasures, on our creatures, and on opponents' fetch lands. It is also the cheapest way to point the infinite loop at a face.",
+      "sources": [
+        {
+          "type": "edhrec",
+          "name": "EDHREC — Smaug, Wicked Worm",
+          "url": "https://edhrec.com/commanders/smaug-wicked-worm",
+          "detail": "1,232 of 1,789 decks, 69 percent."
+        }
+      ]
+    },
+    {
+      "name": "Krark-Clan Ironworks",
+      "price": "$17.16",
+      "isGameChanger": false,
+      "reason": "The single card that lifts this list above the reference decks. It is a free, unbounded artifact sacrifice outlet that turns each Treasure into two mana instead of one. Neither reference list ran a free outlet, which is the main reason both are Bracket 3.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "CEO strategy analysis revision 2",
+          "detail": "Section 5, reason 1."
+        }
+      ]
+    },
+    {
+      "name": "Marionette Master",
+      "price": "$3.92",
+      "isGameChanger": false,
+      "reason": "Fabricate 3 makes it a four-power body, and each artifact we lose then drains one opponent for four. Scryfall's ruling confirms Treasure tokens count: artifact tokens reach the graveyard before ceasing to exist, so the trigger fires.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall ruling on Marionette Master",
+          "detail": "\"Artifact tokens that are sacrificed or destroyed are put into their owner's graveyard before ceasing to exist. If you controlled the token, Marionette Master's last ability will trigger.\""
+        }
+      ]
+    },
+    {
+      "name": "Deflecting Swat",
+      "price": "owned",
+      "isGameChanger": false,
+      "reason": "Free protection while Smaug is on the battlefield. Bracket philosophy names it as the mandatory red free spell at Bracket 4. Held in the free pool, so its high market price costs the build nothing.",
+      "sources": [
+        {
+          "type": "article",
+          "name": "data/bracket-philosophy.md",
+          "detail": "Free-spell requirement for Bracket 4."
+        }
+      ]
+    },
+    {
+      "name": "Hellkite Tyrant",
+      "price": "owned",
+      "isGameChanger": false,
+      "reason": "Alternate win at twenty artifacts, and a two-card win alongside Mycosynth Lattice because Lattice makes our thirty-four lands count. Also steals an opposing artifact board on connection.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Mycosynth Lattice + Hellkite Tyrant",
+          "url": "https://commanderspellbook.com/combo/523-3263/"
+        }
+      ]
+    }
+  ],
+  "decklist": [
+    {
+      "name": "Sol Ring",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Arcane Signet",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Talisman of Indulgence",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Fellwar Stone",
+      "type": "Artifact",
+      "primary_role": "ramp",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "Rakdos Signet",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Dark Ritual",
+      "type": "Instant",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Lotus Petal",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Professional Face-Breaker",
+      "type": "Creature — Human Warrior",
+      "primary_role": "engine",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Black Market Connections",
+      "type": "Enchantment",
+      "primary_role": "engine",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Pitiless Plunderer",
+      "type": "Creature — Human Pirate",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Goldspan Dragon",
+      "type": "Creature — Dragon",
+      "primary_role": "engine",
+      "secondary_role": "threat"
+    },
+    {
+      "name": "Smaug the Magnificent",
+      "type": "Legendary Creature — Dragon",
+      "primary_role": "wincon",
+      "secondary_role": "engine",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Big Score",
+      "type": "Instant",
+      "primary_role": "ramp",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Seize the Spoils",
+      "type": "Sorcery",
+      "primary_role": "ramp",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Deadly Dispute",
+      "type": "Instant",
+      "primary_role": "card-draw",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Unexpected Windfall",
+      "type": "Instant",
+      "primary_role": "ramp",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Xorn",
+      "type": "Creature — Elemental",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Academy Manufactor",
+      "type": "Artifact Creature — Assembly-Worker",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Ashnod's Altar",
+      "type": "Artifact",
+      "primary_role": "utility",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Goblin Bombardment",
+      "type": "Enchantment",
+      "primary_role": "utility",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Krark-Clan Ironworks",
+      "type": "Artifact",
+      "primary_role": "utility",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Mayhem Devil",
+      "type": "Creature — Devil",
+      "primary_role": "payoff",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Mirkwood Bats",
+      "type": "Creature — Bat",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Reckless Fireweaver",
+      "type": "Creature — Human Artificer",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Ingenious Artillerist",
+      "type": "Creature — Human Artificer",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Weftstalker Ardent",
+      "type": "Creature — Drix Artificer",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Marionette Apprentice",
+      "type": "Creature — Human Artificer",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Marionette Master",
+      "type": "Creature — Human Artificer",
+      "primary_role": "wincon",
+      "secondary_role": "payoff",
+      "wincon_style": "drain"
+    },
+    {
+      "name": "Disciple of the Vault",
+      "type": "Creature — Human Cleric",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Nadier's Nightblade",
+      "type": "Creature — Elf Warrior",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "The Sackville-Bagginses",
+      "type": "Legendary Creature — Halfling Citizen",
+      "primary_role": "payoff",
+      "secondary_role": "card-draw"
+    },
+    {
+      "name": "Crime Novelist",
+      "type": "Creature — Goblin Bard",
+      "primary_role": "payoff",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Reassembling Skeleton",
+      "type": "Creature — Skeleton Warrior",
+      "primary_role": "engine",
+      "secondary_role": "recursion"
+    },
+    {
+      "name": "Yawgmoth, Thran Physician",
+      "type": "Legendary Creature — Human Cleric",
+      "primary_role": "engine",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Reanimate",
+      "type": "Sorcery",
+      "primary_role": "recursion"
+    },
+    {
+      "name": "Braids, Arisen Nightmare",
+      "type": "Legendary Creature — Nightmare",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Night's Whisper",
+      "type": "Sorcery",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Skullclamp",
+      "type": "Artifact — Equipment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Diabolic Intent",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Wishclaw Talisman",
+      "type": "Artifact",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Beseech the Mirror",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Grim Tutor",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Hellkite Tyrant",
+      "type": "Creature — Dragon",
+      "primary_role": "wincon",
+      "secondary_role": "threat",
+      "wincon_style": "alt"
+    },
+    {
+      "name": "Revel in Riches",
+      "type": "Enchantment",
+      "primary_role": "wincon",
+      "wincon_style": "alt"
+    },
+    {
+      "name": "Exsanguinate",
+      "type": "Sorcery",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Mycosynth Lattice",
+      "type": "Artifact",
+      "primary_role": "wincon",
+      "wincon_style": "alt"
+    },
+    {
+      "name": "Terminate",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Deadly Rollick",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Deflecting Swat",
+      "type": "Instant",
+      "primary_role": "protection",
+      "secondary_role": "removal-spot"
+    },
+    {
+      "name": "Infernal Grasp",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Fatal Push",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Abrade",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Bedevil",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Chaos Warp",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Feed the Swarm",
+      "type": "Sorcery",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Toxic Deluge",
+      "type": "Sorcery",
+      "primary_role": "removal-board"
+    },
+    {
+      "name": "Lightning Greaves",
+      "type": "Artifact — Equipment",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Malakir Rebirth",
+      "type": "Instant // Land",
+      "primary_role": "protection",
+      "is_mdfc_land": true
+    },
+    {
+      "name": "Fell the Profane",
+      "type": "Instant // Land",
+      "primary_role": "removal-spot",
+      "is_mdfc_land": true
+    },
+    {
+      "name": "Mines of Moria",
+      "type": "Legendary Land",
+      "primary_role": "land",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Mount Doom",
+      "type": "Legendary Land",
+      "primary_role": "land",
+      "secondary_role": "utility"
+    },
+    {
+      "name": "Reflecting Pool",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "mana-fixing"
+    },
+    {
+      "name": "The Misty Mountains Cold",
+      "type": "Enchantment — Saga",
+      "primary_role": "engine",
+      "secondary_role": "threat"
+    },
+    {
+      "name": "Spiteful Banditry",
+      "type": "Enchantment",
+      "primary_role": "removal-board",
+      "secondary_role": "ramp"
+    },
+    {
+      "name": "Blasphemous Act",
+      "type": "Sorcery",
+      "primary_role": "removal-board"
+    },
+    {
+      "name": "Command Tower",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Blood Crypt",
+      "type": "Land — Swamp Mountain",
+      "primary_role": "land"
+    },
+    {
+      "name": "Dragonskull Summit",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Smoldering Marsh",
+      "type": "Land — Swamp Mountain",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sulfurous Springs",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Luxury Suite",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Foreboding Ruins",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Shadowblood Ridge",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Blackcleave Cliffs",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Temple of Malice",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Exotic Orchard",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Spire of Industry",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "City of Brass",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Mana Confluence",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Bloodstained Mire",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Prismatic Vista",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Fabled Passage",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Great Furnace",
+      "type": "Artifact Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Vault of Whispers",
+      "type": "Artifact Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Bojuka Bog",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "utility"
+    },
+    {
+      "name": "High Market",
+      "type": "Land",
+      "primary_role": "land",
+      "secondary_role": "utility"
+    },
+    {
+      "name": "Treasure Vault",
+      "type": "Artifact Land",
+      "primary_role": "land",
+      "secondary_role": "engine"
+    },
+    {
+      "name": "Swamp",
+      "type": "Basic Land — Swamp",
+      "primary_role": "land",
+      "quantity": 6
+    },
+    {
+      "name": "Mountain",
+      "type": "Basic Land — Mountain",
+      "primary_role": "land",
+      "quantity": 6
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Clue",
+      "type_line": "Token Artifact — Clue",
+      "oracle_text": "{2}, Sacrifice this token: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "764a906c-8b27-4ffa-bdc3-7825c6919d3e",
+      "image_uri": "https://cards.scryfall.io/normal/front/7/6/764a906c-8b27-4ffa-bdc3-7825c6919d3e.jpg?1783911522",
+      "produced_by": [
+        "Academy Manufactor"
+      ]
+    },
+    {
+      "name": "Dragon",
+      "type_line": "Token Creature — Dragon",
+      "oracle_text": "Flying",
+      "power": "6",
+      "toughness": "6",
+      "colors": [
+        "R"
+      ],
+      "scryfall_id": "1e4408fa-8037-42f1-989e-2da84867f76c",
+      "image_uri": "https://cards.scryfall.io/normal/front/1/e/1e4408fa-8037-42f1-989e-2da84867f76c.jpg?1785497692",
+      "produced_by": [
+        "The Misty Mountains Cold"
+      ]
+    },
+    {
+      "name": "Food",
+      "type_line": "Token Artifact — Food",
+      "oracle_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "600d5d22-62a0-49c9-b050-90a2566e8caf",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/0/600d5d22-62a0-49c9-b050-90a2566e8caf.jpg?1783911671",
+      "produced_by": [
+        "Academy Manufactor"
+      ]
+    },
+    {
+      "name": "Servo",
+      "type_line": "Token Artifact Creature — Servo",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "scryfall_id": "23165814-3eb8-4d94-b9c8-ecc798afe7a0",
+      "image_uri": "https://cards.scryfall.io/normal/front/2/3/23165814-3eb8-4d94-b9c8-ecc798afe7a0.jpg?1783911109",
+      "produced_by": [
+        "Marionette Apprentice",
+        "Marionette Master"
+      ]
+    },
+    {
+      "name": "Shapeshifter",
+      "type_line": "Token Creature — Shapeshifter",
+      "oracle_text": "Changeling (This token is every creature type.)",
+      "power": "3",
+      "toughness": "2",
+      "colors": [],
+      "scryfall_id": "b66aadb2-cbbb-4150-b4b4-bb0dc5327394",
+      "image_uri": "https://cards.scryfall.io/normal/front/b/6/b66aadb2-cbbb-4150-b4b4-bb0dc5327394.jpg?1783902809",
+      "produced_by": [
+        "Black Market Connections"
+      ]
+    },
+    {
+      "name": "Treasure",
+      "type_line": "Token Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "7ec6f053-96f7-4e57-b2eb-4e7699a40a4f",
+      "image_uri": "https://cards.scryfall.io/normal/front/7/e/7ec6f053-96f7-4e57-b2eb-4e7699a40a4f.jpg?1783911520",
+      "produced_by": [
+        "Academy Manufactor",
+        "Big Score",
+        "Black Market Connections",
+        "Deadly Dispute",
+        "Goldspan Dragon",
+        "Mines of Moria",
+        "Pitiless Plunderer",
+        "Professional Face-Breaker",
+        "Revel in Riches",
+        "Seize the Spoils",
+        "Smaug the Magnificent",
+        "Smaug, Wicked Worm",
+        "Spiteful Banditry",
+        "The Misty Mountains Cold",
+        "The Sackville-Bagginses",
+        "Treasure Vault",
+        "Unexpected Windfall",
+        "Xorn"
+      ]
+    }
+  ]
+}
