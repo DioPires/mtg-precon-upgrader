@@ -97,6 +97,15 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - **Token data (DEC-403)**: `uv run python scripts/compute_tokens.py --deck {id}` regenerates a deck's `tokens[]` (tokens/emblems/game-state markers from Scryfall) and writes it into `deck.json`. Repeat `--deck` for multiple decks; **omitting `--deck` rewrites every deck** — only do that for an intentional fleet-wide token regen. Run it after decklist changes that add or cut token producers. Unknown ids exit 1 before writing anything.
 - **Strategy-ceiling check (DEC-309)**: When validating a deck (or running `/phase-validate` on deck data), also run `uv run python scripts/validate_strategy_ceiling.py [--deck {id}]`. Detects shell/payoff mismatches (B4 shell + sub-B4 payoff, or fast combo + weak shell). Non-blocking — warnings only, exit code 0. Already invoked by `scripts/smoke_test.sh`. Thresholds + calibration documented in [`data/bracket-philosophy.md`](data/bracket-philosophy.md) "B4 Reality Check".
 - **Bracket 4/5 deckbuilding principles**: See [`data/bracket-philosophy.md`](data/bracket-philosophy.md) for mana base, fast mana, free spells, interaction, and card quality standards. Apply when building or updating B4+ decks.
+- **Combo Lab artifacts (DEC-543) — mandatory after any decklist change**: the Combo Lab route reads three committed per-deck files. A deck with none of them renders an empty Combo Lab. Regenerate all three, in this order, after **every** new deck and **every** approved swap round:
+
+  ```bash
+  uv run python scripts/sync_spellbook_combos.py --deck {id}       # spellbook-combos.json (Tier A)
+  uv run python scripts/build_synergy_candidates.py --deck {id}    # synergy-candidates.json (Tier C)
+  uv run python scripts/build_tier_b_candidates.py --deck {id}     # tier-b-loops.json (Tier B)
+  ```
+
+  Order matters: Tier B reads `spellbook-combos.json` `included[]` for corroboration. `sync_spellbook_combos.py` also refreshes the shared `data/spellbook/matcher-index.json`; when the upstream corpus version advances, re-emit the whole fleet with `--offline --force` so every deck sits on one corpus version, then re-run `build_tier_b_candidates.py` for any deck whose `included[]` set changed. Run `uv run python scripts/check_kb_coverage.py` first when the deck introduces cards the KB may not cover — it exits 1 and names the misses. The `included[]` combos and the near-miss triage from step 4 of the Research Workflow read off these files.
 - **Deck modification workflow (board-approval required)**: When asked to review, rebalance, tune, or improve any existing deck, the deliverable is a **proposal comment** with adds/cuts and rationale — *not* edited `deck.json` files. Do not write to `deck.json`, `candidates.json`, or `metrics.json` (even as untracked draft files) before the board has explicitly accepted each individual swap. Acceptable pre-approval work: Scryfall lookups, `scripts/refresh_card_pool.py`, reading `candidates.json`, drafting proposal text. Present swaps as a checklist (`- [ ] CardName — reason`) so the board can accept/block line-by-line. Untracked ≠ approved.
 
 ## Source Attribution Schema
@@ -134,7 +143,7 @@ When building or updating deck guides, use all available sources and cross-refer
 2. **YouTube** — Search for commander deck tech videos, fetch transcripts, extract card recommendations
 3. **EDHREC** — Check commander pages for top cards, new additions from recent sets
    - **EDHREC closing diff (mandatory before handing off any new or changed decklist — DEC-402)**: after the 99 is drafted, fetch the commander's EDHREC page again and diff the final `decklist` against the top ~30 overall cards and top ~10 of each deck-relevant category (e.g. Equipment for a Voltron deck). Every high-inclusion card (≳40%) not in the list gets an explicit include/defer/reject line in the review notes. Research-stage EDHREC data does NOT satisfy this — Buster Sword (43% inclusion) was collected during DEC-402 research and still missed at build time because no closing diff existed. Inclusion rates are auto-fetched into `priv_data/edhrec/{deck-id}.json` by `refresh_card_pool.py` (via `scripts/fetch_edhrec_rates.py`, 7-day cache; board informed-override of the DEC-312 ToS bar, DEC-410 — keep it low-volume, see `docs/discovery-playbook.md`) and feed the candidate scorer as a 0–20 boost. The closing diff itself remains a mandatory human review gate — the scorer only surfaces candidates; include/defer/reject calls still happen here.
-4. **Commander Spellbook** — Use `commanderspellbook_find_combos` MCP tool with the full decklist.
+4. **Commander Spellbook** — Run `scripts/sync_spellbook_combos.py --deck {id}` and read `data/commanders/{id}/spellbook-combos.json`; it holds the same `included` / near-miss data from the local corpus and is what the Combo Lab ships. Use the `commanderspellbook_find_combos` MCP tool for an ad-hoc list that has no deck id yet.
    - Record `included` combos as synergies with `"type": "commanderspellbook"` source
    - **Review `almost_included` combos** (1-2 cards away) — triage each near-miss to one of four outcomes (DEC-474 L7): **complete**, **defer** (with note), **reject** (with reason), or **retain-as-soft-combo**
    - Complete: when the missing card(s) fit deck strategy, budget, and bracket target, recommend the add with `commanderspellbook` source and note it was discovered via near-miss analysis
@@ -209,7 +218,8 @@ Board-approved via the DEC-369 next-steps interaction. Fleet assessments are **e
 3. Include full 99-card `decklist` array
 4. Use `deckCategories` in `guideContent` for deck theme groupings
 5. Run `uv run python scripts/compute_tokens.py --deck {new-id}` to populate `tokens[]`
-6. Run `uv run python scripts/validate_deck_json.py --deck {new-id}` before handing off the change
+6. Generate the three Combo Lab artifacts (see "Combo Lab artifacts" under Deck Rules) — `sync_spellbook_combos.py`, then `build_synergy_candidates.py`, then `build_tier_b_candidates.py`, each with `--deck {new-id}`
+7. Run `uv run python scripts/validate_deck_json.py --deck {new-id}` before handing off the change
 
 ### Card Versions / Printings (DEC-546)
 
