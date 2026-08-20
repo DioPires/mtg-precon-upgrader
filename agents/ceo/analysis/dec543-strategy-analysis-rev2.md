@@ -11,21 +11,32 @@ build the drain package on Blood Artist, Zulaport Cutthroat and Bastion of Remem
 Moxfield list runs none of those three, and that is correct construction, not an oversight. Section 4 replaces the
 rule.
 
-## 0. Two cards in the supplied list do not exist
+## 0. Every card in the supplied list resolves (corrected 2026-08-20)
 
-I checked both against live Scryfall, not the local mirror.
+**Correction.** This section previously claimed that `S.H.I.E.L.D. Spy Satellite` and `Zidane Tribal` were not Magic
+cards. That was wrong. The board corrected it. Both are Universes Beyond **flavor names** — alternate names printed
+on the card face while the card keeps its original oracle name. Scryfall indexes them, and a quoted-string search
+finds them; only my `name:`-scoped and fuzzy lookups missed them.
 
-| Entry as pasted | Result |
-|---|---|
-| `S.H.I.E.L.D. Spy Satellite` | No Magic card contains "Satellite" in its name. The `msh` S.H.I.E.L.D. cycle is 8 cards; none is a Spy Satellite. Nearest real card is S.H.I.E.L.D. Spy Kit — `{W}`, color identity W. |
-| `Zidane Tribal` | No card by that name. The only Zidane is Zidane, Tantalus Thief — `{3}{R}{W}`, color identity R/W. |
+| Entry as pasted | Real card | Set | Identity | Owned? |
+|---|---|---|---|---|
+| `S.H.I.E.L.D. Spy Satellite` | Fellwar Stone — `{2}` Artifact, "`{T}`: Add one mana of any color that a land an opponent controls could produce." | `MSC` #285 | colorless | Yes — 5 copies (`MSC` ×1, `SOC` ×3, `ECC` ×1) |
+| `Zidane Tribal` | Ragavan, Nimble Pilferer — `{R}` 2/1 Monkey Pirate, combat damage to a player makes a Treasure and exiles their top card castable that turn; Dash `{1}{R}` | `FCA` #43 | R | **No** |
 
-Both nearest real matches sit outside Smaug's B/R identity, so neither is legal here under any reading. The list is
-therefore 98 real cards plus 2 entries I cannot resolve. Everything below treats it as a 98-card list. **Board: can
-you confirm what those two slots actually are?** They do not change the strategic verdict.
+Both are Commander-legal and both identities sit inside Smaug's B/R. Ragavan is **not** on the 53-card Game Changer
+list, so it does not move the deck's GC count or the low-bracket-4 target. Fellwar Stone is a plain 2-mana rock we
+already own in the exact `MSC` printing the board named.
 
-The other 98 entries all verify: Commander-legal, and every color identity is a subset of B/R. Zero color-identity
-violations. 35 lands (Treasure Vault included), plus 2 modal spell//land backs (Fell the Profane, Malakir Rebirth).
+The one open item is price, not legality: Ragavan is **$42.67 / €29.50** for the `FCA` printing (cheapest paper
+printing `MH2` at $42.07 / €34.23). That sits in the same band as the cards the board excluded on price — Chrome
+Mox, Mox Opal and Mox Diamond all sit near $40. It is raised as a question, not decided.
+
+Lesson for the process: fuzzy Scryfall lookup on a flavor name returns the correct oracle card. When I searched
+`S.H.I.E.L.D. Spy Satellite` fuzzily I *did* get Fellwar Stone back and discarded it as a bad fuzzy match. That
+discard was the error.
+
+All entries verify: Commander-legal, and every color identity is a subset of B/R. Zero color-identity violations.
+35 lands (Treasure Vault included), plus 2 modal spell//land backs (Fell the Profane, Malakir Rebirth).
 
 ## 1. What the commander does (unchanged, re-verified)
 
@@ -50,8 +61,9 @@ is strategy S1.
 [`data/bracket-philosophy.md`](../../../data/bracket-philosophy.md) names as the mandatory Bracket 4 free spells for
 black and red. We hold 1 of each in the free pool.
 
-**It runs zero Game Changers.** I checked all 98 resolvable entries against `data/game-changers.json` (53 cards,
-2026-02-09 baseline). No hits. This confirms revision 1's claim that the archetype reaches its power level without
+**It runs zero Game Changers.** I checked every entry against `data/game-changers.json` (53 cards, 2026-02-09
+baseline), including the two flavor-name cards resolved in section 0 — Fellwar Stone and Ragavan are both absent
+from the list. No hits. This confirms revision 1's claim that the archetype reaches its power level without
 spending Game Changer slots.
 
 ## 3. What the Moxfield list teaches that revision 1 missed
@@ -151,7 +163,7 @@ The board asked for low Bracket 4. The supplied list does not reach it. Four rea
    sacrifice per turn is capped by the number of mana sinks we have, and there is no loop, so there is no
    deterministic kill. Krark-Clan Ironworks ("Sacrifice an artifact: Add `{C}{C}`") fixes this exactly: free,
    repeatable, artifact-only, and it turns a Treasure into 2 mana instead of 1.
-2. **No tutors at all.** Zero in 98 cards, against three narrow alternate win conditions. Note that Demonic Tutor,
+2. **No tutors at all.** Zero across the whole list, against three narrow alternate win conditions. Note that Demonic Tutor,
    Vampiric Tutor, Imperial Seal, Gamble, Mystical Tutor and Enlightened Tutor are all Game Changers — but
    **Diabolic Intent is not** (we hold 2 free) and **Wishclaw Talisman is not** ($1.70). We can add consistency
    without spending Game Changer slots.
