@@ -14,7 +14,7 @@
     "artifacts-matter",
     "tokens-go-wide"
   ],
-  "wincon_style": "combo",
+  "wincon_style": "drain",
   "commanderRoles": {
     "primary": "engine",
     "secondary": "card-draw"
@@ -75,10 +75,15 @@
       "type": "other",
       "name": "Board round-5 and round-6 swap approvals, DEC-543, 2026-08-20",
       "detail": "Round 5, interaction 233b34ef: board chose option ophio_abrade. IN Ophiomancer, OUT Abrade. Board also kept Goblin Bombardment, which is one of only two free, instant-speed, no-life sacrifice outlets and the enabler that turns Ophiomancer into up to four Snakes per turn cycle. Round 6, interaction f2d9842b: board approved Bloodghast IN and Umbral Collar Zealot OUT, then reversed the round-5 removal choice and asked for Abrade back over Bedevil. Bloodghast is the cheapest Skullclamp target in the deck, at {1} per two cards against three mana for the same two off Reassembling Skeleton, and it survives the deck's own three sweepers. Umbral Collar Zealot was the cut because its payoff per activation is Surveil 1, the weakest of any outlet here, its creature-or-artifact flexibility is already covered by Ashnod's Altar, Goblin Bombardment and Krark-Clan Ironworks, and it appears in none of the five Spellbook combos. Cuts rejected on the record: Blasphemous Act and Spiteful Banditry each open a removal-board gap; Black Market Connections and Braids each open a card-draw gap; Chaos Warp and Feed the Swarm are the only two answers to an enchantment; Marionette Apprentice and Crime Novelist are payoffs that Bloodghast's own death triggers. Abrade over Bedevil keeps the artifact-answer count at three (Abrade, Chaos Warp, Vandalblast) and drops the cost from {B}{B}{R} to {1}{R}. It gives up Bedevil's reach onto planeswalkers, which leaves Chaos Warp as the only card in the 99 that answers one, and it downgrades creature removal from destroy-anything to three damage."
+    },
+    {
+      "type": "other",
+      "name": "Board round-7 swap approval and wincon retag, DEC-543, 2026-08-21",
+      "detail": "Round 7, interaction edf19f77. Board chose option wt_grasp: IN Withering Torment, OUT Infernal Grasp. Both are instants that destroy a creature and cost the caster 2 life; Withering Torment costs one more mana and adds an enchantment mode. That takes enchantment answers from two to three, which matters because Rest in Peace alone stops Reassembling Skeleton, Bloodghast and Reanimate. The spot-answer count stays at eight. Board also chose option retag on wincon_style. The deck-level tag moves from combo to drain. Basis: the goldfish simulation puts the damage proxy at 46.9 percent by turn 7 against 5.1 percent for combo lethal, so incremental life loss is the dominant plan and the combo is the ceiling, not the clock. The retag is not cosmetic. It raises the resilience recursion target from 2 to 3 (RESILIENCE_RECURSION_TARGETS, combo versus drain at bracket 4), which cuts resilience_health from 94 to 84, global_health from 96 to 95, and opens one recursion gap at 2.0 of 3. The win-turn triple does not move: multi-kind detection already drove it off max(comboLethal, lethalProxy) under both tags."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Smaug, Wicked Worm turns Treasures into cards. Its second ability reads \"Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.\" The trigger fires once per spell, not once per Treasure. That single fact sets the whole build: the deck wants many cheap spells, not a few expensive ones. The average mana value of the 61 nonland cards is 2.89.\n\nSmaug draws cards. It does not win. This deck supplies the kill in three layers.\n\nLayer one is incidental damage. A Treasure pays twice in this list. It deals damage when it enters, through Reckless Fireweaver, Ingenious Artillerist and Weftstalker Ardent. It drains when it is sacrificed, through Marionette Apprentice, Marionette Master, Disciple of the Vault, Mirkwood Bats and Mayhem Devil. Xorn and Academy Manufactor multiply the entering half, so the damage curve is steeply nonlinear rather than incremental.\n\nLayer two is the deterministic loop. Pitiless Plunderer plus Ashnod's Altar plus Reassembling Skeleton produces infinite colorless mana and infinite death triggers. Five different payoffs already in the deck convert that loop into a kill, so no single removal spell stops it.\n\nLayer three is the alternate win. Revel in Riches wins at ten Treasures. Hellkite Tyrant wins at twenty artifacts, and Mycosynth Lattice makes every land an artifact, so the twenty-artifact check becomes trivial once both are on the battlefield.\n\nThe cost of Smaug's trigger is real, and the deck pays it with no repeatable life gain. Ten Treasure-cast spells cost ten life, and the trigger is not optional. Warren Soultrader, Black Market Connections, Grim Tutor, Reanimate, Infernal Grasp, Feed the Swarm and six painful lands all charge life on top. Exsanguinate, High Market and Oni-Cult Anvil are the only three cards that give life back. The usual aristocrats life buffer is unavailable here on purpose: Blood Artist, Zulaport Cutthroat and Bastion of Remembrance all trigger on creature death only and never fire on a sacrificed Treasure. The deck therefore plays as a short-clock deck. It must convert its board before its own life total becomes the shortest one at the table."
+    "strategyOverview": "Smaug, Wicked Worm turns Treasures into cards. Its second ability reads \"Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.\" The trigger fires once per spell, not once per Treasure. That single fact sets the whole build: the deck wants many cheap spells, not a few expensive ones. The average mana value of the 61 nonland cards is 2.89.\n\nSmaug draws cards. It does not win. This deck supplies the kill in three layers.\n\nLayer one is incidental damage. A Treasure pays twice in this list. It deals damage when it enters, through Reckless Fireweaver, Ingenious Artillerist and Weftstalker Ardent. It drains when it is sacrificed, through Marionette Apprentice, Marionette Master, Disciple of the Vault, Mirkwood Bats and Mayhem Devil. Xorn and Academy Manufactor multiply the entering half, so the damage curve is steeply nonlinear rather than incremental.\n\nLayer two is the deterministic loop. Pitiless Plunderer plus Ashnod's Altar plus Reassembling Skeleton produces infinite colorless mana and infinite death triggers. Five different payoffs already in the deck convert that loop into a kill, so no single removal spell stops it.\n\nLayer three is the alternate win. Revel in Riches wins at ten Treasures. Hellkite Tyrant wins at twenty artifacts, and Mycosynth Lattice makes every land an artifact, so the twenty-artifact check becomes trivial once both are on the battlefield.\n\nThe cost of Smaug's trigger is real, and the deck pays it with no repeatable life gain. Ten Treasure-cast spells cost ten life, and the trigger is not optional. Warren Soultrader, Black Market Connections, Grim Tutor, Reanimate, Withering Torment, Feed the Swarm and six painful lands all charge life on top. Exsanguinate, High Market and Oni-Cult Anvil are the only three cards that give life back. The usual aristocrats life buffer is unavailable here on purpose: Blood Artist, Zulaport Cutthroat and Bastion of Remembrance all trigger on creature death only and never fire on a sacrificed Treasure. The deck therefore plays as a short-clock deck. It must convert its board before its own life total becomes the shortest one at the table."
   },
   "categories": [
     {
@@ -183,11 +188,11 @@
     },
     {
       "name": "Interaction",
-      "description": "Eight spot answers plus Vandalblast and three sweepers. Deadly Rollick and Deflecting Swat are the free spells that Bracket 4 asks for in black and red. Feed the Swarm and Chaos Warp are the only two answers to an enchantment, which matters because Stony Silence shuts off every Treasure we make. Abrade, Chaos Warp and Vandalblast are the three answers to an artifact, which is what a resolved Grafdigger's Cage or Torpor Orb needs. Vandalblast answers an artifact for one mana and wipes every artifact we do not control for {4}{R}. Chaos Warp is the only card here that answers a planeswalker, so hold it for one rather than spending it on a creature.",
+      "description": "Eight spot answers plus Vandalblast and three sweepers. Deadly Rollick and Deflecting Swat are the free spells that Bracket 4 asks for in black and red. Withering Torment, Feed the Swarm and Chaos Warp are the three answers to an enchantment, which matters because Rest in Peace turns off Reassembling Skeleton, Bloodghast and Reanimate at once, and because Stony Silence shuts off every Treasure we make. Abrade, Chaos Warp and Vandalblast are the three answers to an artifact, which is what a resolved Grafdigger's Cage or Torpor Orb needs. Vandalblast answers an artifact for one mana and wipes every artifact we do not control for {4}{R}. Chaos Warp is the only card here that answers a planeswalker, so hold it for one rather than spending it on a creature.",
       "cards": [
         "Deadly Rollick",
         "Deflecting Swat",
-        "Infernal Grasp",
+        "Withering Torment",
         "Fatal Push",
         "Abrade",
         "Chaos Warp",
@@ -849,7 +854,7 @@
       "secondary_role": "removal-spot"
     },
     {
-      "name": "Infernal Grasp",
+      "name": "Withering Torment",
       "type": "Instant",
       "primary_role": "removal-spot"
     },
