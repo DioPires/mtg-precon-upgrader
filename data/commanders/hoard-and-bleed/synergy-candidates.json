@@ -6,7 +6,7 @@
     "cycles": 30,
     "cyclesTotal": 4578,
     "pairs": 80,
-    "pairsTotal": 511,
+    "pairsTotal": 542,
     "triples": 40,
     "triplesTotal": 414,
     "uncovered": 0
@@ -692,6 +692,84 @@
       "cards": [
         "Goldspan Dragon",
         "Professional Face-Breaker",
+        "Unexpected Windfall",
+        "Xorn"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Unexpected Windfall",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Unexpected Windfall",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Xorn",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Xorn",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Unexpected Windfall",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Unexpected Windfall",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Xorn",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Xorn",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goldspan Dragon",
+        "Professional Face-Breaker",
         "Rain of Riches",
         "Xorn"
       ],
@@ -772,84 +850,6 @@
           "magnitude": 1,
           "to": "Rain of Riches",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goldspan Dragon",
-        "Professional Face-Breaker",
-        "Unexpected Windfall",
-        "Xorn"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Unexpected Windfall",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Unexpected Windfall",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Xorn",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Xorn",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Unexpected Windfall",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Unexpected Windfall",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Xorn",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Xorn",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -1414,6 +1414,85 @@
     {
       "band": "strong",
       "cards": [
+        "Black Market Connections",
+        "Deadly Dispute",
+        "Goldspan Dragon",
+        "Professional Face-Breaker"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Black Market Connections",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Black Market Connections",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Deadly Dispute",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Deadly Dispute",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Black Market Connections",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Black Market Connections",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Deadly Dispute",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Deadly Dispute",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Academy Manufactor",
         "Goldspan Dragon",
         "Rain of Riches",
@@ -1488,85 +1567,6 @@
           "magnitude": 1,
           "to": "Rain of Riches",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Black Market Connections",
-        "Deadly Dispute",
-        "Goldspan Dragon",
-        "Professional Face-Breaker"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Black Market Connections",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Black Market Connections",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Deadly Dispute",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Deadly Dispute",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Black Market Connections",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Black Market Connections",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Deadly Dispute",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Deadly Dispute",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -2537,7 +2537,7 @@
     "crowdPriorApplied": true,
     "deckId": "hoard-and-bleed",
     "deepFocused": true,
-    "generatedAt": "2026-08-21T08:03:10.388392+00:00",
+    "generatedAt": "2026-08-21T08:58:31.753892+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -2641,34 +2641,6 @@
       "band": "strong",
       "cards": [
         "Goldspan Dragon",
-        "Mirkwood Bats"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Mirkwood Bats",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Mirkwood Bats",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goldspan Dragon",
         "Unexpected Windfall"
       ],
       "economies": [
@@ -2689,6 +2661,34 @@
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 2,
           "to": "Unexpected Windfall",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goldspan Dragon",
+        "Mirkwood Bats"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Mirkwood Bats",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Mirkwood Bats",
           "toFeature": "token_create"
         }
       ]
@@ -2873,6 +2873,34 @@
     {
       "band": "strong",
       "cards": [
+        "Professional Face-Breaker",
+        "Unexpected Windfall"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Unexpected Windfall",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Unexpected Windfall",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Goldspan Dragon",
         "Revel in Riches"
       ],
@@ -2910,34 +2938,6 @@
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
           "to": "Revel in Riches",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Professional Face-Breaker",
-        "Unexpected Windfall"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Unexpected Windfall",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Unexpected Windfall",
           "toFeature": "token_create"
         }
       ]
@@ -3057,6 +3057,34 @@
     {
       "band": "strong",
       "cards": [
+        "Deadly Dispute",
+        "Professional Face-Breaker"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Deadly Dispute",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Deadly Dispute",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Black Market Connections",
         "Goldspan Dragon"
       ],
@@ -3080,34 +3108,6 @@
           "magnitude": 1,
           "to": "Goldspan Dragon",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Deadly Dispute",
-        "Professional Face-Breaker"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Deadly Dispute",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Deadly Dispute",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -3170,28 +3170,20 @@
     {
       "band": "strong",
       "cards": [
-        "Goldspan Dragon",
-        "The Misty Mountains Cold"
+        "Blasphemous Act",
+        "Mount Doom"
       ],
       "economies": [
-        "sacrifice"
+        "damage"
       ],
       "edges": [
         {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "The Misty Mountains Cold",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "The Misty Mountains Cold",
-          "toFeature": "token_create"
+          "from": "Mount Doom",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Deals damage",
+          "magnitude": 13,
+          "to": "Blasphemous Act",
+          "toFeature": "damage"
         }
       ]
     },
@@ -3227,26 +3219,6 @@
     {
       "band": "strong",
       "cards": [
-        "Blasphemous Act",
-        "Mount Doom"
-      ],
-      "economies": [
-        "damage"
-      ],
-      "edges": [
-        {
-          "from": "Mount Doom",
-          "fromFeature": "ping_outlet",
-          "label": "Repeatable damage outlet ↔ Deals damage",
-          "magnitude": 13,
-          "to": "Blasphemous Act",
-          "toFeature": "damage"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Bojuka Bog",
         "Rain of Riches"
       ],
@@ -3260,6 +3232,26 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 2,
           "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Big Score",
+        "Rain of Riches"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Big Score",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 2,
+          "to": "Rain of Riches",
           "toFeature": "etb_trigger"
         }
       ]
@@ -3295,20 +3287,20 @@
     {
       "band": "strong",
       "cards": [
-        "Big Score",
+        "Mines of Moria",
         "Rain of Riches"
       ],
       "economies": [
-        "token"
+        "etb"
       ],
       "edges": [
         {
-          "from": "Big Score",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
+          "from": "Rain of Riches",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
           "magnitude": 2,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
+          "to": "Mines of Moria",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -3373,20 +3365,20 @@
     {
       "band": "strong",
       "cards": [
-        "Mines of Moria",
-        "Rain of Riches"
+        "Rain of Riches",
+        "Unexpected Windfall"
       ],
       "economies": [
-        "etb"
+        "token"
       ],
       "edges": [
         {
-          "from": "Rain of Riches",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
+          "from": "Unexpected Windfall",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 2,
-          "to": "Mines of Moria",
-          "toFeature": "token_create"
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -3415,26 +3407,6 @@
           "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
           "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Rain of Riches",
-        "Unexpected Windfall"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Unexpected Windfall",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Rain of Riches",
           "toFeature": "etb_trigger"
         }
       ]
@@ -3810,6 +3782,34 @@
     {
       "band": "strong",
       "cards": [
+        "Black Market Connections",
+        "Professional Face-Breaker"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Black Market Connections",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Black Market Connections",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Goldspan Dragon",
         "Spiteful Banditry"
       ],
@@ -3841,34 +3841,6 @@
           "magnitude": 1,
           "to": "Spiteful Banditry",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Black Market Connections",
-        "Professional Face-Breaker"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Black Market Connections",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Black Market Connections",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -3956,34 +3928,6 @@
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
           "to": "The Sackville-Bagginses",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Professional Face-Breaker",
-        "The Misty Mountains Cold"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "The Misty Mountains Cold",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "The Misty Mountains Cold",
           "toFeature": "token_create"
         }
       ]
@@ -4224,6 +4168,34 @@
     {
       "band": "strong",
       "cards": [
+        "Goldspan Dragon",
+        "Storm-Kiln Artist"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Storm-Kiln Artist",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Storm-Kiln Artist",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Academy Manufactor",
         "Weftstalker Ardent"
       ],
@@ -4281,26 +4253,6 @@
     },
     {
       "band": "strong",
-      "cards": [
-        "Bojuka Bog",
-        "The Misty Mountains Cold"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "The Misty Mountains Cold",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
       "cards": [
         "Krark-Clan Ironworks",
         "Mines of Moria"
@@ -4370,26 +4322,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Bojuka Bog",
-        "Marionette Apprentice"
-      ],
-      "economies": [
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Marionette Apprentice",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Professional Face-Breaker",
         "Spiteful Banditry"
       ],
@@ -4420,6 +4352,26 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
           "to": "Spiteful Banditry",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bojuka Bog",
+        "Marionette Apprentice"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Marionette Apprentice",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
           "toFeature": "etb_trigger"
         }
       ]
@@ -4601,26 +4553,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Professional Face-Breaker",
-        "Reckless Fireweaver"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Black Market Connections",
         "Bojuka Bog"
       ],
@@ -4634,6 +4566,66 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
           "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bojuka Bog",
+        "Deadly Dispute"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Deadly Dispute",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bojuka Bog",
+        "The Sackville-Bagginses"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "The Sackville-Bagginses",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Professional Face-Breaker",
+        "Reckless Fireweaver"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
           "toFeature": "etb_trigger"
         }
       ]
@@ -6294,189 +6286,6 @@
       "band": "strong",
       "cards": [
         "Goldspan Dragon",
-        "Lotus Petal",
-        "Professional Face-Breaker"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Lotus Petal",
-        "Professional Face-Breaker",
-        "The Misty Mountains Cold"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "The Misty Mountains Cold",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "The Misty Mountains Cold",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "The Misty Mountains Cold",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "The Misty Mountains Cold",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Lotus Petal",
-        "Professional Face-Breaker",
-        "Treasure Vault"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Treasure Vault",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Treasure Vault",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Treasure Vault",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Treasure Vault",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goldspan Dragon",
         "Mines of Moria",
         "Warren Soultrader"
       ],
@@ -6836,6 +6645,128 @@
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 2,
           "to": "Mines of Moria",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goldspan Dragon",
+        "Lotus Petal",
+        "Professional Face-Breaker"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Professional Face-Breaker",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Professional Face-Breaker",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Lotus Petal",
+        "Professional Face-Breaker",
+        "Treasure Vault"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Professional Face-Breaker",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Professional Face-Breaker",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Treasure Vault",
           "toFeature": "token_create"
         }
       ]
@@ -7324,6 +7255,67 @@
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
           "to": "Warren Soultrader",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Lotus Petal",
+        "Treasure Vault",
+        "Warren Soultrader"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Warren Soultrader",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Warren Soultrader",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Treasure Vault",
           "toFeature": "token_create"
         }
       ]

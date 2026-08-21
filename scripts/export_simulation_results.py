@@ -315,8 +315,7 @@ KEY_COMBOS = {
                 # (in {C}{C}{B}, out {1}{B}) and Treasures pay the {B}{B}.
                 [
                     "Marionette Apprentice", "Marionette Master", "Mayhem Devil",
-                    "Mirkwood Bats", "Disciple of the Vault", "Reckless Fireweaver",
-                    "Ingenious Artillerist", "Weftstalker Ardent",
+                    "Mirkwood Bats", "Reckless Fireweaver", "Weftstalker Ardent",
                     "The Sackville-Bagginses", "Exsanguinate",
                 ],
             ],
@@ -340,8 +339,7 @@ KEY_COMBOS = {
                 # deliberately absent from this slot.
                 [
                     "Marionette Apprentice", "Marionette Master", "Mayhem Devil",
-                    "Disciple of the Vault", "Reckless Fireweaver",
-                    "Ingenious Artillerist", "Weftstalker Ardent",
+                    "Reckless Fireweaver", "Weftstalker Ardent",
                 ],
             ],
             "requiresCommander": False,
