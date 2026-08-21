@@ -80,10 +80,15 @@
       "type": "other",
       "name": "Board round-7 swap approval and wincon retag, DEC-543, 2026-08-21",
       "detail": "Round 7, interaction edf19f77. Board chose option wt_grasp: IN Withering Torment, OUT Infernal Grasp. Both are instants that destroy a creature and cost the caster 2 life; Withering Torment costs one more mana and adds an enchantment mode. That takes enchantment answers from two to three, which matters because Rest in Peace alone stops Reassembling Skeleton, Bloodghast and Reanimate. The spot-answer count stays at eight. Board also chose option retag on wincon_style. The deck-level tag moves from combo to drain. Basis: the goldfish simulation puts the damage proxy at 46.9 percent by turn 7 against 5.1 percent for combo lethal, so incremental life loss is the dominant plan and the combo is the ceiling, not the clock. The retag is not cosmetic. It raises the resilience recursion target from 2 to 3 (RESILIENCE_RECURSION_TARGETS, combo versus drain at bracket 4), which cuts resilience_health from 94 to 84, global_health from 96 to 95, and opens one recursion gap at 2.0 of 3. The win-turn triple does not move: multi-kind detection already drove it off max(comboLethal, lethalProxy) under both tags."
+    },
+    {
+      "type": "other",
+      "name": "Board round-9 swap approval, DEC-543, 2026-08-21",
+      "detail": "Round 9, interaction ea6626b2, question swap1, option accept. IN Idol of Oblivion, OUT Revel in Riches. Card draw was the weakest role at 7.0 against a target of 10. Idol reads \"{T}: Draw a card. Activate only if you created a token this turn\", so it draws for no mana in a deck that creates a token on almost every turn; it is also an artifact, so it triggers Reckless Fireweaver and Weftstalker Ardent on entry, feeds Ashnod's Altar and Krark-Clan Ironworks, and counts toward Hellkite Tyrant's twenty. Revel in Riches leaves for two reasons. Its Treasure clause reads \"whenever a creature an opponent controls dies\", so this deck's own sacrifices never trigger it. Its win clause asks us to hold ten Treasures through our upkeep, which competes with every kill line for the same Treasures. The deck keeps four win lines; the Alternate line now runs on Hellkite Tyrant alone. The board also rejected a land cut in the same interaction (question landcut, option no_land_cut): 38 lands plus two MDFCs give 39.1 effective lands against a 39.4 target, and dropping to 38.1 crosses a band edge and cuts the land-count component from 15.0 to 7.5. Board deferred Treasure Map and rejected The Gold Saucer."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Smaug, Wicked Worm turns Treasures into cards. Its second ability reads \"Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.\" The trigger fires once per spell, not once per Treasure. That single fact sets the whole build: the deck wants many cheap spells, not a few expensive ones. The average mana value of the 59 nonland cards is 2.92.\n\nSmaug draws cards. It does not win. This deck supplies the kill in three layers.\n\nLayer one is incidental damage. A Treasure pays twice in this list. It deals damage when it enters, through Reckless Fireweaver and Weftstalker Ardent. It drains when it is sacrificed, through Marionette Apprentice, Marionette Master, Mirkwood Bats and Mayhem Devil. Xorn and Academy Manufactor multiply the entering half, so the damage curve is steeply nonlinear rather than incremental.\n\nLayer two is the deterministic loop. Pitiless Plunderer plus Ashnod's Altar plus Reassembling Skeleton produces infinite colorless mana and infinite death triggers. Four different payoffs already in the deck convert that loop into a kill, so no single removal spell stops it.\n\nLayer three is the alternate win. Revel in Riches wins at ten Treasures. Hellkite Tyrant wins at twenty artifacts at our upkeep, and Mycosynth Lattice makes every permanent an artifact, so the check counts our whole board once both are on the battlefield.\n\nThe cost of Smaug's trigger is real, and one card reverses it. Smaug charges one life per Treasure-cast spell and the trigger is not optional. Warren Soultrader, Black Market Connections, Grim Tutor, Reanimate, Withering Torment, Feed the Swarm, Phyrexian Reclamation and six painful lands all charge life on top. The usual aristocrats life buffer is unavailable here on purpose: Blood Artist, Zulaport Cutthroat and Bastion of Remembrance all trigger on creature death only and never fire on a sacrificed Treasure, which is what this deck actually sacrifices. Sheoldred, the Apocalypse is the answer this color pair does allow. She reads \"Whenever you draw a card, you gain 2 life\", and Smaug's trigger is a draw, so every Treasure-cast spell swings from minus one life to plus one. Without her, Exsanguinate, High Market and Oni-Cult Anvil are the only cards that give life back and none is cheap or repeatable, so the deck plays as a short-clock deck that must convert its board before its own life total becomes the shortest at the table. With her, the same list can grind."
+    "strategyOverview": "Smaug, Wicked Worm turns Treasures into cards. Its second ability reads \"Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.\" The trigger fires once per spell, not once per Treasure. That single fact sets the whole build: the deck wants many cheap spells, not a few expensive ones. The average mana value of the 59 nonland cards is 2.92.\n\nSmaug draws cards. It does not win. This deck supplies the kill in three layers.\n\nLayer one is incidental damage. A Treasure pays twice in this list. It deals damage when it enters, through Reckless Fireweaver and Weftstalker Ardent. It drains when it is sacrificed, through Marionette Apprentice, Marionette Master, Mirkwood Bats and Mayhem Devil. Xorn and Academy Manufactor multiply the entering half, so the damage curve is steeply nonlinear rather than incremental.\n\nLayer two is the deterministic loop. Pitiless Plunderer plus Ashnod's Altar plus Reassembling Skeleton produces infinite colorless mana and infinite death triggers. Four different payoffs already in the deck convert that loop into a kill, so no single removal spell stops it.\n\nLayer three is the alternate win. Hellkite Tyrant wins at twenty artifacts at our upkeep, and Mycosynth Lattice makes every permanent an artifact, so the check counts our whole board once both are on the battlefield.\n\nThe cost of Smaug's trigger is real, and one card reverses it. Smaug charges one life per Treasure-cast spell and the trigger is not optional. Warren Soultrader, Black Market Connections, Grim Tutor, Reanimate, Withering Torment, Feed the Swarm, Phyrexian Reclamation and six painful lands all charge life on top. The usual aristocrats life buffer is unavailable here on purpose: Blood Artist, Zulaport Cutthroat and Bastion of Remembrance all trigger on creature death only and never fire on a sacrificed Treasure, which is what this deck actually sacrifices. Sheoldred, the Apocalypse is the answer this color pair does allow. She reads \"Whenever you draw a card, you gain 2 life\", and Smaug's trigger is a draw, so every Treasure-cast spell swings from minus one life to plus one. Without her, Exsanguinate, High Market and Oni-Cult Anvil are the only cards that give life back and none is cheap or repeatable, so the deck plays as a short-clock deck that must convert its board before its own life total becomes the shortest at the table. With her, the same list can grind."
   },
   "categories": [
     {
@@ -166,10 +171,11 @@
     },
     {
       "name": "Card Advantage",
-      "description": "Draw that does not depend on Smaug being on the battlefield, plus the card that makes Smaug's draw free. Skullclamp is the engine here: equip it to Reassembling Skeleton for {1}, the Skeleton dies, we draw two, and it returns from the graveyard for {1}{B}. That is three mana for two cards, repeatable, and Pitiless Plunderer turns each of those deaths into a Treasure. Sheoldred, the Apocalypse reads \"Whenever you draw a card, you gain 2 life\", so it cancels the life Smaug charges and leaves one life over on every Treasure-cast spell.",
+      "description": "Draw that does not depend on Smaug being on the battlefield, plus the card that makes Smaug's draw free. Skullclamp is the engine here: equip it to Reassembling Skeleton for {1}, the Skeleton dies, we draw two, and it returns from the graveyard for {1}{B}. That is three mana for two cards, repeatable, and Pitiless Plunderer turns each of those deaths into a Treasure. Sheoldred, the Apocalypse reads \"Whenever you draw a card, you gain 2 life\", so it cancels the life Smaug charges and leaves one life over on every Treasure-cast spell. Idol of Oblivion draws for no mana at all: it reads \"{T}: Draw a card. Activate only if you created a token this turn\", and the deck creates a token on almost every turn it does anything.",
       "cards": [
         "Braids, Arisen Nightmare",
         "Night's Whisper",
+        "Idol of Oblivion",
         "Skullclamp",
         "Black Market Connections",
         "Sheoldred, the Apocalypse"
@@ -281,17 +287,16 @@
       "description": "One Treasure instruction with Xorn and Academy Manufactor both on the battlefield creates six tokens. Ordering matters: apply Xorn first, so one Treasure becomes two, then Academy Manufactor turns that into two Clues, two Foods and two Treasures. CR 616.1 lets us choose that order. All six are artifacts. With Reckless Fireweaver and Weftstalker Ardent also out, each fires six times for one, so that is twelve damage to each opponent. Mirkwood Bats adds six more as life loss, not damage, because it reads \"Whenever you create or sacrifice a token, each opponent loses 1 life.\" Eighteen life leaves each opponent in total. State the basis plainly: that number needs five specific permanents. With only Fireweaver and Bats it is two to each opponent. This line is nonlinear, not incremental."
     },
     {
-      "title": "Alternate win — Revel in Riches or Hellkite Tyrant",
+      "title": "Alternate win — Hellkite Tyrant",
       "kind": "alternate",
       "cards": [
-        "Revel in Riches",
         "Hellkite Tyrant",
         "Mycosynth Lattice",
         "Treasure Vault",
         "Xorn",
         "Academy Manufactor"
       ],
-      "description": "Revel in Riches wins at the beginning of our upkeep with ten or more Treasures. Treasure Vault, Xorn and Academy Manufactor make that count reachable in one turn. Hellkite Tyrant wins at the beginning of our upkeep with twenty or more artifacts. Mycosynth Lattice makes every permanent an artifact, so the check counts our whole board, not just our artifacts: with ten lands, Lattice, Hellkite and a few creatures we are close, and one Treasure instruction under Xorn and Academy Manufactor covers the rest. Both checks happen at our upkeep, which gives the table a full turn cycle to answer them. Treat them as backup, not as the plan."
+      "description": "Hellkite Tyrant wins at the beginning of our upkeep with twenty or more artifacts. Mycosynth Lattice makes every permanent an artifact, so the check counts our whole board, not just our artifacts: with ten lands, Lattice, Hellkite and a few creatures we are close, and one Treasure instruction under Xorn and Academy Manufactor covers the rest. Treasure Vault refills that count in one activation. The check happens at our upkeep, which gives the table a full turn cycle to answer it. Treat it as backup, not as the plan."
     },
     {
       "title": "Exsanguinate off infinite mana",
@@ -849,10 +854,9 @@
       "wincon_style": "alt"
     },
     {
-      "name": "Revel in Riches",
-      "type": "Enchantment",
-      "primary_role": "wincon",
-      "wincon_style": "alt"
+      "name": "Idol of Oblivion",
+      "type": "Artifact",
+      "primary_role": "card-draw"
     },
     {
       "name": "Exsanguinate",
@@ -1141,6 +1145,19 @@
       ]
     },
     {
+      "name": "Eldrazi",
+      "type_line": "Token Creature — Eldrazi",
+      "oracle_text": "",
+      "power": "10",
+      "toughness": "10",
+      "colors": [],
+      "scryfall_id": "ce6d2786-ef9c-4772-bb71-697131c3c3a4",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/e/ce6d2786-ef9c-4772-bb71-697131c3c3a4.jpg?1783906809",
+      "produced_by": [
+        "Idol of Oblivion"
+      ]
+    },
+    {
       "name": "Fish",
       "type_line": "Token Creature — Fish",
       "oracle_text": "",
@@ -1230,7 +1247,6 @@
         "Pitiless Plunderer",
         "Professional Face-Breaker",
         "Rain of Riches",
-        "Revel in Riches",
         "Smaug, Wicked Worm",
         "Spiteful Banditry",
         "Storm-Kiln Artist",
