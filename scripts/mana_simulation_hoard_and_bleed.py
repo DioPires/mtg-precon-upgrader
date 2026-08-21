@@ -146,6 +146,7 @@ R_PRODUCING_LANDS = FLEXIBLE_LANDS | {
 # Colorless-only utility lands.
 C_ONLY_LANDS = {
     "High Market", "Fountainport", "Treasure Vault", "The Mycosynth Gardens",
+    "Volatile Fault",
 }
 
 # Lands that always enter tapped in this model.

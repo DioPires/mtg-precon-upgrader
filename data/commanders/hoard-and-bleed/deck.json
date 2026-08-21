@@ -85,6 +85,11 @@
       "type": "other",
       "name": "Board round-9 swap approval, DEC-543, 2026-08-21",
       "detail": "Round 9, interaction ea6626b2, question swap1, option accept. IN Idol of Oblivion, OUT Revel in Riches. Card draw was the weakest role at 7.0 against a target of 10. Idol reads \"{T}: Draw a card. Activate only if you created a token this turn\", so it draws for no mana in a deck that creates a token on almost every turn; it is also an artifact, so it triggers Reckless Fireweaver and Weftstalker Ardent on entry, feeds Ashnod's Altar and Krark-Clan Ironworks, and counts toward Hellkite Tyrant's twenty. Revel in Riches leaves for two reasons. Its Treasure clause reads \"whenever a creature an opponent controls dies\", so this deck's own sacrifices never trigger it. Its win clause asks us to hold ten Treasures through our upkeep, which competes with every kill line for the same Treasures. The deck keeps four win lines; the Alternate line now runs on Hellkite Tyrant alone. The board also rejected a land cut in the same interaction (question landcut, option no_land_cut): 38 lands plus two MDFCs give 39.1 effective lands against a 39.4 target, and dropping to 38.1 crosses a band edge and cuts the land-count component from 15.0 to 7.5. Board deferred Treasure Map and rejected The Gold Saucer."
+    },
+    {
+      "type": "other",
+      "name": "Board round-9 land swap approval, DEC-543, 2026-08-21",
+      "detail": "Round 9 part two, interaction 903ac10a, question volatile_fault, option cut_swamp. IN Volatile Fault, OUT one basic Swamp. The board asked for an option that keeps Bojuka Bog, and this is it. Correction on the record: the manabase point quoted earlier came from cutting Bojuka Bog, not from adding Volatile Fault, because the Bog is the deck's only real land that always enters tapped. Keeping the Bog means manabase health stays at 91 under every cut tested. A basic Swamp is the cheapest cut available: it costs one black source and nothing else, while cutting any dual costs a black source and a red source, and cutting Great Furnace or Vault of Whispers also costs an artifact that triggers Reckless Fireweaver and Weftstalker Ardent and feeds Krark-Clan Ironworks. Black sources fall from 28.1 to 27.1 against a Karsten requirement of 18, leaving 9.1 sources of headroom. Land count stays at 39.1 effective against a 39.4 target, so the land-count component keeps its full 15.0. Basics go from six Swamp and six Mountain to five and six; Bloodstained Mire, Prismatic Vista and Fabled Passage still have 11 basic targets. Honest cost on the record: Volatile Fault produces colorless mana only, so colorless-only lands go from three to four out of 40 land cards, against 39 black pips and 25 red pips. The board rejected two options in the same question: cut_bog, which gives up the deck's only graveyard answer, and spellbomb, which scores highest at global 97 but pays for it with Oni-Cult Anvil."
     }
   ],
   "guideContent": {
@@ -223,7 +228,7 @@
     },
     {
       "name": "Mana Base",
-      "description": "Thirty-eight lands. Great Furnace and Vault of Whispers are artifact lands, so they trigger the artifacts-entering payoffs and count toward Hellkite Tyrant. High Market is a free sacrifice outlet on a land. Fountainport makes a Treasure for {4} and turns a spare token into a card for {2}, both without using the stack for a spell. Mines of Moria enters untapped whenever Smaug or another legendary creature is out. The Mycosynth Gardens enters untapped, and for {X} and a tap it becomes a copy of a nontoken artifact we control with mana value X. Copying Academy Manufactor for {3} is the reason it is here; two Manufactors turn one Treasure instruction into three Clues, three Foods and three Treasures.",
+      "description": "Thirty-eight lands. Great Furnace and Vault of Whispers are artifact lands, so they trigger the artifacts-entering payoffs and count toward Hellkite Tyrant. High Market is a free sacrifice outlet on a land. Volatile Fault reads \"{1}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That player may search their library for a basic land card, put it onto the battlefield, then shuffle. You create a Treasure token.\" It is the deck's only answer to Ancient Tomb, Cabal Coffers, Urza's Saga and Gaea's Cradle, and the Treasure it leaves behind feeds Smaug's draw trigger. Fountainport makes a Treasure for {4} and turns a spare token into a card for {2}, both without using the stack for a spell. Mines of Moria enters untapped whenever Smaug or another legendary creature is out. The Mycosynth Gardens enters untapped, and for {X} and a tap it becomes a copy of a nontoken artifact we control with mana value X. Copying Academy Manufactor for {3} is the reason it is here; two Manufactors turn one Treasure instruction into three Clues, three Foods and three Treasures.",
       "cards": [
         "Command Tower",
         "Blood Crypt",
@@ -250,7 +255,8 @@
         "Treasure Vault",
         "Mount Doom",
         "Reflecting Pool",
-        "Mines of Moria"
+        "Mines of Moria",
+        "Volatile Fault"
       ]
     }
   ],
@@ -1088,10 +1094,16 @@
       "secondary_role": "engine"
     },
     {
+      "name": "Volatile Fault",
+      "type": "Land — Cave",
+      "primary_role": "land",
+      "secondary_role": "utility"
+    },
+    {
       "name": "Swamp",
       "type": "Basic Land — Swamp",
       "primary_role": "land",
-      "quantity": 6
+      "quantity": 5
     },
     {
       "name": "Mountain",
@@ -1253,6 +1265,7 @@
         "The Sackville-Bagginses",
         "Treasure Vault",
         "Unexpected Windfall",
+        "Volatile Fault",
         "Warren Soultrader",
         "Xorn"
       ]
