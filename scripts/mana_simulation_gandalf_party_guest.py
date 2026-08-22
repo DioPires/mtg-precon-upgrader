@@ -95,9 +95,25 @@ BASIC_LANDS = {"Island", "Mountain", "Plains"}
 # marker pays generic always and upgrades to any color for legendary casts.
 PLAZA_ATOM = frozenset({"C", "L"})
 
+# MDFC pay-life lands (DEC-547): creature front // land back, "pay 3 life or
+# enters tapped". Modeled per the tidal-legion v1.7 (DEC-471) pattern: in the
+# land pool at lowest play priority (the spell face stays live in
+# can_cast_from_hand), untapped while the mana base is developing (fewer than
+# PAY_LIFE_DEV_LANDS lands down), tapped after. Life is not tracked in this
+# sim; with no incoming damage from 40, the real-game life floor never binds.
+MDFC_PAY_LIFE_LANDS = {
+    "Hydroelectric Specimen // Hydroelectric Laboratory",  # back: {T}: Add {U}
+    "Pinnacle Monk // Mystic Peak",                        # back: {T}: Add {R}
+}
+PAY_LIFE_DEV_LANDS = 6
+
 
 def land_enters_tapped(name: str, battlefield_lands: list[str], turn: int) -> bool:
     """Determine if a land enters tapped given current board and turn number."""
+    # MDFC pay-life land: untapped iff the pilot pays 3 life, which they do
+    # while still developing the mana base.
+    if name in MDFC_PAY_LIFE_LANDS:
+        return len(battlefield_lands) >= PAY_LIFE_DEV_LANDS
     # "Tapped unless your opponents control eight or more lands" — 4-player
     # model: 3 opponents make ~3 land drops per turn cycle, so untapped from T4.
     if name in {"Turbulent Springs", "Turbulent Steppe"}:
@@ -145,6 +161,12 @@ def compute_land_sources(name: str, battlefield_lands: list[str],
     if name == "Island":
         return [frozenset({"U"})]
     if name == "Mountain":
+        return [frozenset({"R"})]
+
+    # MDFC pay-life lands: mono-color land backs
+    if name == "Hydroelectric Specimen // Hydroelectric Laboratory":
+        return [frozenset({"U"})]
+    if name == "Pinnacle Monk // Mystic Peak":
         return [frozenset({"R"})]
     if name == "Plains":
         return [frozenset({"W"})]
@@ -311,7 +333,8 @@ def classify_cards(decklist: list[str], metadata: dict) -> dict:
             classified["rocks"].append(name)
         else:
             meta = metadata.get(name, {})
-            if "Land" in front_face_type_line(meta):
+            if ("Land" in front_face_type_line(meta)
+                    or name in MDFC_PAY_LIFE_LANDS):
                 classified["lands"].append(name)
             else:
                 classified["spells"].append(name)
@@ -371,6 +394,10 @@ class GameState:
 
     def _land_play_priority(self, name: str, turn: int) -> float:
         """Higher = play first. Untapped > tapped. Color-fixing > mono."""
+        # MDFC pay-life lands: lowest priority — only the land drop of last
+        # resort, keeping the spell face live (tidal-legion v1.7 pattern).
+        if name in MDFC_PAY_LIFE_LANDS:
+            return -1
         tapped = land_enters_tapped(name, self.battlefield_lands, turn)
         base = 0 if tapped else 10
 
@@ -534,7 +561,10 @@ def can_cast_from_hand(state: GameState, pool: ManaPool) -> list[str]:
     """Return list of castable non-rock spells from hand."""
     castable = []
     for card in state.hand:
-        if card in ROCK_DEFS or card in state.land_set:
+        # MDFC pay-life lands stay castable on their spell face (front-face
+        # mana_cost in metadata) even though they also sit in land_set.
+        if card in ROCK_DEFS or (card in state.land_set
+                                 and card not in MDFC_PAY_LIFE_LANDS):
             continue
         meta = state.metadata.get(card, {})
         mc = meta.get("mana_cost", "")
@@ -681,7 +711,8 @@ def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAM
     land_set = set()
     for name in set(decklist):
         meta = metadata.get(name, {})
-        if "Land" in front_face_type_line(meta):
+        if ("Land" in front_face_type_line(meta)
+                or name in MDFC_PAY_LIFE_LANDS):
             land_set.add(name)
 
     mana_by_turn = {t: [] for t in range(1, NUM_TURNS + 1)}
