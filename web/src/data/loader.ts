@@ -176,7 +176,9 @@ import type { DeckTierBLoops } from './tierB';
 // Hydroelectric Specimen, 1 Mountain -> Pinnacle Monk (MDFC pay-life lands).
 // v121 -> v122 (DEC-547 2026-08-22): gandalf-party-guest round 7 — Harmonized
 // Crescendo -> Austere Command, Magma Opus -> Narset's Reversal.
-const STORAGE_PREFIX = 'gv1-deck-data-v122:';
+// v122 -> v123 (DEC-548 2026-08-22): hoard-and-bleed round 10 — Night's Whisper ->
+// Bolas's Citadel (first GC), Lotus Petal -> Fake Your Own Death.
+const STORAGE_PREFIX = 'gv1-deck-data-v123:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
