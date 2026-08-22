@@ -46,6 +46,7 @@ import mana_simulation_tidal_legion as sim_tidal_legion
 import mana_simulation_armory_protocol as sim_armory_protocol
 import mana_simulation_shield_doctrine as sim_shield_doctrine
 import mana_simulation_gandalf_party_guest as sim_gandalf
+import mana_simulation_broodfire_hatchery as sim_broodfire_hatchery
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -392,6 +393,58 @@ KEY_COMBOS = {
             "description": "Recruiter stacks Kiki-Jiki on top; Snoop gains Kiki's ability "
                            "and copies itself infinitely — Tremors/Bombardment convert "
                            "tokens to damage.",
+        },
+    ],
+    # broodfire-hatchery (DEC-544/DEC-550): slot spec authored by the CEO. Atla
+    # Palani is the commander (command zone) — she is never a slot, but all three
+    # loops need her on the battlefield, so each line is requiresCommander.
+    "broodfire-hatchery": [
+        {
+            "name": "Maskwood Nexus Hatch Loop",
+            # Maskwood Nexus makes every creature an Egg; any free repeatable
+            # sac outlet then hatches the library. All three outlets
+            # independently complete the outlet slot.
+            "slots": [
+                ["Maskwood Nexus"],
+                ["Ashnod's Altar", "Phyrexian Altar", "Goblin Bombardment"],
+            ],
+            "requiresCommander": True,
+            "description": "Maskwood Nexus makes every creature you control an Egg, so "
+                           "Atla Palani's dies trigger fires off any creature. A free "
+                           "repeatable sacrifice outlet — Ashnod's Altar, Phyrexian Altar "
+                           "or Goblin Bombardment — converts the board into creature cards "
+                           "revealed off the top of the library, over and over.",
+        },
+        {
+            "name": "Thornbite Hatch Engine",
+            # Thornbite Staff equipped to Atla + Ashnod's Altar — mana-neutral
+            # hatch loop.
+            "slots": [
+                ["Thornbite Staff"],
+                ["Ashnod's Altar"],
+            ],
+            "requiresCommander": True,
+            "description": "Equip Thornbite Staff to Atla. Pay {2},{T} for a 0/1 Egg, "
+                           "sacrifice it to Ashnod's Altar for {C}{C}, and the Staff's "
+                           "\"whenever a creature dies, untap this creature\" resets Atla "
+                           "— each mana-neutral loop hatches a creature off the top of the "
+                           "library.",
+        },
+        {
+            "name": "Mirror Entity Mass Hatch",
+            # Mirror Entity X=0 mass-hatch with Atla out — one-card line;
+            # Worldspine Wurm / Vigor only extend it, they are not required
+            # slots.
+            "slots": [
+                ["Mirror Entity"],
+            ],
+            "requiresCommander": True,
+            "description": "With Atla out, activate Mirror Entity for X=0: every creature "
+                           "you control gains all creature types (so each is an Egg) with "
+                           "base power and toughness 0/0 and dies, and Atla reveals a "
+                           "creature card onto the battlefield per death. Worldspine Wurm "
+                           "and Vigor shuffle back to extend the cascade but are not "
+                           "required.",
         },
     ],
     "shield-doctrine": [
@@ -3855,6 +3908,19 @@ def export_stampede_acres(metadata: dict) -> dict:
     )
 
 
+def export_broodfire_hatchery(metadata: dict) -> dict:
+    """Export Broodfire Hatchery (Naya eggs — Atla Palani, Nest Tender) simulation."""
+    return _export_colored(
+        sim_module=sim_broodfire_hatchery,
+        deck_id="broodfire-hatchery",
+        deck_name="Broodfire Hatchery",
+        commander_name="Atla Palani, Nest Tender",
+        commander_cmc=4,
+        colors=["R", "G", "W"],
+        metadata=metadata,
+    )
+
+
 def export_shield_doctrine(metadata: dict) -> dict:
     """Export Shield Doctrine (Jeskai equipment voltron — Captain America) simulation."""
     return _export_colored(
@@ -3943,6 +4009,7 @@ DECKS = [
     ("shield-doctrine", "Shield Doctrine", export_shield_doctrine),
     ("gandalf-party-guest", "Arcane Convocation", export_gandalf_party_guest),
     ("hoard-and-bleed", "Hoard and Bleed", export_hoard_and_bleed),
+    ("broodfire-hatchery", "Broodfire Hatchery", export_broodfire_hatchery),
 ]
 
 
