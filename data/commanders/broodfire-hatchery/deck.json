@@ -1,0 +1,1096 @@
+{
+  "id": "broodfire-hatchery",
+  "type": "commander",
+  "name": "Broodfire Hatchery",
+  "subtitle": "Every Shell Hides a Titan",
+  "commander": "Atla Palani, Nest Tender",
+  "bracket": "4",
+  "status": "brewing",
+  "gameChangers": 8,
+  "lastUpdatedSet": "The Hobbit",
+  "archetypes": [
+    "ramp-big-mana",
+    "aristocrats"
+  ],
+  "wincon_style": "combo",
+  "commanderRoles": {
+    "primary": "engine",
+    "secondary": "tutor"
+  },
+  "sources": [
+    {
+      "type": "other",
+      "name": "Board-supplied example decklist (DEC-544)",
+      "detail": "Starting point given by the board on DEC-544. 14 cards carried over (Atla, Sol Ring, Arcane Signet, Skullclamp, Goblin Bombardment, Phyrexian Altar, Sylvan Library, Heroic Intervention, Etali, Zacama, Blightsteel Colossus, Titan of Industry, Command Beacon, Command Tower) plus the Nature's Lore ramp core and the shock/fetch manabase. Stats-only bodies, defensive locks, soft single-target tricks and tapped lands were dropped against the impact-on-arrival bar."
+    },
+    {
+      "type": "edhrec",
+      "name": "EDHREC — Atla Palani, Nest Tender",
+      "url": "https://edhrec.com/commanders/atla-palani-nest-tender",
+      "detail": "DEC-402 closing diff run 2026-08-22 on the final 99. Lightning Greaves (51%) and Beast Within (43%) were added by the diff. Rejected with reasons: Etali, Primal Storm (attack-gated), Zetalpa and the Ghalta family (stats or combat only), Cultivate / Rampant Growth / Kodama's Reach (tapped-basic ramp), Dinosaur Egg (dud flip), Swiftfoot Boots, and the tapped-land cycle (Jungle Shrine, Cinder Glade, Canopy Vista). Deferred: Sundering Growth, Rhythm of the Wild."
+    },
+    {
+      "type": "commanderspellbook",
+      "name": "Commander Spellbook — find-my-combos on the exact 99",
+      "url": "https://commanderspellbook.com/",
+      "detail": "6 included combo lines, all running through the commander: Maskwood Nexus with each of the three free outlets, Thornbite Staff + Ashnod's Altar, and Mirror Entity with Worldspine Wurm or Vigor. 273 near-misses triaged and rejected — each one imports a different combo archetype's pieces and would dilute the flip quality without making the deck faster."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-544 CEO deck build and soundness review (2026-08-22)",
+      "detail": "Strategy A (Egg-death hatching into an all-bombs library) chosen over the Dinosaur-tribal and token-swarm alternatives, then rebuilt to a true bracket 4 with a free-spell protection suite. Board-accepted amendments A1-A5. Soundness review passed four checks: metrics reproduction, full Scryfall mirror sweep (Naya identity, Commander legality, no duplicates, no board-banned price cards), internal reference check, and clause-by-clause re-derivation of the Mirror Entity and Thornbite Staff lines. Build spec: agents/ceo/analysis/dec544-build-spec.json."
+    },
+    {
+      "type": "scryfall",
+      "name": "Scryfall — oracle text verification",
+      "url": "https://scryfall.com/",
+      "detail": "All 100 names (99 + commander) resolved and oracle-verified against the local mirror."
+    }
+  ],
+  "guideContent": {
+    "strategyOverview": "Broodfire Hatchery is a Naya combo deck with a single question at its centre: how many Eggs can you kill this turn? Atla Palani, Nest Tender pays {2} and taps to make a 0/1 Egg token, and whenever an Egg you control dies she reveals cards from the top of your library until she hits a creature card and puts it straight onto the battlefield. Every Egg death is therefore a free creature, so the 99 is stocked almost entirely with bodies that change the game the moment they arrive — Craterhoof Behemoth, Avacyn, Angel of Hope, Etali, Primal Conqueror, Blightsteel Colossus, Zacama, Primal Calamity, Apex Altisaur, Titan of Industry. A random flip is never a blank.\n\nSpeed comes from free sacrifice outlets. Ashnod's Altar, Phyrexian Altar, Goblin Bombardment, Skullclamp and High Market all kill an Egg for no mana, so an Egg can be cashed in the moment it is made. Maskwood Nexus makes every creature you control every creature type — which means every creature you control is an Egg — so any free outlet becomes a repeatable \"sacrifice a creature, hatch a new one\" engine; three of the deck's six Spellbook-verified lines run through it. Thornbite Staff gives Atla \"whenever a creature dies, untap this creature\", so with Ashnod's Altar the loop is mana-neutral: pay {2} and tap Atla for an Egg, sacrifice the Egg for {C}{C}, the death untaps Atla, repeat. Because Atla is a Shaman, the Staff attaches to her for free if it is already on the battlefield when she enters.\n\nMirror Entity is the widest line of all. With Atla out, activate Mirror Entity for X=0: every creature you control has base power and toughness 0/0 and gains all creature types, so the whole board is a pile of Eggs that dies at once and Atla triggers for each of them. Worldspine Wurm and Vigor shuffle themselves back into the library whenever they hit the graveyard, so the cascade keeps finding fuel instead of burning out.\n\nNone of this needs an attack step. Purphoros, God of the Forge, Impact Tremors, Warleader's Call and Terror of the Peaks all trigger on each creature entering, so a mass hatch converts directly into noncombat damage and kills the table from an empty-looking board. Craterhoof Behemoth is the combat backup when the table is playing damage prevention. Mondrak, Glory Dominus doubles every Egg token, Roaming Throne (naming Shaman) doubles Atla's death trigger for two flips per Egg, and Elesh Norn, Mother of Machines doubles every enters-the-battlefield trigger the hatched creatures cause.\n\nSupport is built for a combo deck: 11 ramp sources, 7 tutors that can find either half of any line, 7 protection pieces (Deflecting Swat and Flawless Maneuver are free with the commander out, Clever Concealment phases the board out of a wipe), and interaction chosen for hoser coverage. The deck's number one hate card is Grafdigger's Cage, which stops creature cards in libraries from entering the battlefield and blanks Atla outright; Aura Shards answers it every time a creature enters, and Krosan Grip, Force of Vigor, Boseiju, Who Endures and Beast Within cover artifacts, enchantments and lands so no resolved hoser sticks. Bracket 4 with 8 Game Changers. The deck is tagged brewing until the goldfish simulation confirms the turn-6 kill rate.",
+    "deckCategories": [
+      {
+        "name": "The Egg Engine",
+        "description": "Atla turns Egg deaths into free creatures, so the deck's real mana sink is making more Eggs and untapping her. Maskwood Nexus makes every creature an Egg, Thornbite Staff untaps Atla on every death, Mondrak doubles every Egg token, and Roaming Throne (naming Shaman) makes Atla's death trigger fire twice. Palani's Hatcher and Nesting Dragon keep making Eggs if Atla is answered.",
+        "cards": [
+          "Maskwood Nexus",
+          "Thornbite Staff",
+          "Mondrak, Glory Dominus",
+          "Roaming Throne",
+          "Seedborn Muse",
+          "Palani's Hatcher",
+          "Nesting Dragon",
+          "Elesh Norn, Mother of Machines"
+        ]
+      },
+      {
+        "name": "Free Sacrifice Outlets",
+        "description": "An Egg is worth nothing until it dies. Every outlet here costs no mana, so an Egg made this turn hatches this turn, and a board full of Eggs empties in one go.",
+        "cards": [
+          "Ashnod's Altar",
+          "Phyrexian Altar",
+          "Goblin Bombardment",
+          "Skullclamp",
+          "High Market",
+          "Birthing Pod"
+        ]
+      },
+      {
+        "name": "Damage Converters",
+        "description": "Each of these triggers on a creature entering, which is exactly what a mass hatch produces. They turn the cascade into lethal noncombat damage without ever attacking.",
+        "cards": [
+          "Purphoros, God of the Forge",
+          "Impact Tremors",
+          "Warleader's Call",
+          "Terror of the Peaks"
+        ]
+      },
+      {
+        "name": "Bombs to Hatch",
+        "description": "The library is the deck's hand. Every creature here wins, sweeps, or draws the game open on arrival, so a blind flip off Atla is always worth the Egg. Worldspine Wurm and Vigor shuffle back from the graveyard and become fuel again.",
+        "cards": [
+          "Craterhoof Behemoth",
+          "Avacyn, Angel of Hope",
+          "Etali, Primal Conqueror // Etali, Primal Sickness",
+          "Blightsteel Colossus",
+          "Zacama, Primal Calamity",
+          "Apex Altisaur",
+          "Titan of Industry",
+          "Vaultborn Tyrant",
+          "Worldspine Wurm",
+          "Vigor"
+        ]
+      },
+      {
+        "name": "Tutors",
+        "description": "Seven tutors cover both halves of every line: Enlightened Tutor finds Thornbite Staff, Maskwood Nexus or either Altar; Worldly Tutor, Eladamri's Call, Chord of Calling and Natural Order find Mirror Entity or a bomb; Gamble finds anything.",
+        "cards": [
+          "Enlightened Tutor",
+          "Worldly Tutor",
+          "Eladamri's Call",
+          "Chord of Calling",
+          "Natural Order",
+          "Gamble",
+          "Birthing Pod"
+        ]
+      },
+      {
+        "name": "Protection for the Combo Turn",
+        "description": "The deck goes off at sorcery speed with the commander on the battlefield, so every protection piece is chosen to be live on that turn. Deflecting Swat and Flawless Maneuver cost nothing while Atla is out, and Clever Concealment phases the whole board out of a wipe.",
+        "cards": [
+          "Deflecting Swat",
+          "Flawless Maneuver",
+          "Clever Concealment",
+          "Heroic Intervention",
+          "Lightning Greaves",
+          "Vigor",
+          "Avacyn, Angel of Hope"
+        ]
+      },
+      {
+        "name": "Interaction and Hoser Coverage",
+        "description": "Grafdigger's Cage is the card that beats this deck outright — creature cards in libraries can't enter the battlefield, so Atla stops hatching. Aura Shards destroys an artifact or enchantment every time a creature enters, and Krosan Grip, Force of Vigor, Boseiju and Beast Within cover artifacts, enchantments and lands between them.",
+        "cards": [
+          "Aura Shards",
+          "Krosan Grip",
+          "Force of Vigor",
+          "Boseiju, Who Endures",
+          "Beast Within",
+          "Swords to Plowshares",
+          "Path to Exile",
+          "Blasphemous Act"
+        ]
+      },
+      {
+        "name": "Ramp and Fixing",
+        "description": "Atla wants to land on turn 3 and activate the same turn, so the ramp is cheap and untapped: the Nature's Lore class fetches shock duals untapped, the auras add mana without diluting the creature count, and Jeska's Will pays for a whole combo turn.",
+        "cards": [
+          "Sol Ring",
+          "Arcane Signet",
+          "Birds of Paradise",
+          "Llanowar Elves",
+          "Nature's Lore",
+          "Three Visits",
+          "Farseek",
+          "Utopia Sprawl",
+          "Wild Growth",
+          "Jeska's Will",
+          "Smothering Tithe"
+        ]
+      },
+      {
+        "name": "Card Advantage",
+        "description": "Draw is tied to the plan rather than bolted on: Guardian Project and Garruk's Uprising fire on the creatures Atla hatches, Skullclamp turns a 0/1 Egg into two cards, and Idol of Oblivion draws off any turn that made a token.",
+        "cards": [
+          "Guardian Project",
+          "Garruk's Uprising",
+          "Sylvan Library",
+          "Skullclamp",
+          "Idol of Oblivion",
+          "Vaultborn Tyrant",
+          "Rishkar's Expertise"
+        ]
+      },
+      {
+        "name": "Key Lands",
+        "description": "36 lands, 35 of them untapped on arrival. Command Beacon recasts Atla past commander tax, High Market is a sacrifice outlet in a land slot, and Boseiju is removal that costs no card.",
+        "cards": [
+          "Command Tower",
+          "Command Beacon",
+          "High Market",
+          "Boseiju, Who Endures",
+          "Jetmir's Garden",
+          "Bountiful Promenade",
+          "Clifftop Retreat",
+          "Exotic Orchard"
+        ]
+      }
+    ]
+  },
+  "winConditions": [
+    {
+      "title": "Nest Cascade",
+      "kind": "combo",
+      "pieces": [
+        "Mirror Entity"
+      ],
+      "cards": [
+        "Mirror Entity",
+        "Worldspine Wurm",
+        "Vigor"
+      ],
+      "description": "With Atla out, activate Mirror Entity for X=0: every creature you control becomes a 0/0 Egg and dies. Atla hatches a nonegg creature from the library for each death, flooding the board with bombs. Worldspine Wurm and Vigor shuffle back from the graveyard, so repeat activations keep finding fuel."
+    },
+    {
+      "title": "Thornbite Hatch Engine",
+      "kind": "combo",
+      "pieces": [
+        "Thornbite Staff",
+        "Ashnod's Altar"
+      ],
+      "cards": [
+        "Thornbite Staff",
+        "Ashnod's Altar",
+        "Phyrexian Altar",
+        "Goblin Bombardment"
+      ],
+      "description": "Equip Thornbite Staff to Atla. Pay {2},{T} for an Egg, sacrifice it to Ashnod's Altar for {C}{C}, and the death untaps Atla via the Staff. Each mana-neutral loop hatches a creature off the top of the library."
+    },
+    {
+      "title": "Hatch-and-Burn",
+      "kind": "drain",
+      "cards": [
+        "Purphoros, God of the Forge",
+        "Impact Tremors",
+        "Terror of the Peaks",
+        "Warleader's Call"
+      ],
+      "description": "Mass hatches convert directly to noncombat damage: each hatched bomb triggers every ETB-damage payoff, so a Mirror Entity cascade kills the table without attacking."
+    },
+    {
+      "title": "Titan Combat",
+      "kind": "combat",
+      "cards": [
+        "Craterhoof Behemoth",
+        "Blightsteel Colossus",
+        "Etali, Primal Conqueror // Etali, Primal Sickness",
+        "Zacama, Primal Calamity"
+      ],
+      "description": "The fair plan: cheat 8-plus-mana bodies into play early through egg deaths and swing."
+    }
+  ],
+  "synergies": [
+    {
+      "title": "Maskwood Nexus + Ashnod's Altar = dump the library for mana",
+      "cards": [
+        "Atla Palani, Nest Tender",
+        "Maskwood Nexus",
+        "Ashnod's Altar"
+      ],
+      "description": "Maskwood Nexus makes every creature you control every creature type, so every creature you control is an Egg. Sacrifice any creature to Ashnod's Altar for {C}{C}; the Egg death triggers Atla, which puts the next creature card off the top of your library onto the battlefield; sacrifice that one too. Each iteration nets {C}{C}, so you can run through the library and finish with a huge mana pool. Any converter on the battlefield turns the chain into lethal damage. Verified line: https://commanderspellbook.com/combo/240-643-2034/",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook — Maskwood Nexus + Ashnod's Altar",
+          "url": "https://commanderspellbook.com/combo/240-643-2034/",
+          "detail": "Maskwood makes every creature an Egg; each sac hatches."
+        }
+      ]
+    },
+    {
+      "title": "Maskwood Nexus + Phyrexian Altar = dump the library for colored mana",
+      "cards": [
+        "Atla Palani, Nest Tender",
+        "Maskwood Nexus",
+        "Phyrexian Altar"
+      ],
+      "description": "The same line on the colored-mana altar: with Maskwood Nexus out, every creature is an Egg, so each sacrifice to Phyrexian Altar adds one mana of any color and hatches the next creature. Worth running alongside the Ashnod's version because the colored mana casts whatever the chain reveals. Verified line: https://commanderspellbook.com/combo/240-643-4050/",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook — Maskwood Nexus + Phyrexian Altar",
+          "url": "https://commanderspellbook.com/combo/240-643-4050/",
+          "detail": "Same line on the colored-mana altar."
+        }
+      ]
+    },
+    {
+      "title": "Maskwood Nexus + Goblin Bombardment = dump the library and burn the table",
+      "cards": [
+        "Atla Palani, Nest Tender",
+        "Maskwood Nexus",
+        "Goblin Bombardment"
+      ],
+      "description": "With Maskwood Nexus out, Goblin Bombardment sacrifices any creature for one damage and each death hatches the next creature off the library. The chain is its own win condition — no separate converter needed — because every iteration pings a player for 1 while the board grows. Verified line: https://commanderspellbook.com/combo/240-643-5147/",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook — Maskwood Nexus + Goblin Bombardment",
+          "url": "https://commanderspellbook.com/combo/240-643-5147/",
+          "detail": "Same line converting each sac into 1 damage."
+        }
+      ]
+    },
+    {
+      "title": "Thornbite Staff + Ashnod's Altar = mana-neutral repeat hatching",
+      "cards": [
+        "Atla Palani, Nest Tender",
+        "Thornbite Staff",
+        "Ashnod's Altar"
+      ],
+      "description": "Equip Thornbite Staff to Atla (free if the Staff is already out when she enters, since she is a Shaman). Pay {2} and tap Atla for a 0/1 Egg, sacrifice the Egg to Ashnod's Altar for {C}{C}, and the death untaps Atla through the Staff. Net mana zero, one hatch per loop, and it is fully deterministic — no Maskwood Nexus required. Verified line: https://commanderspellbook.com/combo/240-2034-2178/",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook — Thornbite Staff + Ashnod's Altar",
+          "url": "https://commanderspellbook.com/combo/240-2034-2178/",
+          "detail": "Mana-neutral repeat hatches; see Thornbite Hatch Engine."
+        }
+      ]
+    },
+    {
+      "title": "Mirror Entity + Worldspine Wurm = recurring mass hatch",
+      "cards": [
+        "Atla Palani, Nest Tender",
+        "Mirror Entity",
+        "Worldspine Wurm"
+      ],
+      "description": "Activate Mirror Entity for X=0 with Atla on the battlefield: every creature you control has base power and toughness 0/0 and gains all creature types, so they are all Eggs and all die at once. Atla triggers once per death and hatches a bomb for each. Creatures that arrive afterwards are not shrunk, because the effect locked in its set of creatures on resolution. Worldspine Wurm shuffles itself back into the library from the graveyard, so the next activation still has fuel. Verified line: https://commanderspellbook.com/combo/240-4486-5209/",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook — Mirror Entity + Worldspine Wurm",
+          "url": "https://commanderspellbook.com/combo/240-4486-5209/",
+          "detail": "X=0 mass-Egg with graveyard-shuffle fuel."
+        }
+      ]
+    },
+    {
+      "title": "Mirror Entity + Vigor = second recurring mass hatch",
+      "cards": [
+        "Atla Palani, Nest Tender",
+        "Mirror Entity",
+        "Vigor"
+      ],
+      "description": "The same mass-Egg activation with Vigor as the recurring fuel: Vigor shuffles itself back into the library whenever it hits the graveyard, so repeated Mirror Entity activations keep drawing live creature cards. Vigor also prevents damage to your other creatures and converts it into +1/+1 counters, which matters when the table answers a hatched board with damage-based removal. Verified line: https://commanderspellbook.com/combo/240-4120-4486/",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook — Mirror Entity + Vigor",
+          "url": "https://commanderspellbook.com/combo/240-4120-4486/",
+          "detail": "Second shuffle body for the Nest Cascade."
+        }
+      ]
+    }
+  ],
+  "highlights": [
+    {
+      "name": "Atla Palani, Nest Tender",
+      "price": "€0.75",
+      "isGameChanger": false,
+      "reason": "Commander. {2}, {T} makes a 0/1 Egg; whenever an Egg you control dies she reveals cards until she hits a creature card and puts it onto the battlefield. Every line in the deck is a way to kill Eggs faster.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Mirror Entity",
+      "price": "€0.57",
+      "isGameChanger": false,
+      "reason": "The widest line. Activate for X=0 with Atla out: every creature you control becomes a 0/0 with all creature types and dies at once, and Atla hatches a bomb for each death.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Maskwood Nexus",
+      "price": "€1.33",
+      "isGameChanger": false,
+      "reason": "Makes every creature you control every creature type, so every creature is an Egg. Turns any free sacrifice outlet into a repeatable hatch engine — three of the six verified combo lines run through it.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Thornbite Staff",
+      "price": "€6.28",
+      "isGameChanger": false,
+      "reason": "Gives Atla \"whenever a creature dies, untap this creature\". With Ashnod's Altar the hatch loop is mana-neutral. Attaches to Atla for free because she is a Shaman.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Ashnod's Altar",
+      "price": "€14.41",
+      "isGameChanger": false,
+      "reason": "Free outlet that pays you {C}{C} per Egg. The mana half of the Thornbite loop and the outlet in two of the six verified combo lines.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Purphoros, God of the Forge",
+      "price": "€22.42",
+      "isGameChanger": false,
+      "reason": "Converter and indestructible. Two damage to each opponent per hatched creature turns a single mass hatch into a table kill with no attack step.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Terror of the Peaks",
+      "price": "€26.12",
+      "isGameChanger": false,
+      "reason": "The heaviest converter: damage equal to each entering creature's power, aimed anywhere. One cascade of fatties ends the game.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Roaming Throne",
+      "price": "€36.67",
+      "isGameChanger": false,
+      "reason": "Name Shaman and Atla's death trigger fires twice — two flips per Egg. The single biggest multiplier on the engine.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Seedborn Muse",
+      "price": "€9.38",
+      "isGameChanger": true,
+      "reason": "Game Changer. Untaps Atla during every opponent's untap step: an Egg per player per turn cycle (×3 in a four-player game) while leaving mana open for Chord of Calling and free protection.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Natural Order",
+      "price": "€25.54",
+      "isGameChanger": true,
+      "reason": "Game Changer. Sacrifice a green Egg — which itself triggers Atla — and put Craterhoof Behemoth, Vigor or Worldspine Wurm straight onto the battlefield.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Craterhoof Behemoth",
+      "price": "€17.44",
+      "isGameChanger": false,
+      "reason": "The combat backup. Any board built by a cascade of hatches becomes lethal damage the turn Craterhoof arrives, hard-cast or flipped.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    },
+    {
+      "name": "Worldspine Wurm",
+      "price": "€2.73",
+      "isGameChanger": false,
+      "reason": "Shuffles itself back into the library from anywhere, so it is permanent fuel for repeated Mirror Entity activations, and it leaves three 5/5 trample tokens behind each time it dies.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        }
+      ]
+    }
+  ],
+  "decklist": [
+    {
+      "name": "Mirror Entity",
+      "type": "Creature — Shapeshifter",
+      "primary_role": "wincon",
+      "wincon_style": "combo"
+    },
+    {
+      "name": "Seedborn Muse",
+      "type": "Creature — Spirit",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Palani's Hatcher",
+      "type": "Creature — Dinosaur",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Nesting Dragon",
+      "type": "Creature — Dragon",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Mondrak, Glory Dominus",
+      "type": "Legendary Creature — Phyrexian Horror",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Birds of Paradise",
+      "type": "Creature — Bird",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Llanowar Elves",
+      "type": "Creature — Elf Druid",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Zacama, Primal Calamity",
+      "type": "Legendary Creature — Elder Dinosaur",
+      "primary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Etali, Primal Conqueror // Etali, Primal Sickness",
+      "type": "Legendary Creature — Elder Dinosaur // Legendary Creature — Phyrexian Elder Dinosaur",
+      "primary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Terror of the Peaks",
+      "type": "Creature — Dragon",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Purphoros, God of the Forge",
+      "type": "Legendary Enchantment Creature — God",
+      "primary_role": "wincon",
+      "wincon_style": "drain"
+    },
+    {
+      "name": "Worldspine Wurm",
+      "type": "Creature — Wurm",
+      "primary_role": "threat"
+    },
+    {
+      "name": "Blightsteel Colossus",
+      "type": "Artifact Creature — Phyrexian Golem",
+      "primary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Vigor",
+      "type": "Creature — Elemental Incarnation",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Avacyn, Angel of Hope",
+      "type": "Legendary Creature — Angel",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Craterhoof Behemoth",
+      "type": "Creature — Beast",
+      "primary_role": "wincon",
+      "wincon_style": "combat"
+    },
+    {
+      "name": "Elesh Norn, Mother of Machines",
+      "type": "Legendary Creature — Phyrexian Praetor",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Titan of Industry",
+      "type": "Creature — Elemental",
+      "primary_role": "threat"
+    },
+    {
+      "name": "Apex Altisaur",
+      "type": "Creature — Dinosaur",
+      "primary_role": "removal-board"
+    },
+    {
+      "name": "Roaming Throne",
+      "type": "Artifact Creature — Golem",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Vaultborn Tyrant",
+      "type": "Creature — Dinosaur",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Sun Titan",
+      "type": "Creature — Giant",
+      "primary_role": "recursion"
+    },
+    {
+      "name": "Idol of Oblivion",
+      "type": "Artifact",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Sol Ring",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Arcane Signet",
+      "type": "Artifact",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Skullclamp",
+      "type": "Artifact — Equipment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Ashnod's Altar",
+      "type": "Artifact",
+      "primary_role": "utility"
+    },
+    {
+      "name": "Phyrexian Altar",
+      "type": "Artifact",
+      "primary_role": "utility"
+    },
+    {
+      "name": "Thornbite Staff",
+      "type": "Kindred Artifact — Shaman Equipment",
+      "primary_role": "engine"
+    },
+    {
+      "name": "Maskwood Nexus",
+      "type": "Artifact",
+      "primary_role": "utility"
+    },
+    {
+      "name": "Birthing Pod",
+      "type": "Artifact",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Lightning Greaves",
+      "type": "Artifact — Equipment",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Goblin Bombardment",
+      "type": "Enchantment",
+      "primary_role": "utility"
+    },
+    {
+      "name": "Impact Tremors",
+      "type": "Enchantment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Sylvan Library",
+      "type": "Enchantment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Guardian Project",
+      "type": "Enchantment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Garruk's Uprising",
+      "type": "Enchantment",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Aura Shards",
+      "type": "Enchantment",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Smothering Tithe",
+      "type": "Enchantment",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Warleader's Call",
+      "type": "Enchantment",
+      "primary_role": "payoff"
+    },
+    {
+      "name": "Worldly Tutor",
+      "type": "Instant",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Enlightened Tutor",
+      "type": "Instant",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Eladamri's Call",
+      "type": "Instant",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Gamble",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Natural Order",
+      "type": "Sorcery",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Chord of Calling",
+      "type": "Instant",
+      "primary_role": "tutor"
+    },
+    {
+      "name": "Deflecting Swat",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Flawless Maneuver",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Clever Concealment",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Heroic Intervention",
+      "type": "Instant",
+      "primary_role": "protection"
+    },
+    {
+      "name": "Swords to Plowshares",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Path to Exile",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Krosan Grip",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Force of Vigor",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Blasphemous Act",
+      "type": "Sorcery",
+      "primary_role": "removal-board"
+    },
+    {
+      "name": "Beast Within",
+      "type": "Instant",
+      "primary_role": "removal-spot"
+    },
+    {
+      "name": "Nature's Lore",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Three Visits",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Farseek",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Utopia Sprawl",
+      "type": "Enchantment — Aura",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Wild Growth",
+      "type": "Enchantment — Aura",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Jeska's Will",
+      "type": "Sorcery",
+      "primary_role": "ramp"
+    },
+    {
+      "name": "Rishkar's Expertise",
+      "type": "Sorcery",
+      "primary_role": "card-draw"
+    },
+    {
+      "name": "Bountiful Promenade",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Clifftop Retreat",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Command Tower",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Command Beacon",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "High Market",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Boseiju, Who Endures",
+      "type": "Legendary Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Sacred Foundry",
+      "type": "Land — Mountain Plains",
+      "primary_role": "land"
+    },
+    {
+      "name": "Stomping Ground",
+      "type": "Land — Mountain Forest",
+      "primary_role": "land"
+    },
+    {
+      "name": "Temple Garden",
+      "type": "Land — Forest Plains",
+      "primary_role": "land"
+    },
+    {
+      "name": "Windswept Heath",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Bloodstained Mire",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Flooded Strand",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Jetmir's Garden",
+      "type": "Land — Mountain Forest Plains",
+      "primary_role": "land"
+    },
+    {
+      "name": "Exotic Orchard",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Brushland",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Karplusan Forest",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Battlefield Forge",
+      "type": "Land",
+      "primary_role": "land"
+    },
+    {
+      "name": "Forest",
+      "type": "Basic Land — Forest",
+      "primary_role": "land",
+      "quantity": 9
+    },
+    {
+      "name": "Plains",
+      "type": "Basic Land — Plains",
+      "primary_role": "land",
+      "quantity": 5
+    },
+    {
+      "name": "Mountain",
+      "type": "Basic Land — Mountain",
+      "primary_role": "land",
+      "quantity": 5
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Beast",
+      "type_line": "Token Creature — Beast",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "62facbb8-1a83-4731-b515-0f7759ee8c3b",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/2/62facbb8-1a83-4731-b515-0f7759ee8c3b.jpg?1783902808",
+      "produced_by": [
+        "Beast Within"
+      ]
+    },
+    {
+      "name": "Dinosaur",
+      "type_line": "Token Creature — Dinosaur",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "2bbb7151-cf71-49bc-8d99-b0230d5465e5",
+      "image_uri": "https://cards.scryfall.io/normal/front/2/b/2bbb7151-cf71-49bc-8d99-b0230d5465e5.jpg?1783913607",
+      "produced_by": [
+        "Palani's Hatcher"
+      ]
+    },
+    {
+      "name": "Dinosaur Egg",
+      "type_line": "Token Creature — Dinosaur Egg",
+      "oracle_text": "",
+      "power": "0",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "a7e24a8f-3663-47c6-94b1-4525ae9da3b5",
+      "image_uri": "https://cards.scryfall.io/normal/front/a/7/a7e24a8f-3663-47c6-94b1-4525ae9da3b5.jpg?1783913607",
+      "produced_by": [
+        "Palani's Hatcher"
+      ]
+    },
+    {
+      "name": "Dragon",
+      "type_line": "Token Creature — Dragon",
+      "oracle_text": "Flying\n{R}: This creature gets +1/+0 until end of turn.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "R"
+      ],
+      "scryfall_id": "1e2aaaca-6563-406f-b1bc-6849ba555da8",
+      "image_uri": "https://cards.scryfall.io/normal/front/1/e/1e2aaaca-6563-406f-b1bc-6849ba555da8.jpg?1783906804",
+      "produced_by": [
+        "Nesting Dragon"
+      ]
+    },
+    {
+      "name": "Dragon Egg",
+      "type_line": "Token Creature — Dragon Egg",
+      "oracle_text": "Defender\nWhen this creature dies, create a 2/2 red Dragon creature token with flying and \"{R}: This creature gets +1/+0 until end of turn.\"",
+      "power": "0",
+      "toughness": "2",
+      "colors": [
+        "R"
+      ],
+      "scryfall_id": "435577cb-a8b6-4795-a301-92128a68d070",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/3/435577cb-a8b6-4795-a301-92128a68d070.jpg?1783906804",
+      "produced_by": [
+        "Nesting Dragon"
+      ]
+    },
+    {
+      "name": "Egg",
+      "type_line": "Token Creature — Egg",
+      "oracle_text": "Defender",
+      "power": "0",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "48cc199d-9596-4d6a-9ed3-b1f599a03741",
+      "image_uri": "https://cards.scryfall.io/normal/front/4/8/48cc199d-9596-4d6a-9ed3-b1f599a03741.jpg?1783921135",
+      "produced_by": [
+        "Atla Palani, Nest Tender"
+      ]
+    },
+    {
+      "name": "Eldrazi",
+      "type_line": "Token Creature — Eldrazi",
+      "oracle_text": "",
+      "power": "10",
+      "toughness": "10",
+      "colors": [],
+      "scryfall_id": "ce6d2786-ef9c-4772-bb71-697131c3c3a4",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/e/ce6d2786-ef9c-4772-bb71-697131c3c3a4.jpg?1783906809",
+      "produced_by": [
+        "Idol of Oblivion"
+      ]
+    },
+    {
+      "name": "Poison Counter",
+      "type_line": "Card",
+      "oracle_text": "(A player with ten or more poison counters loses the game.)",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "8a9cb417-8709-4336-be36-2fb0cea31fe1",
+      "image_uri": "https://cards.scryfall.io/normal/front/8/a/8a9cb417-8709-4336-be36-2fb0cea31fe1.jpg?1783904328",
+      "produced_by": [
+        "Blightsteel Colossus",
+        "Etali, Primal Conqueror // Etali, Primal Sickness"
+      ]
+    },
+    {
+      "name": "Rhino Warrior",
+      "type_line": "Token Creature — Rhino Warrior",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "8f4188d4-a371-49be-ad33-ad87801ba99d",
+      "image_uri": "https://cards.scryfall.io/normal/front/8/f/8f4188d4-a371-49be-ad33-ad87801ba99d.jpg?1783904331",
+      "produced_by": [
+        "Titan of Industry"
+      ]
+    },
+    {
+      "name": "Shapeshifter",
+      "type_line": "Token Creature — Shapeshifter",
+      "oracle_text": "Changeling (This token is every creature type.)",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "U"
+      ],
+      "scryfall_id": "ce94fb42-cde4-4637-b938-13f17793bf1f",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/e/ce94fb42-cde4-4637-b938-13f17793bf1f.jpg?1783922313",
+      "produced_by": [
+        "Maskwood Nexus"
+      ]
+    },
+    {
+      "name": "Treasure",
+      "type_line": "Token Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "scryfall_id": "cb7b5024-3a0b-4f14-977e-ba6c4c2567c9",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/b/cb7b5024-3a0b-4f14-977e-ba6c4c2567c9.jpg?1783915244",
+      "produced_by": [
+        "Smothering Tithe"
+      ]
+    },
+    {
+      "name": "Wurm",
+      "type_line": "Token Creature — Wurm",
+      "oracle_text": "Trample",
+      "power": "5",
+      "toughness": "5",
+      "colors": [
+        "G"
+      ],
+      "scryfall_id": "54d5e60d-559d-49e0-a65e-80db721b142a",
+      "image_uri": "https://cards.scryfall.io/normal/front/5/4/54d5e60d-559d-49e0-a65e-80db721b142a.jpg?1783909271",
+      "produced_by": [
+        "Worldspine Wurm"
+      ]
+    }
+  ]
+}

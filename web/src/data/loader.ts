@@ -178,7 +178,9 @@ import type { DeckTierBLoops } from './tierB';
 // Crescendo -> Austere Command, Magma Opus -> Narset's Reversal.
 // v122 -> v123 (DEC-548 2026-08-22): hoard-and-bleed round 10 — Night's Whisper ->
 // Bolas's Citadel (first GC), Lotus Petal -> Fake Your Own Death.
-const STORAGE_PREFIX = 'gv1-deck-data-v123:';
+// v123 -> v124 (DEC-544 2026-08-22): new brewing deck broodfire-hatchery (Atla
+// Palani, Nest Tender) — new deck.json + index entry.
+const STORAGE_PREFIX = 'gv1-deck-data-v124:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
