@@ -47,6 +47,11 @@
       "type": "ai-inferred",
       "name": "Swap round 5 — DEC-541 candidate assessment (board-approved 2026-08-17)",
       "detail": "Board picked 4 adds from a 14-card assessment: Azami, Lady of Scrolls; Magma Opus; Harmonized Crescendo; Sakashima of a Thousand Faces. Cuts (line-by-line approved, interaction d6d3cde6): Hurkyl, Master Wizard; Vendilion Clique; Dig Through Time; Blasphemous Act. All 4 adds oracle-verified via Scryfall. Legendary Wizard count 19 -> 18 (Azami is a Wizard, Sakashima is a Rogue); legendary creature count unchanged at 19 (cut 2 Wizards, added Azami + Sakashima); Game Changers unchanged at 3; bracket 4- holds (no add is a Game Changer). Rejected in the same pass, do not re-triage: The Emperor of Palamecia, Venat, Alisaie/Alphinaud Leveilleur, Sakashima the Impostor, Chameleon Master of Disguise, Cadric Soul Kindler, Raise the Palisade, Flying Crane Technique, Full Throttle; Stenn was already in the deck."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Swap rounds 6-7 — DEC-547 JLK list assessment (board-approved 2026-08-22)",
+      "detail": "Round 6 (interaction 4b817b9f): 1 Island -> Hydroelectric Specimen // Hydroelectric Laboratory (protection), 1 Mountain -> Pinnacle Monk // Mystic Peak (recursion); land count stays 38. Round 7 (interaction ee709887): Harmonized Crescendo -> Austere Command (third board wipe, closes the removal-board 2/3 gap; still free off the trigger at X=6) and Magma Opus -> Narset's Reversal (board-conditioned on trigger-uptime math: Opus at MV 8 needs four legendary Wizards on board plus Opus in hand — about 15% conditional uptime with realistic removal, 2-4% of games at T6-T8 — while Reversal at MV 2 is free in every Gandalf combat and double-triggers magecraft). Mana Sculpt stays (swap C withdrawn; with 22 Wizards + Wizard commander its refund clause is near-always live). All adds oracle-verified via Scryfall; no Game Changer changes (still 3: Fierce Guardianship, Mystical Tutor, The One Ring); bracket 4- holds."
     }
   ],
   "guideContent": {
@@ -86,11 +91,11 @@
       },
       {
         "name": "Free-Cast Payoffs",
-        "description": "Marquee spells Gandalf casts for free once the council assembles: Jeskai Revelation and Magma Opus at X=8 (four Wizards), Harmonized Crescendo and Sublime Epiphany at X=6 (three Wizards). Magma Opus splits 4 damage, taps two permanents, makes a 4/4, and draws two — all free and each a cast for magecraft. Harmonized Crescendo names Wizard and draws a card for each one, convoke covering any hardcast. Call Forth the Tempest also rides the free cast at X=8, its double cascade intact.",
+        "description": "Marquee spells Gandalf casts for free once the council assembles: Jeskai Revelation at X=7 (four Wizards), Austere Command and Sublime Epiphany at X=6 (three Wizards). Austere Command off the trigger is a free asymmetric wipe — pick the two modes that miss your own board. Call Forth the Tempest rides the free cast at X=8, its double cascade intact. Narset's Reversal is the floor of the package: at mana value 2 it is free in every Gandalf combat, and it triggers magecraft twice — once for the cast, once for the copy it creates.",
         "cards": [
           "Jeskai Revelation",
-          "Magma Opus",
-          "Harmonized Crescendo",
+          "Austere Command",
+          "Narset's Reversal",
           "Sublime Epiphany"
         ]
       },
@@ -673,9 +678,9 @@
       "primary_role": "tutor"
     },
     {
-      "name": "Harmonized Crescendo",
-      "type": "Instant",
-      "primary_role": "card-draw"
+      "name": "Austere Command",
+      "type": "Sorcery",
+      "primary_role": "removal-board"
     },
     {
       "name": "Counterspell",
@@ -731,10 +736,10 @@
       "primary_role": "removal-board"
     },
     {
-      "name": "Magma Opus",
+      "name": "Narset's Reversal",
       "type": "Instant",
-      "primary_role": "payoff",
-      "secondary_role": "removal-spot"
+      "primary_role": "protection",
+      "secondary_role": "payoff"
     },
     {
       "name": "Call Forth the Tempest",
@@ -981,22 +986,6 @@
       ]
     },
     {
-      "name": "Elemental",
-      "type_line": "Token Creature — Elemental",
-      "oracle_text": "",
-      "power": "4",
-      "toughness": "4",
-      "colors": [
-        "R",
-        "U"
-      ],
-      "scryfall_id": "8ba20bb4-a476-448d-bb39-23f8dd59e5a8",
-      "image_uri": "https://cards.scryfall.io/normal/front/8/b/8ba20bb4-a476-448d-bb39-23f8dd59e5a8.jpg?1783903570",
-      "produced_by": [
-        "Magma Opus"
-      ]
-    },
-    {
       "name": "Elephant",
       "type_line": "Token Creature — Elephant",
       "oracle_text": "",
@@ -1080,7 +1069,6 @@
       "scryfall_id": "b4f61b5e-9c53-40b1-b93e-3ffa351ff052",
       "image_uri": "https://cards.scryfall.io/normal/front/b/4/b4f61b5e-9c53-40b1-b93e-3ffa351ff052.jpg?1783903560",
       "produced_by": [
-        "Magma Opus",
         "Prismari Command",
         "Storm-Kiln Artist"
       ]
