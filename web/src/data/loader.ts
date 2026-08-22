@@ -174,7 +174,9 @@ import type { DeckTierBLoops } from './tierB';
 // Dig Through Time, Blasphemous Act out.
 // v120 -> v121 (DEC-547 2026-08-22): gandalf-party-guest swaps A+B — 1 Island ->
 // Hydroelectric Specimen, 1 Mountain -> Pinnacle Monk (MDFC pay-life lands).
-const STORAGE_PREFIX = 'gv1-deck-data-v121:';
+// v121 -> v122 (DEC-547 2026-08-22): gandalf-party-guest round 7 — Harmonized
+// Crescendo -> Austere Command, Magma Opus -> Narset's Reversal.
+const STORAGE_PREFIX = 'gv1-deck-data-v122:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
