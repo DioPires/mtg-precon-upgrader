@@ -172,6 +172,8 @@ import type { DeckTierBLoops } from './tierB';
 // v117 -> v118 (DEC-541 2026-08-17): gandalf-party-guest swap round 5 — Azami, Magma Opus,
 // Harmonized Crescendo, Sakashima of a Thousand Faces in; Hurkyl, Vendilion Clique,
 // Dig Through Time, Blasphemous Act out.
+// v120 -> v121 (DEC-547 2026-08-22): gandalf-party-guest swaps A+B — 1 Island ->
+// Hydroelectric Specimen, 1 Mountain -> Pinnacle Monk (MDFC pay-life lands).
 const STORAGE_PREFIX = 'gv1-deck-data-v121:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
