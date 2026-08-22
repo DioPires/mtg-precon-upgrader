@@ -180,7 +180,7 @@ import type { DeckTierBLoops } from './tierB';
 // Bolas's Citadel (first GC), Lotus Petal -> Fake Your Own Death.
 // v123 -> v124 (DEC-544 2026-08-22): new brewing deck broodfire-hatchery (Atla
 // Palani, Nest Tender) — new deck.json + index entry.
-const STORAGE_PREFIX = 'gv1-deck-data-v124:';
+const STORAGE_PREFIX = 'gv1-deck-data-v125:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
