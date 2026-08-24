@@ -2794,10 +2794,10 @@
     "crowdPriorApplied": true,
     "deckId": "the-white-forge",
     "deepFocused": true,
-    "generatedAt": "2026-08-15T19:10:43.513003+00:00",
+    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
-    "ontologyVersion": "1.0.1",
+    "ontologyVersion": "1.1.0",
     "source": "Tier-C synergy engine (combo_synergy_lib), DEC-491"
   },
   "pairs": [
@@ -3073,26 +3073,6 @@
       "band": "strong",
       "cards": [
         "Angel of the Ruins",
-        "Buried Ruin"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Angel of the Ruins",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Buried Ruin",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Angel of the Ruins",
         "Myr Battlesphere"
       ],
       "economies": [
@@ -3126,6 +3106,26 @@
           "magnitude": 4,
           "to": "Archaeomancer's Map",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Angel of the Ruins",
+        "Buried Ruin"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Angel of the Ruins",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Buried Ruin",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -3505,20 +3505,28 @@
     {
       "band": "strong",
       "cards": [
-        "Buried Ruin",
-        "Scrap Trawler"
+        "Junk Diver",
+        "Oswald Fiddlebender"
       ],
       "economies": [
-        "recursion"
+        "sacrifice"
       ],
       "edges": [
         {
-          "from": "Scrap Trawler",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Graveyard recursion",
+          "from": "Oswald Fiddlebender",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
           "magnitude": 1,
-          "to": "Buried Ruin",
-          "toFeature": "recursion"
+          "to": "Junk Diver",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Oswald Fiddlebender",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Junk Diver",
+          "toFeature": "sac_fodder"
         }
       ]
     },
@@ -3545,28 +3553,20 @@
     {
       "band": "strong",
       "cards": [
-        "Junk Diver",
-        "Oswald Fiddlebender"
+        "Buried Ruin",
+        "Scrap Trawler"
       ],
       "economies": [
-        "sacrifice"
+        "recursion"
       ],
       "edges": [
         {
-          "from": "Oswald Fiddlebender",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
+          "from": "Scrap Trawler",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Junk Diver",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Oswald Fiddlebender",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Junk Diver",
-          "toFeature": "sac_fodder"
+          "to": "Buried Ruin",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -4117,42 +4117,6 @@
     {
       "band": "strong",
       "cards": [
-        "Oswald Fiddlebender",
-        "Wurmcoil Engine"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Oswald Fiddlebender",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Wurmcoil Engine",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Oswald Fiddlebender",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Wurmcoil Engine",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Oswald Fiddlebender",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Wurmcoil Engine",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Archaeomancer's Map",
         "Panharmonicon"
       ],
@@ -4187,6 +4151,42 @@
           "magnitude": 1,
           "to": "Panharmonicon",
           "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Oswald Fiddlebender",
+        "Wurmcoil Engine"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Oswald Fiddlebender",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Wurmcoil Engine",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Oswald Fiddlebender",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Wurmcoil Engine",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Oswald Fiddlebender",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Wurmcoil Engine",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4299,6 +4299,35 @@
     {
       "band": "strong",
       "cards": [
+        "Elesh Norn, Mother of Machines",
+        "Solemn Simulacrum"
+      ],
+      "economies": [
+        "dies",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Solemn Simulacrum",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Elesh Norn, Mother of Machines",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Solemn Simulacrum",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Elesh Norn, Mother of Machines",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Krark-Clan Ironworks",
         "Wurmcoil Engine"
       ],
@@ -4331,35 +4360,6 @@
           "magnitude": 1,
           "to": "Krark-Clan Ironworks",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Elesh Norn, Mother of Machines",
-        "Solemn Simulacrum"
-      ],
-      "economies": [
-        "dies",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Solemn Simulacrum",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Elesh Norn, Mother of Machines",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Solemn Simulacrum",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Elesh Norn, Mother of Machines",
-          "toFeature": "trigger_doubler"
         }
       ]
     },
@@ -4587,6 +4587,26 @@
     {
       "band": "strong",
       "cards": [
+        "Circuit Mender",
+        "Oswald Fiddlebender"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Oswald Fiddlebender",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Leaves-the-battlefield payoff",
+          "magnitude": 1,
+          "to": "Circuit Mender",
+          "toFeature": "ltb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Emeria, the Sky Ruin",
         "Myr Battlesphere"
       ],
@@ -4636,26 +4656,6 @@
     {
       "band": "strong",
       "cards": [
-        "Circuit Mender",
-        "Oswald Fiddlebender"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Oswald Fiddlebender",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Leaves-the-battlefield payoff",
-          "magnitude": 1,
-          "to": "Circuit Mender",
-          "toFeature": "ltb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Buried Ruin",
         "Generous Gift"
       ],
@@ -4670,6 +4670,26 @@
           "magnitude": 1,
           "to": "Buried Ruin",
           "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Angel of the Ruins",
+        "Panharmonicon"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Angel of the Ruins",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Panharmonicon",
+          "toFeature": "trigger_doubler"
         }
       ]
     },
@@ -4741,26 +4761,6 @@
     {
       "band": "strong",
       "cards": [
-        "Angel of the Ruins",
-        "Panharmonicon"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Angel of the Ruins",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Panharmonicon",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Buried Ruin",
         "Ephemerate"
       ],
@@ -4775,6 +4775,54 @@
           "magnitude": 1,
           "to": "Buried Ruin",
           "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Oswald Fiddlebender",
+        "Threefold Thunderhulk"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Oswald Fiddlebender",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Threefold Thunderhulk",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Oswald Fiddlebender",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Threefold Thunderhulk",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Myr Battlesphere",
+        "White Auracite"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Myr Battlesphere",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 4,
+          "to": "White Auracite",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -4804,54 +4852,6 @@
           "magnitude": 1,
           "to": "Junk Diver",
           "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Myr Battlesphere",
-        "White Auracite"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Myr Battlesphere",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 4,
-          "to": "White Auracite",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Oswald Fiddlebender",
-        "Threefold Thunderhulk"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Oswald Fiddlebender",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Threefold Thunderhulk",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Oswald Fiddlebender",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Threefold Thunderhulk",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -4936,62 +4936,6 @@
     {
       "band": "strong",
       "cards": [
-        "Buried Ruin",
-        "Threefold Thunderhulk"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Threefold Thunderhulk",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Threefold Thunderhulk",
-          "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Emeria, the Sky Ruin",
-        "Threefold Thunderhulk"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Emeria, the Sky Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Threefold Thunderhulk",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Emeria, the Sky Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Threefold Thunderhulk",
-          "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Smothering Tithe",
         "Threefold Thunderhulk"
       ],
@@ -5043,6 +4987,62 @@
           "magnitude": 1,
           "to": "Lembas",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Ruin",
+        "Threefold Thunderhulk"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Threefold Thunderhulk",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Threefold Thunderhulk",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Emeria, the Sky Ruin",
+        "Threefold Thunderhulk"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Emeria, the Sky Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Threefold Thunderhulk",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Emeria, the Sky Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Threefold Thunderhulk",
+          "toFeature": "sac_fodder"
         }
       ]
     }
@@ -5789,6 +5789,78 @@
     {
       "band": "strong",
       "cards": [
+        "Krark-Clan Ironworks",
+        "Myr Battlesphere",
+        "Myr Retriever"
+      ],
+      "economies": [
+        "dies",
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Myr Battlesphere",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Krark-Clan Ironworks",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Myr Battlesphere",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 4,
+          "to": "Krark-Clan Ironworks",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Myr Retriever",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Krark-Clan Ironworks",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Myr Retriever",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Krark-Clan Ironworks",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Myr Retriever",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Myr Battlesphere",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Myr Retriever",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Myr Battlesphere",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Myr Retriever",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Myr Battlesphere",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Junk Diver",
         "Myr Battlesphere",
         "Myr Retriever"
@@ -5838,78 +5910,6 @@
           "magnitude": 1,
           "to": "Junk Diver",
           "toFeature": "recursion"
-        },
-        {
-          "from": "Myr Retriever",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Myr Battlesphere",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Myr Retriever",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Myr Battlesphere",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Myr Retriever",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Myr Battlesphere",
-          "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Krark-Clan Ironworks",
-        "Myr Battlesphere",
-        "Myr Retriever"
-      ],
-      "economies": [
-        "dies",
-        "recursion",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Myr Battlesphere",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Krark-Clan Ironworks",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Myr Battlesphere",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 4,
-          "to": "Krark-Clan Ironworks",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Myr Retriever",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Krark-Clan Ironworks",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Myr Retriever",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Krark-Clan Ironworks",
-          "toFeature": "sac_outlet"
         },
         {
           "from": "Myr Retriever",

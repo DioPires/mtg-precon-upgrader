@@ -1422,10 +1422,10 @@
     "crowdPriorApplied": true,
     "deckId": "armory-protocol",
     "deepFocused": false,
-    "generatedAt": "2026-08-15T19:10:43.513003+00:00",
+    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
-    "ontologyVersion": "1.0.1",
+    "ontologyVersion": "1.1.0",
     "source": "Tier-C synergy engine (combo_synergy_lib), DEC-491"
   },
   "pairs": [
@@ -2202,6 +2202,34 @@
     {
       "band": "speculative",
       "cards": [
+        "Big Score",
+        "Mind Stone"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Mind Stone",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Big Score",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mind Stone",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Big Score",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Genji Glove",
         "Temple of Epiphany"
       ],
@@ -2225,34 +2253,6 @@
           "magnitude": 1,
           "to": "Genji Glove",
           "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Big Score",
-        "Mind Stone"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Big Score",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Big Score",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -3267,26 +3267,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Krang, Utrom Warlord",
-        "The Reaver Cleaver"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "The Reaver Cleaver",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Krang, Utrom Warlord",
-          "toFeature": "anthem"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Dramatic Reversal",
         "Mind Stone"
       ],
@@ -3310,6 +3290,26 @@
           "magnitude": 1,
           "to": "Dramatic Reversal",
           "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Krang, Utrom Warlord",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Krang, Utrom Warlord",
+          "toFeature": "anthem"
         }
       ]
     },
@@ -4188,6 +4188,44 @@
     {
       "band": "strong",
       "cards": [
+        "Simulacrum Synthesizer",
+        "Swan Song",
+        "Urza, Lord High Artificer"
+      ],
+      "economies": [
+        "etb",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Swan Song",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Simulacrum Synthesizer",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Swan Song",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Urza, Lord High Artificer",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Urza, Lord High Artificer",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Simulacrum Synthesizer",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Krang, Utrom Warlord",
         "Simulacrum Synthesizer",
         "Urza, Lord High Artificer"
@@ -4257,44 +4295,6 @@
           "magnitude": 1,
           "to": "Krang, Utrom Warlord",
           "toFeature": "anthem"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Simulacrum Synthesizer",
-        "Swan Song",
-        "Urza, Lord High Artificer"
-      ],
-      "economies": [
-        "etb",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Swan Song",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Simulacrum Synthesizer",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Swan Song",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Urza, Lord High Artificer",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Urza, Lord High Artificer",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Simulacrum Synthesizer",
-          "toFeature": "token_create"
         }
       ]
     },

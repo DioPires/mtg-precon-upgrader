@@ -2174,10 +2174,10 @@
     "crowdPriorApplied": true,
     "deckId": "stampede-acres",
     "deepFocused": true,
-    "generatedAt": "2026-08-15T19:10:43.513003+00:00",
+    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
-    "ontologyVersion": "1.0.1",
+    "ontologyVersion": "1.1.0",
     "source": "Tier-C synergy engine (combo_synergy_lib), DEC-491"
   },
   "pairs": [
@@ -2759,35 +2759,6 @@
     {
       "band": "strong",
       "cards": [
-        "March of the Multitudes",
-        "Mondrak, Glory Dominus"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "March of the Multitudes",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "March of the Multitudes",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Anointed Procession",
         "Scute Swarm"
       ],
@@ -2819,6 +2790,35 @@
           "magnitude": 1,
           "to": "Scute Swarm",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "March of the Multitudes",
+        "Mondrak, Glory Dominus"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "March of the Multitudes",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "March of the Multitudes",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -2893,26 +2893,6 @@
           "magnitude": 1,
           "to": "Idol of Oblivion",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Caretaker's Talent",
-        "Halo Fountain"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Halo Fountain",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "anthem"
         }
       ]
     },
@@ -3085,6 +3065,26 @@
           "magnitude": 1,
           "to": "Idol of Oblivion",
           "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Caretaker's Talent",
+        "Halo Fountain"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Halo Fountain",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "anthem"
         }
       ]
     },
@@ -3309,6 +3309,34 @@
     {
       "band": "strong",
       "cards": [
+        "Anointed Procession",
+        "Caretaker's Talent"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Castle Ardenvale",
         "Seedborn Muse"
       ],
@@ -3359,34 +3387,6 @@
           "magnitude": 1,
           "to": "Warleader's Call",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Anointed Procession",
-        "Caretaker's Talent"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "anthem"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -3482,34 +3482,6 @@
     {
       "band": "strong",
       "cards": [
-        "March of the Multitudes",
-        "Warleader's Call"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "March of the Multitudes",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Warleader's Call",
-          "toFeature": "anthem"
-        },
-        {
-          "from": "March of the Multitudes",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Warleader's Call",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Impact Tremors",
         "Parallel Lives"
       ],
@@ -3539,6 +3511,34 @@
     {
       "band": "strong",
       "cards": [
+        "March of the Multitudes",
+        "Warleader's Call"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "March of the Multitudes",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Warleader's Call",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "March of the Multitudes",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Warleader's Call",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Halo Fountain",
         "Skullclamp"
       ],
@@ -3553,26 +3553,6 @@
           "magnitude": 1,
           "to": "Skullclamp",
           "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Artifact Mutation",
-        "Caretaker's Talent"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Artifact Mutation",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -3705,6 +3685,26 @@
     {
       "band": "strong",
       "cards": [
+        "Artifact Mutation",
+        "Caretaker's Talent"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Artifact Mutation",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Idol of Oblivion",
         "Skullclamp"
       ],
@@ -3733,34 +3733,6 @@
     {
       "band": "strong",
       "cards": [
-        "Caretaker's Talent",
-        "Scute Swarm"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Mondrak, Glory Dominus",
         "Scute Swarm"
       ],
@@ -3783,6 +3755,34 @@
           "magnitude": 1,
           "to": "Scute Swarm",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Caretaker's Talent",
+        "Scute Swarm"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -3827,28 +3827,29 @@
     {
       "band": "strong",
       "cards": [
-        "Secure the Wastes",
-        "Warleader's Call"
+        "Parallel Lives",
+        "Skullclamp"
       ],
       "economies": [
-        "token"
+        "sacrifice",
+        "trigger_doubling"
       ],
       "edges": [
         {
-          "from": "Secure the Wastes",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "from": "Parallel Lives",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
           "magnitude": 1,
-          "to": "Warleader's Call",
-          "toFeature": "anthem"
+          "to": "Skullclamp",
+          "toFeature": "dies_trigger"
         },
         {
-          "from": "Secure the Wastes",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Death payoff",
           "magnitude": 1,
-          "to": "Warleader's Call",
-          "toFeature": "etb_trigger"
+          "to": "Skullclamp",
+          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -3884,29 +3885,28 @@
     {
       "band": "strong",
       "cards": [
-        "Parallel Lives",
-        "Skullclamp"
+        "Secure the Wastes",
+        "Warleader's Call"
       ],
       "economies": [
-        "sacrifice",
-        "trigger_doubling"
+        "token"
       ],
       "edges": [
         {
-          "from": "Parallel Lives",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "from": "Secure the Wastes",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
           "magnitude": 1,
-          "to": "Skullclamp",
-          "toFeature": "dies_trigger"
+          "to": "Warleader's Call",
+          "toFeature": "anthem"
         },
         {
-          "from": "Parallel Lives",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Death payoff",
+          "from": "Secure the Wastes",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Skullclamp",
-          "toFeature": "dies_trigger"
+          "to": "Warleader's Call",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -4007,7 +4007,7 @@
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Parallel Lives",
         "Warleader's Call"
@@ -4044,7 +4044,7 @@
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Anointed Procession",
         "Warleader's Call"
@@ -4284,27 +4284,28 @@
     {
       "band": "speculative",
       "cards": [
-        "Rosie Cotton of South Lane",
-        "Warleader's Call"
+        "Anointed Procession",
+        "Impact Tremors"
       ],
       "economies": [
-        "token"
+        "token",
+        "trigger_doubling"
       ],
       "edges": [
         {
-          "from": "Rosie Cotton of South Lane",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Warleader's Call",
-          "toFeature": "anthem"
-        },
-        {
-          "from": "Rosie Cotton of South Lane",
+          "from": "Anointed Procession",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Warleader's Call",
+          "to": "Impact Tremors",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Impact Tremors",
           "toFeature": "etb_trigger"
         }
       ]
@@ -4372,28 +4373,27 @@
     {
       "band": "speculative",
       "cards": [
-        "Anointed Procession",
-        "Impact Tremors"
+        "Rosie Cotton of South Lane",
+        "Warleader's Call"
       ],
       "economies": [
-        "token",
-        "trigger_doubling"
+        "token"
       ],
       "edges": [
         {
-          "from": "Anointed Procession",
+          "from": "Rosie Cotton of South Lane",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Warleader's Call",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Rosie Cotton of South Lane",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Impact Tremors",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Impact Tremors",
+          "to": "Warleader's Call",
           "toFeature": "etb_trigger"
         }
       ]
@@ -5279,59 +5279,6 @@
       "band": "strong",
       "cards": [
         "Anointed Procession",
-        "Caretaker's Talent",
-        "Parallel Lives"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "anthem"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Token doubler (ambient)",
-          "magnitude": 1,
-          "to": "Parallel Lives",
-          "toFeature": "token_doubler"
-        },
-        {
-          "from": "Parallel Lives",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "anthem"
-        },
-        {
-          "from": "Parallel Lives",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Anointed Procession",
         "Halo Fountain",
         "Mondrak, Glory Dominus"
       ],
@@ -5379,6 +5326,59 @@
           "magnitude": 1,
           "to": "Mondrak, Glory Dominus",
           "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Anointed Procession",
+        "Caretaker's Talent",
+        "Parallel Lives"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "token_doubler"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "token_create"
         }
       ]
     },

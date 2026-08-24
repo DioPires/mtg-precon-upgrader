@@ -2683,10 +2683,10 @@
     "crowdPriorApplied": true,
     "deckId": "witherbloom-the-balancer",
     "deepFocused": true,
-    "generatedAt": "2026-08-15T19:10:43.513003+00:00",
+    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
-    "ontologyVersion": "1.0.1",
+    "ontologyVersion": "1.1.0",
     "source": "Tier-C synergy engine (combo_synergy_lib), DEC-491"
   },
   "pairs": [
@@ -3174,34 +3174,6 @@
     {
       "band": "strong",
       "cards": [
-        "Springleaf Parade",
-        "Tendershoot Dryad"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Tendershoot Dryad",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Tendershoot Dryad",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Cauldron of Essence",
         "Pest Infestation"
       ],
@@ -3264,20 +3236,28 @@
     {
       "band": "strong",
       "cards": [
-        "Skullclamp",
-        "Torment of Hailfire"
+        "Springleaf Parade",
+        "Tendershoot Dryad"
       ],
       "economies": [
-        "dies"
+        "token"
       ],
       "edges": [
         {
-          "from": "Skullclamp",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 3,
-          "to": "Torment of Hailfire",
-          "toFeature": "drain"
+          "from": "Tendershoot Dryad",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Tendershoot Dryad",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -3314,6 +3294,26 @@
           "magnitude": 1,
           "to": "Pest Infestation",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Skullclamp",
+        "Torment of Hailfire"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Skullclamp",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Life drain to opponents",
+          "magnitude": 3,
+          "to": "Torment of Hailfire",
+          "toFeature": "drain"
         }
       ]
     },
@@ -3487,7 +3487,7 @@
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Cauldron of Essence",
         "Sedgemoor Witch"
@@ -4006,26 +4006,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Beast Within",
-        "Bojuka Bog"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Bojuka Bog",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Beast Within",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Bolas's Citadel",
         "Massacre Wurm"
       ],
@@ -4055,20 +4035,20 @@
     {
       "band": "speculative",
       "cards": [
-        "Cauldron of Essence",
-        "Torment of Hailfire"
+        "Beast Within",
+        "Bojuka Bog"
       ],
       "economies": [
-        "drain"
+        "etb"
       ],
       "edges": [
         {
-          "from": "Torment of Hailfire",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 3,
-          "to": "Cauldron of Essence",
-          "toFeature": "dies_trigger"
+          "from": "Bojuka Bog",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4097,6 +4077,26 @@
           "label": "Trigger doubler (ambient) ↔ Death payoff",
           "magnitude": 1,
           "to": "Enduring Vitality",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Cauldron of Essence",
+        "Torment of Hailfire"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Torment of Hailfire",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 3,
+          "to": "Cauldron of Essence",
           "toFeature": "dies_trigger"
         }
       ]
@@ -4172,6 +4172,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Enduring Vitality",
+        "Springleaf Parade"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Springleaf Parade",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Enduring Vitality",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Avenger of Zendikar",
         "Cauldron of Essence"
       ],
@@ -4228,26 +4248,6 @@
           "magnitude": 1,
           "to": "Cauldron of Essence",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Enduring Vitality",
-        "Springleaf Parade"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Springleaf Parade",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Enduring Vitality",
-          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -4600,35 +4600,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Blood Artist",
-        "Springleaf Parade"
-      ],
-      "economies": [
-        "dies",
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Pest Infestation",
         "Sedgemoor Witch"
       ],
@@ -4663,6 +4634,35 @@
           "magnitude": 1,
           "to": "Sedgemoor Witch",
           "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Blood Artist",
+        "Springleaf Parade"
+      ],
+      "economies": [
+        "dies",
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Blood Artist",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Blood Artist",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -6842,143 +6842,6 @@
     {
       "band": "strong",
       "cards": [
-        "Bastion of Remembrance",
-        "Cauldron of Essence",
-        "Enduring Vitality"
-      ],
-      "economies": [
-        "dies",
-        "drain",
-        "etb",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Enduring Vitality",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Enduring Vitality",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Enduring Vitality",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Enduring Vitality",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Enduring Vitality",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Enduring Vitality",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Enduring Vitality",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Cauldron of Essence",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Cauldron of Essence",
         "Parallel Lives",
         "Sedgemoor Witch"
@@ -7111,6 +6974,143 @@
           "magnitude": 1,
           "to": "Sedgemoor Witch",
           "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Bastion of Remembrance",
+        "Cauldron of Essence",
+        "Enduring Vitality"
+      ],
+      "economies": [
+        "dies",
+        "drain",
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Enduring Vitality",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Enduring Vitality",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Enduring Vitality",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Enduring Vitality",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Enduring Vitality",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Enduring Vitality",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Enduring Vitality",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Cauldron of Essence",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -7323,52 +7323,6 @@
     {
       "band": "strong",
       "cards": [
-        "Blood Artist",
-        "Sedgemoor Witch",
-        "Torment of Hailfire"
-      ],
-      "economies": [
-        "dies",
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Sedgemoor Witch",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Sedgemoor Witch",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 3,
-          "to": "Torment of Hailfire",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Torment of Hailfire",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 3,
-          "to": "Sedgemoor Witch",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Bastion of Remembrance",
         "Phyrexian Tower",
         "Pitiless Plunderer"
@@ -7450,6 +7404,52 @@
           "magnitude": 1,
           "to": "Bastion of Remembrance",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Blood Artist",
+        "Sedgemoor Witch",
+        "Torment of Hailfire"
+      ],
+      "economies": [
+        "dies",
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Blood Artist",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Sedgemoor Witch",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Blood Artist",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Sedgemoor Witch",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Blood Artist",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Life drain to opponents",
+          "magnitude": 3,
+          "to": "Torment of Hailfire",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Torment of Hailfire",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 3,
+          "to": "Sedgemoor Witch",
+          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -7740,7 +7740,7 @@
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Blood Artist",
         "Cauldron of Essence",

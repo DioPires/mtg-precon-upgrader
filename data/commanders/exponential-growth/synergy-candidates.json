@@ -1139,6 +1139,61 @@
     {
       "band": "strong",
       "cards": [
+        "Curse of the Swine",
+        "Goldvein Hydra",
+        "Lifeblood Hydra",
+        "The Goose Mother"
+      ],
+      "economies": [
+        "dies",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Curse of the Swine",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "The Goose Mother",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Goose Mother",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Lifeblood Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Curse of the Swine",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lifeblood Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "The Goose Mother",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Forgotten Ancient",
         "Hardened Scales",
         "Lattice Library",
@@ -1225,61 +1280,6 @@
           "magnitude": 1,
           "to": "Primo, the Unbounded",
           "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Curse of the Swine",
-        "Goldvein Hydra",
-        "Lifeblood Hydra",
-        "The Goose Mother"
-      ],
-      "economies": [
-        "dies",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Curse of the Swine",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "The Goose Mother",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Goose Mother",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Lifeblood Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Curse of the Swine",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lifeblood Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "The Goose Mother",
-          "toFeature": "sac_fodder"
         }
       ]
     },
@@ -1462,10 +1462,10 @@
     "crowdPriorApplied": true,
     "deckId": "exponential-growth",
     "deepFocused": true,
-    "generatedAt": "2026-08-15T19:10:43.513003+00:00",
+    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
-    "ontologyVersion": "1.0.1",
+    "ontologyVersion": "1.1.0",
     "source": "Tier-C synergy engine (combo_synergy_lib), DEC-491"
   },
   "pairs": [
@@ -1810,26 +1810,6 @@
     {
       "band": "strong",
       "cards": [
-        "Lattice Library",
-        "Unbound Flourishing"
-      ],
-      "economies": [
-        "cast"
-      ],
-      "edges": [
-        {
-          "from": "Unbound Flourishing",
-          "fromFeature": "spell_source",
-          "label": "Repeatable / recastable spell source ↔ Cast payoff (magecraft-style)",
-          "magnitude": 1,
-          "to": "Lattice Library",
-          "toFeature": "cast_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Goldvein Hydra",
         "Primo, the Unbounded"
       ],
@@ -1850,6 +1830,26 @@
     {
       "band": "strong",
       "cards": [
+        "Lattice Library",
+        "Unbound Flourishing"
+      ],
+      "economies": [
+        "cast"
+      ],
+      "edges": [
+        {
+          "from": "Unbound Flourishing",
+          "fromFeature": "spell_source",
+          "label": "Repeatable / recastable spell source ↔ Cast payoff (magecraft-style)",
+          "magnitude": 1,
+          "to": "Lattice Library",
+          "toFeature": "cast_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Lifeblood Hydra",
         "Primo, the Unbounded"
       ],
@@ -1864,46 +1864,6 @@
           "magnitude": 1,
           "to": "Primo, the Unbounded",
           "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Hardened Scales",
-        "Lattice Library"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Hardened Scales",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Lattice Library",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Lattice Library",
-        "Steelbane Hydra"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Steelbane Hydra",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Lattice Library",
-          "toFeature": "counter_add"
         }
       ]
     },
@@ -1950,6 +1910,46 @@
     {
       "band": "strong",
       "cards": [
+        "Hardened Scales",
+        "Lattice Library"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "Hardened Scales",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Lattice Library",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Lattice Library",
+        "Steelbane Hydra"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "Steelbane Hydra",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Lattice Library",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Lifeblood Hydra",
         "The Goose Mother"
       ],
@@ -1990,26 +1990,6 @@
     {
       "band": "strong",
       "cards": [
-        "Forgotten Ancient",
-        "Hardened Scales"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Hardened Scales",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Forgotten Ancient",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Curse of the Swine",
         "The Goose Mother"
       ],
@@ -2024,6 +2004,26 @@
           "magnitude": 1,
           "to": "Curse of the Swine",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Forgotten Ancient",
+        "Hardened Scales"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "Hardened Scales",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Forgotten Ancient",
+          "toFeature": "counter_add"
         }
       ]
     },
@@ -2903,6 +2903,43 @@
     {
       "band": "speculative",
       "cards": [
+        "Doubling Season",
+        "Goldvein Hydra"
+      ],
+      "economies": [
+        "dies",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Doubling Season",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Doubling Season",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
+          "magnitude": 1,
+          "to": "Doubling Season",
+          "toFeature": "token_doubler"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Benevolent Hydra",
         "Herald of Secret Streams"
       ],
@@ -2937,43 +2974,6 @@
           "magnitude": 1,
           "to": "Ozolith, the Shattered Spire",
           "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Doubling Season",
-        "Goldvein Hydra"
-      ],
-      "economies": [
-        "dies",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Doubling Season",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Doubling Season",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Token doubler (ambient)",
-          "magnitude": 1,
-          "to": "Doubling Season",
-          "toFeature": "token_doubler"
         }
       ]
     },
@@ -4233,53 +4233,6 @@
     {
       "band": "strong",
       "cards": [
-        "Hangarback Walker",
-        "Primo, the Unbounded",
-        "Temple of Mystery"
-      ],
-      "economies": [
-        "counters",
-        "dies",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Hangarback Walker",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Primo, the Unbounded",
-          "toFeature": "counter_add"
-        },
-        {
-          "from": "Hangarback Walker",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Primo, the Unbounded",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Temple of Mystery",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Hangarback Walker",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Temple of Mystery",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Primo, the Unbounded",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Goldvein Hydra",
         "Hangarback Walker",
         "Primo, the Unbounded"
@@ -4366,6 +4319,53 @@
           "magnitude": 1,
           "to": "Primo, the Unbounded",
           "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Hangarback Walker",
+        "Primo, the Unbounded",
+        "Temple of Mystery"
+      ],
+      "economies": [
+        "counters",
+        "dies",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Hangarback Walker",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Primo, the Unbounded",
+          "toFeature": "counter_add"
+        },
+        {
+          "from": "Hangarback Walker",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Primo, the Unbounded",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Temple of Mystery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Hangarback Walker",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Temple of Mystery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Primo, the Unbounded",
+          "toFeature": "token_create"
         }
       ]
     },

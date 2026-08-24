@@ -1789,10 +1789,10 @@
     "crowdPriorApplied": true,
     "deckId": "hidden-legion",
     "deepFocused": false,
-    "generatedAt": "2026-08-15T19:10:43.513003+00:00",
+    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
-    "ontologyVersion": "1.0.1",
+    "ontologyVersion": "1.1.0",
     "source": "Tier-C synergy engine (combo_synergy_lib), DEC-491"
   },
   "pairs": [
@@ -2963,26 +2963,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Springleaf Parade",
-        "Vanquisher's Banner"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Vanquisher's Banner",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Dragon Tempest",
         "Thrumming Hivepool"
       ],
@@ -2996,6 +2976,26 @@
           "label": "ETB payoff ↔ Creates tokens",
           "magnitude": 2,
           "to": "Thrumming Hivepool",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Springleaf Parade",
+        "Vanquisher's Banner"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Vanquisher's Banner",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
           "toFeature": "token_create"
         }
       ]
@@ -3409,6 +3409,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Champion of the Path",
+        "Springleaf Parade"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Champion of the Path",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Lathliss, Dragon Queen",
         "Vanquisher's Banner"
       ],
@@ -3429,20 +3449,29 @@
     {
       "band": "speculative",
       "cards": [
-        "Champion of the Path",
-        "Springleaf Parade"
+        "Graveshifter",
+        "Thrumming Hivepool"
       ],
       "economies": [
-        "etb"
+        "sacrifice",
+        "token"
       ],
       "edges": [
         {
-          "from": "Champion of the Path",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
+          "from": "Thrumming Hivepool",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "token_create"
+          "to": "Graveshifter",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Thrumming Hivepool",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 2,
+          "to": "Graveshifter",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -3523,35 +3552,6 @@
           "magnitude": 1,
           "to": "Lathliss, Dragon Queen",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Graveshifter",
-        "Thrumming Hivepool"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Thrumming Hivepool",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Graveshifter",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Thrumming Hivepool",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Graveshifter",
-          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -5116,6 +5116,70 @@
     {
       "band": "speculative",
       "cards": [
+        "Graveshifter",
+        "Smothering Tithe",
+        "Springleaf Parade"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Graveshifter",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Graveshifter",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Graveshifter",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Smothering Tithe",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Graveshifter",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Smothering Tithe",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Graveshifter",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Smothering Tithe",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springleaf Parade",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Cloudshredder Sliver",
         "Lathliss, Dragon Queen",
         "Springleaf Parade"
@@ -5523,70 +5587,6 @@
           "magnitude": 1,
           "to": "Springleaf Parade",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Graveshifter",
-        "Smothering Tithe",
-        "Springleaf Parade"
-      ],
-      "economies": [
-        "etb",
-        "recursion",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Graveshifter",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Graveshifter",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Graveshifter",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Smothering Tithe",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Graveshifter",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Smothering Tithe",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Graveshifter",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Smothering Tithe",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Springleaf Parade",
-          "toFeature": "etb_trigger"
         }
       ]
     }
