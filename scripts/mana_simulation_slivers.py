@@ -21,8 +21,8 @@ Manabase model:
   Reflecting Pool). The creature-restricted / opponent-dependent ones are
   modeled as WUBRG — the deck is near-uniformly Sliver creatures, so the
   restriction rarely binds, and Exotic Orchard / Reflecting Pool resolve to all
-  five colors against any real board. Same precedent as superfriends-esika's
-  treatment of Command Tower / City of Brass.
+  five colors against any real board. Same treatment as Command Tower /
+  City of Brass in the other five-color sims.
 - 15 basics (Forest x4, Plains x3, Island x3, Swamp x3, Mountain x2).
 """
 
@@ -181,7 +181,7 @@ def compute_land_sources(name: str) -> list[frozenset]:
     return [frozenset({"C"})]
 
 
-# --- ManaPool with multi-color allocator (mirrors superfriends-esika) ---
+# --- ManaPool with multi-color allocator ---
 
 class ManaPool:
     def __init__(self, sources=None):

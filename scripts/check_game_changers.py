@@ -12,7 +12,7 @@ Three checks, any failure exits 1:
    of its `decklist` names on the GC list (front face for MDFCs), and the
    count must respect the bracket cap: brackets 1-3 and 3+ cap at 3 GCs,
    4-/4/4+/5 are uncapped, plus per-deck hard caps set by the board
-   (DEC-369: verdant-tide and pyre-and-panic <= 1).
+   (DEC-369: verdant-tide <= 1).
 
 Policy context: AGENTS.md "Fleet Re-Audit Policy". On list drift, update the
 JSON + TS copies together, then re-run for the corrected fleet recount.
@@ -38,7 +38,7 @@ SCRYFALL_SEARCH = "https://api.scryfall.com/cards/search"
 USER_AGENT = "mtg-precon-upgrader/1.0 (github.com/DioPires/mtg-precon-upgrader)"
 
 # Board-set hard caps (DEC-369); bracket caps are derived from `bracket`.
-HARD_CAPS = {"verdant-tide": 1, "pyre-and-panic": 1}
+HARD_CAPS = {"verdant-tide": 1}
 
 
 def front_face(name: str) -> str:

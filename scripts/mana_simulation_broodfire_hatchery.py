@@ -197,7 +197,7 @@ def compute_land_sources(name: str) -> list[frozenset]:
     return [frozenset({"C"})]
 
 
-# --- ManaPool with multi-color allocator (mirrors superfriends-esika) ---
+# --- ManaPool with multi-color allocator ---
 
 class ManaPool:
     def __init__(self, sources=None):

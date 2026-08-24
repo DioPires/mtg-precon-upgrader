@@ -823,9 +823,9 @@ def merge_stats(chunks: list[dict]) -> dict:
 def export_enhanced_json(metadata: dict) -> dict:
     import export_simulation_results as exporter
 
-    result = exporter.export_calculated_infinity(metadata)
-    if not exporter.validate_output(result, "calculated-infinity"):
-        raise ValueError("export_calculated_infinity produced invalid simulation output")
+    result = exporter.export_exponential_growth(metadata)
+    if not exporter.validate_output(result, "exponential-growth"):
+        raise ValueError("export_exponential_growth produced invalid simulation output")
     return result
 
 

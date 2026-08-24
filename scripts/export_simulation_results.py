@@ -33,12 +33,8 @@ import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
 import mana_simulation_grave_dividends as sim_grave_dividends
 import mana_simulation_hoard_and_bleed as sim_hoard_and_bleed
-import mana_simulation_pyre_and_panic as sim_mono_red
 import mana_simulation_hidden_legion as sim_hidden_legion
-import mana_simulation_superfriends_esika as sim_superfriends_esika
-import mana_simulation_aziza_mage_tower_captain as sim_boros
 import mana_simulation_zada_hedron_grinder as sim_zada
-import mana_simulation_calculated_infinity as sim_calculated_infinity
 import mana_simulation_exponential_growth as sim_exponential_growth
 import mana_simulation_slivers as sim_slivers
 import mana_simulation_stampede_acres as sim_stampede_acres
@@ -219,43 +215,6 @@ KEY_COMBOS = {
         }
     ],
     # hidden-legion: Snoop+Kiki+Tremors combo cut in DEC-373 (1.4% assembly by T7 — phantom line).
-    "pyre-and-panic": [
-        {
-            "name": "Norin Drain Stack",
-            "pieces": ["Impact Tremors", "Purphoros, God of the Forge", "Panharmonicon"],
-            "requiresCommander": True,
-            "description": "Norin's repeating self-flicker triggers Impact Tremors + Purphoros twice each per cycle under Panharmonicon — 6 dmg/opp baseline, scales with Torbran/Fiery Emancipation.",
-        }
-    ],
-    "calculated-infinity": [
-        {
-            "name": "Dramatic Scepter",
-            "pieces": ["Dramatic Reversal", "Isochron Scepter"],
-            "requiresCommander": False,
-            "description": "Imprint Reversal on Scepter; with 3+ mana of rocks/dorks in play, each {2} Scepter activation untaps everything for infinite mana. Closes via Walking Ballista, Stroke of Genius mill, or Aetherflux Reservoir.",
-        }
-    ],
-    # DEC-370: entries below fix decks whose comboConsistency was pinned at the
-    # 50 floor despite real, Spellbook-confirmed (or oracle-verified) combo lines.
-    "aziza-mage-tower-captain": [
-        {
-            "name": "Heliod Ballista",
-            "pieces": ["Heliod, Sun-Crowned", "Walking Ballista"],
-            "requiresCommander": False,
-            "description": "Heliod grants Ballista lifelink; each ping gains life, adding "
-                           "a counter back — infinite damage.",
-        },
-        {
-            # DEC-381: third wincon axis (Spellbook 147-1235).
-            "name": "Twinflame Dualcaster",
-            "pieces": ["Twinflame", "Dualcaster Mage"],
-            "requiresCommander": False,
-            "description": "Dualcaster ETB copies Twinflame targeting itself; each hasty "
-                           "token copy re-copies Twinflame — infinite hasty 2/2s + infinite "
-                           "ETB triggers (lethal via Impact Tremors/Warleader's Call/"
-                           "Purphoros, or same-turn haste swing).",
-        },
-    ],
     "grave-dividends": [
         {
             "name": "Recursive-ETB + Death-Return Aura + Free Outlet",
@@ -512,9 +471,9 @@ KEY_COMBOS = {
         {
             # Fury Storm copies itself once per prior commander cast from the
             # command zone — with zero casts it makes no copies, so the line is
-            # commander-gated. requiresCommander mirrors the pyre-and-panic
-            # precedent: it flags commander dependency (resilience component),
-            # it does not delay the assembly-turn measurement.
+            # commander-gated. requiresCommander flags commander dependency
+            # (resilience component); it does not delay the assembly-turn
+            # measurement.
             "name": "Fury Storm Magecraft",
             "pieces": ["Fury Storm", "Storm-Kiln Artist"],
             "requiresCommander": True,
@@ -581,7 +540,6 @@ COMMANDER_CASCADE = {
 #   tapCost — creatures tapped per tap_gate use (Aziza: 3).
 COMMANDER_COPY_ENGINE = {
     "zada-hedron-grinder": {"mode": "per_other_creature"},
-    "aziza-mage-tower-captain": {"mode": "tap_gate", "tapCost": 3},
 }
 
 # DEC-404 — commander token-swarm engines (sequel to DEC-385/DEC-393). The
@@ -3604,50 +3562,6 @@ def export_mono_white(metadata: dict) -> dict:
     )
 
 
-def export_mono_red(metadata: dict) -> dict:
-    """Export Pyre & Panic (mono-red Norin the Wary) simulation."""
-    result = _export_colored(
-        sim_module=sim_mono_red,
-        deck_id="pyre-and-panic",
-        deck_name="Pyre & Panic",
-        commander_name="Norin the Wary",
-        commander_cmc=1,
-        colors=["R"],
-        metadata=metadata,
-    )
-
-    # Add Norin-specific special metrics: engine readiness + flicker triggers
-    deck_file = PROJECT_ROOT / "data" / "commanders" / "pyre-and-panic" / "deck.json"
-    with open(deck_file) as f:
-        deck_data = json.load(f)
-    decklist = sim_mono_red.build_decklist(deck_data)
-
-    print(f"  Running {NUM_GAMES:,} games for Norin-specific metrics...")
-    stats = run_parallel(sim_mono_red._run_chunk, sim_mono_red.merge_stats,
-                         decklist, metadata, NUM_GAMES)
-    total = NUM_GAMES
-
-    engine_ready = {}
-    for t in range(1, NUM_TURNS + 1):
-        engine_ready[str(t)] = pct(stats["engine_ready_by_turn"][t], total)
-
-    flicker_data = stats["flicker_triggers_per_game"]
-    flicker_mean = r1(statistics.mean(flicker_data)) if flicker_data else 0.0
-    flicker_median = r1(statistics.median(flicker_data)) if flicker_data else 0.0
-
-    result["specialMetrics"]["engineReadiness"] = {
-        "description": "Probability 3+ ETB-damage payoffs (Impact Tremors / Purphoros / Witty Roastmaster / etc.) on battlefield",
-        "byTurn": engine_ready,
-    }
-    result["specialMetrics"]["flickerTriggers"] = {
-        "description": "Average Norin self-flicker triggers per game (one per combat post-cast through T10)",
-        "mean": flicker_mean,
-        "median": flicker_median,
-    }
-
-    return result
-
-
 def export_hidden_legion(metadata: dict) -> dict:
     """Export Hidden Legion (5-color Ur-Dragon changeling tribal) simulation."""
     result = _export_colored(
@@ -3702,75 +3616,6 @@ def export_hidden_legion(metadata: dict) -> dict:
     }
 
     return result
-
-
-def export_superfriends_esika(metadata: dict) -> dict:
-    """Export Esika's Council (5C Superfriends) simulation."""
-    result = _export_colored(
-        sim_module=sim_superfriends_esika,
-        deck_id="superfriends-esika",
-        deck_name="Esika's Council",
-        commander_name="Esika, God of the Tree",
-        commander_cmc=6,
-        colors=["W", "U", "B", "R", "G"],
-        metadata=metadata,
-    )
-
-    # Esika-specific metrics: engine readiness, doublers curve, Esika castability
-    deck_file = PROJECT_ROOT / "data" / "commanders" / "superfriends-esika" / "deck.json"
-    with open(deck_file) as f:
-        deck_data = json.load(f)
-    decklist = sim_superfriends_esika.build_decklist(deck_data)
-
-    print(f"  Running {NUM_GAMES:,} games for Esika engine metrics...")
-    stats = run_parallel(sim_superfriends_esika._run_chunk, sim_superfriends_esika.merge_stats,
-                         decklist, metadata, NUM_GAMES)
-    total = NUM_GAMES
-
-    engine_ready = {}
-    for t in range(1, NUM_TURNS + 1):
-        engine_ready[str(t)] = pct(stats["engine_ready_by_turn"][t], total)
-
-    esika_castable = {}
-    for t in range(1, NUM_TURNS + 1):
-        esika_castable[str(t)] = pct(stats["esika_castable_by_turn"][t], total)
-
-    doublers_curve = {}
-    for t in range(1, NUM_TURNS + 1):
-        doublers_curve[str(t)] = mana_stats(stats["counter_doublers_by_turn"][t])
-
-    result["specialMetrics"]["engineReadiness"] = {
-        "description": (
-            "Probability Esika has been cast AND at least one counter-doubler "
-            "(Doubling Season, Parallel Lives, Vorinclex, Deepglow Skate, "
-            "Innkeeper's Talent) is in play. Core engine state — Bridge active "
-            "with a doubler accelerates every walker ETB into ult range."
-        ),
-        "byTurn": engine_ready,
-    }
-    result["specialMetrics"]["esikaCastable"] = {
-        "description": "Esika back-side (Prismatic Bridge, 6 CMC, {1}{W}{U}{B}{R}{G}) castable by turn",
-        "byTurn": esika_castable,
-    }
-    result["specialMetrics"]["counterDoublersInPlay"] = {
-        "description": "Counter-doublers / proliferate enablers in play per turn (median/mean). Combo-readiness scaffolding.",
-        "byTurn": doublers_curve,
-    }
-
-    return result
-
-
-def export_boros(metadata: dict) -> dict:
-    """Export Mage Tower Brigade (Boros — Aziza, Mage Tower Captain) simulation."""
-    return _export_colored(
-        sim_module=sim_boros,
-        deck_id="aziza-mage-tower-captain",
-        deck_name="Mage Tower Brigade",
-        commander_name="Aziza, Mage Tower Captain",
-        commander_cmc=2,
-        colors=["R", "W"],
-        metadata=metadata,
-    )
 
 
 def export_gandalf_party_guest(metadata: dict) -> dict:
@@ -3852,19 +3697,6 @@ def export_hoard_and_bleed(metadata: dict) -> dict:
         commander_name="Smaug, Wicked Worm",
         commander_cmc=5,
         colors=["B", "R"],
-        metadata=metadata,
-    )
-
-
-def export_calculated_infinity(metadata: dict) -> dict:
-    """Export Calculated Infinity (Simic Zimone X-spell combo) simulation."""
-    return _export_colored(
-        sim_module=sim_calculated_infinity,
-        deck_id="calculated-infinity",
-        deck_name="Calculated Infinity",
-        commander_name="Zimone, Infinite Analyst",
-        commander_cmc=3,
-        colors=["U", "G"],
         metadata=metadata,
     )
 
@@ -3995,12 +3827,8 @@ DECKS = [
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
     ("creeping-corruption", "Creeping Corruption", export_wubg_poison),
     ("grave-dividends", "Grave Dividends", export_grave_dividends),
-    ("pyre-and-panic", "Pyre & Panic", export_mono_red),
     ("hidden-legion", "Hidden Legion", export_hidden_legion),
-    ("superfriends-esika", "Esika's Council", export_superfriends_esika),
-    ("aziza-mage-tower-captain", "Mage Tower Brigade", export_boros),
     ("zada-hedron-grinder", "Hedron Storm", export_zada),
-    ("calculated-infinity", "Calculated Infinity", export_calculated_infinity),
     ("exponential-growth", "Exponential Growth", export_exponential_growth),
     ("slivers", "Hivebound Cascade", export_slivers),
     ("stampede-acres", "Field of Blades", export_stampede_acres),

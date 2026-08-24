@@ -119,7 +119,7 @@ class CopyEngineHelperTests(unittest.TestCase):
             engine, {"targetsOnlyCreature": False}, 5, 0), 0)
 
     def test_copy_engine_tap_gate_throttles_per_turn(self):
-        engine = exporter.COMMANDER_COPY_ENGINE["aziza-mage-tower-captain"]
+        engine = {"mode": "tap_gate", "tapCost": 3}
         profile = {"targetsOnlyCreature": False}
         # 7 creatures: first two casts copy (3+3 tapped), third finds only 1 untapped.
         self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 7, 0), 1)
