@@ -108,14 +108,26 @@ simply contributes no edges. An uncovered card is disclosed, never guessed.
 | Step | Script | Output |
 |---|---|---|
 | Feature index + shared config | `build_synergy_index.py` | `data/combo-kb/feature-index.json` (+ `.meta.json`), `synergy-config.json` |
+| Parity fixture | `build_synergy_parity_fixture.py` | `web/src/lib/__fixtures__/synergy-parity.json` |
 | Fleet precompute | `build_synergy_candidates.py [--deck ID]` | `data/commanders/{id}/synergy-candidates.json` |
 | EDHREC cache (fleet, gitignored) | `fetch_edhrec_rates.py --deck ID` | `priv_data/edhrec/{id}.json` |
 | QE-1a C-layer regression | `qe1a_synergy_regression.py` | recall metric + ontology-gap diagnostics |
 
-Re-run `build_synergy_index.py` when the KB corpus/ontology changes, then
-`build_synergy_candidates.py` (all fleet decks) after decklist or KB changes.
-Bump `web/src/data/loader.ts` `STORAGE_PREFIX` if the committed bundle shape
-changes (done: v109 → v110 for the `synergyCandidates` member).
+**After ANY combo-KB change (ontology, extractor, or entries), re-run the first
+two in order** — `build_synergy_index.py`, then `build_synergy_parity_fixture.py` —
+and then `build_synergy_candidates.py` for the fleet. Skipping either of the first
+two silently splits the two surfaces: paste mode keeps serving the old features
+while fleet mode (which reads the KB entries directly) uses the new ones. That is
+exactly what DEC-552 fixed — the ontology v1.1 graveyard-return primitives landed
+in DEC-526/DEC-530 without a re-emit, so `synergy-config.json` was missing four
+features and every IDF weight was computed off a stale histogram. Neither script
+touches the KB entries, so neither can wipe LLM enrichment.
+
+`tests/test_combo_synergy.py::test_parity_fixture_matches_engine` is the drift
+alarm: it fails whenever the committed fixture no longer equals a fresh Python
+run. The fix is always to re-emit (Python is the source of truth), never to relax
+the assertion. Bump `web/src/data/loader.ts` `STORAGE_PREFIX` if the committed
+bundle shape changes (done: v109 → v110 for the `synergyCandidates` member).
 
 ## 7. QE-1a — C-layer regression (QE-1 a-slice)
 

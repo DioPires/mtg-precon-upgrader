@@ -158,13 +158,20 @@ export function loadFeatureIndexMeta(
   return metaInflight;
 }
 
-/** Full feature index — in-memory only, corpus-version cache-buster, never localStorage. */
+/** Full feature index — in-memory only, provenance cache-buster, never localStorage. */
 export function loadFeatureIndex(fetchImpl: typeof fetch = fetch): Promise<FeatureIndex | null> {
   if (indexCache) return Promise.resolve(indexCache);
   if (indexInflight) return indexInflight;
   indexInflight = (async () => {
     const meta = await loadFeatureIndexMeta(fetchImpl);
-    const v = encodeURIComponent(meta?.corpusVersion ?? 'unknown');
+    // All three stamps, not corpus alone: an ontology or extractor re-emit changes
+    // the index's features over an unchanged card corpus (DEC-552), and a
+    // corpus-only key would leave a stale 3.3 MB index cached against a fresh config.
+    const v = encodeURIComponent(
+      [meta?.corpusVersion, meta?.ontologyVersion, meta?.extractorVersion]
+        .map((s) => s ?? 'unknown')
+        .join('|'),
+    );
     const index = await fetchJson<FeatureIndex>(
       `/data/combo-kb/feature-index.json?v=${v}`,
       fetchImpl,

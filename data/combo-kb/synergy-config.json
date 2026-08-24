@@ -3,6 +3,9 @@
     "anthem": [
       "token_create"
     ],
+    "aura_fetch": [
+      "death_return"
+    ],
     "blink": [
       "etb_trigger",
       "ltb_trigger"
@@ -21,6 +24,10 @@
     "damage": [
       "ping_outlet"
     ],
+    "death_return": [
+      "aura_fetch",
+      "etb_reanimate"
+    ],
     "dies_trigger": [
       "drain",
       "sac_fodder",
@@ -32,12 +39,19 @@
       "etb_trigger"
     ],
     "draw": [],
+    "etb_reanimate": [
+      "death_return",
+      "exile_until_leaves"
+    ],
     "etb_trigger": [
       "blink",
       "drain",
       "recursion",
       "token_create",
       "trigger_doubler"
+    ],
+    "exile_until_leaves": [
+      "etb_reanimate"
     ],
     "extra_turn": [],
     "graveyard_payoff": [
@@ -133,16 +147,20 @@
   },
   "economies": {
     "anthem": "token",
+    "aura_fetch": "aura_fetch",
     "blink": "blink",
     "cast_trigger": "cast",
     "cost_reduction": "cost_reduction",
     "counter_add": "counters",
     "counter_payoff": "counters",
     "damage": "damage",
+    "death_return": "death_return",
     "dies_trigger": "dies",
     "drain": "drain",
     "draw": "draw",
+    "etb_reanimate": "reanimate",
     "etb_trigger": "etb",
+    "exile_until_leaves": "exile_return",
     "extra_turn": "turn_phase_budget",
     "graveyard_payoff": "recursion",
     "lifegain": "lifegain",
@@ -164,49 +182,57 @@
     "untap_permanent": "untap"
   },
   "idf": {
-    "anthem": 3.4455,
-    "blink": 5.4854,
-    "cast_trigger": 3.4816,
-    "cost_reduction": 4.101,
-    "counter_add": 2.4398,
-    "counter_payoff": 3.9613,
-    "damage": 2.5022,
-    "dies_trigger": 3.3551,
-    "drain": 4.4765,
-    "draw": 2.3326,
-    "etb_trigger": 1.8241,
-    "extra_turn": 5.8795,
-    "graveyard_payoff": 3.8329,
-    "lifegain": 3.1478,
-    "lifegain_payoff": 5.6232,
-    "ltb_trigger": 5.0069,
-    "mana_add": 2.7209,
-    "mana_sink": 1.6995,
-    "mill": 4.0438,
+    "anthem": 3.3825,
+    "aura_fetch": 8.9819,
+    "blink": 5.4778,
+    "cast_trigger": 3.4654,
+    "cost_reduction": 4.0915,
+    "counter_add": 2.383,
+    "counter_payoff": 3.9272,
+    "damage": 2.4727,
+    "death_return": 7.6601,
+    "dies_trigger": 3.3364,
+    "drain": 4.3842,
+    "draw": 2.2898,
+    "etb_reanimate": 7.4778,
+    "etb_trigger": 1.8204,
+    "exile_until_leaves": 7.5956,
+    "extra_turn": 5.8356,
+    "graveyard_payoff": 3.7861,
+    "lifegain": 3.0724,
+    "lifegain_payoff": 5.589,
+    "ltb_trigger": 4.9975,
+    "mana_add": 2.7161,
+    "mana_sink": 1.6812,
+    "mill": 4.0278,
     "ping_outlet": 4.4793,
-    "recursion": 3.2681,
-    "sac_fodder": 2.1134,
-    "sac_outlet": 3.1147,
-    "self_mill": 4.9837,
-    "spell_source": 4.1496,
-    "tap_ability": 2.0147,
-    "token_create": 2.2494,
+    "recursion": 3.1996,
+    "sac_fodder": 2.1126,
+    "sac_outlet": 3.1076,
+    "self_mill": 4.7772,
+    "spell_source": 4.0384,
+    "tap_ability": 2.0142,
+    "token_create": 2.2261,
     "token_doubler": 8.4223,
     "trigger_doubler": 6.2573,
-    "untap_permanent": 4.2746
+    "untap_permanent": 4.1986
   },
   "labels": {
     "anthem": "Anthem / static buff (ambient)",
+    "aura_fetch": "ETB aura fetch-and-attach (DEC-526)",
     "blink": "Blink / flicker (re-triggers ETB)",
     "cast_trigger": "Cast payoff (magecraft-style)",
     "cost_reduction": "Reduces costs (ambient modifier)",
     "counter_add": "Adds counters",
     "counter_payoff": "Counter payoff",
     "damage": "Deals damage",
+    "death_return": "Death-return attachment — returns the dead creature and self-buries (DEC-526)",
     "dies_trigger": "Death payoff",
     "drain": "Life drain to opponents",
     "draw": "Card draw",
+    "etb_reanimate": "ETB reanimation with a mana-value bound (DEC-526)",
     "etb_trigger": "ETB payoff",
+    "exile_until_leaves": "ETB exile-until-leaves creature — re-establishes its target on death (DEC-526)",
     "extra_turn": "Extra turn / extra combat",
     "graveyard_payoff": "Graveyard-as-resource payoff",
     "lifegain": "Life gain",
@@ -233,6 +259,6 @@
       "mana_sink"
     ]
   ],
-  "ontologyVersion": "1.0.1",
+  "ontologyVersion": "1.1.0",
   "schema": "combo-synergy-config"
 }
