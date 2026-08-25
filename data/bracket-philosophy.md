@@ -100,6 +100,25 @@ Read the proxy curve from the deck's `simulation.json` → `goldfish.byTurn[T].c
 
 These cutoffs apply to the proxy as a *floor* (real-game readiness is higher — see caveats below).
 
+### B2/B3 Reality Check (sub-B4 turn bands)
+
+Added from DEC-559 (2026-08-25, child of DEC-557), calibrated against the fleet's own `comboLethal` / `lethalProxy` curves — not the DEC-557 chart. Same statistic as the B4 test: the better of `comboLethal` / `lethalProxy` from `data/commanders/{id}/simulation.json`. "T50" below means the first turn that statistic reaches 50%. Per-deck calibration extract: `agents/ceo/analysis/dec559-fleet-t50.json`.
+
+| Reading | Classification |
+|---|---|
+| ≥ 50% at T7 (but not T6) | **B3+ / Soft-B4 straddle** — already the Soft-B4 row in the B4 table; split 3+ vs 4- on non-proxy criteria (GC count, fast mana, tutor density) |
+| < 50% at T7, ≥ 50% at T8 | **True B3** — wins open at T6 (T6 reading typically 10–30%), games close ~T8 |
+| 40–50% at T8 | **Soft B3** — B3 label holds if the T6 reading is ≥ ~5% (real wins exist from T6) |
+| < 40% at T8, ≥ 50% by T10 | **B2 band** — games run ~T10; T7-8 wins happen but are not the norm |
+| < 50% at T10 | **Sub-B2 payoff** — precon-level; run `validate_strategy_ceiling.py` and the blind-spot audit |
+
+Two mandatory caveats ship with this table:
+
+1. **The proxy is a floor. It can promote, never demote.** A high reading argues the deck is stronger than its label. A low reading does not demote a deck by itself. Before any down-label, audit the known blind spots: `lethalProxy` misses token combat and noncombat damage, and `comboLethal` holds back tagged combo pieces. Five decks labeled 4/4- read T50 ≥ 9 at calibration time for exactly these reasons (shield-doctrine, the-white-forge, stampede-acres, eternal-agony, grave-dividends) — their labels stand.
+2. **The B2 band is extrapolated.** The fleet holds zero B2 decks (DEC-369 bar is ≥ B3+/4-). Two independent anchors agree on the band: (a) fleet medians shift about one turn per bracket step — true B4 ≤ T6, soft B4 = T7, B3+ median 7.5, B3 median 8, so B2 lands at 9–10; (b) the qualitative anchor from DEC-557, games ~T10 with wins T7-8. Recalibrate this row if the fleet ever gains a real B2 deck.
+
+Honesty note: labels 3 through 4 overlap on T50 in our fleet. This test is a necessary floor, not a sufficient classifier — the same framing the B4 table uses. Labels also ride on GC count, fast mana, tutors, and interaction quality.
+
 ### comboLethal proxy schema (cross-link)
 
 The proxy lives in `scripts/export_simulation_results.py`. Its v2 model substitutes for missing combo pieces via: (1) bargain free-cast tutor (Beseech-style), (2) type-matched regular tutor, (3) reanimation for permanent pieces. Decks must tag the right fields to be read correctly:
@@ -111,6 +130,10 @@ The proxy lives in `scripts/export_simulation_results.py`. Its v2 model substitu
 - `decklist[].primary_role: "recursion"` (or `secondary_role`) — for reanimation spells (Reanimate, Animate Dead, etc.).
 
 Forgetting these tags will under-count comboLethal and make a real B4 deck look weaker than it is.
+
+### Assembly consistency (combo bracket weight)
+
+A combo's bracket weight is its **presence** multiplied by its **assembly consistency**. A decklist that merely contains a two-card infinite does not automatically climb a bracket; the weight comes from how often the deck actually assembles the line inside its win window. The official bracket rules gate on presence alone; this principle adds the consistency axis our sims measure. Both factors have metric hooks: presence is what `winConditions[]` / `KEY_COMBOS` tagging records, and assembly consistency is what the goldfish measures as `reliabilityMetrics.comboAssembly`, surfaced as `deckHealthScore.components.comboConsistency` (floor-anchored — combo-less decks read 50). The product cuts both ways. A tagged combo with no tutor or draw support has low assembly consistency, so it adds little weight. And a deliberately incomplete loop has presence near zero, so it adds almost none: this is the **retain-as-soft-combo** outcome (DEC-474 L7). Worked example: tidal-legion sits exactly at the Bracket 3+ cap of 3 Game Changers and keeps its near-miss loops — e.g., Hullbreaker Horror + Sol Ring, one cheap permanent short of infinite mana — as soft-combo value engines, because completing one would add real assembly-backed weight and could force a bracket relabel.
 
 ### Tainted Pact gotcha
 
