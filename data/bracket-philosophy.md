@@ -67,6 +67,43 @@ Added from DEC-481 (2026-08-15), adopting lesson L4 (as amended) from the DEC-47
 - Redundancy over unique effects. Multiple cards doing the same job ensures consistency.
 - Plan A/B/C resilience: every card should have a role so you never draw dead.
 
+## Tutor Quality Ladder (per bracket)
+
+*Added from DEC-560 (2026-08-25), option B of the DEC-557 process review. Tutor efficiency is a bracket signal on its own, separate from Game Changer status. This section defines three tutor classes and a per-bracket expectation, so swap proposals can name the bracket implication of a tutor add. The per-rung counts are house guidelines set by this proposal, not sim-validated targets.*
+
+### Tutor classes
+
+Class measures speed and freedom of search, not price.
+
+- **T1 — Premium**: MV ≤ 3, searches for any card, puts it in hand or on top of the library. The drawback is small or irrelevant on the turn you win. Examples (Scryfall-verified): Demonic Tutor ({1}{B}, any card to hand), Vampiric Tutor ({B} instant, any card to top, lose 2 life), Imperial Seal ({B} sorcery, any card to top, lose 2 life), Grim Tutor ({1}{B}{B}, any card to hand, lose 3 life), Wishclaw Talisman ({1}{B} artifact; {1}, {T}, remove a wish counter: any card to hand, then an opponent gains control of it), Diabolic Intent ({1}{B}, sacrifice a creature as an additional cost, any card to hand), Gamble ({R}, any card to hand, discard a card at random), Beseech the Mirror (bargained: tutor plus free cast at MV ≤ 4 — see the comboLethal tags below).
+- **T2 — Cheap restricted**: MV ≤ 3, search restricted by card type or destination. Examples: Mystical Tutor, Worldly Tutor, Enlightened Tutor ({U}/{G}/{W} instants, one type class, to top of library), Solve the Equation and Fabricate ({2}{U}, one type, to hand), Green Sun's Zenith and Chord of Calling (to the battlefield, but total cost scales with X).
+- **T3 — Slow or taxed**: MV ≥ 4 unconditional, or cheaper with a real cost or a symmetric gift. Examples: Diabolic Tutor ({2}{B}{B}), Final Parting ({3}{B}{B}, second card to graveyard), Demonic Bargain ({2}{B}, exile your top 13), Scheming Symmetry ({B}, a chosen opponent also searches), transmute cards.
+
+### Game Changer overlay
+
+Seven pure tutors sit on the official GC list: Demonic Tutor, Vampiric Tutor, Imperial Seal, Enlightened Tutor, Mystical Tutor, Worldly Tutor, Gamble. Tutor-adjacent GCs also exist (Intuition, Gifts Ungiven, Survival of the Fittest, Natural Order, Crop Rotation). GC caps therefore bind most T1/T2 adds at B3 and below: brackets ≤ 3 allow at most 3 GCs.
+
+Class and GC status are independent. Wishclaw Talisman, Diabolic Intent, and Grim Tutor are T1 and are not GCs. A non-GC T1 tutor raises deck power without touching the GC count — the ladder exists to catch exactly that case.
+
+### Ladder
+
+- **B1–B2**: T3 only, 0–2 total. No GC tutors. The deck should find pieces by drawing, not searching.
+- **B3**: 2–3 tutors from T2/T3. At most one T1, treated as a deliberate power statement: if it is a GC it consumes one of the deck's ≤3 GC slots; GC or not, it concentrates the deck's best line.
+- **B4**: T1 expected. One to two premium tutors is the norm — Budget Tiers Y/Z below already encode this (Y = one of Demonic/Vampiric; Z = both). Add strategy-matched T2 tutors as redundancy.
+- **B5**: multiple T1 plus strategy-matched T2 redundancy. Tutor density must support the T4–T5 win this bracket expects.
+
+### Why efficiency scales with bracket
+
+A tutor plays as an extra copy of the best piece still in your library. The comboLethal proxy (below) models this directly: it substitutes tutors for missing combo pieces. Each cheap tutor therefore raises comboLethal at a given turn, and the kill-turn thresholds convert that into bracket pressure. This is why the same card is expected at B4 and is a relabel risk at B3. Tier R (below) is the deliberate inverse: redundancy instead of premium tutors.
+
+### Swap-proposal rule
+
+Any proposal that adds a T1 or T2 tutor to a deck labeled B3 or lower must include a "bracket implication" line with three parts:
+
+1. **GC accounting** — is the tutor a GC, and what is the deck's GC count after the add (cap 3 at ≤B3; verdant-tide capped at 1 per DEC-369)?
+2. **Consistency shift** — projected comboLethal/lethalProxy movement, or a stated reason the tutor does not feed a win line.
+3. **Relabel exposure** — whether the add pushes the deck toward the next bracket, noting the relabel floor is GC-gated (DEC-374).
+
 ## Threat Assessment
 
 - Know when something is another player's problem. Leave Rest in Peace up if opponents need graveyard more than you.
