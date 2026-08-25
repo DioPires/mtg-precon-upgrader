@@ -90,8 +90,8 @@ U_PRODUCING_LANDS = {
     "Island", "Breeding Pool", "Command Tower", "Botanical Sanctum",
     "Yavimaya Coast", "Hinterland Harbor", "Dreamroot Cascade",
     "Otawara, Soaring City", "Exotic Orchard", "Simic Growth Chamber",
-    "Sodden Verdure", "Rain-Slicked Copse", "Overflowing Basin", "Turbulent Wilderness",
-    "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
+    "Sodden Verdure", "Overflowing Basin", "Turbulent Wilderness",
+    "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
 }
 
 # G-producing lands in deck:
@@ -99,20 +99,21 @@ G_PRODUCING_LANDS = {
     "Forest", "Breeding Pool", "Command Tower", "Botanical Sanctum",
     "Yavimaya Coast", "Hinterland Harbor", "Dreamroot Cascade",
     "Exotic Orchard", "Simic Growth Chamber",
-    "Sodden Verdure", "Rain-Slicked Copse", "Overflowing Basin", "Turbulent Wilderness",
-    "Temple of Mystery", "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
+    "Sodden Verdure", "Overflowing Basin", "Turbulent Wilderness",
+    "Vineglimmer Snarl", "Flooded Grove", "Fabled Passage",
 }
 
 # Lands that produce only {C} when tapped:
 C_ONLY_LANDS = {
     "Reliquary Tower", "Rogue's Passage", "Arch of Orazca",
     "Opal Palace", "Hall of Oracles", "Fountainport",
+    "Alchemist's Refuge",
 }
 
 # Lands with Forest subtype (for ramp-fetch targeting):
-FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Turbulent Wilderness"}
+FOREST_TYPED_LANDS = {"Forest", "Breeding Pool", "Sodden Verdure", "Turbulent Wilderness"}
 # Lands with Island subtype:
-ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Sodden Verdure", "Rain-Slicked Copse", "Turbulent Wilderness"}
+ISLAND_TYPED_LANDS = {"Island", "Breeding Pool", "Sodden Verdure", "Turbulent Wilderness"}
 
 BASIC_FORESTS = {"Forest"}
 BASIC_ISLANDS = {"Island"}
@@ -173,9 +174,8 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         # as untapped once you control at least one other land.
         return other_count < 1
 
-    if name in ("Simic Growth Chamber", "Sodden Verdure", "Rain-Slicked Copse",
-                "Temple of Mystery"):
-        # Karoo bounce / tapped duals / scry temple — always enter tapped.
+    if name in ("Simic Growth Chamber", "Sodden Verdure"):
+        # Karoo bounce / tapped dual — always enter tapped.
         return True
 
     if name == "Overflowing Basin":
