@@ -4,11 +4,11 @@
   ],
   "counts": {
     "cycles": 30,
-    "cyclesTotal": 2897,
+    "cyclesTotal": 3439,
     "pairs": 80,
-    "pairsTotal": 180,
+    "pairsTotal": 191,
     "triples": 40,
-    "triplesTotal": 403,
+    "triplesTotal": 461,
     "uncovered": 0
   },
   "cycles": [
@@ -915,54 +915,6 @@
       "cards": [
         "Curse of the Swine",
         "Goldvein Hydra",
-        "Lifeblood Hydra",
-        "The Goose Mother"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Curse of the Swine",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Lifeblood Hydra",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Lifeblood Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "The Goose Mother",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "The Goose Mother",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Curse of the Swine",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Curse of the Swine",
-        "Goldvein Hydra",
         "Kinetic Ooze",
         "Lattice Library"
       ],
@@ -1006,6 +958,54 @@
         },
         {
           "from": "Kinetic Ooze",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Curse of the Swine",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Curse of the Swine",
+        "Goldvein Hydra",
+        "Lifeblood Hydra",
+        "The Goose Mother"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Curse of the Swine",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Lifeblood Hydra",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Lifeblood Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "The Goose Mother",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "The Goose Mother",
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Creates tokens",
           "magnitude": 1,
@@ -1493,7 +1493,7 @@
     "crowdPriorApplied": true,
     "deckId": "exponential-growth",
     "deepFocused": false,
-    "generatedAt": "2026-08-25T16:15:04.582798+00:00",
+    "generatedAt": "2026-08-25T16:29:46.504177+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -1781,26 +1781,6 @@
     {
       "band": "strong",
       "cards": [
-        "Goldvein Hydra",
-        "Kinetic Ooze"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Kinetic Ooze",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Benevolent Hydra",
         "Lattice Library"
       ],
@@ -1815,6 +1795,26 @@
           "magnitude": 1,
           "to": "Lattice Library",
           "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goldvein Hydra",
+        "Kinetic Ooze"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Kinetic Ooze",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -1939,6 +1939,26 @@
       ]
     },
     {
+      "band": "strong",
+      "cards": [
+        "Forgotten Ancient",
+        "Hardened Scales"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "Hardened Scales",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Forgotten Ancient",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
       "band": "speculative",
       "cards": [
         "Lattice Library",
@@ -1995,26 +2015,6 @@
           "magnitude": 1,
           "to": "Kinetic Ooze",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Forgotten Ancient",
-        "Hardened Scales"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Hardened Scales",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Forgotten Ancient",
-          "toFeature": "counter_add"
         }
       ]
     },
@@ -2201,26 +2201,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Benevolent Hydra",
-        "Wan Shi Tong, Librarian"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Benevolent Hydra",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Wan Shi Tong, Librarian",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Beast Within",
         "Lattice Library"
       ],
@@ -2280,6 +2260,26 @@
           "magnitude": 1,
           "to": "Lattice Library",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Benevolent Hydra",
+        "Wan Shi Tong, Librarian"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "Benevolent Hydra",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Wan Shi Tong, Librarian",
+          "toFeature": "counter_add"
         }
       ]
     },
@@ -2380,6 +2380,46 @@
     {
       "band": "speculative",
       "cards": [
+        "Benevolent Hydra",
+        "Herald of Secret Streams"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "Benevolent Hydra",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "Herald of Secret Streams",
+          "toFeature": "counter_payoff"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Herald of Secret Streams",
+        "Ozolith, the Shattered Spire"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "Herald of Secret Streams",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Ozolith, the Shattered Spire",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Hardened Scales",
         "Wan Shi Tong, Librarian"
       ],
@@ -2421,7 +2461,7 @@
       "band": "speculative",
       "cards": [
         "Benevolent Hydra",
-        "Herald of Secret Streams"
+        "Oversimplify"
       ],
       "economies": [
         "counters"
@@ -2429,30 +2469,10 @@
       "edges": [
         {
           "from": "Benevolent Hydra",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "Herald of Secret Streams",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Herald of Secret Streams",
-        "Ozolith, the Shattered Spire"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Herald of Secret Streams",
           "fromFeature": "counter_payoff",
           "label": "Counter payoff ↔ Adds counters",
           "magnitude": 1,
-          "to": "Ozolith, the Shattered Spire",
+          "to": "Oversimplify",
           "toFeature": "counter_add"
         }
       ]
@@ -2578,6 +2598,26 @@
           "magnitude": 1,
           "to": "Herald of Secret Streams",
           "toFeature": "counter_payoff"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Oversimplify",
+        "Steelbane Hydra"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "Steelbane Hydra",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Oversimplify",
+          "toFeature": "counter_add"
         }
       ]
     },
@@ -2713,6 +2753,43 @@
       "band": "speculative",
       "cards": [
         "Doubling Season",
+        "Fountainport"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Fountainport",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Doubling Season",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Fountainport",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Doubling Season",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Fountainport",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
+          "magnitude": 1,
+          "to": "Doubling Season",
+          "toFeature": "token_doubler"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Doubling Season",
         "Kinetic Ooze"
       ],
       "economies": [
@@ -2769,6 +2846,34 @@
     {
       "band": "speculative",
       "cards": [
+        "Doubling Season",
+        "Voracious Hydra"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Voracious Hydra",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Doubling Season",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Voracious Hydra",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Doubling Season",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Fountainport",
         "The Goose Mother"
       ],
@@ -2806,71 +2911,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Doubling Season",
-        "Fountainport"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Fountainport",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Doubling Season",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Fountainport",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Doubling Season",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Fountainport",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Token doubler (ambient)",
-          "magnitude": 1,
-          "to": "Doubling Season",
-          "toFeature": "token_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Doubling Season",
-        "Voracious Hydra"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Voracious Hydra",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Doubling Season",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Voracious Hydra",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Doubling Season",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Hardened Scales",
         "Terrasymbiosis"
       ],
@@ -2885,6 +2925,46 @@
           "magnitude": 1,
           "to": "Terrasymbiosis",
           "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Goldvein Hydra",
+        "Oversimplify"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Oversimplify",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Lifeblood Hydra",
+        "Oversimplify"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Lifeblood Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Oversimplify",
+          "toFeature": "sac_fodder"
         }
       ]
     },
@@ -3234,94 +3314,6 @@
           "magnitude": 1,
           "to": "Wan Shi Tong, Librarian",
           "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Benevolent Hydra",
-        "Managorger Hydra"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Benevolent Hydra",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Managorger Hydra",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Inspiring Call",
-        "Wan Shi Tong, Librarian"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Inspiring Call",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Wan Shi Tong, Librarian",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Fountainport",
-        "Lifeblood Hydra"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Fountainport",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Lifeblood Hydra",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Fountainport",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Lifeblood Hydra",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Lattice Library",
-        "Wan Shi Tong, Librarian"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Wan Shi Tong, Librarian",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Lattice Library",
-          "toFeature": "token_create"
         }
       ]
     }
@@ -3731,53 +3723,6 @@
     {
       "band": "strong",
       "cards": [
-        "Curse of the Swine",
-        "Goldvein Hydra",
-        "The Goose Mother"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Curse of the Swine",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "The Goose Mother",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Goose Mother",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "The Goose Mother",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Curse of the Swine",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Goldvein Hydra",
         "Lattice Library",
         "Lifeblood Hydra"
@@ -3819,6 +3764,53 @@
           "magnitude": 1,
           "to": "Lattice Library",
           "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Curse of the Swine",
+        "Goldvein Hydra",
+        "The Goose Mother"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Curse of the Swine",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "The Goose Mother",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Goose Mother",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Goose Mother",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Curse of the Swine",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4306,6 +4298,44 @@
       "cards": [
         "Beast Within",
         "Goldvein Hydra",
+        "Lifeblood Hydra"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldvein Hydra",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Lifeblood Hydra",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Lifeblood Hydra",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Beast Within",
+        "Goldvein Hydra",
         "The Goose Mother"
       ],
       "economies": [
@@ -4345,44 +4375,6 @@
           "magnitude": 1,
           "to": "Beast Within",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Beast Within",
-        "Goldvein Hydra",
-        "Lifeblood Hydra"
-      ],
-      "economies": [
-        "dies",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Beast Within",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldvein Hydra",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Lifeblood Hydra",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Lifeblood Hydra",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Beast Within",
-          "toFeature": "sac_fodder"
         }
       ]
     },
@@ -4810,7 +4802,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Benevolent Hydra",
         "Forgotten Ancient",
@@ -4847,7 +4839,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Benevolent Hydra",
         "Herald of Secret Streams",
@@ -4884,7 +4876,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Benevolent Hydra",
         "Herald of Secret Streams",
