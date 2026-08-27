@@ -390,10 +390,10 @@ em { font-style: italic; color: var(--gv1-gold); }
   padding: 1px 7px;
   margin-left: 8px;
   letter-spacing: 0.06em;
-  color: #d8a64a;
-  border: 1px solid rgba(216, 166, 74, 0.45);
+  color: var(--gv1-brewing);
+  border: 1px solid var(--gv1-brewing-line);
   border-radius: 2px;
-  background: rgba(216, 166, 74, 0.08);
+  background: var(--gv1-brewing-bg);
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -3316,6 +3316,42 @@ em { font-style: italic; color: var(--gv1-gold); }
 .gv1-atlas-usage-bracket {
   border: 1px solid var(--gv1-line-strong);
   padding: 3px 8px;
+}
+
+/* DEC-568 — brewing-deck usage. Rendered below the built-deck list and kept
+   visually distinct (amber accent + dashed frame) so a virtual build is never
+   mistaken for a sleeved one. */
+.gv1-atlas-brewing {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--gv1-brewing-line);
+}
+.gv1-atlas-brewing-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.gv1-atlas-brewing-title {
+  margin: 0;
+  font-weight: inherit;
+  letter-spacing: 0.18em;
+  color: var(--gv1-brewing);
+}
+.gv1-atlas-brewing-num { color: var(--gv1-brewing); }
+.gv1-atlas-usage-list-brewing {
+  border-style: dashed;
+  border-color: var(--gv1-brewing-line);
+  background: var(--gv1-brewing-line);
+}
+.gv1-atlas-usage-list-brewing .gv1-atlas-usage-btn:hover {
+  background: var(--gv1-brewing-bg);
+}
+.gv1-atlas-usage-list-brewing .gv1-atlas-usage-role {
+  color: var(--gv1-brewing);
+  border-color: var(--gv1-brewing-line);
+  background: var(--gv1-brewing-bg);
 }
 
 .gv1-atlas-hint {

@@ -47,6 +47,29 @@ function makeDeck(over: Partial<DeckFull>): DeckFull {
   };
 }
 
+/** One physical + one brewing deck sharing Sol Ring (DEC-568 split fixture). */
+function mixedDecks(): DeckFull[] {
+  return [
+    makeDeck({
+      slug: 'physical-deck',
+      deckName: 'Physical',
+      commander: 'Atraxa, Praetors\' Voice',
+      status: 'physical',
+      rawDecklist: [{ name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' }],
+    }),
+    makeDeck({
+      slug: 'brewing-deck',
+      deckName: 'Brewing',
+      commander: 'Esika, God of the Tree',
+      status: 'brewing',
+      rawDecklist: [
+        { name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' },
+        { name: 'Teferi, Hero of Dominaria', type: 'Planeswalker', primary_role: 'engine' },
+      ],
+    }),
+  ];
+}
+
 describe('buildCardAtlasIndex', () => {
   it('indexes commander, partner, and decklist entries with role labels', () => {
     const decks: DeckFull[] = [
@@ -115,35 +138,68 @@ describe('buildCardAtlasIndex', () => {
     expect(idx.byName.get('forest')?.[0].qty).toBe(8);
   });
 
-  it('excludes brewing decks from the index (DEC-297)', () => {
-    const decks: DeckFull[] = [
-      makeDeck({
-        slug: 'physical-deck',
-        commander: 'Atraxa, Praetors\' Voice',
-        status: 'physical',
-        rawDecklist: [{ name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' }],
-      }),
-      makeDeck({
-        slug: 'brewing-deck',
-        commander: 'Esika, God of the Tree',
-        status: 'brewing',
-        rawDecklist: [
-          { name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' },
-          { name: 'Teferi, Hero of Dominaria', type: 'Planeswalker', primary_role: 'engine' },
-        ],
-      }),
-    ];
+  it('keeps brewing usages out of the built-deck map (DEC-297/DEC-568)', () => {
+    const idx = buildCardAtlasIndex(mixedDecks());
 
-    const idx = buildCardAtlasIndex(decks);
-
-    // Brewing deck contributes nothing — Sol Ring appears once (from physical only).
+    // Sol Ring is in both decks — the built map only reports the physical one.
     expect(idx.byName.get('sol ring')).toHaveLength(1);
     expect(idx.byName.get('sol ring')?.[0].deckSlug).toBe('physical-deck');
 
-    // Cards only present in the brewing deck are absent.
+    // Cards only present in the brewing deck never enter the built map.
     expect(idx.byName.has('teferi, hero of dominaria')).toBe(false);
     expect(idx.byName.has('esika, god of the tree')).toBe(false);
-    expect(idx.names).not.toContain('Teferi, Hero of Dominaria');
+  });
+
+  it('indexes brewing usages separately (DEC-568)', () => {
+    const idx = buildCardAtlasIndex(mixedDecks());
+
+    // Card only in a brewing deck: brewing-side hit, built-side miss.
+    const teferi = idx.brewingByName.get('teferi, hero of dominaria');
+    expect(teferi).toHaveLength(1);
+    expect(teferi?.[0].deckSlug).toBe('brewing-deck');
+    expect(teferi?.[0].role).toBe('Engine');
+    expect(teferi?.[0].deckName).toBe('Brewing');
+
+    // Brewing commanders are indexed too.
+    expect(idx.brewingByName.get('esika, god of the tree')?.[0].role).toBe('Commander');
+
+    // Card in both: one usage on each side — the counters the header renders.
+    expect(idx.byName.get('sol ring')).toHaveLength(1);
+    expect(idx.brewingByName.get('sol ring')).toHaveLength(1);
+    expect(idx.brewingByName.get('sol ring')?.[0].deckSlug).toBe('brewing-deck');
+
+    // Card in neither.
+    expect(idx.byName.has('black lotus')).toBe(false);
+    expect(idx.brewingByName.has('black lotus')).toBe(false);
+  });
+
+  it('offers brewing-only card names as local suggestions (DEC-568)', () => {
+    const idx = buildCardAtlasIndex(mixedDecks());
+
+    // `names` spans both sides so the autocomplete can badge brewing-only hits
+    // instead of dropping through to the Scryfall fallback.
+    expect(idx.names).toContain('Teferi, Hero of Dominaria');
+    expect(idx.names).toContain('Sol Ring');
+    // Deduped across the two decks.
+    expect(idx.names.filter((n) => n === 'Sol Ring')).toHaveLength(1);
+    expect(localSuggest('teferi', idx.names, 10)).toEqual(['Teferi, Hero of Dominaria']);
+  });
+
+  it('preserves brewing quantities and DFC front-face keys (DEC-568)', () => {
+    const idx = buildCardAtlasIndex([
+      makeDeck({
+        slug: 'brewing-deck',
+        status: 'brewing',
+        rawDecklist: [
+          { name: 'Forest', type: 'Basic Land', primary_role: 'land', quantity: 9 },
+          { name: 'Brazen Borrower // Petty Theft', type: 'Creature', primary_role: 'utility' },
+        ],
+      }),
+    ]);
+    expect(idx.brewingByName.get('forest')?.[0].qty).toBe(9);
+    expect(idx.brewingByName.get('brazen borrower')?.[0].displayName).toBe(
+      'Brazen Borrower // Petty Theft',
+    );
   });
 });
 

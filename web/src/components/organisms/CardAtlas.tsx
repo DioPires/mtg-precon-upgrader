@@ -24,9 +24,35 @@ export interface CardAtlasProps {
   decks: DeckFull[];
 }
 
+/** One deck row inside a usage list. Shared by the built and brewing lists. */
+function UsageRow({ usage: u, onOpen }: { usage: CardUsage; onOpen: () => void }) {
+  return (
+    <li className="gv1-atlas-usage">
+      <button type="button" className="gv1-atlas-usage-btn" onClick={onOpen}>
+        <div className="gv1-atlas-usage-l">
+          <span className="gv1-atlas-usage-colors" aria-hidden="true">{u.colors || '◯'}</span>
+          <div>
+            <div className="gv1-serif-md">{u.deckName}</div>
+            <div className="gv1-mono-xs gv1-dim">
+              {u.commander}{u.partner ? ` & ${u.partner}` : ''}
+            </div>
+          </div>
+        </div>
+        <div className="gv1-atlas-usage-r">
+          <span className="gv1-mono-xs gv1-rune gv1-atlas-usage-role">{u.role}</span>
+          {u.qty > 1 && <span className="gv1-mono-xs gv1-dim">×{u.qty}</span>}
+          <span className="gv1-mono-xs gv1-dim gv1-atlas-usage-bracket">{u.bracket}</span>
+        </div>
+      </button>
+    </li>
+  );
+}
+
 export function CardAtlas({ decks }: CardAtlasProps) {
   const navigate = useNavigate();
   const index = useMemo(() => buildCardAtlasIndex(decks), [decks]);
+  const brewingCount = decks.filter((d) => d.status === 'brewing').length;
+  const builtCount = decks.length - brewingCount;
   // Owned map refreshes on cross-tab storage events and tab focus so a CSV
   // imported on /shopping in another tab (or before /atlas was opened) shows
   // up without a manual reload (DEC-325).
@@ -79,6 +105,13 @@ export function CardAtlas({ decks }: CardAtlasProps) {
     return index.byName.get(frontFace(selected).toLowerCase()) || [];
   }, [selected, index.byName]);
 
+  // Brewing usages are reported separately (DEC-568) — they never count toward
+  // USED IN, and never merge into the built-deck list.
+  const brewingUsages: CardUsage[] = useMemo(() => {
+    if (!selected) return [];
+    return index.brewingByName.get(frontFace(selected).toLowerCase()) || [];
+  }, [selected, index.brewingByName]);
+
   const ownedQty = useMemo(() => {
     if (!selected) return 0;
     return owned.get(frontFace(selected).toLowerCase()) || 0;
@@ -123,8 +156,9 @@ export function CardAtlas({ decks }: CardAtlasProps) {
           The <em>Atlas</em>
         </h1>
         <p className="gv1-atlas-sub">
-          Type any card. The Atlas charts which of your {decks.length} tomes already use it,
-          what role it plays, and whether you own a copy.
+          Type any card. The Atlas charts which of your {builtCount} built tomes already use it,
+          what role it plays, and whether you own a copy
+          {brewingCount > 0 && ` — with your ${brewingCount} brews listed separately`}.
         </p>
       </div>
 
@@ -154,7 +188,9 @@ export function CardAtlas({ decks }: CardAtlasProps) {
         {open && suggestions.length > 0 && (
           <ul id={listboxId} role="listbox" className="gv1-atlas-listbox">
             {suggestions.map((s, i) => {
-              const inDecks = index.byName.has(frontFace(s).toLowerCase());
+              const key = frontFace(s).toLowerCase();
+              const inDecks = index.byName.has(key);
+              const inBrewingOnly = !inDecks && index.brewingByName.has(key);
               return (
                 <li
                   key={s}
@@ -169,9 +205,13 @@ export function CardAtlas({ decks }: CardAtlasProps) {
                   onMouseEnter={() => setHighlight(i)}
                 >
                   <span className="gv1-atlas-option-name">{s}</span>
-                  <span className={'gv1-mono-xs ' + (inDecks ? 'gv1-rune' : 'gv1-dim')}>
-                    {inDecks ? 'in tomes' : 'scryfall'}
-                  </span>
+                  {inBrewingOnly ? (
+                    <span className="gv1-mono-xs gv1-brewing-pill">brewing</span>
+                  ) : (
+                    <span className={'gv1-mono-xs ' + (inDecks ? 'gv1-rune' : 'gv1-dim')}>
+                      {inDecks ? 'in tomes' : 'scryfall'}
+                    </span>
+                  )}
                 </li>
               );
             })}
@@ -193,6 +233,21 @@ export function CardAtlas({ decks }: CardAtlasProps) {
                 <div className="gv1-mono-xs gv1-dim">tome{usages.length === 1 ? '' : 's'}</div>
               </div>
               <div className="gv1-atlas-result-stat">
+                <div className="gv1-mono-xs gv1-dim">BREWING</div>
+                <div
+                  className={
+                    'gv1-serif-xl ' + (brewingUsages.length > 0 ? 'gv1-atlas-brewing-num' : 'gv1-dim')
+                  }
+                >
+                  {brewingUsages.length > 0 ? brewingUsages.length : '—'}
+                </div>
+                <div className="gv1-mono-xs gv1-dim">
+                  {brewingUsages.length > 0
+                    ? `brew${brewingUsages.length === 1 ? '' : 's'}`
+                    : 'no brews'}
+                </div>
+              </div>
+              <div className="gv1-atlas-result-stat">
                 <div className="gv1-mono-xs gv1-dim">OWNED</div>
                 <div className={'gv1-serif-xl ' + (ownedQty > 0 ? 'gv1-rune' : 'gv1-dim')}>
                   {ownedQty > 0 ? `×${ownedQty}` : '—'}
@@ -205,39 +260,43 @@ export function CardAtlas({ decks }: CardAtlasProps) {
           {usages.length === 0 ? (
             <div className="gv1-atlas-empty">
               <p className="gv1-mono-xs gv1-dim">
-                ◇ No tome currently lists this card. Pull it into a deck via the Apothecary or
-                Shopping surfaces.
+                {brewingUsages.length > 0
+                  ? '◇ No built tome lists this card — it only appears in the brewing decks below.'
+                  : '◇ No tome currently lists this card. Pull it into a deck via the Apothecary or Shopping surfaces.'}
               </p>
             </div>
           ) : (
             <ul className="gv1-atlas-usage-list">
               {usages.map((u, i) => (
-                <li key={`${u.deckSlug}-${i}`} className="gv1-atlas-usage">
-                  <button
-                    type="button"
-                    className="gv1-atlas-usage-btn"
-                    onClick={() => navigate(`/deck/${u.deckSlug}`)}
-                  >
-                    <div className="gv1-atlas-usage-l">
-                      <span className="gv1-atlas-usage-colors" aria-hidden="true">{u.colors || '◯'}</span>
-                      <div>
-                        <div className="gv1-serif-md">{u.deckName}</div>
-                        <div className="gv1-mono-xs gv1-dim">
-                          {u.commander}{u.partner ? ` & ${u.partner}` : ''}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="gv1-atlas-usage-r">
-                      <span className="gv1-mono-xs gv1-rune gv1-atlas-usage-role">{u.role}</span>
-                      {u.qty > 1 && (
-                        <span className="gv1-mono-xs gv1-dim">×{u.qty}</span>
-                      )}
-                      <span className="gv1-mono-xs gv1-dim gv1-atlas-usage-bracket">{u.bracket}</span>
-                    </div>
-                  </button>
-                </li>
+                <UsageRow
+                  key={`${u.deckSlug}-${i}`}
+                  usage={u}
+                  onOpen={() => navigate(`/deck/${u.deckSlug}`)}
+                />
               ))}
             </ul>
+          )}
+
+          {brewingUsages.length > 0 && (
+            <section className="gv1-atlas-brewing" aria-labelledby="atlas-brewing-title">
+              <div className="gv1-atlas-brewing-head">
+                <h2 id="atlas-brewing-title" className="gv1-mono-xs gv1-atlas-brewing-title">
+                  IN BREWING DECKS
+                </h2>
+                <span className="gv1-mono-xs gv1-dim">
+                  — virtual builds, not physically assembled
+                </span>
+              </div>
+              <ul className="gv1-atlas-usage-list gv1-atlas-usage-list-brewing">
+                {brewingUsages.map((u, i) => (
+                  <UsageRow
+                    key={`brewing-${u.deckSlug}-${i}`}
+                    usage={u}
+                    onOpen={() => navigate(`/deck/${u.deckSlug}`)}
+                  />
+                ))}
+              </ul>
+            </section>
           )}
         </div>
       )}

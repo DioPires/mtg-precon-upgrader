@@ -1,7 +1,9 @@
 // Reverse index for the Card Atlas surface.
 //
 // Given a card name, return every built deck the card appears in plus the role
-// the card plays inside that deck. Match scope (per DEC-197): commander +
+// the card plays inside that deck. Brewing decks are indexed separately
+// (DEC-568) so they can be surfaced without polluting built-deck usage.
+// Match scope (per DEC-197): commander +
 // partner commander + 99-card decklist. Keys are front-face names so DFC /
 // split / adventure cards reconcile against `priv_data` owned-card entries
 // (see web/src/data/cardName.ts).
@@ -43,9 +45,15 @@ export interface CardUsage {
 }
 
 export interface CardAtlasIndex {
-  /** front-face lowercase name -> usages */
+  /** front-face lowercase name -> usages in built (physical) decks */
   byName: Map<string, CardUsage[]>;
-  /** Sorted unique display names (front-face) seen across all decks. */
+  /**
+   * front-face lowercase name -> usages in brewing decks (DEC-568). Kept in a
+   * separate map so built-deck results — the ones that drive card-usage
+   * analysis — never mix with virtual builds.
+   */
+  brewingByName: Map<string, CardUsage[]>;
+  /** Sorted unique display names (front-face) seen across built + brewing decks. */
   names: string[];
 }
 
@@ -56,42 +64,46 @@ export interface CardAtlasIndex {
  */
 export function buildCardAtlasIndex(decks: DeckFull[]): CardAtlasIndex {
   const byName = new Map<string, CardUsage[]>();
+  const brewingByName = new Map<string, CardUsage[]>();
   const displayByKey = new Map<string, string>();
 
-  const push = (rawName: string, usage: CardUsage) => {
+  const push = (
+    target: Map<string, CardUsage[]>,
+    rawName: string,
+    usage: CardUsage,
+  ) => {
     if (!rawName) return;
     const front = frontFace(rawName);
     const key = front.toLowerCase();
-    const arr = byName.get(key);
+    const arr = target.get(key);
     if (arr) arr.push(usage);
-    else byName.set(key, [usage]);
+    else target.set(key, [usage]);
     if (!displayByKey.has(key)) displayByKey.set(key, front);
   };
 
-  // Brewing decks are not physical and must not contribute to card-usage analysis.
-  const physical = decks.filter((d) => d.status !== 'brewing');
-  physical.forEach((d) => {
+  decks.forEach((d) => {
+    // Brewing decks are not physical: they are indexed, but never into the
+    // built-deck map that card-usage analysis reads.
+    const target = d.status === 'brewing' ? brewingByName : byName;
+    const identity = {
+      deckSlug: d.slug,
+      deckName: d.deckName,
+      commander: d.commander,
+      partner: d.partner,
+      colors: d.colors,
+      bracket: d.bracket,
+    };
     if (d.commander) {
-      push(d.commander, {
-        deckSlug: d.slug,
-        deckName: d.deckName,
-        commander: d.commander,
-        partner: d.partner,
-        colors: d.colors,
-        bracket: d.bracket,
+      push(target, d.commander, {
+        ...identity,
         role: 'Commander',
         qty: 1,
         displayName: d.commander,
       });
     }
     if (d.partner) {
-      push(d.partner, {
-        deckSlug: d.slug,
-        deckName: d.deckName,
-        commander: d.commander,
-        partner: d.partner,
-        colors: d.colors,
-        bracket: d.bracket,
+      push(target, d.partner, {
+        ...identity,
         role: 'Partner',
         qty: 1,
         displayName: d.partner,
@@ -99,13 +111,8 @@ export function buildCardAtlasIndex(decks: DeckFull[]): CardAtlasIndex {
     }
     (d.rawDecklist || []).forEach((c) => {
       const role = c.primary_role || 'other';
-      push(c.name, {
-        deckSlug: d.slug,
-        deckName: d.deckName,
-        commander: d.commander,
-        partner: d.partner,
-        colors: d.colors,
-        bracket: d.bracket,
+      push(target, c.name, {
+        ...identity,
         role: ROLE_LABEL[role] || role,
         qty: c.quantity ?? 1,
         displayName: c.name,
@@ -114,7 +121,7 @@ export function buildCardAtlasIndex(decks: DeckFull[]): CardAtlasIndex {
   });
 
   const names = [...displayByKey.values()].sort((a, b) => a.localeCompare(b));
-  return { byName, names };
+  return { byName, brewingByName, names };
 }
 
 /**
