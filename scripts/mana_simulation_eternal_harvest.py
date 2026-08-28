@@ -108,7 +108,7 @@ G_PRODUCING_LANDS = {
 }
 
 C_ONLY_LANDS = {
-    "Phyrexian Tower", "High Market",
+    "Phyrexian Tower", "High Market", "Volrath's Stronghold",
 }
 
 # Lands with Swamp subtype (for Urborg, Woodland Cemetery checks, fetch targets)
@@ -302,6 +302,9 @@ def compute_land_mana(name: str, battlefield_lands: list[str]) -> tuple[int, int
         return (0, 0, 1, 0)
 
     if name == "High Market":
+        return (0, 0, 1, 0)
+
+    if name == "Volrath's Stronghold":
         return (0, 0, 1, 0)
 
     if name == "Urborg, Tomb of Yawgmoth":
