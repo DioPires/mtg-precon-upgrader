@@ -37,6 +37,8 @@ CANDIDATE_CUTS = [
     "Formidable Speaker",
     "Selfless Safewright",
     "Sensei's Divining Top",
+    "Last March of the Ents",
+    "Ghalta, Stampede Tyrant",
 ]
 
 
