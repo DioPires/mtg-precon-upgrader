@@ -171,6 +171,12 @@ def compute_land_mana(name: str) -> tuple[int, int]:
         # untapped Snow-Covered Forest, so it plays as a G source.
         return (1, 0)
 
+    if name == "Fabled Passage":
+        # Sacrifices to fetch a Snow-Covered Forest, untapped once you
+        # control 4+ lands — plays as a G source (DEC-569 alignment with
+        # Elven Passage; slightly optimistic below 4 lands).
+        return (1, 0)
+
     # Fallback: colorless
     return (0, 1)
 
