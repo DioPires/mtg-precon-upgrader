@@ -171,6 +171,11 @@ def compute_land_sources(name: str, battlefield_lands: list[str],
     if name == "Plains":
         return [frozenset({"W"})]
 
+    # Eiganjo, Seat of the Empire (DEC-570): untapped mono-W legendary land.
+    # The channel mode is interaction, not mana, and is not modeled.
+    if name == "Eiganjo, Seat of the Empire":
+        return [frozenset({"W"})]
+
     # Tri-color lands (Mana Confluence / City of Brass are any-color for 1
     # life or damage per tap — life is not modeled, matching the shock lands)
     if name in {"Command Tower", "Exotic Orchard", "Mana Confluence",

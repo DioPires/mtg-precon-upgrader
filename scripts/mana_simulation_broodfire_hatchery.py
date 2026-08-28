@@ -15,8 +15,10 @@ loops and the ETB-damage payoffs are out of scope here — they are measured by
 the shared goldfish in `export_simulation_results.py`.
 
 Manabase model (36 lands):
-- 19 basics: Forest x9, Plains x5, Mountain x5.
-- 17 nonbasics. Jetmir's Garden is the only unconditional "enters tapped" land
+- 18 basics: Forest x9, Plains x4, Mountain x5.
+- 18 nonbasics (Eiganjo, Seat of the Empire is an untapped mono-W legendary
+  land per DEC-570; its channel mode is combat interaction, not mana, and is
+  out of scope here). Jetmir's Garden is the only unconditional "enters tapped" land
   (oracle-verified); everything else is modeled untapped:
   - Shocks (Sacred Foundry, Stomping Ground, Temple Garden) — pay 2 life is
     free in a goldfish, the standing fleet precedent.
@@ -166,8 +168,9 @@ LAND_COLORS: dict[str, frozenset] = {
     "Command Tower":  frozenset({"R", "G", "W"}),
     "Exotic Orchard": frozenset({"R", "G", "W"}),
 
-    # Mono utility land
+    # Mono utility lands
     "Boseiju, Who Endures": frozenset({"G"}),
+    "Eiganjo, Seat of the Empire": frozenset({"W"}),
 }
 
 # Lands with a Forest basic type — fetchable by Nature's Lore / Three Visits.
