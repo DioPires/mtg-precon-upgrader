@@ -78,10 +78,9 @@ DORK_DEFS = {
 
 # --- Creature ramp definitions ---
 # Creatures that fetch lands when cast or sacrificed.
+# (Empty since DEC-569 cut Sakura-Tribe Elder; kept for the cast machinery.)
 
-CREATURE_RAMP = {
-    "Sakura-Tribe Elder":  {"cmc": 2, "pips": {"generic": 1, "G": 1}, "fetch": "forest", "tapped": False},
-}
+CREATURE_RAMP = {}
 
 # --- Sorcery ramp definitions ---
 
@@ -175,6 +174,12 @@ def compute_land_mana(name: str) -> tuple[int, int]:
         # Sacrifices to fetch a Snow-Covered Forest, untapped once you
         # control 4+ lands — plays as a G source (DEC-569 alignment with
         # Elven Passage; slightly optimistic below 4 lands).
+        return (1, 0)
+
+    if name == "Disciple of Freyalise // Garden of Freyalise":
+        # MDFC: Garden of Freyalise land face taps for G, untapped for
+        # 3 life — the goldfish always pays. The creature face's draw
+        # burst is outside the mana model.
         return (1, 0)
 
     # Fallback: colorless
@@ -360,7 +365,7 @@ class GameState:
         """Try to cast ramp from hand in priority order.
 
         Priority: Sol Ring > 1-CMC dorks > 2-CMC sorcery ramp >
-        Priest of Titania > Sakura-Tribe Elder > Elvish Archdruid
+        Priest of Titania > Elvish Archdruid
         """
         priority_order = [
             ("rock", "Sol Ring"),
@@ -370,7 +375,6 @@ class GameState:
             ("sorcery_ramp", "Nature's Lore"),
             ("sorcery_ramp", "Three Visits"),
             ("dork", "Priest of Titania"),
-            ("creature_ramp", "Sakura-Tribe Elder"),
             ("dork", "Elvish Archdruid"),
         ]
 

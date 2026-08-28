@@ -4,11 +4,11 @@
   ],
   "counts": {
     "cycles": 30,
-    "cyclesTotal": 2122,
+    "cyclesTotal": 2365,
     "pairs": 80,
-    "pairsTotal": 533,
+    "pairsTotal": 566,
     "triples": 40,
-    "triplesTotal": 195,
+    "triplesTotal": 125,
     "uncovered": 0
   },
   "cycles": [
@@ -1279,6 +1279,85 @@
     {
       "band": "strong",
       "cards": [
+        "Llanowar Tribe",
+        "Quirion Ranger",
+        "Sol Ring",
+        "Wirewood Symbiote"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Quirion Ranger",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 3,
+          "to": "Llanowar Tribe",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Quirion Ranger",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Llanowar Tribe",
+          "toFeature": "tap_ability"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Quirion Ranger",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Quirion Ranger",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Wirewood Symbiote",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Wirewood Symbiote",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Wirewood Symbiote",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 3,
+          "to": "Llanowar Tribe",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Wirewood Symbiote",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Llanowar Tribe",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Circle of Dreams Druid",
         "Elvish Archdruid",
         "Quirion Ranger",
@@ -1668,85 +1747,6 @@
           "magnitude": 1,
           "to": "Wirewood Symbiote",
           "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Llanowar Tribe",
-        "Quirion Ranger",
-        "Sol Ring",
-        "Wirewood Symbiote"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 3,
-          "to": "Llanowar Tribe",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Llanowar Tribe",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Wirewood Symbiote",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Wirewood Symbiote",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Wirewood Symbiote",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 3,
-          "to": "Llanowar Tribe",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Wirewood Symbiote",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Llanowar Tribe",
-          "toFeature": "tap_ability"
         }
       ]
     },
@@ -2388,7 +2388,7 @@
     "crowdPriorApplied": true,
     "deckId": "verdant-tide",
     "deepFocused": true,
-    "generatedAt": "2026-08-28T08:09:15.770056+00:00",
+    "generatedAt": "2026-08-28T10:15:59.964772+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -2856,6 +2856,35 @@
     {
       "band": "strong",
       "cards": [
+        "Formidable Speaker",
+        "Sol Ring"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Elvish Archdruid",
         "Wirewood Symbiote"
       ],
@@ -2885,29 +2914,28 @@
     {
       "band": "strong",
       "cards": [
-        "Formidable Speaker",
-        "Sol Ring"
+        "Dionus, Elvish Archdruid",
+        "Llanowar Tribe"
       ],
       "economies": [
-        "mana",
         "untap"
       ],
       "edges": [
         {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
+          "from": "Dionus, Elvish Archdruid",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 3,
+          "to": "Llanowar Tribe",
+          "toFeature": "mana_add"
         },
         {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "from": "Dionus, Elvish Archdruid",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
+          "to": "Llanowar Tribe",
+          "toFeature": "tap_ability"
         }
       ]
     },
@@ -3022,6 +3050,35 @@
           "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
           "magnitude": 1,
           "to": "Wirewood Symbiote",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Dionus, Elvish Archdruid",
+        "Sol Ring"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
           "toFeature": "untap_permanent"
         }
       ]
@@ -3203,26 +3260,6 @@
     {
       "band": "strong",
       "cards": [
-        "Beast Within",
-        "Elvish Archdruid"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Beast Within",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Elvish Archdruid",
-          "toFeature": "anthem"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Delighted Halfling",
         "Quirion Ranger"
       ],
@@ -3280,6 +3317,35 @@
     {
       "band": "strong",
       "cards": [
+        "Dionus, Elvish Archdruid",
+        "Marwyn, the Nurturer"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Marwyn, the Nurturer",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Marwyn, the Nurturer",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Delighted Halfling",
         "Formidable Speaker"
       ],
@@ -3303,6 +3369,26 @@
           "magnitude": 1,
           "to": "Formidable Speaker",
           "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Beast Within",
+        "Elvish Archdruid"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Beast Within",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Elvish Archdruid",
+          "toFeature": "anthem"
         }
       ]
     },
@@ -3367,49 +3453,174 @@
     {
       "band": "strong",
       "cards": [
-        "Elvish Archdruid",
-        "Worldspine Wurm"
+        "Dionus, Elvish Archdruid",
+        "Nykthos, Shrine to Nyx"
       ],
       "economies": [
-        "token"
+        "mana",
+        "untap"
       ],
       "edges": [
         {
-          "from": "Elvish Archdruid",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
+          "from": "Nykthos, Shrine to Nyx",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Nykthos, Shrine to Nyx",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
         }
       ]
     },
     {
       "band": "strong",
       "cards": [
-        "Imperious Perfect",
-        "Worldspine Wurm"
+        "Circle of Dreams Druid",
+        "Dionus, Elvish Archdruid"
       ],
       "economies": [
-        "sacrifice",
-        "token"
+        "mana",
+        "untap"
       ],
       "edges": [
         {
-          "from": "Imperious Perfect",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
+          "from": "Circle of Dreams Druid",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
         },
         {
-          "from": "Imperious Perfect",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "from": "Circle of Dreams Druid",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
           "magnitude": 1,
-          "to": "Worldspine Wurm",
-          "toFeature": "dies_trigger"
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Dionus, Elvish Archdruid",
+        "Elvish Mystic"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Elvish Mystic",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Elvish Mystic",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Dionus, Elvish Archdruid",
+        "Llanowar Elves"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Llanowar Elves",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Llanowar Elves",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Dionus, Elvish Archdruid",
+        "Priest of Titania"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Priest of Titania",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Priest of Titania",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Dionus, Elvish Archdruid",
+        "Wirewood Lodge"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Wirewood Lodge",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Wirewood Lodge",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
         }
       ]
     },
@@ -3474,6 +3685,84 @@
     {
       "band": "strong",
       "cards": [
+        "Elvish Archdruid",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Elvish Archdruid",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Formidable Speaker",
+        "Marwyn, the Nurturer"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Marwyn, the Nurturer",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Marwyn, the Nurturer",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Imperious Perfect",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Formidable Speaker",
         "The Great Henge"
       ],
@@ -3503,8 +3792,8 @@
     {
       "band": "strong",
       "cards": [
-        "Formidable Speaker",
-        "Marwyn, the Nurturer"
+        "Dionus, Elvish Archdruid",
+        "Elvish Archdruid"
       ],
       "economies": [
         "mana",
@@ -3512,19 +3801,48 @@
       ],
       "edges": [
         {
-          "from": "Marwyn, the Nurturer",
+          "from": "Elvish Archdruid",
           "fromFeature": "mana_add",
           "label": "Adds mana ↔ Untaps a permanent",
           "magnitude": 1,
-          "to": "Formidable Speaker",
+          "to": "Dionus, Elvish Archdruid",
           "toFeature": "untap_permanent"
         },
         {
-          "from": "Marwyn, the Nurturer",
+          "from": "Elvish Archdruid",
           "fromFeature": "tap_ability",
           "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
           "magnitude": 1,
-          "to": "Formidable Speaker",
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Dionus, Elvish Archdruid",
+        "The Great Henge"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "The Great Henge",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "The Great Henge",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
           "toFeature": "untap_permanent"
         }
       ]
@@ -3733,26 +4051,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Marwyn, the Nurturer",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Marwyn, the Nurturer",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Formidable Speaker",
         "Path of Ancestry"
       ],
@@ -3775,6 +4073,84 @@
           "magnitude": 1,
           "to": "Path of Ancestry",
           "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Delighted Halfling",
+        "Dionus, Elvish Archdruid"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Delighted Halfling",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Delighted Halfling",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Marwyn, the Nurturer",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Marwyn, the Nurturer",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Dionus, Elvish Archdruid",
+        "Rogue's Passage"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Rogue's Passage",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Rogue's Passage",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
         }
       ]
     },
@@ -3832,66 +4208,6 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
           "to": "Formidable Speaker",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Formidable Speaker",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Elvish Archdruid",
-        "Imperious Perfect"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Elvish Archdruid",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Imperious Perfect",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Beast Within",
-        "Craterhoof Behemoth"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Beast Within",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Craterhoof Behemoth",
           "toFeature": "etb_trigger"
         }
       ]
@@ -3977,20 +4293,20 @@
     {
       "band": "speculative",
       "cards": [
-        "Beast Within",
-        "Reclamation Sage"
+        "Formidable Speaker",
+        "Worldspine Wurm"
       ],
       "economies": [
-        "token"
+        "etb"
       ],
       "edges": [
         {
-          "from": "Beast Within",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reclamation Sage",
-          "toFeature": "etb_trigger"
+          "from": "Formidable Speaker",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4020,6 +4336,66 @@
           "magnitude": 1,
           "to": "Formidable Speaker",
           "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Beast Within",
+        "Craterhoof Behemoth"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Beast Within",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Craterhoof Behemoth",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Elvish Archdruid",
+        "Imperious Perfect"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Elvish Archdruid",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Beast Within",
+        "Reclamation Sage"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Beast Within",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reclamation Sage",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -4066,46 +4442,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Craterhoof Behemoth",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Craterhoof Behemoth",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Ezuri, Renegade Leader",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Ezuri, Renegade Leader",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Formidable Speaker",
         "Quirion Ranger"
       ],
@@ -4146,40 +4482,49 @@
     {
       "band": "speculative",
       "cards": [
-        "Beast Within",
-        "Marwyn, the Nurturer"
+        "Dionus, Elvish Archdruid",
+        "Three Tree City"
       ],
       "economies": [
-        "token"
+        "mana",
+        "untap"
       ],
       "edges": [
         {
-          "from": "Beast Within",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
+          "from": "Three Tree City",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
           "magnitude": 1,
-          "to": "Marwyn, the Nurturer",
-          "toFeature": "etb_trigger"
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Three Tree City",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Dionus, Elvish Archdruid",
+          "toFeature": "untap_permanent"
         }
       ]
     },
     {
       "band": "speculative",
       "cards": [
-        "Finale of Devastation",
+        "Craterhoof Behemoth",
         "Worldspine Wurm"
       ],
       "economies": [
-        "token"
+        "etb"
       ],
       "edges": [
         {
-          "from": "Worldspine Wurm",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "from": "Craterhoof Behemoth",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
           "magnitude": 3,
-          "to": "Finale of Devastation",
-          "toFeature": "anthem"
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4215,952 +4560,25 @@
     {
       "band": "speculative",
       "cards": [
-        "Beast Within",
-        "Imperious Perfect"
+        "Ezuri, Renegade Leader",
+        "Worldspine Wurm"
       ],
       "economies": [
         "token"
       ],
       "edges": [
         {
-          "from": "Beast Within",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Imperious Perfect",
-          "toFeature": "anthem"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Ghalta, Stampede Tyrant",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Ghalta, Stampede Tyrant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
+          "from": "Ezuri, Renegade Leader",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
           "magnitude": 3,
           "to": "Worldspine Wurm",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Reclamation Sage",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Reclamation Sage",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Elvish Warmaster",
-        "Imperious Perfect"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Imperious Perfect",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Elvish Warmaster",
-          "toFeature": "anthem"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Garruk's Uprising",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Garruk's Uprising",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-        "Wirewood Symbiote"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Wirewood Symbiote",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Wirewood Symbiote",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Apex Altisaur",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Apex Altisaur",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Oran-Rief, the Vastwood",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Oran-Rief, the Vastwood",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Oran-Rief, the Vastwood",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Oran-Rief, the Vastwood",
-        "Wirewood Symbiote"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Oran-Rief, the Vastwood",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Wirewood Symbiote",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Oran-Rief, the Vastwood",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Wirewood Symbiote",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Formidable Speaker",
-        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Formidable Speaker",
-        "The Shire"
-      ],
-      "economies": [
-        "mana",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "The Shire",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "The Shire",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "The Shire",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "etb_trigger"
         }
       ]
     }
   ],
   "triples": [
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Llanowar Tribe",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 3,
-          "to": "Llanowar Tribe",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Llanowar Tribe",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 3,
-          "to": "Llanowar Tribe",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Llanowar Tribe",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Quirion Ranger",
-        "Sol Ring"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Circle of Dreams Druid",
-        "Formidable Speaker",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Circle of Dreams Druid",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Circle of Dreams Druid",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Circle of Dreams Druid",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Circle of Dreams Druid",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Elvish Mystic",
-        "Formidable Speaker",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Elvish Mystic",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Elvish Mystic",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Elvish Mystic",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Elvish Mystic",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Llanowar Elves",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Llanowar Elves",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Llanowar Elves",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Llanowar Elves",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Llanowar Elves",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Nykthos, Shrine to Nyx",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Nykthos, Shrine to Nyx",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Nykthos, Shrine to Nyx",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Nykthos, Shrine to Nyx",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Nykthos, Shrine to Nyx",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Priest of Titania",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Priest of Titania",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Priest of Titania",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Priest of Titania",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Priest of Titania",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Quirion Ranger",
-        "Wirewood Lodge"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Wirewood Lodge",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Wirewood Lodge",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Wirewood Lodge",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Wirewood Lodge",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Delighted Halfling",
-        "Formidable Speaker",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Delighted Halfling",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Delighted Halfling",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Delighted Halfling",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Delighted Halfling",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Elvish Archdruid",
-        "Formidable Speaker",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Elvish Archdruid",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Elvish Archdruid",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Elvish Archdruid",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Elvish Archdruid",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Quirion Ranger",
-        "Rogue's Passage"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Rogue's Passage",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Rogue's Passage",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Rogue's Passage",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Rogue's Passage",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Marwyn, the Nurturer",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Marwyn, the Nurturer",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Marwyn, the Nurturer",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Marwyn, the Nurturer",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Marwyn, the Nurturer",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
     {
       "band": "strong",
       "cards": [
@@ -5206,114 +4624,6 @@
           "magnitude": 3,
           "to": "Worldspine Wurm",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Quirion Ranger",
-        "Three Tree City"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Three Tree City",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Three Tree City",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Three Tree City",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Three Tree City",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Quirion Ranger",
-        "The Great Henge"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "The Great Henge",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "The Great Henge",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "The Great Henge",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "The Great Henge",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
         }
       ]
     },
@@ -5377,59 +4687,6 @@
       "band": "strong",
       "cards": [
         "Formidable Speaker",
-        "Path of Ancestry",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Path of Ancestry",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Path of Ancestry",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Path of Ancestry",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Path of Ancestry",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
         "Marwyn, the Nurturer",
         "Worldspine Wurm"
       ],
@@ -5477,52 +4734,6 @@
       "band": "strong",
       "cards": [
         "Formidable Speaker",
-        "Imperious Perfect",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Imperious Perfect",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Imperious Perfect",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Imperious Perfect",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
         "The Great Henge",
         "Worldspine Wurm"
       ],
@@ -5563,396 +4774,6 @@
           "magnitude": 3,
           "to": "Worldspine Wurm",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Elven Chorus",
-        "Formidable Speaker",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Elven Chorus",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Elven Chorus",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Elven Chorus",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Elven Chorus",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Oran-Rief, the Vastwood",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Oran-Rief, the Vastwood",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Oran-Rief, the Vastwood",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Oran-Rief, the Vastwood",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Oran-Rief, the Vastwood",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Formidable Speaker",
-        "Heritage Druid",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Heritage Druid",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 3,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Heritage Druid",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 3,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Formidable Speaker",
-        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Formidable Speaker",
-        "Patchwork Banner",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Patchwork Banner",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Patchwork Banner",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Patchwork Banner",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Patchwork Banner",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Formidable Speaker",
-        "Quirion Ranger",
-        "The Shire"
-      ],
-      "economies": [
-        "mana",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "The Shire",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "The Shire",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "The Shire",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "The Shire",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "The Shire",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Formidable Speaker",
-        "Quirion Ranger",
-        "Sensei's Divining Top"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Sensei's Divining Top",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sensei's Divining Top",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Elven Passage",
-        "Formidable Speaker",
-        "Quirion Ranger"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Elven Passage",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Elven Passage",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Quirion Ranger",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Formidable Speaker",
-          "toFeature": "tap_ability"
         }
       ]
     },
@@ -6211,11 +5032,59 @@
     {
       "band": "speculative",
       "cards": [
-        "Badgermole Cub",
+        "Disciple of Freyalise // Garden of Freyalise",
         "Formidable Speaker",
-        "Quirion Ranger"
+        "Worldspine Wurm"
       ],
       "economies": [
+        "etb",
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Formidable Speaker",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Formidable Speaker",
+        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
         "untap"
       ],
       "edges": [
@@ -6224,24 +5093,32 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Adds mana",
           "magnitude": 1,
-          "to": "Badgermole Cub",
+          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
           "toFeature": "mana_add"
         },
         {
-          "from": "Quirion Ranger",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Badgermole Cub",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Quirion Ranger",
+          "from": "Formidable Speaker",
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
-          "to": "Formidable Speaker",
+          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
           "toFeature": "tap_ability"
+        },
+        {
+          "from": "Formidable Speaker",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -6296,39 +5173,81 @@
     {
       "band": "speculative",
       "cards": [
-        "Formidable Speaker",
-        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+        "Disciple of Freyalise // Garden of Freyalise",
+        "Parallel Lives",
         "Worldspine Wurm"
       ],
       "economies": [
         "etb",
-        "untap"
+        "sacrifice",
+        "token",
+        "trigger_doubling"
       ],
       "edges": [
         {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "mana_add"
+          "to": "Parallel Lives",
+          "toFeature": "token_create"
         },
         {
-          "from": "Formidable Speaker",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
           "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "tap_ability"
+          "to": "Parallel Lives",
+          "toFeature": "trigger_doubler"
         },
         {
-          "from": "Formidable Speaker",
+          "from": "Disciple of Freyalise // Garden of Freyalise",
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Creates tokens",
           "magnitude": 3,
           "to": "Worldspine Wurm",
           "toFeature": "token_create"
         },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+        "Parallel Lives",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
         {
           "from": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
           "fromFeature": "etb_trigger",
@@ -6336,6 +5255,46 @@
           "magnitude": 3,
           "to": "Worldspine Wurm",
           "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -6485,19 +5444,26 @@
     {
       "band": "speculative",
       "cards": [
-        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-        "Parallel Lives",
+        "Badgermole Cub",
+        "Formidable Speaker",
         "Worldspine Wurm"
       ],
       "economies": [
         "etb",
-        "sacrifice",
         "token",
-        "trigger_doubling"
+        "untap"
       ],
       "edges": [
         {
-          "from": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "from": "Formidable Speaker",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Badgermole Cub",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Formidable Speaker",
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Creates tokens",
           "magnitude": 3,
@@ -6505,44 +5471,12 @@
           "toFeature": "token_create"
         },
         {
-          "from": "Parallel Lives",
+          "from": "Worldspine Wurm",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Parallel Lives",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Parallel Lives",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Worldspine Wurm",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Parallel Lives",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
           "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Parallel Lives",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Worldspine Wurm",
-          "toFeature": "dies_trigger"
+          "to": "Badgermole Cub",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -6685,6 +5619,1421 @@
           "magnitude": 1,
           "to": "Scute Swarm",
           "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Imperious Perfect",
+        "Timeless Witness",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Timeless Witness",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Timeless Witness",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Timeless Witness",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Timeless Witness",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Imperious Perfect",
+        "Parallel Lives",
+        "Sapling Nursery"
+      ],
+      "economies": [
+        "etb",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "token_doubler"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Imperious Perfect",
+        "Parallel Lives",
+        "Springheart Nantuko"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Marwyn, the Nurturer",
+        "Parallel Lives",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Marwyn, the Nurturer",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Marwyn, the Nurturer",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Marwyn, the Nurturer",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Formidable Speaker",
+        "Parallel Lives",
+        "The Shire"
+      ],
+      "economies": [
+        "mana",
+        "token",
+        "trigger_doubling",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Shire",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "The Shire",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "The Shire",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Shire",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "token_doubler"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Dwynen's Elite",
+        "Elvish Warmaster",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Dwynen's Elite",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Dwynen's Elite",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Dwynen's Elite",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Dwynen's Elite",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Elvish Warmaster",
+        "Sapling Nursery",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Elvish Warmaster",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Elvish Warmaster",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Elvish Warmaster",
+        "Scute Swarm",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Elvish Warmaster",
+        "Springheart Nantuko",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Elvish Warmaster",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Springheart Nantuko",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Sapling Nursery",
+        "Tendershoot Dryad",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Tendershoot Dryad",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Tendershoot Dryad",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Sapling Nursery",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Tendershoot Dryad",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 3,
+          "to": "Tendershoot Dryad",
+          "toFeature": "anthem"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Springheart Nantuko",
+        "Tendershoot Dryad",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Tendershoot Dryad",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Tendershoot Dryad",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Springheart Nantuko",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Springheart Nantuko",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Tendershoot Dryad",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 3,
+          "to": "Tendershoot Dryad",
+          "toFeature": "anthem"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Disciple of Freyalise // Garden of Freyalise",
+        "Formidable Speaker",
+        "Parallel Lives"
+      ],
+      "economies": [
+        "etb",
+        "mana",
+        "token",
+        "trigger_doubling",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Disciple of Freyalise // Garden of Freyalise",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Formidable Speaker",
+        "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+        "Parallel Lives"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Formidable Speaker",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Formidable Speaker",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "toFeature": "tap_ability"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Dwynen's Elite",
+        "Imperious Perfect",
+        "Parallel Lives"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Dwynen's Elite",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Dwynen's Elite",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Dwynen's Elite",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Dwynen's Elite",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Dwynen's Elite",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Imperious Perfect",
+        "Parallel Lives",
+        "Scute Swarm"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Imperious Perfect",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Imperious Perfect",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Parallel Lives",
+        "The Shire",
+        "Timeless Witness"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "The Shire",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "token_doubler"
+        },
+        {
+          "from": "The Shire",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Timeless Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Shire",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Timeless Witness",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Timeless Witness",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Timeless Witness",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Timeless Witness",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Parallel Lives",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Formidable Speaker",
+        "Parallel Lives",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Formidable Speaker",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Dwynen's Elite",
+        "Tendershoot Dryad",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Dwynen's Elite",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Tendershoot Dryad",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Dwynen's Elite",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Tendershoot Dryad",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Dwynen's Elite",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Dwynen's Elite",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Tendershoot Dryad",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 3,
+          "to": "Tendershoot Dryad",
+          "toFeature": "anthem"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Scute Swarm",
+        "Tendershoot Dryad",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Tendershoot Dryad",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Tendershoot Dryad",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Tendershoot Dryad",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 3,
+          "to": "Tendershoot Dryad",
+          "toFeature": "anthem"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Badgermole Cub",
+        "Formidable Speaker",
+        "Parallel Lives"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Formidable Speaker",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Badgermole Cub",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Badgermole Cub",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Badgermole Cub",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Parallel Lives",
+        "The Great Henge",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Great Henge",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Great Henge",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "The Great Henge",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Formidable Speaker",
+        "Marwyn, the Nurturer",
+        "Parallel Lives"
+      ],
+      "economies": [
+        "mana",
+        "token",
+        "trigger_doubling",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Marwyn, the Nurturer",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Marwyn, the Nurturer",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Formidable Speaker",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Marwyn, the Nurturer",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Parallel Lives",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Marwyn, the Nurturer",
+          "toFeature": "etb_trigger"
         }
       ]
     }
