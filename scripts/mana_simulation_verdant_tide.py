@@ -166,6 +166,11 @@ def compute_land_mana(name: str) -> tuple[int, int]:
     if name in {"Rogue's Passage", "Bonders' Enclave"}:
         return (0, 1)
 
+    if name == "Elven Passage":
+        # Produces no mana itself; behold an Elf (21 in the 99) fetches an
+        # untapped Snow-Covered Forest, so it plays as a G source.
+        return (1, 0)
+
     # Fallback: colorless
     return (0, 1)
 
