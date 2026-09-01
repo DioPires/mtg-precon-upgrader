@@ -7,7 +7,7 @@
   "cost": "$600-700",
   "bracket": "4-",
   "status": "brewing",
-  "gameChangers": 1,
+  "gameChangers": 2,
   "lastUpdatedSet": "The Hobbit",
   "archetypes": [
     "aristocrats",
@@ -90,6 +90,11 @@
       "type": "other",
       "name": "Board round-9 land swap approval, DEC-543, 2026-08-21",
       "detail": "Round 9 part two, interaction 903ac10a, question volatile_fault, option cut_swamp. IN Volatile Fault, OUT one basic Swamp. The board asked for an option that keeps Bojuka Bog, and this is it. Correction on the record: the manabase point quoted earlier came from cutting Bojuka Bog, not from adding Volatile Fault, because the Bog is the deck's only real land that always enters tapped. Keeping the Bog means manabase health stays at 91 under every cut tested. A basic Swamp is the cheapest cut available: it costs one black source and nothing else, while cutting any dual costs a black source and a red source, and cutting Great Furnace or Vault of Whispers also costs an artifact that triggers Reckless Fireweaver and Weftstalker Ardent and feeds Krark-Clan Ironworks. Black sources fall from 28.1 to 27.1 against a Karsten requirement of 18, leaving 9.1 sources of headroom. Land count stays at 39.1 effective against a 39.4 target, so the land-count component keeps its full 15.0. Basics go from six Swamp and six Mountain to five and six; Bloodstained Mire, Prismatic Vista and Fabled Passage still have 11 basic targets. Honest cost on the record: Volatile Fault produces colorless mana only, so colorless-only lands go from three to four out of 40 land cards, against 39 black pips and 25 red pips. The board rejected two options in the same question: cut_bog, which gives up the deck's only graveyard answer, and spellbomb, which scores highest at global 97 but pays for it with Oni-Cult Anvil."
+    },
+    {
+      "type": "other",
+      "name": "Board swap approval, DEC-579, 2026-09-01",
+      "detail": "Interaction 3e634d52, question swap-hoard, option accept. IN Necropotence, OUT Idol of Oblivion. Idol capped at one card per untap cycle; Necropotence gives N cards for N life at our throttle and does not depend on the commander. BBB castability from this manabase: about 54% by turn 4, 66% by turn 5 (Monte Carlo, 20k trials). Metrics: global health 97 flat, zero gaps. Game Changers 1→2 (bracket 4-, uncapped). Caution on record: EDHREC’s Smaug corpus (291 cards) does not list Necropotence; the case is deck-specific."
     }
   ],
   "guideContent": {
@@ -175,11 +180,11 @@
     },
     {
       "name": "Card Advantage",
-      "description": "Draw that does not depend on Smaug being on the battlefield, plus the card that makes Smaug's draw free. Skullclamp is the engine here: equip it to Reassembling Skeleton for {1}, the Skeleton dies, we draw two, and it returns from the graveyard for {1}{B}. That is three mana for two cards, repeatable, and Pitiless Plunderer turns each of those deaths into a Treasure. Sheoldred, the Apocalypse reads \"Whenever you draw a card, you gain 2 life\", so it cancels the life Smaug charges and leaves one life over on every Treasure-cast spell. Idol of Oblivion draws for no mana at all: it reads \"{T}: Draw a card. Activate only if you created a token this turn\", and the deck creates a token on almost every turn it does anything. Bolas's Citadel plays spells from the top of the library for life instead of mana. A top-cast spends no Treasure mana, so it never triggers Smaug — the Citadel is raw card advantage on its own clock. Its second ability, \"{T}, Sacrifice ten nonland permanents: Each opponent loses 10 life\", counts Treasures toward the ten, so a wide Treasure board converts into a 10-point drain of each opponent.",
+      "description": "Draw that does not depend on Smaug being on the battlefield, plus the card that makes Smaug's draw free. Skullclamp is the engine here: equip it to Reassembling Skeleton for {1}, the Skeleton dies, we draw two, and it returns from the graveyard for {1}{B}. That is three mana for two cards, repeatable, and Pitiless Plunderer turns each of those deaths into a Treasure. Sheoldred, the Apocalypse reads \"Whenever you draw a card, you gain 2 life\", so it cancels the life Smaug charges and leaves one life over on every Treasure-cast spell. Necropotence refills the hand at whatever rate we pay: \"Pay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step.\" N life buys N cards, the engine works with Smaug nowhere in sight, and the drain suite pays the bill. Three rules notes: the cards arrive at the next end step, not at once; the exile-to-hand is not a draw, so it triggers neither Sheoldred nor Smaug; and Necropotence skips our draw step, so Sheoldred’s two life from the natural draw goes away. Its discard clause exiles discarded cards, so do not pitch Bloodghast or Reassembling Skeleton to Big Score or Unexpected Windfall while it is out. Bolas's Citadel plays spells from the top of the library for life instead of mana. A top-cast spends no Treasure mana, so it never triggers Smaug — the Citadel is raw card advantage on its own clock. Its second ability, \"{T}, Sacrifice ten nonland permanents: Each opponent loses 10 life\", counts Treasures toward the ten, so a wide Treasure board converts into a 10-point drain of each opponent.",
       "cards": [
         "Braids, Arisen Nightmare",
         "Bolas's Citadel",
-        "Idol of Oblivion",
+        "Necropotence",
         "Skullclamp",
         "Black Market Connections",
         "Sheoldred, the Apocalypse"
@@ -877,8 +882,8 @@
       "wincon_style": "alt"
     },
     {
-      "name": "Idol of Oblivion",
-      "type": "Artifact",
+      "name": "Necropotence",
+      "type": "Enchantment",
       "primary_role": "card-draw"
     },
     {
@@ -1171,19 +1176,6 @@
       "image_uri": "https://cards.scryfall.io/normal/front/2/7/2770f887-7e96-44d1-864a-8c0504a39785.jpg?1783923710",
       "produced_by": [
         "Oni-Cult Anvil"
-      ]
-    },
-    {
-      "name": "Eldrazi",
-      "type_line": "Token Creature — Eldrazi",
-      "oracle_text": "",
-      "power": "10",
-      "toughness": "10",
-      "colors": [],
-      "scryfall_id": "ce6d2786-ef9c-4772-bb71-697131c3c3a4",
-      "image_uri": "https://cards.scryfall.io/normal/front/c/e/ce6d2786-ef9c-4772-bb71-697131c3c3a4.jpg?1783906809",
-      "produced_by": [
-        "Idol of Oblivion"
       ]
     },
     {
