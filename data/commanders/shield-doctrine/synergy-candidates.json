@@ -4,62 +4,14 @@
   ],
   "counts": {
     "cycles": 30,
-    "cyclesTotal": 1184,
+    "cyclesTotal": 1690,
     "pairs": 80,
-    "pairsTotal": 135,
+    "pairsTotal": 157,
     "triples": 40,
-    "triplesTotal": 127,
+    "triplesTotal": 194,
     "uncovered": 0
   },
   "cycles": [
-    {
-      "band": "strong",
-      "cards": [
-        "Cloud, Midgar Mercenary",
-        "Forge Anew",
-        "Mjölnir, Hammer of Thor",
-        "Stoneforge Mystic"
-      ],
-      "economies": [
-        "etb",
-        "recursion",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stoneforge Mystic",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stoneforge Mystic",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        }
-      ]
-    },
     {
       "band": "strong",
       "cards": [
@@ -161,6 +113,198 @@
       "cards": [
         "Cloud, Midgar Mercenary",
         "Forge Anew",
+        "Mjölnir, Hammer of Thor",
+        "Stoneforge Mystic"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Forge Anew",
+        "Sigarda's Aid",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sigarda's Aid",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Sigarda's Aid",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Forge Anew",
+        "Mjölnir, Hammer of Thor",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "The Reaver Cleaver",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Forge Anew",
+        "Puresteel Paladin",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Puresteel Paladin",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Puresteel Paladin",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Forge Anew",
         "Puresteel Paladin",
         "Stoneforge Mystic"
       ],
@@ -207,6 +351,54 @@
     {
       "band": "strong",
       "cards": [
+        "Forge Anew",
+        "Mithril Coat",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mithril Coat",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Mithril Coat",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Cloud, Midgar Mercenary",
         "Embercleave",
         "Forge Anew",
@@ -246,6 +438,216 @@
           "from": "Forge Anew",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Forge Anew",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "sacrifice",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Mjölnir, Hammer of Thor",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "The Reaver Cleaver",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Mithril Coat",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mithril Coat",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Mithril Coat",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Sigarda's Aid",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sigarda's Aid",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Sigarda's Aid",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
           "to": "Stoneforge Mystic",
           "toFeature": "etb_trigger"
@@ -396,6 +798,242 @@
     {
       "band": "strong",
       "cards": [
+        "Cloud, Midgar Mercenary",
+        "Puresteel Paladin",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Puresteel Paladin",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Puresteel Paladin",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Mjölnir, Hammer of Thor",
+        "Stoneforge Mystic",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Stoneforge Mystic",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Mithril Coat",
+        "Stoneforge Mystic",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mithril Coat",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Mithril Coat",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Stoneforge Mystic",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Puresteel Paladin",
+        "Stoneforge Mystic",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Puresteel Paladin",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Puresteel Paladin",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Stoneforge Mystic",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Sigarda's Aid",
+        "Stoneforge Mystic",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sigarda's Aid",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Sigarda's Aid",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Stoneforge Mystic",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Buried Ruin",
         "Cloud, Midgar Mercenary",
         "Forge Anew",
@@ -452,237 +1090,64 @@
     {
       "band": "strong",
       "cards": [
-        "Aggravated Assault",
-        "Codsworth, Handy Helper",
-        "Dalakos, Crafter of Wonders",
-        "Sword of Feast and Famine"
+        "Cloud, Midgar Mercenary",
+        "Forge Anew",
+        "Stoneforge Mystic",
+        "The Mighty Thor, Jane Foster"
       ],
       "economies": [
-        "mana",
-        "untap"
+        "etb",
+        "recursion",
+        "trigger_doubling"
       ],
       "edges": [
         {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
           "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
         },
         {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
           "magnitude": 1,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Codsworth, Handy Helper",
-        "Sol Ring",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
         },
         {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "from": "Stoneforge Mystic",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
           "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Dalakos, Crafter of Wonders",
-        "Sol Ring",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
         }
       ]
     },
@@ -739,6 +1204,291 @@
           "magnitude": 1,
           "to": "Stoneforge Mystic",
           "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Aggravated Assault",
+        "Codsworth, Handy Helper",
+        "Dalakos, Crafter of Wonders",
+        "Sword of Feast and Famine"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Codsworth, Handy Helper",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Codsworth, Handy Helper",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Dalakos, Crafter of Wonders",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Dalakos, Crafter of Wonders",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Dalakos, Crafter of Wonders",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Dalakos, Crafter of Wonders",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sword of Feast and Famine",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 2,
+          "to": "Codsworth, Handy Helper",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Sword of Feast and Famine",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Codsworth, Handy Helper",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Aggravated Assault",
+        "Codsworth, Handy Helper",
+        "Sol Ring",
+        "Sword of Feast and Famine"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Codsworth, Handy Helper",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Codsworth, Handy Helper",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sword of Feast and Famine",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 2,
+          "to": "Codsworth, Handy Helper",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Sword of Feast and Famine",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Codsworth, Handy Helper",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Aggravated Assault",
+        "Dalakos, Crafter of Wonders",
+        "Sol Ring",
+        "Sword of Feast and Famine"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Dalakos, Crafter of Wonders",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Dalakos, Crafter of Wonders",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Dalakos, Crafter of Wonders",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Dalakos, Crafter of Wonders",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Embercleave",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Embercleave",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Embercleave",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "The Reaver Cleaver",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -835,1111 +1585,6 @@
           "toFeature": "recursion"
         }
       ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Buried Ruin",
-        "Forge Anew",
-        "Mjölnir, Hammer of Thor",
-        "Stoneforge Mystic"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Mjölnir, Hammer of Thor",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stoneforge Mystic",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stoneforge Mystic",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Buried Ruin",
-        "Cloud, Midgar Mercenary",
-        "Forge Anew",
-        "Mithril Coat"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Mithril Coat",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mithril Coat",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Buried Ruin",
-        "Cloud, Midgar Mercenary",
-        "Forge Anew",
-        "Sigarda's Aid"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Sigarda's Aid",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Sigarda's Aid",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Arcane Signet",
-        "Codsworth, Handy Helper",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Arcane Signet",
-        "Dalakos, Crafter of Wonders",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Arcane Signet",
-        "Sol Ring",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Arcane Signet",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Axgard Armory",
-        "Codsworth, Handy Helper",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Axgard Armory",
-        "Dalakos, Crafter of Wonders",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Axgard Armory",
-        "Sol Ring",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Axgard Armory",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Clifftop Retreat",
-        "Codsworth, Handy Helper",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Clifftop Retreat",
-        "Dalakos, Crafter of Wonders",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Dalakos, Crafter of Wonders",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Clifftop Retreat",
-        "Sol Ring",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Clifftop Retreat",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sol Ring",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Codsworth, Handy Helper",
-        "Command Tower",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Command Tower",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Command Tower",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Command Tower",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Command Tower",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Codsworth, Handy Helper",
-        "Exotic Orchard",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Exotic Orchard",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Exotic Orchard",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Exotic Orchard",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Exotic Orchard",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Aggravated Assault",
-        "Codsworth, Handy Helper",
-        "Fellwar Stone",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 2,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Codsworth, Handy Helper",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Fellwar Stone",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Fellwar Stone",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Aggravated Assault",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Fellwar Stone",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Fellwar Stone",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Codsworth, Handy Helper",
-          "toFeature": "tap_ability"
-        }
-      ]
     }
   ],
   "meta": {
@@ -1947,7 +1592,7 @@
     "crowdPriorApplied": true,
     "deckId": "shield-doctrine",
     "deepFocused": false,
-    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
+    "generatedAt": "2026-09-02T07:45:51.101018+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -2217,35 +1862,6 @@
     {
       "band": "strong",
       "cards": [
-        "Sea of Clouds",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Sea of Clouds",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Sea of Clouds",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Sword of Feast and Famine",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Rogue's Passage",
         "Sword of Feast and Famine"
       ],
@@ -2264,6 +1880,35 @@
         },
         {
           "from": "Rogue's Passage",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Sea of Clouds",
+        "Sword of Feast and Famine"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Sea of Clouds",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Sword of Feast and Famine",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sea of Clouds",
           "fromFeature": "tap_ability",
           "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
           "magnitude": 1,
@@ -2507,6 +2152,26 @@
     {
       "band": "strong",
       "cards": [
+        "Forge Anew",
+        "Stoneforge Mystic"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Stormcarved Coast",
         "Sword of Feast and Famine"
       ],
@@ -2536,20 +2201,20 @@
     {
       "band": "strong",
       "cards": [
-        "Forge Anew",
-        "Stoneforge Mystic"
+        "Stoneforge Mystic",
+        "Sword of Feast and Famine"
       ],
       "economies": [
-        "recursion"
+        "untap"
       ],
       "edges": [
         {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
+          "from": "Sword of Feast and Famine",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
           "to": "Stoneforge Mystic",
-          "toFeature": "etb_trigger"
+          "toFeature": "tap_ability"
         }
       ]
     },
@@ -2579,26 +2244,6 @@
           "magnitude": 1,
           "to": "Sword of Feast and Famine",
           "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Stoneforge Mystic",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Stoneforge Mystic",
-          "toFeature": "tap_ability"
         }
       ]
     },
@@ -2722,6 +2367,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Forge Anew",
+        "Puresteel Paladin"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Puresteel Paladin",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Slayers' Stronghold",
         "Sword of Feast and Famine"
       ],
@@ -2745,26 +2410,6 @@
           "magnitude": 1,
           "to": "Sword of Feast and Famine",
           "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Forge Anew",
-        "Puresteel Paladin"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Puresteel Paladin",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
         }
       ]
     },
@@ -2927,6 +2572,64 @@
     {
       "band": "speculative",
       "cards": [
+        "Forge Anew",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Forge Anew"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Inspiring Vantage",
         "Sword of Feast and Famine"
       ],
@@ -3014,29 +2717,40 @@
     {
       "band": "speculative",
       "cards": [
-        "Cloud, Midgar Mercenary",
-        "Forge Anew"
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
       ],
       "economies": [
-        "etb",
-        "recursion"
+        "token"
       ],
       "edges": [
         {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
+          "to": "Stoneforge Mystic",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Stoneforge Mystic",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Stoneforge Mystic",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
         }
       ]
     },
@@ -3057,6 +2771,26 @@
           "magnitude": 1,
           "to": "Cloud, Midgar Mercenary",
           "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Forge Anew",
+        "Mjölnir, Hammer of Thor"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -3527,20 +3261,44 @@
     {
       "band": "speculative",
       "cards": [
-        "Stoneforge Mystic",
-        "The Mighty Thor, Jane Foster"
+        "Buried Ruin",
+        "Emry, Lurker of the Loch"
       ],
       "economies": [
-        "etb"
+        "recursion"
       ],
       "edges": [
         {
-          "from": "Stoneforge Mystic",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
+          "to": "Emry, Lurker of the Loch",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Emry, Lurker of the Loch",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 4,
+          "to": "Emry, Lurker of the Loch",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Emry, Lurker of the Loch",
+          "toFeature": "self_mill"
         }
       ]
     },
@@ -3693,63 +3451,28 @@
       "band": "speculative",
       "cards": [
         "Forge Anew",
-        "Mjölnir, Hammer of Thor"
+        "The Mighty Thor, Jane Foster"
       ],
       "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
-        "Emry, Lurker of the Loch"
-      ],
-      "economies": [
+        "etb",
         "recursion"
       ],
       "edges": [
         {
-          "from": "Buried Ruin",
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Forge Anew",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Emry, Lurker of the Loch",
+          "to": "The Mighty Thor, Jane Foster",
           "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Emry, Lurker of the Loch",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 4,
-          "to": "Emry, Lurker of the Loch",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Emry, Lurker of the Loch",
-          "toFeature": "self_mill"
         }
       ]
     },
@@ -3856,16 +3579,16 @@
     {
       "band": "speculative",
       "cards": [
-        "Forge Anew",
+        "Cloud, Midgar Mercenary",
         "The Mighty Thor, Jane Foster"
       ],
       "economies": [
         "etb",
-        "recursion"
+        "trigger_doubling"
       ],
       "edges": [
         {
-          "from": "Forge Anew",
+          "from": "Cloud, Midgar Mercenary",
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
           "magnitude": 1,
@@ -3873,9 +3596,9 @@
           "toFeature": "blink"
         },
         {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
           "to": "The Mighty Thor, Jane Foster",
           "toFeature": "etb_trigger"
@@ -3914,26 +3637,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Mana Drain",
-        "Sword of Feast and Famine"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Sword of Feast and Famine",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Mana Drain",
-          "toFeature": "mana_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Buried Ruin",
         "Mjölnir, Hammer of Thor"
       ],
@@ -3948,6 +3651,26 @@
           "magnitude": 1,
           "to": "Mjölnir, Hammer of Thor",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Sram, Senior Edificer"
+      ],
+      "economies": [
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
+          "magnitude": 1,
+          "to": "Sram, Senior Edificer",
+          "toFeature": "cast_trigger"
         }
       ]
     },
@@ -4037,35 +3760,20 @@
           "toFeature": "untap_permanent"
         }
       ]
-    },
+    }
+  ],
+  "triples": [
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
-        "Cloud, Midgar Mercenary",
-        "Sram, Senior Edificer"
+        "Forge Anew",
+        "Stoneforge Mystic",
+        "The Reaver Cleaver"
       ],
       "economies": [
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
-          "magnitude": 1,
-          "to": "Sram, Senior Edificer",
-          "toFeature": "cast_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Emry, Lurker of the Loch",
-        "Forge Anew"
-      ],
-      "economies": [
-        "recursion"
+        "recursion",
+        "sacrifice",
+        "token"
       ],
       "edges": [
         {
@@ -4073,66 +3781,35 @@
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Emry, Lurker of the Loch",
+          "to": "Stoneforge Mystic",
           "toFeature": "etb_trigger"
         },
         {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Emry, Lurker of the Loch",
-          "toFeature": "graveyard_payoff"
+          "to": "Forge Anew",
+          "toFeature": "recursion"
         },
         {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 4,
-          "to": "Emry, Lurker of the Loch",
-          "toFeature": "mill"
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Emry, Lurker of the Loch",
-          "toFeature": "self_mill"
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
         }
       ]
     },
-    {
-      "band": "speculative",
-      "cards": [
-        "Cloud, Midgar Mercenary",
-        "The Mighty Thor, Jane Foster"
-      ],
-      "economies": [
-        "etb",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    }
-  ],
-  "triples": [
     {
       "band": "strong",
       "cards": [
@@ -4181,7 +3858,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Cloud, Midgar Mercenary",
         "Stoneforge Mystic",
@@ -4227,7 +3904,146 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
+      "cards": [
+        "Forge Anew",
+        "Stoneforge Mystic",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Stoneforge Mystic",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Forge Anew",
+        "Mjölnir, Hammer of Thor",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "The Reaver Cleaver",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Forge Anew",
+        "Mjölnir, Hammer of Thor"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
       "cards": [
         "Buried Ruin",
         "Stoneforge Mystic",
@@ -4270,52 +4086,6 @@
           "magnitude": 1,
           "to": "Stoneforge Mystic",
           "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Cloud, Midgar Mercenary",
-        "Forge Anew",
-        "Mjölnir, Hammer of Thor"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
         }
       ]
     },
@@ -4435,6 +4205,100 @@
     {
       "band": "speculative",
       "cards": [
+        "Forge Anew",
+        "Puresteel Paladin",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Puresteel Paladin",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Puresteel Paladin",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Forge Anew",
+        "Sigarda's Aid",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Sigarda's Aid",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Sigarda's Aid",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Buried Ruin",
         "Cloud, Midgar Mercenary",
         "Forge Anew"
@@ -4481,84 +4345,38 @@
     {
       "band": "speculative",
       "cards": [
-        "Forge Anew",
+        "Cloud, Midgar Mercenary",
         "Stoneforge Mystic",
-        "The Mighty Thor, Jane Foster"
+        "The Reaver Cleaver"
       ],
       "economies": [
-        "etb",
-        "recursion"
+        "token",
+        "trigger_doubling"
       ],
       "edges": [
         {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
           "to": "Stoneforge Mystic",
           "toFeature": "etb_trigger"
         },
         {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
+          "to": "Cloud, Midgar Mercenary",
           "toFeature": "etb_trigger"
         },
         {
-          "from": "Stoneforge Mystic",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
-        "Forge Anew",
-        "Mjölnir, Hammer of Thor"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Forge Anew",
+          "to": "Stoneforge Mystic",
           "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Mjölnir, Hammer of Thor",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
         }
       ]
     },
@@ -4704,122 +4522,8 @@
       "band": "speculative",
       "cards": [
         "Buried Ruin",
-        "Cloud, Midgar Mercenary",
-        "Mithril Coat"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Mithril Coat",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mithril Coat",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
-        "Cloud, Midgar Mercenary",
-        "Sigarda's Aid"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Sigarda's Aid",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Sigarda's Aid",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
-        "Cloud, Midgar Mercenary",
-        "Stoneforge Mystic"
-      ],
-      "economies": [
-        "recursion",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stoneforge Mystic",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stoneforge Mystic",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
         "Forge Anew",
-        "The Mighty Thor, Jane Foster"
+        "Mjölnir, Hammer of Thor"
       ],
       "economies": [
         "etb",
@@ -4839,23 +4543,62 @@
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
+          "to": "Mjölnir, Hammer of Thor",
           "toFeature": "etb_trigger"
         },
         {
-          "from": "Forge Anew",
+          "from": "Mjölnir, Hammer of Thor",
           "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Forge Anew",
+        "Mithril Coat",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Mithril Coat",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
         },
         {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Mithril Coat",
           "toFeature": "etb_trigger"
         }
       ]
@@ -4911,6 +4654,166 @@
       "cards": [
         "Buried Ruin",
         "Forge Anew",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Ruin",
+        "Cloud, Midgar Mercenary",
+        "Mithril Coat"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Mithril Coat",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mithril Coat",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Ruin",
+        "Cloud, Midgar Mercenary",
+        "Sigarda's Aid"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Sigarda's Aid",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sigarda's Aid",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Ruin",
+        "Cloud, Midgar Mercenary",
+        "Stoneforge Mystic"
+      ],
+      "economies": [
+        "recursion",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stoneforge Mystic",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Ruin",
+        "Forge Anew",
         "Puresteel Paladin"
       ],
       "economies": [
@@ -4941,6 +4844,52 @@
           "magnitude": 1,
           "to": "Forge Anew",
           "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Mjölnir, Hammer of Thor",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
         }
       ]
     },
@@ -5023,6 +4972,125 @@
     {
       "band": "speculative",
       "cards": [
+        "Cloud, Midgar Mercenary",
+        "Forge Anew",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Cloud, Midgar Mercenary",
+        "Forge Anew",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "recursion",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Cloud, Midgar Mercenary",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Cloud, Midgar Mercenary",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Buried Ruin",
         "Cloud, Midgar Mercenary",
         "The Mighty Thor, Jane Foster"
@@ -5070,6 +5138,52 @@
     {
       "band": "speculative",
       "cards": [
+        "Forge Anew",
+        "Mjölnir, Hammer of Thor",
+        "The Mighty Thor, Jane Foster"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Forge Anew",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        },
+        {
+          "from": "Forge Anew",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Mjölnir, Hammer of Thor",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "magnitude": 1,
+          "to": "The Mighty Thor, Jane Foster",
+          "toFeature": "blink"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Buried Ruin",
         "Cloud, Midgar Mercenary",
         "Puresteel Paladin"
@@ -5102,52 +5216,6 @@
           "magnitude": 1,
           "to": "Cloud, Midgar Mercenary",
           "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Cloud, Midgar Mercenary",
-        "Mjölnir, Hammer of Thor",
-        "The Mighty Thor, Jane Foster"
-      ],
-      "economies": [
-        "etb",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
         }
       ]
     },
@@ -5201,6 +5269,53 @@
       "band": "speculative",
       "cards": [
         "Buried Ruin",
+        "Forge Anew",
+        "The Reaver Cleaver"
+      ],
+      "economies": [
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Buried Ruin",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "The Reaver Cleaver",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Reaver Cleaver",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Forge Anew",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Ruin",
         "Mithril Coat",
         "The Mighty Thor, Jane Foster"
       ],
@@ -5353,44 +5468,6 @@
       "band": "speculative",
       "cards": [
         "Buried Ruin",
-        "Cloud, Midgar Mercenary",
-        "Embercleave"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Embercleave",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Embercleave",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
         "Mjölnir, Hammer of Thor",
         "The Mighty Thor, Jane Foster"
       ],
@@ -5422,405 +5499,6 @@
           "magnitude": 1,
           "to": "The Mighty Thor, Jane Foster",
           "toFeature": "blink"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Cloud, Midgar Mercenary",
-        "Forge Anew",
-        "The Mighty Thor, Jane Foster"
-      ],
-      "economies": [
-        "etb",
-        "recursion",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Cloud, Midgar Mercenary",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Cloud, Midgar Mercenary",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Forge Anew",
-        "Mjölnir, Hammer of Thor",
-        "The Mighty Thor, Jane Foster"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Mjölnir, Hammer of Thor",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
-        "Embercleave",
-        "The Mighty Thor, Jane Foster"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Embercleave",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Embercleave",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Forge Anew",
-        "Mithril Coat",
-        "The Mighty Thor, Jane Foster"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mithril Coat",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Mithril Coat",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Forge Anew",
-        "Puresteel Paladin",
-        "The Mighty Thor, Jane Foster"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Puresteel Paladin",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Puresteel Paladin",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Forge Anew",
-        "Sigarda's Aid",
-        "The Mighty Thor, Jane Foster"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Forge Anew",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        },
-        {
-          "from": "Forge Anew",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Sigarda's Aid",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Forge Anew",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Sigarda's Aid",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
-          "magnitude": 1,
-          "to": "The Mighty Thor, Jane Foster",
-          "toFeature": "blink"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
-        "Generous Gift",
-        "Mithril Coat"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Generous Gift",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Mithril Coat",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mithril Coat",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Generous Gift",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
-        "Generous Gift",
-        "Sigarda's Aid"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Generous Gift",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Sigarda's Aid",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Sigarda's Aid",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Generous Gift",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Ruin",
-        "Generous Gift",
-        "Stoneforge Mystic"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Generous Gift",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Buried Ruin",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stoneforge Mystic",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Stoneforge Mystic",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Generous Gift",
-          "toFeature": "token_create"
         }
       ]
     }
