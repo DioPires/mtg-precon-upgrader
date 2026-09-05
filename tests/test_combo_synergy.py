@@ -83,6 +83,47 @@ def test_name_keys_alias_every_face():
 
 
 # --------------------------------------------------------------------------- #
+# Name → oracle_id precedence (DEC-553)                                        #
+# --------------------------------------------------------------------------- #
+def test_full_name_beats_face_alias_regardless_of_load_order():
+    """An MDFC back face must never hijack a standalone card's exact name.
+
+    `Grave Researcher // Reanimate` aliases the key "reanimate", which is also
+    the full name of the standalone sorcery. Whichever KB shard loaded first
+    used to win the key, so gathering-shadow's Reanimate resolved to the MDFC
+    and was scored on the wrong card's features."""
+    mdfc = ("o_mdfc", "Grave Researcher // Reanimate")
+    standalone = ("o_sorcery", "Reanimate")
+    for order in ((mdfc, standalone), (standalone, mdfc)):
+        n2o = L.build_name_to_oid(order)
+        assert n2o["reanimate"] == "o_sorcery", f"face alias won for order {order}"
+        # The MDFC keeps its own full name and its front-face alias.
+        assert n2o["grave researcher reanimate"] == "o_mdfc"
+        assert n2o["grave researcher"] == "o_mdfc"
+
+
+def test_colliding_names_resolve_to_distinct_oids():
+    """A deck holding BOTH the MDFC and the standalone must see two cards, not
+    one — the pre-fix map collapsed them onto a single oracle_id."""
+    n2o = L.build_name_to_oid(
+        [("o_mdfc", "Grave Researcher // Reanimate"), ("o_sorcery", "Reanimate")]
+    )
+
+    def resolve(name):
+        return next((n2o[k] for k in L.name_keys(name) if k in n2o), None)
+
+    assert resolve("Reanimate") == "o_sorcery"
+    assert resolve("Grave Researcher // Reanimate") == "o_mdfc"
+
+
+def test_first_wins_still_holds_within_a_pass():
+    """Genuine same-full-name and same-face-alias collisions keep first-wins."""
+    assert L.build_name_to_oid([("a", "Reanimate"), ("b", "Reanimate")])["reanimate"] == "a"
+    n2o = L.build_name_to_oid([("a", "Front A // Shared Face"), ("b", "Front B // Shared Face")])
+    assert n2o["shared face"] == "a"
+
+
+# --------------------------------------------------------------------------- #
 # Graph: noise-pair exclusion + edge pruning                                   #
 # --------------------------------------------------------------------------- #
 def test_mana_add_mana_sink_is_excluded_noise():

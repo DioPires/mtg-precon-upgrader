@@ -4,11 +4,11 @@
   ],
   "counts": {
     "cycles": 30,
-    "cyclesTotal": 1093,
+    "cyclesTotal": 1344,
     "pairs": 80,
-    "pairsTotal": 113,
+    "pairsTotal": 121,
     "triples": 40,
-    "triplesTotal": 145,
+    "triplesTotal": 169,
     "uncovered": 0
   },
   "cycles": [
@@ -1398,7 +1398,7 @@
     "crowdPriorApplied": true,
     "deckId": "eternal-agony",
     "deepFocused": false,
-    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
+    "generatedAt": "2026-09-05T15:40:29.178279+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -2454,6 +2454,42 @@
     {
       "band": "speculative",
       "cards": [
+        "Fake Your Own Death",
+        "Phyrexian Tower"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Phyrexian Tower",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Fake Your Own Death",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Phyrexian Tower",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Fake Your Own Death",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Tower",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Fake Your Own Death",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Mount Doom",
         "The Rollercrusher Ride"
       ],
@@ -2488,42 +2524,6 @@
           "magnitude": 1,
           "to": "The Rollercrusher Ride",
           "toFeature": "damage"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Fake Your Own Death",
-        "Phyrexian Tower"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -2619,6 +2619,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Exsanguinate",
+        "Rubble Rouser"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Rubble Rouser",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "Exsanguinate",
+          "toFeature": "drain"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Leechridden Swamp",
         "Rubble Rouser"
       ],
@@ -2632,26 +2652,6 @@
           "label": "ETB payoff ↔ Life drain to opponents",
           "magnitude": 1,
           "to": "Leechridden Swamp",
-          "toFeature": "drain"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Rubble Rouser",
-        "Stensian Sanguinist // Exsanguinate"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Rubble Rouser",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Stensian Sanguinist // Exsanguinate",
           "toFeature": "drain"
         }
       ]
@@ -2688,6 +2688,46 @@
       "edges": [
         {
           "from": "Wound Reflection",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Syr Konrad, the Grim",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Reanimate",
+        "Syr Konrad, the Grim"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Syr Konrad, the Grim",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Exsanguinate",
+        "Syr Konrad, the Grim"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Exsanguinate",
           "fromFeature": "drain",
           "label": "Life drain to opponents ↔ Death payoff",
           "magnitude": 1,
@@ -2748,20 +2788,29 @@
     {
       "band": "speculative",
       "cards": [
-        "Leechridden Swamp",
+        "Reanimate",
         "The Rollercrusher Ride"
       ],
       "economies": [
-        "drain"
+        "etb",
+        "recursion"
       ],
       "edges": [
         {
-          "from": "Leechridden Swamp",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
+          "from": "The Rollercrusher Ride",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "The Rollercrusher Ride",
-          "toFeature": "etb_trigger"
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Rollercrusher Ride",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -2791,6 +2840,26 @@
           "magnitude": 1,
           "to": "Spiked Corridor // Torture Pit",
           "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Leechridden Swamp",
+        "The Rollercrusher Ride"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Leechridden Swamp",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The Rollercrusher Ride",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -2886,28 +2955,20 @@
     {
       "band": "speculative",
       "cards": [
-        "Advanced Reconstruction",
-        "Grave Researcher // Reanimate"
+        "Reanimate",
+        "Rubble Rouser"
       ],
       "economies": [
-        "recursion"
+        "etb"
       ],
       "edges": [
         {
-          "from": "Grave Researcher // Reanimate",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
+          "from": "Rubble Rouser",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Advanced Reconstruction",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Grave Researcher // Reanimate",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Advanced Reconstruction",
-          "toFeature": "self_mill"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -2964,24 +3025,24 @@
       "band": "speculative",
       "cards": [
         "Advanced Reconstruction",
-        "The Rollercrusher Ride"
+        "Reanimate"
       ],
       "economies": [
         "recursion"
       ],
       "edges": [
         {
-          "from": "The Rollercrusher Ride",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
           "magnitude": 1,
           "to": "Advanced Reconstruction",
           "toFeature": "mill"
         },
         {
-          "from": "The Rollercrusher Ride",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Self-mill",
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
           "magnitude": 1,
           "to": "Advanced Reconstruction",
           "toFeature": "self_mill"
@@ -3011,6 +3072,34 @@
     {
       "band": "speculative",
       "cards": [
+        "Advanced Reconstruction",
+        "The Rollercrusher Ride"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "The Rollercrusher Ride",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
+          "magnitude": 1,
+          "to": "Advanced Reconstruction",
+          "toFeature": "mill"
+        },
+        {
+          "from": "The Rollercrusher Ride",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Advanced Reconstruction",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Orcish Bowmasters",
         "Unholy Annex // Ritual Chamber"
       ],
@@ -3034,104 +3123,6 @@
           "magnitude": 1,
           "to": "Orcish Bowmasters",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Fake Your Own Death",
-        "Unholy Annex // Ritual Chamber"
-      ],
-      "economies": [
-        "drain",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Unholy Annex // Ritual Chamber",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 2,
-          "to": "Fake Your Own Death",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Unholy Annex // Ritual Chamber",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Resurrection Orb",
-        "Unholy Annex // Ritual Chamber"
-      ],
-      "economies": [
-        "drain",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Unholy Annex // Ritual Chamber",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 2,
-          "to": "Resurrection Orb",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Unholy Annex // Ritual Chamber",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Resurrection Orb",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Spiked Corridor // Torture Pit",
-        "The Rollercrusher Ride"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Spiked Corridor // Torture Pit",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 3,
-          "to": "The Rollercrusher Ride",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Leechridden Swamp",
-        "Spiked Corridor // Torture Pit"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Spiked Corridor // Torture Pit",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Leechridden Swamp",
-          "toFeature": "drain"
         }
       ]
     }
@@ -4283,6 +4274,44 @@
     {
       "band": "speculative",
       "cards": [
+        "Fake Your Own Death",
+        "Rubble Rouser",
+        "Torment of Hailfire"
+      ],
+      "economies": [
+        "drain",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Rubble Rouser",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Fake Your Own Death",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Rubble Rouser",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 3,
+          "to": "Torment of Hailfire",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Torment of Hailfire",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 3,
+          "to": "Fake Your Own Death",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Bolas's Citadel",
         "Spiked Corridor // Torture Pit",
         "The Rollercrusher Ride"
@@ -4354,44 +4383,6 @@
           "magnitude": 1,
           "to": "Fake Your Own Death",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Fake Your Own Death",
-        "Rubble Rouser",
-        "Torment of Hailfire"
-      ],
-      "economies": [
-        "drain",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Rubble Rouser",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Rubble Rouser",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 3,
-          "to": "Torment of Hailfire",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Torment of Hailfire",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 3,
-          "to": "Fake Your Own Death",
-          "toFeature": "dies_trigger"
         }
       ]
     },

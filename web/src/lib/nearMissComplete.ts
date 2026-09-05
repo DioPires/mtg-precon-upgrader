@@ -27,7 +27,7 @@
 import type { FeatureIndex, SynergyConfig } from '../data/synergy';
 import type { PriceIndex, Currency, PriceRow } from '../data/prices';
 import type { TierBFinding } from '../data/tierB';
-import { nameKeys, normalizeName } from './synergyMatch';
+import { buildNameToOid as buildNameToOidKeys, nameKeys, normalizeName } from './synergyMatch';
 
 // ─── Distance-to-closure (PRD 6.6) ───────────────────────────────────────────────
 //
@@ -235,11 +235,9 @@ export function deriveColorIdentity(names: string[], index: FeatureIndex): strin
 }
 
 function buildNameToOid(index: FeatureIndex): Map<string, string> {
-  const m = new Map<string, string>();
-  for (const [oid, row] of Object.entries(index.cards)) {
-    for (const k of nameKeys(row.n)) if (!m.has(k)) m.set(k, oid);
-  }
-  return m;
+  return buildNameToOidKeys(
+    Object.entries(index.cards).map(([oid, row]) => [oid, row.n] as [string, string]),
+  );
 }
 
 // ─── Price / owned annotation ────────────────────────────────────────────────────

@@ -6,7 +6,7 @@
     "cycles": 30,
     "cyclesTotal": 2505,
     "pairs": 80,
-    "pairsTotal": 923,
+    "pairsTotal": 941,
     "triples": 40,
     "triplesTotal": 234,
     "uncovered": 0
@@ -688,6 +688,197 @@
     {
       "band": "strong",
       "cards": [
+        "Reanimate",
+        "Reassembling Skeleton",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Reanimate",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Buried Alive",
         "Reassembling Skeleton",
         "Stitcher's Supplier",
@@ -910,6 +1101,381 @@
           "magnitude": 1,
           "to": "Scavenger's Talent",
           "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Phyrexian Reclamation",
+        "Reassembling Skeleton",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Phyrexian Reclamation",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Phyrexian Reclamation",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Reanimate",
+        "Reassembling Skeleton",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Phyrexian Reclamation",
+        "Reanimate",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Phyrexian Reclamation",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Phyrexian Reclamation",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Scavenger's Talent",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
         }
       ]
     },
@@ -1029,140 +1595,19 @@
     {
       "band": "strong",
       "cards": [
-        "Phyrexian Reclamation",
-        "Reassembling Skeleton",
-        "Stitcher's Supplier",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Phyrexian Reclamation",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Phyrexian Reclamation",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Buried Alive",
+        "Reanimate",
         "Scavenger's Talent",
         "Stitcher's Supplier",
         "Takenuma, Abandoned Mire"
       ],
       "economies": [
+        "mill",
         "recursion",
-        "sacrifice",
-        "token"
+        "sacrifice"
       ],
       "edges": [
         {
-          "from": "Scavenger's Talent",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Scavenger's Talent",
+          "from": "Reanimate",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
@@ -1170,7 +1615,7 @@
           "toFeature": "etb_trigger"
         },
         {
-          "from": "Scavenger's Talent",
+          "from": "Reanimate",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ Mill (self or opponent)",
           "magnitude": 3,
@@ -1178,132 +1623,27 @@
           "toFeature": "mill"
         },
         {
-          "from": "Scavenger's Talent",
+          "from": "Reanimate",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ Self-mill",
           "magnitude": 1,
           "to": "Stitcher's Supplier",
           "toFeature": "self_mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 2,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
           "from": "Scavenger's Talent",
           "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Living Death",
-        "Reassembling Skeleton",
-        "Stitcher's Supplier",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
+          "to": "Reanimate",
           "toFeature": "recursion"
         },
         {
@@ -1311,23 +1651,7 @@
           "fromFeature": "mill",
           "label": "Mill (self or opponent) ↔ Graveyard recursion",
           "magnitude": 3,
-          "to": "Living Death",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Living Death",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
+          "to": "Scavenger's Talent",
           "toFeature": "recursion"
         },
         {
@@ -1335,7 +1659,7 @@
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Reassembling Skeleton",
+          "to": "Scavenger's Talent",
           "toFeature": "sac_fodder"
         },
         {
@@ -1343,62 +1667,8 @@
           "fromFeature": "self_mill",
           "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Reassembling Skeleton",
+          "to": "Scavenger's Talent",
           "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Buried Alive",
-        "Phyrexian Reclamation",
-        "Stitcher's Supplier",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
         },
         {
           "from": "Takenuma, Abandoned Mire",
@@ -1753,6 +2023,307 @@
           "magnitude": 1,
           "to": "Undead Butler",
           "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Agadeem's Awakening // Agadeem, the Undercrypt",
+        "Reanimate",
+        "Stitcher's Supplier",
+        "Undead Butler"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Undead Butler",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Undead Butler",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Phyrexian Reclamation",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Living Death",
+        "Reassembling Skeleton",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -1854,6 +2425,196 @@
     {
       "band": "strong",
       "cards": [
+        "Living Death",
+        "Reanimate",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Reanimate",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire",
+        "Victimize"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Victimize",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Victimize",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Buried Alive",
         "Living Death",
         "Stitcher's Supplier",
@@ -2219,731 +2980,6 @@
           "magnitude": 1,
           "to": "Undead Butler",
           "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Agadeem's Awakening // Agadeem, the Undercrypt",
-        "Buried Alive",
-        "Living Death",
-        "Stitcher's Supplier"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Agadeem's Awakening // Agadeem, the Undercrypt",
-        "Buried Alive",
-        "Living Death",
-        "Undead Butler"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Agadeem's Awakening // Agadeem, the Undercrypt",
-        "Buried Alive",
-        "Phyrexian Reclamation",
-        "Stitcher's Supplier"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Agadeem's Awakening // Agadeem, the Undercrypt",
-        "Buried Alive",
-        "Phyrexian Reclamation",
-        "Undead Butler"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Agadeem's Awakening // Agadeem, the Undercrypt",
-        "Buried Alive",
-        "Stitcher's Supplier",
-        "Undead Butler"
-      ],
-      "economies": [
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Buried Alive",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bastion of Remembrance",
-        "Elas il-Kor, Sadistic Pilgrim",
-        "Reassembling Skeleton",
-        "Stitcher's Supplier"
-      ],
-      "economies": [
-        "dies",
-        "drain",
-        "etb",
-        "mill",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bastion of Remembrance",
-        "Blood Artist",
-        "Reassembling Skeleton",
-        "Stitcher's Supplier"
-      ],
-      "economies": [
-        "dies",
-        "drain",
-        "etb",
-        "mill",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Agadeem's Awakening // Agadeem, the Undercrypt",
-        "Buried Alive",
-        "Reassembling Skeleton",
-        "Undead Butler"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Buried Alive",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Undead Butler",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Undead Butler",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Undead Butler",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Undead Butler",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Undead Butler",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
         }
       ]
     }
@@ -2953,7 +2989,7 @@
     "crowdPriorApplied": true,
     "deckId": "grave-dividends",
     "deepFocused": true,
-    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
+    "generatedAt": "2026-09-05T15:40:34.613341+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -3050,26 +3086,6 @@
     {
       "band": "strong",
       "cards": [
-        "Blood Artist",
-        "Zulaport Cutthroat"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Zulaport Cutthroat",
-          "toFeature": "drain"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Reassembling Skeleton",
         "Stitcher's Supplier"
       ],
@@ -3110,6 +3126,26 @@
           "magnitude": 1,
           "to": "Reassembling Skeleton",
           "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Blood Artist",
+        "Zulaport Cutthroat"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Blood Artist",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "Zulaport Cutthroat",
+          "toFeature": "drain"
         }
       ]
     },
@@ -3395,26 +3431,6 @@
       "band": "speculative",
       "cards": [
         "Elas il-Kor, Sadistic Pilgrim",
-        "Skullclamp"
-      ],
-      "economies": [
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Skullclamp",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Elas il-Kor, Sadistic Pilgrim",
         "Reassembling Skeleton"
       ],
       "economies": [
@@ -3437,6 +3453,26 @@
           "magnitude": 1,
           "to": "Reassembling Skeleton",
           "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Elas il-Kor, Sadistic Pilgrim",
+        "Skullclamp"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Elas il-Kor, Sadistic Pilgrim",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Skullclamp",
+          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -3466,6 +3502,34 @@
           "magnitude": 1,
           "to": "Pitiless Plunderer",
           "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -3713,6 +3777,97 @@
     {
       "band": "speculative",
       "cards": [
+        "Scavenger's Talent",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Scavenger's Talent",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Scavenger's Talent",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Scavenger's Talent",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Scavenger's Talent",
+        "Stitcher's Supplier"
+      ],
+      "economies": [
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Boonweaver Giant",
         "Changing Loyalty"
       ],
@@ -3950,54 +4105,15 @@
     {
       "band": "speculative",
       "cards": [
-        "Scavenger's Talent",
-        "Takenuma, Abandoned Mire"
+        "Reanimate",
+        "Stitcher's Supplier"
       ],
       "economies": [
-        "mill",
         "recursion"
       ],
       "edges": [
         {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Scavenger's Talent",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Scavenger's Talent",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Scavenger's Talent",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Scavenger's Talent",
-        "Stitcher's Supplier"
-      ],
-      "economies": [
-        "recursion",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Scavenger's Talent",
+          "from": "Reanimate",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
@@ -4005,7 +4121,7 @@
           "toFeature": "etb_trigger"
         },
         {
-          "from": "Scavenger's Talent",
+          "from": "Reanimate",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ Mill (self or opponent)",
           "magnitude": 3,
@@ -4013,28 +4129,60 @@
           "toFeature": "mill"
         },
         {
-          "from": "Scavenger's Talent",
+          "from": "Reanimate",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ Self-mill",
           "magnitude": 1,
           "to": "Stitcher's Supplier",
           "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Phyrexian Reclamation",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Phyrexian Reclamation",
+          "toFeature": "recursion"
         },
         {
-          "from": "Scavenger's Talent",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
+          "to": "Phyrexian Reclamation",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Alive",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
         {
-          "from": "Scavenger's Talent",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
         }
       ]
     },
@@ -4084,54 +4232,6 @@
           "magnitude": 1,
           "to": "Skullclamp",
           "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Alive",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Phyrexian Reclamation",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Phyrexian Reclamation",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Phyrexian Reclamation",
-          "toFeature": "recursion"
         }
       ]
     },
@@ -4196,6 +4296,26 @@
           "magnitude": 1,
           "to": "Stitcher's Supplier",
           "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Alive",
+        "Reassembling Skeleton"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -4295,26 +4415,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Buried Alive",
-        "Reassembling Skeleton"
-      ],
-      "economies": [
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Buried Alive",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Blood Artist",
         "Skullclamp"
       ],
@@ -4349,70 +4449,6 @@
           "magnitude": 1,
           "to": "Skullclamp",
           "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Stitcher's Supplier",
-        "Victimize"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Victimize",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Victimize",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "High Market",
-        "Pitiless Plunderer"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Pitiless Plunderer",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Pitiless Plunderer",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Pitiless Plunderer",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -4564,6 +4600,42 @@
     {
       "band": "speculative",
       "cards": [
+        "High Market",
+        "Pitiless Plunderer"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Deadly Dispute",
         "Skullclamp"
       ],
@@ -4578,46 +4650,6 @@
           "magnitude": 1,
           "to": "Deadly Dispute",
           "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Angelic Renewal",
-        "Boonweaver Giant"
-      ],
-      "economies": [
-        "aura_fetch"
-      ],
-      "edges": [
-        {
-          "from": "Boonweaver Giant",
-          "fromFeature": "aura_fetch",
-          "label": "ETB aura fetch-and-attach (DEC-526) ↔ Death-return attachment — returns the dead creature and self-buries (DEC-526)",
-          "magnitude": 99,
-          "to": "Angelic Renewal",
-          "toFeature": "death_return"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Angelic Renewal",
-        "Danitha, Benalia's Hope"
-      ],
-      "economies": [
-        "aura_fetch"
-      ],
-      "edges": [
-        {
-          "from": "Danitha, Benalia's Hope",
-          "fromFeature": "aura_fetch",
-          "label": "ETB aura fetch-and-attach (DEC-526) ↔ Death-return attachment — returns the dead creature and self-buries (DEC-526)",
-          "magnitude": 99,
-          "to": "Angelic Renewal",
-          "toFeature": "death_return"
         }
       ]
     },
@@ -4679,6 +4711,74 @@
     {
       "band": "speculative",
       "cards": [
+        "Angelic Renewal",
+        "Boonweaver Giant"
+      ],
+      "economies": [
+        "aura_fetch"
+      ],
+      "edges": [
+        {
+          "from": "Boonweaver Giant",
+          "fromFeature": "aura_fetch",
+          "label": "ETB aura fetch-and-attach (DEC-526) ↔ Death-return attachment — returns the dead creature and self-buries (DEC-526)",
+          "magnitude": 99,
+          "to": "Angelic Renewal",
+          "toFeature": "death_return"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Angelic Renewal",
+        "Danitha, Benalia's Hope"
+      ],
+      "economies": [
+        "aura_fetch"
+      ],
+      "edges": [
+        {
+          "from": "Danitha, Benalia's Hope",
+          "fromFeature": "aura_fetch",
+          "label": "ETB aura fetch-and-attach (DEC-526) ↔ Death-return attachment — returns the dead creature and self-buries (DEC-526)",
+          "magnitude": 99,
+          "to": "Angelic Renewal",
+          "toFeature": "death_return"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Stitcher's Supplier",
+        "Victimize"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Victimize",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Victimize",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Agadeem's Awakening // Agadeem, the Undercrypt",
         "Scavenger's Talent"
       ],
@@ -4701,129 +4801,6 @@
           "magnitude": 1,
           "to": "Scavenger's Talent",
           "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Ashnod's Altar",
-        "Emeria's Call // Emeria, Shattered Skyclave"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 2,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Emeria's Call // Emeria, Shattered Skyclave",
-        "Umbral Collar Zealot"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Umbral Collar Zealot",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 2,
-          "to": "Umbral Collar Zealot",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Emeria's Call // Emeria, Shattered Skyclave",
-        "Viscera Seer"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Viscera Seer",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 2,
-          "to": "Viscera Seer",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bastion of Remembrance",
-        "High Market"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -4975,6 +4952,149 @@
     {
       "band": "speculative",
       "cards": [
+        "Buried Alive",
+        "Phyrexian Reclamation"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Phyrexian Reclamation",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Ashnod's Altar",
+        "Emeria's Call // Emeria, Shattered Skyclave"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Emeria's Call // Emeria, Shattered Skyclave",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Emeria's Call // Emeria, Shattered Skyclave",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Emeria's Call // Emeria, Shattered Skyclave",
+        "Umbral Collar Zealot"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Emeria's Call // Emeria, Shattered Skyclave",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Umbral Collar Zealot",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Emeria's Call // Emeria, Shattered Skyclave",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Umbral Collar Zealot",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Emeria's Call // Emeria, Shattered Skyclave",
+        "Viscera Seer"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Emeria's Call // Emeria, Shattered Skyclave",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Viscera Seer",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Emeria's Call // Emeria, Shattered Skyclave",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Viscera Seer",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bastion of Remembrance",
+        "High Market"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Bastion of Remembrance",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Bastion of Remembrance",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Bastion of Remembrance",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Deadly Dispute",
         "Viscera Seer"
       ],
@@ -4997,52 +5117,6 @@
           "magnitude": 1,
           "to": "Deadly Dispute",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bastion of Remembrance",
-        "Stitcher's Supplier"
-      ],
-      "economies": [
-        "drain",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -5160,78 +5234,46 @@
     {
       "band": "speculative",
       "cards": [
-        "Buried Alive",
-        "Phyrexian Reclamation"
+        "Bastion of Remembrance",
+        "Stitcher's Supplier"
       ],
       "economies": [
-        "recursion"
+        "drain",
+        "sacrifice",
+        "token"
       ],
       "edges": [
         {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Boonweaver Giant",
-        "Kaya's Ghostform"
-      ],
-      "economies": [
-        "aura_fetch",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Boonweaver Giant",
-          "fromFeature": "aura_fetch",
-          "label": "ETB aura fetch-and-attach (DEC-526) ↔ Death-return attachment — returns the dead creature and self-buries (DEC-526)",
-          "magnitude": 99,
-          "to": "Kaya's Ghostform",
-          "toFeature": "death_return"
+          "from": "Bastion of Remembrance",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "dies_trigger"
         },
         {
-          "from": "Boonweaver Giant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "from": "Bastion of Remembrance",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Kaya's Ghostform",
-          "toFeature": "blink"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Danitha, Benalia's Hope",
-        "Kaya's Ghostform"
-      ],
-      "economies": [
-        "aura_fetch",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Danitha, Benalia's Hope",
-          "fromFeature": "aura_fetch",
-          "label": "ETB aura fetch-and-attach (DEC-526) ↔ Death-return attachment — returns the dead creature and self-buries (DEC-526)",
-          "magnitude": 99,
-          "to": "Kaya's Ghostform",
-          "toFeature": "death_return"
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Danitha, Benalia's Hope",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Blink / flicker (re-triggers ETB)",
+          "from": "Bastion of Remembrance",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
           "magnitude": 1,
-          "to": "Kaya's Ghostform",
-          "toFeature": "blink"
+          "to": "Stitcher's Supplier",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -5294,36 +5336,36 @@
     {
       "band": "speculative",
       "cards": [
-        "Ashnod's Altar",
-        "Bastion of Remembrance"
+        "Living Death",
+        "Stitcher's Supplier"
       ],
       "economies": [
-        "sacrifice"
+        "recursion"
       ],
       "edges": [
         {
-          "from": "Ashnod's Altar",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "dies_trigger"
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Ashnod's Altar",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
         },
         {
-          "from": "Ashnod's Altar",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
           "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "token_create"
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
         }
       ]
     }
@@ -5767,6 +5809,84 @@
     {
       "band": "strong",
       "cards": [
+        "Reanimate",
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Bastion of Remembrance",
         "Pitiless Plunderer",
         "Viscera Seer"
@@ -6037,84 +6157,6 @@
     {
       "band": "strong",
       "cards": [
-        "Stitcher's Supplier",
-        "Takenuma, Abandoned Mire",
-        "Victimize"
-      ],
-      "economies": [
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Victimize",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Victimize",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Buried Alive",
         "Reassembling Skeleton",
         "Takenuma, Abandoned Mire"
@@ -6328,6 +6370,130 @@
           "magnitude": 1,
           "to": "Stitcher's Supplier",
           "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire",
+        "Victimize"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Victimize",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Victimize",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -6571,90 +6737,73 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
-        "Bastion of Remembrance",
-        "High Market",
-        "Pitiless Plunderer"
+        "Reanimate",
+        "Scavenger's Talent",
+        "Takenuma, Abandoned Mire"
       ],
       "economies": [
-        "dies",
-        "drain",
-        "etb",
+        "mill",
+        "recursion",
         "sacrifice"
       ],
       "edges": [
         {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "from": "Scavenger's Talent",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 2,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Pitiless Plunderer",
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Scavenger's Talent",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Scavenger's Talent",
           "toFeature": "sac_fodder"
         },
         {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Pitiless Plunderer",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Pitiless Plunderer",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Pitiless Plunderer",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Pitiless Plunderer",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Pitiless Plunderer",
-          "toFeature": "token_create"
+          "to": "Scavenger's Talent",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -6755,6 +6904,94 @@
           "magnitude": 1,
           "to": "Phyrexian Reclamation",
           "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bastion of Remembrance",
+        "High Market",
+        "Pitiless Plunderer"
+      ],
+      "economies": [
+        "dies",
+        "drain",
+        "etb",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Bastion of Remembrance",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Bastion of Remembrance",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Bastion of Remembrance",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Pitiless Plunderer",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -7006,6 +7243,208 @@
     {
       "band": "speculative",
       "cards": [
+        "Reassembling Skeleton",
+        "Scavenger's Talent",
+        "Stitcher's Supplier"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "mill",
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 2,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reassembling Skeleton",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Reanimate",
+        "Scavenger's Talent",
+        "Stitcher's Supplier"
+      ],
+      "economies": [
+        "mill",
+        "recursion",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 2,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Scavenger's Talent",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Ashnod's Altar",
         "Bastion of Remembrance",
         "Pitiless Plunderer"
@@ -7166,112 +7605,6 @@
           "magnitude": 1,
           "to": "Teysa Karlov",
           "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Reassembling Skeleton",
-        "Scavenger's Talent",
-        "Stitcher's Supplier"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "mill",
-        "recursion",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 2,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Reassembling Skeleton",
-          "toFeature": "recursion"
         }
       ]
     },
@@ -7507,6 +7840,93 @@
     {
       "band": "speculative",
       "cards": [
+        "Stitcher's Supplier",
+        "Takenuma, Abandoned Mire",
+        "Undead Butler"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Undead Butler",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Stitcher's Supplier",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Stitcher's Supplier",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Stitcher's Supplier",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Undead Butler",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Living Death",
         "Scavenger's Talent",
         "Takenuma, Abandoned Mire"
@@ -7578,171 +7998,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Stitcher's Supplier",
-        "Takenuma, Abandoned Mire",
-        "Undead Butler"
-      ],
-      "economies": [
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Scavenger's Talent",
-        "Takenuma, Abandoned Mire",
-        "Victimize"
-      ],
-      "economies": [
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 2,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Scavenger's Talent",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Scavenger's Talent",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Scavenger's Talent",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Agadeem's Awakening // Agadeem, the Undercrypt",
         "Stitcher's Supplier",
         "Takenuma, Abandoned Mire"
@@ -8211,167 +8466,7 @@
     {
       "band": "speculative",
       "cards": [
-        "Emeria's Call // Emeria, Shattered Skyclave",
-        "Stitcher's Supplier",
-        "Undead Butler"
-      ],
-      "economies": [
-        "etb",
-        "mill",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Undead Butler",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Stitcher's Supplier",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Undead Butler",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bastion of Remembrance",
-        "Elas il-Kor, Sadistic Pilgrim",
-        "Emeria's Call // Emeria, Shattered Skyclave"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Elas il-Kor, Sadistic Pilgrim",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Bastion of Remembrance",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Elas il-Kor, Sadistic Pilgrim",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Emeria's Call // Emeria, Shattered Skyclave",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Elas il-Kor, Sadistic Pilgrim",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Alive",
+        "Reanimate",
         "Takenuma, Abandoned Mire",
         "Undead Butler"
       ],
@@ -8381,20 +8476,44 @@
       ],
       "edges": [
         {
-          "from": "Buried Alive",
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Undead Butler",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Undead Butler",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
           "fromFeature": "self_mill",
           "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Undead Butler",
+          "magnitude": 1,
+          "to": "Reanimate",
           "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
         },
         {
           "from": "Takenuma, Abandoned Mire",
@@ -8419,102 +8538,6 @@
           "magnitude": 1,
           "to": "Undead Butler",
           "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Phyrexian Reclamation",
-        "Scavenger's Talent",
-        "Stitcher's Supplier"
-      ],
-      "economies": [
-        "mill",
-        "recursion",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Phyrexian Reclamation",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 2,
-          "to": "Phyrexian Reclamation",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Phyrexian Reclamation",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Stitcher's Supplier",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Scavenger's Talent",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Stitcher's Supplier",
-          "toFeature": "etb_trigger"
         }
       ]
     }

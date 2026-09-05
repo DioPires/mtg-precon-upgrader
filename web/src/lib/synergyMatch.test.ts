@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it, expect } from 'vitest';
-import { analyze, normalizeName, nameKeys } from './synergyMatch';
+import { analyze, buildNameToOid, normalizeName, nameKeys } from './synergyMatch';
 import type { FeatureIndex, SynergyConfig } from '../data/synergy';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -46,6 +46,45 @@ describe('nameKeys', () => {
     expect(keys).toContain('tony stark the invincible iron man');
     expect(keys).toContain('tony stark');
     expect(keys).toContain('the invincible iron man');
+  });
+});
+
+describe('buildNameToOid — full name beats face alias (DEC-553)', () => {
+  const mdfc: [string, string] = ['o_mdfc', 'Grave Researcher // Reanimate'];
+  const standalone: [string, string] = ['o_sorcery', 'Reanimate'];
+
+  it('gives the standalone card its own name regardless of index order', () => {
+    for (const order of [
+      [mdfc, standalone],
+      [standalone, mdfc],
+    ]) {
+      const m = buildNameToOid(order);
+      expect(m.get('reanimate')).toBe('o_sorcery');
+      expect(m.get('grave researcher reanimate')).toBe('o_mdfc');
+      expect(m.get('grave researcher')).toBe('o_mdfc');
+    }
+  });
+
+  it('resolves a deck holding both cards to two distinct oracle ids', () => {
+    const m = buildNameToOid([mdfc, standalone]);
+    const resolve = (n: string) => nameKeys(n).map((k) => m.get(k)).find((o) => o !== undefined);
+    expect(resolve('Reanimate')).toBe('o_sorcery');
+    expect(resolve('Grave Researcher // Reanimate')).toBe('o_mdfc');
+  });
+
+  it('keeps first-wins within a pass', () => {
+    expect(
+      buildNameToOid([
+        ['a', 'Reanimate'],
+        ['b', 'Reanimate'],
+      ]).get('reanimate'),
+    ).toBe('a');
+    expect(
+      buildNameToOid([
+        ['a', 'Front A // Shared Face'],
+        ['b', 'Front B // Shared Face'],
+      ]).get('shared face'),
+    ).toBe('a');
   });
 });
 

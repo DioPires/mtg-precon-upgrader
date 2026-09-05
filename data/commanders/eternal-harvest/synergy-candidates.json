@@ -4,11 +4,11 @@
   ],
   "counts": {
     "cycles": 30,
-    "cyclesTotal": 1641,
+    "cyclesTotal": 1662,
     "pairs": 80,
-    "pairsTotal": 807,
+    "pairsTotal": 837,
     "triples": 40,
-    "triplesTotal": 285,
+    "triplesTotal": 273,
     "uncovered": 0
   },
   "cycles": [
@@ -698,88 +698,134 @@
     {
       "band": "strong",
       "cards": [
-        "Gray Merchant of Asphodel",
-        "Kokusho, the Evening Star",
-        "Massacre Wurm",
-        "Warren Soultrader"
+        "Buried Alive",
+        "Eternal Witness",
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
       ],
       "economies": [
-        "dies",
-        "drain",
-        "etb"
+        "mill",
+        "recursion"
       ],
       "edges": [
         {
-          "from": "Gray Merchant of Asphodel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "dies_trigger"
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
-          "from": "Gray Merchant of Asphodel",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
+          "from": "Eternal Witness",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
         },
         {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
         },
         {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
+          "to": "Eternal Witness",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Gray Merchant of Asphodel",
-          "toFeature": "drain"
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
         },
         {
-          "from": "Massacre Wurm",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Gray Merchant of Asphodel",
-          "toFeature": "drain"
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Living Death",
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
         },
         {
-          "from": "Massacre Wurm",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "token_create"
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -867,85 +913,6 @@
           "magnitude": 1,
           "to": "Warren Soultrader",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Blood Artist",
-        "Kokusho, the Evening Star",
-        "Massacre Wurm",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
         }
       ]
     },
@@ -1770,6 +1737,85 @@
     {
       "band": "strong",
       "cards": [
+        "Buried Alive",
+        "Eternal Witness",
+        "Fiend Artisan",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Eternal Witness",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Fiend Artisan",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Eternal Witness",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Ashnod's Altar",
         "Bastion of Remembrance",
         "Birthing Pod",
@@ -2212,6 +2258,85 @@
           "magnitude": 1,
           "to": "Liliana, Dreadhorde General",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Fiend Artisan",
+        "Takenuma, Abandoned Mire",
+        "Victimize"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Fiend Artisan",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
         }
       ]
     },
@@ -2299,8 +2424,8 @@
       "band": "strong",
       "cards": [
         "Buried Alive",
-        "Eternal Witness",
         "Fiend Artisan",
+        "Living Death",
         "Takenuma, Abandoned Mire"
       ],
       "economies": [
@@ -2308,14 +2433,6 @@
         "recursion"
       ],
       "edges": [
-        {
-          "from": "Eternal Witness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
         {
           "from": "Fiend Artisan",
           "fromFeature": "graveyard_payoff",
@@ -2325,28 +2442,12 @@
           "toFeature": "self_mill"
         },
         {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Eternal Witness",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
+          "from": "Living Death",
           "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Eternal Witness",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Eternal Witness",
-          "toFeature": "recursion"
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
         },
         {
           "from": "Takenuma, Abandoned Mire",
@@ -2371,6 +2472,22 @@
           "magnitude": 1,
           "to": "Fiend Artisan",
           "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Living Death",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -2379,8 +2496,8 @@
       "cards": [
         "Buried Alive",
         "Fiend Artisan",
-        "Takenuma, Abandoned Mire",
-        "Victimize"
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
       ],
       "economies": [
         "mill",
@@ -2390,10 +2507,10 @@
         {
           "from": "Buried Alive",
           "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 3,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
           "from": "Fiend Artisan",
@@ -2430,106 +2547,18 @@
         {
           "from": "Takenuma, Abandoned Mire",
           "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
           "magnitude": 3,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
           "from": "Takenuma, Abandoned Mire",
           "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Blood Artist",
-        "Gray Merchant of Asphodel",
-        "Kokusho, the Evening Star",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "drain",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Gray Merchant of Asphodel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Gray Merchant of Asphodel",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Gray Merchant of Asphodel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Gray Merchant of Asphodel",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -2868,116 +2897,6 @@
           "toFeature": "token_create"
         }
       ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bastion of Remembrance",
-        "High Market",
-        "Liliana, Dreadhorde General",
-        "Phyrexian Tower"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Liliana, Dreadhorde General",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Liliana, Dreadhorde General",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Liliana, Dreadhorde General",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Liliana, Dreadhorde General",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Liliana, Dreadhorde General",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Liliana, Dreadhorde General",
-          "toFeature": "token_create"
-        }
-      ]
     }
   ],
   "meta": {
@@ -2985,7 +2904,7 @@
     "crowdPriorApplied": true,
     "deckId": "eternal-harvest",
     "deepFocused": true,
-    "generatedAt": "2026-08-28T14:44:41.553520+00:00",
+    "generatedAt": "2026-09-05T15:40:29.823685+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -3135,26 +3054,6 @@
     {
       "band": "strong",
       "cards": [
-        "Massacre Wurm",
-        "Phyrexian Tower"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Massacre Wurm",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Bojuka Bog",
         "Eternal Witness"
       ],
@@ -3175,19 +3074,39 @@
     {
       "band": "strong",
       "cards": [
-        "High Market",
-        "Skullclamp"
+        "Bojuka Bog",
+        "Reanimate"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Bojuka Bog",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Massacre Wurm",
+        "Phyrexian Tower"
       ],
       "economies": [
         "sacrifice"
       ],
       "edges": [
         {
-          "from": "High Market",
+          "from": "Phyrexian Tower",
           "fromFeature": "sac_outlet",
           "label": "Sacrifice outlet ↔ Death payoff",
           "magnitude": 1,
-          "to": "Skullclamp",
+          "to": "Massacre Wurm",
           "toFeature": "dies_trigger"
         }
       ]
@@ -3218,6 +3137,46 @@
           "magnitude": 1,
           "to": "Gray Merchant of Asphodel",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Reanimate"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "High Market",
+        "Skullclamp"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Skullclamp",
+          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -3333,26 +3292,6 @@
     {
       "band": "strong",
       "cards": [
-        "Ashnod's Altar",
-        "Haywire Mite"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Eternal Witness",
         "Victimize"
       ],
@@ -3367,6 +3306,26 @@
           "magnitude": 1,
           "to": "Victimize",
           "toFeature": "graveyard_payoff"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Haywire Mite"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Haywire Mite",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -3579,6 +3538,26 @@
     {
       "band": "strong",
       "cards": [
+        "Bojuka Bog",
+        "Living Death"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Bojuka Bog",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Buried Alive",
         "Fiend Artisan"
       ],
@@ -3599,20 +3578,20 @@
     {
       "band": "speculative",
       "cards": [
-        "Bojuka Bog",
-        "Living Death"
+        "Eternal Witness",
+        "Plaguecrafter"
       ],
       "economies": [
-        "etb"
+        "recursion"
       ],
       "edges": [
         {
-          "from": "Bojuka Bog",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
+          "from": "Eternal Witness",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Living Death",
-          "toFeature": "recursion"
+          "to": "Plaguecrafter",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -3736,26 +3715,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Eternal Witness",
-        "Plaguecrafter"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Eternal Witness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Plaguecrafter",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Gray Merchant of Asphodel",
         "Kokusho, the Evening Star"
       ],
@@ -3834,6 +3793,63 @@
     {
       "band": "speculative",
       "cards": [
+        "Buried Alive",
+        "The Soul Stone"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Fiend Artisan",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Kokusho, the Evening Star",
         "Skullclamp"
       ],
@@ -3882,8 +3898,64 @@
     {
       "band": "speculative",
       "cards": [
-        "Fiend Artisan",
+        "Living Death",
         "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Takenuma, Abandoned Mire",
+        "Victimize"
       ],
       "economies": [
         "mill",
@@ -3895,7 +3967,7 @@
           "fromFeature": "mill",
           "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
           "magnitude": 3,
-          "to": "Fiend Artisan",
+          "to": "Victimize",
           "toFeature": "graveyard_payoff"
         },
         {
@@ -3903,7 +3975,7 @@
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
           "magnitude": 1,
-          "to": "Fiend Artisan",
+          "to": "Victimize",
           "toFeature": "graveyard_payoff"
         },
         {
@@ -3911,28 +3983,8 @@
           "fromFeature": "self_mill",
           "label": "Self-mill ↔ Graveyard-as-resource payoff",
           "magnitude": 1,
-          "to": "Fiend Artisan",
+          "to": "Victimize",
           "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Alive",
-        "The Soul Stone"
-      ],
-      "economies": [
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Buried Alive",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "The Soul Stone",
-          "toFeature": "recursion"
         }
       ]
     },
@@ -4001,71 +4053,6 @@
           "label": "Self-mill ↔ Graveyard-as-resource payoff",
           "magnitude": 3,
           "to": "Crypt of Agadeem",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Living Death",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Living Death",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Living Death",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Takenuma, Abandoned Mire",
-        "Victimize"
-      ],
-      "economies": [
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
           "toFeature": "graveyard_payoff"
         }
       ]
@@ -4155,6 +4142,26 @@
           "magnitude": 1,
           "to": "Warren Soultrader",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Eternal Witness",
+        "Kokusho, the Evening Star"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Eternal Witness",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 5,
+          "to": "Kokusho, the Evening Star",
+          "toFeature": "drain"
         }
       ]
     },
@@ -4256,26 +4263,6 @@
           "magnitude": 1,
           "to": "Plaguecrafter",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Eternal Witness",
-        "Kokusho, the Evening Star"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Eternal Witness",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
         }
       ]
     },
@@ -4388,6 +4375,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Buried Alive",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Gray Merchant of Asphodel",
         "Haywire Mite"
       ],
@@ -4436,26 +4443,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Buried Alive",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Blood Artist",
         "Skullclamp"
       ],
@@ -4470,6 +4457,26 @@
           "magnitude": 1,
           "to": "Blood Artist",
           "toFeature": "drain"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Alive",
+        "Living Death"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Living Death",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
         }
       ]
     },
@@ -4649,123 +4656,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Buried Alive",
-        "Living Death"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Living Death",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Haywire Mite",
-        "Zulaport Cutthroat"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Zulaport Cutthroat",
-          "toFeature": "drain"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Haywire Mite",
-        "Insidious Roots"
-      ],
-      "economies": [
-        "dies",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Insidious Roots",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Insidious Roots",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Insidious Roots",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Haywire Mite",
-        "Sakura-Tribe Elder"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Sakura-Tribe Elder",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Haywire Mite",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Haywire Mite",
-        "Spore Frog"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Spore Frog",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Agadeem's Awakening // Agadeem, the Undercrypt",
         "Buried Alive"
       ],
@@ -4786,40 +4676,20 @@
     {
       "band": "speculative",
       "cards": [
-        "Blood Artist",
-        "Sakura-Tribe Elder"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Sakura-Tribe Elder",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Blood Artist",
-        "Spore Frog"
+        "Haywire Mite",
+        "Zulaport Cutthroat"
       ],
       "economies": [
         "dies"
       ],
       "edges": [
         {
-          "from": "Blood Artist",
+          "from": "Haywire Mite",
           "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
+          "label": "Death payoff ↔ Life drain to opponents",
           "magnitude": 1,
-          "to": "Spore Frog",
-          "toFeature": "sac_outlet"
+          "to": "Zulaport Cutthroat",
+          "toFeature": "drain"
         }
       ]
     },
@@ -4896,6 +4766,63 @@
           "toFeature": "recursion"
         }
       ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Haywire Mite",
+        "Insidious Roots"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Haywire Mite",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Insidious Roots",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Haywire Mite",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Insidious Roots",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Haywire Mite",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Insidious Roots",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Haywire Mite",
+        "Sakura-Tribe Elder"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Sakura-Tribe Elder",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Haywire Mite",
+          "toFeature": "dies_trigger"
+        }
+      ]
     }
   ],
   "triples": [
@@ -4959,76 +4886,6 @@
           "magnitude": 1,
           "to": "Gray Merchant of Asphodel",
           "toFeature": "drain"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Kokusho, the Evening Star",
-        "Massacre Wurm",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -5198,184 +5055,46 @@
     {
       "band": "strong",
       "cards": [
-        "Kokusho, the Evening Star",
-        "Skullclamp",
-        "Warren Soultrader"
+        "Buried Alive",
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
       ],
       "economies": [
-        "dies"
+        "mill",
+        "recursion"
       ],
       "edges": [
         {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
         },
         {
-          "from": "Skullclamp",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
-          "from": "Skullclamp",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Skullclamp",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Grave Pact",
-        "Kokusho, the Evening Star",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Grave Pact",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Grave Pact",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Grave Pact",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Haywire Mite",
-        "Kokusho, the Evening Star",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -5429,6 +5148,60 @@
           "label": "Self-mill ↔ Graveyard-as-resource payoff",
           "magnitude": 1,
           "to": "Fiend Artisan",
+          "toFeature": "graveyard_payoff"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Buried Alive",
+        "Takenuma, Abandoned Mire",
+        "Victimize"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Victimize",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Victimize",
           "toFeature": "graveyard_payoff"
         }
       ]
@@ -5604,263 +5377,6 @@
           "magnitude": 1,
           "to": "Liliana, Dreadhorde General",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Buried Alive",
-        "Takenuma, Abandoned Mire",
-        "Victimize"
-      ],
-      "economies": [
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Alive",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Victimize",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Blood Artist",
-        "Haywire Mite",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Haywire Mite",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Blood Artist",
-        "Massacre Wurm",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Blood Artist",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Massacre Wurm",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Animate Dead",
-        "Kokusho, the Evening Star",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "ltb"
-      ],
-      "edges": [
-        {
-          "from": "Animate Dead",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Animate Dead",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Animate Dead",
-          "fromFeature": "ltb_trigger",
-          "label": "Leaves-the-battlefield payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -6302,85 +5818,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Kokusho, the Evening Star",
-        "Liliana, Dreadhorde General",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Buried Alive",
         "Takenuma, Abandoned Mire",
         "The Soul Stone"
@@ -6416,6 +5853,116 @@
         },
         {
           "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Agadeem's Awakening // Agadeem, the Undercrypt",
+        "Buried Alive",
+        "Overlord of the Balemurk"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Alive",
+        "Overlord of the Balemurk",
+        "The Soul Stone"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
           "fromFeature": "self_mill",
           "label": "Self-mill ↔ Graveyard recursion",
           "magnitude": 1,
@@ -6616,213 +6163,6 @@
           "from": "Liliana, Dreadhorde General",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Agadeem's Awakening // Agadeem, the Undercrypt",
-        "Buried Alive",
-        "Overlord of the Balemurk"
-      ],
-      "economies": [
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Alive",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Overlord of the Balemurk",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Overlord of the Balemurk",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 4,
-          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Overlord of the Balemurk",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Overlord of the Balemurk",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Alive",
-        "Overlord of the Balemurk",
-        "The Soul Stone"
-      ],
-      "economies": [
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Alive",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "The Soul Stone",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Overlord of the Balemurk",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Overlord of the Balemurk",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "The Soul Stone",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Overlord of the Balemurk",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 4,
-          "to": "The Soul Stone",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Overlord of the Balemurk",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "The Soul Stone",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bastion of Remembrance",
-        "Kokusho, the Evening Star",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "drain",
-        "etb",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 5,
-          "to": "Bastion of Remembrance",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kokusho, the Evening Star",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
           "magnitude": 1,
           "to": "Warren Soultrader",
           "toFeature": "sac_outlet"
@@ -7055,6 +6395,60 @@
     {
       "band": "speculative",
       "cards": [
+        "Buried Alive",
+        "Crypt of Agadeem",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Bastion of Remembrance",
         "Liliana, Dreadhorde General",
         "Warren Soultrader"
@@ -7161,125 +6555,6 @@
           "magnitude": 1,
           "to": "Warren Soultrader",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Buried Alive",
-        "Crypt of Agadeem",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Buried Alive",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "Crypt of Agadeem",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 3,
-          "to": "Buried Alive",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "Crypt of Agadeem",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Crypt of Agadeem",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "Takenuma, Abandoned Mire",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "Crypt of Agadeem",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gray Merchant of Asphodel",
-        "Kokusho, the Evening Star",
-        "Liliana, Dreadhorde General"
-      ],
-      "economies": [
-        "dies",
-        "drain",
-        "etb",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Gray Merchant of Asphodel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Gray Merchant of Asphodel",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Gray Merchant of Asphodel",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Gray Merchant of Asphodel",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 5,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Liliana, Dreadhorde General",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Kokusho, the Evening Star",
-          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -7668,6 +6943,84 @@
     {
       "band": "speculative",
       "cards": [
+        "Colossal Grave-Reaver",
+        "Crypt of Agadeem",
+        "Overlord of the Balemurk"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Colossal Grave-Reaver",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Colossal Grave-Reaver",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Colossal Grave-Reaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Colossal Grave-Reaver",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Colossal Grave-Reaver",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 4,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Bastion of Remembrance",
         "Kokusho, the Evening Star",
         "Skullclamp"
@@ -7724,103 +7077,6 @@
           "magnitude": 5,
           "to": "Kokusho, the Evening Star",
           "toFeature": "drain"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bastion of Remembrance",
-        "Blood Artist",
-        "Warren Soultrader"
-      ],
-      "economies": [
-        "dies",
-        "drain",
-        "etb",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Bastion of Remembrance",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bastion of Remembrance",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Blood Artist",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Warren Soultrader",
-          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -7996,6 +7252,743 @@
           "magnitude": 1,
           "to": "Warren Soultrader",
           "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Buried Alive",
+        "Crypt of Agadeem",
+        "Overlord of the Balemurk"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Buried Alive",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 3,
+          "to": "Buried Alive",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 4,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "magnitude": 1,
+          "to": "Crypt of Agadeem",
+          "toFeature": "graveyard_payoff"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Eternal Witness",
+        "Overlord of the Balemurk",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Eternal Witness",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Agadeem's Awakening // Agadeem, the Undercrypt",
+        "Overlord of the Balemurk",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bastion of Remembrance",
+        "Grave Pact",
+        "Warren Soultrader"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Bastion of Remembrance",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Grave Pact",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "Bastion of Remembrance",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Grave Pact",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Bastion of Remembrance",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Grave Pact",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Grave Pact",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Warren Soultrader",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Living Death",
+        "Overlord of the Balemurk",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Living Death",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Overlord of the Balemurk",
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Overlord of the Balemurk",
+        "Takenuma, Abandoned Mire",
+        "The Soul Stone"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Overlord of the Balemurk",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Takenuma, Abandoned Mire",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Agadeem's Awakening // Agadeem, the Undercrypt",
+        "Overlord of the Balemurk",
+        "Tyvar, Jubilant Brawler"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Tyvar, Jubilant Brawler",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "Tyvar, Jubilant Brawler",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Tyvar, Jubilant Brawler",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Tyvar, Jubilant Brawler",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Tyvar, Jubilant Brawler",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Tyvar, Jubilant Brawler",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Tyvar, Jubilant Brawler",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Agadeem's Awakening // Agadeem, the Undercrypt",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Overlord of the Balemurk",
+        "The Soul Stone",
+        "Tyvar, Jubilant Brawler"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Tyvar, Jubilant Brawler",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 4,
+          "to": "Tyvar, Jubilant Brawler",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Overlord of the Balemurk",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Tyvar, Jubilant Brawler",
+          "toFeature": "self_mill"
+        },
+        {
+          "from": "Tyvar, Jubilant Brawler",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Tyvar, Jubilant Brawler",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Tyvar, Jubilant Brawler",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Tyvar, Jubilant Brawler",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "The Soul Stone",
+          "toFeature": "tap_ability"
         }
       ]
     }

@@ -4,14 +4,241 @@
   ],
   "counts": {
     "cycles": 30,
-    "cyclesTotal": 2688,
+    "cyclesTotal": 3455,
     "pairs": 80,
-    "pairsTotal": 163,
+    "pairsTotal": 175,
     "triples": 40,
-    "triplesTotal": 311,
+    "triplesTotal": 391,
     "uncovered": 0
   },
   "cycles": [
+    {
+      "band": "strong",
+      "cards": [
+        "Reanimate",
+        "Saruman, the White Hand",
+        "Sauron, Lord of the Rings",
+        "The One Ring"
+      ],
+      "economies": [
+        "cast",
+        "counters",
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Saruman, the White Hand",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Repeatable / recastable spell source",
+          "magnitude": 1,
+          "to": "Sauron, Lord of the Rings",
+          "toFeature": "spell_source"
+        },
+        {
+          "from": "Saruman, the White Hand",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Nazgûl",
+        "Orcish Bowmasters",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Nazgûl",
+        "Reanimate",
+        "Sauron, Lord of the Rings",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Nazgûl",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Nazgûl",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "In the Darkness Bind Them",
+        "Reanimate",
+        "Sauron, Lord of the Rings",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill",
+        "recursion",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "In the Darkness Bind Them",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "token_create"
+        }
+      ]
+    },
     {
       "band": "strong",
       "cards": [
@@ -62,6 +289,102 @@
     {
       "band": "strong",
       "cards": [
+        "In the Darkness Bind Them",
+        "Nazgûl",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "In the Darkness Bind Them",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "In the Darkness Bind Them",
+        "Orcish Bowmasters",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "In the Darkness Bind Them",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Mount Doom",
         "Orcish Bowmasters",
         "The Great Goblin",
@@ -103,6 +426,397 @@
           "magnitude": 1,
           "to": "The One Ring",
           "toFeature": "counter_payoff"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Inherited Envelope",
+        "One Ring to Rule Them All",
+        "Reanimate",
+        "The Mouth of Sauron"
+      ],
+      "economies": [
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Inherited Envelope",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "One Ring to Rule Them All",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Inherited Envelope",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "One Ring to Rule Them All",
+          "toFeature": "drain"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gothmog, Morgul Lieutenant",
+        "Reanimate",
+        "The Mouth of Sauron",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Gothmog, Morgul Lieutenant",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Gothmog, Morgul Lieutenant",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "March from the Black Gate",
+        "Reanimate",
+        "The Mouth of Sauron",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "March from the Black Gate",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "March from the Black Gate",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Nazgûl",
+        "Reanimate",
+        "The Mouth of Sauron",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "March from the Black Gate",
+        "Nazgûl",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "March from the Black Gate",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "March from the Black Gate",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Orcish Bowmasters",
+        "Reanimate",
+        "Sauron, Lord of the Rings",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Sauron, Lord of the Rings",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "March from the Black Gate",
+        "Reanimate",
+        "Sauron, Lord of the Rings",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "March from the Black Gate",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "March from the Black Gate",
+          "toFeature": "counter_add"
         }
       ]
     },
@@ -199,6 +913,62 @@
           "magnitude": 1,
           "to": "Nazgûl",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Orcish Bowmasters",
+        "Reanimate",
+        "The Mouth of Sauron",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
         }
       ]
     },
@@ -311,6 +1081,63 @@
     {
       "band": "strong",
       "cards": [
+        "In the Darkness Bind Them",
+        "Nazgûl",
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "In the Darkness Bind Them",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Nazgûl",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Foray of Orcs",
         "Mount Doom",
         "Orcish Bowmasters",
@@ -351,6 +1178,109 @@
           "label": "Counter payoff ↔ Adds counters",
           "magnitude": 1,
           "to": "Foray of Orcs",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "March from the Black Gate",
+        "Orcish Bowmasters",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "March from the Black Gate",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "March from the Black Gate",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Reanimate",
+        "Summons of Saruman",
+        "The Mouth of Sauron",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Summons of Saruman",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Summons of Saruman",
           "toFeature": "counter_add"
         }
       ]
@@ -405,6 +1335,54 @@
     {
       "band": "strong",
       "cards": [
+        "Nazgûl",
+        "Orcish Bowmasters",
+        "Sauron, Lord of the Rings",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Nazgûl",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Sauron, Lord of the Rings",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Nazgûl",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "In the Darkness Bind Them",
         "Mount Doom",
         "Orcish Bowmasters",
@@ -453,428 +1431,48 @@
     {
       "band": "strong",
       "cards": [
-        "Nazgûl",
-        "Orcish Bowmasters",
-        "Sauron, Lord of the Rings",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Nazgûl",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Nazgûl",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "In the Darkness Bind Them",
-        "Nazgûl",
-        "Sauron, Lord of the Rings",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "dies",
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Nazgûl",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Nazgûl",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "In the Darkness Bind Them",
-        "Orcish Bowmasters",
-        "Sauron, Lord of the Rings",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "In the Darkness Bind Them",
-        "March from the Black Gate",
-        "Nazgûl",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "March from the Black Gate",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Nazgûl",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Nazgûl",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "March from the Black Gate",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "In the Darkness Bind Them",
-        "March from the Black Gate",
-        "Orcish Bowmasters",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "March from the Black Gate",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "March from the Black Gate",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gothmog, Morgul Lieutenant",
-        "March from the Black Gate",
+        "Bojuka Bog",
         "One Ring to Rule Them All",
-        "The One Ring"
+        "Reanimate",
+        "The Mouth of Sauron"
       ],
       "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "March from the Black Gate",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "March from the Black Gate",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gothmog, Morgul Lieutenant",
-        "Nazgûl",
-        "One Ring to Rule Them All",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Nazgûl",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Nazgûl",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "March from the Black Gate",
-        "Nazgûl",
-        "One Ring to Rule Them All",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "March from the Black Gate",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Nazgûl",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Nazgûl",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "March from the Black Gate",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Sauron, Lord of the Rings",
-        "Summons of Saruman",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
+        "drain",
         "etb",
         "mill",
         "recursion"
       ],
       "edges": [
         {
-          "from": "Sauron, Lord of the Rings",
+          "from": "One Ring to Rule Them All",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Reanimate",
           "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Summons of Saruman",
-          "toFeature": "mill"
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "One Ring to Rule Them All",
+          "toFeature": "drain"
         },
         {
           "from": "The Mouth of Sauron",
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
+          "to": "Reanimate",
           "toFeature": "recursion"
         },
         {
@@ -882,24 +1480,8 @@
           "fromFeature": "mill",
           "label": "Mill (self or opponent) ↔ Graveyard recursion",
           "magnitude": 3,
-          "to": "Sauron, Lord of the Rings",
+          "to": "Reanimate",
           "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Summons of Saruman",
-          "toFeature": "counter_add"
         }
       ]
     },
@@ -907,55 +1489,8 @@
       "band": "strong",
       "cards": [
         "Gothmog, Morgul Lieutenant",
-        "One Ring to Rule Them All",
-        "Orcish Bowmasters",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "March from the Black Gate",
-        "One Ring to Rule Them All",
-        "Orcish Bowmasters",
+        "Reanimate",
         "The One Ring"
       ],
       "economies": [
@@ -964,304 +1499,12 @@
       ],
       "edges": [
         {
-          "from": "March from the Black Gate",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "March from the Black Gate",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Nazgûl",
-        "One Ring to Rule Them All",
-        "Orcish Bowmasters",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Nazgûl",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Nazgûl",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Saruman, the White Hand",
-        "Sauron, Lord of the Rings",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "cast",
-        "counters",
-        "etb",
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Saruman, the White Hand",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Repeatable / recastable spell source",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "spell_source"
-        },
-        {
-          "from": "Saruman, the White Hand",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The Mouth of Sauron",
+          "from": "Gothmog, Morgul Lieutenant",
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
+          "to": "Reanimate",
           "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gothmog, Morgul Lieutenant",
-        "One Ring to Rule Them All",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "March from the Black Gate",
-        "One Ring to Rule Them All",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "March from the Black Gate",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "March from the Black Gate",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Nazgûl",
-        "One Ring to Rule Them All",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Nazgûl",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Nazgûl",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gothmog, Morgul Lieutenant",
-        "In the Darkness Bind Them",
-        "March from the Black Gate",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
         },
         {
           "from": "Gothmog, Morgul Lieutenant",
@@ -1274,10 +1517,10 @@
         {
           "from": "March from the Black Gate",
           "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
+          "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
           "from": "The One Ring",
@@ -1293,8 +1536,8 @@
       "band": "strong",
       "cards": [
         "Gothmog, Morgul Lieutenant",
-        "In the Darkness Bind Them",
         "Nazgûl",
+        "Reanimate",
         "The One Ring"
       ],
       "economies": [
@@ -1305,10 +1548,10 @@
         {
           "from": "Gothmog, Morgul Lieutenant",
           "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
+          "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
           "from": "Gothmog, Morgul Lieutenant",
@@ -1321,172 +1564,13 @@
         {
           "from": "Nazgûl",
           "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
+          "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
           "from": "Nazgûl",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "One Ring to Rule Them All",
-        "Orcish Bowmasters",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Orcish Bowmasters",
-        "Sauron, Lord of the Rings",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb",
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gothmog, Morgul Lieutenant",
-        "Sauron, Lord of the Rings",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb",
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
           "fromFeature": "counter_add",
           "label": "Adds counters ↔ Counter payoff",
           "magnitude": 1,
@@ -1501,7 +1585,7 @@
     "crowdPriorApplied": true,
     "deckId": "gathering-shadow",
     "deepFocused": false,
-    "generatedAt": "2026-08-31T13:05:34.454796+00:00",
+    "generatedAt": "2026-09-05T15:40:33.157825+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -1565,6 +1649,34 @@
           "magnitude": 1,
           "to": "Barad-dûr",
           "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -1711,6 +1823,35 @@
     {
       "band": "speculative",
       "cards": [
+        "Reanimate",
+        "The Mouth of Sauron"
+      ],
+      "economies": [
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Saruman, the White Hand",
         "The One Ring"
       ],
@@ -1800,6 +1941,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Orcish Bowmasters",
+        "Reanimate"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Saruman's Trickery",
         "The One Ring"
       ],
@@ -1814,26 +1975,6 @@
           "magnitude": 1,
           "to": "Saruman's Trickery",
           "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "The Grey Havens",
-        "The Mouth of Sauron"
-      ],
-      "economies": [
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "The Grey Havens",
-          "toFeature": "graveyard_payoff"
         }
       ]
     },
@@ -1880,6 +2021,46 @@
     {
       "band": "speculative",
       "cards": [
+        "The Grey Havens",
+        "The Mouth of Sauron"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
+          "magnitude": 3,
+          "to": "The Grey Havens",
+          "toFeature": "graveyard_payoff"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Flame of Anor",
         "Mount Doom"
       ],
@@ -1894,6 +2075,26 @@
           "magnitude": 5,
           "to": "Mount Doom",
           "toFeature": "ping_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Nazgûl",
+        "Reanimate"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -2099,6 +2300,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Inherited Envelope",
+        "Reanimate"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Inherited Envelope",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "The One Ring",
         "Warg Rider"
       ],
@@ -2119,6 +2340,34 @@
     {
       "band": "speculative",
       "cards": [
+        "Reanimate",
+        "Takenuma, Abandoned Mire"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 3,
+          "to": "Takenuma, Abandoned Mire",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Self-mill",
+          "magnitude": 1,
+          "to": "Takenuma, Abandoned Mire",
+          "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "The One Ring",
         "Treason of Isengard"
       ],
@@ -2133,34 +2382,6 @@
           "magnitude": 1,
           "to": "Treason of Isengard",
           "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Mind Stone",
-        "Swan Song"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Swan Song",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Swan Song",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -2190,6 +2411,34 @@
           "magnitude": 1,
           "to": "Takenuma, Abandoned Mire",
           "toFeature": "self_mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Mind Stone",
+        "Swan Song"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Mind Stone",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Swan Song",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mind Stone",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Swan Song",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -2310,6 +2559,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Bojuka Bog",
+        "Reanimate"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Mount Doom",
         "Shivan Reef"
       ],
@@ -2330,26 +2599,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Foray of Orcs",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Foray of Orcs",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Saruman, the White Hand",
         "Sauron, Lord of the Rings"
       ],
@@ -2364,6 +2613,26 @@
           "magnitude": 1,
           "to": "Sauron, Lord of the Rings",
           "toFeature": "spell_source"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Foray of Orcs",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters"
+      ],
+      "edges": [
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Foray of Orcs",
+          "toFeature": "counter_add"
         }
       ]
     },
@@ -2478,34 +2747,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Black Market Connections",
-        "Mind Stone"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Black Market Connections",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Black Market Connections",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "One Ring to Rule Them All",
         "Sauron, Lord of the Rings"
       ],
@@ -2529,6 +2770,34 @@
           "magnitude": 1,
           "to": "One Ring to Rule Them All",
           "toFeature": "mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Black Market Connections",
+        "Mind Stone"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Mind Stone",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Black Market Connections",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mind Stone",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Black Market Connections",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -2663,42 +2932,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Grave Researcher // Reanimate",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Grave Researcher // Reanimate",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Grave Researcher // Reanimate",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Grave Researcher // Reanimate",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Goblin-town",
         "The One Ring"
       ],
@@ -2713,6 +2946,95 @@
           "magnitude": 2,
           "to": "Goblin-town",
           "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Reanimate",
+        "The Grey Havens"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "The Grey Havens",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Grey Havens",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Palantír of Orthanc",
+        "Reanimate"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Palantír of Orthanc",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "March from the Black Gate",
+        "Reanimate"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "March from the Black Gate",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Reanimate",
+        "Summons of Saruman"
+      ],
+      "economies": [
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Summons of Saruman",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -2759,35 +3081,6 @@
     {
       "band": "speculative",
       "cards": [
-        "One Ring to Rule Them All",
-        "The Grey Havens"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Gathering of Darkness",
         "The Mouth of Sauron"
       ],
@@ -2818,6 +3111,35 @@
       "band": "speculative",
       "cards": [
         "One Ring to Rule Them All",
+        "The Grey Havens"
+      ],
+      "economies": [
+        "etb",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "The Grey Havens",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "One Ring to Rule Them All",
+          "toFeature": "drain"
+        },
+        {
+          "from": "The Grey Havens",
+          "fromFeature": "graveyard_payoff",
+          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
+          "magnitude": 1,
+          "to": "One Ring to Rule Them All",
+          "toFeature": "mill"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "One Ring to Rule Them All",
         "Orcish Bowmasters"
       ],
       "economies": [
@@ -2831,6 +3153,26 @@
           "magnitude": 1,
           "to": "One Ring to Rule Them All",
           "toFeature": "drain"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Gothmog, Morgul Lieutenant",
+        "Reanimate"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Gothmog, Morgul Lieutenant",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -2871,26 +3213,6 @@
           "magnitude": 1,
           "to": "Nazgûl",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Palantír of Orthanc",
-        "The Grey Havens"
-      ],
-      "economies": [
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Palantír of Orthanc",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "The Grey Havens",
-          "toFeature": "graveyard_payoff"
         }
       ]
     },
@@ -2957,27 +3279,7 @@
     {
       "band": "speculative",
       "cards": [
-        "One Ring to Rule Them All",
-        "The Mouth of Sauron"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Sauron's Ransom",
+        "Palantír of Orthanc",
         "The Grey Havens"
       ],
       "economies": [
@@ -2985,32 +3287,12 @@
       ],
       "edges": [
         {
-          "from": "Sauron's Ransom",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard-as-resource payoff",
+          "from": "Palantír of Orthanc",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
           "magnitude": 1,
           "to": "The Grey Havens",
           "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "One Ring to Rule Them All",
-        "The Great Goblin"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
         }
       ]
     },
@@ -3045,6 +3327,75 @@
     {
       "band": "speculative",
       "cards": [
+        "One Ring to Rule Them All",
+        "The Mouth of Sauron"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "One Ring to Rule Them All",
+          "toFeature": "drain"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Gathering of Darkness",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Gathering of Darkness",
+          "toFeature": "counter_add"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Gathering of Darkness",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "One Ring to Rule Them All",
+        "The Great Goblin"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "The Great Goblin",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "One Ring to Rule Them All",
+          "toFeature": "drain"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Bojuka Bog",
         "In the Darkness Bind Them"
       ],
@@ -3061,270 +3412,237 @@
           "toFeature": "etb_trigger"
         }
       ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gathering of Darkness",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Gathering of Darkness",
-          "toFeature": "counter_add"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Gathering of Darkness",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Assault on Osgiliath",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Assault on Osgiliath",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Sauron, Lord of the Rings",
-        "Summons of Saruman"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 1,
-          "to": "Summons of Saruman",
-          "toFeature": "mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bojuka Bog",
-        "Gathering of Darkness"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gathering of Darkness",
-        "Inherited Envelope"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Inherited Envelope",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Gathering of Darkness",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Mind Stone",
-        "Sauron, Lord of the Rings"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mind Stone",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Summons of Saruman",
-        "The Grey Havens"
-      ],
-      "economies": [
-        "mill"
-      ],
-      "edges": [
-        {
-          "from": "Summons of Saruman",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "The Grey Havens",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Swarming of Moria",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Swarming of Moria",
-          "toFeature": "counter_add"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Swarming of Moria",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Great Goblin, Foul-Hearted",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters"
-      ],
-      "edges": [
-        {
-          "from": "Great Goblin, Foul-Hearted",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bojuka Bog",
-        "Swan Song"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Swan Song",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Inherited Envelope",
-        "Swan Song"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Inherited Envelope",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Swan Song",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Inherited Envelope",
-        "Sauron, Lord of the Rings"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Inherited Envelope",
-          "toFeature": "etb_trigger"
-        }
-      ]
     }
   ],
   "triples": [
     {
       "band": "strong",
       "cards": [
+        "Reanimate",
+        "Sauron, Lord of the Rings",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Nazgûl",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Orcish Bowmasters",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Orcish Bowmasters",
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Sauron, Lord of the Rings",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Nazgûl",
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Nazgûl",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Saruman, the White Hand",
         "Sauron, Lord of the Rings",
         "The One Ring"
@@ -3404,6 +3722,109 @@
           "magnitude": 1,
           "to": "In the Darkness Bind Them",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Reanimate",
+        "The Mouth of Sauron",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "In the Darkness Bind Them",
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "dies",
+        "mill",
+        "recursion",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "In the Darkness Bind Them",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -3597,6 +4018,251 @@
     {
       "band": "strong",
       "cards": [
+        "In the Darkness Bind Them",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "In the Darkness Bind Them",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "March from the Black Gate",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "March from the Black Gate",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "March from the Black Gate",
+          "toFeature": "counter_add"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Inherited Envelope",
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Inherited Envelope",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Inherited Envelope",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "In the Darkness Bind Them",
+        "Orcish Bowmasters",
+        "Reanimate"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "In the Darkness Bind Them",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gothmog, Morgul Lieutenant",
+        "Reanimate",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Gothmog, Morgul Lieutenant",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Gothmog, Morgul Lieutenant",
+          "fromFeature": "counter_add",
+          "label": "Adds counters ↔ Counter payoff",
+          "magnitude": 1,
+          "to": "The One Ring",
+          "toFeature": "counter_payoff"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Bojuka Bog",
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Sauron, Lord of the Rings",
         "The Mouth of Sauron",
         "The One Ring"
@@ -3647,6 +4313,199 @@
           "magnitude": 1,
           "to": "The One Ring",
           "toFeature": "counter_payoff"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "March from the Black Gate",
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "etb",
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "March from the Black Gate",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "March from the Black Gate",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "In the Darkness Bind Them",
+        "Nazgûl",
+        "Reanimate"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "In the Darkness Bind Them",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "In the Darkness Bind Them",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Nazgûl",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Reanimate",
+        "Sauron, Lord of the Rings",
+        "Summons of Saruman"
+      ],
+      "economies": [
+        "mill",
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Mill (self or opponent)",
+          "magnitude": 1,
+          "to": "Summons of Saruman",
+          "toFeature": "mill"
+        },
+        {
+          "from": "Summons of Saruman",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Reanimate",
+        "Sauron, Lord of the Rings",
+        "The Mouth of Sauron"
+      ],
+      "economies": [
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Sauron, Lord of the Rings",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Sauron, Lord of the Rings",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -3974,6 +4833,52 @@
     {
       "band": "speculative",
       "cards": [
+        "Gothmog, Morgul Lieutenant",
+        "Reanimate",
+        "Sauron, Lord of the Rings"
+      ],
+      "economies": [
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Gothmog, Morgul Lieutenant",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Gothmog, Morgul Lieutenant",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Sauron, Lord of the Rings",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 5,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Sauron, Lord of the Rings",
+          "fromFeature": "self_mill",
+          "label": "Self-mill ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "One Ring to Rule Them All",
         "Sauron, Lord of the Rings",
         "The One Ring"
@@ -4024,6 +4929,52 @@
           "magnitude": 1,
           "to": "One Ring to Rule Them All",
           "toFeature": "drain"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "One Ring to Rule Them All",
+        "Reanimate",
+        "The Mouth of Sauron"
+      ],
+      "economies": [
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "One Ring to Rule Them All",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "One Ring to Rule Them All",
+          "toFeature": "drain"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The Mouth of Sauron",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 3,
+          "to": "Reanimate",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -4068,6 +5019,45 @@
     {
       "band": "speculative",
       "cards": [
+        "Reanimate",
+        "Summons of Saruman",
+        "The One Ring"
+      ],
+      "economies": [
+        "counters",
+        "etb",
+        "mill"
+      ],
+      "edges": [
+        {
+          "from": "Summons of Saruman",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Reanimate",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "The One Ring",
+          "fromFeature": "counter_payoff",
+          "label": "Counter payoff ↔ Adds counters",
+          "magnitude": 1,
+          "to": "Summons of Saruman",
+          "toFeature": "counter_add"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Sauron, Lord of the Rings",
         "Summons of Saruman",
         "The One Ring"
@@ -4161,689 +5151,25 @@
     {
       "band": "speculative",
       "cards": [
-        "Gothmog, Morgul Lieutenant",
-        "In the Darkness Bind Them",
+        "One Ring to Rule Them All",
+        "Reanimate",
         "The One Ring"
       ],
       "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gathering of Darkness",
-        "The Grey Havens",
-        "The Mouth of Sauron"
-      ],
-      "economies": [
         "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Grey Havens",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "The Grey Havens",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Gathering of Darkness",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Gathering of Darkness",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "The Grey Havens",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gothmog, Morgul Lieutenant",
-        "Sauron, Lord of the Rings",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Gothmog, Morgul Lieutenant",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "In the Darkness Bind Them",
-        "Mind Stone",
-        "The Great Goblin"
-      ],
-      "economies": [
-        "dies",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mind Stone",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "One Ring to Rule Them All",
-        "The Great Goblin",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "dies",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Inherited Envelope",
-        "One Ring to Rule Them All",
-        "Sauron, Lord of the Rings"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Inherited Envelope",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Inherited Envelope",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Mind Stone",
-        "Swan Song",
-        "The Great Goblin"
-      ],
-      "economies": [
-        "dies",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Swan Song",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Swan Song",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mind Stone",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Swan Song",
-          "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "One Ring to Rule Them All",
-        "Sauron, Lord of the Rings",
-        "The Mouth of Sauron"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "mill"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gathering of Darkness",
-        "Takenuma, Abandoned Mire",
-        "The Mouth of Sauron"
-      ],
-      "economies": [
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Gathering of Darkness",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Gathering of Darkness",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "One Ring to Rule Them All",
-        "The Grey Havens",
-        "The Mouth of Sauron"
-      ],
-      "economies": [
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "mill"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "The Grey Havens",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "In the Darkness Bind Them",
-        "Sauron, Lord of the Rings",
-        "The Mouth of Sauron"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "In the Darkness Bind Them",
-        "The Mouth of Sauron",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "The One Ring",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bojuka Bog",
-        "One Ring to Rule Them All",
-        "Sauron, Lord of the Rings"
-      ],
-      "economies": [
-        "dies",
-        "drain",
-        "recursion"
+        "mill"
       ],
       "edges": [
         {
           "from": "One Ring to Rule Them All",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
+          "fromFeature": "mill",
+          "label": "Mill (self or opponent) ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Palantír of Orthanc",
-        "Sauron, Lord of the Rings",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 1,
-          "to": "Palantír of Orthanc",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "etb_trigger"
+          "to": "Reanimate",
+          "toFeature": "recursion"
         },
         {
           "from": "The One Ring",
-          "fromFeature": "counter_payoff",
-          "label": "Counter payoff ↔ Adds counters",
-          "magnitude": 1,
-          "to": "Palantír of Orthanc",
-          "toFeature": "counter_add"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "One Ring to Rule Them All",
-        "Orcish Bowmasters",
-        "Sauron, Lord of the Rings"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Orcish Bowmasters",
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Life drain to opponents",
           "magnitude": 1,
@@ -4851,362 +5177,11 @@
           "toFeature": "drain"
         },
         {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Sauron, Lord of the Rings",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 1,
-          "to": "One Ring to Rule Them All",
-          "toFeature": "mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gathering of Darkness",
-        "Sauron's Ransom",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Sauron's Ransom",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Gathering of Darkness",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Sauron's Ransom",
-          "fromFeature": "self_mill",
-          "label": "Self-mill ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "In the Darkness Bind Them",
-        "The Great Goblin",
-        "The One Ring"
-      ],
-      "economies": [
-        "counters",
-        "dies",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "The Great Goblin",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
-          "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
-        },
-        {
           "from": "The One Ring",
           "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "In the Darkness Bind Them",
-        "Mind Stone",
-        "Sauron, Lord of the Rings"
-      ],
-      "economies": [
-        "dies",
-        "recursion",
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mind Stone",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "In the Darkness Bind Them",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Sauron, Lord of the Rings",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mind Stone",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Takenuma, Abandoned Mire",
-        "The Grey Havens",
-        "The Mouth of Sauron"
-      ],
-      "economies": [
-        "etb",
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "mill"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Mouth of Sauron",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard-as-resource payoff",
-          "magnitude": 3,
-          "to": "The Grey Havens",
-          "toFeature": "graveyard_payoff"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gathering of Darkness",
-        "Takenuma, Abandoned Mire",
-        "The Grey Havens"
-      ],
-      "economies": [
-        "etb",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "The Grey Havens",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Graveyard-as-resource payoff",
-          "magnitude": 1,
-          "to": "The Grey Havens",
-          "toFeature": "graveyard_payoff"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "mill"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "The Grey Havens",
-          "fromFeature": "graveyard_payoff",
-          "label": "Graveyard-as-resource payoff ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gathering of Darkness",
-        "Palantír of Orthanc",
-        "Takenuma, Abandoned Mire"
-      ],
-      "economies": [
-        "mill",
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Mill (self or opponent)",
-          "magnitude": 3,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "mill"
-        },
-        {
-          "from": "Gathering of Darkness",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Self-mill",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
-          "toFeature": "self_mill"
-        },
-        {
-          "from": "Palantír of Orthanc",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Gathering of Darkness",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Palantír of Orthanc",
-          "fromFeature": "mill",
-          "label": "Mill (self or opponent) ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Takenuma, Abandoned Mire",
+          "to": "Reanimate",
           "toFeature": "recursion"
         }
       ]

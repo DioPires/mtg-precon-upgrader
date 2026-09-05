@@ -63,18 +63,18 @@ def load_raw_kb_index(entries_dir: str = ENTRIES_DIR) -> tuple[dict[str, dict], 
     """Load the FULL raw KB entries the verifier needs (events_emitted, costs,
     per-item provenance — none of which survive the synergy layer's lean
     projection). Returns (oracle_id → raw entry, normalized name key → oracle_id),
-    aliasing every DFC/split face via ``combo_synergy_lib.name_keys``."""
+    aliasing every DFC/split face via ``combo_synergy_lib.name_keys`` with exact
+    full names taking precedence over face aliases (DEC-553)."""
     by_oid: dict[str, dict] = {}
-    name_to_oid: dict[str, str] = {}
+    ordered: list[tuple[str, str]] = []
     for shard in sorted(glob.glob(os.path.join(entries_dir, "*.json"))):
         for e in json.load(open(shard)):
             oid = e.get("oracle_id")
             if not oid:
                 continue
             by_oid[oid] = e
-            for k in SYN.name_keys(e.get("name", "")):
-                name_to_oid.setdefault(k, oid)
-    return by_oid, name_to_oid
+            ordered.append((oid, e.get("name", "")))
+    return by_oid, SYN.build_name_to_oid(ordered)
 
 # ─── Closure-model constants ─────────────────────────────────────────────────────
 # The verifier scope (DB-3): 2-3 cycle pieces + any number of ambient modifiers.

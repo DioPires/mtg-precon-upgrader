@@ -101,17 +101,31 @@ def _price(raw: dict, key: str) -> float | None:
 
 
 def build_index(cards: list[dict]) -> dict[str, list]:
-    """Name-key → [eur, usd]. First-wins per key so a face alias never clobbers
-    the primary card. Cards with neither price are skipped entirely."""
+    """Name-key → [eur, usd]. Cards with neither price are skipped entirely.
+
+    Two passes, because a face alias must never outrank an exact full name: an
+    MDFC back face can carry a standalone card's whole name (`Grave Researcher
+    // Reanimate` vs the sorcery `Reanimate`), and Scryfall's bulk export is
+    name-ordered, so the MDFC reached the key first and the standalone card
+    displayed the MDFC's price (DEC-553, same defect as the Tier-C name map).
+    Full names claim their key first; face aliases only fill what is left.
+    Within each pass it stays first-wins."""
     index: dict[str, list] = {}
+    aliases: list[tuple[str, list]] = []
     for c in cards:
         eur = _price(c.get("prices"), "eur")
         usd = _price(c.get("prices"), "usd")
         if eur is None and usd is None:
             continue
-        for k in name_keys(c.get("name", "")):
-            if k and k not in index:
-                index[k] = [eur, usd]
+        keys = [k for k in name_keys(c.get("name", "")) if k]
+        if not keys:
+            continue
+        if keys[0] not in index:
+            index[keys[0]] = [eur, usd]
+        aliases.extend((k, [eur, usd]) for k in keys[1:])
+    for k, price in aliases:
+        if k not in index:
+            index[k] = price
     return index
 
 

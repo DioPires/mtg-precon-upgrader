@@ -235,7 +235,7 @@ def main(argv: list[str]) -> int:
     combo_oids = load_combo_oids()
     cards: dict[str, dict] = {}
     member_count = 0
-    names: dict[str, str] = {}
+    indexed_names: list[tuple[str, str]] = []
     versions: dict[str, set] = {"ov": set(), "xv": set(), "cv": set()}
     for shard in sorted(glob.glob(os.path.join(ENTRIES_DIR, "*.json"))):
         for entry in json.load(open(shard)):
@@ -253,8 +253,7 @@ def main(argv: list[str]) -> int:
             cards[oid] = build_record(entry)
             if is_member:
                 member_count += 1
-            for k in SYN.name_keys(entry.get("name", "")):
-                names.setdefault(k, oid)
+            indexed_names.append((oid, entry.get("name", "")))
             versions["ov"].add(entry.get("ontology_version"))
             versions["xv"].add(entry.get("extractor_version"))
             versions["cv"].add(entry.get("corpus_version"))
@@ -271,6 +270,9 @@ def main(argv: list[str]) -> int:
             return 1
 
     corpus_version = next(iter(versions["cv"]))
+    # Exact full names claim their key before any face alias — an MDFC back face
+    # otherwise hijacks a standalone card's name (DEC-553).
+    names = SYN.build_name_to_oid(indexed_names)
     out = {
         "meta": {
             "schema": "combo-lab-tier-b-index",

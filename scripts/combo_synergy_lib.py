@@ -107,6 +107,32 @@ def name_keys(name: str) -> list[str]:
     return keys
 
 
+def build_name_to_oid(items: Iterable[tuple[str, str]]) -> dict[str, str]:
+    """(oracle_id, name) pairs → normalized name key → oracle_id.
+
+    Two passes, because a face alias and a full name are NOT equal-priority: an
+    MDFC back face can carry the exact name of a standalone card (`Grave
+    Researcher // Reanimate` vs the sorcery `Reanimate`). Registering both in one
+    shard-ordered pass let whichever loaded first win the key, so a deck naming
+    the standalone resolved to the MDFC and was scored on the wrong card's
+    features (DEC-553). Full names are claimed first and are never overwritten;
+    face aliases only fill keys no full name took. Within each pass it is still
+    first-wins, so genuine same-name collisions keep their previous behaviour.
+    Mirror of buildNameToOid() in web/src/lib/synergyMatch.ts."""
+    name_to_oid: dict[str, str] = {}
+    pending: list[tuple[str, str]] = []
+    for oid, name in items:
+        keys = name_keys(name)
+        if not keys:
+            continue
+        name_to_oid.setdefault(keys[0], oid)
+        for k in keys[1:]:
+            pending.append((k, oid))
+    for k, oid in pending:
+        name_to_oid.setdefault(k, oid)
+    return name_to_oid
+
+
 # ─── Ontology compatibility relation ─────────────────────────────────────────────
 def load_ontology(path: str = ONTOLOGY_PATH) -> dict:
     return json.load(open(path))
@@ -196,9 +222,8 @@ def load_index_from_feature_index(
     path = path or os.path.join(KB_DIR, "feature-index.json")
     raw = json.load(open(path))["cards"]
     by_oid: dict[str, dict] = {}
-    name_to_oid: dict[str, str] = {}
     for oid, row in raw.items():
-        entry = {
+        by_oid[oid] = {
             "oracle_id": oid,
             "name": row["n"],
             "ci": list(row.get("ci", "")),
@@ -206,9 +231,7 @@ def load_index_from_feature_index(
             "wants": [{"feature": f, "magnitude": m} for f, m in row.get("w", [])],
             "ambient": [{"feature": f, "magnitude": m} for f, m in row.get("a", [])],
         }
-        by_oid[oid] = entry
-        for k in name_keys(entry["name"]):
-            name_to_oid.setdefault(k, oid)
+    name_to_oid = build_name_to_oid((oid, e["name"]) for oid, e in by_oid.items())
     return by_oid, name_to_oid
 
 
@@ -216,19 +239,19 @@ def load_kb_index(entries_dir: str = ENTRIES_DIR) -> tuple[dict[str, dict], dict
     """Load the full KB into (oracle_id → lean entry, normalized name key → oracle_id).
 
     The name map aliases every DFC/split face so a decklist naming either face
-    resolves. Featureless cards are still indexed (they are *covered* — they just
+    resolves, with exact full names taking precedence over face aliases
+    (``build_name_to_oid``). Featureless cards are still indexed (they are *covered* — they just
     contribute no edges), so callers can distinguish covered-but-featureless from
     genuinely uncovered (KB-gap caveat, DC-6)."""
     by_oid: dict[str, dict] = {}
-    name_to_oid: dict[str, str] = {}
+    ordered: list[tuple[str, str]] = []
     for shard in sorted(glob.glob(os.path.join(entries_dir, "*.json"))):
         for e in json.load(open(shard)):
             lean = _lean_entry(e)
             oid = lean["oracle_id"]
             by_oid[oid] = lean
-            for k in name_keys(lean["name"]):
-                name_to_oid.setdefault(k, oid)
-    return by_oid, name_to_oid
+            ordered.append((oid, lean["name"]))
+    return by_oid, build_name_to_oid(ordered)
 
 
 def export_synergy_config(ontology: dict, idf: dict[str, float]) -> dict:

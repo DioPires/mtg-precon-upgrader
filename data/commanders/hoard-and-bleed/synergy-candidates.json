@@ -6,7 +6,7 @@
     "cycles": 30,
     "cyclesTotal": 4367,
     "pairs": 80,
-    "pairsTotal": 549,
+    "pairsTotal": 575,
     "triples": 40,
     "triplesTotal": 396,
     "uncovered": 0
@@ -2467,7 +2467,7 @@
     "crowdPriorApplied": true,
     "deckId": "hoard-and-bleed",
     "deepFocused": true,
-    "generatedAt": "2026-09-01T08:13:59.903750+00:00",
+    "generatedAt": "2026-09-05T15:40:36.951149+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -4260,6 +4260,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Reanimate",
+        "Treasure Vault"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Mirkwood Bats",
         "Weftstalker Ardent"
       ],
@@ -4303,6 +4323,26 @@
           "magnitude": 1,
           "to": "Reckless Fireweaver",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Mines of Moria",
+        "Reanimate"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Mines of Moria",
+          "toFeature": "sac_fodder"
         }
       ]
     },
@@ -4442,46 +4482,6 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
           "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bojuka Bog",
-        "Professional Face-Breaker"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Goldspan Dragon",
-        "Weftstalker Ardent"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Weftstalker Ardent",
           "toFeature": "etb_trigger"
         }
       ]

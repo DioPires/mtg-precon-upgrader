@@ -1849,7 +1849,7 @@
     "crowdPriorApplied": true,
     "deckId": "creeping-corruption",
     "deepFocused": false,
-    "generatedAt": "2026-08-24T08:50:32.516494+00:00",
+    "generatedAt": "2026-09-05T15:40:28.125376+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -2918,26 +2918,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Emeritus of Abundance // Regrowth",
-        "Glistening Sphere"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Glistening Sphere",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Eternal Witness",
         "Glistening Sphere"
       ],
@@ -2951,6 +2931,26 @@
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
           "to": "Eternal Witness",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Glistening Sphere",
+        "Regrowth"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Glistening Sphere",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Regrowth",
           "toFeature": "recursion"
         }
       ]
@@ -3468,26 +3468,6 @@
       "band": "speculative",
       "cards": [
         "Contagion Engine",
-        "Emeritus of Abundance // Regrowth"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Contagion Engine",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
-          "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Contagion Engine",
         "Eternal Witness"
       ],
       "economies": [
@@ -3500,6 +3480,26 @@
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
           "to": "Eternal Witness",
+          "toFeature": "recursion"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Contagion Engine",
+        "Regrowth"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Contagion Engine",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Regrowth",
           "toFeature": "recursion"
         }
       ]
@@ -4839,9 +4839,9 @@
     {
       "band": "speculative",
       "cards": [
-        "Emeritus of Abundance // Regrowth",
         "Eternal Witness",
-        "Glistening Sphere"
+        "Glistening Sphere",
+        "Regrowth"
       ],
       "economies": [
         "etb",
@@ -4849,28 +4849,28 @@
       ],
       "edges": [
         {
-          "from": "Emeritus of Abundance // Regrowth",
+          "from": "Glistening Sphere",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Eternal Witness",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Glistening Sphere",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Regrowth",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Regrowth",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
           "to": "Eternal Witness",
           "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Glistening Sphere",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Glistening Sphere",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Eternal Witness",
-          "toFeature": "recursion"
         }
       ]
     },
@@ -5104,8 +5104,8 @@
     {
       "band": "speculative",
       "cards": [
-        "Emeritus of Abundance // Regrowth",
         "Glistening Sphere",
+        "Regrowth",
         "Vishgraz, the Doomhive"
       ],
       "economies": [
@@ -5120,23 +5120,7 @@
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Vishgraz, the Doomhive",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
-          "toFeature": "recursion"
-        },
-        {
-          "from": "Vishgraz, the Doomhive",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
-          "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
+          "to": "Regrowth",
           "toFeature": "recursion"
         },
         {
@@ -5154,6 +5138,22 @@
           "magnitude": 3,
           "to": "Glistening Sphere",
           "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Vishgraz, the Doomhive",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Regrowth",
+          "toFeature": "recursion"
+        },
+        {
+          "from": "Vishgraz, the Doomhive",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
+          "magnitude": 1,
+          "to": "Regrowth",
+          "toFeature": "recursion"
         }
       ]
     },
@@ -5466,7 +5466,7 @@
       "band": "speculative",
       "cards": [
         "Contagion Engine",
-        "Emeritus of Abundance // Regrowth",
+        "Regrowth",
         "Vishgraz, the Doomhive"
       ],
       "economies": [
@@ -5481,7 +5481,7 @@
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
+          "to": "Regrowth",
           "toFeature": "recursion"
         },
         {
@@ -5505,7 +5505,7 @@
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
+          "to": "Regrowth",
           "toFeature": "recursion"
         },
         {
@@ -5513,7 +5513,7 @@
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
+          "to": "Regrowth",
           "toFeature": "recursion"
         }
       ]
@@ -5585,8 +5585,8 @@
       "band": "speculative",
       "cards": [
         "Contagion Engine",
-        "Emeritus of Abundance // Regrowth",
-        "Eternal Witness"
+        "Eternal Witness",
+        "Regrowth"
       ],
       "economies": [
         "etb",
@@ -5598,7 +5598,7 @@
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Emeritus of Abundance // Regrowth",
+          "to": "Eternal Witness",
           "toFeature": "recursion"
         },
         {
@@ -5606,11 +5606,11 @@
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Graveyard recursion",
           "magnitude": 1,
-          "to": "Eternal Witness",
+          "to": "Regrowth",
           "toFeature": "recursion"
         },
         {
-          "from": "Emeritus of Abundance // Regrowth",
+          "from": "Regrowth",
           "fromFeature": "recursion",
           "label": "Graveyard recursion ↔ ETB payoff",
           "magnitude": 1,
