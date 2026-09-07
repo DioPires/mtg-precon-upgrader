@@ -43,6 +43,7 @@ import mana_simulation_armory_protocol as sim_armory_protocol
 import mana_simulation_shield_doctrine as sim_shield_doctrine
 import mana_simulation_gandalf_party_guest as sim_gandalf
 import mana_simulation_broodfire_hatchery as sim_broodfire_hatchery
+import mana_simulation_anvil_chorus as sim_anvil_chorus
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -212,6 +213,20 @@ KEY_COMBOS = {
             "pieces": ["Vorinclex, Monstrous Raider", "Vraska, Betrayal's Sting"],
             "requiresCommander": False,
             "description": "Vraska enters with doubled loyalty, -9 deals doubled poison for instant kill.",
+        }
+    ],
+    "anvil-chorus": [
+        {
+            "name": "Blink Loop Lethal",
+            # Felidar Guardian + Restoration Angel is infinite ETBs but not a
+            # win by itself (the loop pieces are not Dwarves — Fíli adds no
+            # tokens); Cathars' Crusade is the in-deck converter that makes the
+            # board arbitrarily large. Lethal on the next combat.
+            "pieces": ["Felidar Guardian", "Restoration Angel", "Cathars' Crusade"],
+            "requiresCommander": False,
+            "description": "Felidar Guardian and Restoration Angel blink each other for "
+                           "infinite ETB triggers; Cathars' Crusade converts the loop into "
+                           "an arbitrarily large board.",
         }
     ],
     # hidden-legion: Snoop+Kiki+Tremors combo cut in DEC-373 (1.4% assembly by T7 — phantom line).
@@ -3766,6 +3781,19 @@ def export_shield_doctrine(metadata: dict) -> dict:
     )
 
 
+def export_anvil_chorus(metadata: dict) -> dict:
+    """Export Anvil Chorus (mono-white Fíli Dwarf ETB/token) simulation."""
+    return _export_colored(
+        sim_module=sim_anvil_chorus,
+        deck_id="anvil-chorus",
+        deck_name="Anvil Chorus",
+        commander_name="Fíli the Pathfinder",
+        commander_cmc=4,
+        colors=["W"],
+        metadata=metadata,
+    )
+
+
 def export_wubg_poison(metadata: dict) -> dict:
     """Export Creeping Corruption (WUBG Atraxa poison/proliferate) simulation."""
     return _export_colored(
@@ -3838,6 +3866,7 @@ DECKS = [
     ("gandalf-party-guest", "Arcane Convocation", export_gandalf_party_guest),
     ("hoard-and-bleed", "Hoard and Bleed", export_hoard_and_bleed),
     ("broodfire-hatchery", "Broodfire Hatchery", export_broodfire_hatchery),
+    ("anvil-chorus", "Anvil Chorus", export_anvil_chorus),
 ]
 
 
