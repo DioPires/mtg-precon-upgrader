@@ -76,14 +76,14 @@ ROCK_DEFS = {
 
 # --- Land subtype definitions (for check lands and fetch targets) ---
 
-ISLAND_TYPED_LANDS = {"Island", "Watery Grave", "Steam Vents", "Sunken Hollow"}
+ISLAND_TYPED_LANDS = {"Island", "Watery Grave", "Steam Vents", "Sunken Hollow", "Turbulent Springs"}
 SWAMP_TYPED_LANDS = {"Swamp", "Watery Grave", "Blood Crypt", "Sunken Hollow", "Smoldering Marsh"}
-MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Steam Vents", "Smoldering Marsh"}
+MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Steam Vents", "Smoldering Marsh", "Turbulent Springs"}
 
 FETCH_LANDS = {"Bloodstained Mire", "Polluted Delta"}
 
 ALWAYS_TAPPED = {
-    "Bojuka Bog", "Goblin-town",
+    "Bojuka Bog",
     "Minas Morgul, Dark Fortress",
     "Barad-dûr",  # tapped w/o legendary creature (not tracked — conservative)
     # The Black Gate: pay 3 life to enter untapped — this deck always pays.
@@ -111,6 +111,12 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     # Slow land: untapped with two or more other lands
     if name == "Stormcarved Coast":
         return len(battlefield_lands) < 2
+    # Turbulent Springs: untapped once opponents control 8+ lands. Opponent
+    # boards are not tracked; under the vanilla 4-player model that holds from
+    # your turn 4 in every seat (turn 3 only in seats 3-4), so gate on this
+    # being at least the 4th land drop (conservative: drops the turn-3 case).
+    if name == "Turbulent Springs":
+        return len(battlefield_lands) < 3
 
     # Battle lands (need 2+ basics with the right types)
     if name == "Smoldering Marsh":
@@ -154,13 +160,13 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
 
     # BR duals
     if name in {"Blood Crypt", "Luxury Suite", "Smoldering Marsh", "Sulfurous Springs",
-                "Dragonskull Summit", "Blackcleave Cliffs", "Goblin-town"}:
+                "Dragonskull Summit", "Blackcleave Cliffs"}:
         return [frozenset({"B", "R"})]
 
     # UR duals (Cascade Bluffs filters colored mana — nearly always usable with
     # 20+ colored sources in the base; the T1-only-land corner is optimistic)
     if name in {"Steam Vents", "Training Center", "Sulfur Falls", "Shivan Reef",
-                "Stormcarved Coast", "Cascade Bluffs"}:
+                "Stormcarved Coast", "Cascade Bluffs", "Turbulent Springs"}:
         return [frozenset({"U", "R"})]
 
     # Gloomlake Verge: {U} always; {B} only with Island or Swamp in play
