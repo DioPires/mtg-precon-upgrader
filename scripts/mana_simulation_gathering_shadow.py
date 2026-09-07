@@ -65,10 +65,13 @@ ROCK_DEFS = {
     "Talisman of Indulgence": {"cmc": 2, "colors": frozenset({"B", "R"}), "count": 1, "burst": False},
     "Talisman of Dominance":  {"cmc": 2, "colors": frozenset({"U", "B"}), "count": 1, "burst": False},
     "Relic of Sauron":        {"cmc": 4, "colors": frozenset({"U", "B", "R"}), "count": 2, "burst": False},
-    "Mind Stone":             {"cmc": 2, "colors": frozenset({"C"}), "count": 1, "burst": False},
     "Talisman of Creativity": {"cmc": 2, "colors": frozenset({"U", "R"}), "count": 1, "burst": False},
-    # Inherited Envelope: any color (ETB Ring-temptation not mana-relevant)
-    "Inherited Envelope":     {"cmc": 3, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
+    # Chrome Mox: {0}, taps for the imprinted card's color. 49/99 colored
+    # nonartifact spells make fuel near-certain (~98.7% with Mox in hand), so
+    # the imprint requirement and card loss are not modeled.
+    "Chrome Mox":             {"cmc": 0, "colors": frozenset({"U", "B", "R"}), "count": 1, "burst": False},
+    # Dark Ritual is a one-shot ritual, not a standing source; this sim has no
+    # burst-mana support, so it is deliberately left unmodeled (conservative).
 }
 
 # --- Land subtype definitions (for check lands and fetch targets) ---
@@ -495,11 +498,10 @@ class GameState:
     def _try_cast_rocks(self, pool: ManaPool):
         """Try to cast mana rocks from hand, priority order (lowest CMC first)."""
         priority_order = [
+            "Chrome Mox",  # free, so always first
             "Sol Ring",
-            "Arcane Signet", "Mind Stone",
+            "Arcane Signet",
             "Talisman of Dominance", "Talisman of Indulgence", "Talisman of Creativity",
-
-            "Inherited Envelope",
             "Relic of Sauron",
         ]
 

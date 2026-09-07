@@ -61,6 +61,53 @@
     {
       "band": "strong",
       "cards": [
+        "Balmor, Battlemage Captain",
+        "Kykar, Wind's Fury",
+        "Veyran, Voice of Duality",
+        "Wizard's Staff"
+      ],
+      "economies": [
+        "cast",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Balmor, Battlemage Captain",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Veyran, Voice of Duality",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Balmor, Battlemage Captain",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
+          "magnitude": 1,
+          "to": "Kykar, Wind's Fury",
+          "toFeature": "cast_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Harmonic Prodigy",
         "Veyran, Voice of Duality",
         "Vivi Ornitier",
@@ -200,53 +247,6 @@
     {
       "band": "strong",
       "cards": [
-        "Balmor, Battlemage Captain",
-        "Kykar, Wind's Fury",
-        "Veyran, Voice of Duality",
-        "Wizard's Staff"
-      ],
-      "economies": [
-        "cast",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Balmor, Battlemage Captain",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Veyran, Voice of Duality",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Balmor, Battlemage Captain",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
-          "magnitude": 1,
-          "to": "Kykar, Wind's Fury",
-          "toFeature": "cast_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Gandalf the Grey",
         "Harmonic Prodigy",
         "Kykar, Wind's Fury",
@@ -282,6 +282,54 @@
         },
         {
           "from": "Kykar, Wind's Fury",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
+        "Kykar, Wind's Fury",
+        "Veyran, Voice of Duality",
+        "Wizard's Staff"
+      ],
+      "economies": [
+        "cast",
+        "mana",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Gandalf the Grey",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
+          "magnitude": 1,
+          "to": "Kykar, Wind's Fury",
+          "toFeature": "cast_trigger"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
@@ -335,54 +383,6 @@
           "magnitude": 1,
           "to": "Kykar, Wind's Fury",
           "toFeature": "cast_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gandalf the Grey",
-        "Kykar, Wind's Fury",
-        "Veyran, Voice of Duality",
-        "Wizard's Staff"
-      ],
-      "economies": [
-        "cast",
-        "mana",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Gandalf the Grey",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
-          "magnitude": 1,
-          "to": "Kykar, Wind's Fury",
-          "toFeature": "cast_trigger"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
         }
       ]
     },
@@ -661,194 +661,6 @@
           "magnitude": 1,
           "to": "Wizard's Staff",
           "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gandalf the Grey",
-        "Harmonic Prodigy",
-        "Veyran, Voice of Duality",
-        "Vivi Ornitier"
-      ],
-      "economies": [
-        "cast",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
-          "magnitude": 1,
-          "to": "Gandalf the Grey",
-          "toFeature": "cast_trigger"
-        },
-        {
-          "from": "Vivi Ornitier",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Vivi Ornitier",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Veyran, Voice of Duality",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gandalf the Grey",
-        "Harmonic Prodigy",
-        "Vivi Ornitier",
-        "Wizard's Staff"
-      ],
-      "economies": [
-        "cast"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Vivi Ornitier",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Vivi Ornitier",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gandalf the Grey",
-        "Veyran, Voice of Duality",
-        "Vivi Ornitier",
-        "Wizard's Staff"
-      ],
-      "economies": [
-        "cast",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
-          "magnitude": 1,
-          "to": "Gandalf the Grey",
-          "toFeature": "cast_trigger"
-        },
-        {
-          "from": "Vivi Ornitier",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Veyran, Voice of Duality",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Vivi Ornitier",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Balmor, Battlemage Captain",
-        "Gandalf the Grey",
-        "Harmonic Prodigy",
-        "Kykar, Wind's Fury"
-      ],
-      "economies": [
-        "cast",
-        "mana",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Balmor, Battlemage Captain",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Balmor, Battlemage Captain",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Kykar, Wind's Fury",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Gandalf the Grey",
-          "toFeature": "untap_permanent"
         }
       ]
     },
@@ -952,6 +764,194 @@
     {
       "band": "strong",
       "cards": [
+        "Balmor, Battlemage Captain",
+        "Gandalf the Grey",
+        "Harmonic Prodigy",
+        "Kykar, Wind's Fury"
+      ],
+      "economies": [
+        "cast",
+        "mana",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Balmor, Battlemage Captain",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Balmor, Battlemage Captain",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Kykar, Wind's Fury",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Gandalf the Grey",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
+        "Harmonic Prodigy",
+        "Veyran, Voice of Duality",
+        "Vivi Ornitier"
+      ],
+      "economies": [
+        "cast",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
+          "magnitude": 1,
+          "to": "Gandalf the Grey",
+          "toFeature": "cast_trigger"
+        },
+        {
+          "from": "Vivi Ornitier",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Vivi Ornitier",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Veyran, Voice of Duality",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
+        "Harmonic Prodigy",
+        "Vivi Ornitier",
+        "Wizard's Staff"
+      ],
+      "economies": [
+        "cast"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Vivi Ornitier",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Vivi Ornitier",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
+        "Veyran, Voice of Duality",
+        "Vivi Ornitier",
+        "Wizard's Staff"
+      ],
+      "economies": [
+        "cast",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
+          "magnitude": 1,
+          "to": "Gandalf the Grey",
+          "toFeature": "cast_trigger"
+        },
+        {
+          "from": "Vivi Ornitier",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Veyran, Voice of Duality",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Vivi Ornitier",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Adeliz, the Cinder Wind",
         "Harmonic Prodigy",
         "Kykar, Wind's Fury",
@@ -987,6 +987,52 @@
         },
         {
           "from": "Kykar, Wind's Fury",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
+        "Harmonic Prodigy",
+        "Veyran, Voice of Duality",
+        "Wizard's Staff"
+      ],
+      "economies": [
+        "cast"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
@@ -1127,52 +1173,6 @@
         },
         {
           "from": "Vivi Ornitier",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gandalf the Grey",
-        "Harmonic Prodigy",
-        "Veyran, Voice of Duality",
-        "Wizard's Staff"
-      ],
-      "economies": [
-        "cast"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
@@ -1425,7 +1425,7 @@
     "crowdPriorApplied": true,
     "deckId": "gandalf-party-guest",
     "deepFocused": true,
-    "generatedAt": "2026-09-05T15:40:32.005797+00:00",
+    "generatedAt": "2026-09-07T17:46:02.039037+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -1519,34 +1519,6 @@
     {
       "band": "strong",
       "cards": [
-        "Gandalf the Grey",
-        "Sulfur Falls"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Sulfur Falls",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sulfur Falls",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Exotic Orchard",
         "Gandalf the Grey"
       ],
@@ -1568,6 +1540,34 @@
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
           "to": "Exotic Orchard",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
+        "Sulfur Falls"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Sulfur Falls",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Sulfur Falls",
           "toFeature": "tap_ability"
         }
       ]
@@ -1688,6 +1688,26 @@
       "band": "strong",
       "cards": [
         "Gandalf the Grey",
+        "Kaza, Roil Chaser"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Kaza, Roil Chaser",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Gandalf the Grey",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
         "Training Center"
       ],
       "economies": [
@@ -1709,26 +1729,6 @@
           "magnitude": 1,
           "to": "Training Center",
           "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gandalf the Grey",
-        "Kaza, Roil Chaser"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Kaza, Roil Chaser",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Gandalf the Grey",
-          "toFeature": "untap_permanent"
         }
       ]
     },
@@ -1819,26 +1819,6 @@
     {
       "band": "strong",
       "cards": [
-        "Harmonic Prodigy",
-        "Kykar, Wind's Fury"
-      ],
-      "economies": [
-        "cast"
-      ],
-      "edges": [
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Kykar, Wind's Fury",
         "Veyran, Voice of Duality"
       ],
@@ -1868,6 +1848,46 @@
       "edges": [
         {
           "from": "Kykar, Wind's Fury",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Harmonic Prodigy",
+        "Kykar, Wind's Fury"
+      ],
+      "economies": [
+        "cast"
+      ],
+      "edges": [
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
+        "Wizard's Staff"
+      ],
+      "economies": [
+        "cast"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
@@ -1959,26 +1979,6 @@
     {
       "band": "strong",
       "cards": [
-        "Gandalf the Grey",
-        "Wizard's Staff"
-      ],
-      "economies": [
-        "cast"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Veyran, Voice of Duality",
         "Wizard's Staff"
       ],
@@ -2019,26 +2019,6 @@
     {
       "band": "strong",
       "cards": [
-        "Harmonic Prodigy",
-        "Veyran, Voice of Duality"
-      ],
-      "economies": [
-        "cast"
-      ],
-      "edges": [
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Gandalf the Grey",
         "Kykar, Wind's Fury"
       ],
@@ -2053,6 +2033,26 @@
           "magnitude": 1,
           "to": "Gandalf the Grey",
           "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Harmonic Prodigy",
+        "Veyran, Voice of Duality"
+      ],
+      "economies": [
+        "cast"
+      ],
+      "edges": [
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
         }
       ]
     },
@@ -2157,7 +2157,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Gandalf the Grey",
         "Izzet Signet"
@@ -2188,19 +2188,19 @@
       "band": "speculative",
       "cards": [
         "Balmor, Battlemage Captain",
-        "Harmonic Prodigy"
+        "Kykar, Wind's Fury"
       ],
       "economies": [
-        "cast"
+        "token"
       ],
       "edges": [
         {
           "from": "Balmor, Battlemage Captain",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
+          "to": "Kykar, Wind's Fury",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -2208,26 +2208,6 @@
       "band": "speculative",
       "cards": [
         "Balmor, Battlemage Captain",
-        "Kykar, Wind's Fury"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Balmor, Battlemage Captain",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Kykar, Wind's Fury",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Adeliz, the Cinder Wind",
         "Harmonic Prodigy"
       ],
       "economies": [
@@ -2235,7 +2215,7 @@
       ],
       "edges": [
         {
-          "from": "Adeliz, the Cinder Wind",
+          "from": "Balmor, Battlemage Captain",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
@@ -2261,6 +2241,26 @@
           "magnitude": 1,
           "to": "Kykar, Wind's Fury",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Adeliz, the Cinder Wind",
+        "Harmonic Prodigy"
+      ],
+      "economies": [
+        "cast"
+      ],
+      "edges": [
+        {
+          "from": "Adeliz, the Cinder Wind",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
         }
       ]
     },
@@ -2307,34 +2307,6 @@
     {
       "band": "speculative",
       "cards": [
-        "City of Brass",
-        "Gandalf the Grey"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "City of Brass",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "City of Brass",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Gandalf the Grey",
         "Plaza of Heroes"
       ],
@@ -2363,8 +2335,8 @@
     {
       "band": "speculative",
       "cards": [
-        "Gandalf the Grey",
-        "Reflecting Pool"
+        "City of Brass",
+        "Gandalf the Grey"
       ],
       "economies": [
         "untap"
@@ -2375,7 +2347,7 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Adds mana",
           "magnitude": 1,
-          "to": "Reflecting Pool",
+          "to": "City of Brass",
           "toFeature": "mana_add"
         },
         {
@@ -2383,7 +2355,7 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
-          "to": "Reflecting Pool",
+          "to": "City of Brass",
           "toFeature": "tap_ability"
         }
       ]
@@ -2623,6 +2595,34 @@
     {
       "band": "speculative",
       "cards": [
+        "Eiganjo, Seat of the Empire",
+        "Gandalf the Grey"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Eiganjo, Seat of the Empire",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Eiganjo, Seat of the Empire",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Gandalf the Grey",
         "Hengegate Pathway // Mistgate Pathway"
       ],
@@ -2644,6 +2644,34 @@
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
           "to": "Hengegate Pathway // Mistgate Pathway",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Gandalf the Grey",
+        "Mana Confluence"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Mana Confluence",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Mana Confluence",
           "toFeature": "tap_ability"
         }
       ]
@@ -2680,6 +2708,34 @@
       "band": "speculative",
       "cards": [
         "Gandalf the Grey",
+        "Reflecting Pool"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Reflecting Pool",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Reflecting Pool",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Gandalf the Grey",
         "Riverglide Pathway // Lavaglide Pathway"
       ],
       "economies": [
@@ -2700,62 +2756,6 @@
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
           "to": "Riverglide Pathway // Lavaglide Pathway",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Eiganjo, Seat of the Empire",
-        "Gandalf the Grey"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Eiganjo, Seat of the Empire",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Eiganjo, Seat of the Empire",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Gandalf the Grey",
-        "Mana Confluence"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Mana Confluence",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Mana Confluence",
           "toFeature": "tap_ability"
         }
       ]
@@ -2932,6 +2932,74 @@
     {
       "band": "speculative",
       "cards": [
+        "Kykar, Wind's Fury",
+        "Stenn, Paranoid Partisan"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Stenn, Paranoid Partisan",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Kykar, Wind's Fury",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Jeskai Revelation",
+        "Raff, Weatherlight Stalwart"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Raff, Weatherlight Stalwart",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Jeskai Revelation",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Gandalf the Grey",
+        "Pinnacle Monk // Mystic Peak"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Pinnacle Monk // Mystic Peak",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Pinnacle Monk // Mystic Peak",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Adeliz, the Cinder Wind",
         "Jeskai Revelation"
       ],
@@ -2972,74 +3040,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Gandalf the Grey",
-        "Pinnacle Monk // Mystic Peak"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Pinnacle Monk // Mystic Peak",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Pinnacle Monk // Mystic Peak",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Jeskai Revelation",
-        "Raff, Weatherlight Stalwart"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Raff, Weatherlight Stalwart",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Jeskai Revelation",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Kykar, Wind's Fury",
-        "Stenn, Paranoid Partisan"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Stenn, Paranoid Partisan",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Kykar, Wind's Fury",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Harmonic Prodigy",
         "Hydroelectric Specimen // Hydroelectric Laboratory"
       ],
@@ -3073,54 +3073,6 @@
           "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
           "to": "Hydroelectric Specimen // Hydroelectric Laboratory",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Kykar, Wind's Fury",
-        "Prismari Command"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Prismari Command",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Prismari Command",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Naru Meha, Master Wizard",
-        "Veyran, Voice of Duality"
-      ],
-      "economies": [
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Naru Meha, Master Wizard",
           "toFeature": "etb_trigger"
         }
       ]
@@ -3188,6 +3140,34 @@
     {
       "band": "speculative",
       "cards": [
+        "Kykar, Wind's Fury",
+        "Prismari Command"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Prismari Command",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Prismari Command",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Hydroelectric Specimen // Hydroelectric Laboratory",
         "Veyran, Voice of Duality"
       ],
@@ -3201,6 +3181,26 @@
           "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
           "to": "Hydroelectric Specimen // Hydroelectric Laboratory",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Naru Meha, Master Wizard",
+        "Veyran, Voice of Duality"
+      ],
+      "economies": [
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Naru Meha, Master Wizard",
           "toFeature": "etb_trigger"
         }
       ]
@@ -3277,20 +3277,20 @@
     {
       "band": "speculative",
       "cards": [
-        "The One Ring",
-        "Vivi Ornitier"
+        "Gandalf the Grey",
+        "Turbulent Springs"
       ],
       "economies": [
-        "counters"
+        "untap"
       ],
       "edges": [
         {
-          "from": "Vivi Ornitier",
-          "fromFeature": "counter_add",
-          "label": "Adds counters ↔ Counter payoff",
+          "from": "Gandalf the Grey",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
           "magnitude": 1,
-          "to": "The One Ring",
-          "toFeature": "counter_payoff"
+          "to": "Turbulent Springs",
+          "toFeature": "mana_add"
         }
       ]
     },
@@ -3328,44 +3328,6 @@
     {
       "band": "strong",
       "cards": [
-        "Harmonic Prodigy",
-        "Kykar, Wind's Fury",
-        "Veyran, Voice of Duality"
-      ],
-      "economies": [
-        "cast",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
-          "magnitude": 1,
-          "to": "Kykar, Wind's Fury",
-          "toFeature": "cast_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Kykar, Wind's Fury",
         "Veyran, Voice of Duality",
         "Wizard's Staff"
@@ -3398,6 +3360,44 @@
           "magnitude": 1,
           "to": "Wizard's Staff",
           "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Harmonic Prodigy",
+        "Kykar, Wind's Fury",
+        "Veyran, Voice of Duality"
+      ],
+      "economies": [
+        "cast",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
+          "magnitude": 1,
+          "to": "Kykar, Wind's Fury",
+          "toFeature": "cast_trigger"
         }
       ]
     },
@@ -3471,44 +3471,6 @@
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
           "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Gandalf the Grey",
-        "Harmonic Prodigy",
-        "Kykar, Wind's Fury"
-      ],
-      "economies": [
-        "cast",
-        "mana"
-      ],
-      "edges": [
-        {
-          "from": "Gandalf the Grey",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Gandalf the Grey",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
           "toFeature": "trigger_doubler"
         }
       ]
@@ -3593,44 +3555,6 @@
       "band": "strong",
       "cards": [
         "Balmor, Battlemage Captain",
-        "Harmonic Prodigy",
-        "Kykar, Wind's Fury"
-      ],
-      "economies": [
-        "cast",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Balmor, Battlemage Captain",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Balmor, Battlemage Captain",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Kykar, Wind's Fury",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Balmor, Battlemage Captain",
         "Kykar, Wind's Fury",
         "Veyran, Voice of Duality"
       ],
@@ -3700,6 +3624,82 @@
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
           "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Gandalf the Grey",
+        "Harmonic Prodigy",
+        "Kykar, Wind's Fury"
+      ],
+      "economies": [
+        "cast",
+        "mana"
+      ],
+      "edges": [
+        {
+          "from": "Gandalf the Grey",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Gandalf the Grey",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Balmor, Battlemage Captain",
+        "Harmonic Prodigy",
+        "Kykar, Wind's Fury"
+      ],
+      "economies": [
+        "cast",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Balmor, Battlemage Captain",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Balmor, Battlemage Captain",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Kykar, Wind's Fury",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Kykar, Wind's Fury",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
           "toFeature": "trigger_doubler"
         }
       ]
@@ -4656,84 +4656,6 @@
       "band": "speculative",
       "cards": [
         "Harmonic Prodigy",
-        "Naru Meha, Master Wizard",
-        "Veyran, Voice of Duality"
-      ],
-      "economies": [
-        "cast",
-        "etb",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Naru Meha, Master Wizard",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Harmonic Prodigy",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Naru Meha, Master Wizard",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Naru Meha, Master Wizard",
-        "Veyran, Voice of Duality",
-        "Wizard's Staff"
-      ],
-      "economies": [
-        "cast",
-        "etb",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Naru Meha, Master Wizard",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Naru Meha, Master Wizard",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "cast_trigger",
-          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
-          "magnitude": 1,
-          "to": "Wizard's Staff",
-          "toFeature": "trigger_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Harmonic Prodigy",
         "Hydroelectric Specimen // Hydroelectric Laboratory",
         "Veyran, Voice of Duality"
       ],
@@ -4809,17 +4731,26 @@
     {
       "band": "speculative",
       "cards": [
-        "Deekah, Fractal Theorist",
         "Harmonic Prodigy",
-        "Kykar, Wind's Fury"
+        "Naru Meha, Master Wizard",
+        "Veyran, Voice of Duality"
       ],
       "economies": [
         "cast",
-        "sacrifice"
+        "etb",
+        "trigger_doubling"
       ],
       "edges": [
         {
-          "from": "Deekah, Fractal Theorist",
+          "from": "Naru Meha, Master Wizard",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Veyran, Voice of Duality",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
@@ -4827,27 +4758,50 @@
           "toFeature": "trigger_doubler"
         },
         {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Deekah, Fractal Theorist",
-          "toFeature": "sac_fodder"
+          "to": "Naru Meha, Master Wizard",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Naru Meha, Master Wizard",
+        "Veyran, Voice of Duality",
+        "Wizard's Staff"
+      ],
+      "economies": [
+        "cast",
+        "etb",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Naru Meha, Master Wizard",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Trigger doubler (ambient)",
+          "magnitude": 1,
+          "to": "Wizard's Staff",
+          "toFeature": "trigger_doubler"
         },
         {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
+          "from": "Veyran, Voice of Duality",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Deekah, Fractal Theorist",
-          "toFeature": "token_create"
+          "to": "Naru Meha, Master Wizard",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Kykar, Wind's Fury",
+          "from": "Veyran, Voice of Duality",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
-          "to": "Harmonic Prodigy",
+          "to": "Wizard's Staff",
           "toFeature": "trigger_doubler"
         }
       ]
@@ -4855,38 +4809,69 @@
     {
       "band": "speculative",
       "cards": [
-        "Deekah, Fractal Theorist",
+        "Harmonic Prodigy",
         "Kykar, Wind's Fury",
-        "Veyran, Voice of Duality"
+        "Raff, Weatherlight Stalwart"
       ],
       "economies": [
-        "sacrifice",
-        "trigger_doubling"
+        "cast",
+        "token"
       ],
       "edges": [
         {
           "from": "Kykar, Wind's Fury",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
-          "to": "Deekah, Fractal Theorist",
-          "toFeature": "sac_fodder"
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
         },
         {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
+          "from": "Raff, Weatherlight Stalwart",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
-          "to": "Deekah, Fractal Theorist",
+          "to": "Harmonic Prodigy",
+          "toFeature": "trigger_doubler"
+        },
+        {
+          "from": "Raff, Weatherlight Stalwart",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Kykar, Wind's Fury",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Kykar, Wind's Fury",
+        "Raff, Weatherlight Stalwart",
+        "Veyran, Voice of Duality"
+      ],
+      "economies": [
+        "cast",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Raff, Weatherlight Stalwart",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Kykar, Wind's Fury",
           "toFeature": "token_create"
         },
         {
-          "from": "Veyran, Voice of Duality",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ Cast payoff (magecraft-style)",
+          "from": "Raff, Weatherlight Stalwart",
+          "fromFeature": "cast_trigger",
+          "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
-          "to": "Deekah, Fractal Theorist",
-          "toFeature": "cast_trigger"
+          "to": "Veyran, Voice of Duality",
+          "toFeature": "trigger_doubler"
         },
         {
           "from": "Veyran, Voice of Duality",
@@ -4901,17 +4886,17 @@
     {
       "band": "speculative",
       "cards": [
-        "Deekah, Fractal Theorist",
         "Kykar, Wind's Fury",
+        "Raff, Weatherlight Stalwart",
         "Wizard's Staff"
       ],
       "economies": [
         "cast",
-        "sacrifice"
+        "token"
       ],
       "edges": [
         {
-          "from": "Deekah, Fractal Theorist",
+          "from": "Kykar, Wind's Fury",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,
@@ -4919,23 +4904,15 @@
           "toFeature": "trigger_doubler"
         },
         {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "from": "Raff, Weatherlight Stalwart",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Deekah, Fractal Theorist",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Kykar, Wind's Fury",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Deekah, Fractal Theorist",
+          "to": "Kykar, Wind's Fury",
           "toFeature": "token_create"
         },
         {
-          "from": "Kykar, Wind's Fury",
+          "from": "Raff, Weatherlight Stalwart",
           "fromFeature": "cast_trigger",
           "label": "Cast payoff (magecraft-style) ↔ Trigger doubler (ambient)",
           "magnitude": 1,

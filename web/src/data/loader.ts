@@ -185,7 +185,10 @@ import type { DeckTierBLoops } from './tierB';
 // the cached catalog and the orphaned deck envelopes.
 // v127 -> v128 (DEC-686 2026-09-07): new brewing deck anvil-chorus (Fíli the
 // Pathfinder) — new deck.json + index entry.
-const STORAGE_PREFIX = 'gv1-deck-data-v128:';
+// v128 -> v129 (DEC-687 2026-09-07): freed-card placements — +Force of Will
+// (gandalf-party-guest), +Chrome Mox/+Dark Ritual (gathering-shadow),
+// +Lotus Petal (hoard-and-bleed).
+const STORAGE_PREFIX = 'gv1-deck-data-v129:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

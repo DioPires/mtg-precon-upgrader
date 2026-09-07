@@ -96,7 +96,6 @@ ROCK_DEFS = {
     "Sol Ring":               {"cmc": 1, "B": 0, "R": 0, "C": 2, "burst": False},
     "Arcane Signet":          {"cmc": 2, "B": 1, "R": 1, "C": 0, "burst": False, "flexible": True},
     "Talisman of Indulgence": {"cmc": 2, "B": 1, "R": 1, "C": 0, "burst": False, "flexible": True},
-    "Rakdos Signet":          {"cmc": 2, "B": 1, "R": 1, "C": 0, "burst": False, "flexible": True},
     "Fellwar Stone":          {"cmc": 2, "B": 1, "R": 1, "C": 0, "burst": False, "flexible": True},
     PETAL_NAME:               {"cmc": 0, "B": 0, "R": 0, "C": 0, "burst": False, "oneshot": True},
 }
@@ -536,7 +535,6 @@ class GameState:
             "Sol Ring",
             "Arcane Signet",
             "Talisman of Indulgence",
-            "Rakdos Signet",
             "Fellwar Stone",
         ]
 
