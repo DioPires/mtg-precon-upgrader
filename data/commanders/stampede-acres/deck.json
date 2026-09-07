@@ -15,7 +15,7 @@
     "tokens-go-wide"
   ],
   "wincon_style": "combat",
-  "lastUpdatedSet": "Tarkir: Dragonstorm",
+  "lastUpdatedSet": "The Hobbit",
   "sources": [
     {
       "type": "ai-inferred",
@@ -47,6 +47,11 @@
       "type": "other",
       "name": "Board swap approval, DEC-580, 2026-09-01",
       "detail": "Confirmation c74f1afd, accepted. IN Drumbellower, OUT Dragon Fodder. Drumbellower is a second creature-untap engine alongside Seedborn Muse: it untaps all your creatures during each other player's untap step (×3 per turn cycle), refueling Baylen and Prosperous Partnership off-turn. Dragon Fodder was the sorcery-speed twin of Raise the Alarm (same two-token output for two mana, no Goblin/Soldier typal payoff in the 99); the instant stays per board comment. Skullclamp synergy re-pointed from Dragon Fodder to Raise the Alarm."
+    },
+    {
+      "type": "other",
+      "name": "Board swap approval, DEC-685, 2026-09-07",
+      "detail": "Interaction 89eecf15, accepted, all lines ticked. IN Gleaming Splendor, OUT Raise the Alarm; IN The Queen of Dale, OUT Parallel Lives. Splendor is the single missing card in the tracked Smothering Tithe + doubler Spellbook lines (three of four lines remain after the Parallel Lives cut: Anointed Procession, Mondrak, Elspeth, Storm Slayer). Queen of Dale recruits on each opponent's first noncreature spell each turn (2-3 triggers per turn cycle at a 4-player table), making roughly 1-2 untapped Soldiers per cycle plus loot filtering — replacing Raise the Alarm's one-shot two tokens as early Baylen fuel. Parallel Lives cut as the twin doubler (text-identical to Anointed Procession); doubler consistency P(>=1 in first 13 cards) drops ~44% to ~35% on record. Skullclamp synergy re-pointed from Raise the Alarm to The Queen of Dale. Metrics: global health 85->85, role coverage 88->89, curve 98->99, gaps unchanged. Game Changers unchanged at 7 (bracket 4-, uncapped)."
     }
   ],
   "guideContent": {
@@ -57,7 +62,8 @@
         "description": "Unconditional and instant-speed makers that flood the board from an empty start — several can fire on opponents' turns.",
         "cards": [
           "Smothering Tithe",
-          "Raise the Alarm",
+          "Gleaming Splendor",
+          "The Queen of Dale",
           "Secure the Wastes",
           "Grand Crescendo",
           "March of the Multitudes",
@@ -79,7 +85,6 @@
         "description": "Static multipliers that turn every maker into an exponential flood.",
         "cards": [
           "Anointed Procession",
-          "Parallel Lives",
           "Mondrak, Glory Dominus",
           "Elspeth, Storm Slayer"
         ]
@@ -218,7 +223,7 @@
         "Aligned Heart",
         "Impact Tremors"
       ],
-      "description": "Each Flurry trigger makes a 1/1 Monk; every Monk is a token (multiplied by Anointed Procession/Parallel Lives/Mondrak) and a creature ETB that pings with Impact Tremors/Purphoros and grows Scurry Oak via Rosie Cotton. Cori-Steel Cutter's equip hands a single Monk haste + trample to push damage through.",
+      "description": "Each Flurry trigger makes a 1/1 Monk; every Monk is a token (multiplied by Anointed Procession/Mondrak) and a creature ETB that pings with Impact Tremors/Purphoros and grows Scurry Oak via Rosie Cotton. Cori-Steel Cutter's equip hands a single Monk haste + trample to push damage through.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -261,9 +266,9 @@
       "title": "Skullclamp turns 1/1 tokens into card advantage",
       "cards": [
         "Skullclamp",
-        "Raise the Alarm"
+        "The Queen of Dale"
       ],
-      "description": "Equipping Skullclamp to a 1/1 token kills it and draws two — a relentless draw engine fed by every cheap token maker.",
+      "description": "Equipping Skullclamp to a 1/1 token kills it and draws two — a relentless draw engine. The Queen of Dale restocks the fodder: her recruit trigger on each opponent's first noncreature spell makes a 1/1 Soldier whenever the discard is a nonland card.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -400,9 +405,9 @@
       "primary_role": "ramp"
     },
     {
-      "name": "Raise the Alarm",
-      "type": "Instant",
-      "primary_role": "threat"
+      "name": "The Queen of Dale",
+      "type": "Legendary Creature — Human Noble",
+      "primary_role": "engine"
     },
     {
       "name": "Secure the Wastes",
@@ -446,9 +451,10 @@
       "primary_role": "payoff"
     },
     {
-      "name": "Parallel Lives",
+      "name": "Gleaming Splendor",
       "type": "Enchantment",
-      "primary_role": "payoff"
+      "primary_role": "ramp",
+      "secondary_role": "engine"
     },
     {
       "name": "Mondrak, Glory Dominus",
@@ -925,6 +931,21 @@
       ]
     },
     {
+      "name": "Human Soldier",
+      "type_line": "Token Creature — Human Soldier",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "6007af81-4541-4b55-90ea-03d365362ae5",
+      "image_uri": "https://cards.scryfall.io/normal/front/6/0/6007af81-4541-4b55-90ea-03d365362ae5.jpg?1785497653",
+      "produced_by": [
+        "The Queen of Dale"
+      ]
+    },
+    {
       "name": "Insect",
       "type_line": "Token Creature — Insect",
       "oracle_text": "",
@@ -999,8 +1020,7 @@
       "scryfall_id": "6455d903-6996-448f-9148-9068febecb00",
       "image_uri": "https://cards.scryfall.io/normal/front/6/4/6455d903-6996-448f-9148-9068febecb00.jpg?1783906789",
       "produced_by": [
-        "Elspeth, Storm Slayer",
-        "Raise the Alarm"
+        "Elspeth, Storm Slayer"
       ]
     },
     {
@@ -1055,9 +1075,10 @@
       "power": null,
       "toughness": null,
       "colors": [],
-      "scryfall_id": "93116d98-2dad-4b80-a3af-9e36e34da6d4",
-      "image_uri": "https://cards.scryfall.io/normal/front/9/3/93116d98-2dad-4b80-a3af-9e36e34da6d4.jpg?1783922957",
+      "scryfall_id": "d1892b78-7663-4cbd-a732-9a4b0b18d4c8",
+      "image_uri": "https://cards.scryfall.io/normal/front/d/1/d1892b78-7663-4cbd-a732-9a4b0b18d4c8.jpg?1785498054",
       "produced_by": [
+        "Gleaming Splendor",
         "Prosperous Partnership",
         "Smothering Tithe"
       ]
