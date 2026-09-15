@@ -30,6 +30,11 @@
       "detail": "+The Eagles Are Coming!/-Semester's End (wipe insurance that converts the team into 4/4 fliers, tokens doubled); +Path to Exile/-Get Lost (1-mana exile; hoser coverage retained via Generous Gift, Witch Enchanter, Austere Command, Skyclave Apparition)"
     },
     {
+      "type": "ai-inferred",
+      "name": "DEC-803 — board-approved swap round 2 (2026-09-15)",
+      "detail": "DEC-803 airbending assessment: +Airbender Ascension/-Bloodline Pretender (a 2-mana repeating end-step flicker beats a counter accumulator whose counters the deck's own flickers and airbends erase); +Appa, Steadfast Guardian/-Flock Impostor (flash mass self-airbend as wipe insurance plus an Ally token on every spell cast from exile). Nontoken Dwarf count drops from 20 to 18 — both cuts were changelings."
+    },
+    {
       "type": "edhrec",
       "name": "EDHREC — Fíli the Pathfinder",
       "url": "https://edhrec.com/commanders/fili-the-pathfinder",
@@ -74,11 +79,9 @@
       },
       {
         "name": "Changelings",
-        "description": "Every changeling is a nontoken Dwarf for Fíli and every creature type for the kindred payoffs. Mirror Entity doubles as a finisher with its {X} overrun activation.",
+        "description": "Both changelings are nontoken Dwarves for Fíli and every creature type for the kindred payoffs. Mirror Entity doubles as a finisher with its {X} overrun activation; Universal Automaton is a one-mana Dwarf that any flicker re-buys.",
         "cards": [
           "Mirror Entity",
-          "Flock Impostor",
-          "Bloodline Pretender",
           "Universal Automaton"
         ]
       },
@@ -96,13 +99,15 @@
       },
       {
         "name": "Flicker Suite",
-        "description": "Every flicker of a nontoken Dwarf repeats its ETB and makes another 2/2. Eerie Interlude doubles as board-wipe insurance that returns the team with a fresh wave of triggers, and a kicked The Eagles Are Coming! bounces the team instead — each returned creature (tokens included) becomes a 4/4 flying Bird Soldier, doubled by Mondrak or Anointed Procession.",
+        "description": "Every flicker of a nontoken Dwarf repeats its ETB and makes another 2/2. Eerie Interlude doubles as board-wipe insurance that returns the team with a fresh wave of triggers, and a kicked The Eagles Are Coming! bounces the team instead — each returned creature (tokens included) becomes a 4/4 flying Bird Soldier, doubled by Mondrak or Anointed Procession. Airbender Ascension flickers a creature you control at every end step once it hits four quest counters, and Appa's flash ETB airbends the nontoken board out of a wipe — with the caveat that airbended tokens cease to exist and counters on airbended cards are gone. Cards cast out of airbend exile are real casts, so they re-fire Fíli's token trigger and Appa's Ally trigger.",
         "cards": [
           "Ephemerate",
           "Eerie Interlude",
           "The Eagles Are Coming!",
           "Teleportation Circle",
-          "Conjurer's Closet"
+          "Conjurer's Closet",
+          "Airbender Ascension",
+          "Appa, Steadfast Guardian"
         ]
       },
       {
@@ -335,6 +340,38 @@
         {
           "type": "ai-inferred",
           "name": "DEC-686 — board-approved v4 build (sign-off 2026-09-07)"
+        }
+      ]
+    },
+    {
+      "title": "Airbender Ascension + the token stream",
+      "cards": [
+        "Airbender Ascension",
+        "Fíli the Pathfinder",
+        "Aviary Mechanic"
+      ],
+      "description": "Ascension's quest counters come from any creature you control entering, tokens included. With Fíli out, one nontoken Dwarf drop is worth 2 counters (the Dwarf plus its 2/2), 3 with Mondrak or Anointed Procession, 5 with both — so two Dwarf drops clear the four-counter threshold with no doubler at all. The counters are never removed, so from then on it is a free end-step flicker of one of your creatures every turn: re-buy a Dwarf ETB and collect another 2/2. Its own enter trigger airbends up to one target creature; on your own nontoken Dwarf that is a {2} recast for a fresh ETB, and recasting from exile is a real cast, so Fíli's trigger fires again.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-803 — airbending assessment (board approval 2026-09-15)",
+          "detail": "DEC-803 airbending assessment"
+        }
+      ]
+    },
+    {
+      "title": "Appa + cast-from-exile",
+      "cards": [
+        "Appa, Steadfast Guardian",
+        "Airbender Ascension",
+        "Fíli the Pathfinder"
+      ],
+      "description": "Appa flashes in for {2}{W}{W} and airbends any number of your other nonland permanents, which is a fifth piece of wipe insurance alongside Eerie Interlude, Clever Concealment, Flawless Maneuver, and a kicked The Eagles Are Coming!. Two limits are real: airbended tokens cease to exist, so the 2/2 army is not saved — only nontoken permanents come back; and counters on airbended cards are gone, which matters with Cathars' Crusade counters on the board. Each exiled card then costs {2} to recast, and every one of those recasts is a spell cast from exile, so Appa makes a 1/1 Ally token for each while nontoken Dwarves also re-trigger Fíli.",
+      "sources": [
+        {
+          "type": "ai-inferred",
+          "name": "DEC-803 — airbending assessment (board approval 2026-09-15)",
+          "detail": "DEC-803 airbending assessment"
         }
       ]
     }
@@ -587,15 +624,16 @@
       "wincon_style": "combat"
     },
     {
-      "name": "Flock Impostor",
-      "type": "Creature — Shapeshifter",
-      "primary_role": "utility",
+      "name": "Appa, Steadfast Guardian",
+      "type": "Legendary Creature — Bison Ally",
+      "primary_role": "protection",
       "secondary_role": "engine"
     },
     {
-      "name": "Bloodline Pretender",
-      "type": "Artifact Creature — Shapeshifter",
-      "primary_role": "utility"
+      "name": "Airbender Ascension",
+      "type": "Enchantment",
+      "primary_role": "engine",
+      "secondary_role": "utility"
     },
     {
       "name": "Universal Automaton",
@@ -881,6 +919,21 @@
     }
   ],
   "tokens": [
+    {
+      "name": "Ally",
+      "type_line": "Token Creature — Ally",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "W"
+      ],
+      "scryfall_id": "01439983-8394-4a0c-9e9e-92a3f1927fe3",
+      "image_uri": "https://cards.scryfall.io/normal/front/0/1/01439983-8394-4a0c-9e9e-92a3f1927fe3.jpg?1783904746",
+      "produced_by": [
+        "Appa, Steadfast Guardian"
+      ]
+    },
     {
       "name": "Angel Warrior",
       "type_line": "Token Creature — Angel Warrior",
