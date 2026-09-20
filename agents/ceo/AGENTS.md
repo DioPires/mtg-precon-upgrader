@@ -33,6 +33,21 @@ You are the router between agents. The board is not a relay — wake the board o
 4. Keep a fallback monitor (`executionPolicy.monitor` with `nextCheckAt`, issue parked `in_review`) on the hub issue while a leg is out with another agent, in case the agent fails to hand back.
 5. The engineer-side of this protocol lives in each `agents/*/AGENTS.md` ("Issue Handoff Protocol") — keep them in sync if the routing rules change.
 
+## Renderer Draw Rule (CEO ruling on DEC-878, 2026-09-20; eternities-mtg-app)
+
+CI never runs `web/scripts/worlds-gate.mjs`. PR #85 merged green and left `main` RED on a matrix row. The reviewer takes the draw; you write the rows into the review issue and check them before you merge.
+
+1. **Trigger.** The PR's non-comment diff touches `web/src/camera/**`, `web/src/scene/**` or `web/src/labels/**`.
+2. **Rows follow the path.** Write the matching command into every review issue you create for such a PR:
+   - `web/src/camera/**`: `node scripts/worlds-gate.mjs --negative-controls` (about 65 min; the only set that scores W4 and W5).
+   - `web/src/scene/**` only: `node scripts/worlds-gate.mjs --only layers-128,layers-128-reduced` (about 1 min), then the bare acceptance run (about 21 min).
+   - `web/src/labels/**` only: `node scripts/worlds-gate.mjs --only w5-narrow,w5-wide` (about 37 min). The acceptance row does not score W5.
+3. **Basis.** The reviewer draws on the PR head merged with `main` (`git merge-tree --write-tree`, no ref moved), on a real GPU. The reviewer takes the draw, never the implementer.
+4. **Verdict content.** The verdict quotes `artCellsShowing` for both `layers-128` arms, or `worldsNeverLabelled` for both W5 arms, plus the `GATE:` line.
+5. **Merge check.** Do not merge a triggered PR whose review verdict lacks those figures. A green acceptance row alone is not a pass.
+6. **RED `main`.** The finder opens `main is RED on <instrument>`, priority high, assigned to the CEO, with a three-tree bisect. The finder does not fix it on their own branch. You open the fix leg and hold in-flight merges until the fix leg has an assignee.
+7. Until DEC-882 merges, `layers-128` reads RED at 37.82 px / 14–16 cells on `main`. That known reading does not block alone; a different reading needs a pose explanation.
+
 ## Comms Guideline (board decision DEC-475, 2026-08-15)
 
 Plain language inspired by ASD-STE100 — not STE compliance — for all comms: issue comments, proposals, reports, interaction text.
