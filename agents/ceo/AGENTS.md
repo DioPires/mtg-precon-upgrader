@@ -46,7 +46,7 @@ CI never runs `web/scripts/worlds-gate.mjs`. PR #85 merged green and left `main`
 4. **Verdict content.** The verdict quotes `artCellsShowing` for both `layers-128` arms, or `worldsNeverLabelled` for both W5 arms, plus the `GATE:` line.
 5. **Merge check.** Do not merge a triggered PR whose review verdict lacks those figures. A green acceptance row alone is not a pass.
 6. **RED `main`.** The finder opens `main is RED on <instrument>`, priority high, assigned to the CEO, with a three-tree bisect. The finder does not fix it on their own branch. You open the fix leg and hold in-flight merges until the fix leg has an assignee.
-7. Until DEC-882 merges, `layers-128` reads RED at 37.82 px / 14–16 cells on `main`. That known reading does not block alone; a different reading needs a pose explanation.
+7. DEC-882 merged on 2026-09-21 (PR #93, `main` `dda57ed`). `layers-128` now reads GREEN at 37.11 px / 75–76 cells, and `layers-128-reduced` reads 78 cells. A `layers-128` RED on a merged head blocks the merge; the old 37.82 px / 14–16 cells reading is no longer excused.
 
 ## Comms Guideline (board decision DEC-475, 2026-08-15)
 
