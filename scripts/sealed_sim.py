@@ -134,17 +134,20 @@ def is_dual_land(card: dict) -> bool:
     return bool(DUAL_MANA_RE.search(card.get("oracle_text") or ""))
 
 
-def fixing_mask(card: dict) -> int:
+def fixing_mask(card: dict, count_landcycling: bool = False) -> int:
     """Which colours this card can fix for a splash.
 
-    A dual land that makes the colour, an any-colour land, or any basic
-    landcycling card (it fetches a basic of the needed colour).
+    Board ruling (DEC-926 CEO review): a fixer is a *land in the pool that
+    produces the splash colour* -- the common duals, the rare slowlands, or an
+    any-colour land such as Room of Refuge. Basic-landcycling spells do not
+    count: they are spells, they cost a deck slot, and they only fix when drawn.
+
+    `count_landcycling=True` restores the original spec's wider rule, kept so
+    the report can show both ends of the range.
     """
     text = card.get("oracle_text") or ""
-    if LANDCYCLING_RE.search(text):
-        return 0b11111
     if "Land" not in card["type_line"] or is_basic(card):
-        return 0
+        return 0b11111 if (count_landcycling and LANDCYCLING_RE.search(text)) else 0
     if ANY_COLOR_MANA_RE.search(text):
         return 0b11111
     m = 0
@@ -156,7 +159,12 @@ def fixing_mask(card: dict) -> int:
 class CardTable:
     """Flat, index-addressed view of the set. All hot-loop lookups are lists."""
 
-    def __init__(self, cards: list[dict], pair_table: dict | None):
+    def __init__(
+        self,
+        cards: list[dict],
+        pair_table: dict | None,
+        count_landcycling_as_fixer: bool = False,
+    ):
         self.cards = [c for c in cards if not is_basic(c)]
         self.name = [c["name"] for c in self.cards]
         self.index = {n: i for i, n in enumerate(self.name)}
@@ -166,7 +174,9 @@ class CardTable:
         self.castable = [castable_subsets(r) for r in self.reqs]
         self.is_land = ["Land" in c["type_line"] for c in self.cards]
         self.is_dual = [is_dual_land(c) for c in self.cards]
-        self.fix = [fixing_mask(c) for c in self.cards]
+        self.fix = [
+            fixing_mask(c, count_landcycling_as_fixer) for c in self.cards
+        ]
         self.collector = [collector_num(c) for c in self.cards]
 
         paired: set[str] = set()
@@ -784,6 +794,27 @@ def markdown_report(results: dict, meta: dict) -> str:
     return "\n".join(L) + "\n"
 
 
+SPLASH_ASSUMPTION = {
+    "lands": (
+        "Splash gate is LANDS ONLY (board ruling, DEC-926 CEO review): up to 2 "
+        "cards of a single third colour at effective grade >= 7, allowed when "
+        "the pool holds >= 2 lands that produce that colour -- the common "
+        "duals, the rare slowlands, Room of Refuge. Basic-landcycling spells "
+        "do NOT count as fixers: they are spells, they cost a deck slot, and "
+        "they only fix when drawn. Splash cards are graded against the "
+        "two-colour eligible set's synergy counts."
+    ),
+    "spec": (
+        "Splash gate is the ORIGINAL SPEC rule (superseded; kept only to show "
+        "the range): same 2-fixer gate, but basic-landcycling spells and "
+        "Room of Refuge each count as a fixer for all five colours."
+    ),
+    "none": (
+        "Splash is DISABLED in this run (lower bound): decks are strictly two "
+        "colours."
+    ),
+}
+
 ASSUMPTIONS = [
     "Slot 6's 1.82% Special Guest is off-set and unusable in Sealed, so that "
     "slot always yields a main-set common.",
@@ -811,11 +842,7 @@ ASSUMPTIONS = [
     "-- its 8-mana reality is priced into its grade, not its eligibility. "
     "For `prepare` DFCs the front face is card_faces[0]. Lands are never deck "
     "spells; they enter only as fixers.",
-    "Splash: up to 2 cards of a single third colour, effective grade >= 7, "
-    "allowed when the pool holds >= 2 fixers for that colour. A fixer is any "
-    "land in the pool that can produce it (the common duals, the rare "
-    "slowlands, Room of Refuge) or any basic-landcycling card. Splash cards "
-    "are graded against the two-colour eligible set's synergy counts.",
+    "__SPLASH__",
     "`playables` counts the pair's available cards (eligible + any splash "
     "taken) at effective grade >= 4, not base grade; the same effective grade "
     "drives deck choice, score and the bomb count.",
@@ -846,19 +873,33 @@ def main() -> int:
         help="max splashed cards from a third colour (0 disables splashing)",
     )
     ap.add_argument(
+        "--splash-fixers",
+        choices=("lands", "spec"),
+        default="lands",
+        help="lands = only lands producing the colour count as fixers (board "
+        "ruling); spec = also count basic-landcycling spells (superseded)",
+    )
+    ap.add_argument(
         "--no-placeholder-run",
         action="store_true",
         help="skip the flat-grade comparison run",
     )
     args = ap.parse_args()
     SPLASH_MAX = args.splash_max
+    splash_mode = "none" if SPLASH_MAX == 0 else args.splash_fixers
 
     config = json.loads(pathlib.Path(args.config).read_text())
     cards = json.loads(pathlib.Path(args.cards).read_text())
     pair_table = (
         json.loads(pathlib.Path(args.pairs).read_text()) if args.pairs else None
     )
-    table = CardTable(cards, pair_table)
+    table = CardTable(
+        cards, pair_table, count_landcycling_as_fixer=(args.splash_fixers == "spec")
+    )
+    assumptions = [
+        SPLASH_ASSUMPTION[splash_mode] if x == "__SPLASH__" else x
+        for x in ASSUMPTIONS
+    ]
 
     if args.emit_grade_template:
         rows = grade_template(table)
@@ -904,7 +945,7 @@ def main() -> int:
         "set_name": config.get("set_name", config["set"]),
         "packs": collation.packs,
         "promo": bool(collation.promo),
-        "assumptions": ASSUMPTIONS,
+        "assumptions": assumptions,
         "pack_check": pack_check,
     }
 
@@ -915,7 +956,7 @@ def main() -> int:
         "cards": args.cards,
         "pairs": args.pairs,
         "grades": args.grades,
-        "assumptions": ASSUMPTIONS,
+        "assumptions": assumptions,
         "pack_check": pack_check,
         "normalization_residuals": collation.normalization_residuals,
         "runs": {},

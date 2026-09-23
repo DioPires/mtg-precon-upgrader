@@ -1,0 +1,237 @@
+{
+  "generated": "2026-09-23 15:55:07",
+  "set": "fra",
+  "config": "agents/ceo/analysis/dec925/collation.json",
+  "cards": "agents/ceo/analysis/dec925/fra_all_cards.json",
+  "pairs": "agents/ceo/analysis/dec925/echoed_pairs.json",
+  "grades": "agents/ceo/analysis/dec925/grades.json",
+  "assumptions": [
+    "Slot 6's 1.82% Special Guest is off-set and unusable in Sealed, so that slot always yields a main-set common.",
+    "Slot 8's 3% 'other' folds into non-paired uncommon.",
+    "Slots 9-11: the third echoed-pair card is drawn independently of the pair in slots 9-10 and may duplicate one of its halves.",
+    "Slot 12's 10.8% booster-fun variants are still set rares/mythics, split proportionally (R 83.4% / M 16.6%).",
+    "Slot 13 'full main set' means the 270-card main numbering, so the 10 common duals are not in the foil slot; the 2.8% residual is normalized away proportionally.",
+    "Every slot's published weights are normalized to sum to 1. The published figures for slots 8, 9-11 and 13 sum to 0.97-0.972; the CEO's target of 4.81 uncommons per pack was computed without that normalization and is not reachable by any proper distribution. The normalized model gives ~4.94. Commons, rares+mythics and duals match the targets.",
+    "Promo: one card uniform over the 64 main-set rares + 26 mythics (64/90 vs 26/90). FLAGGED - board to confirm from the pack.",
+    "Basic lands are dropped from the pool (unlimited at the event).",
+    "Eligibility is castability, not colour identity (DEC-927): every pip of the front-face mana cost must be payable by the pair. A hybrid pip {W/B} needs W or B; {2/W}, Phyrexian, generic, {X} and {C} are always payable. So Blessed Ghoul ({W/B}) is eligible for all 7 pairs containing W or B and Karn, Gilded Guardian ({2/W}{2/U}{2/B}{2/R}{2/G}) for all 10 -- its 8-mana reality is priced into its grade, not its eligibility. For `prepare` DFCs the front face is card_faces[0]. Lands are never deck spells; they enter only as fixers.",
+    "Splash gate is the ORIGINAL SPEC rule (superseded; kept only to show the range): same 2-fixer gate, but basic-landcycling spells and Room of Refuge each count as a fixer for all five colours.",
+    "`playables` counts the pair's available cards (eligible + any splash taken) at effective grade >= 4, not base grade; the same effective grade drives deck choice, score and the bomb count.",
+    "A pool shorter than 23 eligible cards is padded to 23 at grade 1 so scores stay comparable."
+  ],
+  "pack_check": {
+    "simulated": {
+      "common": 6.74188,
+      "uncommon": 4.94236,
+      "rare_plus_mythic": 1.31576,
+      "dual_land": 0.43622,
+      "total": 13.43622
+    },
+    "analytic": {
+      "common": 6.73925925925926,
+      "uncommon": 4.936151202749142,
+      "rare_plus_mythic": 1.3245895379915997,
+      "dual_land": 0.436
+    },
+    "target": {
+      "common": 6.71,
+      "uncommon": 4.81,
+      "rare_plus_mythic": 1.31,
+      "dual_land": 0.436
+    }
+  },
+  "normalization_residuals": {
+    "9,10": 0.03,
+    "11": 0.03,
+    "13": 0.028
+  },
+  "runs": {
+    "CEO grades": {
+      "pools": 100000,
+      "seed": 20260925,
+      "mean_pool_size": 81.61346,
+      "p_any_viable_pair": 0.86902,
+      "per_pair": [
+        {
+          "pair": "WU",
+          "p_viable": 0.66289,
+          "mean_score": 5.465447391304307,
+          "p_best": 0.1013,
+          "p_top2": 0.2049,
+          "mean_available": 35.19578,
+          "mean_playables": 31.05481,
+          "mean_removal": 4.15062,
+          "mean_bombs": 1.56383,
+          "mean_splash": 1.94931
+        },
+        {
+          "pair": "WB",
+          "p_viable": 0.80142,
+          "mean_score": 5.489019130434844,
+          "p_best": 0.12269,
+          "p_top2": 0.23717,
+          "mean_available": 35.38242,
+          "mean_playables": 31.28341,
+          "mean_removal": 6.38533,
+          "mean_bombs": 1.65282,
+          "mean_splash": 1.93532
+        },
+        {
+          "pair": "WR",
+          "p_viable": 0.80623,
+          "mean_score": 5.477636956521679,
+          "p_best": 0.1174,
+          "p_top2": 0.22778,
+          "mean_available": 35.46872,
+          "mean_playables": 31.18503,
+          "mean_removal": 6.9546,
+          "mean_bombs": 1.61679,
+          "mean_splash": 1.9132
+        },
+        {
+          "pair": "WG",
+          "p_viable": 0.76351,
+          "mean_score": 5.47567869565215,
+          "p_best": 0.12429,
+          "p_top2": 0.2317,
+          "mean_available": 34.96964,
+          "mean_playables": 31.37851,
+          "mean_removal": 5.19294,
+          "mean_bombs": 1.70953,
+          "mean_splash": 1.94873
+        },
+        {
+          "pair": "UB",
+          "p_viable": 0.71368,
+          "mean_score": 5.418786521739167,
+          "p_best": 0.07393,
+          "p_top2": 0.1558,
+          "mean_available": 35.1777,
+          "mean_playables": 30.65285,
+          "mean_removal": 5.50633,
+          "mean_bombs": 1.3807,
+          "mean_splash": 1.94528
+        },
+        {
+          "pair": "UR",
+          "p_viable": 0.7214,
+          "mean_score": 5.4800926086956565,
+          "p_best": 0.11133,
+          "p_top2": 0.22196,
+          "mean_available": 35.4873,
+          "mean_playables": 30.72445,
+          "mean_removal": 5.86371,
+          "mean_bombs": 1.35295,
+          "mean_splash": 1.93443
+        },
+        {
+          "pair": "UG",
+          "p_viable": 0.60701,
+          "mean_score": 5.442131304347798,
+          "p_best": 0.08183,
+          "p_top2": 0.17704,
+          "mean_available": 35.35833,
+          "mean_playables": 31.11236,
+          "mean_removal": 3.92114,
+          "mean_bombs": 1.4313,
+          "mean_splash": 1.95879
+        },
+        {
+          "pair": "BR",
+          "p_viable": 0.7278,
+          "mean_score": 5.465761739130455,
+          "p_best": 0.1117,
+          "p_top2": 0.21421,
+          "mean_available": 35.19954,
+          "mean_playables": 29.91723,
+          "mean_removal": 7.91757,
+          "mean_bombs": 1.33621,
+          "mean_splash": 1.87137
+        },
+        {
+          "pair": "BG",
+          "p_viable": 0.7689,
+          "mean_score": 5.4412217391304605,
+          "p_best": 0.08392,
+          "p_top2": 0.17998,
+          "mean_available": 35.15146,
+          "mean_playables": 30.51426,
+          "mean_removal": 6.13829,
+          "mean_bombs": 1.5209,
+          "mean_splash": 1.95572
+        },
+        {
+          "pair": "RG",
+          "p_viable": 0.73712,
+          "mean_score": 5.402802608695684,
+          "p_best": 0.07161,
+          "p_top2": 0.14946,
+          "mean_available": 35.02997,
+          "mean_playables": 30.27762,
+          "mean_removal": 7.04634,
+          "mean_bombs": 1.3662,
+          "mean_splash": 1.9209
+        }
+      ],
+      "per_color": [
+        {
+          "color": "W",
+          "mean_playables": 31.22544,
+          "mean_removal": 5.6708725
+        },
+        {
+          "color": "U",
+          "mean_playables": 30.8861175,
+          "mean_removal": 4.86045
+        },
+        {
+          "color": "B",
+          "mean_playables": 30.5919375,
+          "mean_removal": 6.48688
+        },
+        {
+          "color": "R",
+          "mean_playables": 30.5260825,
+          "mean_removal": 6.945555
+        },
+        {
+          "color": "G",
+          "mean_playables": 30.8206875,
+          "mean_removal": 5.5746775
+        }
+      ],
+      "rare_mythic_per_pool": {
+        "mean": 8.9559,
+        "distribution": {
+          "7": 0.22049,
+          "8": 0.22542,
+          "9": 0.2284,
+          "10": 0.15596,
+          "11": 0.09147,
+          "12": 0.04638,
+          "13": 0.02042,
+          "14": 0.00758,
+          "15": 0.00286,
+          "16": 0.00075,
+          "17": 0.0002,
+          "18": 4e-05,
+          "19": 2e-05,
+          "20": 1e-05
+        }
+      },
+      "dual_lands_per_pool": {
+        "mean": 2.61346,
+        "distribution": {
+          "0": 0.03209,
+          "1": 0.14972,
+          "2": 0.28829,
+          "3": 0.29914,
+          "4": 0.17105,
+          "5": 0.05272,
+          "6": 0.00699
+        }
+      },
+      "elapsed_seconds": 21.7
+    }
+  }
+}

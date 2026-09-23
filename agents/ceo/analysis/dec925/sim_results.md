@@ -13,7 +13,7 @@
 - Promo: one card uniform over the 64 main-set rares + 26 mythics (64/90 vs 26/90). FLAGGED - board to confirm from the pack.
 - Basic lands are dropped from the pool (unlimited at the event).
 - Eligibility is castability, not colour identity (DEC-927): every pip of the front-face mana cost must be payable by the pair. A hybrid pip {W/B} needs W or B; {2/W}, Phyrexian, generic, {X} and {C} are always payable. So Blessed Ghoul ({W/B}) is eligible for all 7 pairs containing W or B and Karn, Gilded Guardian ({2/W}{2/U}{2/B}{2/R}{2/G}) for all 10 -- its 8-mana reality is priced into its grade, not its eligibility. For `prepare` DFCs the front face is card_faces[0]. Lands are never deck spells; they enter only as fixers.
-- Splash: up to 2 cards of a single third colour, effective grade >= 7, allowed when the pool holds >= 2 fixers for that colour. A fixer is any land in the pool that can produce it (the common duals, the rare slowlands, Room of Refuge) or any basic-landcycling card. Splash cards are graded against the two-colour eligible set's synergy counts.
+- Splash gate is LANDS ONLY (board ruling, DEC-926 CEO review): up to 2 cards of a single third colour at effective grade >= 7, allowed when the pool holds >= 2 lands that produce that colour -- the common duals, the rare slowlands, Room of Refuge. Basic-landcycling spells do NOT count as fixers: they are spells, they cost a deck slot, and they only fix when drawn. Splash cards are graded against the two-colour eligible set's synergy counts.
 - `playables` counts the pair's available cards (eligible + any splash taken) at effective grade >= 4, not base grade; the same effective grade drives deck choice, score and the bomb count.
 - A pool shorter than 23 eligible cards is padded to 23 at grade 1 so scores stay comparable.
 
@@ -21,28 +21,28 @@
 
 | Pair | P(viable) | Mean score | P(best) | P(top 2) | Playables | Removal | Bombs | Splash |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| WB | 80.1% | 5.49 | 12.3% | 23.7% | 31.3 | 6.39 | 1.65 | 1.94 |
-| UR | 72.1% | 5.48 | 11.1% | 22.2% | 30.7 | 5.86 | 1.35 | 1.93 |
-| WR | 80.6% | 5.48 | 11.7% | 22.8% | 31.2 | 6.95 | 1.62 | 1.91 |
-| WG | 76.4% | 5.48 | 12.4% | 23.2% | 31.4 | 5.19 | 1.71 | 1.95 |
-| BR | 72.8% | 5.47 | 11.2% | 21.4% | 29.9 | 7.92 | 1.34 | 1.87 |
-| WU | 66.3% | 5.47 | 10.1% | 20.5% | 31.1 | 4.15 | 1.56 | 1.95 |
-| UG | 60.7% | 5.44 | 8.2% | 17.7% | 31.1 | 3.92 | 1.43 | 1.96 |
-| BG | 76.9% | 5.44 | 8.4% | 18.0% | 30.5 | 6.14 | 1.52 | 1.96 |
-| UB | 71.4% | 5.42 | 7.4% | 15.6% | 30.7 | 5.51 | 1.38 | 1.95 |
-| RG | 73.7% | 5.40 | 7.2% | 14.9% | 30.3 | 7.05 | 1.37 | 1.92 |
+| UR | 61.1% | 5.40 | 11.3% | 22.8% | 30.2 | 5.81 | 1.05 | 1.46 |
+| WB | 68.8% | 5.40 | 11.9% | 23.1% | 30.8 | 6.42 | 1.27 | 1.44 |
+| WG | 65.9% | 5.40 | 12.8% | 23.4% | 30.9 | 5.12 | 1.33 | 1.48 |
+| WR | 68.9% | 5.39 | 11.5% | 22.2% | 30.7 | 6.88 | 1.24 | 1.41 |
+| WU | 54.5% | 5.38 | 10.1% | 20.4% | 30.6 | 4.12 | 1.15 | 1.49 |
+| BR | 63.7% | 5.38 | 11.0% | 21.0% | 29.4 | 7.85 | 1.08 | 1.32 |
+| UG | 48.2% | 5.37 | 8.2% | 18.0% | 30.7 | 3.96 | 1.01 | 1.53 |
+| BG | 62.4% | 5.36 | 8.5% | 18.2% | 30.1 | 6.19 | 1.11 | 1.51 |
+| UB | 59.7% | 5.34 | 7.6% | 15.9% | 30.2 | 5.49 | 1.04 | 1.47 |
+| RG | 63.4% | 5.32 | 7.2% | 15.0% | 29.8 | 6.94 | 1.08 | 1.42 |
 
-P(at least one viable pair in the pool): **86.9%**. Mean pool size (basics excluded): 81.6 cards.
+P(at least one viable pair in the pool): **86.6%**. Mean pool size (basics excluded): 81.6 cards.
 
 ## Per colour (mean over the 4 pairs containing it)
 
 | Colour | Mean playables | Mean removal in deck |
 |---|---:|---:|
-| W | 31.2 | 5.67 |
-| U | 30.9 | 4.86 |
-| B | 30.6 | 6.49 |
-| R | 30.5 | 6.95 |
-| G | 30.8 | 5.57 |
+| W | 30.7 | 5.64 |
+| U | 30.4 | 4.84 |
+| B | 30.1 | 6.49 |
+| R | 30.0 | 6.87 |
+| G | 30.4 | 5.55 |
 
 ## Pool composition (grade-independent)
 
@@ -101,7 +101,7 @@ P(at least one viable pair in the pool): **86.9%**. Mean pool size (basics exclu
 - Promo: one card uniform over the 64 main-set rares + 26 mythics (64/90 vs 26/90). FLAGGED - board to confirm from the pack.
 - Basic lands are dropped from the pool (unlimited at the event).
 - Eligibility is castability, not colour identity (DEC-927): every pip of the front-face mana cost must be payable by the pair. A hybrid pip {W/B} needs W or B; {2/W}, Phyrexian, generic, {X} and {C} are always payable. So Blessed Ghoul ({W/B}) is eligible for all 7 pairs containing W or B and Karn, Gilded Guardian ({2/W}{2/U}{2/B}{2/R}{2/G}) for all 10 -- its 8-mana reality is priced into its grade, not its eligibility. For `prepare` DFCs the front face is card_faces[0]. Lands are never deck spells; they enter only as fixers.
-- Splash: up to 2 cards of a single third colour, effective grade >= 7, allowed when the pool holds >= 2 fixers for that colour. A fixer is any land in the pool that can produce it (the common duals, the rare slowlands, Room of Refuge) or any basic-landcycling card. Splash cards are graded against the two-colour eligible set's synergy counts.
+- Splash gate is LANDS ONLY (board ruling, DEC-926 CEO review): up to 2 cards of a single third colour at effective grade >= 7, allowed when the pool holds >= 2 lands that produce that colour -- the common duals, the rare slowlands, Room of Refuge. Basic-landcycling spells do NOT count as fixers: they are spells, they cost a deck slot, and they only fix when drawn. Splash cards are graded against the two-colour eligible set's synergy counts.
 - `playables` counts the pair's available cards (eligible + any splash taken) at effective grade >= 4, not base grade; the same effective grade drives deck choice, score and the bomb count.
 - A pool shorter than 23 eligible cards is padded to 23 at grade 1 so scores stay comparable.
 

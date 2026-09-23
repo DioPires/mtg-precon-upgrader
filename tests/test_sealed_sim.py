@@ -359,15 +359,15 @@ def test_splash_needs_two_fixers_and_a_grade_seven_card(table):
     green_fixers = [i for i in duals if table.fix[i] & ss.COLOR_BIT["G"]]
     assert len(green_fixers) >= 2
 
-    # exclude the basic-landcycling commons: those are fixers in their own
-    # right, which would satisfy the green requirement on their own
+    # no spell may be a fixer under the lands-only gate; assert that rather
+    # than relying on it, since this pool must supply exactly the 2 green
+    # fixers the test adds by hand
     mono_w = [
         i
         for i in range(len(table.cards))
-        if table.cmask[i] == ss.COLOR_BIT["W"]
-        and not table.is_land[i]
-        and not table.fix[i]
+        if table.cmask[i] == ss.COLOR_BIT["W"] and not table.is_land[i]
     ][:23]
+    assert all(table.fix[i] == 0 for i in mono_w)
     green_bomb = next(
         i
         for i in range(len(table.cards))
@@ -394,17 +394,49 @@ def test_splash_needs_two_fixers_and_a_grade_seven_card(table):
     assert idx  # keep the fixture reference meaningful
 
 
-def test_room_of_refuge_and_landcycling_count_as_fixers(table):
-    room = table.index["Room of Refuge"]
-    assert table.fix[room] == 0b11111
-    cyclers = [
+def _landcyclers(table):
+    return [
         i
         for i in range(len(table.cards))
         if "landcycling" in (table.cards[i].get("oracle_text") or "").lower()
     ]
+
+
+def test_landcycling_spells_are_not_fixers(table):
+    """Board ruling (DEC-926 CEO review): the splash gate is lands only."""
+    cyclers = _landcyclers(table)
     assert len(cyclers) == 5
     for i in cyclers:
-        assert table.fix[i] == 0b11111
+        assert not table.is_land[i], table.name[i]
+        assert table.fix[i] == 0, table.name[i]
+
+
+def test_common_dual_fixes_exactly_its_two_colours(table, cards):
+    duals = [i for i in range(len(table.cards)) if table.is_dual[i]]
+    assert len(duals) == 10
+    for i in duals:
+        pairs = ss.DUAL_MANA_RE.findall(table.cards[i].get("oracle_text") or "")
+        assert len(pairs) == 1, table.name[i]
+        a, b = pairs[0]
+        expected = ss.COLOR_BIT[a] | ss.COLOR_BIT[b]
+        assert table.fix[i] == expected, table.name[i]
+        assert bin(table.fix[i]).count("1") == 2, table.name[i]
+    # the 10 duals cover all 10 colour pairs exactly once
+    assert len({table.fix[i] for i in duals}) == 10
+    assert cards  # fixture kept meaningful
+
+
+def test_room_of_refuge_fixes_every_colour(table):
+    assert table.fix[table.index["Room of Refuge"]] == 0b11111
+
+
+def test_spec_splash_mode_restores_landcycling_fixers(cards, pair_table):
+    """The superseded spec rule stays reachable for the range table."""
+    spec = ss.CardTable(cards, pair_table, count_landcycling_as_fixer=True)
+    for i in _landcyclers(spec):
+        assert spec.fix[i] == 0b11111, spec.name[i]
+    # lands are unaffected by the switch
+    assert spec.fix[spec.index["Room of Refuge"]] == 0b11111
 
 
 def test_viability_thresholds(table):
