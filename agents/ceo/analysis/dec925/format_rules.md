@@ -1,0 +1,6 @@
+- **The Jace token.** Any card that says "empower Jace N" creates a blue Jace planeswalker token if you have none and puts N loyalty on it. The token has −1: surveil 1 and −3: draw a card. It can be attacked. Count your Jace sources: 4 or more means the Jace synergy grades apply.
+- **The 10 common dual lands enter untapped only if you control a planeswalker.** A Jace token counts. Without one they are tapped duals. Play them anyway.
+- **Prepared creatures** (two-faced cards) enter with a spell you may cast once by paying the spell's cost; three of them (Paradox Shaper, Stingerquill Voxmancer, Woodwork Prodigy) re-prepare every upkeep and are engines.
+- **Threshold** (7 cards in graveyard) needs mill: Omit Variables, surveil, Something Worth Saving. Without 4+ enablers the threshold cards are their base grade.
+- **Basic landcycling {2}** on five commons is your splash insurance and your flood insurance.
+- **3 damage kills most creatures in the set.** Counted from the card file: 68% of creatures have toughness 3 or less, 48% have 2 or less, 87% have 4 or less. Respect No Admittance, Stingerquill Charm and Last Gasp at 2 mana.

@@ -26,7 +26,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
    ```bash
    uv run python scripts/prerelease/dump_set.py --set CODE --out-dir DIR
    ```
-   Writes the card dump, the grading sheet, and `set_facts.md` (rarity and colour counts, keyword counts, toughness census, collector-number gaps, watermarks). Check the rarity totals against WotC's article. Collector gaps are usually showcase-first printings, not missing cards.
+   Writes the card dump, the prints dump, the grading sheet, and `set_facts.md` (rarity and colour counts, keyword and oracle-text mechanic counts, toughness census, collector-number gaps, watermarks, two-colour uncommons per pair). Check the rarity totals against WotC's article. Collector gaps are usually showcase-first printings, not missing cards; the tool resolves each one against the prints dump. `--from-dump` rebuilds the two text files from dumps already on disk, without the network.
 2. **Collation config.** Copy `scripts/prerelease/collation_template.json` to `DIR/collation.json`. Fill every slot from the WotC article's verbatim slot text. Rules:
    - Sum every treatment of the same card class inside a slot (non-foil plus foil plus showcase). A foil dual is still a dual. This was the DEC-925 error.
    - Booster-fun variants of rares and mythics are still rares and mythics; fold them proportionally.
@@ -38,7 +38,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
    ```bash
    uv run python scripts/prerelease/build_grades.py --set-dir DIR
    ```
-   The builder fails if any card is missing or duplicated.
+   The builder fails if any card is missing, duplicated, or not in the set. The `provides` tag rules live in `DIR/tags.json`; copy `scripts/prerelease/tags_default.json` and rewrite them for the set, keeping only tags some card's grade actually depends on.
 4. **Compare to two external sources.** Parse Draftsim's ratings and search the Limited Resources transcript for the cards you are least sure of.
    ```bash
    uv run python scripts/prerelease/compare_grades.py --set-dir DIR --draftsim URL
@@ -57,7 +57,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
    ```bash
    uv run python scripts/prerelease/build_cheat_sheet.py --set-dir DIR
    ```
-   Output `DIR/cheat_sheet.md`: hand-scoring procedure, format rules, removal and tricks per colour, the ranking as tiers, the full graded list. Phone-readable on GitHub.
+   Output `DIR/cheat_sheet.md`: hand-scoring procedure, format rules, removal and tricks per colour, the ranking as tiers, the full graded list. Phone-readable on GitHub. Section 2 is `format_rules.md` verbatim; everything else is generated. A handful of sentences in sections 1, 3 and 5 are judgement calls about the set rather than facts the tool can derive (which cards fix a splash, how to read the ranking at the table); write those into `DIR/prose.json` — without it the tool emits a generic version of each, and `--print-tiers` shows the tier reading computed from the data.
 8. **Report.** Post on the issue: the tier reading of P(best), P(viable) per pair, colour depth, what moved the numbers, the model's limits, the day-of steps. Commit and push the folder.
 9. **Self-review.** Cold pass, every number against its source: re-read the WotC slot text, re-count mechanics, audit removal tags with a regex over oracle text, re-check any quoted statistic by computing it, re-read the cheat sheet procedure for inconsistent thresholds. Post the findings even when nothing changes.
 10. **After the event.** Ask the board how the cheat sheet held up. Record what was wrong in `DIR/notes.md` and, if it is a process lesson, in this playbook.

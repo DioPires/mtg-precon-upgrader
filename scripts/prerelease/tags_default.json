@@ -1,0 +1,45 @@
+{
+  "_comment": [
+    "Rules that derive a card's `provides` tags from its oracle text and type line.",
+    "A tag is added when either regex matches; both are matched case-insensitively",
+    "against lower-cased text, so write the patterns in lower case.",
+    "These are the Reality Fracture (FRA) rules from DEC-925. Copy this file to",
+    "<set-dir>/tags.json and rewrite the rules for the set you are grading:",
+    "a tag only earns its place when some card's grade depends on counting it.",
+    "The `needs` value in grades_src.py must name a tag that exists here."
+  ],
+  "rules": [
+    {
+      "tag": "jace",
+      "oracle": "empower jace",
+      "type_line": "planeswalker —",
+      "note": "cards that put loyalty on the Jace token, plus real planeswalkers"
+    },
+    {
+      "tag": "planeswalker",
+      "type_line": "planeswalker —",
+      "note": "turns on the common dual lands, which enter untapped only with a planeswalker"
+    },
+    {
+      "tag": "graveyard",
+      "oracle": "\\bmill\\b|\\bsurveil\\b|put .* into your graveyard|from your graveyard",
+      "note": "threshold enablers"
+    },
+    {
+      "tag": "surveil",
+      "oracle": "\\bscry\\b|\\bsurveil\\b",
+      "note": "scry/surveil payoffs count these"
+    },
+    {
+      "tag": "lifegain",
+      "oracle": "gain \\d+ life|gain life|lifelink|you gain \\w+ life",
+      "note": "lifegain payoffs count these"
+    },
+    {
+      "tag": "artifact",
+      "oracle": "artifact token|heartwood|thopter|treasure",
+      "type_line": "artifact",
+      "note": "artifact-count payoffs"
+    }
+  ]
+}

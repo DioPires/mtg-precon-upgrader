@@ -1,0 +1,101 @@
+{
+  "_comment": [
+    "Template for <set-dir>/collation.json, the Play Booster model scripts/sealed_sim.py",
+    "samples from. Copy it, delete the _comment keys, and fill every slot from the",
+    "verbatim slot text in WotC's 'Collecting <set>' article.",
+    "",
+    "Rules that cost us accuracy before:",
+    "- Sum every treatment of the same card class inside one slot: non-foil + foil +",
+    "  showcase. A foil dual is still a dual. Counting only the non-foil duals put the",
+    "  Reality Fracture dual rate at 43.6% instead of 54.5% (DEC-925).",
+    "- Booster-fun variants of rares and mythics are still rares and mythics. Fold them",
+    "  in with __other__ + other_goes_to: proportional.",
+    "- Off-set cards (Special Guests, The List) are not in the Sealed pool unless the",
+    "  event rules say otherwise. State the assumption in the slot note.",
+    "- Cross-check against a machine-readable model when one exists (taw/magic-search-engine,",
+    "  data/boosters/<code>-play.yaml) and record every disagreement in the note.",
+    "- Weights per slot need not sum to 1; the simulator normalizes and reports the",
+    "  residual it absorbed. Say so in the note when the published figures do not sum to 1.",
+    "",
+    "Slot kinds the simulator supports:",
+    "- single: draw one card from the groups in `weights`.",
+    "- echoed_pair: draw a pair of cards that are printed as a linked pair. Needs a",
+    "  pairs file passed to sealed_sim.py with --pairs.",
+    "A slot kind the set needs and the simulator does not have is an engineer leg:",
+    "spec it as a new `kind` here with its own test."
+  ],
+
+  "set": "CODE",
+  "set_name": "Set Name",
+  "description": "Where the weights come from, with dates. Name every source and note where two sources disagree.",
+  "packs_per_pool": 6,
+
+  "groups": {
+    "_comment": "One line per group naming exactly which cards are in it, including what is excluded. The simulator resolves group names against the card dump.",
+    "main_common": "rarity=common in the main numbering, excluding the dual lands and basics",
+    "main_uncommon": "all main-set uncommons",
+    "main_rare": "all main-set rares",
+    "main_mythic": "all main-set mythics",
+    "dual_common_land": "the common dual land cycle, if the set has one"
+  },
+
+  "slots": [
+    {
+      "slots": [1, 2, 3, 4, 5],
+      "kind": "single",
+      "weights": { "main_common": 1.0 },
+      "note": "common. NOTE: sum non-foil + foil + showcase shares of the same card class before writing a weight."
+    },
+    {
+      "slots": [6],
+      "kind": "single",
+      "weights": { "main_common": 0.982, "__other__": 0.018 },
+      "other_goes_to": "proportional",
+      "note": "common 98.2% / off-set card 1.8%. NOTE: sum non-foil + foil + showcase shares. __other__ is the share this model cannot place; other_goes_to says where it goes ('proportional' spreads it over the named groups)."
+    },
+    {
+      "slots": [7],
+      "kind": "single",
+      "weights": { "main_uncommon": 1.0 },
+      "note": "uncommon. NOTE: sum non-foil + foil + showcase shares."
+    },
+    {
+      "slots": [8, 9],
+      "kind": "echoed_pair",
+      "weights": { "main_uncommon": 1.0 },
+      "note": "a linked pair filling two slots; needs --pairs. NOTE: sum non-foil + foil + showcase shares. Delete this slot when the set has no paired cycle."
+    },
+    {
+      "slots": [10],
+      "kind": "single",
+      "weights": { "main_rare": 0.858, "main_mythic": 0.142 },
+      "note": "rare or mythic. NOTE: sum non-foil + foil + showcase shares; booster-fun rares and mythics belong here, not in a separate group."
+    },
+    {
+      "slots": [11],
+      "kind": "single",
+      "weights": { "dual_common_land": 0.545, "__basic__": 0.455 },
+      "note": "land slot. NOTE: sum non-foil + foil + showcase shares of the duals. __basic__ is a basic land; the simulator drops basics from the pool because the event supplies them."
+    }
+  ],
+
+  "promo": {
+    "enabled": true,
+    "count": 1,
+    "weights": { "main_rare": 0.711, "main_mythic": 0.289 },
+    "note": "The date-stamped promo card. Confirm the pool with the board from an actual pack; set enabled=false to simulate without it."
+  },
+
+  "sanity_targets": {
+    "_comment": "Per-pack expectation worked out by hand from the article, before running the sim. The sim's test pins the model to these.",
+    "source": "who computed these, from which article, on which date",
+    "per_pack_excluding_basics": {
+      "common": 0.0,
+      "uncommon": 0.0,
+      "rare_plus_mythic": 0.0,
+      "dual_land": 0.0
+    },
+    "tolerance": 0.05,
+    "known_divergence": "Any target the model cannot hit, and why. Leave empty when there is none."
+  }
+}
