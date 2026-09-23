@@ -57,7 +57,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
    ```bash
    uv run python scripts/prerelease/build_cheat_sheet.py --set-dir DIR
    ```
-   Output `DIR/cheat_sheet.md`: hand-scoring procedure, format rules, removal and tricks per colour, the ranking as tiers, the full graded list. Phone-readable on GitHub. Section 2 is `format_rules.md` verbatim; everything else is generated. A handful of sentences in sections 1, 3 and 5 are judgement calls about the set rather than facts the tool can derive (which cards fix a splash, how to read the ranking at the table); write those into `DIR/prose.json` — without it the tool emits a generic version of each, and `--print-tiers` shows the tier reading computed from the data.
+   Output `DIR/cheat_sheet.md`: hand-scoring procedure, format rules, removal and tricks per colour, the ranking as tiers, the full graded list. Phone-readable on GitHub. Section 2 is `format_rules.md` verbatim; keep each rule to one bold line and one number. Everything else is generated, including the toughness table and the per-spell kill share in section 3. A handful of sentences in sections 1, 3 and 5 are judgement calls about the set rather than facts the tool can derive (which cards fix a splash, how to read the ranking at the table); write those into `DIR/prose.json` — without it the tool emits a generic version of each, and `--print-tiers` shows the tier reading computed from the data.
 8. **Report.** Post on the issue: the tier reading of P(best), P(viable) per pair, colour depth, what moved the numbers, the model's limits, the day-of steps. Commit and push the folder.
 9. **Self-review.** Cold pass, every number against its source: re-read the WotC slot text, re-count mechanics, audit removal tags with a regex over oracle text, re-check any quoted statistic by computing it, re-read the cheat sheet procedure for inconsistent thresholds. Post the findings even when nothing changes.
 10. **After the event.** Ask the board how the cheat sheet held up. Record what was wrong in `DIR/notes.md` and, if it is a process lesson, in this playbook.
@@ -67,6 +67,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
 - Report P(best) as tiers, not an order. One-point changes on a dozen grades move pairs by up to 2 points.
 - P(viable) is more stable than P(best); colour-level statements (which colours carry removal, which are deep) are the most stable.
 - The durable deliverables are the verified fact sheet, the graded list and the ten-minute hand procedure. The ranking is background.
+- Write the sheet as instructions, not explanations: one imperative line per step, the number first, reasons in the report. Show colour at a glance (the ⚪🔵⚫🔴🟢 pips) and put the creature-toughness table next to the removal list with what each spell kills. Both came from a reader of the FRA sheet (DEC-925, step 10).
 
 ## Known traps
 

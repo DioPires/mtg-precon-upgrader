@@ -17,7 +17,9 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 CSS = """
 @page { size: A4; margin: 12mm 11mm; }
-body { font-family: -apple-system, Helvetica, Arial, sans-serif; font-size: 9.5pt; line-height: 1.3; }
+body { font-family: -apple-system, Helvetica, Arial, "Apple Color Emoji", sans-serif; font-size: 9.5pt; line-height: 1.3; }
+sub { font-size: 7.5pt; color: #444; vertical-align: baseline; }
+li { margin: 2pt 0; }
 h1 { font-size: 16pt; } h2 { font-size: 12.5pt; margin-top: 14pt; } h3 { font-size: 10.5pt; }
 table { border-collapse: collapse; font-size: 8.4pt; width: 100%; }
 th, td { border: 1px solid #999; padding: 2px 4px; vertical-align: top; }

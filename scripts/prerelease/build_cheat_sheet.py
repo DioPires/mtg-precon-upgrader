@@ -93,6 +93,105 @@ def mark(entry: dict) -> str:
     return out
 
 
+COLOR_PIP = {"W": "⚪", "U": "🔵", "B": "⚫", "R": "🔴", "G": "🟢"}
+
+
+def pip(entry: dict) -> str:
+    """A colour mark that survives markdown, GitHub and the PDF: one circle per colour."""
+    cols = [c for c in "WUBRG" if c in entry["colors"]]
+    if "Land" in entry["type_line"].split(" //")[0] and not cols:
+        return "◇"
+    if not cols:
+        return "◇"
+    if len(cols) == 1:
+        return COLOR_PIP[cols[0]]
+    mc = entry["mana_cost"].split(" // ")[0]
+    hybrid = any("/" in p and not any(a.isdigit() for a in p.split("/")) for p in pips(mc))
+    if len(cols) == 2 and hybrid:
+        return "".join(COLOR_PIP[c] for c in cols)
+    return "🟡"
+
+
+def heading_pip(key: str) -> str:
+    """The pip for a section heading such as "W", "Gold WB", "Hybrid (either color)"."""
+    if key in COLOR_PIP:
+        return COLOR_PIP[key]
+    if key.startswith("Gold"):
+        return "🟡"
+    if key.startswith("Hybrid"):
+        return "⚪🔵"
+    return "◇"
+
+
+def toughness_census(cards: dict) -> tuple:
+    """(distribution, cumulative, per_colour_le3, n) over creatures with printed toughness."""
+    def front_face(card: dict) -> dict:
+        faces = card.get("card_faces")
+        return faces[0] if faces and "oracle_text" not in card else card
+
+    vals, by_colour = [], collections.defaultdict(list)
+    for card in cards.values():
+        face = front_face(card)
+        if "Creature" not in face["type_line"].split(" //")[0] or "Basic" in card["type_line"]:
+            continue
+        t = face.get("toughness", "")
+        if not t.isdigit():
+            continue
+        vals.append(int(t))
+        cols = face.get("colors", card.get("colors", []))
+        if len(cols) == 1:
+            by_colour[cols[0]].append(int(t))
+    n = len(vals)
+    dist = collections.Counter(min(v, 6) for v in vals)
+    cum, running = {}, 0
+    for t in range(0, 7):
+        running += dist.get(t, 0)
+        cum[t] = running / n if n else 0.0
+    per_colour = {
+        c: (sum(v <= 3 for v in by_colour[c]) / len(by_colour[c]) if by_colour[c] else 0.0)
+        for c in WUBRG
+    }
+    return dist, cum, per_colour, n
+
+
+def kill_share(entry: dict, card: dict, cum: dict) -> str:
+    """What share of the set's creatures this removal spell answers, from its oracle text."""
+    text = oracle_text(card).split("//")[0]
+    if re.search(r"base power and toughness 0/0", text):
+        return "all (no counters)"
+    if re.search(r"target creature with flying", text):
+        return "flyers only"
+    if re.search(r"x -1/-1 counters", text):
+        return "−X/−X, X = highest MV in your graveyard"
+    if re.search(r"sacrifices a creature", text):
+        return "edict"
+    if re.search(r"(target|creature or planeswalker) that's (green|blue|black|red|white) or", text):
+        return "two colours only"
+    if re.search(r"destroy target creature|exile target (creature|nonland permanent)|"
+                 r"destroy target nonland permanent|"
+                 r"put(s)? it on (the|their choice)|choose target nonland permanent|"
+                 r"loses all abilities|destroy all creatures|exile all creatures|all creatures get -3/-3",
+                 text):
+        if re.search(r"toughness 4 or greater", text):
+            return f"toughness 4+ ({100 * (1 - cum[3]):.0f}%)"
+        if re.search(r"mana value 3 or greater", text):
+            return "MV 3+"
+        if re.search(r"that's (green|blue|black|red|white) or", text):
+            return "two colours only"
+        return "all"
+    damage = [int(m) for m in re.findall(r"deals (\d) damage to (?:any target|target creature)", text)]
+    if damage:
+        d = max(damage)
+        return f"≤{d} toughness ({100 * cum[min(d, 6)]:.0f}%)"
+    m = re.search(r"-(\d)/-(\d)", text)
+    if m:
+        d = int(m.group(2))
+        return f"≤{d} toughness ({100 * cum[min(d, 6)]:.0f}%)"
+    if re.search(r"fights?|deals damage equal to its power", text):
+        return "fight (your creature's power)"
+    return "conditional"
+
+
 def row(entry: dict) -> str:
     syn = (
         f" (→{entry['grade_synergy']} with {entry['needs_threshold']}+ {entry['needs']})"
@@ -101,7 +200,7 @@ def row(entry: dict) -> str:
     )
     cost = entry["mana_cost"].split(" // ")[0]
     return (
-        f"| {entry['grade']}{syn} | {entry['name']} | {cost} | "
+        f"| {entry['grade']}{syn} | {pip(entry)} {entry['name']} | {cost} | "
         f"{entry['rarity'][0].upper()} | {mark(entry)} | {entry['note']} |"
     )
 
@@ -178,27 +277,18 @@ def build(set_dir: str) -> str:
         "",
         "## 1. Scoring your pool by hand (10 minutes)",
         "",
-        "1. Sort the pool by color. Hybrid cards go to whichever of their two colors you "
-        "are considering; gold cards stay aside.",
-        "2. For each color, count cards graded 4 or higher (playables). Write the count on "
-        "the deck box. That is your depth. Count the 6-or-higher cards too; that is your "
-        "quality.",
-        "3. For each color, count ✕ cards. Two colors with at least 3 ✕ between them is the "
-        "target.",
-        "4. Take the two deepest colors. Add gold cards for that pair. Count again: you need "
-        "22 to 23 spells graded 4 or higher, with 3 or more ✕ and at least one ★ (grade 8 or "
-        "higher). That is the same viability test the simulation in section 5 uses.",
+        "1. **Sort by colour.** Hybrid cards go with either colour; gold cards aside.",
+        "2. **Count per colour:** cards graded 4+ (depth) and 6+ (quality). Write both on the deck box.",
+        "3. **Count ✕ per colour.** Target: 3+ across your two colours.",
+        "4. **Pick the two deepest colours, add their gold cards.** Need: 22-23 cards graded 4+, 3+ ✕, 1+ ★.",
         prose.get(
             "procedure_splash",
-            "5. If a third color holds a card graded 7 or higher, splash it only with 2 or "
-            "more lands in the pool that make that color. Splash at most 2 cards.",
+            "5. **Splash only a 7+ card, only with 2+ lands that make its colour. Max 2 cards.**",
         ),
-        "6. Build: 17 lands (duals count), 23 spells. Curve target: 1-2 one-drops, 7-8 "
-        "two-drops, 5-6 three-drops, the rest 4+. Play every ✕ you can cast.",
+        "6. **Build 17 lands, 23 spells.** Curve: 1-2 one-drops, 7-8 two-drops, 5-6 three-drops. Play every ✕.",
         prose.get(
             "procedure_tiebreak",
-            f"7. If two pairs tie, prefer the one with more 6-or-higher cards, then the one "
-            f"whose synergy grades turn on ({synergy_list}), then the one with more 2-drops.",
+            f"7. **Tie between pairs?** More 6+ cards wins; then synergy counts ({synergy_list}); then more 2-drops.",
         ),
         "",
         "## 2. Format rules that decide games",
@@ -235,7 +325,23 @@ def build(set_dir: str) -> str:
             f"{sum(c.values())} | {mean} |"
         )
 
-    out += ["", "Commons and uncommons you will actually open:", ""]
+    dist, cum, per_colour, n_creatures = toughness_census(cards)
+    out += [
+        "",
+        f"**What removal kills.** Toughness of the set's {n_creatures} creatures:",
+        "",
+        "| Toughness | 1 | 2 | 3 | 4 | 5 | 6+ |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+        "| Share | " + " | ".join(f"{100 * dist.get(t, 0) / n_creatures:.0f}%" for t in range(1, 7)) + " |",
+        "| Cumulative | " + " | ".join(f"{100 * cum[t]:.0f}%" for t in range(1, 7)) + " |",
+        "",
+        "Share with toughness 3 or less, by colour: "
+        + ", ".join(f"{COLOR_PIP[c]} {c} {100 * per_colour[c]:.0f}%" for c in WUBRG)
+        + ".",
+        "",
+        "Commons and uncommons you will actually open (grade, what it kills):",
+        "",
+    ]
     removal: dict = collections.defaultdict(list)
     for entry in graded:
         if (
@@ -247,10 +353,11 @@ def build(set_dir: str) -> str:
     for key in list(WUBRG) + sorted(k for k in removal if k not in WUBRG):
         if key in removal:
             body = "; ".join(
-                f"{e['name']} ({e['mana_cost'].split(' // ')[0]}, {e['grade']})"
+                f"{e['name']} ({e['mana_cost'].split(' // ')[0]}, {e['grade']}, "
+                f"{kill_share(e, cards[e['name']], cum)})"
                 for e in sorted(removal[key], key=lambda e: -e["grade"])
             )
-            out.append(f"- **{key}**: {body}")
+            out.append(f"- {heading_pip(key)} **{key}**: {body}")
 
     out += ["", "## 4. Tricks and instant-speed plays to respect (by open mana)", ""]
     tricks: dict = collections.defaultdict(list)
@@ -273,7 +380,7 @@ def build(set_dir: str) -> str:
                 f"{e['name']} ({e['mana_cost'].split(' // ')[0]})"
                 for e in sorted(tricks[key], key=lambda e: len(pips(e["mana_cost"])))
             )
-            out.append(f"- **{key}**: {body}")
+            out.append(f"- {heading_pip(key)} **{key}**: {body}")
 
     sims = load_sims(set_dir)
     if "headline" in sims:
@@ -281,15 +388,13 @@ def build(set_dir: str) -> str:
         p_best = {k: v["p_best"] for k, v in head.items()}
         order = sorted(head, key=lambda k: -head[k]["p_best"])
         tiers = tier_sentence(p_best)
-        lead = [
-            f"{run['pools']:,} simulated pools of {pack_phrase(set_dir)}, scored with the "
-            "grades below.",
-            "P(best) = share of pools where this pair builds the highest-scoring 23.",
-            "P(viable) = pool holds 23 playables, 3 removal and a bomb for this pair, with "
-            "at most a 2-card splash gated on 2 lands that make the colour.",
-            f"Any pair is viable in {pct(run['p_any_viable_pair'])} of pools.",
-            prose.get("ranking_commentary", tiers),
-        ]
+        lead = [prose.get("ranking_commentary", tiers)]
+        footnote = (
+            f"P(best): share of {run['pools']:,} simulated pools of {pack_phrase(set_dir)} "
+            "where this pair builds the highest-scoring 23. P(viable): the pool holds 23 playables, "
+            "3 ✕ and 1 ★ for this pair (2-card splash allowed off 2 lands). "
+            f"Some pair is viable in {pct(run['p_any_viable_pair'])} of pools."
+        )
         header = ["Pair", "P(best)", "P(viable)", "Mean score", "Removal in deck", "Bombs"]
         align = ["---", "---:", "---:", "---:", "---:", "---:"]
         if "spec_splash" in sims:
@@ -325,6 +430,7 @@ def build(set_dir: str) -> str:
             if "nosplash" in sims:
                 cells.append(pct(sims["nosplash"][0][key]["p_viable"]))
             out.append("| " + " | ".join(cells) + " |")
+        out += ["", f"<sub>{footnote}</sub>"]
         if prose.get("ranking_reading"):
             out += ["", prose["ranking_reading"], ""]
         else:
@@ -342,7 +448,7 @@ def build(set_dir: str) -> str:
     for key in keys:
         if key not in groups:
             continue
-        out += [f"### {key}", "", "| Grade | Card | Cost | R | Tags | Why |", "|---|---|---|---|---|---|"]
+        out += [f"### {heading_pip(key)} {key}", "", "| Grade | Card | Cost | R | Tags | Why |", "|---|---|---|---|---|---|"]
         out += [row(e) for e in sorted(groups[key], key=lambda e: (-e["grade"], e["name"]))]
         out.append("")
     return "\n".join(out) + "\n"
