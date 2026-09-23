@@ -165,7 +165,7 @@ def kill_share(entry: dict, card: dict, cum: dict) -> str:
         return "−X/−X, X = highest MV in your graveyard"
     if re.search(r"sacrifices a creature", text):
         return "edict"
-    if re.search(r"(target|creature or planeswalker) that's (green|blue|black|red|white) or", text):
+    if re.search(r"(that's|target) (green|blue|black|red|white) or (green|blue|black|red|white)", text):
         return "two colours only"
     if re.search(r"destroy target creature|exile target (creature|nonland permanent)|"
                  r"destroy target nonland permanent|"

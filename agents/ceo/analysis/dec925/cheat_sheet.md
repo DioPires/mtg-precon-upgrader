@@ -47,7 +47,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 - ⚪ **W**: Memory Trap ({2}{W}, 7, all); Prophesied End ({1}{W}, 7, all); Your Fate Ends Here ({2}{W}, 7, MV 3+); Surgical Precision ({1}{W}, 5, toughness 4+ (32%)); Refute Destiny ({1}{W}, 4, two colours only)
 - 🔵 **U**: Infinite Coursework ({2}{U}, 6, all); Plan for All Outcomes ({3}{U}, 6, all)
 - ⚫ **B**: Extended Absence ({3}{B}, 7, all); Last Gasp ({1}{B}, 7, ≤3 toughness (68%)); Multiply by Zero ({1}{B}, 7, all (no counters)); Silence the Echo ({1}{B}, 6, all); Break Under Pressure ({2}{B}, 6, edict); Winter, Tormented Loner ({2}{B}, 5, edict); Terminal Criticism ({1}{B}, 4, two colours only)
-- 🔴 **R**: No Admittance ({1}{R}, 7, ≤3 toughness (68%)); Wrath of the Bloodmane ({2}{R}, 7, ≤4 toughness (87%)); Fulminous Forte ({2}{R}, 7, ≤5 toughness (94%)); Violent Echoes ({2}{R}{R}, 7, ≤6 toughness (100%)); Awaken the Inferno ({4}{R}, 6, ≤6 toughness (100%)); Essence Burn ({1}{R}, 4, conditional)
+- 🔴 **R**: No Admittance ({1}{R}, 7, ≤3 toughness (68%)); Wrath of the Bloodmane ({2}{R}, 7, ≤4 toughness (87%)); Fulminous Forte ({2}{R}, 7, ≤5 toughness (94%)); Violent Echoes ({2}{R}{R}, 7, ≤6 toughness (100%)); Awaken the Inferno ({4}{R}, 6, ≤6 toughness (100%)); Essence Burn ({1}{R}, 4, two colours only)
 - 🟢 **G**: Compel Brutality ({1}{G}, 6, fight (your creature's power)); Sureshot Sower ({1}{G}, 5, flyers only); Yoshimaru, Scrappy Stray ({1}{G}, 5, fight (your creature's power)); Flourishing Grapple ({G}, 4, two colours only)
 - 🟡 **Gold BG**: Hapatra, the Desert Fang ({2}{B}{B}{G}, 6, −X/−X, X = highest MV in your graveyard)
 - 🟡 **Gold BR**: Stingerquill Charm ({B}{R}, 7, ≤3 toughness (68%))
