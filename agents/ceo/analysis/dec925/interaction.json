@@ -1,0 +1,53 @@
+{
+  "kind": "ask_user_questions",
+  "title": "DEC-925 Reality Fracture prerelease: confirm the analysis approach",
+  "continuationPolicy": "wake_assignee",
+  "idempotencyKey": "ask:DEC-925:approach:v1",
+  "payload": {
+    "version": 1,
+    "prompt": "Confirm the two-part process (pre-event archetype ranking by Monte Carlo + day-of pool evaluator) and answer four scoping questions. Full reasoning and verified facts are in my comment above.",
+    "supersedeOnUserComment": false,
+    "questions": [
+      {
+        "id": "event_date",
+        "prompt": "When is your prerelease event? (Arena launches 2026-09-29, so 17Lands data only exists for events on or after 2026-09-30.)",
+        "selectionMode": "single",
+        "allowText": true,
+        "options": [
+          {"id": "d25_26", "label": "Fri 25 or Sat 26 Sep"},
+          {"id": "d27_29", "label": "Sun 27 to Tue 29 Sep"},
+          {"id": "d30_01", "label": "Wed 30 Sep or Thu 1 Oct"}
+        ]
+      },
+      {
+        "id": "deliverable",
+        "prompt": "Which deliverable matters most? (multi-select; I will do all selected, in this priority order)",
+        "selectionMode": "multi",
+        "options": [
+          {"id": "ranking", "label": "Pre-event ranking of the 10 pairs with probabilities (Monte Carlo over collation + graded cards)"},
+          {"id": "cheatsheet", "label": "One-page cheat sheet: key commons per color, tricks to respect, Jace-token and dual-land interaction"},
+          {"id": "evaluator", "label": "Day-of pool evaluator CLI: paste the pool, get top 3 builds with land split and splash"},
+          {"id": "grades_only", "label": "Just the graded card list (0 to 10 with role tags), no simulation"}
+        ]
+      },
+      {
+        "id": "delegation",
+        "prompt": "Who builds the collation simulator and the pool evaluator scripts?",
+        "selectionMode": "single",
+        "options": [
+          {"id": "engineer", "label": "Engineer via child issue (default per the no-execution rule); CEO grades cards and writes the report"},
+          {"id": "ceo_inline", "label": "CEO does everything inline as a declared exception (faster, one owner)"}
+        ]
+      },
+      {
+        "id": "grading_method",
+        "prompt": "How should the card grades be produced?",
+        "selectionMode": "single",
+        "options": [
+          {"id": "blind_then_compare", "label": "Grade blind from oracle text first, then compare to Draftsim and limitedmtg and log disagreements (recommended)"},
+          {"id": "import_then_correct", "label": "Start from Draftsim grades, verify each against oracle text, correct with a reason"}
+        ]
+      }
+    ]
+  }
+}
