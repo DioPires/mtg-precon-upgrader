@@ -7,8 +7,8 @@ Grades are Sealed grades, 0 to 10, from oracle text (CEO, 2026-09-23), cross-che
 1. Sort the pool by color. Hybrid cards go to whichever of their two colors you are considering; gold cards stay aside.
 2. For each color, count cards graded 5 or higher. Write the count on the deck box. That is your depth.
 3. For each color, count ✕ cards. Two colors with at least 3 ✕ between them is the target.
-4. Take the two deepest colors. Add gold cards for that pair. Count again: you need 22 to 23 spells graded 4 or higher, with 3 or more ✕ and at least one card at 7 or higher.
-5. If a third color holds a card graded 7 or higher, splash it only with 2 or more fixers for that color: a dual land that makes it, Room of Refuge, Murmuring Volume, or a basic landcycler (Hexhaven Battalion, Undulating Witness, Apex Witchstalker, Awaken the Inferno, Vinelasher Adept). Splash at most 2 cards.
+4. Take the two deepest colors. Add gold cards for that pair. Count again: you need 22 to 23 spells graded 4 or higher, with 3 or more ✕ and at least one ★ (grade 8 or higher). That is the same viability test the simulation in section 5 uses.
+5. If a third color holds a card graded 7 or higher, splash it only with 2 or more lands in the pool that make that color: a dual land (common Annex/Commons or rare slowland) or Room of Refuge. Murmuring Volume and the basic landcyclers (Hexhaven Battalion, Undulating Witness, Apex Witchstalker, Awaken the Inferno, Vinelasher Adept) help the splash but do not count toward the 2. Splash at most 2 cards.
 6. Build: 17 lands (duals count), 23 spells. Curve target: 1-2 one-drops, 7-8 two-drops, 5-6 three-drops, the rest 4+. Play every ✕ you can cast.
 7. If two pairs tie, prefer the one whose synergy grades turn on (Jace count, graveyard count, lifegain count), then the one with more 2-drops.
 
@@ -54,9 +54,24 @@ Grades are Sealed grades, 0 to 10, from oracle text (CEO, 2026-09-23), cross-che
 - **Gold WU**: Fatehold Charm ({W}{U})
 - **Hybrid (either color)**: Ferocity of the Hunt ({1}{B/G}); Charge the Sanctum ({2}{R/W}); Twinned Vision ({1}{U/R})
 
-## 5. Archetype ranking (from the Monte Carlo, DEC-926)
+## 5. Archetype ranking (Monte Carlo over the booster collation, DEC-926)
 
-_Pending the simulator run. Filled in before the event._
+100,000 simulated pools of 6 Play Boosters plus a promo, scored with the grades below. P(best) = share of pools where this pair builds the highest-scoring 23. P(viable) = pool holds 23 playables, 3 removal and a bomb for this pair, with at most a 2-card splash gated on 2 lands that make the colour. Any pair is viable in 86.6% of pools. Read this as "what the set makes likely", not as a pick: mean scores sit within 0.1 of each other, so the pool you open decides.
+
+| Pair | P(best) | P(viable) | Mean score | Removal in deck | Bombs | P(viable) if splash gate also counts landcyclers | P(viable) with no splash |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| WG | 12.8% | 65.9% | 5.40 | 5.1 | 1.33 | 76.4% | 44.7% |
+| WB | 11.9% | 68.8% | 5.40 | 6.4 | 1.27 | 80.1% | 46.3% |
+| WR | 11.5% | 68.9% | 5.39 | 6.9 | 1.24 | 80.6% | 45.9% |
+| UR | 11.3% | 61.1% | 5.40 | 5.8 | 1.05 | 72.1% | 38.9% |
+| BR | 11.0% | 63.7% | 5.38 | 7.8 | 1.08 | 72.8% | 47.4% |
+| WU | 10.1% | 54.5% | 5.38 | 4.1 | 1.15 | 66.3% | 27.3% |
+| BG | 8.5% | 62.4% | 5.36 | 6.2 | 1.11 | 76.9% | 33.4% |
+| UG | 8.2% | 48.2% | 5.37 | 4.0 | 1.01 | 60.7% | 19.2% |
+| UB | 7.6% | 59.7% | 5.34 | 5.5 | 1.04 | 71.4% | 36.9% |
+| RG | 7.2% | 63.4% | 5.32 | 6.9 | 1.08 | 73.7% | 44.4% |
+
+**How to read it at the table.** White pairs top P(viable) because white has the most playables; red and black pairs carry the removal (BR deepest at about 8 per deck); blue pairs are removal-poor (UG and WU under 4.2). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.
 
 ## 6. Full graded list
 

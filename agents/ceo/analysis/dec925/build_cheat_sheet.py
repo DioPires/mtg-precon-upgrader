@@ -35,8 +35,8 @@ out = ["# Reality Fracture prerelease cheat sheet (DEC-925)", "",
 "1. Sort the pool by color. Hybrid cards go to whichever of their two colors you are considering; gold cards stay aside.",
 "2. For each color, count cards graded 5 or higher. Write the count on the deck box. That is your depth.",
 "3. For each color, count ✕ cards. Two colors with at least 3 ✕ between them is the target.",
-"4. Take the two deepest colors. Add gold cards for that pair. Count again: you need 22 to 23 spells graded 4 or higher, with 3 or more ✕ and at least one card at 7 or higher.",
-"5. If a third color holds a card graded 7 or higher, splash it only with 2 or more fixers for that color: a dual land that makes it, Room of Refuge, Murmuring Volume, or a basic landcycler (Hexhaven Battalion, Undulating Witness, Apex Witchstalker, Awaken the Inferno, Vinelasher Adept). Splash at most 2 cards.",
+"4. Take the two deepest colors. Add gold cards for that pair. Count again: you need 22 to 23 spells graded 4 or higher, with 3 or more ✕ and at least one ★ (grade 8 or higher). That is the same viability test the simulation in section 5 uses.",
+"5. If a third color holds a card graded 7 or higher, splash it only with 2 or more lands in the pool that make that color: a dual land (common Annex/Commons or rare slowland) or Room of Refuge. Murmuring Volume and the basic landcyclers (Hexhaven Battalion, Undulating Witness, Apex Witchstalker, Awaken the Inferno, Vinelasher Adept) help the splash but do not count toward the 2. Splash at most 2 cards.",
 "6. Build: 17 lands (duals count), 23 spells. Curve target: 1-2 one-drops, 7-8 two-drops, 5-6 three-drops, the rest 4+. Play every ✕ you can cast.",
 "7. If two pairs tie, prefer the one whose synergy grades turn on (Jace count, graveyard count, lifegain count), then the one with more 2-drops.", "",
 "## 2. Format rules that decide games", "",
@@ -61,7 +61,18 @@ for e in G:
         tr[bucket(e)].append(e)
 for k in ["W", "U", "B", "R", "G"] + sorted(k for k in tr if k not in "WUBRG"):
     if k in tr: out.append(f"- **{k}**: " + "; ".join(f"{e['name']} ({e['mana_cost'].split(' // ')[0]})" for e in sorted(tr[k], key=lambda e: len(pips(e["mana_cost"])))))
-out += ["", "## 5. Archetype ranking (from the Monte Carlo, DEC-926)", "", "_Pending the simulator run. Filled in before the event._", "", "## 6. Full graded list", ""]
+def sim_rows(path):
+    r = json.load(open(path))["runs"]["CEO grades"]; return {p["pair"]: p for p in r["per_pair"]}, r
+head, hr = sim_rows("sim_results.json"); spec, _ = sim_rows("sim_results_spec_splash.json"); nos, _ = sim_rows("sim_results_nosplash.json")
+order = sorted(head, key=lambda k: -head[k]["p_best"])
+pct = lambda x: f"{100*x:.1f}%"
+out += ["", "## 5. Archetype ranking (Monte Carlo over the booster collation, DEC-926)", "",
+f"{hr['pools']:,} simulated pools of 6 Play Boosters plus a promo, scored with the grades below. P(best) = share of pools where this pair builds the highest-scoring 23. P(viable) = pool holds 23 playables, 3 removal and a bomb for this pair, with at most a 2-card splash gated on 2 lands that make the colour. Any pair is viable in {pct(hr['p_any_viable_pair'])} of pools. Read this as \"what the set makes likely\", not as a pick: mean scores sit within 0.1 of each other, so the pool you open decides.", "",
+"| Pair | P(best) | P(viable) | Mean score | Removal in deck | Bombs | P(viable) if splash gate also counts landcyclers | P(viable) with no splash |", "|---|---:|---:|---:|---:|---:|---:|---:|"]
+for k in order:
+    h = head[k]; out.append(f"| {k} | {pct(h['p_best'])} | {pct(h['p_viable'])} | {h['mean_score']:.2f} | {h['mean_removal']:.1f} | {h['mean_bombs']:.2f} | {pct(spec[k]['p_viable'])} | {pct(nos[k]['p_viable'])} |")
+out += ["", "**How to read it at the table.** White pairs top P(viable) because white has the most playables; red and black pairs carry the removal (BR deepest at about 8 per deck); blue pairs are removal-poor (UG and WU under 4.2). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.", ""]
+out += ["## 6. Full graded list", ""]
 groups = collections.defaultdict(list)
 for e in G: groups[bucket(e)].append(e)
 keys = ["W", "U", "B", "R", "G"] + sorted(k for k in groups if k.startswith("Gold")) + ["Hybrid (either color)", "Three+ colors", "Colorless", "Lands"]
