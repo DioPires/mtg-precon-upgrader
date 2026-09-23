@@ -21,7 +21,19 @@ Grades are Sealed grades, 0 to 10, from oracle text (CEO, 2026-09-23), cross-che
 - **Basic landcycling {2}** on five commons is your splash insurance and your flood insurance.
 - **3 damage kills most creatures in the set** (limitedmtg count: 68%). Respect No Admittance, Stingerquill Charm, Last Gasp at 2 mana.
 
-## 3. Removal by color (commons and uncommons you will actually open)
+## 3. Removal by color
+
+Count and quality by colour (mono-colour cards only; ✕ role). White has fewer removal cards than black or red but its commons and uncommons are the best-graded; red has the most at common, which is what a 40-common pool actually opens.
+
+| Colour | Common | Uncommon | Rare/Mythic | Total | Mean grade |
+|---|---:|---:|---:|---:|---:|
+| W | 2 | 3 | 2 | 7 | 6.0 |
+| U | 1 | 1 | 0 | 2 | 6.0 |
+| B | 3 | 4 | 5 | 12 | 6.6 |
+| R | 4 | 4 | 2 | 10 | 6.3 |
+| G | 3 | 2 | 0 | 5 | 4.8 |
+
+Commons and uncommons you will actually open:
 
 - **W**: Memory Trap ({2}{W}, 7); Prophesied End ({1}{W}, 7); Your Fate Ends Here ({2}{W}, 7); Surgical Precision ({1}{W}, 5); Refute Destiny ({1}{W}, 4)
 - **U**: Infinite Coursework ({2}{U}, 6); Plan for All Outcomes ({3}{U}, 6)
@@ -71,7 +83,7 @@ Grades are Sealed grades, 0 to 10, from oracle text (CEO, 2026-09-23), cross-che
 | UB | 7.6% | 59.7% | 5.34 | 5.5 | 1.04 | 71.4% | 36.9% |
 | RG | 7.2% | 63.4% | 5.32 | 6.9 | 1.08 | 73.7% | 44.4% |
 
-**How to read it at the table.** White pairs top P(viable) because white has the most playables; red and black pairs carry the removal (BR deepest at about 8 per deck); blue pairs are removal-poor (UG and WU under 4.2). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.
+**How to read it at the table.** White pairs top P(viable) because white has the most playables and its removal is premium (Memory Trap, Prophesied End, Your Fate Ends Here are all grade 7) but few: 5 white removal cards at common and uncommon against 8 red and 7 black. Red and black have the most removal by count, so BR decks average about 8 removal spells and white pairs 5 to 7. Blue pairs are removal-poor (UG and WU under 4.2). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.
 
 ## 6. Full graded list
 

@@ -46,7 +46,15 @@ out = ["# Reality Fracture prerelease cheat sheet (DEC-925)", "",
 "- **Threshold** (7 cards in graveyard) needs mill: Omit Variables, surveil, Something Worth Saving. Without 4+ enablers the threshold cards are their base grade.",
 "- **Basic landcycling {2}** on five commons is your splash insurance and your flood insurance.",
 "- **3 damage kills most creatures in the set** (limitedmtg count: 68%). Respect No Admittance, Stingerquill Charm, Last Gasp at 2 mana.", "",
-"## 3. Removal by color (commons and uncommons you will actually open)", ""]
+"## 3. Removal by color", "", "Count and quality by colour (mono-colour cards only; ✕ role). White has fewer removal cards than black or red but its commons and uncommons are the best-graded; red has the most at common, which is what a 40-common pool actually opens.", "",
+"| Colour | Common | Uncommon | Rare/Mythic | Total | Mean grade |", "|---|---:|---:|---:|---:|---:|"]
+_rc = collections.defaultdict(collections.Counter); _rg = collections.defaultdict(list)
+for e in G:
+    if "removal" in e["roles"] and "Land" not in e["type_line"] and len(e["colors"]) == 1:
+        _rc[e["colors"][0]][e["rarity"]] += 1; _rg[e["colors"][0]].append(e["grade"])
+for k in "WUBRG":
+    c = _rc[k]; out.append(f"| {k} | {c['common']} | {c['uncommon']} | {c['rare'] + c['mythic']} | {sum(c.values())} | {sum(_rg[k]) / len(_rg[k]):.1f} |")
+out += ["", "Commons and uncommons you will actually open:", ""]
 rem = collections.defaultdict(list)
 for e in G:
     if "removal" in e["roles"] and e["rarity"] in ("common", "uncommon") and "Land" not in e["type_line"]:
@@ -71,7 +79,7 @@ f"{hr['pools']:,} simulated pools of 6 Play Boosters plus a promo, scored with t
 "| Pair | P(best) | P(viable) | Mean score | Removal in deck | Bombs | P(viable) if splash gate also counts landcyclers | P(viable) with no splash |", "|---|---:|---:|---:|---:|---:|---:|---:|"]
 for k in order:
     h = head[k]; out.append(f"| {k} | {pct(h['p_best'])} | {pct(h['p_viable'])} | {h['mean_score']:.2f} | {h['mean_removal']:.1f} | {h['mean_bombs']:.2f} | {pct(spec[k]['p_viable'])} | {pct(nos[k]['p_viable'])} |")
-out += ["", "**How to read it at the table.** White pairs top P(viable) because white has the most playables; red and black pairs carry the removal (BR deepest at about 8 per deck); blue pairs are removal-poor (UG and WU under 4.2). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.", ""]
+out += ["", "**How to read it at the table.** White pairs top P(viable) because white has the most playables and its removal is premium (Memory Trap, Prophesied End, Your Fate Ends Here are all grade 7) but few: 5 white removal cards at common and uncommon against 8 red and 7 black. Red and black have the most removal by count, so BR decks average about 8 removal spells and white pairs 5 to 7. Blue pairs are removal-poor (UG and WU under 4.2). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.", ""]
 out += ["## 6. Full graded list", ""]
 groups = collections.defaultdict(list)
 for e in G: groups[bucket(e)].append(e)

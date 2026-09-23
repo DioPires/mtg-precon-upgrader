@@ -1,6 +1,6 @@
 ## Final report: what the set makes likely, and how to use it on the day
 
-**Answer to the question you asked.** No two-colour pair is a pre-commit. On 100,000 simulated 6-booster pools, the best pair's mean deck score ranges only from 5.32 (RG) to 5.40 (UR, WB, WG), and no pair is the best build of more than 12.8% of pools. What the set does make likely: a white pair is the best build in 46% of pools, a green pair in 37%; red and black pairs carry the removal; blue pairs are removal-poor. Your pool decides the rest, and the cheat sheet's hand procedure is how you read it in ten minutes.
+**Answer to the question you asked.** No two-colour pair is a pre-commit. On 100,000 simulated 6-booster pools, the best pair's mean deck score ranges only from 5.32 (RG) to 5.40 (UR, WB, WG), and no pair is the best build of more than 12.8% of pools. What the set does make likely: a white pair is the best build in 46% of pools, a green pair in 37%; red and black have the most removal cards, white has fewer but its common and uncommon removal is the best-graded in the set, and blue pairs are removal-poor. Your pool decides the rest, and the cheat sheet's hand procedure is how you read it in ten minutes.
 
 **Deliverables** (all on `main`, folder `agents/ceo/analysis/dec925/`):
 
@@ -26,7 +26,7 @@
 
 P(viable) = the pool holds 23 playables at grade 4 or higher, 3 removal spells and one card at grade 8 or higher for that pair, allowing a 2-card splash when 2 lands in the pool make the third colour. At least one pair is viable in 86.6% of pools. Every pool averages 9.0 rares or mythics and 2.6 common duals.
 
-**By colour** (sum of P(best) over the four pairs holding the colour): W 46%, R 41%, B 39%, U 37%, G 37%. Removal per deck by colour: R 6.9, B 6.5, W 5.6, G 5.6, U 4.8. The removal order R > B > W > G > U survived every model change and matches limitedmtg's independent count.
+**By colour** (sum of P(best) over the four pairs holding the colour): W 46%, R 41%, B 39%, U 37%, G 37%. Removal per deck by colour: R 6.9, B 6.5, W 5.6, G 5.6, U 4.8. Removal cards by colour (common / uncommon / rare+mythic): R 4/4/2, B 3/4/5, W 2/3/2, G 3/2/0, U 1/1/0. The count order R > B > W > G > U survived every model change and matches limitedmtg's independent count; white's five common and uncommon removal spells average grade 6.0 against red's 6.0 and black's 5.7, so white is short on count, not quality.
 
 ### What moved the numbers, and what did not
 
