@@ -352,12 +352,12 @@ def build(set_dir: str) -> str:
             removal[bucket(entry)].append(entry)
     for key in list(WUBRG) + sorted(k for k in removal if k not in WUBRG):
         if key in removal:
-            body = "; ".join(
-                f"{e['name']} ({e['mana_cost'].split(' // ')[0]}, {e['grade']}, "
+            out.append(f"- {heading_pip(key)} **{key}**")
+            out += [
+                f"  - {e['name']} ({e['mana_cost'].split(' // ')[0]}, {e['grade']}, "
                 f"{kill_share(e, cards[e['name']], cum)})"
                 for e in sorted(removal[key], key=lambda e: -e["grade"])
-            )
-            out.append(f"- {heading_pip(key)} **{key}**: {body}")
+            ]
 
     out += ["", "## 4. Tricks and instant-speed plays to respect (by open mana)", ""]
     tricks: dict = collections.defaultdict(list)
@@ -376,11 +376,11 @@ def build(set_dir: str) -> str:
             tricks[bucket(entry)].append(entry)
     for key in list(WUBRG) + sorted(k for k in tricks if k not in WUBRG):
         if key in tricks:
-            body = "; ".join(
-                f"{e['name']} ({e['mana_cost'].split(' // ')[0]})"
+            out.append(f"- {heading_pip(key)} **{key}**")
+            out += [
+                f"  - {e['name']} ({e['mana_cost'].split(' // ')[0]})"
                 for e in sorted(tricks[key], key=lambda e: len(pips(e["mana_cost"])))
-            )
-            out.append(f"- {heading_pip(key)} **{key}**: {body}")
+            ]
 
     sims = load_sims(set_dir)
     if "headline" in sims:
