@@ -1,99 +1,150 @@
 {
-  "set": "fra",
-  "set_name": "Reality Fracture",
-  "description": "Play Booster collation model for Reality Fracture Sealed. Sources: WotC 'Collecting Reality Fracture' and the mtgscribe Play Booster fact sheet (2026-09-08); the two agree. Slot weights are raw as published; the simulator normalizes each slot's weights to sum to 1 and records the residual it absorbed.",
-  "packs_per_pool": 6,
-  "groups": {
-    "main_common": "rarity=common, in the 270-card main numbering (excludes the 10 common duals and the basics). Contains exactly one land, Room of Refuge.",
-    "dual_common_land": "the 10 common '{T}: Add {X} or {Y}' lands (Annex / Commons cycle)",
-    "nonpaired_uncommon": "43 uncommons outside the echoed-pair cycle",
-    "nonpaired_rare": "50 rares outside the cycle",
-    "nonpaired_mythic": "20 mythics outside the cycle",
-    "paired_uncommon": "66 echoed-pair uncommons (33 pairs)",
-    "paired_rare": "14 echoed-pair rares (7 pairs)",
-    "paired_mythic": "6 echoed-pair mythics (3 pairs)",
-    "main_uncommon": "all 109 main-set uncommons (paired + non-paired)",
-    "main_rare": "all 64 main-set rares",
-    "main_mythic": "all 26 main-set mythics"
+ "set": "fra",
+ "set_name": "Reality Fracture",
+ "description": "Play Booster collation model for Reality Fracture Sealed. Sources: WotC 'Collecting Reality Fracture' and the mtgscribe Play Booster fact sheet (2026-09-08); the two agree. Slot weights are raw as published; the simulator normalizes each slot's weights to sum to 1 and records the residual it absorbed.",
+ "packs_per_pool": 6,
+ "groups": {
+  "main_common": "rarity=common, in the 270-card main numbering (excludes the 10 common duals and the basics). Contains exactly one land, Room of Refuge.",
+  "dual_common_land": "the 10 common '{T}: Add {X} or {Y}' lands (Annex / Commons cycle)",
+  "nonpaired_uncommon": "43 uncommons outside the echoed-pair cycle",
+  "nonpaired_rare": "50 rares outside the cycle",
+  "nonpaired_mythic": "20 mythics outside the cycle",
+  "paired_uncommon": "66 echoed-pair uncommons (33 pairs)",
+  "paired_rare": "14 echoed-pair rares (7 pairs)",
+  "paired_mythic": "6 echoed-pair mythics (3 pairs)",
+  "main_uncommon": "all 109 main-set uncommons (paired + non-paired)",
+  "main_rare": "all 64 main-set rares",
+  "main_mythic": "all 26 main-set mythics"
+ },
+ "slots": [
+  {
+   "slots": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "kind": "single",
+   "weights": {
+    "main_common": 1.0
+   },
+   "note": "common"
   },
-  "slots": [
-    {
-      "slots": [1, 2, 3, 4, 5],
-      "kind": "single",
-      "weights": { "main_common": 1.0 },
-      "note": "common"
-    },
-    {
-      "slots": [6],
-      "kind": "single",
-      "weights": { "main_common": 1.0 },
-      "note": "common 98.18% / Special Guest 1.82%. ASSUMPTION: the Special Guest is off-set and unplayable in this Sealed model, so the slot always yields a main-set common."
-    },
-    {
-      "slots": [7],
-      "kind": "single",
-      "weights": { "nonpaired_uncommon": 1.0 },
-      "note": "non-paired uncommon"
-    },
-    {
-      "slots": [8],
-      "kind": "single",
-      "weights": { "main_common": 0.23, "nonpaired_uncommon": 0.74, "__other__": 0.03 },
-      "other_goes_to": "nonpaired_uncommon",
-      "note": "common 23% / non-paired uncommon 74% / other 3%. ASSUMPTION: the 3% folds into non-paired uncommon."
-    },
-    {
-      "slots": [9, 10],
-      "kind": "echoed_pair",
-      "weights": { "paired_uncommon": 0.889, "paired_rare": 0.067, "paired_mythic": 0.014 },
-      "note": "Draw one rarity, pick one pair of that rarity uniformly, add both halves. Raw weights sum to 0.970; the simulator normalizes."
-    },
-    {
-      "slots": [11],
-      "kind": "single",
-      "weights": { "paired_uncommon": 0.889, "paired_rare": 0.067, "paired_mythic": 0.014 },
-      "note": "Third echoed-pair card, drawn from the same rarity distribution. ASSUMPTION: independent of the pair in slots 9-10 (it may duplicate a half already drawn)."
-    },
-    {
-      "slots": [12],
-      "kind": "single",
-      "weights": { "nonpaired_rare": 0.744, "nonpaired_mythic": 0.148, "__other__": 0.108 },
-      "other_goes_to": "proportional",
-      "note": "rare 74.4% / mythic 14.8% / booster-fun variants 10.8%. ASSUMPTION: the variants are still set rares/mythics, so the 10.8% is split proportionally, giving R 83.4% / M 16.6%."
-    },
-    {
-      "slots": [13],
-      "kind": "single",
-      "weights": {
-        "main_common": 0.495,
-        "main_uncommon": 0.405,
-        "main_rare": 0.06,
-        "main_mythic": 0.012
-      },
-      "note": "traditional foil, any main-set card including echoed-pair halves. Raw weights sum to 0.972; the 2.8% residual is normalized away proportionally. ASSUMPTION: 'full main set' means the 270-card main numbering, so the 10 common duals are not in the foil slot."
-    },
-    {
-      "slots": [14],
-      "kind": "single",
-      "weights": { "dual_common_land": 0.436, "__basic__": 0.564 },
-      "note": "land slot. Basics are dropped from the pool (unlimited supply at the event)."
-    }
-  ],
-  "promo": {
-    "enabled": true,
-    "count": 1,
-    "weights": { "main_rare": 0.7111, "main_mythic": 0.2889 },
-    "note": "ASSUMPTION (flagged, board to confirm from the pack): one date-stamped card drawn uniformly over the 64 main-set rares + 26 main-set mythics, i.e. 64/90 vs 26/90. Set promo.enabled=false to simulate pools without it."
+  {
+   "slots": [
+    6
+   ],
+   "kind": "single",
+   "weights": {
+    "main_common": 1.0
+   },
+   "note": "common 98.18% / Special Guest 1.82%. ASSUMPTION: the Special Guest is off-set and unplayable in this Sealed model, so the slot always yields a main-set common."
   },
-  "sanity_targets": {
-    "source": "CEO arithmetic in the DEC-926 spec",
-    "per_pack_excluding_basics": {
-      "common": 6.71,
-      "uncommon": 4.81,
-      "rare_plus_mythic": 1.31,
-      "dual_land": 0.436
-    },
-    "tolerance": 0.05,
-    "known_divergence": "The CEO's uncommon target 4.81 was computed from the raw published weights for slots 8, 9-11 and 13, which sum to 0.97-0.972 rather than 1. Under any model that normalizes those slots the uncommon expectation is ~4.94. Commons, rares+mythics and duals land inside +/-0.05; uncommons are ~0.13 high by construction, not by sampler error. Flagged for the CEO in the handoff."
+  {
+   "slots": [
+    7
+   ],
+   "kind": "single",
+   "weights": {
+    "nonpaired_uncommon": 1.0
+   },
+   "note": "non-paired uncommon"
+  },
+  {
+   "slots": [
+    8
+   ],
+   "kind": "single",
+   "weights": {
+    "main_common": 0.23,
+    "nonpaired_uncommon": 0.74,
+    "__other__": 0.03
+   },
+   "other_goes_to": "nonpaired_uncommon",
+   "note": "common 23% / non-paired uncommon 74% / other 3%. ASSUMPTION: the 3% folds into non-paired uncommon."
+  },
+  {
+   "slots": [
+    9,
+    10
+   ],
+   "kind": "echoed_pair",
+   "weights": {
+    "paired_uncommon": 0.889,
+    "paired_rare": 0.067,
+    "paired_mythic": 0.014
+   },
+   "note": "Draw one rarity, pick one pair of that rarity uniformly, add both halves. Raw weights sum to 0.970; the simulator normalizes."
+  },
+  {
+   "slots": [
+    11
+   ],
+   "kind": "single",
+   "weights": {
+    "paired_uncommon": 0.889,
+    "paired_rare": 0.067,
+    "paired_mythic": 0.014
+   },
+   "note": "Third echoed-pair card, drawn from the same rarity distribution. ASSUMPTION: independent of the pair in slots 9-10 (it may duplicate a half already drawn)."
+  },
+  {
+   "slots": [
+    12
+   ],
+   "kind": "single",
+   "weights": {
+    "nonpaired_rare": 0.744,
+    "nonpaired_mythic": 0.148,
+    "__other__": 0.108
+   },
+   "other_goes_to": "proportional",
+   "note": "rare 74.4% / mythic 14.8% / booster-fun variants 10.8%. ASSUMPTION: the variants are still set rares/mythics, so the 10.8% is split proportionally, giving R 83.4% / M 16.6%."
+  },
+  {
+   "slots": [
+    13
+   ],
+   "kind": "single",
+   "weights": {
+    "main_common": 0.495,
+    "main_uncommon": 0.405,
+    "main_rare": 0.06,
+    "main_mythic": 0.012
+   },
+   "note": "traditional foil, any main-set card including echoed-pair halves. Raw weights sum to 0.972; the 2.8% residual is normalized away proportionally. ASSUMPTION: 'full main set' means the 270-card main numbering, so the 10 common duals are not in the foil slot."
+  },
+  {
+   "slots": [
+    14
+   ],
+   "kind": "single",
+   "weights": {
+    "dual_common_land": 0.545,
+    "__basic__": 0.455
+   },
+   "note": "land slot. WotC 'Collecting Reality Fracture' lists: default basic non-foil 14.6% + foil 3.6%; tower basic non-foil 21.8% + foil 5.5%; common dual non-foil 43.6% + foil 10.9%. Duals total 54.5% (a foil dual is still a dual). The earlier 0.436 counted only the non-foil duals (CEO error, caught in the DEC-925 self-review 2026-09-23). Cross-check: taw/magic-search-engine PR #636 weights duals 30/55 = 54.5%. Basics are dropped from the pool (unlimited supply at the event)."
   }
+ ],
+ "promo": {
+  "enabled": true,
+  "count": 1,
+  "weights": {
+   "main_rare": 0.7111,
+   "main_mythic": 0.2889
+  },
+  "note": "ASSUMPTION (flagged, board to confirm from the pack): one date-stamped card drawn uniformly over the 64 main-set rares + 26 main-set mythics, i.e. 64/90 vs 26/90. Set promo.enabled=false to simulate pools without it."
+ },
+ "sanity_targets": {
+  "source": "CEO arithmetic in the DEC-926 spec; dual_land corrected to 0.545 on 2026-09-23 (foil duals counted)",
+  "per_pack_excluding_basics": {
+   "common": 6.71,
+   "uncommon": 4.81,
+   "rare_plus_mythic": 1.31,
+   "dual_land": 0.545
+  },
+  "tolerance": 0.05,
+  "known_divergence": "The CEO's uncommon target 4.81 was computed from the raw published weights for slots 8, 9-11 and 13, which sum to 0.97-0.972 rather than 1. Under any model that normalizes those slots the uncommon expectation is ~4.94. Commons, rares+mythics and duals land inside +/-0.05; uncommons are ~0.13 high by construction, not by sampler error. Flagged for the CEO in the handoff."
+ }
 }

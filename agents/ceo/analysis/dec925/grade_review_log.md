@@ -52,3 +52,26 @@ Draftsim's full-set review (fetched 2026-09-23, 277 ratings) grades on a 0-10 sc
 | Whiplash Wordsmith // Vicious Verse | 5 | 2 | 4 | 5 mana total for a 3/3 flying haste turn; then needs noncombat damage each turn. Draftsim 2. |
 | Keeper of the Quiet Hour | 4 | 1 | 4 | 3-mana 3/2 plus Jace 2. Draftsim 1 with positive text; keep 4. |
 | Theorist's Sanctum | 4 | 7 | 6 | Island that converts 3 mana into Jace loyalty every turn; a free include in blue. Draftsim 7. |
+
+## Self-review pass (2026-09-23, board request)
+
+Second external source: Limited Resources episode 872 (Marshall Sutcliffe and Luis Scott-Vargas, commons and uncommons only, auto-captions). Excerpts for 50 cards were read; grades quoted are as spoken. Changes:
+
+| Card | Before | After | Reason |
+|---|---|---|---|
+| Perfected Theory | 4 | 3 | LR "D", Draftsim 1; two sources say the trick underperforms |
+| Extended Absence | 6 | 7 | LR "B/B+"; restores my blind grade over Draftsim's 4 |
+| Thalia, the Survivor | 5 | 6 | LR "goes pretty hard"; restores my blind grade |
+| Loot, the Nexus | 4 | 5 | LR "seems great" but fragile; Draftsim 6 |
+| Break Under Pressure | 5 | 6 | LR "B/B+", instant, hits their best |
+| Living Library | 4 ✕ | 3, tag removed | LR "Nope"; the 6-mana shuffle is too slow to count as removal |
+| Sphinx's Approach | 4 | 3 | LR "not particularly good"; Draftsim 2 |
+| Rampart Hunter | 4 | 3 | LR "D", Draftsim 2 |
+| Theorix Charm | 6 | 7 | LR "excellent"; -2/-2 kills 48% of the set's creatures |
+| Yargle, Glutton of Urborg | 3 | 2 | LR "D or F", Draftsim 1 |
+| Mindseeker Oculus | 5 | 6 | LR "B"; Draftsim 6 |
+| Massacre Girl, Most Wanted | 5 | 6 | LR "B" |
+
+Role-tag corrections (the sim's removal count now means creature or planeswalker answers only): Budding Insurgent (artifact/enchantment only), Archive Arbiter (noncreature permanents only), Tether Technician (2 damage), Way of the Warlord (one 2-damage shot) lost the ✕ tag; grades unchanged. Note fixes: Countersculpt (UU plus 1, not "3-mana"), Graft Surgeon (2/2 entering as 3/3), Ajani Unrelenting (-3 hits your non-token creatures too).
+
+Cards LR confirmed at my grade (no change): Memory Trap B, Surgical Precision C/C+, Undulating Witness C+, Apex Witchstalker C+/B-, Silence the Echo, Your Fate Ends Here, Infinite Coursework, Multiply by Zero, Violent Echoes, Compel Brutality, Last Gasp B, No Admittance B, Wrath of the Bloodmane, Warrior's Blades, Twisted Fates, Kiora of Fire and Ashes, Saheeli Consul B+, Woodwork Prodigy, Paradox Shaper, Keeper of the Quiet Hour C, Tether Technician C, Whiplash Wordsmith C/C+, Wrecking Gecko, Ferocity of the Hunt, Winter, Icy Reception, Mind Meanderer, Clash of Elements, Arcane Amphisbaena C+.

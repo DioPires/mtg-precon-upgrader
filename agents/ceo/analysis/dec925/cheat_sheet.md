@@ -5,12 +5,12 @@ Grades are Sealed grades, 0 to 10, from oracle text (CEO, 2026-09-23), cross-che
 ## 1. Scoring your pool by hand (10 minutes)
 
 1. Sort the pool by color. Hybrid cards go to whichever of their two colors you are considering; gold cards stay aside.
-2. For each color, count cards graded 5 or higher. Write the count on the deck box. That is your depth.
+2. For each color, count cards graded 4 or higher (playables). Write the count on the deck box. That is your depth. Count the 6-or-higher cards too; that is your quality.
 3. For each color, count ✕ cards. Two colors with at least 3 ✕ between them is the target.
 4. Take the two deepest colors. Add gold cards for that pair. Count again: you need 22 to 23 spells graded 4 or higher, with 3 or more ✕ and at least one ★ (grade 8 or higher). That is the same viability test the simulation in section 5 uses.
 5. If a third color holds a card graded 7 or higher, splash it only with 2 or more lands in the pool that make that color: a dual land (common Annex/Commons or rare slowland) or Room of Refuge. Murmuring Volume and the basic landcyclers (Hexhaven Battalion, Undulating Witness, Apex Witchstalker, Awaken the Inferno, Vinelasher Adept) help the splash but do not count toward the 2. Splash at most 2 cards.
 6. Build: 17 lands (duals count), 23 spells. Curve target: 1-2 one-drops, 7-8 two-drops, 5-6 three-drops, the rest 4+. Play every ✕ you can cast.
-7. If two pairs tie, prefer the one whose synergy grades turn on (Jace count, graveyard count, lifegain count), then the one with more 2-drops.
+7. If two pairs tie, prefer the one with more 6-or-higher cards, then the one whose synergy grades turn on (Jace count, graveyard count, lifegain count), then the one with more 2-drops.
 
 ## 2. Format rules that decide games
 
@@ -19,7 +19,7 @@ Grades are Sealed grades, 0 to 10, from oracle text (CEO, 2026-09-23), cross-che
 - **Prepared creatures** (two-faced cards) enter with a spell you may cast once by paying the spell's cost; three of them (Paradox Shaper, Stingerquill Voxmancer, Woodwork Prodigy) re-prepare every upkeep and are engines.
 - **Threshold** (7 cards in graveyard) needs mill: Omit Variables, surveil, Something Worth Saving. Without 4+ enablers the threshold cards are their base grade.
 - **Basic landcycling {2}** on five commons is your splash insurance and your flood insurance.
-- **3 damage kills most creatures in the set** (limitedmtg count: 68%). Respect No Admittance, Stingerquill Charm, Last Gasp at 2 mana.
+- **3 damage kills most creatures in the set.** Counted from the card file: 68% of creatures have toughness 3 or less, 48% have 2 or less, 87% have 4 or less. Respect No Admittance, Stingerquill Charm and Last Gasp at 2 mana.
 
 ## 3. Removal by color
 
@@ -29,22 +29,21 @@ Count and quality by colour (mono-colour cards only; ✕ role). White has fewer 
 |---|---:|---:|---:|---:|---:|
 | W | 2 | 3 | 2 | 7 | 6.0 |
 | U | 1 | 1 | 0 | 2 | 6.0 |
-| B | 3 | 4 | 5 | 12 | 6.6 |
-| R | 4 | 4 | 2 | 10 | 6.3 |
-| G | 3 | 2 | 0 | 5 | 4.8 |
+| B | 3 | 4 | 5 | 12 | 6.8 |
+| R | 3 | 3 | 2 | 8 | 6.6 |
+| G | 2 | 2 | 0 | 4 | 5.0 |
 
 Commons and uncommons you will actually open:
 
 - **W**: Memory Trap ({2}{W}, 7); Prophesied End ({1}{W}, 7); Your Fate Ends Here ({2}{W}, 7); Surgical Precision ({1}{W}, 5); Refute Destiny ({1}{W}, 4)
 - **U**: Infinite Coursework ({2}{U}, 6); Plan for All Outcomes ({3}{U}, 6)
-- **B**: Last Gasp ({1}{B}, 7); Multiply by Zero ({1}{B}, 7); Extended Absence ({3}{B}, 6); Silence the Echo ({1}{B}, 6); Break Under Pressure ({2}{B}, 5); Winter, Tormented Loner ({2}{B}, 5); Terminal Criticism ({1}{B}, 4)
-- **R**: No Admittance ({1}{R}, 7); Wrath of the Bloodmane ({2}{R}, 7); Fulminous Forte ({2}{R}, 7); Violent Echoes ({2}{R}{R}, 7); Awaken the Inferno ({4}{R}, 6); Tether Technician ({4}{R}, 5); Way of the Warlord ({2}{R}, 5); Essence Burn ({1}{R}, 4)
-- **G**: Compel Brutality ({1}{G}, 6); Sureshot Sower ({1}{G}, 5); Yoshimaru, Scrappy Stray ({1}{G}, 5); Budding Insurgent ({2}{G}, 4); Flourishing Grapple ({G}, 4)
-- **Colorless**: Archive Arbiter ({6}, 5); Living Library ({2}, 4)
+- **B**: Extended Absence ({3}{B}, 7); Last Gasp ({1}{B}, 7); Multiply by Zero ({1}{B}, 7); Silence the Echo ({1}{B}, 6); Break Under Pressure ({2}{B}, 6); Winter, Tormented Loner ({2}{B}, 5); Terminal Criticism ({1}{B}, 4)
+- **R**: No Admittance ({1}{R}, 7); Wrath of the Bloodmane ({2}{R}, 7); Fulminous Forte ({2}{R}, 7); Violent Echoes ({2}{R}{R}, 7); Awaken the Inferno ({4}{R}, 6); Essence Burn ({1}{R}, 4)
+- **G**: Compel Brutality ({1}{G}, 6); Sureshot Sower ({1}{G}, 5); Yoshimaru, Scrappy Stray ({1}{G}, 5); Flourishing Grapple ({G}, 4)
 - **Gold BG**: Hapatra, the Desert Fang ({2}{B}{B}{G}, 6)
 - **Gold BR**: Stingerquill Charm ({B}{R}, 7)
 - **Gold RG**: Craftwork Crusher ({3}{R}{R}{G}{G}, 7); Konstrari Charm ({R}{G}, 5)
-- **Gold UB**: Theorix Charm ({U}{B}, 6)
+- **Gold UB**: Theorix Charm ({U}{B}, 7)
 - **Gold UG**: Mind Meanderer ({3}{G}{U}{U}, 7)
 - **Gold UR**: Clash of Elements ({1}{U}{R}, 6)
 - **Gold WB**: Twisted Fates ({2}{W}{W}{B}, 7)
@@ -54,36 +53,36 @@ Commons and uncommons you will actually open:
 ## 4. Tricks and instant-speed plays to respect (by open mana)
 
 - **W**: Academic Ascent ({1}{W}); Prophesied End ({1}{W}); Teyo, Lightshield Expert ({1}{W}); Your Fate Ends Here ({2}{W})
-- **U**: Unsummon ({U}); Perfected Theory ({U}); Yuriko, Hope from the Shadows ({U}); Divining Duelist ({2}{U}); Icy Reception ({1}{U}); Countersculpt ({U}{U}); Precise Redaction ({1}{U}); Sphinx's Approach ({1}{U}{U})
+- **U**: Unsummon ({U}); Perfected Theory ({U}); Yuriko, Hope from the Shadows ({U}); Divining Duelist ({2}{U}); Icy Reception ({1}{U}); Countersculpt ({U}{U})
 - **B**: Extended Absence ({3}{B}); Last Gasp ({1}{B}); Break Under Pressure ({2}{B}); Multiply by Zero ({1}{B}); Terminal Criticism ({1}{B}); Teyo, Diamondblade Mage ({3}{B})
 - **R**: Blazing Crescendo ({1}{R}); Wrath of the Bloodmane ({2}{R}); Essence Burn ({1}{R}); Fulminous Forte ({2}{R}); Violent Echoes ({2}{R}{R})
-- **G**: Tethermage's Advantage ({G}); Flourishing Grapple ({G}); Compel Brutality ({1}{G}); Something Worth Saving ({1}{G}); Restore with Empathy ({2}{G}); Edgar, Moonlit Sovereign ({3}{G}{G})
+- **G**: Tethermage's Advantage ({G}); Flourishing Grapple ({G}); Compel Brutality ({1}{G}); Edgar, Moonlit Sovereign ({3}{G}{G})
 - **Gold BR**: Stingerquill Charm ({B}{R})
 - **Gold RG**: Konstrari Charm ({R}{G})
 - **Gold UB**: Theorix Charm ({U}{B})
 - **Gold UR**: Clash of Elements ({1}{U}{R})
 - **Gold WG**: Vigorbloom Charm ({G}{W})
 - **Gold WU**: Fatehold Charm ({W}{U})
-- **Hybrid (either color)**: Ferocity of the Hunt ({1}{B/G}); Charge the Sanctum ({2}{R/W}); Twinned Vision ({1}{U/R})
+- **Hybrid (either color)**: Ferocity of the Hunt ({1}{B/G}); Charge the Sanctum ({2}{R/W})
 
 ## 5. Archetype ranking (Monte Carlo over the booster collation, DEC-926)
 
-100,000 simulated pools of 6 Play Boosters plus a promo, scored with the grades below. P(best) = share of pools where this pair builds the highest-scoring 23. P(viable) = pool holds 23 playables, 3 removal and a bomb for this pair, with at most a 2-card splash gated on 2 lands that make the colour. Any pair is viable in 86.6% of pools. Read this as "what the set makes likely", not as a pick: mean scores sit within 0.1 of each other, so the pool you open decides.
+100,000 simulated pools of 6 Play Boosters plus a promo, scored with the grades below. P(best) = share of pools where this pair builds the highest-scoring 23. P(viable) = pool holds 23 playables, 3 removal and a bomb for this pair, with at most a 2-card splash gated on 2 lands that make the colour. Any pair is viable in 86.6% of pools. Read this as "what the set makes likely", not as a pick: mean scores sit within 0.15 of each other, so the pool you open decides. Read P(best) as tiers, not an order: a one-point change on a dozen grades moved pairs by up to 2 points in review. Tier 1: WB. Tier 2: BR, WG, UB, UR, WU, WR. Tier 3: BG, UG, RG. Stable across every model version: white pairs have the highest P(viable), UG and WU the lowest, RG the lowest P(best).
 
 | Pair | P(best) | P(viable) | Mean score | Removal in deck | Bombs | P(viable) if splash gate also counts landcyclers | P(viable) with no splash |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| WG | 12.8% | 65.9% | 5.40 | 5.1 | 1.33 | 76.4% | 44.7% |
-| WB | 11.9% | 68.8% | 5.40 | 6.4 | 1.27 | 80.1% | 46.3% |
-| WR | 11.5% | 68.9% | 5.39 | 6.9 | 1.24 | 80.6% | 45.9% |
-| UR | 11.3% | 61.1% | 5.40 | 5.8 | 1.05 | 72.1% | 38.9% |
-| BR | 11.0% | 63.7% | 5.38 | 7.8 | 1.08 | 72.8% | 47.4% |
-| WU | 10.1% | 54.5% | 5.38 | 4.1 | 1.15 | 66.3% | 27.3% |
-| BG | 8.5% | 62.4% | 5.36 | 6.2 | 1.11 | 76.9% | 33.4% |
-| UG | 8.2% | 48.2% | 5.37 | 4.0 | 1.01 | 60.7% | 19.2% |
-| UB | 7.6% | 59.7% | 5.34 | 5.5 | 1.04 | 71.4% | 36.9% |
-| RG | 7.2% | 63.4% | 5.32 | 6.9 | 1.08 | 73.7% | 44.4% |
+| WB | 13.6% | 69.2% | 5.49 | 5.9 | 1.35 | 77.7% | 44.1% |
+| BR | 11.5% | 62.6% | 5.45 | 6.4 | 1.13 | 69.7% | 44.1% |
+| WG | 11.2% | 63.7% | 5.45 | 4.5 | 1.41 | 71.5% | 38.2% |
+| UB | 10.4% | 57.1% | 5.44 | 4.9 | 1.11 | 65.6% | 32.0% |
+| UR | 10.4% | 55.2% | 5.45 | 4.4 | 1.11 | 62.8% | 30.3% |
+| WU | 10.1% | 50.1% | 5.45 | 3.6 | 1.24 | 57.6% | 20.9% |
+| WR | 9.7% | 67.9% | 5.43 | 5.5 | 1.32 | 76.7% | 41.8% |
+| BG | 9.2% | 62.6% | 5.44 | 5.5 | 1.19 | 73.0% | 30.7% |
+| UG | 7.9% | 43.1% | 5.42 | 3.4 | 1.10 | 50.5% | 13.7% |
+| RG | 5.9% | 61.0% | 5.35 | 5.4 | 1.13 | 68.9% | 38.5% |
 
-**How to read it at the table.** White pairs top P(viable) because white has the most playables and its removal is premium (Memory Trap, Prophesied End, Your Fate Ends Here are all grade 7) but few: 5 white removal cards at common and uncommon against 8 red and 7 black. Red and black have the most removal by count, so BR decks average about 8 removal spells and white pairs 5 to 7. Blue pairs are removal-poor (UG and WU under 4.2). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.
+**How to read it at the table.** White pairs top P(viable) because white has the most playables and its removal is premium (Memory Trap, Prophesied End, Your Fate Ends Here are all grade 7) but few: 5 white removal cards at common and uncommon against 6 red and 7 black. Red and black have the most removal by count, so BR decks average about 6 removal spells and white pairs 4 to 6. Blue pairs are removal-poor (UG and WU lowest). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.
 
 ## 6. Full graded list
 
@@ -102,13 +101,13 @@ Commons and uncommons you will actually open:
 | 6 | Hexhaven Battalion | {4}{W}{W} | C |  | three 2/2s + Jace 2 + landcycling 2; never dead |
 | 6 | Kindred Judgment | {5}{W}{W} | R | ✕ | 7-mana near-wrath; choose your best creature's type |
 | 6 | Repurposed Enforcer | {1}{W} | R |  | 2-mana 3/2 that empowers Jace by creature count on attack |
+| 6 | Thalia, the Survivor | {3}{W} | U |  | 4-mana 3/4 lifelink that taxes their spells; Limited Resources likes it |
 | 6 | Way of the Healer | {3}{W} | U |  | 4 mana: Jace with 5 loyalty, -2 makes a 2/2 and surveils; two bodies then a draw |
 | 5 | Blossom-Blessed Angel // Seed Suture | {3}{W} | C |  | 4-mana 2/4 flying vigilance; Seed Suture copy makes it 3/5 for one more |
 | 5 | Ghalta the Immovable | {8}{W} | U |  | usually 5-6 mana 0/7 that attacks for 7 and makes your walls hit hard |
 | 5 | Koth of the Homestead | {2}{W} | U |  | 3-mana 2/3; landfall life and Plains counters |
 | 5 | Shatterwing Pegasus | {2}{W} | C |  | 2/3 flyer for 3 with late-game anthem |
 | 5 | Surgical Precision | {1}{W} | C | ✕ | kills toughness 4+ or cycles with 2 life; rarely dead |
-| 5 | Thalia, the Survivor | {3}{W} | U |  | 4-mana 3/4 lifelink, taxes their removal |
 | 5 | Tomik, Orzhov Lawmage | {1}{W} | U |  | 2-mana 2/1 flyer; grants flying to countered creatures |
 | 4 | Academic Ascent | {1}{W} | C | ⚡ | +2/+2 flying trick plus Jace 2; wins a combat and leaves value |
 | 4 (→7 with 4+ lifegain) | Ajani Resolute | {1}{W} | M |  | 2-mana PW; 0 nets +1 loyalty per turn; -4 Pridemate; needs lifegain to accelerate |
@@ -117,7 +116,7 @@ Commons and uncommons you will actually open:
 | 4 | Fateshaper Aspirant | {4}{W} | C |  | 5-mana 3/4; 70 legendary creatures in set make mode 1 live |
 | 4 | Flickering Hound | {3}{W} | R |  | 2/2 for 4; blink on creature cast re-buys ETBs |
 | 4 | Generous Revival | {2}{W} | U |  | reanimate MV<=3 with counter, flashback; fine value late |
-| 4 | Graft Surgeon | {2}{W} | C |  | 3/3 for 3 that passes its counter on death |
+| 4 | Graft Surgeon | {2}{W} | C |  | 2/2 that enters with a counter (3/3 for 3) and passes its counters on death |
 | 4 (→6 with 4+ lifegain) | Liliana the Faultless | {W} | R |  | 1-mana 1/1 with lifegain drips and hexproof; low impact |
 | 4 | Predictive Preparations | {1}{W} | C | ⚡ | two counters spread, flashback; slow 2-for-1 |
 | 4 | Refute Destiny | {1}{W} | U | ✕ | exile green or blue creature/PW; hits about 40% of targets |
@@ -144,31 +143,31 @@ Commons and uncommons you will actually open:
 | 6 | Hapatra, the Desert Frost | {3}{U} | U |  | 4-mana 4/3; stuns their best creature on entry |
 | 6 | Infinite Coursework | {2}{U} | C | ✕ | 3-mana aura: loses abilities, never untaps; solid removal |
 | 6 | Jace's Machinations | {2}{U} | R |  | 3-mana instant Jace 8: about three cards over time |
+| 6 | Mindseeker Oculus | {2}{U} | C |  | 3-mana 2/1 plus Jace 4 (a draw and a surveil); Limited Resources B |
 | 6 | Plan for All Outcomes | {3}{U} | U | ✕ | 4-mana enchantment that tucks a nonland permanent; Jace 1 per turn after |
 | 6 | Ruric Thar, Biomagus | {4}{U}{U} | U |  | 6-mana 4/6 flyer, double prowess, punishes targeting |
 | 5 | Diviner of Victory // Unwind History | {U} | R |  | 1-mana 1/1 that grows on surveil; carries a bounce plus surveil |
 | 5 | Divining Duelist | {2}{U} | C |  | flash 3/2 with tap/untap/loot |
-| 5 | Mindseeker Oculus | {2}{U} | C |  | 3-mana 2/1 plus Jace 4 (a draw and a surveil) |
 | 5 (→7 with 4+ surveil) | Proft, Consulting Detective | {1}{U} | U |  | 2/2 for 2; pay 2 per scry/surveil for counter plus draw |
 | 5 | Protege's Awakening | {3}{U} | C |  | 4 mana: draw plus Jace 6 (two more draws); slow card advantage |
 | 5 | Semester Foreseer // Peer Review | {3}{U} | C |  | 4-mana 3/4 surveil carrying Peer Review |
 | 5 | Undulating Witness | {4}{U} | C |  | 5-mana 3/5 flyer with pump and landcycling |
 | 5 | Variable Chaser // Arc of Fortune | {2}{U} | R |  | 3-mana 2/3 flying prowess; wheel is optional |
 | 4 | Arni, Humble Scribe | {2}{U} | U |  | 3/2 for 3 that loots when creatures enter |
-| 4 | Countersculpt | {U}{U} | U | ⚡ | 3-mana counter (2 with a Jace) plus Jace 1 |
+| 4 | Countersculpt | {U}{U} | U | ⚡ | UU plus 1 more mana (or behold a Jace) to counter a spell, plus Jace 1 |
 | 4 | Cryotheory Adept | {1}{U} | C |  | 2/1 prowess; graveyard stun later |
 | 4 | Fblthp, Impossibly Lost | {1}{U} | U |  | draws two when you connect on your turn; needs evasion |
 | 4 | Geist of Saint Thalia | {1}{U} | U |  | 2-mana 1/2 flyer; noncreature discount |
 | 4 | Icy Reception | {1}{U} | C | ⚡ | soft counter or -5/-0 fog; flexible |
-| 4 | Perfected Theory | {U} | U | ⚡ | 1-mana: shrink to 1/1 or grow to 4/5; kills in combat or saves |
-| 4 | Sphinx's Approach | {1}{U}{U} | C |  | 3-mana instant draw two |
 | 4 (→6 with 4+ surveil) | Surveillance Phantasm | {1}{U} | C |  | 2-mana 2/3 flyer; attacks once you scry or surveil, self-enables at 4 mana |
 | 4 | Theorist's Proxy | {1}{U} | R |  | flash 0/3 plus Jace 3 |
 | 4 | Traxos, Academy Guardian | {3}{U} | U |  | 1/5 flyer vigilance prowess; 2 mana after a noncreature spell |
 | 4 | Way of the Cryomancer | {2}{U} | U |  | 3 mana Jace 5; copy-a-spell ability is niche |
 | 4 (→5 with 5+ graveyard) | Yuriko, Hope from the Shadows | {U} | U | ⚡ | 1-mana flash 1/1; -X/-0 scales with graveyard or surveil 2 |
 | 3 (→6 with 4+ graveyard) | Cruel Calculations | {2}{U} | R |  | draw X where X = cards milled from target library this turn; needs mill |
+| 3 | Perfected Theory | {U} | U | ⚡ | 1-mana shrink-to-1/1 or grow-to-4/5; both Draftsim and Limited Resources rate it a D-level trick |
 | 3 | Samut, Tyrant of Naktamun | {1}{U} | R |  | 2/1 for 2; split second is niche |
+| 3 | Sphinx's Approach | {1}{U}{U} | C |  | 3-mana instant draw two, UU; fine filler in a slow deck |
 | 3 | Tetsuko Umezawa, Fugitive | {1}{U} | U |  | 1/3 for 2; unblockable for small creatures |
 | 3 | Unsummon | {U} | C | ⚡ | tempo only |
 | 3 | Way of the Mind Sculptor | {4}{U} | U |  | 5 mana Jace 5; draws on big loyalty activations |
@@ -182,18 +181,18 @@ Commons and uncommons you will actually open:
 | 9 | Garruk, Veiled Butcher | {3}{B}{B} | M | ★✕ | 5-mana PW: -4/-1 each turn, edict plus 4/4, discard two |
 | 8 | Lich's Relic | {B} | R | ★✕ | 3 mana total: kill a creature or PW, then a +2/+1 equipment |
 | 8 | Vraska's Final Mercy | {B}{B} | R | ★✕ | 2-mana kill anything, or Jace 6 |
+| 7 | Extended Absence | {3}{B} | C | ✕ | 4-mana instant exile creature or PW plus drain 1; Limited Resources B/B+ |
 | 7 | Last Gasp | {1}{B} | C | ✕ | 2-mana instant -3/-3 |
 | 7 | Multiply by Zero | {1}{B} | U | ✕ | 2-mana instant: base 0/0 kills anything without counters |
 | 7 | Overwrite the Multiverse | {4}{B}{B} | M | ✕ | 6-mana exile all creatures plus Jace X |
 | 7 | Rise of the Deathbringer | {4}{B} | R | ✕ | instant -3/-3 sweep or big draw |
+| 6 | Break Under Pressure | {2}{B} | U | ✕ | instant edict of their biggest creature or PW plus 2 life; Limited Resources B/B+ |
 | 6 | Darklight Phoenix | {3}{B} | M |  | 4-mana 3/2 flying haste that recurs after double deaths |
-| 6 | Extended Absence | {3}{B} | C | ✕ | 4-mana instant exile creature or PW plus drain 1 |
 | 6 | Gideon the Oathless | {2}{B} | R |  | 3-mana 3/3 with discard ward; pings on their creatures entering |
+| 6 | Massacre Girl, Most Wanted | {4}{B} | U |  | 5-mana 4/4 that drains on deaths and grows on noncombat damage; Limited Resources B |
 | 6 | Silence the Echo | {1}{B} | C | ✕ | unconditional kill for 2 plus a sacrifice, or 5 mana |
 | 5 | Apex Witchstalker | {4}{B}{B} | C |  | 6-mana 6/4 menace, 2 life on ETB and death, landcycling 2 |
-| 5 | Break Under Pressure | {2}{B} | U | ✕ | instant edict of their biggest creature or PW; plus 2 life |
 | 5 | Liliana the Repentant | {1}{B} | R |  | 2-mana 2/2 self-mill; one reanimation for 6 |
-| 5 | Massacre Girl, Most Wanted | {4}{B} | U |  | 5-mana 4/4 that drains on deaths |
 | 5 (→6 with 4+ jace) | Sanctum Lurker | {2}{B} | R |  | 3/2 for 3; Jace never dies and drains each turn |
 | 5 | Screeching Soulbreaker | {2}{B} | C |  | 1/4 flyer that drains 1 on attack |
 | 5 | Way of the Deathbringer | {2}{B} | U |  | 3 mana Jace 5; -2 sac a creature for a 4/4 trample |
@@ -204,7 +203,6 @@ Commons and uncommons you will actually open:
 | 4 | Gallia, Tragic Host | {1}{B} | U |  | 2/1 menace; recursion from graveyard |
 | 4 | Mabel, Bitter Recluse | {B} | U |  | 1-mana deathtouch; strips counters |
 | 4 (→7 with 5+ graveyard) | Proft, Sinister Mastermind | {2}{B} | U |  | discard for -3/-1 always; 5/5 menace for 3 at threshold |
-| 4 | Rampart Hunter | {3}{B} | C |  | 4-mana 3/3 deathtouch; ETB grants deathtouch as a trick |
 | 4 | Rewrite Regrets | {3}{B} | U |  | 4-mana reanimate MV<=6 plus Jace 2 |
 | 4 | Terminal Criticism | {1}{B} | U | ✕ | kill blue or red creature/PW; about 40% of targets |
 | 4 | Teyo, Diamondblade Mage | {3}{B} | U | ⚡ | flash 3/1 that grants deathtouch and a counter |
@@ -213,18 +211,19 @@ Commons and uncommons you will actually open:
 | 4 (→5 with 4+ graveyard) | Void Extrapolator // Omit Variables | {1}{B} | C |  | 2-mana 2/2, 3/3 at threshold; carries mill 3 |
 | 3 (→6 with 4+ graveyard) | Dark Matter Manipulator | {B} | R |  | 1-mana 1/2 mill 3; grows at 7 and 14 |
 | 3 (→4 with 5+ graveyard) | Loot, the Anomaly | {2}{B} | U |  | 3-mana 4-toughness that hits for 2; threshold pump |
+| 3 | Rampart Hunter | {3}{B} | C |  | 4-mana 3/3 deathtouch with an ETB trick; both reviews call it filler |
 | 3 | Rank Rat | {1}{B} | C |  | 1/1 discard |
 | 3 | Solve for Disappointment | {1}{B} | C |  | targeted discard plus Jace 1 |
 | 3 | Way of the Necromancer | {1}{B} | U |  | 2 mana Jace 2; loyalty on your creature deaths |
-| 3 | Yargle, Glutton of Urborg | {4}{B} | U |  | 5-mana 9/3 vanilla; trades up |
 | 2 | Extrapolate the Impossible | {1}{B} | R |  | 2-mana tutor from sideboard, opponent picks one of two |
+| 2 | Yargle, Glutton of Urborg | {4}{B} | U |  | 9/3 vanilla; chump-blocked forever |
 
 ### R
 
 | Grade | Card | Cost | R | Tags | Why |
 |---|---|---|---|---|---|
 | 9 | Chandra, Torch of Defiance | {2}{R}{R} | M | ★✕ | 4-mana PW: 4 damage, card or 2 damage each turn, ramp |
-| 8 | Ajani Unrelenting | {4}{R}{R} | M | ★ | 6-mana PW that makes a 2/2 per activation and pumps; -3 is a one-sided sweep with tokens |
+| 8 | Ajani Unrelenting | {4}{R}{R} | M | ★ | 6-mana PW that makes a 2/2 per activation and pumps; -3 hits every non-token creature, yours too |
 | 8 | Curse-Marred Demon | {2}{R}{R} | R | ★ | 4-mana 4/4 flying trample that tutors |
 | 8 | Draconic Visitor | {3}{R}{R} | R | ★ | 5-mana 5/5 flyer |
 | 7 (→8 with 3+ artifact) | Craterclaw Colossus | {4}{R}{R}{R} | M |  | 7-mana 5/5 haste with team trample and pump |
@@ -241,9 +240,9 @@ Commons and uncommons you will actually open:
 | 5 | Koth, the Geomancer | {2}{R} | U |  | 3/2 reach; landfall ping each land |
 | 5 | Master of Barbs | {1}{R} | R |  | 2-mana 2/1 menace; team pump on noncombat damage |
 | 5 | Pia, Determined Rebuilder | {2}{R} | U |  | 3 mana for 2/2 plus a 1/1 flying thopter |
-| 5 | Tether Technician | {4}{R} | C | ✕ | 5-mana 4/5 reach; discard for 2 damage any target |
+| 5 | Tether Technician | {4}{R} | C |  | 5-mana 4/5 reach; discard for 2 damage any target (kills 48% of creatures); counted as a body, not removal |
 | 5 | Tetsuko Umezawa, Pursuer | {3}{R} | U |  | 4-mana 2/4 double strike prowess |
-| 5 | Way of the Warlord | {2}{R} | U | ✕ | 3 mana Jace 5; -4 once for 2 to a creature and 2 to face |
+| 5 | Way of the Warlord | {2}{R} | U |  | 3 mana Jace 5; -4 once for 2 to a creature and 2 to face; not counted as removal |
 | 4 | Arni, Renowned Champion | {3}{R} | U |  | 1/5 trample that swells when creatures enter |
 | 4 | Blazing Crescendo | {1}{R} | C | ⚡ | +3/+1 plus impulse draw |
 | 4 | Chandra's Emberling | {2}{R} | C |  | 3-mana 2/2 haste that grows on noncreature spells |
@@ -281,6 +280,7 @@ Commons and uncommons you will actually open:
 | 5 | Carnivorous Cultivator // Enroot | {1}{G} | R |  | 2-mana 2/3 deathtouch; Enroot is filler |
 | 5 | Greenhouse Propagator | {2}{G} | C |  | 3-mana 2/3 mana creature with lifegain drips |
 | 5 | Jiang Yanggu, Never Alone | {3}{G} | U |  | 4 mana for 2/2 plus a 3/3 dog |
+| 5 | Loot, the Nexus | {2}{G} | U |  | 3-mana dork that taps for 2-3 with varied powers; fragile |
 | 5 | Marwyn, the Preserver | {1}{G} | U |  | 2-mana 3/2 |
 | 5 | Simulacrum Shaper | {1}{G}{G} | R |  | 3-mana 2/2 ramp that draws on death |
 | 5 | Sureshot Sower | {1}{G} | C | ✕ | 3/1 reach for 2; discard to kill a flyer |
@@ -288,14 +288,13 @@ Commons and uncommons you will actually open:
 | 5 | Vinelasher Adept | {4}{G}{G} | C |  | 6 mana for 5/7 reach or three counters elsewhere; landcycling 2 |
 | 5 | Way of the Wildspeaker | {4}{G} | U |  | 5 mana Jace 7; -4 for a 4/4 trample |
 | 5 | Yoshimaru, Scrappy Stray | {1}{G} | U | ✕ | 2-mana 1/1 that makes another creature fight |
-| 4 | Budding Insurgent | {2}{G} | C | ✕ | 3/3 vigilance for 3; sacrifice to kill an artifact or enchantment |
+| 4 | Budding Insurgent | {2}{G} | C |  | 3/3 vigilance for 3; sacrifice to kill an artifact, enchantment or Way; not creature removal |
 | 4 | Fblthp, Knows the Way | {X}{G}{G} | U |  | X=1: 3 mana for a 1-2/2 that fetches a basic |
 | 4 | Flourishing Grapple | {G} | U | ✕ | 1-mana bite vs red or white targets; about 40% |
 | 4 | Heartwood Crafter // Soul Tether | {G} | U |  | 1-mana dork for abilities; carries Heartwood ramp |
 | 4 | Hexhaven Invigorator | {G}{G}{G}{G} | M |  | GGGG 6/6 vigilance; hard to cast in two colors |
 | 4 | Hunter's Axe | {G} | U |  | 1-mana equipment +2/+0 plus trample or deathtouch |
 | 4 (→5 with 4+ jace) | Inspired Tethermage | {2}{G} | C |  | 3/2 for 3; grows on loyalty counters |
-| 4 | Loot, the Nexus | {2}{G} | U |  | 2/1 mana engine; fragile |
 | 4 | Something Worth Saving | {1}{G} | C |  | 2-mana mill 4, take a permanent; fuels threshold |
 | 4 | Way of the Paradox | {2}{G} | U |  | 3 mana Jace 5; life and extra land on activations |
 | 4 | Wrecking Gecko | {4}{G} | C |  | 5-mana 5/5 ward 2 |
@@ -337,8 +336,8 @@ Commons and uncommons you will actually open:
 | Grade | Card | Cost | R | Tags | Why |
 |---|---|---|---|---|---|
 | 8 | Uldaros Theorix | {3}{U}{B}{B} | M | ★ | 6-mana 5/5 flyer that recasts copies from the graveyard |
+| 7 | Theorix Charm | {U}{B} | U | ✕⚡ | -2/-2 (kills 48% of the set's creatures), soft counter, or mill 3 and draw; Limited Resources 'excellent' |
 | 6 (→7 with 5+ graveyard) | Null Summoner | {2}{U}{B} | R |  | 4-mana 4/2 that exiles their best card; castable at threshold |
-| 6 | Theorix Charm | {U}{B} | U | ✕⚡ | -2/-2, soft counter, or mill 3 draw |
 | 5 | Recursive Recruitment | {2}{U}{B} | U |  | two 2/2s; flashback with counters |
 
 ### Gold UG
@@ -425,16 +424,16 @@ Commons and uncommons you will actually open:
 | Grade | Card | Cost | R | Tags | Why |
 |---|---|---|---|---|---|
 | 6 | The Echoverse Fulcrum | {2} | M | ✕ | 2-mana loot; 5 mana exile-wrath later |
-| 5 | Archive Arbiter | {6} | U | ✕ | 6-mana 4/4 flyer; kills a noncreature permanent or gains 4 |
+| 5 | Archive Arbiter | {6} | U |  | 6-mana 4/4 flyer; kills a planeswalker (including a Jace token) or enchantment, or gains 4; not creature removal |
 | 5 | Traxos, Scourge Eternal | {4} | U |  | 4-mana 5/4 trample that untaps on artifact or creature casts |
 | 4 | Afterthought Sentry | {2} | C |  | 2-mana 2/2 that flies for 2 |
 | 4 | Keeper of the Quiet Hour | {3} | C |  | 3-mana 3/2 plus Jace 2 |
-| 4 | Living Library | {2} | C | ✕ | 2-mana 0/4 wall; 6 mana to shuffle away their best creature |
 | 4 | Medic's Kitesail | {2} | C |  | 2-mana flying equipment with lifegain |
 | 4 | Murmuring Volume | {3} | C | ◆ | 3-mana any-color rock that loots |
 | 3 | Codie, Ravenous Codex | {3} | R |  | 3-mana 1/4 that copies prepared spells; needs many prepared cards |
 | 3 | Emrakul, the Exigent Doom | {10} | M |  | 10-mana 12/12; the exile mode ramps you two mana from turn 3 |
 | 3 (→4 with 4+ graveyard) | Eye of Jace | {1} | U |  | 1-mana surveil each upkeep; pops at threshold |
+| 3 | Living Library | {2} | C |  | 2-mana 0/4 wall; the 6-mana shuffle is too slow to count as removal |
 | 2 | Karn, Argent Defender | {2} | R |  | 2-mana 1/3 Torpor Orb; hurts your own ETBs |
 
 ### Lands

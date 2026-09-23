@@ -33,19 +33,19 @@ out = ["# Reality Fracture prerelease cheat sheet (DEC-925)", "",
 "Grades are Sealed grades, 0 to 10, from oracle text (CEO, 2026-09-23), cross-checked against Draftsim. ★ bomb, ✕ removal, ⚡ trick or instant-speed interaction, ◆ fixing. A grade in parentheses applies when your deck holds the listed number of enablers.", "",
 "## 1. Scoring your pool by hand (10 minutes)", "",
 "1. Sort the pool by color. Hybrid cards go to whichever of their two colors you are considering; gold cards stay aside.",
-"2. For each color, count cards graded 5 or higher. Write the count on the deck box. That is your depth.",
+"2. For each color, count cards graded 4 or higher (playables). Write the count on the deck box. That is your depth. Count the 6-or-higher cards too; that is your quality.",
 "3. For each color, count ✕ cards. Two colors with at least 3 ✕ between them is the target.",
 "4. Take the two deepest colors. Add gold cards for that pair. Count again: you need 22 to 23 spells graded 4 or higher, with 3 or more ✕ and at least one ★ (grade 8 or higher). That is the same viability test the simulation in section 5 uses.",
 "5. If a third color holds a card graded 7 or higher, splash it only with 2 or more lands in the pool that make that color: a dual land (common Annex/Commons or rare slowland) or Room of Refuge. Murmuring Volume and the basic landcyclers (Hexhaven Battalion, Undulating Witness, Apex Witchstalker, Awaken the Inferno, Vinelasher Adept) help the splash but do not count toward the 2. Splash at most 2 cards.",
 "6. Build: 17 lands (duals count), 23 spells. Curve target: 1-2 one-drops, 7-8 two-drops, 5-6 three-drops, the rest 4+. Play every ✕ you can cast.",
-"7. If two pairs tie, prefer the one whose synergy grades turn on (Jace count, graveyard count, lifegain count), then the one with more 2-drops.", "",
+"7. If two pairs tie, prefer the one with more 6-or-higher cards, then the one whose synergy grades turn on (Jace count, graveyard count, lifegain count), then the one with more 2-drops.", "",
 "## 2. Format rules that decide games", "",
 "- **The Jace token.** Any card that says \"empower Jace N\" creates a blue Jace planeswalker token if you have none and puts N loyalty on it. The token has −1: surveil 1 and −3: draw a card. It can be attacked. Count your Jace sources: 4 or more means the Jace synergy grades apply.",
 "- **The 10 common dual lands enter untapped only if you control a planeswalker.** A Jace token counts. Without one they are tapped duals. Play them anyway.",
 "- **Prepared creatures** (two-faced cards) enter with a spell you may cast once by paying the spell's cost; three of them (Paradox Shaper, Stingerquill Voxmancer, Woodwork Prodigy) re-prepare every upkeep and are engines.",
 "- **Threshold** (7 cards in graveyard) needs mill: Omit Variables, surveil, Something Worth Saving. Without 4+ enablers the threshold cards are their base grade.",
 "- **Basic landcycling {2}** on five commons is your splash insurance and your flood insurance.",
-"- **3 damage kills most creatures in the set** (limitedmtg count: 68%). Respect No Admittance, Stingerquill Charm, Last Gasp at 2 mana.", "",
+"- **3 damage kills most creatures in the set.** Counted from the card file: 68% of creatures have toughness 3 or less, 48% have 2 or less, 87% have 4 or less. Respect No Admittance, Stingerquill Charm and Last Gasp at 2 mana.", "",
 "## 3. Removal by color", "", "Count and quality by colour (mono-colour cards only; ✕ role). White has fewer removal cards than black or red but its commons and uncommons are the best-graded; red has the most at common, which is what a 40-common pool actually opens.", "",
 "| Colour | Common | Uncommon | Rare/Mythic | Total | Mean grade |", "|---|---:|---:|---:|---:|---:|"]
 _rc = collections.defaultdict(collections.Counter); _rg = collections.defaultdict(list)
@@ -65,7 +65,7 @@ out += ["", "## 4. Tricks and instant-speed plays to respect (by open mana)", ""
 tr = collections.defaultdict(list)
 for e in G:
     t = e["type_line"]; o = (cards[e["name"]].get("oracle_text") or " ".join(f.get("oracle_text", "") for f in cards[e["name"]].get("card_faces", []))).lower()
-    if ("Instant" in t.split(" //")[0] or re.search(r"\bflash\b", o.split("//")[0])) and e["rarity"] in ("common", "uncommon"):
+    if ("Instant" in t.split(" //")[0] or re.search(r"\bflash\b", o.split("//")[0])) and e["rarity"] in ("common", "uncommon") and ({"trick", "removal", "threat"} & set(e["roles"])):
         tr[bucket(e)].append(e)
 for k in ["W", "U", "B", "R", "G"] + sorted(k for k in tr if k not in "WUBRG"):
     if k in tr: out.append(f"- **{k}**: " + "; ".join(f"{e['name']} ({e['mana_cost'].split(' // ')[0]})" for e in sorted(tr[k], key=lambda e: len(pips(e["mana_cost"])))))
@@ -75,11 +75,13 @@ head, hr = sim_rows("sim_results.json"); spec, _ = sim_rows("sim_results_spec_sp
 order = sorted(head, key=lambda k: -head[k]["p_best"])
 pct = lambda x: f"{100*x:.1f}%"
 out += ["", "## 5. Archetype ranking (Monte Carlo over the booster collation, DEC-926)", "",
-f"{hr['pools']:,} simulated pools of 6 Play Boosters plus a promo, scored with the grades below. P(best) = share of pools where this pair builds the highest-scoring 23. P(viable) = pool holds 23 playables, 3 removal and a bomb for this pair, with at most a 2-card splash gated on 2 lands that make the colour. Any pair is viable in {pct(hr['p_any_viable_pair'])} of pools. Read this as \"what the set makes likely\", not as a pick: mean scores sit within 0.1 of each other, so the pool you open decides.", "",
+f"{hr['pools']:,} simulated pools of 6 Play Boosters plus a promo, scored with the grades below. P(best) = share of pools where this pair builds the highest-scoring 23. P(viable) = pool holds 23 playables, 3 removal and a bomb for this pair, with at most a 2-card splash gated on 2 lands that make the colour. Any pair is viable in {pct(hr['p_any_viable_pair'])} of pools. Read this as \"what the set makes likely\", not as a pick: mean scores sit within 0.15 of each other, so the pool you open decides. Read P(best) as tiers, not an order: a one-point change on a dozen grades moved pairs by up to 2 points in review. Tier 1: WB. Tier 2: BR, WG, UB, UR, WU, WR. Tier 3: BG, UG, RG. Stable across every model version: white pairs have the highest P(viable), UG and WU the lowest, RG the lowest P(best).", "",
 "| Pair | P(best) | P(viable) | Mean score | Removal in deck | Bombs | P(viable) if splash gate also counts landcyclers | P(viable) with no splash |", "|---|---:|---:|---:|---:|---:|---:|---:|"]
 for k in order:
     h = head[k]; out.append(f"| {k} | {pct(h['p_best'])} | {pct(h['p_viable'])} | {h['mean_score']:.2f} | {h['mean_removal']:.1f} | {h['mean_bombs']:.2f} | {pct(spec[k]['p_viable'])} | {pct(nos[k]['p_viable'])} |")
-out += ["", "**How to read it at the table.** White pairs top P(viable) because white has the most playables and its removal is premium (Memory Trap, Prophesied End, Your Fate Ends Here are all grade 7) but few: 5 white removal cards at common and uncommon against 8 red and 7 black. Red and black have the most removal by count, so BR decks average about 8 removal spells and white pairs 5 to 7. Blue pairs are removal-poor (UG and WU under 4.2). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.", ""]
+_cu = {k: _rc[k]["common"] + _rc[k]["uncommon"] for k in "WUBRG"}
+_pr = {p["pair"]: p for p in hr["per_pair"]}
+out += ["", f"**How to read it at the table.** White pairs top P(viable) because white has the most playables and its removal is premium (Memory Trap, Prophesied End, Your Fate Ends Here are all grade 7) but few: {_cu['W']} white removal cards at common and uncommon against {_cu['R']} red and {_cu['B']} black. Red and black have the most removal by count, so BR decks average about {_pr['BR']['mean_removal']:.0f} removal spells and white pairs {min(_pr[p]['mean_removal'] for p in ('WU','WB','WR','WG')):.0f} to {max(_pr[p]['mean_removal'] for p in ('WU','WB','WR','WG')):.0f}. Blue pairs are removal-poor (UG and WU lowest). A pool that opens 3 or more black or red removal spells is usually a BR/WB/WR deck; a pool with a white bomb and lifegain is WG. Green is the least likely main colour, not a bad one.", ""]
 out += ["## 6. Full graded list", ""]
 groups = collections.defaultdict(list)
 for e in G: groups[bucket(e)].append(e)
