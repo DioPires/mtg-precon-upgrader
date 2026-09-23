@@ -12,7 +12,7 @@
 - Every slot's published weights are normalized to sum to 1. The published figures for slots 8, 9-11 and 13 sum to 0.97-0.972; the CEO's target of 4.81 uncommons per pack was computed without that normalization and is not reachable by any proper distribution. The normalized model gives ~4.94. Commons, rares+mythics and duals match the targets.
 - Promo: one card uniform over the 64 main-set rares + 26 mythics (64/90 vs 26/90). FLAGGED - board to confirm from the pack.
 - Basic lands are dropped from the pool (unlimited at the event).
-- Card colours come from Scryfall's top-level `colors`, i.e. the front face. Every card in the set whose colour identity is wider than that has a hybrid back face, so front-face colours are the correct castability set.
+- Eligibility is castability, not colour identity (DEC-927): every pip of the front-face mana cost must be payable by the pair. A hybrid pip {W/B} needs W or B; {2/W}, Phyrexian, generic, {X} and {C} are always payable. So Blessed Ghoul ({W/B}) is eligible for all 7 pairs containing W or B and Karn, Gilded Guardian ({2/W}{2/U}{2/B}{2/R}{2/G}) for all 10 -- its 8-mana reality is priced into its grade, not its eligibility. For `prepare` DFCs the front face is card_faces[0]. Lands are never deck spells; they enter only as fixers.
 - Splash: up to 2 cards of a single third colour, effective grade >= 7, allowed when the pool holds >= 2 fixers for that colour. A fixer is any land in the pool that can produce it (the common duals, the rare slowlands, Room of Refuge) or any basic-landcycling card. Splash cards are graded against the two-colour eligible set's synergy counts.
 - `playables` counts the pair's available cards (eligible + any splash taken) at effective grade >= 4, not base grade; the same effective grade drives deck choice, score and the bomb count.
 - A pool shorter than 23 eligible cards is padded to 23 at grade 1 so scores stay comparable.
@@ -21,28 +21,28 @@
 
 | Pair | P(viable) | Mean score | P(best) | P(top 2) | Playables | Removal | Bombs | Splash |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| WG | 73.8% | 5.38 | 13.1% | 24.5% | 28.5 | 5.53 | 1.69 | 1.95 |
-| RG | 66.9% | 5.38 | 14.3% | 25.7% | 27.4 | 7.33 | 1.31 | 1.92 |
-| WU | 64.2% | 5.37 | 11.5% | 22.8% | 28.7 | 4.30 | 1.53 | 1.95 |
-| WR | 73.4% | 5.37 | 11.3% | 22.5% | 27.7 | 7.25 | 1.56 | 1.91 |
-| WB | 74.4% | 5.37 | 10.3% | 21.3% | 27.9 | 6.64 | 1.64 | 1.93 |
-| UB | 65.1% | 5.37 | 13.8% | 24.4% | 27.3 | 5.64 | 1.37 | 1.94 |
-| BR | 65.9% | 5.32 | 8.3% | 17.5% | 27.0 | 8.14 | 1.33 | 1.87 |
-| UR | 64.2% | 5.30 | 6.4% | 14.8% | 26.8 | 6.09 | 1.34 | 1.93 |
-| BG | 69.3% | 5.30 | 6.2% | 14.6% | 27.1 | 6.51 | 1.48 | 1.95 |
-| UG | 57.9% | 5.27 | 4.9% | 11.8% | 27.2 | 4.30 | 1.40 | 1.96 |
+| WB | 80.1% | 5.49 | 12.3% | 23.7% | 31.3 | 6.39 | 1.65 | 1.94 |
+| UR | 72.1% | 5.48 | 11.1% | 22.2% | 30.7 | 5.86 | 1.35 | 1.93 |
+| WR | 80.6% | 5.48 | 11.7% | 22.8% | 31.2 | 6.95 | 1.62 | 1.91 |
+| WG | 76.4% | 5.48 | 12.4% | 23.2% | 31.4 | 5.19 | 1.71 | 1.95 |
+| BR | 72.8% | 5.47 | 11.2% | 21.4% | 29.9 | 7.92 | 1.34 | 1.87 |
+| WU | 66.3% | 5.47 | 10.1% | 20.5% | 31.1 | 4.15 | 1.56 | 1.95 |
+| UG | 60.7% | 5.44 | 8.2% | 17.7% | 31.1 | 3.92 | 1.43 | 1.96 |
+| BG | 76.9% | 5.44 | 8.4% | 18.0% | 30.5 | 6.14 | 1.52 | 1.96 |
+| UB | 71.4% | 5.42 | 7.4% | 15.6% | 30.7 | 5.51 | 1.38 | 1.95 |
+| RG | 73.7% | 5.40 | 7.2% | 14.9% | 30.3 | 7.05 | 1.37 | 1.92 |
 
-P(at least one viable pair in the pool): **86.8%**. Mean pool size (basics excluded): 81.6 cards.
+P(at least one viable pair in the pool): **86.9%**. Mean pool size (basics excluded): 81.6 cards.
 
 ## Per colour (mean over the 4 pairs containing it)
 
 | Colour | Mean playables | Mean removal in deck |
 |---|---:|---:|
-| W | 28.2 | 5.93 |
-| U | 27.5 | 5.08 |
-| B | 27.3 | 6.73 |
-| R | 27.2 | 7.20 |
-| G | 27.6 | 5.92 |
+| W | 31.2 | 5.67 |
+| U | 30.9 | 4.86 |
+| B | 30.6 | 6.49 |
+| R | 30.5 | 6.95 |
+| G | 30.8 | 5.57 |
 
 ## Pool composition (grade-independent)
 
@@ -100,7 +100,7 @@ P(at least one viable pair in the pool): **86.8%**. Mean pool size (basics exclu
 - Every slot's published weights are normalized to sum to 1. The published figures for slots 8, 9-11 and 13 sum to 0.97-0.972; the CEO's target of 4.81 uncommons per pack was computed without that normalization and is not reachable by any proper distribution. The normalized model gives ~4.94. Commons, rares+mythics and duals match the targets.
 - Promo: one card uniform over the 64 main-set rares + 26 mythics (64/90 vs 26/90). FLAGGED - board to confirm from the pack.
 - Basic lands are dropped from the pool (unlimited at the event).
-- Card colours come from Scryfall's top-level `colors`, i.e. the front face. Every card in the set whose colour identity is wider than that has a hybrid back face, so front-face colours are the correct castability set.
+- Eligibility is castability, not colour identity (DEC-927): every pip of the front-face mana cost must be payable by the pair. A hybrid pip {W/B} needs W or B; {2/W}, Phyrexian, generic, {X} and {C} are always payable. So Blessed Ghoul ({W/B}) is eligible for all 7 pairs containing W or B and Karn, Gilded Guardian ({2/W}{2/U}{2/B}{2/R}{2/G}) for all 10 -- its 8-mana reality is priced into its grade, not its eligibility. For `prepare` DFCs the front face is card_faces[0]. Lands are never deck spells; they enter only as fixers.
 - Splash: up to 2 cards of a single third colour, effective grade >= 7, allowed when the pool holds >= 2 fixers for that colour. A fixer is any land in the pool that can produce it (the common duals, the rare slowlands, Room of Refuge) or any basic-landcycling card. Splash cards are graded against the two-colour eligible set's synergy counts.
 - `playables` counts the pair's available cards (eligible + any splash taken) at effective grade >= 4, not base grade; the same effective grade drives deck choice, score and the bomb count.
 - A pool shorter than 23 eligible cards is padded to 23 at grade 1 so scores stay comparable.
@@ -109,16 +109,16 @@ P(at least one viable pair in the pool): **86.8%**. Mean pool size (basics exclu
 
 | Pair | P(viable) | Mean score | P(best) | P(top 2) | Playables | Removal | Bombs | Splash |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| BR | 0.0% | 4.98 | 10.0% | 20.1% | 29.3 | 0.00 | 0.00 | 0.00 |
-| WU | 0.0% | 4.98 | 10.1% | 20.1% | 29.2 | 0.00 | 0.00 | 0.00 |
-| UB | 0.0% | 4.98 | 10.2% | 20.1% | 29.2 | 0.00 | 0.00 | 0.00 |
-| WR | 0.0% | 4.98 | 9.9% | 20.0% | 29.0 | 0.00 | 0.00 | 0.00 |
-| WG | 0.0% | 4.98 | 9.8% | 20.0% | 29.0 | 0.00 | 0.00 | 0.00 |
-| UR | 0.0% | 4.98 | 10.0% | 19.9% | 29.0 | 0.00 | 0.00 | 0.00 |
-| RG | 0.0% | 4.98 | 10.1% | 20.0% | 29.0 | 0.00 | 0.00 | 0.00 |
-| WB | 0.0% | 4.97 | 10.1% | 20.1% | 28.8 | 0.00 | 0.00 | 0.00 |
-| UG | 0.0% | 4.97 | 9.9% | 19.7% | 28.8 | 0.00 | 0.00 | 0.00 |
-| BG | 0.0% | 4.97 | 10.0% | 20.0% | 28.6 | 0.00 | 0.00 | 0.00 |
+| UR | 0.0% | 5.00 | 10.0% | 19.9% | 33.6 | 0.00 | 0.00 | 0.00 |
+| WR | 0.0% | 5.00 | 9.9% | 20.0% | 33.6 | 0.00 | 0.00 | 0.00 |
+| UG | 0.0% | 5.00 | 10.0% | 19.9% | 33.4 | 0.00 | 0.00 | 0.00 |
+| WB | 0.0% | 5.00 | 10.2% | 20.2% | 33.4 | 0.00 | 0.00 | 0.00 |
+| BR | 0.0% | 5.00 | 9.9% | 19.9% | 33.3 | 0.00 | 0.00 | 0.00 |
+| BG | 0.0% | 5.00 | 10.1% | 20.2% | 33.2 | 0.00 | 0.00 | 0.00 |
+| WU | 0.0% | 5.00 | 10.0% | 19.9% | 33.2 | 0.00 | 0.00 | 0.00 |
+| UB | 0.0% | 5.00 | 10.1% | 20.0% | 33.2 | 0.00 | 0.00 | 0.00 |
+| WG | 0.0% | 5.00 | 9.8% | 19.8% | 33.0 | 0.00 | 0.00 | 0.00 |
+| RG | 0.0% | 5.00 | 10.0% | 20.0% | 33.1 | 0.00 | 0.00 | 0.00 |
 
 P(at least one viable pair in the pool): **0.0%**. Mean pool size (basics excluded): 81.6 cards.
 
@@ -126,11 +126,11 @@ P(at least one viable pair in the pool): **0.0%**. Mean pool size (basics exclud
 
 | Colour | Mean playables | Mean removal in deck |
 |---|---:|---:|
-| W | 29.0 | 0.00 |
-| U | 29.0 | 0.00 |
-| B | 29.0 | 0.00 |
-| R | 29.1 | 0.00 |
-| G | 28.8 | 0.00 |
+| W | 33.3 | 0.00 |
+| U | 33.4 | 0.00 |
+| B | 33.3 | 0.00 |
+| R | 33.4 | 0.00 |
+| G | 33.2 | 0.00 |
 
 ## Pool composition (grade-independent)
 

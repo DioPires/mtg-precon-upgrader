@@ -47,6 +47,7 @@ VIABLE_REMOVAL = 3
 VIABLE_BOMBS = 1
 FILLER_GRADE = 1.0
 
+PIP_RE = re.compile(r"\{([^}]+)\}")
 DUAL_MANA_RE = re.compile(r"\{T\}: Add \{([WUBRG])\} or \{([WUBRG])\}")
 ANY_COLOR_MANA_RE = re.compile(r"\{T\}: Add one mana of (any|the chosen) color")
 LANDCYCLING_RE = re.compile(r"basic landcycling", re.IGNORECASE)
@@ -66,6 +67,60 @@ def color_mask(card: dict) -> int:
     for c in card.get("colors") or []:
         m |= COLOR_BIT.get(c, 0)
     return m
+
+
+def front_face_cost(card: dict) -> str:
+    """The mana cost you actually pay to cast the card from hand.
+
+    Split/`prepare` layouts carry both halves in the top-level `mana_cost`
+    (`"{2}{R} // {B/R}"`); `card_faces[0]` is the authoritative front face.
+    """
+    faces = card.get("card_faces")
+    if faces:
+        return faces[0].get("mana_cost") or ""
+    cost = card.get("mana_cost") or ""
+    return cost.split("//")[0].strip()
+
+
+def pip_mask(symbol: str) -> int | None:
+    """Colours that can pay one mana symbol, or None if anything can pay it.
+
+    `{W}` -> W. Hybrid `{W/B}` -> W or B. Generic-hybrid `{2/W}`, Phyrexian
+    `{W/P}`, generic, `{X}`, `{C}` and `{S}` are payable by any deck.
+    """
+    parts = symbol.upper().split("/")
+    if any(p.isdigit() for p in parts) or "P" in parts:
+        return None
+    m = 0
+    for p in parts:
+        bit = COLOR_BIT.get(p)
+        if bit is None:
+            return None
+        m |= bit
+    return m
+
+
+def pip_requirements(card: dict) -> tuple[int, ...]:
+    """Colour masks the card's front face requires, one per restrictive pip.
+
+    A deck whose colour set intersects every one of these can cast the card.
+    An empty tuple means castable by any deck (colourless, or lands).
+    """
+    reqs = []
+    for symbol in PIP_RE.findall(front_face_cost(card)):
+        m = pip_mask(symbol)
+        if m is not None:
+            reqs.append(m)
+    return tuple(reqs)
+
+
+def castable_subsets(reqs: tuple[int, ...]) -> int:
+    """Bitmap over the 32 colour subsets: bit s set iff subset s can cast it."""
+    bits = 0
+    for s in range(32):
+        if all(r & s for r in reqs):
+            bits |= 1 << s
+    return bits
 
 
 def is_basic(card: dict) -> bool:
@@ -107,6 +162,8 @@ class CardTable:
         self.index = {n: i for i, n in enumerate(self.name)}
         self.rarity = [c["rarity"] for c in self.cards]
         self.cmask = [color_mask(c) for c in self.cards]
+        self.reqs = [pip_requirements(c) for c in self.cards]
+        self.castable = [castable_subsets(r) for r in self.reqs]
         self.is_land = ["Land" in c["type_line"] for c in self.cards]
         self.is_dual = [is_dual_land(c) for c in self.cards]
         self.fix = [fixing_mask(c) for c in self.cards]
@@ -121,15 +178,18 @@ class CardTable:
                 self.pairs.append((self.index[a], self.index[b]))
         self.paired_names = paired
 
-        # cards that are eligible for each of the 10 two-colour pairs
+        # cards each of the 10 two-colour pairs can cast. Castability, not
+        # colour identity: {W/B} is castable by any deck with W or with B, and
+        # {2/W} by any deck at all. Lands are never deck spells here -- they
+        # enter the pool only as fixers.
         self.pair_slots: list[tuple[int, ...]] = []
         for i in range(len(self.cards)):
             if self.is_land[i]:
                 self.pair_slots.append(())
                 continue
-            m = self.cmask[i]
+            bits = self.castable[i]
             self.pair_slots.append(
-                tuple(p for p, pm in enumerate(PAIR_MASKS) if m & ~pm == 0)
+                tuple(p for p, pm in enumerate(PAIR_MASKS) if bits >> pm & 1)
             )
 
     def group(self, name: str) -> list[int]:
@@ -337,7 +397,7 @@ class Collation:
 def evaluate_pool(pool: list[int], table: CardTable, gt: GradeTable) -> list[dict]:
     """Best 23-card deck in each of the 10 two-colour pairs."""
     pair_slots = table.pair_slots
-    cmask = table.cmask
+    castable = table.castable
     is_land = table.is_land
     fix = table.fix
     grade, syn, needs, thr = gt.grade, gt.syn_grade, gt.needs, gt.needs_thr
@@ -393,8 +453,9 @@ def evaluate_pool(pool: list[int], table: CardTable, gt: GradeTable) -> list[dic
                 continue
             allowed = pm | bit
             for i in nonland:
-                m = cmask[i]
-                if m & ~allowed == 0 and m & bit:
+                bits = castable[i]
+                # needs the third colour: castable with it, not without it
+                if bits >> allowed & 1 and not bits >> pm & 1:
                     g = eff(i)
                     if g >= SPLASH_FLOOR:
                         splash_pool.append((g, i))
@@ -742,10 +803,14 @@ ASSUMPTIONS = [
     "Promo: one card uniform over the 64 main-set rares + 26 mythics "
     "(64/90 vs 26/90). FLAGGED - board to confirm from the pack.",
     "Basic lands are dropped from the pool (unlimited at the event).",
-    "Card colours come from Scryfall's top-level `colors`, i.e. the front "
-    "face. Every card in the set whose colour identity is wider than that has "
-    "a hybrid back face, so front-face colours are the correct castability "
-    "set.",
+    "Eligibility is castability, not colour identity (DEC-927): every pip of "
+    "the front-face mana cost must be payable by the pair. A hybrid pip "
+    "{W/B} needs W or B; {2/W}, Phyrexian, generic, {X} and {C} are always "
+    "payable. So Blessed Ghoul ({W/B}) is eligible for all 7 pairs containing "
+    "W or B and Karn, Gilded Guardian ({2/W}{2/U}{2/B}{2/R}{2/G}) for all 10 "
+    "-- its 8-mana reality is priced into its grade, not its eligibility. "
+    "For `prepare` DFCs the front face is card_faces[0]. Lands are never deck "
+    "spells; they enter only as fixers.",
     "Splash: up to 2 cards of a single third colour, effective grade >= 7, "
     "allowed when the pool holds >= 2 fixers for that colour. A fixer is any "
     "land in the pool that can produce it (the common duals, the rare "

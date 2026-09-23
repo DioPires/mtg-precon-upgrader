@@ -219,13 +219,84 @@ def _graded(table, overrides):
     return ss.GradeTable(table, rows)
 
 
-def test_eligibility_is_colour_subset(table):
-    """A pair's eligible set is exactly the non-land cards inside its colours."""
+def _pairs_for(table, name):
+    i = table.index[name]
+    return {ss.PAIR_NAMES[p] for p in table.pair_slots[i]}
+
+
+@pytest.mark.parametrize(
+    "symbol,expected",
+    [
+        ("W", "W"),
+        ("W/B", "WB"),
+        ("2/W", None),
+        ("W/P", None),
+        ("3", None),
+        ("X", None),
+        ("C", None),
+        ("S", None),
+    ],
+)
+def test_pip_mask(symbol, expected):
+    want = None if expected is None else sum(ss.COLOR_BIT[c] for c in expected)
+    assert ss.pip_mask(symbol) == want
+
+
+def test_front_face_cost_uses_face_zero(cards):
+    by_name = {c["name"]: c for c in cards}
+    heckler = by_name["Hallway Heckler // Vicious Verse"]
+    assert heckler["mana_cost"] == "{2}{R} // {B/R}"
+    assert ss.front_face_cost(heckler) == "{2}{R}"
+    assert ss.front_face_cost(by_name["Twisted Fates"]) == "{2}{W}{W}{B}"
+    assert ss.front_face_cost(by_name["Plains"]) == ""
+
+
+def test_eligibility_is_pip_castability(table):
+    """DEC-927: every front-face pip must be payable by the pair."""
     for p, name in enumerate(ss.PAIR_NAMES):
         mask = ss.PAIR_MASKS[p]
         for i in range(len(table.cards)):
-            expected = (not table.is_land[i]) and table.cmask[i] & ~mask == 0
+            reqs = ss.pip_requirements(table.cards[i])
+            expected = (not table.is_land[i]) and all(r & mask for r in reqs)
             assert (p in table.pair_slots[i]) is expected, (name, table.name[i])
+
+
+def test_dec927_castability_cases(table):
+    """The four worked examples from the DEC-927 addendum."""
+    # hybrid {W/B}: any deck with W or with B
+    assert _pairs_for(table, "Blessed Ghoul") == {
+        "WU", "WB", "WR", "WG", "UB", "BR", "BG"
+    }
+    # prepare DFC, front face {2}{R}: any pair with R
+    assert _pairs_for(table, "Hallway Heckler // Vicious Verse") == {
+        "WR", "UR", "BR", "RG"
+    }
+    # prepare DFC, front face {1}{W/U}: any pair with W or U
+    assert _pairs_for(table, "Fatehold Chronologist // Peer Review") == {
+        "WU", "WB", "WR", "WG", "UB", "UR", "UG"
+    }
+    # plain coloured pips
+    assert _pairs_for(table, "Twisted Fates") == {"WB"}
+    # all-generic-hybrid: castable everywhere, the 8 mana is priced in the grade
+    assert _pairs_for(table, "Karn, Gilded Guardian") == set(ss.PAIR_NAMES)
+
+
+def test_lands_are_never_eligible_spells(table):
+    for i in range(len(table.cards)):
+        if table.is_land[i]:
+            assert table.pair_slots[i] == (), table.name[i]
+
+
+def test_hybrids_are_no_longer_locked_to_their_colour_pair(table):
+    """The rule this replaced would have put every hybrid in exactly 1 pair."""
+    widened = [
+        table.name[i]
+        for i in range(len(table.cards))
+        if not table.is_land[i]
+        and bin(table.cmask[i]).count("1") >= 2
+        and len(table.pair_slots[i]) > 1
+    ]
+    assert len(widened) >= 10
 
 
 def test_deck_takes_the_top_23_by_effective_grade(table):
