@@ -354,7 +354,7 @@ def build(set_dir: str) -> str:
         if key in removal:
             out.append(f"- {heading_pip(key)} **{key}**")
             out += [
-                f"  - {e['name']} ({e['mana_cost'].split(' // ')[0]}, {e['grade']}, "
+                f"    - {e['name']} ({e['mana_cost'].split(' // ')[0]}, {e['grade']}, "
                 f"{kill_share(e, cards[e['name']], cum)})"
                 for e in sorted(removal[key], key=lambda e: -e["grade"])
             ]
@@ -378,7 +378,7 @@ def build(set_dir: str) -> str:
         if key in tricks:
             out.append(f"- {heading_pip(key)} **{key}**")
             out += [
-                f"  - {e['name']} ({e['mana_cost'].split(' // ')[0]})"
+                f"    - {e['name']} ({e['mana_cost'].split(' // ')[0]})"
                 for e in sorted(tricks[key], key=lambda e: len(pips(e["mana_cost"])))
             ]
 

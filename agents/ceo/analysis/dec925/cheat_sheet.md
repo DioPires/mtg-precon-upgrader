@@ -45,101 +45,101 @@ Share with toughness 3 or less, by colour: ⚪ W 77%, 🔵 U 78%, ⚫ B 77%, �
 Commons and uncommons you will actually open (grade, what it kills):
 
 - ⚪ **W**
-  - Memory Trap ({2}{W}, 7, all)
-  - Prophesied End ({1}{W}, 7, all)
-  - Your Fate Ends Here ({2}{W}, 7, MV 3+)
-  - Surgical Precision ({1}{W}, 5, toughness 4+ (32%))
-  - Refute Destiny ({1}{W}, 4, two colours only)
+    - Memory Trap ({2}{W}, 7, all)
+    - Prophesied End ({1}{W}, 7, all)
+    - Your Fate Ends Here ({2}{W}, 7, MV 3+)
+    - Surgical Precision ({1}{W}, 5, toughness 4+ (32%))
+    - Refute Destiny ({1}{W}, 4, two colours only)
 - 🔵 **U**
-  - Infinite Coursework ({2}{U}, 6, all)
-  - Plan for All Outcomes ({3}{U}, 6, all)
+    - Infinite Coursework ({2}{U}, 6, all)
+    - Plan for All Outcomes ({3}{U}, 6, all)
 - ⚫ **B**
-  - Extended Absence ({3}{B}, 7, all)
-  - Last Gasp ({1}{B}, 7, ≤3 toughness (68%))
-  - Multiply by Zero ({1}{B}, 7, all (no counters))
-  - Silence the Echo ({1}{B}, 6, all)
-  - Break Under Pressure ({2}{B}, 6, edict)
-  - Winter, Tormented Loner ({2}{B}, 5, edict)
-  - Terminal Criticism ({1}{B}, 4, two colours only)
+    - Extended Absence ({3}{B}, 7, all)
+    - Last Gasp ({1}{B}, 7, ≤3 toughness (68%))
+    - Multiply by Zero ({1}{B}, 7, all (no counters))
+    - Silence the Echo ({1}{B}, 6, all)
+    - Break Under Pressure ({2}{B}, 6, edict)
+    - Winter, Tormented Loner ({2}{B}, 5, edict)
+    - Terminal Criticism ({1}{B}, 4, two colours only)
 - 🔴 **R**
-  - No Admittance ({1}{R}, 7, ≤3 toughness (68%))
-  - Wrath of the Bloodmane ({2}{R}, 7, ≤4 toughness (87%))
-  - Fulminous Forte ({2}{R}, 7, ≤5 toughness (94%))
-  - Violent Echoes ({2}{R}{R}, 7, ≤6 toughness (100%))
-  - Awaken the Inferno ({4}{R}, 6, ≤6 toughness (100%))
-  - Essence Burn ({1}{R}, 4, two colours only)
+    - No Admittance ({1}{R}, 7, ≤3 toughness (68%))
+    - Wrath of the Bloodmane ({2}{R}, 7, ≤4 toughness (87%))
+    - Fulminous Forte ({2}{R}, 7, ≤5 toughness (94%))
+    - Violent Echoes ({2}{R}{R}, 7, ≤6 toughness (100%))
+    - Awaken the Inferno ({4}{R}, 6, ≤6 toughness (100%))
+    - Essence Burn ({1}{R}, 4, two colours only)
 - 🟢 **G**
-  - Compel Brutality ({1}{G}, 6, fight (your creature's power))
-  - Sureshot Sower ({1}{G}, 5, flyers only)
-  - Yoshimaru, Scrappy Stray ({1}{G}, 5, fight (your creature's power))
-  - Flourishing Grapple ({G}, 4, two colours only)
+    - Compel Brutality ({1}{G}, 6, fight (your creature's power))
+    - Sureshot Sower ({1}{G}, 5, flyers only)
+    - Yoshimaru, Scrappy Stray ({1}{G}, 5, fight (your creature's power))
+    - Flourishing Grapple ({G}, 4, two colours only)
 - 🟡 **Gold BG**
-  - Hapatra, the Desert Fang ({2}{B}{B}{G}, 6, −X/−X, X = highest MV in your graveyard)
+    - Hapatra, the Desert Fang ({2}{B}{B}{G}, 6, −X/−X, X = highest MV in your graveyard)
 - 🟡 **Gold BR**
-  - Stingerquill Charm ({B}{R}, 7, ≤3 toughness (68%))
+    - Stingerquill Charm ({B}{R}, 7, ≤3 toughness (68%))
 - 🟡 **Gold RG**
-  - Craftwork Crusher ({3}{R}{R}{G}{G}, 7, ≤4 toughness (87%))
-  - Konstrari Charm ({R}{G}, 5, flyers only)
+    - Craftwork Crusher ({3}{R}{R}{G}{G}, 7, ≤4 toughness (87%))
+    - Konstrari Charm ({R}{G}, 5, flyers only)
 - 🟡 **Gold UB**
-  - Theorix Charm ({U}{B}, 7, ≤2 toughness (48%))
+    - Theorix Charm ({U}{B}, 7, ≤2 toughness (48%))
 - 🟡 **Gold UG**
-  - Mind Meanderer ({3}{G}{U}{U}, 7, fight (your creature's power))
+    - Mind Meanderer ({3}{G}{U}{U}, 7, fight (your creature's power))
 - 🟡 **Gold UR**
-  - Clash of Elements ({1}{U}{R}, 6, all)
+    - Clash of Elements ({1}{U}{R}, 6, all)
 - 🟡 **Gold WB**
-  - Twisted Fates ({2}{W}{W}{B}, 7, all)
+    - Twisted Fates ({2}{W}{W}{B}, 7, all)
 - 🟡 **Gold WG**
-  - Vigorbloom Charm ({G}{W}, 7, fight (your creature's power))
+    - Vigorbloom Charm ({G}{W}, 7, fight (your creature's power))
 - 🟡 **Gold WR**
-  - Warrior's Blades ({2}{R}{W}, 7, ≤3 toughness (68%))
+    - Warrior's Blades ({2}{R}{W}, 7, ≤3 toughness (68%))
 
 ## 4. Tricks and instant-speed plays to respect (by open mana)
 
 - ⚪ **W**
-  - Academic Ascent ({1}{W})
-  - Prophesied End ({1}{W})
-  - Teyo, Lightshield Expert ({1}{W})
-  - Your Fate Ends Here ({2}{W})
+    - Academic Ascent ({1}{W})
+    - Prophesied End ({1}{W})
+    - Teyo, Lightshield Expert ({1}{W})
+    - Your Fate Ends Here ({2}{W})
 - 🔵 **U**
-  - Unsummon ({U})
-  - Perfected Theory ({U})
-  - Yuriko, Hope from the Shadows ({U})
-  - Divining Duelist ({2}{U})
-  - Icy Reception ({1}{U})
-  - Countersculpt ({U}{U})
+    - Unsummon ({U})
+    - Perfected Theory ({U})
+    - Yuriko, Hope from the Shadows ({U})
+    - Divining Duelist ({2}{U})
+    - Icy Reception ({1}{U})
+    - Countersculpt ({U}{U})
 - ⚫ **B**
-  - Extended Absence ({3}{B})
-  - Last Gasp ({1}{B})
-  - Break Under Pressure ({2}{B})
-  - Multiply by Zero ({1}{B})
-  - Terminal Criticism ({1}{B})
-  - Teyo, Diamondblade Mage ({3}{B})
+    - Extended Absence ({3}{B})
+    - Last Gasp ({1}{B})
+    - Break Under Pressure ({2}{B})
+    - Multiply by Zero ({1}{B})
+    - Terminal Criticism ({1}{B})
+    - Teyo, Diamondblade Mage ({3}{B})
 - 🔴 **R**
-  - Blazing Crescendo ({1}{R})
-  - Wrath of the Bloodmane ({2}{R})
-  - Essence Burn ({1}{R})
-  - Fulminous Forte ({2}{R})
-  - Violent Echoes ({2}{R}{R})
+    - Blazing Crescendo ({1}{R})
+    - Wrath of the Bloodmane ({2}{R})
+    - Essence Burn ({1}{R})
+    - Fulminous Forte ({2}{R})
+    - Violent Echoes ({2}{R}{R})
 - 🟢 **G**
-  - Tethermage's Advantage ({G})
-  - Flourishing Grapple ({G})
-  - Compel Brutality ({1}{G})
-  - Edgar, Moonlit Sovereign ({3}{G}{G})
+    - Tethermage's Advantage ({G})
+    - Flourishing Grapple ({G})
+    - Compel Brutality ({1}{G})
+    - Edgar, Moonlit Sovereign ({3}{G}{G})
 - 🟡 **Gold BR**
-  - Stingerquill Charm ({B}{R})
+    - Stingerquill Charm ({B}{R})
 - 🟡 **Gold RG**
-  - Konstrari Charm ({R}{G})
+    - Konstrari Charm ({R}{G})
 - 🟡 **Gold UB**
-  - Theorix Charm ({U}{B})
+    - Theorix Charm ({U}{B})
 - 🟡 **Gold UR**
-  - Clash of Elements ({1}{U}{R})
+    - Clash of Elements ({1}{U}{R})
 - 🟡 **Gold WG**
-  - Vigorbloom Charm ({G}{W})
+    - Vigorbloom Charm ({G}{W})
 - 🟡 **Gold WU**
-  - Fatehold Charm ({W}{U})
+    - Fatehold Charm ({W}{U})
 - ⚪🔵 **Hybrid (either color)**
-  - Ferocity of the Hunt ({1}{B/G})
-  - Charge the Sanctum ({2}{R/W})
+    - Ferocity of the Hunt ({1}{B/G})
+    - Charge the Sanctum ({2}{R/W})
 
 ## 5. Archetype ranking (100,000 simulated pools)
 
