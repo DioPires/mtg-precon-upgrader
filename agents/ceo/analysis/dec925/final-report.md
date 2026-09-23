@@ -26,7 +26,7 @@
 
 P(viable) = the pool holds 23 playables at grade 4 or higher, 3 removal spells and one card at grade 8 or higher for that pair, allowing a 2-card splash when 2 lands in the pool make the third colour. At least one pair is viable in 86.6% of pools. Every pool averages 8.9 rares or mythics and 3.3 common duals.
 
-**Read P(best) as tiers, not an order.** In review, one-point changes on a dozen grades and one collation fix moved pairs by up to 2 points and reordered the middle of the table. Tier 1: WB. Tier 2: BR, WG, UB, UR, WU, WR (9.7% to 11.5%, inside grade noise). Tier 3: BG, UG, RG. Stable across every version of the model: white pairs have the highest P(viable), UG and WU the lowest, RG the lowest P(best), and at least one viable pair exists in about 87% of pools.
+**Read P(best) as tiers, not an order.** In review, one-point changes on a dozen grades and one collation fix moved pairs by up to 2 points and reordered the middle of the table. Tier 1: WB. Tier 2: BR, WG, UB, UR, WU, WR, BG (9.2% to 11.5%, inside grade noise). Tier 3: UG, RG (below 8% P(best)). Stable across every version of the model: white pairs have the highest P(viable), UG and WU the lowest, RG the lowest P(best), and at least one viable pair exists in about 87% of pools.
 
 **By colour** (sum of P(best) over the four pairs holding the colour): B 45%, W 45%, U 39%, R 38%, G 34%. Removal cards by colour (creature or planeswalker answers only; common / uncommon / rare+mythic): B 3/4/5, R 3/3/2, W 2/3/2, G 2/2/0, U 1/1/0. White's five common and uncommon removal spells average grade 6.0 against red's 6.3 and black's 5.9, so white is short on count, not quality.
 
@@ -40,7 +40,7 @@ P(viable) = the pool holds 23 playables at grade 4 or higher, 3 removal spells a
 
 ### Effect of the corrections on the ranking
 
-P(best) before and after: WB 11.9 to 13.6, BR 11.0 to 11.5, WG 12.8 to 11.2, UB 7.6 to 10.4, UR 11.3 to 10.4, WU 10.1 to 10.1, WR 11.5 to 9.7, BG 8.5 to 9.2, UG 8.2 to 7.9, RG 7.2 to 5.9. Black pairs gained from four black cards moving up a grade; red pairs lost the two red cards untagged as removal. This is why the report now presents tiers.
+P(best) before and after: WB 11.9 to 13.6, BR 11.0 to 11.5, WG 12.8 to 11.2, UB 7.6 to 10.4, UR 11.3 to 10.4, WU 10.1 to 10.1, WR 11.5 to 9.7, BG 8.5 to 9.2, UG 8.2 to 7.9, RG 7.2 to 5.9. Black pairs gained from four black cards moving up a grade; red pairs lost the two red cards untagged as removal. This is why the report now presents tiers. The tier rule is fixed (tier 1 leads the next pair by 1.5 points or more; tier 3 is below 8% P(best)); the DEC-928 review moved BG from tier 3 to tier 2 under that rule, since BG clears 8% in every model version.
 
 ### Where the model stops
 
