@@ -9,6 +9,7 @@ Start 4 to 5 days before the event. All inputs must exist:
 - Scryfall lists every main-set card (`unique=cards` count equals WotC's stated rarity totals plus lands).
 - WotC's "Collecting <set>" article is out (booster slot percentages).
 - At least two external reviews are out: Draftsim's full-set review and Limited Resources' commons-and-uncommons episode usually land about a week before prerelease.
+- Optional: WotC's "<set> Prerelease Guide" article (archetype names and plans) and one video primer (Tolarian Community College usually posts one the week of the event). These feed step 7b only.
 
 If any input is missing, do the steps that do not need it and mark the rest pending.
 
@@ -57,7 +58,8 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
    ```bash
    uv run python scripts/prerelease/build_cheat_sheet.py --set-dir DIR
    ```
-   Output `DIR/cheat_sheet.md`: hand-scoring procedure, format rules, removal and tricks per colour, the ranking as tiers, the full graded list. Phone-readable on GitHub. Section 2 is `format_rules.md` verbatim; keep each rule to one bold line and one number. Everything else is generated, including the toughness table and the per-spell kill share in section 3. A handful of sentences in sections 1, 3 and 5 are judgement calls about the set rather than facts the tool can derive (which cards fix a splash, how to read the ranking at the table); write those into `DIR/prose.json` — without it the tool emits a generic version of each, and `--print-tiers` shows the tier reading computed from the data. `prose.json` also holds `pair_plans`: per colour pair, the archetype name, one plan sentence and a "look for" line of key commons and uncommons with their grades in brackets (sources: WotC's prerelease guide and a video primer such as Tolarian Community College's). The tool adds the signposts (the pair's two-colour cards graded 5+) from the data.
+   Output `DIR/cheat_sheet.md`: hand-scoring procedure, format rules, removal and tricks per colour, the ranking as tiers, the full graded list. Phone-readable on GitHub. Section 2 is `format_rules.md` verbatim; keep each rule to one bold line and one number. Everything else is generated, including the toughness table and the per-spell kill share in section 3. A handful of sentences in sections 1, 3 and 5 are judgement calls about the set rather than facts the tool can derive (which cards fix a splash, how to read the ranking at the table); write those into `DIR/prose.json` — without it the tool emits a generic version of each, and `--print-tiers` shows the tier reading computed from the data.
+7b. **Pair plans (conditional).** Do this only when at least one of the optional sources exists; the sheet is complete without it. For each colour pair add a `pair_plans` entry to `DIR/prose.json`: the archetype `name` (WotC's), one `plan` sentence (what the deck does and how it wins, in the imperative), and a `look_for` line of the key commons and uncommons the sources name, each with our grade in brackets. Rules: one sentence per plan; name only cards that exist in the card file; keep our grade next to every card so a source's "key card" we grade low reads as such; where the two sources disagree, prefer the WotC guide for the archetype's identity and the video for play advice, and say nothing you cannot verify against oracle text. The tool adds the **Signposts** line itself (the pair's two-colour cards graded 5+), so with no sources at all the block still shows every pair's signposts. Rebuild with the same command as step 7.
 8. **Report.** Post on the issue: the tier reading of P(best), P(viable) per pair, colour depth, what moved the numbers, the model's limits, the day-of steps. Commit and push the folder.
 9. **Self-review.** Cold pass, every number against its source: re-read the WotC slot text, re-count mechanics, audit removal tags with a regex over oracle text, re-check any quoted statistic by computing it, re-read the cheat sheet procedure for inconsistent thresholds. Post the findings even when nothing changes.
 10. **After the event.** Ask the board how the cheat sheet held up. Record what was wrong in `DIR/notes.md` and, if it is a process lesson, in this playbook.
@@ -86,7 +88,7 @@ Create one issue per event, titled `Prerelease: <set name> (<date>)`, assigned t
 ```
 Event: <date>, <venue>. Format: Sealed, 6 Play Boosters + promo.
 Deliverables: pair ranking as tiers, phone-readable cheat sheet (agents/ceo/analysis/prerelease/<code>/cheat_sheet.md).
-Inputs available? Scryfall full preview [ ] WotC Collecting article [ ] Draftsim review [ ] Limited Resources episode [ ]
-Steps (docs/prerelease-playbook.md): 1 verify set [ ] 2 collation config [ ] 3 blind grades [ ] 4 external compare [ ] 5 sim x3 + tests [ ] 6 sim review [ ] 7 cheat sheet [ ] 8 report [ ] 9 self-review [ ] 10 post-event notes [ ]
+Inputs available? Scryfall full preview [ ] WotC Collecting article [ ] Draftsim review [ ] Limited Resources episode [ ] Optional: WotC Prerelease Guide [ ] video primer [ ]
+Steps (docs/prerelease-playbook.md): 1 verify set [ ] 2 collation config [ ] 3 blind grades [ ] 4 external compare [ ] 5 sim x3 + tests [ ] 6 sim review [ ] 7 cheat sheet [ ] 7b pair plans (if sources) [ ] 8 report [ ] 9 self-review [ ] 10 post-event notes [ ]
 Assumptions to confirm at the event: promo pool.
 ```
