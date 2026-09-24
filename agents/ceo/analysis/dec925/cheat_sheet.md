@@ -162,6 +162,39 @@ Commons and uncommons you will actually open (grade, what it kills):
 
 **At the table:** 3+ black or red ✕ opened → WB, WR or BR. White bomb + lifegain → WG. Blue only with its removal (Infinite Coursework, Plan for All Outcomes, a charm) or a bomb. Green is the least likely main colour, not a bad one.
 
+**Pair plans** (signposts = this pair's two-colour cards graded 5+; grades in brackets):
+
+- ⚪⚫ **WB Liliana's Attrition** — Trade one-for-one, then win on recursion. Discard, sacrifice and removal fill both graveyards; you are the one who gets cards back.
+    - Signposts: Vindictive Triumph [8]; Twisted Fates [7]; Edgar, Ancient Bloodlord [5]
+    - Look for: Rank Rat [3], Gallia, Tragic Host [4], Campus Crier [4], Fateshaper Aspirant [4], Generous Revival [4], Massacre Girl [6], Liliana the Repentant [5].
+- ⚫🔴 **BR Stingerquill** — Cheap creatures early, burn to the face to finish. Noncombat damage (Vicious Verse, burn) turns on the payoffs.
+    - Signposts: Ingris Stingerquill [7]; Stingerquill Charm [7]; Grim Repriser [5]
+    - Look for: No Admittance [7], Screeching Soulbreaker [5], Master of Barbs [5], Cast Away Doubt [4], Command the Stage [4], the three Vicious Verse creatures [4].
+- ⚪🟢 **WG Vigorbloom** — Aggressive lifegain: every life gained adds counters or cards. Attack, do not turtle.
+    - Signposts: Kwia Vigorbloom [10]; Vigorbloom Charm [7]; Bloombrute [6]; Solarium Sentry [6]
+    - Look for: Greenhouse Propagator [5], Enlightened Confidant [6], Lyra, Archangel of Dawn [7], Titanbones [5→7], Koth of the Homestead [5], Unflinching Hortimancer [3→5], Seed Suture creatures.
+- 🔵⚫ **UB Theorix** — Mill yourself to threshold (7 in graveyard), grind with flashback and recursion. Slow; needs both enablers and payoffs.
+    - Signposts: Uldaros Theorix [8]; Theorix Charm [7]; Null Summoner [6]; Paradox Shaper [5]; Recursive Recruitment [5]; Theorix Metamage [5]
+    - Look for: Omit Variables creatures (Paradox Shaper [5], Metamage [5], Void Extrapolator [4→5]), Divining Duelist [5], Proft, Sinister Mastermind [4→7], Yuriko, Hope from the Shadows [4], Dark Matter Manipulator [3→6].
+- 🔵🔴 **UR Chandra's Prowess** — Noncreature spells grow prowess bodies and make thopters. Build it aggro (burn) or control (bounce, draw); either way keep 12+ creatures.
+    - Signposts: Clash of Elements [6]; Saheeli, Jewel of Avishkar [6]
+    - Look for: Plan for All Outcomes [6], Pia, Determined Rebuilder [5], Variable Chaser [5], Chandra's Emberling [4], Tomik, Izzet Sparkmage [4], Pyre Rhymer [4].
+- ⚪🔵 **WU Fatehold** — Surveil triggers grow the team or make tokens; play to the board and win in the air. Best home for Jace tokens (repeat surveils).
+    - Signposts: Denzilore Fatehold [8]; Desperate Futurescribe [7]; Fatehold Charm [6]; Proctor of Potential [6]; Fatehold Chronologist [5]; Prudent Fateseer [5]
+    - Look for: Saheeli, Consul of Oversight [7→8], Mindseeker Oculus [6], Hexhaven Battalion [6], Semester Foreseer [5], Surveillance Phantasm [4→6], Peer Review creatures.
+- ⚪🔴 **WR Ajani's Army** — Go wide and fast: tokens, +1/+1 counters, tricks that punish blocks. Keep 16+ creatures; spells are removal and tricks only.
+    - Signposts: Warrior's Blades [7]; Solitary Cell [6]; Mabel, Valley Hero [5]
+    - Look for: Guiding Hydra [7], Hexhaven Battalion [6], Heartstring Puller [5], Skilled Battlecarver [4], Graft Surgeon [4], Gallia, the Merrymaker [4], Charge the Sanctum [3].
+- ⚫🟢 **BG Garruk's Bestiary** — Big tramplers plus deathtouch grants plus the best removal. Low synergy; pick card quality.
+    - Signposts: Vraska, the Cutting Glare [7]; Hapatra, the Desert Fang [6]; Primal Witchstalker [5]
+    - Look for: Bestial Incursion [6], Ruric Thar, Magecrusher [7], Ferocity of the Hunt [4], Teyo, Diamondblade Mage [4], Rampart Hunter [3], Rewrite Regrets [4].
+- 🔵🟢 **UG Jace's Mastery** — Empower Jace, protect the token, play long. Defensive creatures, removal and counters; the Way enchantments are your planeswalkers.
+    - Signposts: Avatar of Burgeoning Echoes [7]; Mind Meanderer [7]
+    - Look for: Plan for All Outcomes [6], Arcane Amphisbaena [5], Proft, Consulting Detective [5→7], Inspired Tethermage [4→5], Countersculpt [4], Tam's Resistance [4], any Way of the… [4-6].
+- 🔴🟢 **RG Konstrari** — Heartwood tokens ramp into big creatures. Balance ramp with early blockers and removal or you get run over.
+    - Signposts: Aerid Konstrari [8]; Craftwork Crusher [7]; Tenured Tethermage [7]; Woodwork Prodigy [6]; Konstrari Charm [5]; Konstrari Improviser [5]
+    - Look for: Kiora of Fire and Ashes [7], Hungering Puppetbeast [7], Draconic Visitor [8], Craterclaw Colossus [7→8], Greenhouse Propagator [5], Heartwood Crafter [4], Wrecking Gecko [4].
+
 ## 6. Full graded list
 
 ### ⚪ W

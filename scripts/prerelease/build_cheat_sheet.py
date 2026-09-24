@@ -49,6 +49,7 @@ PROSE_KEYS = (
     "ranking_heading",
     "ranking_commentary",
     "ranking_reading",
+    "pair_plans",
 )
 
 
@@ -432,9 +433,25 @@ def build(set_dir: str) -> str:
             out.append("| " + " | ".join(cells) + " |")
         out += ["", f"<sub>{footnote}</sub>"]
         if prose.get("ranking_reading"):
-            out += ["", prose["ranking_reading"], ""]
-        else:
-            out.append("")
+            out += ["", prose["ranking_reading"]]
+        out += ["", "**Pair plans** (signposts = this pair's two-colour cards graded 5+; grades in brackets):", ""]
+        plans = prose.get("pair_plans", {})
+        for key in order:
+            plan = plans.get(key, {})
+            pair_pips = "".join(COLOR_PIP[c] for c in key)
+            gold = sorted(
+                (e for e in graded
+                 if "Land" not in e["type_line"] and len(e["colors"]) == 2
+                 and set(e["colors"]) == set(key) and e["grade"] >= 5),
+                key=lambda e: (-e["grade"], e["name"]),
+            )
+            title = f"{pair_pips} **{key}{' ' + plan['name'] if plan.get('name') else ''}**"
+            out.append(f"- {title}" + (f" — {plan['plan']}" if plan.get("plan") else ""))
+            if gold:
+                out.append("    - Signposts: " + "; ".join(f"{e['name'].split(' // ')[0]} [{e['grade']}]" for e in gold))
+            if plan.get("look_for"):
+                out.append(f"    - Look for: {plan['look_for']}")
+        out.append("")
 
     out += ["## 6. Full graded list", ""]
     groups: dict = collections.defaultdict(list)
