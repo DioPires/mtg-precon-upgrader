@@ -80,6 +80,8 @@ CREATURE_RAMP = {
     "Sakura-Tribe Elder":  {"cmc": 2, "pips": {"generic": 1, "B": 0, "G": 1}, "fetch": "basic", "tapped": False},
     "Wood Elves":          {"cmc": 3, "pips": {"generic": 2, "B": 0, "G": 1}, "fetch": "forest", "tapped": False},
     "Solemn Simulacrum":   {"cmc": 4, "pips": {"generic": 4, "B": 0, "G": 0}, "fetch": "basic", "tapped": True},
+    # DEC-929: ETB basic fetch (tapped); the dies-draw is outside a mana model.
+    "Simulacrum Shaper":   {"cmc": 3, "pips": {"generic": 1, "B": 0, "G": 2}, "fetch": "basic", "tapped": True},
 }
 
 # Wight of the Reliquary: treat as a dork producing {G} (too complex to model sac)
@@ -589,6 +591,7 @@ class GameState:
             ("dork", "Birds of Paradise"),
             ("dork", WIGHT_NAME),
             ("creature_ramp", "Sakura-Tribe Elder"),
+            ("creature_ramp", "Simulacrum Shaper"),
             ("creature_ramp", "Wood Elves"),
             ("creature_ramp", "Solemn Simulacrum"),
         ]

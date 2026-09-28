@@ -188,7 +188,9 @@ import type { DeckTierBLoops } from './tierB';
 // v128 -> v129 (DEC-687 2026-09-07): freed-card placements — +Force of Will
 // (gandalf-party-guest), +Chrome Mox/+Dark Ritual (gathering-shadow),
 // +Lotus Petal (hoard-and-bleed).
-const STORAGE_PREFIX = 'gv1-deck-data-v129:';
+// v129 -> v130 (DEC-929 2026-09-28): +Turbulent Crater/-Mountain (hoard-and-bleed),
+// +Simulacrum Shaper/-Carrion Feeder (eternal-harvest).
+const STORAGE_PREFIX = 'gv1-deck-data-v130:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
