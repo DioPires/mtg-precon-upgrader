@@ -32,10 +32,15 @@
       "type": "scryfall",
       "name": "All 100 cards validated — 0 color-identity violations within WUBRG",
       "url": "https://scryfall.com/@pirex"
+    },
+    {
+      "type": "other",
+      "name": "Board swap approval, DEC-929, 2026-09-28",
+      "detail": "Interaction 5531eafc, question judgment_cut, option telekinetic. IN Kindred Judgment, OUT Telekinetic Sliver. Judgment naming Sliver is a fully one-sided wipe (37 Slivers plus Morophon's changeling survive) and closes the removal-board gap that only Cyclonic Rift covered. Descendants' Path was withdrawn as the cut: a Sliver cast free off Path is still cast, so it cascades, about a 38% hit per upkeep with 38 creature cards in the 99. Telekinetic Sliver was the slowest interaction in the list (tap effects delay a board, Judgment removes it) and sits below the listed cutoff on The First Sliver's EDHREC page. Erode was the offered alternative and stays as the cheap instant-speed answer. Rejected for Anvil Chorus: only 15 of its 30 nontoken creatures are Dwarves."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Hivebound Cascade is a five-color Sliver tribal deck built around The First Sliver. Every Sliver spell you cast has Cascade, so each Sliver chains into another free Sliver — the deck snowballs an entire hive onto the battlefield while digging through the library for free. Sliver Legion, Morophon, and the stat anthems turn that wide board into lethal commander damage, while keyword lords (flying, haste, double strike, menace, deathtouch) push the swarm through blockers. Card advantage (Rhystic Study, Kindred Discovery, Vanquisher's Banner, Synapse Sliver) and a green ramp package keep the gas flowing; Cyclonic Rift, Constricting Sliver, and Telekinetic Sliver provide the interaction a five-color table demands. The deck also packs a compact 4-card infinite-damage combo (Morophon + Hibernation Sliver + Syphon/Essence Sliver + Lavabelly Sliver) as a backup win. Built as a budget brew: no fetch lands and no Sliver Queen, with green ramp standing in as the fixing engine.",
+    "strategyOverview": "Hivebound Cascade is a five-color Sliver tribal deck built around The First Sliver. Every Sliver spell you cast has Cascade, so each Sliver chains into another free Sliver — the deck snowballs an entire hive onto the battlefield while digging through the library for free. Sliver Legion, Morophon, and the stat anthems turn that wide board into lethal commander damage, while keyword lords (flying, haste, double strike, menace, deathtouch) push the swarm through blockers. Card advantage (Rhystic Study, Kindred Discovery, Vanquisher's Banner, Synapse Sliver) and a green ramp package keep the gas flowing; Cyclonic Rift, Constricting Sliver, and Kindred Judgment (name Sliver: every other creature dies, all of ours live) provide the interaction a five-color table demands. The deck also packs a compact 4-card infinite-damage combo (Morophon + Hibernation Sliver + Syphon/Essence Sliver + Lavabelly Sliver) as a backup win. Built as a budget brew: no fetch lands and no Sliver Queen, with green ramp standing in as the fixing engine.",
     "deckCategories": [
       {
         "name": "Cascade Engine",
@@ -93,7 +98,7 @@
         "cards": [
           "Cyclonic Rift",
           "Constricting Sliver",
-          "Telekinetic Sliver",
+          "Kindred Judgment",
           "Swords to Plowshares",
           "Path to Exile",
           "Necrotic Sliver",
@@ -227,20 +232,6 @@
       ]
     },
     {
-      "title": "Telekinetic Sliver soft-locks the table",
-      "cards": [
-        "Telekinetic Sliver",
-        "Sentinel Sliver"
-      ],
-      "description": "Telekinetic gives every Sliver a tap ability; with a wide board you tap down opposing lands, blockers, and combo pieces. Sentinel's vigilance lets attackers keep tapping on opponents' turns.",
-      "sources": [
-        {
-          "type": "ai-inferred",
-          "name": "Stax interaction analysis"
-        }
-      ]
-    },
-    {
       "title": "Constricting Sliver = repeatable Cascade removal",
       "cards": [
         "Constricting Sliver",
@@ -251,6 +242,26 @@
         {
           "type": "ai-inferred",
           "name": "Interaction analysis"
+        }
+      ]
+    },
+    {
+      "title": "Kindred Judgment is a one-sided wipe",
+      "cards": [
+        "Kindred Judgment",
+        "Morophon, the Boundless"
+      ],
+      "description": "Name Sliver: every creature that is not a Sliver is destroyed. All 38 creatures in the 99 survive, Morophon included (changeling counts as every creature type). Seven mana at sorcery speed, and cascade never reveals it (mana value 7), so it is a hard-cast reset. It is the deck's only true board wipe beside Cyclonic Rift, and the only one that leaves our board untouched.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Kindred Judgment",
+          "url": "https://scryfall.com/card/fra/13/kindred-judgment"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-929 placement rationale"
         }
       ]
     }
@@ -278,7 +289,25 @@
       "name": "Constricting Sliver"
     },
     {
-      "name": "Telekinetic Sliver"
+      "name": "Kindred Judgment",
+      "reason": "One-sided board wipe for a 37-Sliver list: name Sliver and every opposing creature dies while all of ours (Morophon included, via changeling) survive. Fills the deck's removal-board gap; Kindred Dominance, its black twin, sits at 23.4% on The First Sliver's EDHREC page and the white copy casts as well (18 W sources, 18 B sources). Hard-cast only: cascade never hits a mana value of 7.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Kindred Judgment",
+          "url": "https://scryfall.com/card/fra/13/kindred-judgment"
+        },
+        {
+          "type": "edhrec",
+          "name": "EDHREC - The First Sliver (Kindred Dominance 23.4%)",
+          "url": "https://edhrec.com/commanders/the-first-sliver"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-929"
+        }
+      ]
     },
     {
       "name": "Patriarch's Bidding"
@@ -526,10 +555,9 @@
       "primary_role": "payoff"
     },
     {
-      "name": "Telekinetic Sliver",
-      "type": "Creature — Sliver",
-      "primary_role": "utility",
-      "secondary_role": "protection"
+      "name": "Kindred Judgment",
+      "type": "Sorcery",
+      "primary_role": "removal-board"
     },
     {
       "name": "Virulent Sliver",

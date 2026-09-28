@@ -52,6 +52,11 @@
       "type": "other",
       "name": "Board swap approval, DEC-685, 2026-09-07",
       "detail": "Interaction 89eecf15, accepted, all lines ticked. IN Gleaming Splendor, OUT Raise the Alarm; IN The Queen of Dale, OUT Parallel Lives. Splendor is the single missing card in the tracked Smothering Tithe + doubler Spellbook lines (three of four lines remain after the Parallel Lives cut: Anointed Procession, Mondrak, Elspeth, Storm Slayer). Queen of Dale recruits on each opponent's first noncreature spell each turn (2-3 triggers per turn cycle at a 4-player table), making roughly 1-2 untapped Soldiers per cycle plus loot filtering — replacing Raise the Alarm's one-shot two tokens as early Baylen fuel. Parallel Lives cut as the twin doubler (text-identical to Anointed Procession); doubler consistency P(>=1 in first 13 cards) drops ~44% to ~35% on record. Skullclamp synergy re-pointed from Raise the Alarm to The Queen of Dale. Metrics: global health 85->85, role coverage 88->89, curve 98->99, gaps unchanged. Game Changers unchanged at 7 (bracket 4-, uncapped)."
+    },
+    {
+      "type": "other",
+      "name": "Board swap approval, DEC-929, 2026-09-28",
+      "detail": "Interaction 5531eafc, question visitor_cut, option wedding. IN Draconic Visitor, OUT Wedding Announcement. Visitor converts every artifact-token event (Smothering Tithe, Gleaming Splendor, Prosperous Partnership, Rosie Cotton's Food, Anim Pakal's Gnome artifact tokens) into 5/5 flying Dragon creature tokens, which the deck's creature-token payoffs and multipliers all see. Frontline Rush was withdrawn as the cut on the board's early-curve concern: only Rush and Staff of the Storyteller make bodies unconditionally at two mana. Wedding Announcement was the slowest payoff (one 1/1 or one card per end step for three turns, then an anthem) and sits below the listed cutoff on Baylen's EDHREC page. Felidar Retreat was the offered alternative. Rejected for Hoard and Bleed: 19 of its 99 make or use artifact tokens, and Smaug's draw needs Treasure mana."
     }
   ],
   "guideContent": {
@@ -97,7 +102,7 @@
           "Purphoros, God of the Forge",
           "Rosie Cotton of South Lane",
           "Warleader's Call",
-          "Wedding Announcement // Wedding Festivity"
+          "Draconic Visitor"
         ]
       },
       {
@@ -296,6 +301,28 @@
           "url": "https://edhrec.com/commanders/baylen-the-haymaker"
         }
       ]
+    },
+    {
+      "title": "Draconic Visitor turns every artifact token into a 5/5 flyer",
+      "cards": [
+        "Draconic Visitor",
+        "Anim Pakal, Thousandth Moon",
+        "Smothering Tithe",
+        "Prosperous Partnership"
+      ],
+      "description": "Visitor replaces any artifact token you would create with that many 5/5 red Dragon creature tokens with flying. Anim Pakal's Gnomes are artifact creature tokens, so each attack creates X Dragons instead (X grows by one per attack, and the Dragons are not Gnomes, so they keep triggering her). Smothering Tithe and Gleaming Splendor turn opponents' draws into Dragons, and Prosperous Partnership taps three creatures for a Dragon at instant speed for no mana. Every Dragon is a creature token, so Impact Tremors, Purphoros, Caretaker's Talent and Belladonna Took fire on it, and Anointed Procession, Mondrak and Elspeth double it. Cost: Treasures stop (Baylen still taps two tokens for one mana), and The Battle of Bywater kills Visitor and every Dragon.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall - Draconic Visitor",
+          "url": "https://scryfall.com/card/fra/80/draconic-visitor"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-929 placement rationale; the tapped-and-attacking carry-over on Anim Pakal's Dragons is a CR 614.1 reading, no published ruling"
+        }
+      ]
     }
   ],
   "highlights": [
@@ -491,9 +518,10 @@
       "secondary_role": "card-draw"
     },
     {
-      "name": "Wedding Announcement // Wedding Festivity",
-      "type": "Enchantment // Enchantment",
-      "primary_role": "payoff"
+      "name": "Draconic Visitor",
+      "type": "Creature — Dragon",
+      "primary_role": "threat",
+      "secondary_role": "engine"
     },
     {
       "name": "Aligned Heart",
@@ -850,12 +878,27 @@
         "G",
         "W"
       ],
-      "scryfall_id": "40135aa8-d531-427d-ab5c-9a2192f61bf9",
-      "image_uri": "https://cards.scryfall.io/normal/front/4/0/40135aa8-d531-427d-ab5c-9a2192f61bf9.jpg?1783906796",
+      "scryfall_id": "b7171de9-476d-4bfa-8cc0-b4fbc168cf4d",
+      "image_uri": "https://cards.scryfall.io/normal/front/b/7/b7171de9-476d-4bfa-8cc0-b4fbc168cf4d.jpg?1789737561",
       "produced_by": [
         "Grand Crescendo",
         "Halo Fountain",
         "Prosperous Partnership"
+      ]
+    },
+    {
+      "name": "Dragon",
+      "type_line": "Token Creature — Dragon",
+      "oracle_text": "Flying",
+      "power": "5",
+      "toughness": "5",
+      "colors": [
+        "R"
+      ],
+      "scryfall_id": "991a5840-adc7-45b5-8d5f-b24dae384bab",
+      "image_uri": "https://cards.scryfall.io/normal/front/9/9/991a5840-adc7-45b5-8d5f-b24dae384bab.jpg?1789734473",
+      "produced_by": [
+        "Draconic Visitor"
       ]
     },
     {
@@ -926,8 +969,7 @@
       "image_uri": "https://cards.scryfall.io/normal/front/5/0/5054bb15-ddd5-4e5e-a9fd-6bdf255f7fd3.jpg?1783906807",
       "produced_by": [
         "Adeline, Resplendent Cathar",
-        "Castle Ardenvale",
-        "Wedding Announcement // Wedding Festivity"
+        "Castle Ardenvale"
       ]
     },
     {
@@ -1047,8 +1089,8 @@
       "colors": [
         "W"
       ],
-      "scryfall_id": "6f5a5786-e2be-4bb0-b971-81d1d5cc8f52",
-      "image_uri": "https://cards.scryfall.io/normal/front/6/f/6f5a5786-e2be-4bb0-b971-81d1d5cc8f52.jpg?1783903574",
+      "scryfall_id": "06a96ac2-94a4-4b1c-a3c5-add1a3112cb2",
+      "image_uri": "https://cards.scryfall.io/normal/front/0/6/06a96ac2-94a4-4b1c-a3c5-add1a3112cb2.jpg?1789737345",
       "produced_by": [
         "Staff of the Storyteller"
       ]
@@ -1092,8 +1134,8 @@
       "colors": [
         "W"
       ],
-      "scryfall_id": "9feb9fa0-29d3-4cf7-a996-e7cb718f02b6",
-      "image_uri": "https://cards.scryfall.io/normal/front/9/f/9feb9fa0-29d3-4cf7-a996-e7cb718f02b6.jpg?1783916653",
+      "scryfall_id": "2dde64e7-dff3-4495-9649-d4b1e91f1cf3",
+      "image_uri": "https://cards.scryfall.io/normal/front/2/d/2dde64e7-dff3-4495-9649-d4b1e91f1cf3.jpg?1789737362",
       "produced_by": [
         "Secure the Wastes",
         "Voice of Victory"

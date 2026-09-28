@@ -4,12 +4,12 @@
   ],
   "counts": {
     "cycles": 30,
-    "cyclesTotal": 2215,
+    "cyclesTotal": 2436,
     "pairs": 80,
-    "pairsTotal": 671,
+    "pairsTotal": 632,
     "triples": 40,
-    "triplesTotal": 177,
-    "uncovered": 0
+    "triplesTotal": 164,
+    "uncovered": 1
   },
   "cycles": [
     {
@@ -2386,7 +2386,7 @@
     "crowdPriorApplied": true,
     "deckId": "stampede-acres",
     "deepFocused": true,
-    "generatedAt": "2026-09-07T13:44:07.083096+00:00",
+    "generatedAt": "2026-09-28T15:12:32.470643+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -2736,35 +2736,6 @@
     {
       "band": "strong",
       "cards": [
-        "Halo Fountain",
-        "Mondrak, Glory Dominus"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Halo Fountain",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Halo Fountain",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Arcane Signet",
         "Drumbellower"
       ],
@@ -3047,6 +3018,35 @@
     {
       "band": "strong",
       "cards": [
+        "Halo Fountain",
+        "Mondrak, Glory Dominus"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Halo Fountain",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Halo Fountain",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Drumbellower",
         "Path of Ancestry"
       ],
@@ -3168,43 +3168,6 @@
     {
       "band": "strong",
       "cards": [
-        "Caretaker's Talent",
-        "Idol of Oblivion"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Anointed Procession",
         "Rosie Cotton of South Lane"
       ],
@@ -3236,6 +3199,43 @@
           "magnitude": 1,
           "to": "Rosie Cotton of South Lane",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Caretaker's Talent",
+        "Idol of Oblivion"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -3472,26 +3472,6 @@
     {
       "band": "strong",
       "cards": [
-        "Caretaker's Talent",
-        "Halo Fountain"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Halo Fountain",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "anthem"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Idol of Oblivion",
         "Rosie Cotton of South Lane"
       ],
@@ -3530,6 +3510,63 @@
     {
       "band": "strong",
       "cards": [
+        "Caretaker's Talent",
+        "Halo Fountain"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Halo Fountain",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "anthem"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Anointed Procession",
+        "Idol of Oblivion"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Mondrak, Glory Dominus",
         "Secure the Wastes"
       ],
@@ -3553,35 +3590,6 @@
           "magnitude": 1,
           "to": "Mondrak, Glory Dominus",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Caretaker's Talent",
-        "Rosie Cotton of South Lane"
-      ],
-      "economies": [
-        "etb",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Rosie Cotton of South Lane",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Rosie Cotton of South Lane",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "anthem"
         }
       ]
     },
@@ -3625,37 +3633,29 @@
     {
       "band": "strong",
       "cards": [
-        "Anointed Procession",
-        "Idol of Oblivion"
+        "Caretaker's Talent",
+        "Rosie Cotton of South Lane"
       ],
       "economies": [
-        "sacrifice",
+        "etb",
         "token"
       ],
       "edges": [
         {
-          "from": "Anointed Procession",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "from": "Rosie Cotton of South Lane",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
+          "to": "Caretaker's Talent",
           "toFeature": "token_create"
+        },
+        {
+          "from": "Rosie Cotton of South Lane",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "anthem"
         }
       ]
     },
@@ -3851,29 +3851,124 @@
     {
       "band": "strong",
       "cards": [
-        "Anim Pakal, Thousandth Moon",
-        "Idol of Oblivion"
+        "Battlefield Forge",
+        "Drumbellower"
       ],
       "economies": [
-        "sacrifice",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Drumbellower",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Battlefield Forge",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Drumbellower",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Battlefield Forge",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Battlefield Forge",
+        "Seedborn Muse"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Battlefield Forge",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Battlefield Forge",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Anointed Procession",
+        "Artifact Mutation"
+      ],
+      "economies": [
         "token"
       ],
       "edges": [
         {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "from": "Anointed Procession",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
+          "to": "Artifact Mutation",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Halo Fountain",
+        "Skullclamp"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Halo Fountain",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Skullclamp",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "March of the Multitudes",
+        "Warleader's Call"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "March of the Multitudes",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Warleader's Call",
+          "toFeature": "anthem"
         },
         {
-          "from": "Anim Pakal, Thousandth Moon",
+          "from": "March of the Multitudes",
           "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
+          "to": "Warleader's Call",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -3937,73 +4032,54 @@
     {
       "band": "strong",
       "cards": [
-        "March of the Multitudes",
-        "Warleader's Call"
+        "Anim Pakal, Thousandth Moon",
+        "Idol of Oblivion"
       ],
       "economies": [
+        "sacrifice",
         "token"
       ],
       "edges": [
         {
-          "from": "March of the Multitudes",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Warleader's Call",
-          "toFeature": "anthem"
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "March of the Multitudes",
+          "from": "Anim Pakal, Thousandth Moon",
           "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
+          "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Warleader's Call",
-          "toFeature": "etb_trigger"
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
         }
       ]
     },
     {
-      "band": "strong",
-      "cards": [
-        "Halo Fountain",
-        "Skullclamp"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Halo Fountain",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Skullclamp",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Anointed Procession",
-        "Artifact Mutation"
+        "March of the Multitudes"
       ],
       "economies": [
         "token"
       ],
       "edges": [
         {
-          "from": "Anointed Procession",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "from": "March of the Multitudes",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
           "magnitude": 1,
-          "to": "Artifact Mutation",
-          "toFeature": "token_create"
+          "to": "Anointed Procession",
+          "toFeature": "token_doubler"
         }
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Felidar Retreat",
         "Idol of Oblivion"
@@ -4041,7 +4117,7 @@
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Idol of Oblivion",
         "Skullclamp"
@@ -4069,103 +4145,7 @@
       ]
     },
     {
-      "band": "strong",
-      "cards": [
-        "Anointed Procession",
-        "March of the Multitudes"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "March of the Multitudes",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Token doubler (ambient)",
-          "magnitude": 1,
-          "to": "Anointed Procession",
-          "toFeature": "token_doubler"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Artifact Mutation",
-        "Caretaker's Talent"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Artifact Mutation",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Caretaker's Talent",
-        "Scute Swarm"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Caretaker's Talent",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Caretaker's Talent",
-        "Mondrak, Glory Dominus"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Caretaker's Talent",
         "Warleader's Call"
@@ -4193,10 +4173,68 @@
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
-        "Mondrak, Glory Dominus",
-        "Scute Swarm"
+        "Delighted Halfling",
+        "Drumbellower"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Delighted Halfling",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Drumbellower",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Delighted Halfling",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Drumbellower",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Delighted Halfling",
+        "Seedborn Muse"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Delighted Halfling",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Seedborn Muse",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Delighted Halfling",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Seedborn Muse",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Caretaker's Talent",
+        "Mondrak, Glory Dominus"
       ],
       "economies": [
         "sacrifice"
@@ -4207,7 +4245,7 @@
           "fromFeature": "sac_outlet",
           "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Scute Swarm",
+          "to": "Caretaker's Talent",
           "toFeature": "sac_fodder"
         },
         {
@@ -4215,13 +4253,13 @@
           "fromFeature": "sac_outlet",
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Scute Swarm",
+          "to": "Caretaker's Talent",
           "toFeature": "token_create"
         }
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Grand Crescendo",
         "Mondrak, Glory Dominus"
@@ -4250,9 +4288,85 @@
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
-        "Battlefield Forge",
+        "Mondrak, Glory Dominus",
+        "Scute Swarm"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Caretaker's Talent",
+        "Scute Swarm"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Artifact Mutation",
+        "Caretaker's Talent"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Artifact Mutation",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Brushland",
         "Drumbellower"
       ],
       "economies": [
@@ -4264,7 +4378,7 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Adds mana",
           "magnitude": 1,
-          "to": "Battlefield Forge",
+          "to": "Brushland",
           "toFeature": "mana_add"
         },
         {
@@ -4272,15 +4386,15 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
-          "to": "Battlefield Forge",
+          "to": "Brushland",
           "toFeature": "tap_ability"
         }
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
-        "Battlefield Forge",
+        "Brushland",
         "Seedborn Muse"
       ],
       "economies": [
@@ -4292,7 +4406,7 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Adds mana",
           "magnitude": 1,
-          "to": "Battlefield Forge",
+          "to": "Brushland",
           "toFeature": "mana_add"
         },
         {
@@ -4300,13 +4414,13 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
-          "to": "Battlefield Forge",
+          "to": "Brushland",
           "toFeature": "tap_ability"
         }
       ]
     },
     {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Secure the Wastes",
         "Warleader's Call"
@@ -4330,6 +4444,26 @@
           "magnitude": 1,
           "to": "Warleader's Call",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Anointed Procession",
+        "Secure the Wastes"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Secure the Wastes",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
+          "magnitude": 1,
+          "to": "Anointed Procession",
+          "toFeature": "token_doubler"
         }
       ]
     },
@@ -4365,26 +4499,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Anointed Procession",
-        "Secure the Wastes"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Secure the Wastes",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Token doubler (ambient)",
-          "magnitude": 1,
-          "to": "Anointed Procession",
-          "toFeature": "token_doubler"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Halo Fountain",
         "Seedborn Muse"
       ],
@@ -4398,149 +4512,6 @@
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
           "to": "Halo Fountain",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Delighted Halfling",
-        "Drumbellower"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Delighted Halfling",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Drumbellower",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Delighted Halfling",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Drumbellower",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Delighted Halfling",
-        "Seedborn Muse"
-      ],
-      "economies": [
-        "mana",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Delighted Halfling",
-          "fromFeature": "mana_add",
-          "label": "Adds mana ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Seedborn Muse",
-          "toFeature": "untap_permanent"
-        },
-        {
-          "from": "Delighted Halfling",
-          "fromFeature": "tap_ability",
-          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
-          "magnitude": 1,
-          "to": "Seedborn Muse",
-          "toFeature": "untap_permanent"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Anim Pakal, Thousandth Moon",
-        "Mondrak, Glory Dominus"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Brushland",
-        "Drumbellower"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Drumbellower",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Brushland",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Drumbellower",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Brushland",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Brushland",
-        "Seedborn Muse"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Brushland",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Brushland",
           "toFeature": "tap_ability"
         }
       ]
@@ -4579,6 +4550,35 @@
           "magnitude": 1,
           "to": "Warleader's Call",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Anim Pakal, Thousandth Moon",
+        "Mondrak, Glory Dominus"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -4673,68 +4673,6 @@
     {
       "band": "strong",
       "cards": [
-        "Anim Pakal, Thousandth Moon",
-        "Idol of Oblivion",
-        "Mondrak, Glory Dominus"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Artifact Mutation",
         "Idol of Oblivion",
         "Mondrak, Glory Dominus"
@@ -5168,6 +5106,68 @@
     {
       "band": "strong",
       "cards": [
+        "Anim Pakal, Thousandth Moon",
+        "Idol of Oblivion",
+        "Mondrak, Glory Dominus"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Idol of Oblivion",
         "Mondrak, Glory Dominus",
         "Rosie Cotton of South Lane"
@@ -5520,62 +5520,62 @@
     {
       "band": "strong",
       "cards": [
-        "Idol of Oblivion",
-        "Mondrak, Glory Dominus",
-        "Skullclamp"
+        "Anointed Procession",
+        "Halo Fountain",
+        "Warleader's Call"
       ],
       "economies": [
-        "dies",
-        "sacrifice"
+        "token",
+        "trigger_doubling"
       ],
       "edges": [
         {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
           "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_fodder"
+          "to": "Warleader's Call",
+          "toFeature": "anthem"
         },
         {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "token_create"
+          "to": "Warleader's Call",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "from": "Anointed Procession",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Skullclamp",
-          "toFeature": "dies_trigger"
+          "to": "Warleader's Call",
+          "toFeature": "etb_trigger"
         },
         {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
+          "from": "Halo Fountain",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
           "magnitude": 1,
-          "to": "Skullclamp",
-          "toFeature": "dies_trigger"
+          "to": "Anointed Procession",
+          "toFeature": "token_doubler"
         },
         {
-          "from": "Skullclamp",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "from": "Halo Fountain",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
           "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_fodder"
+          "to": "Warleader's Call",
+          "toFeature": "anthem"
         },
         {
-          "from": "Skullclamp",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
+          "from": "Halo Fountain",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
+          "to": "Warleader's Call",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -5647,6 +5647,68 @@
           "magnitude": 1,
           "to": "Rosie Cotton of South Lane",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Idol of Oblivion",
+        "Mondrak, Glory Dominus",
+        "Skullclamp"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Skullclamp",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Skullclamp",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Skullclamp",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Skullclamp",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -6246,9 +6308,9 @@
     {
       "band": "strong",
       "cards": [
-        "Anim Pakal, Thousandth Moon",
         "Anointed Procession",
-        "Idol of Oblivion"
+        "Artifact Mutation",
+        "Mondrak, Glory Dominus"
       ],
       "economies": [
         "sacrifice",
@@ -6256,51 +6318,43 @@
       ],
       "edges": [
         {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Token doubler (ambient)",
-          "magnitude": 1,
-          "to": "Anointed Procession",
-          "toFeature": "token_doubler"
-        },
-        {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anim Pakal, Thousandth Moon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_outlet"
-        },
-        {
           "from": "Anointed Procession",
           "fromFeature": "token_doubler",
           "label": "Token doubler (ambient) ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Idol of Oblivion",
+          "to": "Artifact Mutation",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Artifact Mutation",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Artifact Mutation",
           "toFeature": "token_create"
         }
       ]
@@ -6518,9 +6572,9 @@
     {
       "band": "strong",
       "cards": [
+        "Anim Pakal, Thousandth Moon",
         "Anointed Procession",
-        "Artifact Mutation",
-        "Mondrak, Glory Dominus"
+        "Idol of Oblivion"
       ],
       "economies": [
         "sacrifice",
@@ -6528,19 +6582,35 @@
       ],
       "edges": [
         {
-          "from": "Anointed Procession",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Token doubler (ambient)",
           "magnitude": 1,
-          "to": "Artifact Mutation",
-          "toFeature": "token_create"
+          "to": "Anointed Procession",
+          "toFeature": "token_doubler"
+        },
+        {
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anim Pakal, Thousandth Moon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
         },
         {
           "from": "Anointed Procession",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
+          "to": "Idol of Oblivion",
           "toFeature": "sac_outlet"
         },
         {
@@ -6548,23 +6618,15 @@
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
+          "to": "Idol of Oblivion",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "from": "Anointed Procession",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Artifact Mutation",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Artifact Mutation",
+          "to": "Idol of Oblivion",
           "toFeature": "token_create"
         }
       ]
@@ -6619,6 +6681,85 @@
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
           "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Caretaker's Talent",
+        "Felidar Retreat",
+        "Idol of Oblivion"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Caretaker's Talent",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Felidar Retreat",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Felidar Retreat",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Felidar Retreat",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Felidar Retreat",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Felidar Retreat",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Idol of Oblivion",
           "toFeature": "sac_outlet"
         }
       ]
@@ -6682,77 +6823,6 @@
           "magnitude": 1,
           "to": "Warleader's Call",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Anointed Procession",
-        "Mondrak, Glory Dominus",
-        "Scute Swarm"
-      ],
-      "economies": [
-        "sacrifice",
-        "token",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Scute Swarm",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -6832,30 +6902,15 @@
       "band": "strong",
       "cards": [
         "Anointed Procession",
-        "Caretaker's Talent",
-        "Mondrak, Glory Dominus"
+        "Mondrak, Glory Dominus",
+        "Scute Swarm"
       ],
       "economies": [
         "sacrifice",
-        "token"
+        "token",
+        "trigger_doubling"
       ],
       "edges": [
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "anthem"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Caretaker's Talent",
-          "toFeature": "token_create"
-        },
         {
           "from": "Anointed Procession",
           "fromFeature": "sac_fodder",
@@ -6873,11 +6928,35 @@
           "toFeature": "sac_outlet"
         },
         {
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Scute Swarm",
+          "toFeature": "etb_trigger"
+        },
+        {
           "from": "Mondrak, Glory Dominus",
           "fromFeature": "sac_outlet",
           "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Caretaker's Talent",
+          "to": "Scute Swarm",
           "toFeature": "sac_fodder"
         },
         {
@@ -6885,7 +6964,7 @@
           "fromFeature": "sac_outlet",
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Caretaker's Talent",
+          "to": "Scute Swarm",
           "toFeature": "token_create"
         }
       ]
@@ -6950,6 +7029,68 @@
           "magnitude": 1,
           "to": "Skullclamp",
           "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Anointed Procession",
+        "Caretaker's Talent",
+        "Mondrak, Glory Dominus"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_doubler",
+          "label": "Token doubler (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Anointed Procession",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Caretaker's Talent",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -7155,122 +7296,9 @@
           "toFeature": "sac_outlet"
         }
       ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Castle Ardenvale",
-        "Idol of Oblivion",
-        "Mondrak, Glory Dominus"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Idol of Oblivion",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Castle Ardenvale",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Idol of Oblivion",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Castle Ardenvale",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Castle Ardenvale",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Castle Ardenvale",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Idol of Oblivion",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Anointed Procession",
-        "Elspeth, Storm Slayer",
-        "Mondrak, Glory Dominus"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_doubler",
-          "label": "Token doubler (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Elspeth, Storm Slayer",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Anointed Procession",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Mondrak, Glory Dominus",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Elspeth, Storm Slayer",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Mondrak, Glory Dominus",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Elspeth, Storm Slayer",
-          "toFeature": "token_create"
-        }
-      ]
     }
   ],
-  "uncovered": []
+  "uncovered": [
+    "Draconic Visitor"
+  ]
 }

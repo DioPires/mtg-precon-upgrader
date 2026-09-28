@@ -190,7 +190,9 @@ import type { DeckTierBLoops } from './tierB';
 // +Lotus Petal (hoard-and-bleed).
 // v129 -> v130 (DEC-929 2026-09-28): +Turbulent Crater/-Mountain (hoard-and-bleed),
 // +Simulacrum Shaper/-Carrion Feeder (eternal-harvest).
-const STORAGE_PREFIX = 'gv1-deck-data-v130:';
+// v130 -> v131 (DEC-929 2026-09-28): +Draconic Visitor/-Wedding Announcement
+// (stampede-acres), +Kindred Judgment/-Telekinetic Sliver (slivers).
+const STORAGE_PREFIX = 'gv1-deck-data-v131:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

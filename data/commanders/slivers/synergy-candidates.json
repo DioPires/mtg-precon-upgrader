@@ -9,7 +9,7 @@
     "pairsTotal": 51,
     "triples": 21,
     "triplesTotal": 21,
-    "uncovered": 0
+    "uncovered": 1
   },
   "cycles": [
     {
@@ -1359,69 +1359,6 @@
     {
       "band": "strong",
       "cards": [
-        "Necrotic Sliver",
-        "Sinew Sliver",
-        "Sliver Hive",
-        "Thrumming Hivepool"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Necrotic Sliver",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Sliver Hive",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Necrotic Sliver",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Sliver Hive",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Necrotic Sliver",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Thrumming Hivepool",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Necrotic Sliver",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Thrumming Hivepool",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Sinew Sliver",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Sliver Hive",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Sinew Sliver",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Thrumming Hivepool",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Bonescythe Sliver",
         "Harmonic Sliver",
         "Sliver Hive",
@@ -1512,6 +1449,53 @@
           "toFeature": "token_create"
         }
       ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Galerider Sliver",
+        "Harmonic Sliver",
+        "Sliver Hive",
+        "Thrumming Hivepool"
+      ],
+      "economies": [
+        "etb",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Galerider Sliver",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Sliver Hive",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Galerider Sliver",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Thrumming Hivepool",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Harmonic Sliver",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Sliver Hive",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Harmonic Sliver",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Thrumming Hivepool",
+          "toFeature": "token_create"
+        }
+      ]
     }
   ],
   "meta": {
@@ -1519,7 +1503,7 @@
     "crowdPriorApplied": true,
     "deckId": "slivers",
     "deepFocused": false,
-    "generatedAt": "2026-09-05T15:40:39.665589+00:00",
+    "generatedAt": "2026-09-28T15:13:05.852689+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -1725,26 +1709,6 @@
     {
       "band": "strong",
       "cards": [
-        "Predatory Sliver",
-        "Sliver Hive"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Predatory Sliver",
-          "fromFeature": "anthem",
-          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Sliver Hive",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Bonescythe Sliver",
         "Thrumming Hivepool"
       ],
@@ -1865,15 +1829,15 @@
     {
       "band": "strong",
       "cards": [
-        "Sliver Hive",
-        "Winged Sliver"
+        "Predatory Sliver",
+        "Sliver Hive"
       ],
       "economies": [
         "token"
       ],
       "edges": [
         {
-          "from": "Winged Sliver",
+          "from": "Predatory Sliver",
           "fromFeature": "anthem",
           "label": "Anthem / static buff (ambient) ↔ Creates tokens",
           "magnitude": 1,
@@ -1885,15 +1849,15 @@
     {
       "band": "strong",
       "cards": [
-        "Muscle Sliver",
-        "Sliver Hive"
+        "Sliver Hive",
+        "Winged Sliver"
       ],
       "economies": [
         "token"
       ],
       "edges": [
         {
-          "from": "Muscle Sliver",
+          "from": "Winged Sliver",
           "fromFeature": "anthem",
           "label": "Anthem / static buff (ambient) ↔ Creates tokens",
           "magnitude": 1,
@@ -1918,6 +1882,26 @@
           "label": "Anthem / static buff (ambient) ↔ Creates tokens",
           "magnitude": 2,
           "to": "Thrumming Hivepool",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Muscle Sliver",
+        "Sliver Hive"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Muscle Sliver",
+          "fromFeature": "anthem",
+          "label": "Anthem / static buff (ambient) ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Sliver Hive",
           "toFeature": "token_create"
         }
       ]
@@ -2025,26 +2009,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Sliver Gravemother",
-        "Sliver Hive"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Sliver Gravemother",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Sliver Hive",
-          "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Morophon, the Boundless",
         "Thrumming Hivepool"
       ],
@@ -2059,6 +2023,26 @@
           "magnitude": 2,
           "to": "Thrumming Hivepool",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Sliver Gravemother",
+        "Sliver Hive"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Sliver Gravemother",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Sliver Hive",
+          "toFeature": "sac_fodder"
         }
       ]
     },
@@ -2145,26 +2129,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Lazotep Sliver",
-        "Sliver Hive"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Lazotep Sliver",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Sliver Hive",
-          "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Harmonic Sliver",
         "Thrumming Hivepool"
       ],
@@ -2179,6 +2143,26 @@
           "magnitude": 2,
           "to": "Thrumming Hivepool",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Lazotep Sliver",
+        "Sliver Hive"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Lazotep Sliver",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Sliver Hive",
+          "toFeature": "sac_fodder"
         }
       ]
     },
@@ -3376,5 +3360,7 @@
       ]
     }
   ],
-  "uncovered": []
+  "uncovered": [
+    "Kindred Judgment"
+  ]
 }
