@@ -9,7 +9,7 @@
     "pairsTotal": 602,
     "triples": 40,
     "triplesTotal": 322,
-    "uncovered": 0
+    "uncovered": 1
   },
   "cycles": [
     {
@@ -371,6 +371,94 @@
     {
       "band": "strong",
       "cards": [
+        "Academy Manufactor",
+        "Goldspan Dragon",
+        "Professional Face-Breaker",
+        "Rain of Riches"
+      ],
+      "economies": [
+        "sacrifice",
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Rain of Riches",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Academy Manufactor",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Academy Manufactor",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Big Score",
         "Black Market Connections",
         "Goldspan Dragon",
@@ -522,94 +610,6 @@
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 2,
           "to": "Unexpected Windfall",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Academy Manufactor",
-        "Goldspan Dragon",
-        "Professional Face-Breaker",
-        "Rain of Riches"
-      ],
-      "economies": [
-        "sacrifice",
-        "token",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Academy Manufactor",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Academy Manufactor",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Rain of Riches",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Academy Manufactor",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Academy Manufactor",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
           "toFeature": "token_create"
         }
       ]
@@ -1114,85 +1114,6 @@
           "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
           "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Academy Manufactor",
-        "Rain of Riches",
-        "Reckless Fireweaver",
-        "Xorn"
-      ],
-      "economies": [
-        "token",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Academy Manufactor",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Academy Manufactor",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Academy Manufactor",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Academy Manufactor",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Xorn",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Xorn",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Xorn",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Xorn",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reckless Fireweaver",
           "toFeature": "etb_trigger"
         }
       ]
@@ -1359,6 +1280,85 @@
       "band": "strong",
       "cards": [
         "Academy Manufactor",
+        "Rain of Riches",
+        "Reckless Fireweaver",
+        "Xorn"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Academy Manufactor",
         "Bojuka Bog",
         "Professional Face-Breaker",
         "Xorn"
@@ -2361,6 +2361,164 @@
       "band": "strong",
       "cards": [
         "Academy Manufactor",
+        "Rain of Riches",
+        "Weftstalker Ardent",
+        "Xorn"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Academy Manufactor",
+        "Reckless Fireweaver",
+        "Weftstalker Ardent",
+        "Xorn"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Academy Manufactor",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Academy Manufactor",
         "Goldspan Dragon",
         "Professional Face-Breaker",
         "Spiteful Banditry"
@@ -2444,206 +2602,6 @@
           "toFeature": "token_create"
         }
       ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goldspan Dragon",
-        "Professional Face-Breaker",
-        "Spiteful Banditry",
-        "Xorn"
-      ],
-      "economies": [
-        "sacrifice",
-        "token",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Spiteful Banditry",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Spiteful Banditry",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Spiteful Banditry",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Xorn",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Xorn",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Xorn",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Spiteful Banditry",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Xorn",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Spiteful Banditry",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Fake Your Own Death",
-        "Goldspan Dragon",
-        "Mines of Moria",
-        "Professional Face-Breaker"
-      ],
-      "economies": [
-        "dies",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Fake Your Own Death",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Fake Your Own Death",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Fake Your Own Death",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Fake Your Own Death",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Fake Your Own Death",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Fake Your Own Death",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Fake Your Own Death",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Fake Your Own Death",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Mines of Moria",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Mines of Moria",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Mines of Moria",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Mines of Moria",
-          "toFeature": "token_create"
-        }
-      ]
     }
   ],
   "meta": {
@@ -2651,7 +2609,7 @@
     "crowdPriorApplied": true,
     "deckId": "hoard-and-bleed",
     "deepFocused": true,
-    "generatedAt": "2026-09-07T17:46:55.315904+00:00",
+    "generatedAt": "2026-09-28T14:05:44.362166+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -2718,6 +2676,34 @@
       "band": "strong",
       "cards": [
         "Goldspan Dragon",
+        "Mirkwood Bats"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Mirkwood Bats",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Mirkwood Bats",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goldspan Dragon",
         "Rain of Riches"
       ],
       "economies": [
@@ -2748,34 +2734,6 @@
           "magnitude": 1,
           "to": "Rain of Riches",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goldspan Dragon",
-        "Mirkwood Bats"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Mirkwood Bats",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Mirkwood Bats",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -2987,34 +2945,6 @@
     {
       "band": "strong",
       "cards": [
-        "Professional Face-Breaker",
-        "Unexpected Windfall"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Unexpected Windfall",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Unexpected Windfall",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Goldspan Dragon",
         "Mines of Moria"
       ],
@@ -3064,6 +2994,34 @@
           "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 2,
           "to": "Mines of Moria",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Professional Face-Breaker",
+        "Unexpected Windfall"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Unexpected Windfall",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Unexpected Windfall",
           "toFeature": "token_create"
         }
       ]
@@ -3240,6 +3198,26 @@
     {
       "band": "strong",
       "cards": [
+        "Blasphemous Act",
+        "Mount Doom"
+      ],
+      "economies": [
+        "damage"
+      ],
+      "edges": [
+        {
+          "from": "Mount Doom",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Deals damage",
+          "magnitude": 13,
+          "to": "Blasphemous Act",
+          "toFeature": "damage"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Rain of Riches",
         "Xorn"
       ],
@@ -3269,54 +3247,6 @@
     {
       "band": "strong",
       "cards": [
-        "Blasphemous Act",
-        "Mount Doom"
-      ],
-      "economies": [
-        "damage"
-      ],
-      "edges": [
-        {
-          "from": "Mount Doom",
-          "fromFeature": "ping_outlet",
-          "label": "Repeatable damage outlet ↔ Deals damage",
-          "magnitude": 13,
-          "to": "Blasphemous Act",
-          "toFeature": "damage"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Mirkwood Bats",
-        "Rain of Riches"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Rain of Riches",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Mirkwood Bats",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Rain of Riches",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Mirkwood Bats",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Bojuka Bog",
         "Rain of Riches"
       ],
@@ -3330,55 +3260,6 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 2,
           "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Reckless Fireweaver",
-        "Xorn"
-      ],
-      "economies": [
-        "token",
-        "trigger_doubling"
-      ],
-      "edges": [
-        {
-          "from": "Xorn",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Xorn",
-          "fromFeature": "trigger_doubler",
-          "label": "Trigger doubler (ambient) ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Big Score",
-        "Rain of Riches"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Big Score",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Rain of Riches",
           "toFeature": "etb_trigger"
         }
       ]
@@ -3444,6 +3325,63 @@
     {
       "band": "strong",
       "cards": [
+        "Reckless Fireweaver",
+        "Xorn"
+      ],
+      "economies": [
+        "token",
+        "trigger_doubling"
+      ],
+      "edges": [
+        {
+          "from": "Xorn",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Xorn",
+          "fromFeature": "trigger_doubler",
+          "label": "Trigger doubler (ambient) ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Mirkwood Bats",
+        "Rain of Riches"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Rain of Riches",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "Mirkwood Bats",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Rain of Riches",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Mirkwood Bats",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Mines of Moria",
         "Rain of Riches"
       ],
@@ -3484,6 +3422,46 @@
     {
       "band": "strong",
       "cards": [
+        "Bojuka Bog",
+        "Mines of Moria"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Mines of Moria",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 2,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Big Score",
+        "Rain of Riches"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Big Score",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 2,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Rain of Riches",
         "Unexpected Windfall"
       ],
@@ -3505,17 +3483,26 @@
       "band": "strong",
       "cards": [
         "Bojuka Bog",
-        "Mines of Moria"
+        "Mirkwood Bats"
       ],
       "economies": [
+        "drain",
         "token"
       ],
       "edges": [
         {
-          "from": "Mines of Moria",
+          "from": "Mirkwood Bats",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Mirkwood Bats",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
+          "magnitude": 1,
           "to": "Bojuka Bog",
           "toFeature": "etb_trigger"
         }
@@ -3575,35 +3562,6 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
           "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bojuka Bog",
-        "Mirkwood Bats"
-      ],
-      "economies": [
-        "drain",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Mirkwood Bats",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bojuka Bog",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mirkwood Bats",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Bojuka Bog",
           "toFeature": "etb_trigger"
         }
       ]
@@ -3837,6 +3795,26 @@
       "band": "strong",
       "cards": [
         "Goldspan Dragon",
+        "Reckless Fireweaver"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Reckless Fireweaver",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goldspan Dragon",
         "Spiteful Banditry"
       ],
       "economies": [
@@ -3866,26 +3844,6 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
           "to": "Spiteful Banditry",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goldspan Dragon",
-        "Reckless Fireweaver"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Reckless Fireweaver",
           "toFeature": "etb_trigger"
         }
       ]
@@ -4073,26 +4031,6 @@
     {
       "band": "strong",
       "cards": [
-        "Mines of Moria",
-        "Spiteful Banditry"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Mines of Moria",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Spiteful Banditry",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Goldspan Dragon",
         "Storm-Kiln Artist"
       ],
@@ -4201,40 +4139,20 @@
     {
       "band": "strong",
       "cards": [
-        "Deadly Dispute",
-        "Rain of Riches"
+        "Mines of Moria",
+        "Spiteful Banditry"
       ],
       "economies": [
         "token"
       ],
       "edges": [
         {
-          "from": "Deadly Dispute",
+          "from": "Mines of Moria",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
+          "magnitude": 2,
+          "to": "Spiteful Banditry",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bolas's Citadel",
-        "Malakir Rebirth // Malakir Mire"
-      ],
-      "economies": [
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Bolas's Citadel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 10,
-          "to": "Malakir Rebirth // Malakir Mire",
-          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -4297,6 +4215,126 @@
       ]
     },
     {
+      "band": "strong",
+      "cards": [
+        "Bolas's Citadel",
+        "Malakir Rebirth // Malakir Mire"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Bolas's Citadel",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 10,
+          "to": "Malakir Rebirth // Malakir Mire",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Rain of Riches",
+        "Weftstalker Ardent"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Rain of Riches",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 2,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Treasure Vault",
+        "Weftstalker Ardent"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Weftstalker Ardent",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bojuka Bog",
+        "Marionette Apprentice"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Marionette Apprentice",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Deadly Dispute",
+        "Rain of Riches"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Deadly Dispute",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bolas's Citadel",
+        "Spiteful Banditry"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Bolas's Citadel",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 10,
+          "to": "Spiteful Banditry",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
       "band": "speculative",
       "cards": [
         "Krark-Clan Ironworks",
@@ -4327,80 +4365,29 @@
     {
       "band": "speculative",
       "cards": [
-        "Rain of Riches",
+        "Mirkwood Bats",
         "Weftstalker Ardent"
       ],
       "economies": [
+        "drain",
         "token"
       ],
       "edges": [
         {
-          "from": "Rain of Riches",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
+          "from": "Mirkwood Bats",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 1,
           "to": "Weftstalker Ardent",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bojuka Bog",
-        "Marionette Apprentice"
-      ],
-      "economies": [
-        "drain"
-      ],
-      "edges": [
+        },
         {
-          "from": "Marionette Apprentice",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
+          "from": "Mirkwood Bats",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
-          "to": "Bojuka Bog",
+          "to": "Weftstalker Ardent",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bolas's Citadel",
-        "Spiteful Banditry"
-      ],
-      "economies": [
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Bolas's Citadel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 10,
-          "to": "Spiteful Banditry",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Treasure Vault",
-        "Weftstalker Ardent"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Weftstalker Ardent",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Treasure Vault",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -4444,26 +4431,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Reanimate",
-        "Treasure Vault"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Reanimate",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Treasure Vault",
-          "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Lotus Petal",
         "Mines of Moria"
       ],
@@ -4492,27 +4459,58 @@
     {
       "band": "speculative",
       "cards": [
-        "Mirkwood Bats",
+        "Reanimate",
+        "Treasure Vault"
+      ],
+      "economies": [
+        "recursion"
+      ],
+      "edges": [
+        {
+          "from": "Reanimate",
+          "fromFeature": "recursion",
+          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Treasure Vault",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Big Score",
         "Weftstalker Ardent"
       ],
       "economies": [
-        "drain",
         "token"
       ],
       "edges": [
         {
-          "from": "Mirkwood Bats",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Weftstalker Ardent",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Mirkwood Bats",
+          "from": "Big Score",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
+          "magnitude": 2,
+          "to": "Weftstalker Ardent",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Unexpected Windfall",
+        "Weftstalker Ardent"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Unexpected Windfall",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 2,
           "to": "Weftstalker Ardent",
           "toFeature": "etb_trigger"
         }
@@ -4554,66 +4552,6 @@
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
           "to": "Reckless Fireweaver",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Mines of Moria",
-        "Reanimate"
-      ],
-      "economies": [
-        "recursion"
-      ],
-      "edges": [
-        {
-          "from": "Reanimate",
-          "fromFeature": "recursion",
-          "label": "Graveyard recursion ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Mines of Moria",
-          "toFeature": "sac_fodder"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Big Score",
-        "Weftstalker Ardent"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Big Score",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Weftstalker Ardent",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Unexpected Windfall",
-        "Weftstalker Ardent"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Unexpected Windfall",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Weftstalker Ardent",
           "toFeature": "etb_trigger"
         }
       ]
@@ -4670,6 +4608,26 @@
       "edges": [
         {
           "from": "Goldspan Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Bojuka Bog",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bojuka Bog",
+        "Professional Face-Breaker"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Professional Face-Breaker",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ ETB payoff",
           "magnitude": 1,
@@ -5966,6 +5924,146 @@
     {
       "band": "strong",
       "cards": [
+        "Goldspan Dragon",
+        "Lotus Petal",
+        "Rain of Riches"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Rain of Riches",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Goldspan Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Goldspan Dragon",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Rain of Riches",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Lotus Petal",
+        "Professional Face-Breaker",
+        "Rain of Riches"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Professional Face-Breaker",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Professional Face-Breaker",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Lotus Petal",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Rain of Riches",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 2,
+          "to": "Rain of Riches",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Professional Face-Breaker",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Rain of Riches",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
         "Academy Manufactor",
         "Professional Face-Breaker",
         "Spiteful Banditry"
@@ -6101,146 +6199,6 @@
           "label": "Trigger doubler (ambient) ↔ ETB payoff",
           "magnitude": 1,
           "to": "Spiteful Banditry",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goldspan Dragon",
-        "Lotus Petal",
-        "Rain of Riches"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Rain of Riches",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Goldspan Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Goldspan Dragon",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Rain of Riches",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Lotus Petal",
-        "Professional Face-Breaker",
-        "Rain of Riches"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Professional Face-Breaker",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Lotus Petal",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Rain of Riches",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Rain of Riches",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 2,
-          "to": "Rain of Riches",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Professional Face-Breaker",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Rain of Riches",
           "toFeature": "etb_trigger"
         }
       ]
@@ -7394,5 +7352,7 @@
       ]
     }
   ],
-  "uncovered": []
+  "uncovered": [
+    "Turbulent Crater"
+  ]
 }

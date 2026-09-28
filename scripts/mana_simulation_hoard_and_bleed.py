@@ -19,6 +19,8 @@ credited with mana it may not have:
 - Lotus Petal is a one-shot. It is credited on the turn it is played and never
   again. Holding it for a later turn is the stronger real line, so this
   understates it rather than crediting a permanent +1.
+- Turbulent Crater (DEC-929) enters tapped unless opponents control eight or
+  more lands; modeled as untapped from the 4th land drop, conservative.
 - Mines of Moria enters tapped unless you control a legendary creature. This
   model does not track the commander on the battlefield, so it always enters
   tapped.
@@ -119,15 +121,15 @@ BASIC_SWAMPS = {"Swamp"}
 BASIC_MOUNTAINS = {"Mountain"}
 
 # Subtype membership, used for fetch targeting and check-land conditions.
-SWAMP_TYPED_LANDS = {"Swamp", "Blood Crypt", "Smoldering Marsh"}
-MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Smoldering Marsh"}
+SWAMP_TYPED_LANDS = {"Swamp", "Blood Crypt", "Smoldering Marsh", "Turbulent Crater"}
+MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Smoldering Marsh", "Turbulent Crater"}
 
 # Untapped B/R duals and any-color lands.
 FLEXIBLE_LANDS = {
     "Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs",
     "Blackcleave Cliffs", "Dragonskull Summit", "Smoldering Marsh",
     "Foreboding Ruins", "Mount Doom", "City of Brass", "Mana Confluence",
-    "Exotic Orchard",
+    "Exotic Orchard", "Turbulent Crater",
 }
 
 # Lands that produce B (used for land-play priority and fetch colour need).
@@ -215,6 +217,14 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     if name == "Luxury Suite":
         # Untapped with two or more opponents; a four-player pod always qualifies.
         return False
+
+    if name == "Turbulent Crater":
+        # Untapped once opponents control 8+ lands. Opponent boards are not
+        # tracked; under the vanilla 4-player model that holds from your turn 4
+        # in every seat (turn 3 only in seats 3-4), so gate on this being at
+        # least the 4th land drop (conservative; same model as Turbulent
+        # Springs in gathering-shadow, DEC-688).
+        return other_count < 3
 
     # Blood Crypt (pay 2 life), Command Tower, Sulfurous Springs, Mount Doom,
     # City of Brass, Mana Confluence, Exotic Orchard, Reflecting Pool,

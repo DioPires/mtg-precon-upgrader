@@ -95,10 +95,15 @@
       "type": "other",
       "name": "Board swap approval, DEC-579, 2026-09-01",
       "detail": "Interaction 3e634d52, question swap-hoard, option accept. IN Necropotence, OUT Idol of Oblivion. Idol capped at one card per untap cycle; Necropotence gives N cards for N life at our throttle and does not depend on the commander. BBB castability from this manabase: about 54% by turn 4, 66% by turn 5 (Monte Carlo, 20k trials). Metrics: global health 97 flat, zero gaps. Game Changers 1→2 (bracket 4-, uncapped). Caution on record: EDHREC’s Smaug corpus (291 cards) does not list Necropotence; the case is deck-specific."
+    },
+    {
+      "type": "other",
+      "name": "Board swap approval, DEC-929, 2026-09-28",
+      "detail": "Board comment 7864d22d on DEC-929: IN Turbulent Crater, OUT one basic Mountain. Crater is a Swamp Mountain that enters tapped unless opponents control eight or more lands; under the four-player model that holds from your turn 3 (last seat) or turn 4 (first seat). Black sources go from 27.1 to 28.1, red stays at 27.0, basics go from 11 to 10 (Smoldering Marsh still finds two). Bloodstained Mire fetches it and Dragonskull Summit reads it. Same cut logic as DEC-543: the basic is the cheapest cut and Bojuka Bog stays. Gathering Shadow (minus a basic Swamp) was the offered alternative; the board chose Hoard and Bleed."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Smaug, Wicked Worm turns Treasures into cards. Its second ability reads \"Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.\" The trigger fires once per spell, not once per Treasure. That single fact sets the whole build: the deck wants many cheap spells, not a few expensive ones. The average mana value of the 59 nonland cards is 2.97.\n\nSmaug draws cards. It does not win. This deck supplies the kill in three layers.\n\nLayer one is incidental damage. A Treasure pays twice in this list. It deals damage when it enters, through Reckless Fireweaver and Weftstalker Ardent. It drains when it is sacrificed, through Marionette Apprentice, Marionette Master, Mirkwood Bats and Mayhem Devil. Xorn and Academy Manufactor multiply the entering half, so the damage curve is steeply nonlinear rather than incremental.\n\nLayer two is the deterministic loop. Pitiless Plunderer plus Ashnod's Altar plus Reassembling Skeleton produces infinite colorless mana and infinite death triggers. Four different payoffs already in the deck convert that loop into a kill, so no single removal spell stops it.\n\nLayer three is the alternate win. Hellkite Tyrant wins at twenty artifacts at our upkeep, and Mycosynth Lattice makes every permanent an artifact, so the check counts our whole board once both are on the battlefield.\n\nThe cost of Smaug's trigger is real, and one card reverses it. Smaug charges one life per Treasure-cast spell and the trigger is not optional. Warren Soultrader, Black Market Connections, Grim Tutor, Reanimate, Withering Torment, Feed the Swarm, Phyrexian Reclamation and six painful lands all charge life on top. The usual aristocrats life buffer is unavailable here on purpose: Blood Artist, Zulaport Cutthroat and Bastion of Remembrance all trigger on creature death only and never fire on a sacrificed Treasure, which is what this deck actually sacrifices. Sheoldred, the Apocalypse is the answer this color pair does allow. She reads \"Whenever you draw a card, you gain 2 life\", and Smaug's trigger is a draw, so every Treasure-cast spell swings from minus one life to plus one. Without her, Exsanguinate, High Market and Oni-Cult Anvil are the only cards that give life back and none is cheap or repeatable, so the deck plays as a short-clock deck that must convert its board before its own life total becomes the shortest at the table. With her, the same list can grind."
+    "strategyOverview": "Smaug, Wicked Worm turns Treasures into cards. Its second ability reads \"Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.\" The trigger fires once per spell, not once per Treasure. That single fact sets the whole build: the deck wants many cheap spells, not a few expensive ones. The average mana value of the 59 nonland cards is 2.95.\n\nSmaug draws cards. It does not win. This deck supplies the kill in three layers.\n\nLayer one is incidental damage. A Treasure pays twice in this list. It deals damage when it enters, through Reckless Fireweaver and Weftstalker Ardent. It drains when it is sacrificed, through Marionette Apprentice, Marionette Master, Mirkwood Bats and Mayhem Devil. Xorn and Academy Manufactor multiply the entering half, so the damage curve is steeply nonlinear rather than incremental.\n\nLayer two is the deterministic loop. Pitiless Plunderer plus Ashnod's Altar plus Reassembling Skeleton produces infinite colorless mana and infinite death triggers. Four different payoffs already in the deck convert that loop into a kill, so no single removal spell stops it.\n\nLayer three is the alternate win. Hellkite Tyrant wins at twenty artifacts at our upkeep, and Mycosynth Lattice makes every permanent an artifact, so the check counts our whole board once both are on the battlefield.\n\nThe cost of Smaug's trigger is real, and one card reverses it. Smaug charges one life per Treasure-cast spell and the trigger is not optional. Warren Soultrader, Black Market Connections, Grim Tutor, Reanimate, Withering Torment, Feed the Swarm, Phyrexian Reclamation and six painful lands all charge life on top. The usual aristocrats life buffer is unavailable here on purpose: Blood Artist, Zulaport Cutthroat and Bastion of Remembrance all trigger on creature death only and never fire on a sacrificed Treasure, which is what this deck actually sacrifices. Sheoldred, the Apocalypse is the answer this color pair does allow. She reads \"Whenever you draw a card, you gain 2 life\", and Smaug's trigger is a draw, so every Treasure-cast spell swings from minus one life to plus one. Without her, Exsanguinate, High Market and Oni-Cult Anvil are the only cards that give life back and none is cheap or repeatable, so the deck plays as a short-clock deck that must convert its board before its own life total becomes the shortest at the table. With her, the same list can grind."
   },
   "categories": [
     {
@@ -239,6 +244,7 @@
         "Blood Crypt",
         "Dragonskull Summit",
         "Smoldering Marsh",
+        "Turbulent Crater",
         "Sulfurous Springs",
         "Luxury Suite",
         "Foreboding Ruins",
@@ -644,7 +650,7 @@
       "name": "Bolas's Citadel",
       "price": "owned",
       "isGameChanger": true,
-      "reason": "The deck's first Game Changer, added in the DEC-548 re-assessment. It plays spells from the top of the library for life instead of mana, and the deck's average nonland mana value of 2.97 keeps that life price low while Sheoldred refunds every draw. Top-casts spend no Treasure mana, so they never trigger Smaug — the Citadel is raw card advantage. Late game, \"{T}, Sacrifice ten nonland permanents: Each opponent loses 10 life\" turns a wide Treasure board into a 10-point drain of every opponent.",
+      "reason": "The deck's first Game Changer, added in the DEC-548 re-assessment. It plays spells from the top of the library for life instead of mana, and the deck's average nonland mana value of 2.95 keeps that life price low while Sheoldred refunds every draw. Top-casts spend no Treasure mana, so they never trigger Smaug — the Citadel is raw card advantage. Late game, \"{T}, Sacrifice ten nonland permanents: Each opponent loses 10 life\" turns a wide Treasure board into a 10-point drain of every opponent.",
       "sources": [
         {
           "type": "scryfall",
@@ -1016,6 +1022,11 @@
       "primary_role": "land"
     },
     {
+      "name": "Turbulent Crater",
+      "type": "Land — Swamp Mountain",
+      "primary_role": "land"
+    },
+    {
       "name": "Sulfurous Springs",
       "type": "Land",
       "primary_role": "land"
@@ -1131,7 +1142,7 @@
       "name": "Mountain",
       "type": "Basic Land — Mountain",
       "primary_role": "land",
-      "quantity": 6
+      "quantity": 5
     },
     {
       "name": "Sheoldred, the Apocalypse",
