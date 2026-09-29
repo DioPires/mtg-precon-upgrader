@@ -192,7 +192,10 @@ import type { DeckTierBLoops } from './tierB';
 // +Simulacrum Shaper/-Carrion Feeder (eternal-harvest).
 // v130 -> v131 (DEC-929 2026-09-28): +Draconic Visitor/-Wedding Announcement
 // (stampede-acres), +Kindred Judgment/-Telekinetic Sliver (slivers).
-const STORAGE_PREFIX = 'gv1-deck-data-v133:';
+// v133 -> v134 (DEC-933 2026-09-29): stampede-acres prose corrections (Halo
+// Fountain untaps tapped creatures; Warleader's Call named on the Scurry Oak
+// line) + DEC-931 source entry.
+const STORAGE_PREFIX = 'gv1-deck-data-v134:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
