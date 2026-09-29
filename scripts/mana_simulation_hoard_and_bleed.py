@@ -21,6 +21,8 @@ credited with mana it may not have:
   understates it rather than crediting a permanent +1.
 - Turbulent Crater (DEC-929) enters tapped unless opponents control eight or
   more lands; modeled as untapped from the 4th land drop, conservative.
+- Haunted Ridge (DEC-931, replaces Foreboding Ruins) enters tapped unless two
+  or more other lands are already on the battlefield; modeled exactly.
 - Mines of Moria enters tapped unless you control a legendary creature. This
   model does not track the commander on the battlefield, so it always enters
   tapped.
@@ -128,7 +130,7 @@ MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Smoldering Marsh", "Turbulen
 FLEXIBLE_LANDS = {
     "Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs",
     "Blackcleave Cliffs", "Dragonskull Summit", "Smoldering Marsh",
-    "Foreboding Ruins", "Mount Doom", "City of Brass", "Mana Confluence",
+    "Haunted Ridge", "Mount Doom", "City of Brass", "Mana Confluence",
     "Exotic Orchard", "Turbulent Crater",
 }
 
@@ -209,10 +211,10 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
         # Fast land — untapped with two or fewer other lands.
         return other_count > 2
 
-    if name == "Foreboding Ruins":
-        # Reveal land — untapped if a Swamp or Mountain card is in hand.
-        return not any(l in SWAMP_TYPED_LANDS or l in MOUNTAIN_TYPED_LANDS
-                       for l in hand)
+    if name == "Haunted Ridge":
+        # Slow land (DEC-931) — untapped once two or more other lands are on
+        # the battlefield; the new land is not on board yet.
+        return other_count < 2
 
     if name == "Luxury Suite":
         # Untapped with two or more opponents; a four-player pod always qualifies.

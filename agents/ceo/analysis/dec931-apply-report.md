@@ -48,6 +48,13 @@ Manabase audit after the swaps: stampede-acres lands 37, untapped 37, Karsten G 
 - **broodfire-hatchery**: Cultivate 63.5, Rampant Growth 55.6, Kodama's Reach 43.7 — reject class: tapped basics; the deck's ramp is the untapped Nature's Lore class. Jungle Shrine 59.7 — reject (always tapped). Heroic Intervention 40.8 — DEC-574 board cut. Etali Primal Storm 59.1, Zetalpa 51.2, Ghalta and Mavren 49.2, Ghalta Primal Hunger 48.5, Ghalta Stampede Tyrant 46.2, Gishath 42.0 — defer to the Trigger-2 re-assessment (bomb slots). Cinder Glade 54.4 (owned, 3 free), Canopy Vista 49.9, Sunpetal Grove 41.8 — defer: next land adds; Cinder Glade is Forest-typed and fetchable by Nature's Lore, so it is first in line if the count goes to 38. Rhythm of the Wild 51.0, Sundering Growth 45.1, Swiftfoot Boots 41.9, Dinosaur Egg 41.6 — defer.
 - **eternal-harvest**: Viscera Seer 67.4, Arcane Signet 57.6, Accursed Marauder 54.5, Grim Haruspex 49.4, Cankerbloom 46.4, Protean Hulk 45.9, Syr Konrad 44.5 — DEC-572 defers; Tainted Wood 54.6, Fleshbag Marauder 42.9, Golgari Rot Farm 41.3 — DEC-572 rejects; Carrion Feeder 46.9 — DEC-929 board cut. Unchanged.
 
+## Addendum — line J applied on board direction (comment 9766e00e)
+
+- **hoard-and-bleed: + Haunted Ridge / − Foreboding Ruins.** The board overrode the DEC-930 defer. Round 1 since the DEC-930 reset at 723ae74.
+- Mana sim: Haunted Ridge modeled exactly (tapped unless two other lands are already on the battlefield); the Foreboding Ruins reveal rule removed. Manabase audit: lands 39.1, untapped 37.7, Karsten B 28.1/20, R 27.0/18, health 91 (unchanged).
+- Before/after: sim health 70.8 → 70.8 (manaReliability 72.1 → 72.2), metrics global 97 → 97, gaps 0, included combos 5 → 5. Validator, GC recount and strategy-ceiling clean. Cache key v133.
+- EDHREC absentees ≥ 40% after the swap: Smaug the Magnificent 74.2, Cavern-Hoard Dragon 61.5, Grim Hireling 53.7, Magda 53.5, Alchemist's Talent 51.9, Nadier's Nightblade 50.6, Generous Plunderer 47.5, Dragon-Cursed Halls 47.1, Terminate 45.5, Revel in Riches 43.1, The Misty Mountains Cold 43.1, Dark Ritual 42.9, Smaug the Impenetrable 42.8, The Reaver Cleaver 42.5, Rakdos Signet 42.4, Seize the Spoils 41.7, Ancient Copper Dragon 40.9, Blazemire Verge 40.1 — all already triaged at DEC-548/DEC-687/DEC-930 (Rakdos Signet and Dark Ritual are board cuts/non-placements; Misty Mountains Cold and Blazemire Verge are DEC-930 defers); no new entry.
+
 ## Purchases (information only; release 2026-10-02)
 
 The Theorist, Jace Beleren; Emrakul, the Exigent Doom; Verdant Kraken; Rockfall Vale; Overgrown Farmland; Identity Echo; Darklight Phoenix. Rootbound Crag comes from the owned pool (3 free copies). ManaBox remains the printing record.
