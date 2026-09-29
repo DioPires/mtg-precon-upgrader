@@ -14,9 +14,9 @@ exporter calls `_export_colored`, which consumes the standard stats keys
 loops and the ETB-damage payoffs are out of scope here — they are measured by
 the shared goldfish in `export_simulation_results.py`.
 
-Manabase model (36 lands):
+Manabase model (37 lands):
 - 18 basics: Forest x9, Plains x4, Mountain x5.
-- 18 nonbasics (Eiganjo, Seat of the Empire is an untapped mono-W legendary
+- 19 nonbasics (Eiganjo, Seat of the Empire is an untapped mono-W legendary
   land per DEC-570; its channel mode is combat interaction, not mana, and is
   out of scope here). Jetmir's Garden is the only unconditional "enters tapped" land
   (oracle-verified); everything else is modeled untapped:
@@ -24,6 +24,8 @@ Manabase model (36 lands):
     free in a goldfish, the standing fleet precedent.
   - Clifftop Retreat (checkland) — 10 basics plus 4 typed duals satisfy the
     Mountain-or-Plains condition; modeled untapped, same precedent.
+  - Rootbound Crag (checkland, DEC-931) — Mountain-or-Forest condition met by
+    14 basics plus the typed duals; modeled untapped, same precedent.
   - Bountiful Promenade — untapped with two or more opponents, which the
     four-player pod model always satisfies.
   - Painlands (Battlefield Forge, Brushland, Karplusan Forest) — the 1 damage
@@ -45,9 +47,6 @@ Manabase model (36 lands):
   and Arcane Signet (R/G/W). Dorks: Birds of Paradise, Llanowar Elves.
 
 Known modeling gaps (reported, not patched — DEC-550):
-- Utopia Sprawl and Wild Growth are land auras. The fleet has no precedent for
-  aura ramp in these thin sims, so they are counted as ordinary spells. Mana
-  output here is therefore slightly conservative.
 - Ashnod's Altar, Phyrexian Altar and Jeska's Will are conditional/burst mana
   that depend on a board the goldfish does not model; they are not mana rocks.
 """
@@ -159,6 +158,7 @@ LAND_COLORS: dict[str, frozenset] = {
     "Stomping Ground":    frozenset({"R", "G"}),
     "Temple Garden":      frozenset({"G", "W"}),
     "Clifftop Retreat":   frozenset({"R", "W"}),
+    "Rootbound Crag":     frozenset({"R", "G"}),
     "Bountiful Promenade": frozenset({"G", "W"}),
     "Battlefield Forge":  frozenset({"R", "W"}),
     "Brushland":          frozenset({"G", "W"}),

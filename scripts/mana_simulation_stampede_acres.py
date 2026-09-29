@@ -14,15 +14,15 @@ exporter calls `_export_colored`, which consumes the standard stats keys
 combo lines are out of scope here.
 
 Manabase model (37 lands):
-- 1 Naya tri-land (Jungle Shrine, always tapped) + Path of Ancestry (tapped) +
-  3 fetches: Fabled Passage (tapped basic), Prismatic Vista (untapped basic),
+- 2 slow lands (Rockfall Vale R/G, Overgrown Farmland G/W — enter tapped
+  unless two other lands are already on the battlefield; DEC-931) + 3 fetches: Fabled Passage (tapped basic), Prismatic Vista (untapped basic),
   Windswept Heath (untapped Forest/Plains).
 - 18 untapped Naya duals (shocks / fastlands / checklands / bondlands /
   painlands / filters / battlelands / Turbulent Steppe) — all modeled untapped:
   pay-2-life, on-curve, and opponents-8+-lands conditions are effectively free
   in a goldfish, the same precedent as the shockland treatment in the other sims.
-- 3 commander-CI rainbow producers (Command Tower, Path of Ancestry, Exotic
-  Orchard) modeled as R/G/W.
+- 2 commander-CI rainbow producers (Command Tower, Exotic Orchard) modeled as
+  R/G/W.
 - Utility / white lands: Castle Ardenvale (W token-land), Eiganjo Seat of the
   Empire (W; removal channel), Wooded Bastion (G/W filter).
 - 10 basics (Forest x4, Plains x5, Mountain x1).
@@ -111,9 +111,12 @@ def dork_sources(name: str, board: dict) -> list[frozenset]:
 BASIC_LANDS = {"Plains", "Island", "Swamp", "Mountain", "Forest"}
 
 ALWAYS_TAPPED = {
-    # Tri-land, scry-land, and the fetch land (enters/fetches tapped)
-    "Jungle Shrine", "Path of Ancestry", "Fabled Passage",
+    # The fetch land (enters/fetches tapped)
+    "Fabled Passage",
 }
+
+# Slow lands: enter tapped unless two or more other lands are on the battlefield.
+SLOW_LANDS = {"Rockfall Vale", "Overgrown Farmland"}
 
 LAND_COLORS: dict[str, frozenset] = {
     # Basics
@@ -121,8 +124,7 @@ LAND_COLORS: dict[str, frozenset] = {
     "Mountain": frozenset({"R"}),
     "Forest":   frozenset({"G"}),
 
-    # Naya tri-lands / fetch (always tapped)
-    "Jungle Shrine":  frozenset({"R", "G", "W"}),
+    # Fetch (always tapped)
     "Fabled Passage": frozenset({"R", "G", "W"}),  # fetches one of our basics
 
     # Untapped fetches (sacrifice for an untapped basic)
@@ -150,9 +152,12 @@ LAND_COLORS: dict[str, frozenset] = {
     "Brushland":         frozenset({"G", "W"}),
     "Horizon Canopy":    frozenset({"G", "W"}),
 
+    # Slow lands (untapped from the third land drop; see land_enters_tapped)
+    "Rockfall Vale":     frozenset({"R", "G"}),
+    "Overgrown Farmland": frozenset({"G", "W"}),
+
     # Rainbow / commander-CI producers — modeled as Naya (R/G/W)
     "Command Tower":   frozenset({"R", "G", "W"}),
-    "Path of Ancestry": frozenset({"R", "G", "W"}),
     "Exotic Orchard":  frozenset({"R", "G", "W"}),
 
     # Mono / colorless utility lands
@@ -174,6 +179,9 @@ BASIC_TYPED = set(BASIC_LANDS)
 
 
 def land_enters_tapped(name: str, battlefield_lands: list[str]) -> bool:
+    if name in SLOW_LANDS:
+        # The new land is not on the battlefield yet; needs two others already there.
+        return len(battlefield_lands) < 2
     return name in ALWAYS_TAPPED
 
 
@@ -344,8 +352,7 @@ class GameState:
         if sources:
             n_colors = sum(1 for c in "WUBRG" if c in sources[0])
             base += n_colors * 2
-        if name in {"Command Tower", "Path of Ancestry", "Exotic Orchard",
-                    "Jungle Shrine"}:
+        if name in {"Command Tower", "Exotic Orchard"}:
             base += 3
         return base
 
