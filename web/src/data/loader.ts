@@ -197,7 +197,9 @@ import type { DeckTierBLoops } from './tierB';
 // line) + DEC-931 source entry.
 // v135 -> v136 (DEC-933 2026-09-30): stampede-acres +Peregrin Took/-Felidar Retreat
 // (board verdict card 031e35bb).
-const STORAGE_PREFIX = 'gv1-deck-data-v136:';
+// v136 -> v137 (DEC-935 2026-09-30): broodfire-hatchery combat remake, 11 swaps
+// (board verdict card 5e9a7eeb); wincon_style combo -> combat; guide rewritten.
+const STORAGE_PREFIX = 'gv1-deck-data-v137:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

@@ -404,22 +404,8 @@ KEY_COMBOS = {
                            "— each mana-neutral loop hatches a creature off the top of the "
                            "library.",
         },
-        {
-            "name": "Mirror Entity Mass Hatch",
-            # Mirror Entity X=0 mass-hatch with Atla out — one-card line;
-            # Worldspine Wurm / Vigor only extend it, they are not required
-            # slots.
-            "slots": [
-                ["Mirror Entity"],
-            ],
-            "requiresCommander": True,
-            "description": "With Atla out, activate Mirror Entity for X=0: every creature "
-                           "you control gains all creature types (so each is an Egg) with "
-                           "base power and toughness 0/0 and dies, and Atla reveals a "
-                           "creature card onto the battlefield per death. Worldspine Wurm "
-                           "and Vigor shuffle back to extend the cascade but are not "
-                           "required.",
-        },
+        # DEC-935 (2026-09-30): the Mirror Entity X=0 mass-hatch line was removed
+        # with the combat remake (Mirror Entity cut, board verdict card 5e9a7eeb).
     ],
     "shield-doctrine": [
         {
