@@ -1677,7 +1677,7 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
                           combo_lines: list[dict], profiles: dict,
                           tutor_meta: dict, reanim_names: set[str],
                           commander_in_play: bool, commander_play_turn: int | None,
-                          commander_name: str = "") -> bool:
+                          pool: "GoldfishManaPool", commander_name: str = "") -> bool:
     """Check whether any combo line is fully assembled and castable this turn.
 
     Three substitution paths for a missing piece, tried in priority order:
@@ -1699,13 +1699,13 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
     sac target would neutralize the cost).
 
     Returns True if any combo line has all pieces resolved (via presence or substitution)
-    AND the synthetic combined mana cost is payable from this turn's mana pool.
+    AND the synthetic combined mana cost is payable from ``pool`` — the mana still
+    unspent this turn after the main-phase casts (DEC-937), not a fresh turn pool.
     """
     if not combo_lines:
         return False
     battlefield_names = {permanent["name"] for permanent in permanents if permanent["kind"] != "land"}
     hand_names = set(hand)
-    pool = GoldfishManaPool(turn_sources(permanents, turn))
     bargainable = is_bargainable_battlefield(
         permanents, profiles, commander_in_play, commander_play_turn, turn,
     )
@@ -1856,7 +1856,7 @@ def _max_bipartite_matching(slot_options: list[list[int]]) -> dict[int, int]:
 
 def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict],
                               library: list[str], assembly_line: dict, profiles: dict,
-                              tutor_meta: dict) -> bool:
+                              tutor_meta: dict, pool: "GoldfishManaPool") -> bool:
     """Whether every slot of one combo can be filled this turn (DEC-363).
 
     A slot is filled directly when any of its members has been drawn — i.e. is in
@@ -1865,7 +1865,8 @@ def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict]
     not-yet-used generic to-hand tutor that is in hand, can legally fetch a member
     still left in the library (card-type + mana-value gate), and whose mana is
     payable. Each tutor fills at most one slot (bipartite matching); the combined
-    cost of all assigned tutors must be castable from this turn's mana pool.
+    cost of all assigned tutors must be castable from ``pool`` — the mana still
+    unspent this turn after the main-phase casts (DEC-937).
 
     Conditional tutors (bargain free-cast, sacrifice extra-cost) are credited
     conservatively as plain hand tutors — full mana, no free ride. Graveyard
@@ -1926,8 +1927,8 @@ def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict]
     if len(assignment) < len(open_slots):
         return False  # no one-tutor-one-slot assignment covers all open slots
 
-    # Mana gate: pay for exactly the tutors in the chosen assignment this turn.
-    pool = GoldfishManaPool(turn_sources(permanents, turn))
+    # Mana gate: pay for exactly the tutors in the chosen assignment out of the
+    # mana still unspent this turn (DEC-937).
     combined = combine_mana_costs([
         profiles[tutors_in_hand[tutor_idx]]["manaCost"] for tutor_idx in assignment
     ])
@@ -2285,8 +2286,14 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 "isBasic": land_profile["isBasic"],
             })
 
+        # DEC-937 — one pool per turn. It is built once, after the land drop,
+        # and carried through every cast: `after_spending` below removes the
+        # sources each spell consumed, and `resolve_cast_effects` extends it
+        # with sources that come online untapped. Rebuilding it per cast (the
+        # pre-DEC-937 behaviour) let the goldfish spend the same lands again
+        # for every spell in the turn.
+        pool = GoldfishManaPool(turn_sources(permanents, turn))
         while True:
-            pool = GoldfishManaPool(turn_sources(permanents, turn))
             candidates = []
             for name in ordered_unique(hand):
                 profile = profiles[name]
@@ -2418,7 +2425,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             transform_cost = (deploy_engine["reducedTransformCost"]
                               if reducer_on_board
                               else deploy_engine["transformCost"])
-            if GoldfishManaPool(turn_sources(permanents, turn)).can_cast(transform_cost):
+            if pool.can_cast(transform_cost):
+                pool = pool.after_spending(transform_cost)
                 commander_transformed = True
                 for permanent in permanents:
                     if permanent["name"] == commander_name:
@@ -2433,8 +2441,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 deploy_profile = profiles[deploy_name]
                 # Free put-onto-battlefield, not a cast: it re-credits
                 # resolution effects but never triggers cast-gated models.
-                resolve_cast_effects(deploy_name, deploy_profile, turn,
-                                     GoldfishManaPool(turn_sources(permanents, turn)),
+                resolve_cast_effects(deploy_name, deploy_profile, turn, pool,
                                      library, hand, permanents, battlefield_lands,
                                      profiles, metadata, commander_colors)
                 if "Equipment" in deploy_profile["typeLine"]:
@@ -2510,6 +2517,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 reanim_names=reanim_names,
                 commander_in_play=commander_in_play,
                 commander_play_turn=commander_play_turn,
+                pool=pool,
                 commander_name=commander_name,
             )
         for idx, line in enumerate(assembly_lines):
@@ -2523,6 +2531,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 assembly_line=line,
                 profiles=profiles,
                 tutor_meta=tutor_meta,
+                pool=pool,
             ):
                 assembly_turn[idx] = turn
         by_turn[turn] = metrics_from_board(
@@ -2710,6 +2719,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
         "methodology": (
             f"{GOLDFISH_GAMES:,}-game solitaire heuristic. Sequencing: land drop, cheapest ramp, "
             "commander on affordability, biggest affordable threat, then other proactive spells. "
+            "Mana is spent once per turn: the turn's pool is built after the land drop and each "
+            "cast removes the sources it paid with, so the whole turn's casts (plus the combo and "
+            "engine-activation gates, which are checked against what is left) never exceed the "
+            "available mana (DEC-937). Sources that come online untapped mid-turn join the pool. "
             f"Meaningful board = pressure score >= {meaningful_threshold} or 2+ threats. "
             f"Lethal proxy = cumulative combat-pressure proxy >= {GOLDFISH_LETHAL_DAMAGE_PROXY}; "
             "combat pressure uses mana-value-based creature scoring because card metadata omits power/toughness. "

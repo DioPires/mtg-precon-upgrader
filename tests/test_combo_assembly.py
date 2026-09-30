@@ -150,7 +150,8 @@ class OneTutorOneSlotTests(unittest.TestCase):
     def _assembled(self, hand, library):
         return exporter.combo_assembled_this_turn(
             turn=3, hand=hand, permanents=self.mana, library=library,
-            assembly_line=self.line, profiles=self.profiles, tutor_meta=self.tutor_meta)
+            assembly_line=self.line, profiles=self.profiles, tutor_meta=self.tutor_meta,
+            pool=exporter.GoldfishManaPool(exporter.turn_sources(self.mana, 3)))
 
     def test_one_tutor_two_empty_slots_not_assembled(self):
         # 1 tutor, neither piece drawn -> cannot cover both slots.

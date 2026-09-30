@@ -1,7 +1,9 @@
 import importlib
 import json
+import random
 import tempfile
 import unittest
+from collections import Counter, defaultdict
 from pathlib import Path
 from unittest.mock import patch
 
@@ -127,3 +129,74 @@ class CopyEngineHelperTests(unittest.TestCase):
         self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 7, 2), 0)
         # Below the gate entirely.
         self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 2, 0), 0)
+
+
+class GoldfishManaSpendTests(unittest.TestCase):
+    """DEC-937 — mana is spent once per turn, not rebuilt per cast.
+
+    Synthetic deck: 40 Forest + 59 identical {1}{G} two-drops (one of which is
+    the commander). No ramp, so end-of-turn ``availableMana`` equals the size of
+    the pool the casts were paid from, which makes the ceiling exact:
+    ``2 * casts <= availableMana``. Before the fix the turn pool was rebuilt
+    from every active source on each pass of the cast loop, so two lands on
+    turn 2 paid for as many two-drops as the hand held.
+    """
+
+    GAMES = 120
+    SEED = 11
+
+    @staticmethod
+    def _synthetic_deck():
+        forest = {
+            "name": "Forest", "type_line": "Basic Land — Forest",
+            "oracle_text": "({T}: Add {G}.)", "mana_cost": "", "cmc": 0,
+            "colors": [], "color_identity": ["G"], "produced_mana": ["G"],
+        }
+        decklist = ["Forest"] * 40 + [f"Bear {i}" for i in range(1, 60)]
+        metadata = {"Forest": forest}
+        for i in range(1, 60):
+            metadata[f"Bear {i}"] = {
+                "name": f"Bear {i}", "type_line": "Creature — Bear",
+                "oracle_text": "", "mana_cost": "{1}{G}", "cmc": 2,
+                "colors": ["G"], "color_identity": ["G"],
+            }
+        deck_data = {"decklist": [{"name": name} for name in decklist]}
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, metadata, "Bear 1", ["G"], "synthetic-two-drops")
+        return decklist, metadata, context
+
+    def _casts_by_mana(self):
+        """Run GAMES goldfish games; return {availableMana: [casts that turn]}."""
+        decklist, metadata, context = self._synthetic_deck()
+        casts_this_turn = Counter()
+        original = exporter.resolve_cast_effects
+
+        def counting_resolve(name, profile, turn, pool, *args, **kwargs):
+            casts_this_turn[turn] += 1
+            return original(name, profile, turn, pool, *args, **kwargs)
+
+        by_mana = defaultdict(list)
+        with patch.object(exporter, "resolve_cast_effects", counting_resolve):
+            random.seed(self.SEED)
+            for _ in range(self.GAMES):
+                casts_this_turn.clear()
+                by_turn, _ = exporter.simulate_goldfish_game(
+                    decklist, metadata, context, 6)
+                for turn in range(1, exporter.NUM_TURNS + 1):
+                    by_mana[by_turn[turn]["availableMana"]].append(casts_this_turn[turn])
+        return by_mana
+
+    def test_casts_never_exceed_the_turn_pool(self):
+        by_mana = self._casts_by_mana()
+        self.assertTrue(by_mana, "no goldfish turns observed")
+        for mana, casts in sorted(by_mana.items()):
+            self.assertLessEqual(
+                2 * max(casts), mana,
+                f"{max(casts)} two-drops cast on a turn with {mana} mana available")
+
+    def test_two_lands_cast_one_two_drop_and_four_lands_cast_two(self):
+        by_mana = self._casts_by_mana()
+        self.assertIn(2, by_mana, "no two-mana turn observed")
+        self.assertIn(4, by_mana, "no four-mana turn observed")
+        self.assertEqual(max(by_mana[2]), 1)
+        self.assertEqual(max(by_mana[4]), 2)
