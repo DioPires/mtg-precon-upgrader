@@ -231,22 +231,24 @@ The check lives in `scripts/validate_strategy_ceiling.py` and runs as part of `s
 **Inputs:**
 
 - `shell = min(manabase_health, interaction_density)` — the weaker of the two. Fast mana with no countermagic is still a slow shell to defend a combo turn on.
-- `payoff`: branched on the deck-root `wincon_style`:
-  - `combo` → `comboLethal@T6`
-  - `combat`, `drain`, `drain-x`, `discrete-threats` → `lethalProxy@T7`
-  - `value-incremental` → `max(comboLethal@T6, lethalProxy@T7)` — a value pile can win either way.
-  - Multi-kind (card-level mix of `combo` + any non-combo style, or missing root style) → `max(comboLethal@T6, lethalProxy@T7)` — silverquill-style decks where the payoff is genuinely diversified.
+- `payoff`: branched on the deck-root `wincon_style` (turn reads moved one turn later by DEC-939 — see below):
+  - `combo` → `comboLethal@T7`
+  - `combat`, `drain`, `drain-x`, `discrete-threats` → `lethalProxy@T8`
+  - `value-incremental` → `max(comboLethal@T7, lethalProxy@T8)` — a value pile can win either way.
+  - Multi-kind (card-level mix of `combo` + any non-combo style, or missing root style) → `max(comboLethal@T7, lethalProxy@T8)` — silverquill-style decks where the payoff is genuinely diversified.
 
 **Detection rules (final thresholds):**
 
 - **shell-exceeds-payoff** (downgrade signal): `shell ≥ 80` AND `payoff < 15%`.
   → "B4 shell, sub-B4 payoff. Either reduce shell investment or upgrade wincon."
-- **payoff-exceeds-shell** (consistency risk): `comboLethal@T5 ≥ 50%` AND `shell < 60`.
+- **payoff-exceeds-shell** (consistency risk): `comboLethal@T6 ≥ 50%` AND `shell < 60`.
   → "Fast wincon, weak shell — combo line exists but won't survive a contested table."
+
+**Turn re-fit (DEC-939, 2026-09-30):** the reads above were originally `CL@T6` / `LP@T7` with the fast rule on `CL@T5`. DEC-937 fixed the goldfish's mana double-spend and every fast deck's lethal curve slid one turn later, which is why the turn-band tables in this document now read True B4 at T7 and the fleet body at T8; the ceiling check's reads moved with them. The four thresholds (`shell_floor=80`, `payoff_floor=15%`, `fast_payoff=50%`, `weak_shell=60`) are unchanged. On the new reads the only fleet warning is grave-dividends (shell 87, payoff 6.7% CL@T7 — Sub-B2 on either read); hidden-legion, which the old reads flagged at LP@T7 13.2% after the goldfish fix, clears at LP@T8 36.5%.
 
 **Calibration snapshot (2026-05-29):**
 
-Computed across all 15 production decks. Columns: manaH = manabase_health, intD = interaction_density, shell = min(manaH, intD), CL@T5/T6 = comboLethal at turn 5/6, LP@T7 = lethalProxy at turn 7, payoff per the branching rules above.
+Historical — computed across the 15 production decks of the time, on the pre-DEC-937 goldfish and the original `CL@T6` / `LP@T7` reads. Kept as the record of how the thresholds were set; it is not a current fleet reading. Columns: manaH = manabase_health, intD = interaction_density, shell = min(manaH, intD), CL@T5/T6 = comboLethal at turn 5/6, LP@T7 = lethalProxy at turn 7, payoff per the branching rules as they stood then.
 
 | deck | bracket | root `wincon_style` | manaH | intD | shell | CL@T5 | CL@T6 | LP@T7 | payoff | flag |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---|
@@ -270,7 +272,7 @@ Computed across all 15 production decks. Columns: manaH = manabase_health, intD 
 
 - `shell_floor=80` clears the four decks that earn B4-shell scores (creeping-corruption 82, gathering-shadow 82, silverquill 85, mutant-multiplication 86). Anything below isn't paying B4 tax in the first place, so shell-exceeds-payoff isn't the right diagnosis for it.
 - `payoff_floor=15` leaves silverquill (22.4%) above the floor by ~7 points — the canonical multi-axis case that *should not* trigger. Mutant-multiplication (33.3%) and creeping-corruption (46.8%) are well clear.
-- `fast_payoff=50%` (CL@T5) and `weak_shell=60` form the opposite warning. No current deck triggers it — the closest is superfriends-esika at shell 62 / CL@T5 3.9%. The rule is forward-looking: it catches a future deck that adds a Thoracle line without strengthening its lands or interaction.
+- `fast_payoff=50%` (CL@T5 as calibrated; CL@T6 since DEC-939) and `weak_shell=60` form the opposite warning. No current deck triggers it — the closest is superfriends-esika at shell 62 / CL@T5 3.9%. The rule is forward-looking: it catches a future deck that adds a Thoracle line without strengthening its lands or interaction.
 
 **Sanity checks (from DEC-309 acceptance):**
 

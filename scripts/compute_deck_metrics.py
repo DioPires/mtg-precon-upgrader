@@ -119,6 +119,9 @@ RESILIENCE_GY_ROLES = {"recursion", "engine"}
 # DEC-311 — win_turn triple thresholds. Best floor MUST match DEC-309's
 # PAYOFF_FLOOR (see scripts/validate_strategy_ceiling.py); both values are
 # documented in docs/deck-metrics.md and data/bracket-philosophy.md.
+# These are percentage floors scanned across every simulated turn, so they are
+# turn-agnostic: DEC-939 moved the ceiling check's reads to CL@T7 / LP@T8
+# (fast payoff CL@T6) without changing either number here.
 WIN_TURN_BEST_THRESHOLD = 15.0
 WIN_TURN_TYPICAL_THRESHOLD = 50.0
 WIN_TURN_DRAG = {3: 0, 4: 1, 5: 2}

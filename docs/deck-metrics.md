@@ -239,7 +239,7 @@ Implementation detail: `candidates.json` carries an internal `generated_at` time
 | `typical` | lowest `T` where `payoff_curve(T) ≥ 50%` |
 | `contested` | `typical + interaction_drag(bracket)`, drag = `{B3: 0, B4: 1, B5: 2}` |
 
-The **`best` floor is locked to DEC-309's [`PAYOFF_FLOOR`](../scripts/validate_strategy_ceiling.py)** (`15.0`) — both consumers MUST read the same number, so the strategy-ceiling check and the Vitals readout never disagree on what "the payoff is real" means. If DEC-309 retunes its floor, retune the `WIN_TURN_BEST_THRESHOLD` constant in `scripts/compute_deck_metrics.py` to match in the same PR.
+The **`best` floor is locked to DEC-309's [`PAYOFF_FLOOR`](../scripts/validate_strategy_ceiling.py)** (`15.0`) — both consumers MUST read the same number, so the strategy-ceiling check and the Vitals readout never disagree on what "the payoff is real" means. If DEC-309 retunes its floor, retune the `WIN_TURN_BEST_THRESHOLD` constant in `scripts/compute_deck_metrics.py` to match in the same PR. Only the *percentage* is shared: `win_turn` scans every simulated turn for the first one that clears the floor, while the ceiling check reads two fixed turns (`comboLethal@T7` / `lethalProxy@T8` since DEC-939). A turn change on one side does not move the other.
 
 **Suppression rules** — surface honest absences, never fabricate:
 

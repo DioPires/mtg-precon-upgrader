@@ -9,11 +9,18 @@ Two warnings:
 - **shell-exceeds-payoff**: deck pays B4 shell tax (`shell >= 80`) but the
   wincon is sub-B4 (`payoff < 15`). The shell is over-invested relative to
   what it's protecting. ScryCheck-style downgrade signal.
-- **payoff-exceeds-shell**: deck has a fast combo line (`comboLethal@T5 >=
+- **payoff-exceeds-shell**: deck has a fast combo line (`comboLethal@T6 >=
   50%`) but a weak shell (`shell < 60`). The combo exists but won't survive a
   contested table.
 
 Non-blocking: warnings go to stdout, exit code is 0 even if warnings fire.
+
+Turn reads (DEC-939): payoff is `comboLethal@T7` / `lethalProxy@T8`, fast
+payoff is `comboLethal@T6`. These moved one turn later from the original
+DEC-309 reads (CL@T6 / LP@T7, fast CL@T5) when DEC-937 fixed the goldfish's
+mana double-spend and every fast deck's lethal curve slid one turn; the
+re-fitted bracket bands read True B4 at T7 and the fleet body at T8. The
+percentage thresholds themselves are unchanged.
 
 Thresholds were calibrated against the 15 production decks; see
 `data/bracket-philosophy.md` "B4 Reality Check" for the table and rationale.
@@ -44,9 +51,9 @@ class DeckSnapshot:
     card_styles: frozenset[str]
     manabase_health: int
     interaction_density: int
-    combo_lethal_t5: float
     combo_lethal_t6: float
-    lethal_proxy_t7: float
+    combo_lethal_t7: float
+    lethal_proxy_t8: float
 
     @property
     def shell(self) -> int:
@@ -61,15 +68,15 @@ class DeckSnapshot:
     def payoff(self) -> tuple[float, str]:
         ws = self.wincon_style
         if self.is_multi_kind or ws == "value-incremental" or ws is None:
-            val = max(self.combo_lethal_t6, self.lethal_proxy_t7)
-            src = "max(CL@T6, LP@T7)"
+            val = max(self.combo_lethal_t7, self.lethal_proxy_t8)
+            src = "max(CL@T7, LP@T8)"
             return val, src
         if ws == "combo":
-            return self.combo_lethal_t6, "CL@T6"
+            return self.combo_lethal_t7, "CL@T7"
         if ws in {"combat", "drain", "drain-x", "discrete-threats"}:
-            return self.lethal_proxy_t7, "LP@T7"
+            return self.lethal_proxy_t8, "LP@T8"
         # Unknown style — fall back to max for safety.
-        return max(self.combo_lethal_t6, self.lethal_proxy_t7), "max(CL@T6, LP@T7) [unknown style]"
+        return max(self.combo_lethal_t7, self.lethal_proxy_t8), "max(CL@T7, LP@T8) [unknown style]"
 
 
 def load_snapshot(deck_dir: Path) -> DeckSnapshot | None:
@@ -93,9 +100,9 @@ def load_snapshot(deck_dir: Path) -> DeckSnapshot | None:
         card_styles=card_styles,
         manabase_health=int(metrics["metrics"]["manabase_health"]["score"]),
         interaction_density=int(metrics["metrics"]["interaction_density"]["score"]),
-        combo_lethal_t5=float(by_turn["5"]["comboLethal"]),
         combo_lethal_t6=float(by_turn["6"]["comboLethal"]),
-        lethal_proxy_t7=float(by_turn["7"]["lethalProxy"]),
+        combo_lethal_t7=float(by_turn["7"]["comboLethal"]),
+        lethal_proxy_t8=float(by_turn["8"]["lethalProxy"]),
     )
 
 
@@ -108,9 +115,9 @@ def evaluate(snap: DeckSnapshot) -> list[str]:
             f"intD={snap.interaction_density}), payoff={payoff:.1f}% [{payoff_src}]. "
             "Bracket 4 shell, sub-B4 payoff. Either reduce shell investment or upgrade wincon."
         )
-    if snap.combo_lethal_t5 >= FAST_PAYOFF and snap.shell < WEAK_SHELL:
+    if snap.combo_lethal_t6 >= FAST_PAYOFF and snap.shell < WEAK_SHELL:
         warnings.append(
-            f"payoff-exceeds-shell: shell={snap.shell}, comboLethal@T5={snap.combo_lethal_t5:.1f}%. "
+            f"payoff-exceeds-shell: shell={snap.shell}, comboLethal@T6={snap.combo_lethal_t6:.1f}%. "
             "Fast wincon, weak shell — combo line exists but won't survive a contested table."
         )
     return warnings
@@ -156,9 +163,9 @@ def main(argv: list[str] | None = None) -> int:
                 "manabase_health": snap.manabase_health,
                 "interaction_density": snap.interaction_density,
                 "shell": snap.shell,
-                "combo_lethal_t5": snap.combo_lethal_t5,
                 "combo_lethal_t6": snap.combo_lethal_t6,
-                "lethal_proxy_t7": snap.lethal_proxy_t7,
+                "combo_lethal_t7": snap.combo_lethal_t7,
+                "lethal_proxy_t8": snap.lethal_proxy_t8,
                 "payoff": payoff,
                 "payoff_source": payoff_src,
                 "warnings": warnings,
@@ -188,7 +195,7 @@ def main(argv: list[str] | None = None) -> int:
     print("=== Strategy-Ceiling Check (DEC-309) ===")
     print(
         f"Thresholds: shell_floor={SHELL_FLOOR}, payoff_floor={PAYOFF_FLOOR}%, "
-        f"fast_payoff(CL@T5)={FAST_PAYOFF}%, weak_shell={WEAK_SHELL}"
+        f"fast_payoff(CL@T6)={FAST_PAYOFF}%, weak_shell={WEAK_SHELL}"
     )
     print()
     print(f"{'deck':<32} {'bracket':<8} {'shell':>5} {'payoff':>7} {'source':<22} flags")
