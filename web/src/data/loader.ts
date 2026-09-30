@@ -212,7 +212,9 @@ import type { DeckTierBLoops } from './tierB';
 // Rhythm of the Wild's riot no longer readies a commander already on the
 // battlefield, and Skullclamp no longer eats Nesting Dragon's 0/2 Dragon Eggs.
 // broodfire-hatchery's simulation.json moves slightly (T8/T10 damage proxy -0.1).
-const STORAGE_PREFIX = 'gv1-deck-data-v141:';
+// v141 -> v142 (DEC-935 2026-09-30): broodfire-hatchery brewing gate reworded to the
+// turn-7 True-B4 row after the DEC-937 bracket-band re-fit (board confirmation fd5c5bc4).
+const STORAGE_PREFIX = 'gv1-deck-data-v142:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

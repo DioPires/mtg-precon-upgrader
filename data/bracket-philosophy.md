@@ -130,31 +130,33 @@ Read the proxy curve from the deck's `simulation.json` → `goldfish.byTurn[T].c
 
 | Reading | Classification |
 |---|---|
-| comboLethal/lethalProxy **≥ 50% at T6** | **True B4** — reliable T5-T7 win window |
-| < 50% T6, **≥ 50% at T7** | **Soft B4** — CAN win in the window, doesn't always |
-| < 50% at T7 | **B3-B4 borderline** — the combo plan exists but isn't reliable; deck plays as a value pile |
-| **≥ 60% at T4-T5** | Approaching B5 / cEDH territory |
+| **≥ 60% at T5–T6** | Approaching B5 / cEDH territory |
+| comboLethal/lethalProxy **≥ 50% at T7** | **True B4** — reliable T6–T8 win window (at the 2026-09-30 re-fit: gathering-shadow) |
+| < 50% T7, **≥ 50% at T8** | **Fleet body** — labels 3, 3+ and 4- overlap here; the proxy does not separate them. Split on GC count, fast mana, tutor density and interaction quality (DEC-369 policy) |
+| < 50% at T8 | **Below the bar on the proxy** — read the B2/B3 table below; a low reading never demotes a deck by itself |
+
+Re-fit note (DEC-935 / DEC-937, 2026-09-30): until DEC-937 the goldfish spent its turn's mana more than once (the pool was rebuilt before every cast). The fix moved every fast deck exactly one turn later and left the slow decks alone, so both tables in this section shifted one turn. Per-deck evidence and the row-by-row check: `agents/ceo/analysis/dec937-band-refit.md`. The Tier X/Y/Z "T6 gain" estimates above predate the fix and read one turn early.
 
 These cutoffs apply to the proxy as a *floor* (real-game readiness is higher — see caveats below).
 
 ### B2/B3 Reality Check (sub-B4 turn bands)
 
-Added from DEC-559 (2026-08-25, child of DEC-557), calibrated against the fleet's own `comboLethal` / `lethalProxy` curves — not the DEC-557 chart. Same statistic as the B4 test: the better of `comboLethal` / `lethalProxy` from `data/commanders/{id}/simulation.json`. "T50" below means the first turn that statistic reaches 50%. Per-deck calibration extract: `agents/ceo/analysis/dec559-fleet-t50.json`.
+Added from DEC-559 (2026-08-25, child of DEC-557), calibrated against the fleet's own `comboLethal` / `lethalProxy` curves — not the DEC-557 chart — and re-fitted at DEC-935 / DEC-937 (2026-09-30) on the one-pool-per-turn goldfish. Same statistic as the B4 test: the better of `comboLethal` / `lethalProxy` from `data/commanders/{id}/simulation.json`. "T50" below means the first turn that statistic reaches 50%. Per-deck calibration extract: `agents/ceo/analysis/dec937-fleet-t50.json` (supersedes `dec559-fleet-t50.json`).
 
 | Reading | Classification |
 |---|---|
-| ≥ 50% at T7 (but not T6) | **B3+ / Soft-B4 straddle** — already the Soft-B4 row in the B4 table; split 3+ vs 4- on non-proxy criteria (GC count, fast mana, tutor density) |
-| < 50% at T7, ≥ 50% at T8 | **True B3** — wins open at T6 (T6 reading typically 10–30%), games close ~T8 |
-| 40–50% at T8 | **Soft B3** — B3 label holds if the T6 reading is ≥ ~5% (real wins exist from T6) |
-| < 40% at T8, ≥ 50% by T10 | **B2 band** — games run ~T10; T7-8 wins happen but are not the norm |
-| < 50% at T10 | **Sub-B2 payoff** — precon-level; run `validate_strategy_ceiling.py` and the blind-spot audit |
+| ≥ 50% at T8 (but not T7) | **Fleet body — 3 / 3+ / 4- straddle** — the same row as in the B4 table; split on non-proxy criteria (GC count, fast mana, tutor density, interaction quality). At re-fit: armory-protocol, gandalf-party-guest, hoard-and-bleed, stampede-acres, tidal-legion, slivers, verdant-tide, creeping-corruption, zada-hedron-grinder |
+| < 50% at T8, ≥ 50% at T9 | **True B3 on the proxy** — wins open at T7 (T7 reading typically 10–30%), games close ~T9. At re-fit: broodfire-hatchery, eternal-agony, eternal-harvest, titan-convergence, anvil-chorus, hidden-legion, witherbloom-the-balancer; the 4/4- decks in this row are on the blind-spot list below |
+| 40–50% at T9 | **Soft B3** — B3 label holds if the T7 reading is ≥ ~5% (real wins exist from T7) |
+| < 40% at T9, ≥ 50% by T10 | **B2 band** — games run ~T10; T8–9 wins happen but are not the norm. At re-fit: exponential-growth, shield-doctrine, the-white-forge (all labeled 4/4-, all on the blind-spot list) |
+| < 50% at T10 | **Sub-B2 payoff** — precon-level; run `validate_strategy_ceiling.py` and the blind-spot audit (at re-fit: grave-dividends) |
 
 Two mandatory caveats ship with this table:
 
-1. **The proxy is a floor. It can promote, never demote.** A high reading argues the deck is stronger than its label. A low reading does not demote a deck by itself. Before any down-label, audit the known blind spots: `lethalProxy` misses token combat and noncombat damage, and `comboLethal` holds back tagged combo pieces. Five decks labeled 4/4- read T50 ≥ 9 at calibration time for exactly these reasons (shield-doctrine, the-white-forge, stampede-acres, eternal-agony, grave-dividends) — their labels stand.
-2. **The B2 band is extrapolated.** The fleet holds zero B2 decks (DEC-369 bar is ≥ B3+/4-). Two independent anchors agree on the band: (a) fleet medians shift about one turn per bracket step — true B4 ≤ T6, soft B4 = T7, B3+ median 7.5, B3 median 8, so B2 lands at 9–10; (b) the qualitative anchor from DEC-557, games ~T10 with wins T7-8. Recalibrate this row if the fleet ever gains a real B2 deck.
+1. **The proxy is a floor. It can promote, never demote.** A high reading argues the deck is stronger than its label. A low reading does not demote a deck by itself. Before any down-label, audit the known blind spots: `lethalProxy` misses token combat, noncombat damage, extra combat phases and power multipliers, and `comboLethal` holds back tagged combo pieces and is checked only after the turn's filler casts. Six decks labeled 4/4- read T50 ≥ 9 at the re-fit for exactly these reasons (shield-doctrine, the-white-forge, eternal-agony, eternal-harvest, grave-dividends, exponential-growth) — their labels stand. A per-commander engine in `scripts/export_simulation_results.py` (DEC-385 cascade, DEC-393 copy, DEC-404 token swarm, DEC-405 transform-deploy, DEC-472 permanent draw, DEC-533 amass, DEC-938 Atla hatch) is the sanctioned way to take a deck off this list.
+2. **The B2 band is extrapolated.** The fleet holds zero B2 decks (DEC-369 bar is ≥ B3+/4-). The qualitative anchor from DEC-557 — games ~T10 with wins T7–8 — still places it at T10 on the re-fitted scale. Recalibrate this row if the fleet ever gains a real B2 deck.
 
-Honesty note: labels 3 through 4 overlap on T50 in our fleet. This test is a necessary floor, not a sufficient classifier — the same framing the B4 table uses. Labels also ride on GC count, fast mana, tutors, and interaction quality.
+Honesty note: labels 3 through 4 overlap on T50 in our fleet — at the re-fit the label medians were T8 (label 3), T8 (3+), T8 (4-) and T9 (4), so this statistic does not separate the labels at all. This test is a necessary floor, not a sufficient classifier — the same framing the B4 table uses. Labels ride on GC count, fast mana, tutors, and interaction quality.
 
 ### comboLethal proxy schema (cross-link)
 
