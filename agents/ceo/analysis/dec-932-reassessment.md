@@ -116,4 +116,4 @@ Numeric and factual claims re-checked against the current 99: "10+ Wastes" (13),
 
 ## Disposition
 
-PASS. Verdict card with lines A and B posted on DEC-932. On approval: apply per line, add the new cards to `card-metadata.json`, refresh card pool, metrics, re-sim, tokens, Combo Lab artifacts, validator, prose sweep (Bauble highlight and category, Sire lifegain sentence), cache key bump. Round counter resets to 0 at the closing commit.
+PASS, no card changes. The board answered on 2026-09-30: "no swap for now for this deck" (comment fc5f17b8; verdict card 25851319 cancelled). Lines A (+Kozilek's Command / −Worn Powerstone) and B (+Calamity of the Titans / −Wayfarer's Bauble) move to the deferred list with their projections on record; do not re-propose them without a new trigger. The closing commit carries the Sire of Seven Deaths lifegain prose correction and the web cache bump (v135). The swap-round counter resets to 0 at that commit; the next Trigger-2 fires after three new board-approved rounds.
