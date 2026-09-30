@@ -208,7 +208,11 @@ import type { DeckTierBLoops } from './tierB';
 // v139 -> v140 (DEC-938 2026-09-30): Atla hatch engine + team-haste rule added to
 // the shared goldfish, so broodfire-hatchery's simulation.json speed curves and
 // metrics.json win_turn move (lethalProxy T7 16.1 -> 32.9, typical win T9 -> T8).
-const STORAGE_PREFIX = 'gv1-deck-data-v140:';
+// v140 -> v141 (DEC-938 review 2026-09-30): two hatch-engine ceilings removed —
+// Rhythm of the Wild's riot no longer readies a commander already on the
+// battlefield, and Skullclamp no longer eats Nesting Dragon's 0/2 Dragon Eggs.
+// broodfire-hatchery's simulation.json moves slightly (T8/T10 damage proxy -0.1).
+const STORAGE_PREFIX = 'gv1-deck-data-v141:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.

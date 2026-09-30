@@ -813,20 +813,28 @@ COMMANDER_HATCH_ENGINE = {
 # plus a keyword list and ignores printed Haste fleet-wide, so a deck whose
 # whole point is "the fatty that just entered attacks now" is measured a full
 # turn slow on every body. Generic opt-in mechanism, one deck configured today:
-# while any `anyOf` permanent (or every name in one `allOfPairs` pair) is on the
-# battlefield, a creature that enters — cast or hatched — is combat-ready the
-# turn it entered; `printedHasteNames` creatures are ready on entry regardless.
+# a creature that enters — cast or hatched — while any source is on the
+# battlefield is combat-ready the turn it entered, and `printedHasteNames`
+# creatures are ready on entry regardless.
+#
+# Sources split by how they behave for a creature that is ALREADY on the
+# battlefield when the source lands (DEC-938 review):
+#   staticNames / staticPairs — continuous grants ("Creatures you control have
+#       haste"). They cover creatures already out, so a permanent that needs to
+#       be untapped-and-unsick this turn can check them live.
+#   entryGatedNames — replacement effects that only apply as a creature enters
+#       (Rhythm of the Wild's riot). They never haste a creature that was
+#       already on the battlefield, so they only count through the entry-time
+#       record written when that creature entered.
 # Lightning Greaves is deliberately absent: single target, and the sim has no
-# equip path. Floor: static sources also grant haste to creatures already on the
-# battlefield when the source lands, which this entry-time rule misses — it
-# undercounts by at most one creature-turn per creature.
+# equip path.
 COMMANDER_HASTE_SOURCES = {
     "broodfire-hatchery": {
-        "anyOf": {"Rhythm of the Wild", "Samut, Hazoret's Champion",
-                  "Rising of the Day"},
+        "staticNames": {"Samut, Hazoret's Champion", "Rising of the Day"},
         # Palani's Hatcher grants haste to other Dinosaurs; Maskwood Nexus makes
         # every creature you control every creature type.
-        "allOfPairs": [("Palani's Hatcher", "Maskwood Nexus")],
+        "staticPairs": [("Palani's Hatcher", "Maskwood Nexus")],
+        "entryGatedNames": {"Rhythm of the Wild"},
         "printedHasteNames": {"Raph & Mikey, Troublemakers"},
     },
 }
@@ -2255,12 +2263,29 @@ def set_entry_ready_turn(permanents: list[dict], name: str, ready_turn: int) -> 
         return
 
 
-def team_haste_active(haste_sources: dict, permanents: list[dict]) -> bool:
-    """Whether a configured team-haste source is on the battlefield (DEC-938)."""
+def static_haste_active(haste_sources: dict, permanents: list[dict]) -> bool:
+    """Whether a continuous team-haste grant is on the battlefield (DEC-938).
+
+    Static grants ("Creatures you control have haste") also cover creatures that
+    were already on the battlefield when the source landed, so a permanent that
+    needs to be unsick *this* turn can read them live.
+    """
     names = {permanent["name"] for permanent in permanents}
-    if haste_sources["anyOf"] & names:
+    if haste_sources["staticNames"] & names:
         return True
-    return any(set(pair) <= names for pair in haste_sources["allOfPairs"])
+    return any(set(pair) <= names for pair in haste_sources["staticPairs"])
+
+
+def team_haste_active(haste_sources: dict, permanents: list[dict]) -> bool:
+    """Whether any team-haste source covers a creature entering now (DEC-938).
+
+    Entry-gated sources (Rhythm of the Wild's riot) count here but not in
+    ``static_haste_active`` — riot applies only as the creature enters.
+    """
+    if static_haste_active(haste_sources, permanents):
+        return True
+    names = {permanent["name"] for permanent in permanents}
+    return bool(haste_sources["entryGatedNames"] & names)
 
 
 def hatch_from_library(turn: int, pool: "GoldfishManaPool", library: list[str],
@@ -2381,10 +2406,15 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             amass_ping_damage += amass_engine["batchDamage"]
     # DEC-938 hatch-engine bookkeeping: Eggs are a counter (they have no power
     # and never block in a goldfish), carried across turns until an outlet eats
-    # them. `landfall_entry` records when a per-land-drop Egg maker landed (its
-    # trigger starts the next turn) and `untapper_attached` locks in whether the
-    # Staff was already on the battlefield when the commander entered.
+    # them. Two counters, because Skullclamp's +1/-1 only kills the 0/1 Eggs the
+    # commander and Palani's Hatcher make — Nesting Dragon's Dragon Egg is 0/2
+    # and survives the equip as a 1/1, so those sit in `tough_eggs_on_board` and
+    # only the free/limited sacrifice outlets eat them. `landfall_entry` records
+    # when a per-land-drop Egg maker landed (its trigger starts the next turn)
+    # and `untapper_attached` locks in whether the Staff was already on the
+    # battlefield when the commander entered.
     eggs_on_board = 0
+    tough_eggs_on_board = 0
     landfall_entry: dict[str, int] = {}
     untapper_attached = False
 
@@ -2492,12 +2522,14 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             })
             # DEC-938 — landfall Egg makers (Nesting Dragon) mint one Egg per
             # land drop, from the turn after the maker landed. Only the natural
-            # land drop counts; lands fetched by ramp spells are a floor.
+            # land drop counts; lands fetched by ramp spells are a floor. These
+            # Eggs are 0/2, so they go to the Skullclamp-proof counter.
             if hatch_engine is not None:
                 for maker, entry_turn in landfall_entry.items():
                     if turn > entry_turn and any(
                             permanent["name"] == maker for permanent in permanents):
-                        eggs_on_board += hatch_egg_multiplier(hatch_engine, permanents)
+                        tough_eggs_on_board += hatch_egg_multiplier(
+                            hatch_engine, permanents)
 
         # DEC-937 — one pool per turn. It is built once, after the land drop,
         # and carried through every cast: `after_spending` below removes the
@@ -2718,8 +2750,24 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             board = {permanent["name"] for permanent in permanents}
             haste_now = (haste_sources is not None
                          and team_haste_active(haste_sources, permanents))
-            commander_ready = (commander_in_play and commander_play_turn is not None
-                               and (commander_play_turn < turn or haste_now))
+            # The commander's {2},{T} needs her unsick *now*, which is a
+            # different question from "does a creature entering now get haste".
+            # A static grant covers her retroactively; Rhythm's riot only does
+            # if it was already out when she entered — that case is recorded on
+            # her own permanent by `on_permanent_entered`.
+            commander_record = next(
+                (permanent for permanent in permanents
+                 if permanent["name"] == commander_name), None)
+            commander_hasted_on_entry = (
+                commander_record is not None
+                and commander_record["combat"] > 0
+                and commander_record["combatReadyTurn"] <= turn)
+            commander_ready = (
+                commander_in_play and commander_play_turn is not None
+                and (commander_play_turn < turn
+                     or commander_hasted_on_entry
+                     or (haste_sources is not None
+                         and static_haste_active(haste_sources, permanents))))
             instant_outlet = bool(hatch_engine["instantOutletNames"] & board)
             limited_outlet = bool(hatch_engine["limitedOutletNames"] & board)
             # The gate's outlet half. Skullclamp and Palani's Hatcher add
@@ -2767,25 +2815,32 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             # outlet that pays the deck back, then the free/limited ones.
             # The dies-trigger only needs the commander on the battlefield, not
             # untapped or unsick — an Egg dying on her cast turn still hatches.
-            if commander_in_play and outlet_online and eggs_on_board > 0:
-                deaths = 0
+            if (commander_in_play and outlet_online
+                    and eggs_on_board + tough_eggs_on_board > 0):
+                clamp_deaths = 0
+                # +1/-1 kills a 0/1 Egg; the 0/2 Dragon Eggs survive as 1/1s.
                 if hatch_engine["sorceryOutletName"] in board:
-                    while (eggs_on_board > deaths
+                    while (eggs_on_board > clamp_deaths
                            and pool.can_cast(hatch_engine["sorceryOutletCost"])):
                         pool = pool.after_spending(hatch_engine["sorceryOutletCost"])
-                        deaths += 1
+                        clamp_deaths += 1
                         for _ in range(hatch_engine["sorceryOutletDraw"]):
                             if library:
                                 hand.append(library.pop())
-                free_deaths = eggs_on_board - deaths
+                eggs_on_board -= clamp_deaths
+                free_deaths = eggs_on_board + tough_eggs_on_board
                 if not instant_outlet:
                     free_deaths = min(
                         free_deaths,
                         (1 if limited_outlet else 0)
                         + (1 if hatch_engine["combatOutletNames"] & board else 0),
                     )
-                deaths += max(0, free_deaths)
-                eggs_on_board -= deaths
+                # Spend the Clamp-proof Eggs on the free outlets first so the
+                # 0/1s stay as Clamp fuel for the next turn.
+                from_tough = min(free_deaths, tough_eggs_on_board)
+                tough_eggs_on_board -= from_tough
+                eggs_on_board -= free_deaths - from_tough
+                deaths = clamp_deaths + free_deaths
                 hatches_per_egg = 1 + len(hatch_engine["extraHatchNames"] & board)
                 run_hatches(deaths * hatches_per_egg,
                             turn if haste_now else None)
@@ -3176,7 +3231,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             f"doubles every Egg; each of {len(hatch_engine['extraHatchNames'])} "
             "trigger doublers adds one hatch per death. Skullclamp equips own-turn "
             f"Eggs at {hatch_engine['sorceryOutletCost']['generic']} generic each and "
-            f"credits {hatch_engine['sorceryOutletDraw']} cards. Seedborn Muse adds "
+            f"credits {hatch_engine['sorceryOutletDraw']} cards, but only the 0/1 "
+            "Eggs — its +1/-1 leaves Nesting Dragon's 0/2 Dragon Egg alive as a 1/1, "
+            "so those are tracked apart and only the free/limited outlets eat them. "
+            "Seedborn Muse adds "
             f"{hatch_engine['untapStepActivations']} free activations on the "
             "opponents' untap steps (instant-speed outlets only; those creatures are "
             "ready next turn regardless of haste). Attack-triggered hatches (Raph & "
@@ -3194,13 +3252,17 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
     if haste_sources:
         section["methodology"] += (
             " Team-haste rule modeled (DEC-938): the combat profile ignores printed "
-            f"Haste fleet-wide, so while any of {len(haste_sources['anyOf'])} static "
-            f"haste permanents (or both halves of {len(haste_sources['allOfPairs'])} "
-            "configured pair) is on the battlefield, a creature that enters — cast or "
-            "hatched — is combat-ready the turn it entered, as are "
-            f"{len(haste_sources['printedHasteNames'])} printed-haste creatures. "
-            "Floor: static sources also grant haste to creatures already on the "
-            "battlefield when the source lands, which this entry-time rule misses."
+            "Haste fleet-wide, so a creature that enters — cast or hatched — while "
+            f"any of {len(haste_sources['staticNames'])} continuous haste grants, "
+            f"both halves of {len(haste_sources['staticPairs'])} configured pair, or "
+            f"{len(haste_sources['entryGatedNames'])} entry-gated grant (riot) is on "
+            "the battlefield is combat-ready the turn it entered, as are "
+            f"{len(haste_sources['printedHasteNames'])} printed-haste creatures. The "
+            "commander's tap ability reads the continuous grants live (they cover "
+            "her retroactively) but reads riot only off her own entry record, since "
+            "riot never hastes a creature already on the battlefield. Floor: the "
+            "entry-time rule misses other creatures already out when a continuous "
+            "source lands — at most one creature-turn each."
         )
     return section, combo_assembly
 

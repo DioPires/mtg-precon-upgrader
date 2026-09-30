@@ -178,6 +178,17 @@ class HatchEngineHelperTests(unittest.TestCase):
         self.assertTrue(exporter.team_haste_active(
             self.HASTE, self._board("Palani's Hatcher", "Maskwood Nexus")))
 
+    def test_static_haste_excludes_entry_gated_riot(self):
+        # Rhythm's riot applies only as a creature enters, so it is not a
+        # continuous grant a permanent already on the battlefield can read.
+        self.assertFalse(exporter.static_haste_active(
+            self.HASTE, self._board("Rhythm of the Wild")))
+        for name in ("Samut, Hazoret's Champion", "Rising of the Day"):
+            self.assertTrue(exporter.static_haste_active(
+                self.HASTE, self._board(name)), name)
+        self.assertTrue(exporter.static_haste_active(
+            self.HASTE, self._board("Palani's Hatcher", "Maskwood Nexus")))
+
     def test_set_entry_ready_turn_only_pulls_readiness_forward(self):
         permanents = [{"name": "Bear", "combat": 3, "combatReadyTurn": 5}]
         exporter.set_entry_ready_turn(permanents, "Bear", 4)
@@ -259,12 +270,14 @@ class HatchEngineGoldfishTests(unittest.TestCase):
         "Elesh Norn, Mother of Machines": "Legendary Creature — Phyrexian Praetor",
         "Raph & Mikey, Troublemakers": "Legendary Creature — Mutant Ninja Turtle",
         "Rhythm of the Wild": "Enchantment",
+        "Rising of the Day": "Enchantment",
+        "Samut, Hazoret's Champion": "Legendary Creature — Human Warrior Cleric",
         "Maskwood Nexus": "Artifact",
     }
     BEARS = [f"Bear {i}" for i in range(40)]
     FILLERS = [f"Filler {i}" for i in range(30)]
 
-    def _metadata(self, commander_cmc: int) -> dict:
+    def _metadata(self, commander_cmc: int, pre_commander=()) -> dict:
         metadata = {
             "Forest": {
                 "name": "Forest", "type_line": "Basic Land — Forest",
@@ -291,6 +304,12 @@ class HatchEngineGoldfishTests(unittest.TestCase):
         # High Market must not be a castable spell — it is the land outlet.
         metadata["High Market"]["oracle_text"] = "{T}: Add {C}."
         metadata["High Market"]["produced_mana"] = ["C"]
+        # `proactive_cast_priority` casts mana sources before the commander, so
+        # naming a card here is the harness knob for "this permanent is already
+        # on the battlefield when the commander enters".
+        for name in pre_commander:
+            metadata[name]["oracle_text"] = "{T}: Add {C}."
+            metadata[name]["produced_mana"] = ["C"]
         for name in self.BEARS:
             metadata[name] = {
                 "name": name, "type_line": "Creature — Bear", "oracle_text": "",
@@ -303,15 +322,17 @@ class HatchEngineGoldfishTests(unittest.TestCase):
             }
         return metadata
 
-    def _run(self, engine_cards, commander_cmc=1, crystals=3, forests=6):
+    def _run(self, engine_cards, commander_cmc=1, crystals=3, forests=6,
+             pre_commander=(), extra_lands=()):
         """Run one pinned game; return (hatch calls, by_turn)."""
-        metadata = self._metadata(commander_cmc)
-        decklist = (["Forest"] * forests + ["Mana Crystal"] * crystals
+        metadata = self._metadata(commander_cmc, pre_commander)
+        lands = ["Forest"] * forests + list(extra_lands)
+        decklist = (lands + ["Mana Crystal"] * crystals
                     + list(self.FREE_PERMANENTS) + self.BEARS + self.FILLERS)
         deck_data = {"decklist": [{"name": name} for name in decklist]}
         context = exporter.build_goldfish_context(
             decklist, deck_data, metadata, self.COMMANDER, ["G"], self.DECK_ID)
-        hand = ["Forest"] * forests + ["Mana Crystal"] * crystals + list(engine_cards)
+        hand = lands + ["Mana Crystal"] * crystals + list(engine_cards)
         # library.pop() draws from the end, so Bears sit on top of the Fillers.
         library = list(self.FILLERS) + list(self.BEARS)
 
@@ -351,10 +372,26 @@ class HatchEngineGoldfishTests(unittest.TestCase):
         self.assertEqual(min(turn for turn, _ in calls), 2)
         self.assertEqual(self._per_turn(calls)[2], 1)
 
-    def test_haste_source_lets_the_commander_hatch_on_her_cast_turn(self):
-        calls, _ = self._run(["Ashnod's Altar", "Rhythm of the Wild"])
+    def test_static_haste_source_covers_the_commander_retroactively(self):
+        # Rising of the Day is continuous ("Creatures you control have haste"),
+        # so it readies her even though the goldfish casts her first.
+        calls, _ = self._run(["Ashnod's Altar", "Rising of the Day"])
         self.assertEqual(self._per_turn(calls)[1], 1)
         # With haste the hatched creature is combat-ready the turn it entered.
+        self.assertEqual(calls[0], (1, 1))
+
+    def test_riot_does_not_ready_the_commander_when_it_enters_after_her(self):
+        # Rhythm of the Wild is a replacement effect on entry, so a commander
+        # already on the battlefield never gets haste from it.
+        calls, _ = self._run(["Ashnod's Altar", "Rhythm of the Wild"])
+        self.assertEqual(min(turn for turn, _ in calls), 2)
+        # It still hastes creatures that enter later, hatched ones included.
+        self.assertEqual(calls[0], (2, 2))
+
+    def test_riot_readies_the_commander_when_it_enters_before_her(self):
+        calls, _ = self._run(["Ashnod's Altar", "Rhythm of the Wild"],
+                             pre_commander=["Rhythm of the Wild"])
+        self.assertEqual(self._per_turn(calls)[1], 1)
         self.assertEqual(calls[0], (1, 1))
 
     def test_one_egg_per_turn_without_thornbite_and_four_with_it(self):
@@ -421,6 +458,18 @@ class HatchEngineGoldfishTests(unittest.TestCase):
         # Nesting Dragon lands turn 1; its landfall Egg starts turn 2 and adds
         # one Egg per land drop on top of the commander's activation.
         self.assertEqual(self._per_turn(dragon)[3], 2)
+
+    def test_skullclamp_cannot_eat_nesting_dragons_0_2_eggs(self):
+        # High Market is the whole land base so every land drop is an outlet
+        # land; Mondrak doubles both Egg streams so supply outruns capacity.
+        calls, _ = self._run(
+            ["Nesting Dragon", "Skullclamp", "Mondrak, Glory Dominus"],
+            forests=0, extra_lands=["High Market"] * 4)
+        # Turn 2: two 0/1 Eggs from the doubled activation and two 0/2 Dragon
+        # Eggs from landfall. Skullclamp's +1/-1 kills only the 0/1s (two
+        # equips at {1}), then High Market eats one 0/2 — three hatches, not
+        # the four the Clamp would reach if it could equip a 0/2.
+        self.assertEqual(self._per_turn(calls)[2], 3)
 
     def test_raph_and_mikey_hatch_at_combat_ready_to_attack(self):
         calls, _ = self._run(["Raph & Mikey, Troublemakers"])
