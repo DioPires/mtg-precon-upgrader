@@ -131,3 +131,28 @@ If accepted: apply with the DEC-929 tail (card-metadata check, card pool, `compu
 ## Disposition
 
 PASS. Round counter reset to 0 at the closing commit. Next Trigger-2 fires after 3 new board-approved rounds (a line-A apply inside this issue does not count).
+
+## Addendum — line A applied (board verdict card 031e35bb, accepted 2026-09-30 13:56)
+
+**IN Peregrin Took — OUT Felidar Retreat.** Owned x2, no purchase. Applied inside the Trigger-2 reset, so the swap-round counter stays at 0.
+
+Before/after, same inputs (100k mana games, 10k goldfish games, metrics weights A, oracle mirror 2026-09-30):
+
+| Signal | Before (68c99ec) | After |
+|---|---|---|
+| global_health / normalized | 85 / 93 | 86 / 94 |
+| roles (card-draw) / curve / cohesion / interaction / resilience | 89 (7.5) / 98 / 52 / 104 / 80 | 91 (8.5) / 99 / 50 / 104 / 80 |
+| avg nonland MV | 2.87 | 2.85 |
+| gaps[] | 2 | 2 (unchanged) |
+| sim health (grade) | 72.8 (B) | 72.9 (B) |
+| manaReliability / commanderIndependence | 71.6 / 61.5 | 71.9 / 61.6 |
+| drawEngineReliability count, T6 | 13, 83.5 | 14, 85.8 |
+| lethalProxy T6 / T7 / T8 | 19.9 / 44.1 / 64.1 | 22.6 / 47.7 / 67.5 |
+| comboLethal T6 / T7 / T8 | 8.7 / 10.8 / 13.6 | 9.0 / 11.2 / 13.9 |
+| strategy ceiling payoff | 44.1% | 47.7% (LP@T7), shell 78, no warning |
+
+The lethalProxy gain (+3.4 to +3.6 per turn) is above the ±0.1 noise band measured yesterday: the goldfish model counts Took as a body and a token-rate engine where Retreat was a land-drop enchantment. The projection posted on the card (86 / 94, roles 91, curve 99, cohesion 50) reproduced exactly.
+
+Hygiene tail: `card-metadata.json` +Peregrin Took; `refresh_card_pool.py` (Retreat now a candidate, Took removed); `compute_tokens.py` (Cat Beast token dropped, Took added as a Food producer); Combo Lab trio for stampede-acres (included 4 / near-miss 120 / total 282, unchanged; Tier C pairs 80 / triples 40 / cycles 30; Tier B 0 novel). The per-deck Spellbook sync advanced the shared corpus (2026-09-29T15:10 → 2026-09-30T13:11, 7,302 → 7,306 cards, 107,731 → 108,278 variants, API 7.1.2), so the fleet was re-emitted with `--offline --force`; no deck's `included[]` changed, so no Tier B rebuild elsewhere. `validate_deck_json.py` 4,791 references across 21 decks clean; `check_game_changers.py --offline` ts mirror ok (53), fleet recount 0; `validate_strategy_ceiling.py` stampede-acres ok (the grave-dividends shell-exceeds-payoff warning is pre-existing: its deck, metrics and simulation files did not change). Prose: Retreat removed from the Token Producers category; Took added to Card Draw, to the Draconic Visitor synergy, and to the roles list (card-draw / engine); `sources[]` decision record added. Web cache key v135 → v136.
+
+Round counter after this apply: 0.
