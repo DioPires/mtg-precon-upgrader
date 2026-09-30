@@ -11,8 +11,11 @@ from available mana.
 This is a thin colored-mana sim (no bespoke engine-readiness block): the
 exporter calls `_export_colored`, which consumes the standard stats keys
 (mana / color / commander castability / curve / tapped-land). The Egg-hatch
-loops and the ETB-damage payoffs are out of scope here — they are measured by
-the shared goldfish in `export_simulation_results.py`.
+loops are out of scope here — they are measured by the shared goldfish in
+`export_simulation_results.py`, whose `COMMANDER_HATCH_ENGINE` block (DEC-938)
+models Egg supply, sacrifice outlets and the reveal-and-put hatch, plus the
+`COMMANDER_HASTE_SOURCES` team-haste rule. ETB-damage payoffs remain unmodelled
+on both sides.
 
 Manabase model (37 lands):
 - 18 basics: Forest x9, Plains x4, Mountain x5.

@@ -131,6 +131,307 @@ class CopyEngineHelperTests(unittest.TestCase):
         self.assertEqual(exporter.copy_engine_copy_count(engine, profile, 2, 0), 0)
 
 
+class HatchEngineHelperTests(unittest.TestCase):
+    """DEC-938 — pure helpers behind the hatch engine and team-haste rule."""
+
+    ENGINE = exporter.COMMANDER_HATCH_ENGINE["broodfire-hatchery"]
+    HASTE = exporter.COMMANDER_HASTE_SOURCES["broodfire-hatchery"]
+
+    @staticmethod
+    def _board(*names):
+        return [{"name": name, "combat": 0, "combatReadyTurn": 99} for name in names]
+
+    def test_egg_multiplier_doubles_per_token_doubler(self):
+        self.assertEqual(exporter.hatch_egg_multiplier(self.ENGINE, self._board()), 1)
+        self.assertEqual(exporter.hatch_egg_multiplier(
+            self.ENGINE, self._board("Mondrak, Glory Dominus")), 2)
+        self.assertEqual(exporter.hatch_egg_multiplier(
+            self.ENGINE, self._board("Mondrak, Glory Dominus",
+                                     "Elspeth, Storm Slayer")), 4)
+
+    def test_entry_eggs_double_on_elesh_norn_then_on_token_doublers(self):
+        hatcher = "Palani's Hatcher"
+        self.assertEqual(exporter.hatch_entry_eggs(
+            self.ENGINE, hatcher, self._board(hatcher)), 2)
+        # Elesh Norn doubles the ETB trigger itself: two triggers, two Eggs each.
+        self.assertEqual(exporter.hatch_entry_eggs(
+            self.ENGINE, hatcher,
+            self._board(hatcher, "Elesh Norn, Mother of Machines")), 4)
+        # ...and the token doublers then multiply the tokens created.
+        self.assertEqual(exporter.hatch_entry_eggs(
+            self.ENGINE, hatcher,
+            self._board(hatcher, "Elesh Norn, Mother of Machines",
+                        "Mondrak, Glory Dominus")), 8)
+        self.assertEqual(exporter.hatch_entry_eggs(
+            self.ENGINE, "Nesting Dragon", self._board("Nesting Dragon")), 0)
+
+    def test_team_haste_needs_a_source_or_a_complete_pair(self):
+        self.assertFalse(exporter.team_haste_active(self.HASTE, self._board()))
+        self.assertTrue(exporter.team_haste_active(
+            self.HASTE, self._board("Rhythm of the Wild")))
+        # Palani's Hatcher only hastes other Dinosaurs — Maskwood Nexus is the
+        # other half of the pair.
+        self.assertFalse(exporter.team_haste_active(
+            self.HASTE, self._board("Palani's Hatcher")))
+        self.assertFalse(exporter.team_haste_active(
+            self.HASTE, self._board("Maskwood Nexus")))
+        self.assertTrue(exporter.team_haste_active(
+            self.HASTE, self._board("Palani's Hatcher", "Maskwood Nexus")))
+
+    def test_set_entry_ready_turn_only_pulls_readiness_forward(self):
+        permanents = [{"name": "Bear", "combat": 3, "combatReadyTurn": 5}]
+        exporter.set_entry_ready_turn(permanents, "Bear", 4)
+        self.assertEqual(permanents[0]["combatReadyTurn"], 4)
+        exporter.set_entry_ready_turn(permanents, "Bear", 7)
+        self.assertEqual(permanents[0]["combatReadyTurn"], 4)
+        # Non-combat permanents are untouched.
+        rock = [{"name": "Rock", "combat": 0, "combatReadyTurn": 99}]
+        exporter.set_entry_ready_turn(rock, "Rock", 3)
+        self.assertEqual(rock[0]["combatReadyTurn"], 99)
+
+    def test_hatch_puts_one_creature_and_bottoms_the_rest(self):
+        profiles = {
+            "Rock": {"typeLine": "Artifact", "isPermanent": True, "landRamp": None,
+                     "manaAtoms": [], "manaSourceDelay": None, "immediateDraw": 0,
+                     "impact": 1, "combat": 0, "isThreat": False},
+            "Wastes": {"typeLine": "Land", "isPermanent": True, "landRamp": None,
+                       "manaAtoms": [], "manaSourceDelay": 0, "immediateDraw": 0,
+                       "impact": 0, "combat": 0, "isThreat": False},
+            "Bear": {"typeLine": "Creature — Bear", "isPermanent": True,
+                     "landRamp": None, "manaAtoms": [], "manaSourceDelay": None,
+                     "immediateDraw": 0, "impact": 2, "combat": 2, "isThreat": True},
+        }
+        # Library bottom -> top; the two cards above the Bear are bottomed.
+        library = ["Deep", "Bear", "Wastes", "Rock"]
+        permanents, hand, lands = [], [], []
+        hatched = exporter.hatch_from_library(
+            3, exporter.GoldfishManaPool([]), library, hand, permanents, lands,
+            profiles, {}, [])
+        self.assertEqual(hatched, "Bear")
+        self.assertEqual([p["name"] for p in permanents], ["Bear"])
+        self.assertEqual(permanents[0]["combatReadyTurn"], 4)
+        self.assertEqual(library, ["Rock", "Wastes", "Deep"])
+
+        # ready_turn pulls the hatch into the current combat (Raph & Mikey).
+        library = ["Bear"]
+        permanents = []
+        exporter.hatch_from_library(
+            3, exporter.GoldfishManaPool([]), library, hand, permanents, lands,
+            profiles, {}, [], ready_turn=3)
+        self.assertEqual(permanents[0]["combatReadyTurn"], 3)
+
+        # A creature-less library hatches nothing and is left intact.
+        library = ["Rock", "Wastes"]
+        permanents = []
+        self.assertIsNone(exporter.hatch_from_library(
+            3, exporter.GoldfishManaPool([]), library, hand, permanents, lands,
+            profiles, {}, []))
+        self.assertEqual(permanents, [])
+        self.assertEqual(sorted(library), ["Rock", "Wastes"])
+
+
+class HatchEngineGoldfishTests(unittest.TestCase):
+    """DEC-938 — the hatch engine inside a deterministic goldfish turn loop.
+
+    Synthetic ``broodfire-hatchery`` deck: the engine permanents cost nothing so
+    the whole opening hand lands on turn 1, every Bear and Filler costs {9} so
+    the goldfish never casts one (Bears exist only to be hatched), and the
+    opening hand/library are pinned by patching the mulligan — the only source
+    of randomness in ``simulate_goldfish_game``. Each test asserts on the
+    ``(turn, ready_turn)`` pairs recorded from every ``hatch_from_library`` call.
+    """
+
+    DECK_ID = "broodfire-hatchery"
+    COMMANDER = "Atla Palani, Nest Tender"
+    FREE_PERMANENTS = {
+        "Ashnod's Altar": "Artifact",
+        "Goblin Bombardment": "Enchantment",
+        "High Market": "Land",
+        "Skullclamp": "Artifact — Equipment",
+        "Thornbite Staff": "Kindred Artifact — Shaman Equipment",
+        "Mondrak, Glory Dominus": "Legendary Creature — Phyrexian Horror",
+        "Elspeth, Storm Slayer": "Planeswalker — Elspeth",
+        "Annie Joins Up": "Legendary Enchantment",
+        "Roaming Throne": "Artifact Creature — Golem",
+        "Seedborn Muse": "Creature — Spirit",
+        "Palani's Hatcher": "Creature — Dinosaur",
+        "Nesting Dragon": "Creature — Dragon",
+        "Elesh Norn, Mother of Machines": "Legendary Creature — Phyrexian Praetor",
+        "Raph & Mikey, Troublemakers": "Legendary Creature — Mutant Ninja Turtle",
+        "Rhythm of the Wild": "Enchantment",
+        "Maskwood Nexus": "Artifact",
+    }
+    BEARS = [f"Bear {i}" for i in range(40)]
+    FILLERS = [f"Filler {i}" for i in range(30)]
+
+    def _metadata(self, commander_cmc: int) -> dict:
+        metadata = {
+            "Forest": {
+                "name": "Forest", "type_line": "Basic Land — Forest",
+                "oracle_text": "({T}: Add {G}.)", "mana_cost": "", "cmc": 0,
+                "colors": [], "color_identity": ["G"], "produced_mana": ["G"],
+            },
+            "Mana Crystal": {
+                "name": "Mana Crystal", "type_line": "Artifact",
+                "oracle_text": "{T}: Add {C}.", "mana_cost": "", "cmc": 0,
+                "colors": [], "color_identity": [], "produced_mana": ["C"],
+            },
+            self.COMMANDER: {
+                "name": self.COMMANDER,
+                "type_line": "Legendary Creature — Human Shaman",
+                "oracle_text": "", "mana_cost": "{%d}" % commander_cmc,
+                "cmc": commander_cmc, "colors": [], "color_identity": ["G"],
+            },
+        }
+        for name, type_line in self.FREE_PERMANENTS.items():
+            metadata[name] = {
+                "name": name, "type_line": type_line, "oracle_text": "",
+                "mana_cost": "", "cmc": 0, "colors": [], "color_identity": [],
+            }
+        # High Market must not be a castable spell — it is the land outlet.
+        metadata["High Market"]["oracle_text"] = "{T}: Add {C}."
+        metadata["High Market"]["produced_mana"] = ["C"]
+        for name in self.BEARS:
+            metadata[name] = {
+                "name": name, "type_line": "Creature — Bear", "oracle_text": "",
+                "mana_cost": "{9}", "cmc": 9, "colors": [], "color_identity": [],
+            }
+        for name in self.FILLERS:
+            metadata[name] = {
+                "name": name, "type_line": "Sorcery", "oracle_text": "",
+                "mana_cost": "{9}", "cmc": 9, "colors": [], "color_identity": [],
+            }
+        return metadata
+
+    def _run(self, engine_cards, commander_cmc=1, crystals=3, forests=6):
+        """Run one pinned game; return (hatch calls, by_turn)."""
+        metadata = self._metadata(commander_cmc)
+        decklist = (["Forest"] * forests + ["Mana Crystal"] * crystals
+                    + list(self.FREE_PERMANENTS) + self.BEARS + self.FILLERS)
+        deck_data = {"decklist": [{"name": name} for name in decklist]}
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, metadata, self.COMMANDER, ["G"], self.DECK_ID)
+        hand = ["Forest"] * forests + ["Mana Crystal"] * crystals + list(engine_cards)
+        # library.pop() draws from the end, so Bears sit on top of the Fillers.
+        library = list(self.FILLERS) + list(self.BEARS)
+
+        calls = []
+        original = exporter.hatch_from_library
+
+        def recording_hatch(turn, *args, ready_turn=None, **kwargs):
+            calls.append((turn, ready_turn))
+            return original(turn, *args, ready_turn=ready_turn, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          lambda *_: (list(library), list(hand))), \
+                patch.object(exporter, "hatch_from_library", recording_hatch):
+            by_turn, _ = exporter.simulate_goldfish_game(
+                decklist, metadata, context, 6)
+        return calls, by_turn
+
+    @staticmethod
+    def _per_turn(calls):
+        counts = Counter(turn for turn, _ in calls)
+        return {turn: counts[turn] for turn in sorted(counts)}
+
+    def test_no_hatch_without_the_commander(self):
+        # Commander at {30} is never affordable inside the 10-turn window.
+        calls, _ = self._run(["Ashnod's Altar"], commander_cmc=30)
+        self.assertEqual(calls, [])
+
+    def test_no_hatch_without_an_outlet(self):
+        calls, _ = self._run([])
+        self.assertEqual(calls, [])
+        # Skullclamp alone does not open the engine (board scope, DEC-938).
+        calls, _ = self._run(["Skullclamp"])
+        self.assertEqual(calls, [])
+
+    def test_no_own_turn_hatch_on_the_commanders_cast_turn(self):
+        calls, _ = self._run(["Ashnod's Altar"])
+        self.assertEqual(min(turn for turn, _ in calls), 2)
+        self.assertEqual(self._per_turn(calls)[2], 1)
+
+    def test_haste_source_lets_the_commander_hatch_on_her_cast_turn(self):
+        calls, _ = self._run(["Ashnod's Altar", "Rhythm of the Wild"])
+        self.assertEqual(self._per_turn(calls)[1], 1)
+        # With haste the hatched creature is combat-ready the turn it entered.
+        self.assertEqual(calls[0], (1, 1))
+
+    def test_one_egg_per_turn_without_thornbite_and_four_with_it(self):
+        base, _ = self._run(["Ashnod's Altar"])
+        self.assertEqual(self._per_turn(base)[3], 1)
+        # Commander at {4} lands on turn 2, after the Staff — the free attach
+        # trigger ("whenever a Shaman enters") is the sim's only equip path.
+        staffed, _ = self._run(["Ashnod's Altar", "Thornbite Staff"],
+                               commander_cmc=4, crystals=2)
+        self.assertEqual(self._per_turn(staffed)[3], 4)
+        # Thornbite without Ashnod's Altar has nothing to pay the next
+        # activation ({C}{C} off the Egg it just ate), so even with a free
+        # unlimited outlet the commander untaps once: one Egg per turn.
+        no_altar, _ = self._run(["Goblin Bombardment", "Thornbite Staff"],
+                                commander_cmc=4, crystals=2)
+        self.assertEqual(self._per_turn(no_altar)[3], 1)
+
+    def test_high_market_is_a_once_per_untap_outlet(self):
+        # Only land in the deck, so it is the turn-1 land drop.
+        calls, _ = self._run(["High Market", "Mondrak, Glory Dominus"], forests=0)
+        # Two Eggs from the doubled activation, but High Market eats one.
+        self.assertEqual(self._per_turn(calls)[2], 1)
+
+    def test_token_doublers_multiply_the_eggs(self):
+        one, _ = self._run(["Ashnod's Altar"])
+        two, _ = self._run(["Ashnod's Altar", "Mondrak, Glory Dominus"])
+        four, _ = self._run(["Ashnod's Altar", "Mondrak, Glory Dominus",
+                             "Elspeth, Storm Slayer"])
+        self.assertEqual(self._per_turn(one)[3], 1)
+        self.assertEqual(self._per_turn(two)[3], 2)
+        self.assertEqual(self._per_turn(four)[3], 4)
+
+    def test_trigger_doublers_add_one_hatch_per_egg_each(self):
+        annie, _ = self._run(["Ashnod's Altar", "Annie Joins Up"])
+        both, _ = self._run(["Ashnod's Altar", "Annie Joins Up", "Roaming Throne"])
+        self.assertEqual(self._per_turn(annie)[3], 2)
+        self.assertEqual(self._per_turn(both)[3], 3)
+
+    def test_hatch_cap_holds_at_eight_per_turn(self):
+        calls, _ = self._run(
+            ["Ashnod's Altar", "Thornbite Staff", "Mondrak, Glory Dominus",
+             "Elspeth, Storm Slayer", "Annie Joins Up", "Roaming Throne",
+             "Seedborn Muse"],
+            commander_cmc=4, crystals=2)
+        per_turn = self._per_turn(calls)
+        self.assertTrue(per_turn, "no hatches observed")
+        self.assertEqual(max(per_turn.values()), 8)
+
+    def test_seedborn_hatches_are_ready_next_turn_even_under_haste(self):
+        calls, _ = self._run(["Ashnod's Altar", "Seedborn Muse",
+                              "Rhythm of the Wild"])
+        turn_three = [ready for turn, ready in calls if turn == 3]
+        # One own-turn Egg (hasted: ready this turn) + three Seedborn Eggs on
+        # the opponents' untap steps (ready next turn regardless of haste).
+        self.assertEqual(turn_three, [3, None, None, None])
+
+    def test_palanis_hatcher_entry_eggs_and_nesting_dragon_landfall(self):
+        hatcher, _ = self._run(["Ashnod's Altar", "Palani's Hatcher"],
+                               commander_cmc=4, crystals=2)
+        # Turn 2 the commander lands; the Hatcher's two entry Eggs from turn 1
+        # are still on the board and her dies-trigger converts them at once.
+        self.assertEqual(self._per_turn(hatcher)[2], 2)
+        dragon, _ = self._run(["Ashnod's Altar", "Nesting Dragon"])
+        # Nesting Dragon lands turn 1; its landfall Egg starts turn 2 and adds
+        # one Egg per land drop on top of the commander's activation.
+        self.assertEqual(self._per_turn(dragon)[3], 2)
+
+    def test_raph_and_mikey_hatch_at_combat_ready_to_attack(self):
+        calls, _ = self._run(["Raph & Mikey, Troublemakers"])
+        # No commander gate and no outlet needed — the attack trigger stands
+        # alone, and printed haste makes them ready the turn they enter.
+        self.assertEqual(calls[0], (1, 1))
+        self.assertEqual(self._per_turn(calls)[1], 1)
+        annie, _ = self._run(["Raph & Mikey, Troublemakers", "Annie Joins Up"])
+        self.assertEqual(self._per_turn(annie)[1], 2)
+
+
 class GoldfishManaSpendTests(unittest.TestCase):
     """DEC-937 — mana is spent once per turn, not rebuilt per cast.
 

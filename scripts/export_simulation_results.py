@@ -730,6 +730,107 @@ AMASS_ARMY_ENGINE = {
     },
 }
 
+# DEC-938 — commander hatch engines (sequel to DEC-385/393/404/405/533).
+# Creatures only ever reach the goldfish battlefield by being cast from hand, so
+# a commander whose whole plan is "sacrifice a token, put the top creature card
+# onto the battlefield" reads as zero. Atla Palani, Nest Tender: "{2}, {T}:
+# Create a 0/1 green Egg creature token with defender. Whenever an Egg you
+# control dies, reveal cards from the top of your library until you reveal a
+# creature card. Put that card onto the battlefield and the rest on the bottom."
+# Model: Eggs are a counter, Egg deaths are gated on a real sacrifice outlet,
+# and each death runs `hatch_from_library` — the DEC-385 cascade dig without the
+# mana-value filter, resolving through the DEC-405 free put-onto-battlefield
+# path so a hatch credits impact/combat/draw exactly like a cast but never
+# re-triggers a cast-gated model (CR 707.10 reasoning; a put is not a cast).
+#
+# Config keys:
+#   activationCost        — pips per commander activation ({2})
+#   maxEggsPerTurn        — own-turn activation cap before token doublers (4)
+#   maxHatchesPerTurn     — hard cap on hatches per turn; the Thornbite infinite
+#                           is scored by the combo systems, not here (8)
+#   instantOutletNames    — free, unlimited instant-speed sacrifice outlets
+#   limitedOutletNames    — instant-speed outlets usable once per untap
+#   sorceryOutletName/Cost/Draw — Skullclamp: own-turn Eggs only, {1} per Egg,
+#                           credits its two-card draw (equip is sorcery-speed,
+#                           so it never serves opponent-turn Eggs)
+#   combatOutletNames     — free sacrifice of one Egg at your combat
+#                           (Palani's Hatcher)
+#   tokenDoublerNames     — each doubles every Egg created (Mondrak/Elspeth: x4)
+#   extraHatchNames       — each adds one hatch per Egg death (Annie Joins Up
+#                           doubles Atla's legendary trigger; Roaming Throne
+#                           naming Shaman doubles it again — three with both)
+#   untapperName/untapperRequiresName — Thornbite Staff untaps the commander per
+#                           creature death, but only counts while Ashnod's Altar
+#                           is out (its {C}{C} pays the next activation) and only
+#                           if the Staff was already on the battlefield when the
+#                           commander entered (the sim has no equip path, so the
+#                           free "whenever a Shaman enters, attach" is the only
+#                           way it lands)
+#   untapStepName/untapStepActivations — Seedborn Muse: three extra activations
+#                           on opponents' untap steps, free (lands untap too);
+#                           those hatches are ready next turn regardless of haste
+#   entryEggNames/entryEggDoublerName — Eggs made on entry (Palani's Hatcher's
+#                           two, doubled again by Elesh Norn's ETB doubling)
+#   landfallEggNames      — one Egg per land drop from the turn after entry
+#                           (Nesting Dragon)
+#   combatHatchNames/legendaryTriggerDoublerName — Raph & Mikey, Troublemakers
+#                           hatch once per combat while combat-ready, and that
+#                           creature attacks the same combat; Annie doubles it
+# Floors, not ceilings: no blockers and no opponents; Eggs left unsacrificed
+# carry over but never block or trade; Palani's Hatcher's 3/3 Dinosaur token and
+# Nesting Dragon's 2/2 Dragon token are not credited; Maskwood Nexus making
+# every creature an Egg, Zopandrel's and Mondrak's paid sacrifice outlets,
+# Elesh Norn doubling Nesting Dragon's landfall trigger, extra land drops from
+# ramp spells, and hatching on opponents' end steps beyond Seedborn are all
+# unmodelled.
+COMMANDER_HATCH_ENGINE = {
+    "broodfire-hatchery": {
+        "activationCost": {"generic": 2},
+        "maxEggsPerTurn": 4,
+        "maxHatchesPerTurn": 8,
+        "instantOutletNames": {"Ashnod's Altar", "Phyrexian Altar",
+                               "Goblin Bombardment"},
+        "limitedOutletNames": {"High Market"},
+        "sorceryOutletName": "Skullclamp",
+        "sorceryOutletCost": {"generic": 1},
+        "sorceryOutletDraw": 2,
+        "combatOutletNames": {"Palani's Hatcher"},
+        "tokenDoublerNames": {"Mondrak, Glory Dominus", "Elspeth, Storm Slayer"},
+        "extraHatchNames": {"Annie Joins Up", "Roaming Throne"},
+        "untapperName": "Thornbite Staff",
+        "untapperRequiresName": "Ashnod's Altar",
+        "untapStepName": "Seedborn Muse",
+        "untapStepActivations": 3,
+        "entryEggNames": {"Palani's Hatcher": 2},
+        "entryEggDoublerName": "Elesh Norn, Mother of Machines",
+        "landfallEggNames": {"Nesting Dragon"},
+        "combatHatchNames": {"Raph & Mikey, Troublemakers"},
+        "legendaryTriggerDoublerName": "Annie Joins Up",
+    },
+}
+
+# DEC-938 — team-haste rule. The goldfish profile scores combat from mana value
+# plus a keyword list and ignores printed Haste fleet-wide, so a deck whose
+# whole point is "the fatty that just entered attacks now" is measured a full
+# turn slow on every body. Generic opt-in mechanism, one deck configured today:
+# while any `anyOf` permanent (or every name in one `allOfPairs` pair) is on the
+# battlefield, a creature that enters — cast or hatched — is combat-ready the
+# turn it entered; `printedHasteNames` creatures are ready on entry regardless.
+# Lightning Greaves is deliberately absent: single target, and the sim has no
+# equip path. Floor: static sources also grant haste to creatures already on the
+# battlefield when the source lands, which this entry-time rule misses — it
+# undercounts by at most one creature-turn per creature.
+COMMANDER_HASTE_SOURCES = {
+    "broodfire-hatchery": {
+        "anyOf": {"Rhythm of the Wild", "Samut, Hazoret's Champion",
+                  "Rising of the Day"},
+        # Palani's Hatcher grants haste to other Dinosaurs; Maskwood Nexus makes
+        # every creature you control every creature type.
+        "allOfPairs": [("Palani's Hatcher", "Maskwood Nexus")],
+        "printedHasteNames": {"Raph & Mikey, Troublemakers"},
+    },
+}
+
 
 def combo_slot_lists(combo: dict) -> list[list[str]]:
     """Return a combo's slots as lists of interchangeable member card names.
@@ -1534,6 +1635,8 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "deployEngine": COMMANDER_DEPLOY_ENGINE.get(deck_id),
         "drawEngines": PERMANENT_DRAW_ENGINE.get(deck_id),
         "amassEngine": AMASS_ARMY_ENGINE.get(deck_id),
+        "hatchEngine": COMMANDER_HATCH_ENGINE.get(deck_id),
+        "hasteSources": COMMANDER_HASTE_SOURCES.get(deck_id),
     }
 
 
@@ -2138,6 +2241,85 @@ def resolve_cascade_triggers(spell_profile: dict, cascade: dict, turn: int,
                                      commander_colors, reserved_pieces)
 
 
+def set_entry_ready_turn(permanents: list[dict], name: str, ready_turn: int) -> None:
+    """Pull a just-entered creature's combat readiness forward (DEC-938).
+
+    Finds the most recently appended record with this name and lowers its
+    ``combatReadyTurn``; non-combat permanents (``combat`` 0) are left alone.
+    """
+    for permanent in reversed(permanents):
+        if permanent["name"] != name:
+            continue
+        if permanent["combat"] > 0:
+            permanent["combatReadyTurn"] = min(permanent["combatReadyTurn"], ready_turn)
+        return
+
+
+def team_haste_active(haste_sources: dict, permanents: list[dict]) -> bool:
+    """Whether a configured team-haste source is on the battlefield (DEC-938)."""
+    names = {permanent["name"] for permanent in permanents}
+    if haste_sources["anyOf"] & names:
+        return True
+    return any(set(pair) <= names for pair in haste_sources["allOfPairs"])
+
+
+def hatch_from_library(turn: int, pool: "GoldfishManaPool", library: list[str],
+                       hand: list[str], permanents: list[dict],
+                       battlefield_lands: list[dict], profiles: dict, metadata: dict,
+                       commander_colors: list[str],
+                       ready_turn: int | None = None) -> str | None:
+    """Put the top creature card of the library onto the battlefield free (DEC-938).
+
+    The DEC-385 cascade dig without the mana-value filter: reveal from the top
+    until a creature card is found, resolve it through the DEC-405 free
+    put-onto-battlefield path (``resolve_cast_effects``, so it credits impact,
+    combat and draw exactly like a cast) and bottom the cards revealed past it.
+    A put is not a cast, so it never re-triggers a cast-gated model. Returns the
+    hatched card name, or ``None`` when the library holds no creature card.
+
+    Deliberately free of deck-specific names so other reveal-and-put engines
+    (e.g. Eladamri, Korvecdal) can reuse it from their own config block.
+    """
+    passed = []
+    hit = None
+    while library:
+        card = library.pop()
+        if "Creature" in profiles[card]["typeLine"]:
+            hit = card
+            break
+        passed.append(card)
+    library[:0] = passed
+    if hit is None:
+        return None
+    resolve_cast_effects(hit, profiles[hit], turn, pool, library, hand, permanents,
+                         battlefield_lands, profiles, metadata, commander_colors)
+    if ready_turn is not None:
+        set_entry_ready_turn(permanents, hit, ready_turn)
+    return hit
+
+
+def hatch_egg_multiplier(hatch_engine: dict, permanents: list[dict]) -> int:
+    """Token-doubling multiplier applied to every Egg created (DEC-938)."""
+    names = {permanent["name"] for permanent in permanents}
+    return 2 ** len(hatch_engine["tokenDoublerNames"] & names)
+
+
+def hatch_entry_eggs(hatch_engine: dict, name: str, permanents: list[dict]) -> int:
+    """Eggs a just-entered permanent creates (DEC-938).
+
+    Palani's Hatcher's "create two Egg tokens" ETB; Elesh Norn doubles the
+    trigger itself (two triggers, two Eggs each) and the token doublers then
+    multiply the tokens.
+    """
+    base = hatch_engine["entryEggNames"].get(name, 0)
+    if not base:
+        return 0
+    names = {permanent["name"] for permanent in permanents}
+    if hatch_engine["entryEggDoublerName"] in names:
+        base *= 2
+    return base * hatch_egg_multiplier(hatch_engine, permanents)
+
+
 def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                            meaningful_threshold: int) -> dict:
     """Simulate one solitaire game with heuristic sequencing."""
@@ -2156,6 +2338,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     deploy_engine = context.get("deployEngine")
     draw_engines = context.get("drawEngines")
     amass_engine = context.get("amassEngine")
+    hatch_engine = context.get("hatchEngine")
+    haste_sources = context.get("hasteSources")
     # DEC-472 activated-draw bookkeeping: activations so far per engine name.
     # The cast-turn activation is credited by immediateDraw, so it seeds at 1.
     draw_engine_activations: dict[str, int] = {}
@@ -2195,6 +2379,27 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         army_counters += n
         if amass_engine["batchDamageName"] in names_on_board:
             amass_ping_damage += amass_engine["batchDamage"]
+    # DEC-938 hatch-engine bookkeeping: Eggs are a counter (they have no power
+    # and never block in a goldfish), carried across turns until an outlet eats
+    # them. `landfall_entry` records when a per-land-drop Egg maker landed (its
+    # trigger starts the next turn) and `untapper_attached` locks in whether the
+    # Staff was already on the battlefield when the commander entered.
+    eggs_on_board = 0
+    landfall_entry: dict[str, int] = {}
+    untapper_attached = False
+
+    def on_permanent_entered(name: str, current_turn: int) -> None:
+        """Post-entry bookkeeping for the hatch engine and team-haste rule."""
+        nonlocal eggs_on_board
+        if haste_sources is not None:
+            if (name in haste_sources["printedHasteNames"]
+                    or team_haste_active(haste_sources, permanents)):
+                set_entry_ready_turn(permanents, name, current_turn)
+        if hatch_engine is None:
+            return
+        eggs_on_board += hatch_entry_eggs(hatch_engine, name, permanents)
+        if name in hatch_engine["landfallEggNames"]:
+            landfall_entry.setdefault(name, current_turn)
     # DEC-405 transform/free-deploy bookkeeping: the back face comes online
     # when the transform activation is paid; engine-deployed Equipment with a
     # configured bonus count as attached from then on.
@@ -2285,6 +2490,14 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 "subtypes": land_profile["subtypes"],
                 "isBasic": land_profile["isBasic"],
             })
+            # DEC-938 — landfall Egg makers (Nesting Dragon) mint one Egg per
+            # land drop, from the turn after the maker landed. Only the natural
+            # land drop counts; lands fetched by ramp spells are a floor.
+            if hatch_engine is not None:
+                for maker, entry_turn in landfall_entry.items():
+                    if turn > entry_turn and any(
+                            permanent["name"] == maker for permanent in permanents):
+                        eggs_on_board += hatch_egg_multiplier(hatch_engine, permanents)
 
         # DEC-937 — one pool per turn. It is built once, after the land drop,
         # and carried through every cast: `after_spending` below removes the
@@ -2394,10 +2607,21 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 swarm_tokens_new += chosen_profile["manaCost"].get(
                     token_engine["pipColor"], 0)
 
+            if hatch_engine is not None or haste_sources is not None:
+                on_permanent_entered(chosen, turn)
+
             if chosen == commander_name:
                 commander_in_play = True
                 if commander_play_turn is None:
                     commander_play_turn = turn
+                    # DEC-938 — Thornbite Staff's free attach is "whenever a
+                    # Shaman creature enters"; with no equip path in the sim it
+                    # only lands if the Staff was already on the battlefield.
+                    if hatch_engine is not None:
+                        untapper_attached = any(
+                            permanent["name"] == hatch_engine["untapperName"]
+                            for permanent in permanents
+                        )
 
             if cascade_fires:
                 resolve_cascade_triggers(chosen_profile, cascade, turn, pool, library,
@@ -2485,6 +2709,116 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                             hand.append(library.pop())
             cumulative_damage += amass_ping_damage
             amass_ping_damage = 0.0
+
+        # DEC-938 — hatch engine. Eggs are made (commander activations, entry
+        # and landfall makers), an outlet kills them, and every death reveals
+        # the top creature card of the library onto the battlefield free.
+        if hatch_engine is not None:
+            hatches_left = hatch_engine["maxHatchesPerTurn"]
+            board = {permanent["name"] for permanent in permanents}
+            haste_now = (haste_sources is not None
+                         and team_haste_active(haste_sources, permanents))
+            commander_ready = (commander_in_play and commander_play_turn is not None
+                               and (commander_play_turn < turn or haste_now))
+            instant_outlet = bool(hatch_engine["instantOutletNames"] & board)
+            limited_outlet = bool(hatch_engine["limitedOutletNames"] & board)
+            # The gate's outlet half. Skullclamp and Palani's Hatcher add
+            # own-turn capacity once an instant-speed outlet is online but do
+            # not open the engine on their own (board scope, DEC-938) — Eggs
+            # they would eat with no altar out are a floor.
+            outlet_online = instant_outlet or limited_outlet
+            engine_online = commander_ready and outlet_online
+
+            def run_hatches(count: int, ready_turn: int | None) -> None:
+                """Resolve `count` hatches (capped), applying entry bookkeeping."""
+                nonlocal hatches_left
+                for _ in range(count):
+                    if hatches_left <= 0:
+                        return
+                    hatched = hatch_from_library(
+                        turn, pool, library, hand, permanents, battlefield_lands,
+                        profiles, metadata, commander_colors, ready_turn=ready_turn)
+                    hatches_left -= 1
+                    if hatched is None:
+                        return
+                    on_permanent_entered(hatched, turn)
+
+            # Own-turn commander activations: {2} each out of what the casts
+            # left. The commander taps, so one per untap — Thornbite Staff
+            # untaps her per creature death, and only with Ashnod's Altar out
+            # does the Egg it just ate pay ({C}{C}) for the next activation.
+            if engine_online:
+                thornbite = (untapper_attached
+                             and hatch_engine["untapperName"] in board
+                             and hatch_engine["untapperRequiresName"] in board)
+                untaps = hatch_engine["maxEggsPerTurn"] if thornbite else 1
+                egg_multiplier = hatch_egg_multiplier(hatch_engine, permanents)
+                for activation in range(min(untaps, hatch_engine["maxEggsPerTurn"])):
+                    if activation > 0 and thornbite:
+                        pass  # the Altar's {C}{C} from the last Egg pays for it
+                    elif pool.can_cast(hatch_engine["activationCost"]):
+                        pool = pool.after_spending(hatch_engine["activationCost"])
+                    else:
+                        break
+                    eggs_on_board += egg_multiplier
+
+            # Own-turn sacrifice outlets, in mana order: Skullclamp equips
+            # ({1} each, two cards per Egg) first because they are the only
+            # outlet that pays the deck back, then the free/limited ones.
+            # The dies-trigger only needs the commander on the battlefield, not
+            # untapped or unsick — an Egg dying on her cast turn still hatches.
+            if commander_in_play and outlet_online and eggs_on_board > 0:
+                deaths = 0
+                if hatch_engine["sorceryOutletName"] in board:
+                    while (eggs_on_board > deaths
+                           and pool.can_cast(hatch_engine["sorceryOutletCost"])):
+                        pool = pool.after_spending(hatch_engine["sorceryOutletCost"])
+                        deaths += 1
+                        for _ in range(hatch_engine["sorceryOutletDraw"]):
+                            if library:
+                                hand.append(library.pop())
+                free_deaths = eggs_on_board - deaths
+                if not instant_outlet:
+                    free_deaths = min(
+                        free_deaths,
+                        (1 if limited_outlet else 0)
+                        + (1 if hatch_engine["combatOutletNames"] & board else 0),
+                    )
+                deaths += max(0, free_deaths)
+                eggs_on_board -= deaths
+                hatches_per_egg = 1 + len(hatch_engine["extraHatchNames"] & board)
+                run_hatches(deaths * hatches_per_egg,
+                            turn if haste_now else None)
+
+            # Attack-triggered hatches (Raph & Mikey): the creature enters
+            # tapped and attacking, so it is combat-ready this turn. Annie Joins
+            # Up doubles the trigger (they are legendary). Independent of the
+            # Egg engine — no commander and no outlet needed.
+            for name in sorted(hatch_engine["combatHatchNames"] & board):
+                record = next((permanent for permanent in permanents
+                               if permanent["name"] == name), None)
+                if record is None or record["combatReadyTurn"] > turn:
+                    continue
+                triggers = 1 + (1 if hatch_engine["legendaryTriggerDoublerName"]
+                                in board else 0)
+                run_hatches(triggers, turn)
+
+            # Seedborn Muse untaps the commander (and the lands) on each of the
+            # three opponents' untap steps: three free activations after your
+            # combat. Only instant-speed outlets serve them, and the creatures
+            # they put down are ready on your next turn regardless of haste.
+            board = {permanent["name"] for permanent in permanents}
+            if (engine_online and hatch_engine["untapStepName"] in board
+                    and (hatch_engine["instantOutletNames"] & board
+                         or hatch_engine["limitedOutletNames"] & board)):
+                activations = hatch_engine["untapStepActivations"]
+                eggs = activations * hatch_egg_multiplier(hatch_engine, permanents)
+                # High Market alone still sacrifices one Egg per opponent untap.
+                deaths = eggs if (hatch_engine["instantOutletNames"] & board) \
+                    else min(eggs, activations)
+                eggs_on_board += eggs - deaths
+                hatches_per_egg = 1 + len(hatch_engine["extraHatchNames"] & board)
+                run_hatches(deaths * hatches_per_egg, None)
 
         cumulative_damage += sum(
             permanent["combat"] for permanent in permanents
@@ -2819,6 +3153,54 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "upkeep life loss, which the goldfish does not track. Floors: the on-cast "
             "protection turn and opponent-dependent draw taxes (Rhystic Study / Mystic "
             "Remora class) are not modeled."
+        )
+    hatch_engine = context.get("hatchEngine")
+    if hatch_engine:
+        section["methodology"] += (
+            " Commander hatch engine modeled (DEC-938): with the commander on the "
+            "battlefield and at least one instant-speed sacrifice outlet "
+            f"({len(hatch_engine['instantOutletNames'])} free/unlimited, "
+            f"{len(hatch_engine['limitedOutletNames'])} once-per-untap) online, each "
+            "Egg that dies reveals from the top of the library until a creature card "
+            "and puts it onto the battlefield free — a put, not a cast, so it credits "
+            "impact, combat and draw like a cast but never re-triggers a cast-gated "
+            "model. Egg supply per own turn: commander activations paid at "
+            f"{hatch_engine['activationCost']['generic']} generic out of what the "
+            f"turn's casts left, one per untap and at most "
+            f"{hatch_engine['maxEggsPerTurn']} before doublers (Thornbite Staff untaps "
+            "her per death, but only while Ashnod's Altar is out to pay the next "
+            "activation and only if the Staff was on the battlefield when she "
+            "entered), plus entry Eggs (Palani's Hatcher's two, doubled again by Elesh "
+            "Norn) and one per land drop from a landfall Egg maker the turn after it "
+            f"lands. Each of {len(hatch_engine['tokenDoublerNames'])} token doublers "
+            f"doubles every Egg; each of {len(hatch_engine['extraHatchNames'])} "
+            "trigger doublers adds one hatch per death. Skullclamp equips own-turn "
+            f"Eggs at {hatch_engine['sorceryOutletCost']['generic']} generic each and "
+            f"credits {hatch_engine['sorceryOutletDraw']} cards. Seedborn Muse adds "
+            f"{hatch_engine['untapStepActivations']} free activations on the "
+            "opponents' untap steps (instant-speed outlets only; those creatures are "
+            "ready next turn regardless of haste). Attack-triggered hatches (Raph & "
+            "Mikey) enter attacking and are ready the same combat. Hard cap "
+            f"{hatch_engine['maxHatchesPerTurn']} hatches per turn — the Thornbite "
+            "infinite is scored by the combo systems, not here. Floors: no blockers "
+            "or opponents, Eggs left over never block or trade, the Dinosaur and "
+            "Dragon tokens that Egg sacrifices leave behind are not credited, "
+            "Skullclamp and Palani's Hatcher do not open the engine on their own, "
+            "ramp-fetched lands do not trigger landfall, and Maskwood Nexus turning "
+            "every creature into an Egg, the paid Zopandrel/Mondrak outlets and "
+            "opponent-end-step hatching beyond Seedborn are unmodelled."
+        )
+    haste_sources = context.get("hasteSources")
+    if haste_sources:
+        section["methodology"] += (
+            " Team-haste rule modeled (DEC-938): the combat profile ignores printed "
+            f"Haste fleet-wide, so while any of {len(haste_sources['anyOf'])} static "
+            f"haste permanents (or both halves of {len(haste_sources['allOfPairs'])} "
+            "configured pair) is on the battlefield, a creature that enters — cast or "
+            "hatched — is combat-ready the turn it entered, as are "
+            f"{len(haste_sources['printedHasteNames'])} printed-haste creatures. "
+            "Floor: static sources also grant haste to creatures already on the "
+            "battlefield when the source lands, which this entry-time rule misses."
         )
     return section, combo_assembly
 

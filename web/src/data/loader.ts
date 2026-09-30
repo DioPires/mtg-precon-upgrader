@@ -205,7 +205,10 @@ import type { DeckTierBLoops } from './tierB';
 // pool is now spent once per turn, so every deck's simulation.json speed curves
 // (lethalProxy/comboLethal) and metrics.json win_turn shift. Force-invalidate so
 // returning users stop reading the pre-fix curves in Compare/Vitals.
-const STORAGE_PREFIX = 'gv1-deck-data-v139:';
+// v139 -> v140 (DEC-938 2026-09-30): Atla hatch engine + team-haste rule added to
+// the shared goldfish, so broodfire-hatchery's simulation.json speed curves and
+// metrics.json win_turn move (lethalProxy T7 16.1 -> 32.9, typical win T9 -> T8).
+const STORAGE_PREFIX = 'gv1-deck-data-v140:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
