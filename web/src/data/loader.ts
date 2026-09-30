@@ -199,7 +199,9 @@ import type { DeckTierBLoops } from './tierB';
 // (board verdict card 031e35bb).
 // v136 -> v137 (DEC-935 2026-09-30): broodfire-hatchery combat remake, 11 swaps
 // (board verdict card 5e9a7eeb); wincon_style combo -> combat; guide rewritten.
-const STORAGE_PREFIX = 'gv1-deck-data-v137:';
+// v137 -> v138 (DEC-935 2026-09-30): broodfire-hatchery +Raphael/-Eladamri's Call,
+// +Rising of the Day/-Clever Concealment (board verdict card ad106107).
+const STORAGE_PREFIX = 'gv1-deck-data-v138:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
