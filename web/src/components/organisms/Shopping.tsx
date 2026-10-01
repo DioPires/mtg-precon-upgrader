@@ -16,11 +16,10 @@ import {
   computeBuyOwnSplit,
 } from '../../data/builtDecks';
 import { frontFace } from '../../data/cardName';
+import { OWNED_KEY, saveOwned } from '../../data/ownedCards';
 import { useBuiltDecks } from '../../hooks/useBuiltDecks';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
 import type { DeckFull } from '../../data/types';
-
-const SHOP_OWNED_KEY = 'grimoire-owned-cards';
 
 const BASIC_LANDS = new Set([
   'Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes',
@@ -105,7 +104,7 @@ export function parseOwnedFile(text: string): Map<string, number> {
 
 function loadOwned(): Map<string, number> {
   try {
-    const raw = localStorage.getItem(SHOP_OWNED_KEY);
+    const raw = localStorage.getItem(OWNED_KEY);
     if (raw) {
       // Re-key to front-face on load so legacy/full-DFC entries reconcile
       // with deck.json names. Idempotent for non-DFC cards.
@@ -120,14 +119,6 @@ function loadOwned(): Map<string, number> {
     // ignore
   }
   return new Map();
-}
-
-function saveOwned(map: Map<string, number>): void {
-  try {
-    localStorage.setItem(SHOP_OWNED_KEY, JSON.stringify([...map]));
-  } catch {
-    // ignore
-  }
 }
 
 interface AggregateInfo {
@@ -359,6 +350,9 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
   const [sortMode, setSortMode] = useState<'type' | 'az'>('type');
   const [ownedCollapsed, setOwnedCollapsed] = useState(true);
   const [importMsg, setImportMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  // Tracks whether the in-memory owned map actually reached localStorage, so the
+  // bar never claims "saved locally" over a dropped write (DEC-941).
+  const [savedLocally, setSavedLocally] = useState(true);
   const [copyState, setCopyState] = useState<'ok' | 'err' | null>(null);
   const [, bump] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -456,20 +450,32 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
       const merged = new Map(owned);
       parsed.forEach((q, n) => merged.set(n, (merged.get(n) || 0) + q));
       setOwned(merged);
-      saveOwned(merged);
+      if (!saveOwned(merged)) {
+        setSavedLocally(false);
+        setImportMsg({
+          ok: false,
+          text: 'Out of browser storage — the import is active for this session but was not saved. '
+            + 'Free up site data and import again.',
+        });
+        return;
+      }
+      setSavedLocally(true);
       const totalCards = [...parsed.values()].reduce((s, q) => s + q, 0);
       setImportMsg({ ok: true, text: `Imported ${parsed.size} unique cards (${totalCards} total).` });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       setImportMsg({ ok: false, text: 'Could not read file: ' + msg });
+    } finally {
+      // Reset on every path, including the early returns above, so re-picking
+      // the same file after a failure still fires a change event.
+      e.target.value = '';
     }
-    e.target.value = '';
   };
 
   const clearOwned = () => {
     if (!window.confirm('Clear all owned cards? This is local-only and cannot be undone.')) return;
     setOwned(new Map());
-    saveOwned(new Map());
+    setSavedLocally(saveOwned(new Map()));
     setImportMsg(null);
   };
 
@@ -619,7 +625,8 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           </label>
           <span className="gv1-mono-xs gv1-dim">
             {owned.size > 0
-              ? `${[...owned.values()].reduce((s, q) => s + q, 0)} cards loaded — saved locally`
+              ? `${[...owned.values()].reduce((s, q) => s + q, 0)} cards loaded — `
+                + (savedLocally ? 'saved locally' : 'NOT saved (browser storage full)')
               : '// .csv (Name,Quantity) or .txt (one card per line)'}
           </span>
           {owned.size > 0 && (

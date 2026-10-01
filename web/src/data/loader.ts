@@ -1,8 +1,15 @@
 // Deck JSON loader.
 //
-// Fetches data/index.json + per-deck {deck,simulation,metrics,candidates}.json,
-// caches each response in localStorage with a 24h TTL, and returns the bundle
-// shape that normalize.ts expects.
+// Fetches data/index.json + per-deck {deck,simulation,metrics,candidates}.json
+// plus the three Combo Lab artifacts, and returns the bundle shape that
+// normalize.ts expects.
+//
+// Only deck + simulation + metrics are persisted to localStorage (DEC-942).
+// The four large artifacts (candidates, spellbook-combos, synergy-candidates,
+// tier-b-loops) are 11.7M chars fleet-wide against a ~5.2M browser quota, so
+// caching them starved user data — an imported owned-cards map had no room and
+// the write was silently dropped. They are re-fetched on every loadDeck and
+// lean on HTTP caching instead.
 //
 // Production deploy (Phase 6) places dist/ next to data/ at the host root, so
 // `/data/...` is the same origin. In dev the vite middleware in vite.config.ts
@@ -217,7 +224,16 @@ import type { DeckTierBLoops } from './tierB';
 // v142 -> v143 (DEC-940 2026-10-01): card-metadata.json entries gained printed
 // `power`/`toughness` (additive — the web app reads neither), and the goldfish
 // combat modifiers move broodfire-hatchery's simulation.json speed curves.
-const STORAGE_PREFIX = 'gv1-deck-data-v143:';
+// v143 -> v144 (DEC-942 2026-10-01): persisted envelope shape change — the four
+// large per-deck artifacts are no longer written to localStorage.
+const STORAGE_PREFIX = 'gv1-deck-data-v144:';
+/**
+ * Every version this loader has ever used. A prefix bump alone only orphans the
+ * old keys — it does not free their bytes — so returning users would carry the
+ * whole fat v143 envelope (5.2M chars, the DEC-941 quota wall) *plus* the new
+ * one. Sweep anything that is not the current version.
+ */
+const STORAGE_FAMILY = /^gv1-deck-data-v\d+:/;
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
@@ -227,6 +243,15 @@ interface PersistedEnvelope<T> {
   fetchedAt: number;
   payload: T;
 }
+
+/** The four per-deck artifacts that are fetched but never persisted (DEC-942). */
+type DeckArtifacts = Pick<
+  RawDeckBundle,
+  'candidates' | 'spellbookCombos' | 'synergyCandidates' | 'tierBLoops'
+>;
+
+/** What actually lands in localStorage: ~1.85M chars fleet-wide, not 13.5M. */
+type PersistedDeckBundle = Omit<RawDeckBundle, keyof DeckArtifacts | 'cardMetadata'>;
 
 interface LoaderDeps {
   fetchImpl?: typeof fetch;
@@ -262,6 +287,28 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   let memCardMetadata: RawCardMetadata | null = null;
   const memDecks = new Map<string, RawDeckBundle>();
 
+  /**
+   * Drop envelopes written under an earlier STORAGE_PREFIX. Runs once per
+   * loader, before the first write, so a bump actually reclaims its space.
+   */
+  function purgeStaleVersions(): void {
+    const storage = resolveStorage();
+    if (!storage) return;
+    try {
+      const doomed: string[] = [];
+      for (let i = 0; i < storage.length; i += 1) {
+        const key = storage.key(i);
+        if (key && STORAGE_FAMILY.test(key) && !key.startsWith(STORAGE_PREFIX)) {
+          doomed.push(key);
+        }
+      }
+      doomed.forEach((k) => storage.removeItem(k));
+    } catch {
+      // Storage unavailable (private mode, disabled) — nothing to reclaim.
+    }
+  }
+  let purged = false;
+
   function readPersisted<T>(key: string): T | null {
     const storage = resolveStorage();
     if (!storage) return null;
@@ -282,6 +329,10 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   function writePersisted<T>(key: string, payload: T): void {
     const storage = resolveStorage();
     if (!storage) return;
+    if (!purged) {
+      purged = true;
+      purgeStaleVersions();
+    }
     try {
       const env: PersistedEnvelope<T> = { fetchedAt: now(), payload };
       storage.setItem(STORAGE_PREFIX + key, JSON.stringify(env));
@@ -338,30 +389,49 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
     return promise;
   }
 
-  function withoutCardMetadata(bundle: RawDeckBundle): RawDeckBundle {
-    const persistable = { ...bundle };
-    delete persistable.cardMetadata;
-    return persistable;
+  /**
+   * Strip everything that must not reach localStorage: card-metadata (shared,
+   * persisted once under its own key) and the four large per-deck artifacts
+   * (DEC-942 — they alone exceed the browser quota fleet-wide).
+   */
+  function persistable(bundle: RawDeckBundle): PersistedDeckBundle {
+    const { id, index, deck, sim, metrics } = bundle;
+    return { id, index, deck, sim, metrics };
   }
 
-  async function attachCardMetadata(bundle: RawDeckBundle): Promise<RawDeckBundle> {
-    const cardMetadata = await loadCardMetadata();
-    return { ...bundle, cardMetadata };
+  async function fetchDeckArtifacts(id: string): Promise<DeckArtifacts> {
+    const base = `/data/commanders/${id}`;
+    const [candidates, spellbookCombos, synergyCandidates, tierBLoops] = await Promise.all([
+      fetchJson<RawCandidates>(`${base}/candidates.json`),
+      fetchJson<SpellbookDeckCombos>(`${base}/spellbook-combos.json`),
+      fetchJson<DeckSynergyCandidates>(`${base}/synergy-candidates.json`),
+      fetchJson<DeckTierBLoops>(`${base}/tier-b-loops.json`),
+    ]);
+    return {
+      candidates: candidates ?? null,
+      spellbookCombos: spellbookCombos ?? null,
+      synergyCandidates: synergyCandidates ?? null,
+      tierBLoops: tierBLoops ?? null,
+    };
+  }
+
+  /** Re-attach the pieces a persisted envelope deliberately omits. */
+  async function rehydrate(persisted: PersistedDeckBundle): Promise<RawDeckBundle> {
+    const [cardMetadata, artifacts] = await Promise.all([
+      loadCardMetadata(),
+      fetchDeckArtifacts(persisted.id),
+    ]);
+    return { ...persisted, ...artifacts, cardMetadata };
   }
 
   async function fetchDeckBundle(entry: RawDeckIndexEntry): Promise<RawDeckBundle> {
     const id = entry.id;
     const base = `/data/commanders/${id}`;
-    const [
-      deck, sim, metrics, candidates, spellbookCombos, synergyCandidates, tierBLoops, cardMetadata,
-    ] = await Promise.all([
+    const [deck, sim, metrics, artifacts, cardMetadata] = await Promise.all([
       fetchJson<RawDeck>(`${base}/deck.json`),
       fetchJson<RawSimulation>(`${base}/simulation.json`),
       fetchJson<RawMetrics>(`${base}/metrics.json`),
-      fetchJson<RawCandidates>(`${base}/candidates.json`),
-      fetchJson<SpellbookDeckCombos>(`${base}/spellbook-combos.json`),
-      fetchJson<DeckSynergyCandidates>(`${base}/synergy-candidates.json`),
-      fetchJson<DeckTierBLoops>(`${base}/tier-b-loops.json`),
+      fetchDeckArtifacts(id),
       loadCardMetadata(),
     ]);
     if (!deck) throw new Error(`deck.json missing for ${id}`);
@@ -371,10 +441,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
       deck,
       sim: sim ?? null,
       metrics: metrics ?? null,
-      candidates: candidates ?? null,
-      spellbookCombos: spellbookCombos ?? null,
-      synergyCandidates: synergyCandidates ?? null,
-      tierBLoops: tierBLoops ?? null,
+      ...artifacts,
       cardMetadata,
     };
   }
@@ -382,22 +449,22 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   async function loadDeck(id: string): Promise<RawDeckBundle | null> {
     const cachedMem = memDecks.get(id);
     if (cachedMem) return cachedMem;
-    const persisted = readPersisted<RawDeckBundle>(`deck:${id}`);
-    if (persisted) {
-      const withMetadata = await attachCardMetadata(persisted);
-      memDecks.set(id, withMetadata);
-      return withMetadata;
-    }
     const existing = deckInflight.get(id);
     if (existing) return existing;
 
     const promise = (async (): Promise<RawDeckBundle | null> => {
+      const persisted = readPersisted<PersistedDeckBundle>(`deck:${id}`);
+      if (persisted?.deck) {
+        const bundle = await rehydrate(persisted);
+        memDecks.set(id, bundle);
+        return bundle;
+      }
       const index = await loadIndex();
       const entry = index.commanders.find((c) => c.id === id);
       if (!entry) return null;
       const bundle = await fetchDeckBundle(entry);
       memDecks.set(id, bundle);
-      writePersisted(`deck:${id}`, withoutCardMetadata(bundle));
+      writePersisted(`deck:${id}`, persistable(bundle));
       return bundle;
     })().finally(() => deckInflight.delete(id));
 
@@ -412,6 +479,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   }
 
   function _reset(): void {
+    purged = false;
     memIndex = null;
     memCardMetadata = null;
     memDecks.clear();
