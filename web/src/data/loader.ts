@@ -214,7 +214,10 @@ import type { DeckTierBLoops } from './tierB';
 // broodfire-hatchery's simulation.json moves slightly (T8/T10 damage proxy -0.1).
 // v141 -> v142 (DEC-935 2026-09-30): broodfire-hatchery brewing gate reworded to the
 // turn-7 True-B4 row after the DEC-937 bracket-band re-fit (board confirmation fd5c5bc4).
-const STORAGE_PREFIX = 'gv1-deck-data-v142:';
+// v142 -> v143 (DEC-940 2026-10-01): card-metadata.json entries gained printed
+// `power`/`toughness` (additive — the web app reads neither), and the goldfish
+// combat modifiers move broodfire-hatchery's simulation.json speed curves.
+const STORAGE_PREFIX = 'gv1-deck-data-v143:';
 // TTL relaxed from 24h to 1h (DEC-226): new decks land more frequently than
 // once a day; the cache is still useful for fast navigation within a session
 // without making returning users wait a full day to see new content.
