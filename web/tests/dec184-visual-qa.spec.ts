@@ -81,7 +81,7 @@ async function auditTapTargets(page: Page, surface: string, width: number): Prom
   for (const target of relevant) {
     const violations: TapViolation[] = await page.evaluate(({ selector, surface, label, MIN_TAP, width }) => {
       const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
-      const out: any[] = [];
+      const out: TapViolation[] = [];
       for (const el of els) {
         const r = el.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) continue;

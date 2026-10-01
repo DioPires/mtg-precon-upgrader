@@ -162,6 +162,9 @@ function useCardMetaMap(names: string[]): Map<string, CardMeta> {
       }
     });
     return map;
+    // `version` is not read here on purpose: it is the cache-bust key that
+    // forces this memo to re-read the mutable cardCache after a hydration.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [names, version]);
 }
 

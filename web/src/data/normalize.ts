@@ -150,8 +150,11 @@ function expandToCopies(decklist: RawDecklistCard[]): RawDecklistCard[] {
   const out: RawDecklistCard[] = [];
   for (const c of decklist) {
     const qty = Math.max(1, c.quantity ?? 1);
-    const { quantity: _q, ...rest } = c;
-    for (let i = 0; i < qty; i++) out.push({ ...rest });
+    for (let i = 0; i < qty; i++) {
+      const copy: RawDecklistCard = { ...c };
+      delete copy.quantity;
+      out.push(copy);
+    }
   }
   return out;
 }

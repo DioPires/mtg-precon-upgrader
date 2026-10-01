@@ -79,7 +79,6 @@ describe('DEC-526 — Bartolomé del Presidio video fixture (paste-mode Tier-B)'
   const verifiedCores = new Set(gyVerified.map(coreKey).filter((k): k is string => k !== null));
 
   it('reports the pipeline result for the evidence trail', () => {
-    // eslint-disable-next-line no-console
     console.log(
       `[DEC-526 fixture] curated(matchDecklist)=${match.included.length} ` +
         `Tier-B: corroborated=${result.counts.verifiedCorroborated} ` +
