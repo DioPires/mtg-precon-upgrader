@@ -57,11 +57,16 @@ def collect_card_names(deck_ids: list[str] | None = None) -> set[str]:
 def _entry_from_card(card: dict) -> dict:
     """Build a metadata entry from a Scryfall card object.
 
-    Transform/modal DFC layouts carry mana_cost, oracle_text, and colors on
-    card_faces, not top-level — fill empty fields from the FRONT face (the
-    cast face; matches the project's MDFC handling policy). type_line and cmc
-    stay top-level ("A // B", front-face cmc) so land/type checks still see
-    both faces.
+    Transform/modal DFC layouts carry mana_cost, oracle_text, colors, power and
+    toughness on card_faces, not top-level — fill empty fields from the FRONT
+    face (the cast face; matches the project's MDFC handling policy). type_line
+    and cmc stay top-level ("A // B", front-face cmc) so land/type checks still
+    see both faces.
+
+    ``power``/``toughness`` are the printed front-face values as Scryfall gives
+    them (strings, so "*" and "1+*" survive) and ``None`` for anything with no
+    printed power — non-creatures and the back-face-only creatures of a DFC.
+    Added by DEC-940 for the goldfish combat modifiers' printed-power gates.
     """
     layout = card.get("layout", "normal")
     entry = {
@@ -70,6 +75,8 @@ def _entry_from_card(card: dict) -> dict:
         "mana_cost": card.get("mana_cost", ""),
         "colors": card.get("colors", []),
         "oracle_text": card.get("oracle_text", ""),
+        "power": card.get("power"),
+        "toughness": card.get("toughness"),
     }
     faces = card.get("card_faces") or []
     if faces:
@@ -80,6 +87,10 @@ def _entry_from_card(card: dict) -> dict:
             entry["oracle_text"] = front.get("oracle_text", "")
         if not entry["colors"]:
             entry["colors"] = front.get("colors", [])
+        if entry["power"] is None:
+            entry["power"] = front.get("power")
+        if entry["toughness"] is None:
+            entry["toughness"] = front.get("toughness")
     if layout in ("modal_dfc", "transform"):
         entry["layout"] = layout
     return entry
