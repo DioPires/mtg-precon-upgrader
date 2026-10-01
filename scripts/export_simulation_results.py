@@ -839,6 +839,140 @@ COMMANDER_HASTE_SOURCES = {
     },
 }
 
+# DEC-940 (DEC-935 Phase 2) — combat modifiers: extra combat phases and power
+# multipliers. The goldfish credits each ready creature `min(8, MV)` (+1 per
+# listed keyword) exactly once per turn, so a deck whose plan is "swing three
+# times with doubled power" is measured as a single unmodified combat. Generic
+# opt-in mechanism, one deck configured today (broodfire-hatchery).
+#
+# THE BASE COMBAT PROXY IS UNCHANGED. Every deck's per-creature combat value is
+# still `min(8, MV)` + keyword bonus, so lethalProxy stays comparable across the
+# fleet; a deck with no COMBAT_MODIFIERS entry runs exactly one unmodified combat
+# phase, as before. Printed power (`profile["printedPower"]`, DEC-940 metadata)
+# is read only by the power gates below, never by the damage sum.
+#
+# Per combat phase, in this order (the controller's own trigger order, chosen to
+# stack the multipliers the way a real pilot would):
+#   1. teamDoublerNames (Zopandrel, Hunger Dominus) — "at the beginning of each
+#      combat, double the power and toughness of each creature you control until
+#      end of turn". Until-end-of-turn doubling compounds across the turn's
+#      combat phases, so a creature present for n beginning-of-combat triggers
+#      is scaled 2**n (30 -> 60 -> 120).
+#   2. largestDoublerNames (Xenagos, God of Revels) — "another target creature
+#      you control ... gets +X/+X where X is that creature's power": the single
+#      largest other ready attacker is doubled. A creature that entered during
+#      this combat phase was not on the battlefield when the trigger went on the
+#      stack, so it cannot be targeted this phase (it can from the next one).
+#   3. doubleStrikeGrantNames (Raphael, the Nightwatcher) — "attacking creatures
+#      you control have double strike": the whole phase's damage doubles.
+#
+# Extra combat phases, each re-running the sum above:
+#   extraCombatAttackerNames (Aurelia, the Warleader) — "whenever Aurelia attacks
+#       for the first time each turn": one extra combat, from the first combat
+#       only, while she is combat-ready.
+#   exertCombatNames (Combat Celebrant) — exert as it attacks for one extra
+#       combat; it untaps all *other* creatures, so the Celebrant itself is out
+#       of the rest of the turn's combats, and an exerted creature does not untap
+#       during the next untap step, so it is available every other turn.
+#   powerGatedCombatNames (Tifa, Martial Artist) — one extra combat from the
+#       first combat only, gated on at least one ready attacker with printed
+#       power >= powerGateThreshold (7).
+#   paidCombatName (Aggravated Assault) — after any combat, pay paidCombatCost
+#       ({3}{R}{R}) out of the mana the turn's casts and activations left and
+#       take another combat; repeats while the pool allows.
+#   legendaryTriggerDoublerName (Annie Joins Up) — "if a triggered ability of a
+#       legendary creature you control triggers, that ability triggers an
+#       additional time": the Aurelia and Tifa triggers each add two combats.
+#       Combat Celebrant is not legendary, and Aggravated Assault is an activated
+#       ability on an enchantment, so neither is doubled.
+#   maxCombatPhases — hard cap on combat phases per turn, base combat included.
+#
+# Per-combat hooks into the DEC-938 hatch engine fire again at each extra
+# combat's beginning of combat: combatOutletNames (Palani's Hatcher sacrifices
+# one Egg) and combatHatchNames (Raph & Mikey hatch, entering tapped and
+# attacking so they count in that combat).
+#
+# Floors, not ceilings: no blockers, no opponents, no fogs, so every phase
+# connects. Annie Joins Up also doubles Zopandrel's beginning-of-combat trigger
+# (x4 per phase, not x2) and Roaming Throne naming the relevant creature type
+# under Maskwood Nexus doubles the combat triggers again — both left unmodelled.
+# Ghalta and Mavren's attack token, Combat Celebrant untapping again off a later
+# untap-all effect, and the DEC-404/405/533 ledgers (token swarm, free-deploy
+# commander, amass Army — none of which this deck runs) are unmodified by the
+# multipliers.
+#
+# Decks that carry these effects and could opt in later, each with its own
+# review and a calibration re-run: shield-doctrine (Aggravated Assault, double
+# strike), armory-protocol (Genji Glove), hidden-legion, gathering-shadow,
+# anvil-chorus and eternal-agony (double strike or damage doublers).
+COMBAT_MODIFIERS = {
+    "broodfire-hatchery": {
+        "maxCombatPhases": 4,
+        "teamDoublerNames": {"Zopandrel, Hunger Dominus"},
+        "largestDoublerNames": {"Xenagos, God of Revels"},
+        "doubleStrikeGrantNames": {"Raphael, the Nightwatcher"},
+        "extraCombatAttackerNames": {"Aurelia, the Warleader"},
+        "exertCombatNames": {"Combat Celebrant"},
+        "powerGatedCombatNames": {"Tifa, Martial Artist"},
+        "powerGateThreshold": 7,
+        "paidCombatName": "Aggravated Assault",
+        "paidCombatCost": {"generic": 3, "R": 2},
+        "legendaryTriggerDoublerName": "Annie Joins Up",
+    },
+}
+
+
+def ready_attackers(permanents: list[dict], turn: int) -> list[dict]:
+    """Permanent records that attack this turn (DEC-940).
+
+    The same predicate ``metrics_from_board`` sums for the reported ``combat``
+    field: a positive combat proxy and combat readiness reached.
+    """
+    return [
+        permanent for permanent in permanents
+        if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
+    ]
+
+
+def combat_phase_damage(attackers: list[dict], modifiers: dict | None,
+                        board: set[str], phase_index: int) -> float:
+    """Damage one combat phase deals, with the DEC-940 multipliers applied.
+
+    ``phase_index`` is 0 for the turn's first combat. With no modifiers config
+    (or none of the configured permanents on the battlefield) this is exactly
+    the unmodified sum the goldfish has always credited.
+    """
+    values = [float(permanent["combat"]) for permanent in attackers]
+    if modifiers is None or not values:
+        return sum(values)
+
+    # Zopandrel: one doubling per beginning-of-combat trigger the creature was
+    # present for. `combatEntryPhase` is the phase a creature entered during
+    # (absent = already on the battlefield before combat, i.e. -1).
+    if modifiers["teamDoublerNames"] & board:
+        for idx, permanent in enumerate(attackers):
+            entry_phase = permanent.get("combatEntryPhase", -1)
+            values[idx] *= 2 ** max(0, phase_index - entry_phase)
+
+    # Xenagos: +X/+X where X is that creature's power, on another target
+    # creature — the biggest attacker that was already on the battlefield when
+    # the beginning-of-combat trigger went on the stack.
+    if modifiers["largestDoublerNames"] & board:
+        targetable = [
+            idx for idx, permanent in enumerate(attackers)
+            if permanent["name"] not in modifiers["largestDoublerNames"]
+            and permanent.get("combatEntryPhase", -1) < phase_index
+        ]
+        if targetable:
+            best = max(targetable, key=lambda idx: values[idx])
+            values[best] *= 2
+
+    total = sum(values)
+    # Raphael: attacking creatures you control have double strike.
+    if modifiers["doubleStrikeGrantNames"] & board:
+        total *= 2
+    return total
+
 
 def combo_slot_lists(combo: dict) -> list[list[str]]:
     """Return a combo's slots as lists of interchangeable member card names.
@@ -1434,11 +1568,22 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
         if any(keyword in oracle for keyword in ("Flying", "Trample", "Menace", "Double strike", "First strike")):
             combat += 1
 
+    # DEC-940 — printed front-face power, for the combat modifiers' power gates
+    # only (Tifa's "power 7 or greater"). It never feeds the combat proxy above,
+    # which stays min(8, MV) + keyword bonus fleet-wide. `*`-style printed power
+    # has no fixed value, so it reads as 0 rather than guessing.
+    printed_power = meta.get("power")
+    try:
+        printed_power = int(printed_power)
+    except (TypeError, ValueError):
+        printed_power = 0
+
     return {
         "name": name,
         "cmc": int(meta.get("cmc", 0) or mana_cost["total"] or 0),
         "manaCost": mana_cost,
         "typeLine": type_line,
+        "printedPower": printed_power,
         "isColorless": not meta.get("colors"),
         "isLand": is_land,
         "isPermanent": is_permanent_card(meta),
@@ -1645,6 +1790,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "amassEngine": AMASS_ARMY_ENGINE.get(deck_id),
         "hatchEngine": COMMANDER_HATCH_ENGINE.get(deck_id),
         "hasteSources": COMMANDER_HASTE_SOURCES.get(deck_id),
+        "combatModifiers": COMBAT_MODIFIERS.get(deck_id),
     }
 
 
@@ -2365,6 +2511,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     amass_engine = context.get("amassEngine")
     hatch_engine = context.get("hatchEngine")
     haste_sources = context.get("hasteSources")
+    combat_modifiers = context.get("combatModifiers")
     # DEC-472 activated-draw bookkeeping: activations so far per engine name.
     # The cast-turn activation is credited by immediateDraw, so it seeds at 1.
     draw_engine_activations: dict[str, int] = {}
@@ -2430,11 +2577,81 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         eggs_on_board += hatch_entry_eggs(hatch_engine, name, permanents)
         if name in hatch_engine["landfallEggNames"]:
             landfall_entry.setdefault(name, current_turn)
+    # DEC-940 — hatch budget and the hatch runner live at turn scope so the
+    # combat-phase loop can fire the per-combat hatch triggers again at each
+    # extra combat. Reset at the top of each turn's hatch block.
+    hatches_left = 0
+
+    def mark_combat_entry(name: str, phase_index: int) -> None:
+        """Record which combat phase a creature entered during (DEC-940).
+
+        Xenagos cannot target a creature that was not on the battlefield when
+        its beginning-of-combat trigger went on the stack, and Zopandrel's
+        doubling only compounds over the triggers a creature was present for.
+        """
+        for permanent in reversed(permanents):
+            if permanent["name"] == name:
+                permanent["combatEntryPhase"] = phase_index
+                return
+
+    def run_hatches(count: int, ready_turn: int | None,
+                    combat_phase: int | None = None) -> None:
+        """Resolve `count` hatches (capped), applying entry bookkeeping."""
+        nonlocal hatches_left
+        for _ in range(count):
+            if hatches_left <= 0:
+                return
+            hatched = hatch_from_library(
+                turn, pool, library, hand, permanents, battlefield_lands,
+                profiles, metadata, commander_colors, ready_turn=ready_turn)
+            hatches_left -= 1
+            if hatched is None:
+                return
+            on_permanent_entered(hatched, turn)
+            if combat_phase is not None:
+                mark_combat_entry(hatched, combat_phase)
+
+    def run_combat_phase_hatches(phase_index: int) -> None:
+        """Per-combat hatch triggers at an extra combat's beginning of combat.
+
+        Palani's Hatcher sacrifices one Egg for free at the beginning of combat
+        on your turn, and Raph & Mikey hatch whenever they attack — both fire
+        again in every extra combat phase. Their first-combat instances are
+        already credited by the DEC-938 block above. The Hatcher keeps DEC-938's
+        gate: it adds capacity but never opens the engine on its own, so an
+        altar or High Market still has to be on the battlefield.
+        """
+        nonlocal eggs_on_board, tough_eggs_on_board
+        if hatch_engine is None:
+            return
+        board = {permanent["name"] for permanent in permanents}
+        outlet_online = bool((hatch_engine["instantOutletNames"]
+                              | hatch_engine["limitedOutletNames"]) & board)
+        hatches_per_egg = 1 + len(hatch_engine["extraHatchNames"] & board)
+        if (hatch_engine["combatOutletNames"] & board
+                and commander_in_play and outlet_online
+                and eggs_on_board + tough_eggs_on_board > 0):
+            if tough_eggs_on_board > 0:
+                tough_eggs_on_board -= 1
+            else:
+                eggs_on_board -= 1
+            run_hatches(hatches_per_egg, turn, combat_phase=phase_index)
+        for name in sorted(hatch_engine["combatHatchNames"] & board):
+            record = next((permanent for permanent in permanents
+                           if permanent["name"] == name), None)
+            if record is None or record["combatReadyTurn"] > turn:
+                continue
+            triggers = 1 + (1 if hatch_engine["legendaryTriggerDoublerName"]
+                            in board else 0)
+            run_hatches(triggers, turn, combat_phase=phase_index)
     # DEC-405 transform/free-deploy bookkeeping: the back face comes online
     # when the transform activation is paid; engine-deployed Equipment with a
     # configured bonus count as attached from then on.
     commander_transformed = False
     attached_equipment: set[str] = set()
+    # DEC-940 — the turn Combat Celebrant last exerted. It does not untap during
+    # the next untap step, so it can attack (and exert) only every other turn.
+    celebrant_exert_turn: int | None = None
     combo_ready_ever = False
     assembly_turn = [None] * len(assembly_lines)
     # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
@@ -2746,7 +2963,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         # and landfall makers), an outlet kills them, and every death reveals
         # the top creature card of the library onto the battlefield free.
         if hatch_engine is not None:
-            hatches_left = hatch_engine["maxHatchesPerTurn"]
+            hatches_left = hatch_engine["maxHatchesPerTurn"]  # noqa: F841 (nonlocal)
             board = {permanent["name"] for permanent in permanents}
             haste_now = (haste_sources is not None
                          and team_haste_active(haste_sources, permanents))
@@ -2776,20 +2993,6 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             # they would eat with no altar out are a floor.
             outlet_online = instant_outlet or limited_outlet
             engine_online = commander_ready and outlet_online
-
-            def run_hatches(count: int, ready_turn: int | None) -> None:
-                """Resolve `count` hatches (capped), applying entry bookkeeping."""
-                nonlocal hatches_left
-                for _ in range(count):
-                    if hatches_left <= 0:
-                        return
-                    hatched = hatch_from_library(
-                        turn, pool, library, hand, permanents, battlefield_lands,
-                        profiles, metadata, commander_colors, ready_turn=ready_turn)
-                    hatches_left -= 1
-                    if hatched is None:
-                        return
-                    on_permanent_entered(hatched, turn)
 
             # Own-turn commander activations: {2} each out of what the casts
             # left. The commander taps, so one per untap — Thornbite Staff
@@ -2856,7 +3059,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                     continue
                 triggers = 1 + (1 if hatch_engine["legendaryTriggerDoublerName"]
                                 in board else 0)
-                run_hatches(triggers, turn)
+                run_hatches(triggers, turn, combat_phase=0)
 
             # Seedborn Muse untaps the commander (and the lands) on each of the
             # three opponents' untap steps: three free activations after your
@@ -2875,10 +3078,70 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 hatches_per_egg = 1 + len(hatch_engine["extraHatchNames"] & board)
                 run_hatches(deaths * hatches_per_egg, None)
 
-        cumulative_damage += sum(
-            permanent["combat"] for permanent in permanents
-            if permanent["combat"] > 0 and permanent["combatReadyTurn"] <= turn
-        )
+        # DEC-940 — combat phases. A deck with no COMBAT_MODIFIERS entry runs
+        # exactly one phase and `combat_phase_damage` returns the unmodified sum
+        # of ready attackers, so this is the behaviour the goldfish has always
+        # had. For a configured deck each phase re-applies the multipliers
+        # (Zopandrel -> Xenagos -> Raphael), the per-combat hatch triggers fire
+        # again at every extra combat, and extra phases come from the trigger
+        # queue first, then from Aggravated Assault paid out of what the turn's
+        # casts and Egg activations left in the pool.
+        combat_total = 0.0
+        phase_index = 0
+        max_phases = combat_modifiers["maxCombatPhases"] if combat_modifiers else 1
+        trigger_extras = 0
+        excluded_attackers: set[str] = set()
+        if combat_modifiers is not None and celebrant_exert_turn == turn - 1:
+            # An exerted creature does not untap during your next untap step.
+            excluded_attackers |= combat_modifiers["exertCombatNames"]
+        while True:
+            if phase_index > 0:
+                run_combat_phase_hatches(phase_index)
+            board_now = {permanent["name"] for permanent in permanents}
+            attackers = [
+                permanent for permanent in ready_attackers(permanents, turn)
+                if permanent["name"] not in excluded_attackers
+            ]
+            combat_total += combat_phase_damage(
+                attackers, combat_modifiers, board_now, phase_index)
+            if combat_modifiers is None:
+                break
+            if phase_index == 0:
+                # Aurelia and Tifa both trigger off the first combat only, and
+                # both are legendary creatures, so Annie Joins Up doubles them.
+                annie = (2 if combat_modifiers["legendaryTriggerDoublerName"]
+                         in board_now else 1)
+                attacker_names = {permanent["name"] for permanent in attackers}
+                if combat_modifiers["extraCombatAttackerNames"] & attacker_names:
+                    trigger_extras += annie
+                if (combat_modifiers["powerGatedCombatNames"] & attacker_names
+                        and any(profiles[permanent["name"]]["printedPower"]
+                                >= combat_modifiers["powerGateThreshold"]
+                                for permanent in attackers)):
+                    trigger_extras += annie
+                celebrant = combat_modifiers["exertCombatNames"] & attacker_names
+                if celebrant:
+                    celebrant_exert_turn = turn
+                    trigger_extras += 1
+                    # It untaps all *other* creatures, so it sits out the rest
+                    # of this turn's combats.
+                    excluded_attackers |= celebrant
+            if phase_index + 1 >= max_phases:
+                break
+            if trigger_extras > 0:
+                trigger_extras -= 1
+            elif (combat_modifiers["paidCombatName"] in board_now
+                  and pool.can_cast(combat_modifiers["paidCombatCost"])):
+                pool = pool.after_spending(combat_modifiers["paidCombatCost"])
+            else:
+                break
+            phase_index += 1
+        cumulative_damage += combat_total
+        # `metrics_from_board` re-sums one unmodified combat from the board, so
+        # hand it the difference the extra phases and multipliers made — exactly
+        # 0.0 for a deck with no COMBAT_MODIFIERS entry.
+        combat_modifier_bonus = combat_total - sum(
+            permanent["combat"] for permanent in ready_attackers(permanents, turn))
         # DEC-404 — token-swarm combat: ready tokens swing every turn, each
         # pumped by battlefield anthems; the commander's variable power adds
         # commanderPowerPerToken per ready token once he can attack himself.
@@ -2931,7 +3194,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             cumulative_damage=cumulative_damage,
             meaningful_threshold=meaningful_threshold,
             combo_ready_ever=combo_ready_ever,
-            extra_combat=swarm_combat + deploy_combat + army_combat,
+            extra_combat=(swarm_combat + deploy_combat + army_combat
+                          + combat_modifier_bonus),
         )
 
     return by_turn, assembly_turn
@@ -3114,7 +3378,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "available mana (DEC-937). Sources that come online untapped mid-turn join the pool. "
             f"Meaningful board = pressure score >= {meaningful_threshold} or 2+ threats. "
             f"Lethal proxy = cumulative combat-pressure proxy >= {GOLDFISH_LETHAL_DAMAGE_PROXY}; "
-            "combat pressure uses mana-value-based creature scoring because card metadata omits power/toughness. "
+            "combat pressure uses mana-value-based creature scoring (min(8, MV) plus one for a "
+            "listed combat keyword) so the curve stays comparable across the fleet — printed "
+            "power/toughness is in the card metadata since DEC-940 but is deliberately not used "
+            "for the damage sum, only for the combat modifiers' power gates. "
             "Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces "
             "present (hand, battlefield, or substitutable) and combined mana cost payable. Substitution "
             "priority for missing pieces: (1) bargain free-cast tutor (e.g. Beseech the Mirror) when a "
@@ -3263,6 +3530,41 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "riot never hastes a creature already on the battlefield. Floor: the "
             "entry-time rule misses other creatures already out when a continuous "
             "source lands — at most one creature-turn each."
+        )
+    combat_modifiers = context.get("combatModifiers")
+    if combat_modifiers:
+        section["methodology"] += (
+            " Combat modifiers modeled (DEC-940, DEC-935 Phase 2): the base combat "
+            "proxy is unchanged — every creature still scores min(8, MV) plus one for "
+            "a listed keyword, so this deck's per-creature values stay comparable with "
+            "the rest of the fleet, and printed power is read only by the power gate "
+            "below. What changes is that the turn can hold up to "
+            f"{combat_modifiers['maxCombatPhases']} combat phases, and each phase "
+            "applies, in this order: Zopandrel's beginning-of-combat team doubling "
+            "(until end of turn, so it compounds once per phase a creature was "
+            "present for), Xenagos doubling the single largest other attacker that "
+            "was already on the battlefield when the trigger went on the stack, then "
+            "Raphael doubling the whole phase (double strike). Extra phases come from "
+            "Aurelia and Tifa (first combat only; Tifa gated on a ready attacker with "
+            f"printed power >= {combat_modifiers['powerGateThreshold']}; Annie Joins "
+            "Up doubles both legendary triggers), Combat Celebrant's exert (it untaps "
+            "all other creatures, so it sits out the rest of the turn's combats and "
+            "does not untap next turn), and Aggravated Assault paid at "
+            f"{combat_modifiers['paidCombatCost']['generic']} generic + "
+            f"{combat_modifiers['paidCombatCost']['R']} red out of whatever the turn's "
+            "casts and Egg activations left, repeating while the pool allows. The "
+            "per-combat hatch triggers (Palani's Hatcher's Egg sacrifice, Raph & "
+            "Mikey's attack hatch) fire again at each extra combat, and a creature "
+            "that enters during a combat phase counts in that phase but is not a legal "
+            "Xenagos target until the next one. Floors, not ceilings: no blockers, no "
+            "opponents and no fogs, so every phase connects; Annie also doubling "
+            "Zopandrel's trigger (x4 per phase), Roaming Throne under Maskwood Nexus "
+            "doubling the combat triggers again, Ghalta and Mavren's attack token, and "
+            "Combat Celebrant untapping off a later untap-all effect are all "
+            "unmodelled. Only this deck is configured; shield-doctrine, "
+            "armory-protocol, hidden-legion, gathering-shadow, anvil-chorus and "
+            "eternal-agony carry comparable effects and can opt in later, each with "
+            "its own review and a calibration re-run."
         )
     return section, combo_assembly
 

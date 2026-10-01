@@ -273,6 +273,8 @@ class HatchEngineGoldfishTests(unittest.TestCase):
         "Rising of the Day": "Enchantment",
         "Samut, Hazoret's Champion": "Legendary Creature — Human Warrior Cleric",
         "Maskwood Nexus": "Artifact",
+        # DEC-940 — extra combat phase, for the per-combat hatch trigger test.
+        "Aurelia, the Warleader": "Legendary Creature — Angel",
     }
     BEARS = [f"Bear {i}" for i in range(40)]
     FILLERS = [f"Filler {i}" for i in range(30)]
@@ -480,6 +482,15 @@ class HatchEngineGoldfishTests(unittest.TestCase):
         annie, _ = self._run(["Raph & Mikey, Troublemakers", "Annie Joins Up"])
         self.assertEqual(self._per_turn(annie)[1], 2)
 
+    def test_raph_and_mikey_hatch_again_in_each_extra_combat(self):
+        """DEC-940 — the per-combat hatch trigger fires at every combat phase."""
+        base, _ = self._run(["Raph & Mikey, Troublemakers"])
+        self.assertEqual(self._per_turn(base)[2], 1)
+        # Aurelia adds a second combat phase, so the attack trigger fires twice.
+        extra, _ = self._run(["Raph & Mikey, Troublemakers",
+                              "Aurelia, the Warleader"])
+        self.assertEqual(self._per_turn(extra)[2], 2)
+
 
 class GoldfishManaSpendTests(unittest.TestCase):
     """DEC-937 — mana is spent once per turn, not rebuilt per cast.
@@ -550,3 +561,307 @@ class GoldfishManaSpendTests(unittest.TestCase):
         self.assertIn(4, by_mana, "no four-mana turn observed")
         self.assertEqual(max(by_mana[2]), 1)
         self.assertEqual(max(by_mana[4]), 2)
+
+
+class CombatPhaseDamageTests(unittest.TestCase):
+    """DEC-940 — the power multipliers inside one combat phase."""
+
+    MODS = exporter.COMBAT_MODIFIERS["broodfire-hatchery"]
+    ZOPANDREL = "Zopandrel, Hunger Dominus"
+    XENAGOS = "Xenagos, God of Revels"
+    RAPHAEL = "Raphael, the Nightwatcher"
+
+    @staticmethod
+    def _att(name, combat, entry_phase=None):
+        record = {"name": name, "combat": combat, "combatReadyTurn": 1}
+        if entry_phase is not None:
+            record["combatEntryPhase"] = entry_phase
+        return record
+
+    def test_unconfigured_deck_gets_the_plain_sum(self):
+        attackers = [self._att("A", 3), self._att("B", 5)]
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, None, set(), 0), 8)
+        # Configured deck, none of the modifier permanents on the battlefield.
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, {"Forest"}, 0), 8)
+        self.assertEqual(
+            exporter.combat_phase_damage([], self.MODS, {self.RAPHAEL}, 0), 0)
+
+    def test_zopandrel_compounds_once_per_beginning_of_combat(self):
+        attackers = [self._att("A", 3), self._att("B", 5)]
+        board = {self.ZOPANDREL}
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, board, 0), 16)
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, board, 1), 32)
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, board, 2), 64)
+
+    def test_zopandrel_only_doubles_triggers_a_creature_was_present_for(self):
+        # Hatched during the second combat phase: no doubling that phase, one
+        # doubling at the next beginning of combat.
+        attackers = [self._att("A", 3), self._att("Hatched", 4, entry_phase=1)]
+        board = {self.ZOPANDREL}
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, board, 1),
+            3 * 4 + 4)
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, board, 2),
+            3 * 8 + 4 * 2)
+
+    def test_xenagos_doubles_only_the_single_largest_attacker(self):
+        attackers = [self._att("A", 3), self._att("B", 5), self._att("C", 2)]
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, {self.XENAGOS}, 0),
+            3 + 10 + 2)
+
+    def test_xenagos_cannot_target_itself(self):
+        # "another target creature you control" — the God is the biggest body
+        # on the board but pumps the next-largest attacker instead.
+        attackers = [self._att(self.XENAGOS, 9), self._att("A", 3),
+                     self._att("B", 2)]
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, {self.XENAGOS}, 0),
+            9 + 6 + 2)
+
+    def test_xenagos_cannot_target_a_creature_hatched_in_response(self):
+        # The hatch resolves after the beginning-of-combat trigger is already on
+        # the stack, so the fresh body is not a legal target this phase.
+        attackers = [self._att("A", 3), self._att("Hatched", 9, entry_phase=1)]
+        board = {self.XENAGOS}
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, board, 1),
+            3 * 2 + 9)
+        # From the next combat phase it is a legal target again.
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, board, 2),
+            3 + 9 * 2)
+
+    def test_raphael_doubles_the_whole_phase(self):
+        attackers = [self._att("A", 3), self._att("B", 5)]
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, {self.RAPHAEL}, 0),
+            16)
+
+    def test_multipliers_stack_in_zopandrel_xenagos_raphael_order(self):
+        attackers = [self._att("A", 2), self._att("B", 3)]
+        board = {self.ZOPANDREL, self.XENAGOS, self.RAPHAEL}
+        # Zopandrel -> [4, 6]; Xenagos doubles the 6 -> [4, 12]; Raphael x2.
+        self.assertEqual(
+            exporter.combat_phase_damage(attackers, self.MODS, board, 0), 32)
+
+
+class PrintedPowerProfileTests(unittest.TestCase):
+    """DEC-940 — printed power reaches the profile without touching the proxy."""
+
+    def _profile(self, **meta):
+        base = {"type_line": "Creature — Bear", "oracle_text": "",
+                "mana_cost": "{3}", "cmc": 3, "colors": ["G"]}
+        base.update(meta)
+        return exporter.build_goldfish_profile(
+            name="Bear", meta=base, category_names=set(),
+            commander_colors=["G"], commander_name="Other")
+
+    def test_printed_power_is_parsed_and_defaults_to_zero(self):
+        self.assertEqual(self._profile(power="7")["printedPower"], 7)
+        self.assertEqual(self._profile(power="0")["printedPower"], 0)
+        # No printed power (non-creature) and unfixed power both read 0.
+        self.assertEqual(self._profile()["printedPower"], 0)
+        self.assertEqual(self._profile(power=None)["printedPower"], 0)
+        self.assertEqual(self._profile(power="*")["printedPower"], 0)
+        self.assertEqual(self._profile(power="1+*")["printedPower"], 0)
+
+    def test_printed_power_does_not_change_the_combat_proxy(self):
+        # The proxy stays min(8, MV) + keyword bonus whatever the printed power.
+        for power in (None, "0", "7", "15"):
+            with self.subTest(power=power):
+                self.assertEqual(self._profile(power=power)["combat"], 3)
+
+
+class CombatModifierGoldfishTests(unittest.TestCase):
+    """DEC-940 — extra combat phases inside a deterministic goldfish turn loop.
+
+    Synthetic ``broodfire-hatchery`` deck built like the DEC-938 harness: the
+    combat permanents cost nothing so the whole opening hand lands on turn 1 and
+    every attacker is combat-ready on turn 2 (no haste source is ever in play).
+    Free creatures all score combat 1 (``max(1, min(8, MV))``), which makes the
+    per-turn ``combat`` field a direct count of phases x attackers. The commander
+    costs {60} and every Filler {30}, so neither is ever cast: the hatch engine
+    stays closed and the whole mana pool is available to Aggravated Assault.
+    """
+
+    DECK_ID = "broodfire-hatchery"
+    COMMANDER = "Atla Palani, Nest Tender"
+    # name -> (type_line, printed power)
+    COMBAT_CARDS = {
+        "Aurelia, the Warleader": ("Legendary Creature — Angel", "3"),
+        "Combat Celebrant": ("Creature — Human Warrior", "4"),
+        "Tifa, Martial Artist": ("Legendary Creature — Human Monk", "4"),
+        "Zopandrel, Hunger Dominus": ("Legendary Creature — Phyrexian Horror", "9"),
+        "Xenagos, God of Revels": ("Legendary Enchantment Creature — God", "6"),
+        "Raphael, the Nightwatcher": ("Legendary Creature — Mutant Ninja Turtle", "4"),
+        "Aggravated Assault": ("Enchantment", None),
+        "Annie Joins Up": ("Legendary Enchantment", None),
+        "Attacker A": ("Creature — Bear", "2"),
+        "Attacker B": ("Creature — Bear", "2"),
+        "Big Attacker": ("Creature — Giant", "7"),
+    }
+    FILLERS = [f"Filler {i}" for i in range(30)]
+
+    def _metadata(self) -> dict:
+        metadata = {
+            "Forest": {
+                "name": "Forest", "type_line": "Basic Land — Forest",
+                "oracle_text": "({T}: Add {G}.)", "mana_cost": "", "cmc": 0,
+                "colors": [], "color_identity": ["G"], "produced_mana": ["G"],
+            },
+            "Ruby Crystal": {
+                "name": "Ruby Crystal", "type_line": "Artifact",
+                "oracle_text": "{T}: Add {R}.", "mana_cost": "", "cmc": 0,
+                "colors": [], "color_identity": ["R"], "produced_mana": ["R"],
+            },
+            self.COMMANDER: {
+                "name": self.COMMANDER,
+                "type_line": "Legendary Creature — Human Shaman",
+                "oracle_text": "", "mana_cost": "{60}", "cmc": 60,
+                "colors": [], "color_identity": ["G"], "power": "2",
+                "toughness": "3",
+            },
+        }
+        for name, (type_line, power) in self.COMBAT_CARDS.items():
+            metadata[name] = {
+                "name": name, "type_line": type_line, "oracle_text": "",
+                "mana_cost": "", "cmc": 0, "colors": [], "color_identity": [],
+                "power": power, "toughness": power,
+            }
+        for name in self.FILLERS:
+            metadata[name] = {
+                "name": name, "type_line": "Sorcery", "oracle_text": "",
+                "mana_cost": "{30}", "cmc": 30, "colors": [],
+                "color_identity": [],
+            }
+        return metadata
+
+    def _run(self, hand_cards, crystals=0, forests=8, deck_id=None):
+        """Run one pinned game; return {turn: combat damage dealt that turn}."""
+        metadata = self._metadata()
+        decklist = (["Forest"] * forests + ["Ruby Crystal"] * max(crystals, 1)
+                    + list(self.COMBAT_CARDS) + self.FILLERS)
+        deck_data = {"decklist": [{"name": name} for name in decklist]}
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, metadata, self.COMMANDER, ["G"],
+            self.DECK_ID if deck_id is None else deck_id)
+        hand = (["Forest"] * forests + ["Ruby Crystal"] * crystals
+                + list(hand_cards))
+        library = list(self.FILLERS)
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          lambda *_: (list(library), list(hand))):
+            by_turn, _ = exporter.simulate_goldfish_game(
+                decklist, metadata, context, 6)
+        return {turn: by_turn[turn]["combat"] for turn in by_turn}
+
+    def test_unconfigured_deck_runs_one_unmodified_combat(self):
+        hand = ["Aurelia, the Warleader", "Attacker A", "Attacker B"]
+        combat = self._run(hand, deck_id="not-configured")
+        self.assertEqual(combat[2], 3)
+        # Same hand on the configured deck takes Aurelia's extra combat.
+        self.assertEqual(self._run(hand)[2], 6)
+
+    def test_aurelia_adds_one_extra_combat_per_turn(self):
+        self.assertEqual(self._run(["Attacker A", "Attacker B"])[2], 2)
+        combat = self._run(["Aurelia, the Warleader", "Attacker A", "Attacker B"])
+        # Three attackers x two phases — "the first time each turn" is one extra
+        # combat, not one per phase, so it does not reach the 4-phase cap.
+        self.assertEqual(combat[2], 6)
+        self.assertEqual(combat[3], 6)
+
+    def test_combat_celebrant_exerts_every_other_turn_and_sits_out(self):
+        combat = self._run(["Combat Celebrant", "Attacker A", "Attacker B"])
+        # Turn 2: 3 attackers, then an extra combat without the exerted
+        # Celebrant (it untaps all *other* creatures) = 3 + 2.
+        self.assertEqual(combat[2], 5)
+        # Turn 3: exerted, so it does not untap and cannot attack at all.
+        self.assertEqual(combat[3], 2)
+        self.assertEqual(combat[4], 5)
+        self.assertEqual(combat[5], 2)
+
+    def test_tifa_needs_a_printed_power_seven_attacker(self):
+        # Tifa 4 / Attacker 2 / Attacker 2 — nothing reaches power 7.
+        self.assertEqual(
+            self._run(["Tifa, Martial Artist", "Attacker A", "Attacker B"])[2], 3)
+        # Big Attacker is printed 7/7, so the trigger's gate is met.
+        self.assertEqual(
+            self._run(["Tifa, Martial Artist", "Big Attacker", "Attacker A"])[2],
+            6)
+
+    def test_tifa_only_triggers_from_the_first_combat_phase(self):
+        combat = self._run(["Tifa, Martial Artist", "Big Attacker",
+                            "Aurelia, the Warleader"])
+        # One extra combat each from Aurelia and Tifa = 3 phases x 3 attackers.
+        # A Tifa that re-triggered in the extra combats would hit the 4 cap (12).
+        self.assertEqual(combat[2], 9)
+
+    def test_annie_doubles_the_aurelia_and_tifa_triggers(self):
+        self.assertEqual(
+            self._run(["Aurelia, the Warleader", "Attacker A"])[2], 4)
+        self.assertEqual(
+            self._run(["Aurelia, the Warleader", "Attacker A",
+                       "Annie Joins Up"])[2], 6)
+        self.assertEqual(
+            self._run(["Tifa, Martial Artist", "Big Attacker"])[2], 4)
+        self.assertEqual(
+            self._run(["Tifa, Martial Artist", "Big Attacker",
+                       "Annie Joins Up"])[2], 6)
+
+    def test_four_combat_phases_is_the_cap(self):
+        # Aurelia + Tifa under Annie queue four extra combats; only three fit.
+        combat = self._run(["Aurelia, the Warleader", "Tifa, Martial Artist",
+                            "Big Attacker", "Annie Joins Up"])
+        self.assertEqual(combat[2], 12)
+
+    def test_aggravated_assault_is_paid_from_the_remaining_pool(self):
+        # {3}{R}{R} per extra combat. Turn 2 the pool is two Forests plus the
+        # Ruby Crystals that landed on turn 1.
+        self.assertEqual(
+            self._run(["Aggravated Assault", "Attacker A", "Attacker B"],
+                      crystals=2)[2], 2)
+        self.assertEqual(
+            self._run(["Aggravated Assault", "Attacker A", "Attacker B"],
+                      crystals=3)[2], 4)
+
+    def test_aggravated_assault_repeats_while_the_pool_allows(self):
+        self.assertEqual(
+            self._run(["Aggravated Assault", "Attacker A", "Attacker B"],
+                      crystals=8)[2], 6)
+        # Pool for four more activations, but the phase cap stops it at four.
+        self.assertEqual(
+            self._run(["Aggravated Assault", "Attacker A", "Attacker B"],
+                      crystals=20)[2], 8)
+
+    def test_zopandrel_compounds_across_the_turns_combat_phases(self):
+        # Three attackers at combat 1: phase 0 doubles to 2 each (6), phase 1
+        # doubles again to 4 each (12) = 18 for the turn.
+        combat = self._run(["Zopandrel, Hunger Dominus",
+                            "Aurelia, the Warleader", "Attacker A"])
+        self.assertEqual(combat[2], 18)
+        # Without the extra combat it is one doubling: 3 attackers x 2.
+        self.assertEqual(
+            self._run(["Zopandrel, Hunger Dominus", "Attacker A",
+                       "Attacker B"])[2], 6)
+
+    def test_raphael_doubles_every_phase(self):
+        self.assertEqual(
+            self._run(["Raphael, the Nightwatcher", "Attacker A",
+                       "Attacker B"])[2], 6)
+        # Three attackers doubled in each of Aurelia's two phases.
+        self.assertEqual(
+            self._run(["Raphael, the Nightwatcher", "Aurelia, the Warleader",
+                       "Attacker A"])[2], 12)
+
+    def test_xenagos_doubles_one_attacker_per_phase(self):
+        # Four equal attackers (Xenagos included): one of the other three is
+        # doubled each phase, so 4 + 1 = 5.
+        self.assertEqual(
+            self._run(["Xenagos, God of Revels", "Attacker A", "Attacker B",
+                       "Big Attacker"])[2], 5)
