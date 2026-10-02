@@ -226,7 +226,7 @@ import type { DeckTierBLoops } from './tierB';
 // combat modifiers move broodfire-hatchery's simulation.json speed curves.
 // v143 -> v144 (DEC-942 2026-10-01): persisted envelope shape change — the four
 // large per-deck artifacts are no longer written to localStorage.
-const STORAGE_PREFIX = 'gv1-deck-data-v144:';
+const STORAGE_PREFIX = 'gv1-deck-data-v145:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
