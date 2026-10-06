@@ -1,7 +1,5 @@
 # MTG Precon Upgrader
 
-## Dryness Dial — This project: High
-
 ## Tooling
 
 The Grimoire is a Vite + React + TypeScript app in [`web/`](web). DEC-149 cutover landed 2026-05-05; the previous vanilla-JS app is archived in [`legacy/`](legacy) for one release.
@@ -95,7 +93,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - **Card text validation**: ALWAYS verify card names and oracle text via the `scryfall_card_by_name` MCP tool before recommending cards. Never assume card text or abilities from memory — validate every card considered. For bulk validation, use `scryfall_collection`.
 - **Deck JSON validation**: After editing any `deck.json`, run `uv run python scripts/validate_deck_json.py --deck {id}`. The validator checks commander/decklist/highlight/category/win-condition/synergy card references against `priv_data/scryfall-oracle.json` and fails if reference blocks point to cards not in that deck. If the mirror is missing or stale, run `uv run python scripts/refresh_scryfall_mirror.py`.
 - **Token data (DEC-403)**: `uv run python scripts/compute_tokens.py --deck {id}` regenerates a deck's `tokens[]` (tokens/emblems/game-state markers from Scryfall) and writes it into `deck.json`. Repeat `--deck` for multiple decks; **omitting `--deck` rewrites every deck** — only do that for an intentional fleet-wide token regen. Run it after decklist changes that add or cut token producers. Unknown ids exit 1 before writing anything.
-- **Strategy-ceiling check (DEC-309)**: When validating a deck (or running `/phase-validate` on deck data), also run `uv run python scripts/validate_strategy_ceiling.py [--deck {id}]`. Detects shell/payoff mismatches (B4 shell + sub-B4 payoff, or fast combo + weak shell). Non-blocking — warnings only, exit code 0. Already invoked by `scripts/smoke_test.sh`. Thresholds + calibration documented in [`data/bracket-philosophy.md`](data/bracket-philosophy.md) "B4 Reality Check".
+- **Strategy-ceiling check (DEC-309)**: When validating a deck or deck data, also run `uv run python scripts/validate_strategy_ceiling.py [--deck {id}]`. Detects shell/payoff mismatches (B4 shell + sub-B4 payoff, or fast combo + weak shell). Non-blocking — warnings only, exit code 0. Already invoked by `scripts/smoke_test.sh`. Thresholds + calibration documented in [`data/bracket-philosophy.md`](data/bracket-philosophy.md) "B4 Reality Check".
 - **Bracket 4/5 deckbuilding principles**: See [`data/bracket-philosophy.md`](data/bracket-philosophy.md) for mana base, fast mana, free spells, interaction, and card quality standards. Apply when building or updating B4+ decks.
 - **Combo Lab artifacts (DEC-543) — mandatory after any decklist change**: the Combo Lab route reads three committed per-deck files. A deck with none of them renders an empty Combo Lab. Regenerate all three, in this order, after **every** new deck and **every** approved swap round:
 
