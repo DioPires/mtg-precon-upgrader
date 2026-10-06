@@ -865,3 +865,256 @@ class CombatModifierGoldfishTests(unittest.TestCase):
         self.assertEqual(
             self._run(["Xenagos, God of Revels", "Attacker A", "Attacker B",
                        "Big Attacker"])[2], 5)
+
+
+class CastPriorityHoldTests(unittest.TestCase):
+    """DEC-944 — the goldfish holds mana for the turn's line.
+
+    Two pinned synthetic decks, built like the DEC-938/940 harnesses: the
+    opening hand and library are fixed by patching the mulligan, so each run is
+    deterministic and every assertion is about one sequencing decision.
+    """
+
+    HATCH_DECK_ID = "broodfire-hatchery"
+    HATCH_COMMANDER = "Atla Palani, Nest Tender"
+
+    @staticmethod
+    def _forest() -> dict:
+        return {
+            "name": "Forest", "type_line": "Basic Land — Forest",
+            "oracle_text": "({T}: Add {G}.)", "mana_cost": "", "cmc": 0,
+            "colors": [], "color_identity": ["G"], "produced_mana": ["G"],
+        }
+
+    # --- (c) engine activations: holding {2} beats casting a two-drop --------
+
+    def _hatch_metadata(self) -> dict:
+        metadata = {
+            "Forest": self._forest(),
+            self.HATCH_COMMANDER: {
+                "name": self.HATCH_COMMANDER,
+                "type_line": "Legendary Creature — Human Shaman",
+                "oracle_text": "", "mana_cost": "{1}", "cmc": 1,
+                "colors": [], "color_identity": ["G"],
+            },
+            "Ashnod's Altar": {
+                "name": "Ashnod's Altar", "type_line": "Artifact",
+                "oracle_text": "", "mana_cost": "", "cmc": 0,
+                "colors": [], "color_identity": [],
+            },
+        }
+        # The filler the hold has to beat: a plain {2} sorcery, no mana, no
+        # combat, so the only reason to cast it is "the mana was there".
+        for i in range(10):
+            metadata[f"Two Drop {i}"] = {
+                "name": f"Two Drop {i}", "type_line": "Sorcery",
+                "oracle_text": "", "mana_cost": "{2}", "cmc": 2,
+                "colors": [], "color_identity": [],
+            }
+        for i in range(20):
+            metadata[f"Bear {i}"] = {
+                "name": f"Bear {i}", "type_line": "Creature — Bear",
+                "oracle_text": "", "mana_cost": "{9}", "cmc": 9,
+                "colors": [], "color_identity": [],
+            }
+        return metadata
+
+    def _run_hatch(self, forests_in_hand: int):
+        """Pinned hatch-engine game; returns (hatch turns, casts by turn)."""
+        metadata = self._hatch_metadata()
+        two_drops = [f"Two Drop {i}" for i in range(10)]
+        bears = [f"Bear {i}" for i in range(20)]
+        decklist = (["Forest"] * 12 + ["Ashnod's Altar"] + two_drops + bears)
+        deck_data = {"decklist": [{"name": name} for name in decklist]}
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, metadata, self.HATCH_COMMANDER, ["G"],
+            self.HATCH_DECK_ID)
+        hand = (["Forest"] * forests_in_hand + ["Ashnod's Altar"]
+                + two_drops[:2])
+        # library.pop() draws from the end: Bears sit on top so a hatch finds one.
+        library = ["Forest"] * (12 - forests_in_hand) + bears
+
+        hatch_turns = []
+        casts = defaultdict(list)
+        original_hatch = exporter.hatch_from_library
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_hatch(turn, *args, **kwargs):
+            hatch_turns.append(turn)
+            return original_hatch(turn, *args, **kwargs)
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          lambda *_: (list(library), list(hand))), \
+                patch.object(exporter, "hatch_from_library", recording_hatch), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            exporter.simulate_goldfish_game(decklist, metadata, context, 6)
+        return hatch_turns, casts
+
+    def test_two_mana_is_held_for_the_egg_activation(self):
+        # Turn 1: Forest, free Altar, {1} commander. Turn 2: second Forest, so
+        # exactly {2} is available and the engine is online. The pilot makes an
+        # Egg instead of casting the two-drop.
+        hatch_turns, casts = self._run_hatch(forests_in_hand=2)
+        self.assertEqual(casts[1], [self.HATCH_COMMANDER, "Ashnod's Altar"])
+        self.assertNotIn("Two Drop 0", casts[2],
+                         "the two-drop ate the activation's mana")
+        self.assertIn(2, hatch_turns, "no Egg hatched on the two-mana turn")
+
+    def test_the_hold_is_one_activation_not_a_ban_on_casting(self):
+        # Four Forests in hand: turn 4 has {4}, enough for the activation and a
+        # two-drop, so both happen. Only one activation is held, not a budget.
+        hatch_turns, casts = self._run_hatch(forests_in_hand=4)
+        self.assertIn("Two Drop 0", casts[4])
+        self.assertIn(4, hatch_turns)
+
+    # --- (b) the combo gate -------------------------------------------------
+
+    COMBO_DECK_ID = "synthetic-combo"
+    COMBO_COMMANDER = "Synthetic Commander"
+
+    def _combo_metadata(self) -> dict:
+        metadata = {
+            "Forest": self._forest(),
+            self.COMBO_COMMANDER: {
+                "name": self.COMBO_COMMANDER,
+                "type_line": "Legendary Creature — Human",
+                "oracle_text": "", "mana_cost": "{9}", "cmc": 9,
+                "colors": [], "color_identity": ["G"],
+            },
+            # Permanent piece: cast normally, then it waits on the battlefield.
+            "Piece Permanent": {
+                "name": "Piece Permanent", "type_line": "Artifact",
+                "oracle_text": "", "mana_cost": "{2}", "cmc": 2,
+                "colors": [], "color_identity": [],
+            },
+            # Non-permanent piece: reserved from filler casting, so the gate is
+            # purely a question of whether {2} is still in the pool.
+            "Piece Instant": {
+                "name": "Piece Instant", "type_line": "Instant",
+                "oracle_text": "", "mana_cost": "{2}", "cmc": 2,
+                "colors": [], "color_identity": [],
+            },
+        }
+        for i in range(20):
+            metadata[f"Bear {i}"] = {
+                "name": f"Bear {i}", "type_line": "Creature — Bear",
+                "oracle_text": "", "mana_cost": "{2}", "cmc": 2,
+                "colors": [], "color_identity": [],
+                "power": "2", "toughness": "2",
+            }
+        return metadata
+
+    def _run_combo(self, forests_in_hand: int = 3):
+        """Pinned combo game; returns (by_turn, casts by turn)."""
+        metadata = self._combo_metadata()
+        bears = [f"Bear {i}" for i in range(20)]
+        decklist = (["Forest"] * 20 + ["Piece Permanent", "Piece Instant"]
+                    + bears)
+        deck_data = {
+            "decklist": [{"name": name} for name in decklist],
+            "winConditions": [{
+                "kind": "combo",
+                "pieces": ["Piece Permanent", "Piece Instant"],
+            }],
+        }
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, metadata, self.COMBO_COMMANDER, ["G"],
+            self.COMBO_DECK_ID)
+        self.assertEqual(len(context["comboLines"]), 1)
+        hand = (["Forest"] * forests_in_hand
+                + ["Piece Permanent", "Piece Instant"] + bears[:2])
+        library = ["Forest"] * (20 - forests_in_hand) + bears[2:]
+
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          lambda *_: (list(library), list(hand))), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = exporter.simulate_goldfish_game(
+                decklist, metadata, context, 6)
+        return by_turn, casts
+
+    def test_the_gate_fires_on_the_turn_the_pieces_are_castable(self):
+        by_turn, casts = self._run_combo()
+        # Turn 2 casts the permanent piece ({2} out of two Forests); the gate
+        # still needs {2} for the instant, which turn 2 no longer has.
+        self.assertEqual(casts[2], ["Piece Permanent"])
+        self.assertEqual(by_turn[2]["comboLethal"], 0)
+        # Turn 3 brings the pool to {3}. A Bear is affordable and would leave
+        # {1}, so it is held back and the gate fires instead.
+        self.assertEqual(casts[3], [])
+        self.assertEqual(by_turn[3]["comboLethal"], 1)
+
+    def test_filler_resumes_once_the_gate_has_fired(self):
+        # comboLethal is sticky, so from turn 4 on there is nothing left to
+        # protect and the Bears get cast again.
+        _, casts = self._run_combo()
+        self.assertEqual(casts[4], ["Bear 0"])
+
+
+class ControlDeckGoldfishEqualityTests(unittest.TestCase):
+    """DEC-944 — a deck with no combo and no engine config is untouched.
+
+    ``gathering-shadow`` has no ``winConditions[] kind:'combo'`` entry, no
+    KEY_COMBOS line and no hatch/combat-modifier config, so it has no gates to
+    protect and no activations to hold: every DEC-944 branch is inert and the
+    whole goldfish section must still reproduce the checked-in numbers. The
+    goldfish run is seeded per chunk, so this is an exact comparison; the pool
+    is mapped serially here to keep the test single-process.
+    """
+
+    DECK_ID = "gathering-shadow"
+    COLORS = ["U", "B", "R"]
+
+    def test_control_deck_goldfish_section_is_unchanged(self):
+        root = Path(__file__).resolve().parent.parent
+        deck_data = json.loads(
+            (root / "data" / "commanders" / self.DECK_ID / "deck.json").read_text())
+        decklist = [card["name"]
+                    for card in deck_data["decklist"]
+                    for _ in range(card.get("quantity", 1))]
+        metadata = json.loads(Path(exporter.METADATA_FILE).read_text())
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, metadata, deck_data["commander"],
+            self.COLORS, self.DECK_ID)
+        self.assertEqual(context["comboLines"], [])
+        self.assertEqual(context["assemblyLines"], [])
+        self.assertIsNone(context["hatchEngine"])
+        self.assertIsNone(context["combatModifiers"])
+
+        class SerialPool:
+            def __init__(self, *_args, **_kwargs):
+                pass
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_exc):
+                return False
+
+            @staticmethod
+            def map(fn, iterable):
+                return [fn(item) for item in iterable]
+
+        with patch("multiprocessing.Pool", SerialPool):
+            goldfish, _ = exporter.compute_goldfish_section(
+                decklist=decklist, deck_data=deck_data, metadata=metadata,
+                commander_name=deck_data["commander"],
+                commander_colors=self.COLORS, deck_id=self.DECK_ID)
+
+        checked_in = json.loads(
+            (root / "data" / "commanders" / self.DECK_ID
+             / "simulation.json").read_text())["goldfish"]
+        for key in ("byTurn", "speed", "commanderCurve", "numGames"):
+            if key in checked_in:
+                with self.subTest(key=key):
+                    self.assertEqual(goldfish[key], checked_in[key])

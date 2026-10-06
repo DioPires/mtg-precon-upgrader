@@ -2,7 +2,7 @@
   "metadata": {
     "numGames": 100000,
     "numTurns": 10,
-    "generatedAt": "2026-09-30"
+    "generatedAt": "2026-10-06"
   },
   "deckComposition": {
     "totalCards": 99,
@@ -76,15 +76,15 @@
   "mulliganStats": {
     "keptFirst": 87.9,
     "freeMulligan": 10.6,
-    "paidMulligan": 1.4
+    "paidMulligan": 1.5
   },
   "openingHand": {
     "landDistribution": {
       "0": 0.4,
-      "1": 7.3,
-      "2": 32.6,
+      "1": 7.2,
+      "2": 32.9,
       "3": 33.1,
-      "4": 19.1,
+      "4": 18.9,
       "5": 6.3,
       "6": 1.1,
       "7": 0.1
@@ -95,15 +95,15 @@
     "cmc": 3,
     "byTurn": {
       "1": 0.3,
-      "2": 15.9,
-      "3": 54.1,
+      "2": 16.0,
+      "3": 54.0,
       "4": 66.3,
-      "5": 73.3,
-      "6": 78.4,
-      "7": 82.3,
-      "8": 85.5,
+      "5": 73.4,
+      "6": 78.6,
+      "7": 82.5,
+      "8": 85.6,
       "9": 88.1,
-      "10": 90.2
+      "10": 90.1
     },
     "medianTurn": 3
   },
@@ -217,66 +217,66 @@
     "colorScrewByTurn": {
       "1": {
         "U": 57.1,
-        "G": 52.7
+        "G": 52.9
       },
       "2": {
         "U": 37.1,
         "G": 26.4
       },
       "3": {
-        "U": 28.0,
-        "G": 14.9
+        "U": 28.2,
+        "G": 14.8
       },
       "4": {
-        "U": 22.9,
+        "U": 23.0,
         "G": 9.7
       },
       "5": {
         "U": 19.0,
-        "G": 7.0
+        "G": 6.9
       },
       "6": {
-        "U": 15.8,
-        "G": 5.3
+        "U": 15.7,
+        "G": 5.2
       },
       "7": {
-        "U": 13.2,
-        "G": 4.1
+        "U": 13.1,
+        "G": 4.0
       },
       "8": {
-        "U": 11.0,
-        "G": 3.2
+        "U": 11.1,
+        "G": 3.1
       },
       "9": {
         "U": 9.3,
         "G": 2.4
       },
       "10": {
-        "U": 7.8,
-        "G": 1.8
+        "U": 7.9,
+        "G": 1.9
       }
     }
   },
   "curveEfficiency": {
     "castableByTurn": {
-      "1": 36.1,
-      "2": 71.5,
-      "3": 88.3,
+      "1": 36.3,
+      "2": 71.7,
+      "3": 88.5,
       "4": 94.0,
-      "5": 96.5,
-      "6": 97.8,
+      "5": 96.4,
+      "6": 97.7,
       "7": 98.6,
       "8": 99.1,
       "9": 99.4,
       "10": 99.6
     },
-    "curveOutRate": 36.1
+    "curveOutRate": 36.3
   },
   "specialMetrics": {
     "cascadeReadiness": null,
     "etbTapped": {
-      "1": 2.1,
-      "2": 5.9
+      "1": 2.0,
+      "2": 6.1
     }
   },
   "assessment": {
@@ -484,10 +484,10 @@
     }
   },
   "deckHealthScore": {
-    "score": 81.5,
+    "score": 81.4,
     "grade": "A",
     "components": {
-      "manaReliability": 69.2,
+      "manaReliability": 69.0,
       "threatDeployment": 99.1,
       "interactionDensity": 97.0,
       "comboConsistency": 50.0,
@@ -1067,6 +1067,6 @@
         "medianTurn": null
       }
     },
-    "methodology": "10,000-game solitaire heuristic. Sequencing: land drop, cheapest ramp, commander on affordability, biggest affordable threat, then other proactive spells. Mana is spent once per turn: the turn's pool is built after the land drop and each cast removes the sources it paid with, so the whole turn's casts (plus the combo and engine-activation gates, which are checked against what is left) never exceed the available mana (DEC-937). Sources that come online untapped mid-turn join the pool. Meaningful board = pressure score >= 6 or 2+ threats. Lethal proxy = cumulative combat-pressure proxy >= 40; combat pressure uses mana-value-based creature scoring because card metadata omits power/toughness. Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces present (hand, battlefield, or substitutable) and combined mana cost payable. Substitution priority for missing pieces: (1) bargain free-cast tutor (e.g. Beseech the Mirror) when a non-rock enchantment is on battlefield OR commander has been in play for 1+ turn (approximates Sauron-style amass token from real-game opponent casts); (2) type-matched regular tutor whose tutor_targets includes piece's card type and tutor_mv_cap permits piece's MV; (3) reanimation spell (decklist[].primary_role/secondary_role == 'recursion') for permanent pieces only \u2014 cost replaces piece's cast cost (treats piece as if in graveyard). Each substitute is consumed once per combo line. Tutors, non-permanent combo pieces, and reanimation spells are reserved from filler casting. v2 limitations: no literal graveyard tracking (reanim assumes piece could be in GY), no opponent interaction, no multi-turn assembly tracking, no stack-trigger ordering."
+    "methodology": "10,000-game solitaire heuristic. Sequencing: land drop, cheapest ramp, commander on affordability, combo/assembly pieces, biggest affordable threat, then other proactive spells. Mana is spent once per turn: the turn's pool is built after the land drop and each cast removes the sources it paid with, so the whole turn's casts (plus the combo and engine-activation gates, which are checked against what is left) never exceed the available mana (DEC-937). Sources that come online untapped mid-turn join the pool. Cast priority holds mana for the line instead of emptying the pool into filler (DEC-944). The commander, mana sources and the cards named by the deck's combo gate or KEY_COMBOS assembly slots are cast freely \u2014 mana sources are mana-positive across the turn and a piece cast advances a line rather than spending it. Every other cast is filler, and filler is skipped when the pool it would leave behind no longer pays for (a) a combo or assembly line that was reachable this turn before the cast, or (b) the deck's configured paid activations: one commander Egg activation while the hatch engine is online (DEC-938) and one Aggravated Assault combat while the enchantment is out with an attacker (DEC-940). The gate outranks the activations: an Egg activation, a Skullclamp equip or an extra combat is itself skipped when paying for it would lose a reachable gate. A hold the pool cannot afford at all is dropped rather than left blocking development. One activation of each kind is held, not an open-ended budget. Decks with no combo win condition, no KEY_COMBOS entry and no configured engine have no holds and sequence exactly as before. Meaningful board = pressure score >= 6 or 2+ threats. Lethal proxy = cumulative combat-pressure proxy >= 40; combat pressure uses mana-value-based creature scoring (min(8, MV) plus one for a listed combat keyword) so the curve stays comparable across the fleet \u2014 printed power/toughness is in the card metadata since DEC-940 but is deliberately not used for the damage sum, only for the combat modifiers' power gates. Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces present (hand, battlefield, or substitutable) and combined mana cost payable. Substitution priority for missing pieces: (1) bargain free-cast tutor (e.g. Beseech the Mirror) when a non-rock enchantment is on battlefield OR commander has been in play for 1+ turn (approximates Sauron-style amass token from real-game opponent casts); (2) type-matched regular tutor whose tutor_targets includes piece's card type and tutor_mv_cap permits piece's MV; (3) reanimation spell (decklist[].primary_role/secondary_role == 'recursion') for permanent pieces only \u2014 cost replaces piece's cast cost (treats piece as if in graveyard). Each substitute is consumed once per combo line. Tutors, non-permanent combo pieces, and reanimation spells are reserved from filler casting. v2 limitations: no literal graveyard tracking (reanim assumes piece could be in GY), no opponent interaction, no multi-turn assembly tracking, no stack-trigger ordering."
   }
 }

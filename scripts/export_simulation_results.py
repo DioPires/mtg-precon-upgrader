@@ -1872,8 +1872,19 @@ def choose_land_to_play(hand: list[str], profiles: dict, metadata: dict,
 
 
 def proactive_cast_priority(name: str, profile: dict, commander_name: str,
-                            commander_cast: bool) -> tuple:
-    """Sort order for proactive solitaire decisions."""
+                            commander_cast: bool,
+                            line_members: frozenset = frozenset()) -> tuple:
+    """Sort order for proactive solitaire decisions.
+
+    DEC-944 — ``line_members`` are the cards named by the deck's combo gate
+    (``winConditions[] kind:'combo'``) and KEY_COMBOS assembly slots. A piece
+    outranks the generic threat/draw/filler tiers because it is the cast that
+    advances the turn's line; mana sources still come first (they are mana
+    positive across the turn and the line needs the mana) and the commander
+    still comes before them (most of the fleet's engines gate on the commander
+    being on the battlefield). For a deck with no combo configuration
+    ``line_members`` is empty and the relative order is exactly as before.
+    """
     if profile["isInteraction"]:
         return (99, 99, 99, name)
     if profile["landRamp"] or profile["manaSourceDelay"] is not None:
@@ -1881,13 +1892,15 @@ def proactive_cast_priority(name: str, profile: dict, commander_name: str,
         return (0, profile["cmc"], -ramp_value, name)
     if name == commander_name and not commander_cast:
         return (1, 0, -profile["impact"], name)
+    if name in line_members:
+        return (2, profile["cmc"], -profile["impact"], name)
     if profile["isThreat"]:
-        return (2, -profile["impact"], -profile["cmc"], name)
+        return (3, -profile["impact"], -profile["cmc"], name)
     if profile["isDraw"]:
-        return (3, profile["cmc"], -profile["immediateDraw"], name)
+        return (4, profile["cmc"], -profile["immediateDraw"], name)
     if profile["isPermanent"]:
-        return (4, -profile["impact"], -profile["cmc"], name)
-    return (5, profile["cmc"], 0, name)
+        return (5, -profile["impact"], -profile["cmc"], name)
+    return (6, profile["cmc"], 0, name)
 
 
 def turn_sources(permanents: list[dict], turn: int) -> list[frozenset]:
@@ -2671,6 +2684,110 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         for member in slot["members"]
         if not profiles[member].get("isPermanent")
     } | tutor_names | reanim_names
+    # DEC-944 — every card the deck's two gates name: combo-gate pieces
+    # (winConditions[] kind:'combo') plus KEY_COMBOS assembly slot members.
+    # These are cast ahead of filler and are never held back by either hold
+    # below, because casting a piece advances the line instead of spending it.
+    line_members = frozenset(
+        {piece for line in combo_lines for piece in line["pieces"]}
+        | {member
+           for line in assembly_lines
+           for slot in line["slots"]
+           for member in slot["members"]}
+    )
+    has_gates = bool(combo_lines or assembly_lines)
+
+    def hatch_engine_state() -> dict:
+        """Is the DEC-938 Egg engine online right now, and on which outlets?
+
+        Single source of truth for the hatch block below and for the DEC-944
+        activation hold, so the mana the pilot keeps and the mana the engine
+        actually spends are decided by the same predicate. The commander's
+        {2},{T} needs her unsick *now*, which is a different question from
+        "does a creature entering now get haste": a static grant covers her
+        retroactively, Rhythm's riot only if it was already out when she
+        entered (recorded on her own permanent by `on_permanent_entered`).
+        """
+        board = {permanent["name"] for permanent in permanents}
+        commander_record = next(
+            (permanent for permanent in permanents
+             if permanent["name"] == commander_name), None)
+        commander_hasted_on_entry = (
+            commander_record is not None
+            and commander_record["combat"] > 0
+            and commander_record["combatReadyTurn"] <= turn)
+        commander_ready = (
+            commander_in_play and commander_play_turn is not None
+            and (commander_play_turn < turn
+                 or commander_hasted_on_entry
+                 or (haste_sources is not None
+                     and static_haste_active(haste_sources, permanents))))
+        instant_outlet = bool(hatch_engine["instantOutletNames"] & board)
+        limited_outlet = bool(hatch_engine["limitedOutletNames"] & board)
+        return {
+            "board": board,
+            "instantOutlet": instant_outlet,
+            "limitedOutlet": limited_outlet,
+            "outletOnline": instant_outlet or limited_outlet,
+            "online": commander_ready and (instant_outlet or limited_outlet),
+        }
+
+    def engine_hold_cost() -> dict | None:
+        """Mana to keep back for this deck's configured paid activations (DEC-944).
+
+        One commander Egg activation (DEC-938) while the hatch engine is online,
+        and one Aggravated Assault combat (DEC-940) while the enchantment is on
+        the battlefield and something can attack. One of each: a real pilot
+        protects the activation that converts a turn, not an open-ended budget,
+        and holding for more than the deck can convert would starve development.
+        """
+        costs = []
+        if hatch_engine is not None and hatch_engine_state()["online"]:
+            costs.append(hatch_engine["activationCost"])
+        if combat_modifiers is not None:
+            board = {permanent["name"] for permanent in permanents}
+            if (combat_modifiers["paidCombatName"] in board
+                    and ready_attackers(permanents, turn)):
+                costs.append(combat_modifiers["paidCombatCost"])
+        return combine_mana_costs(costs) if costs else None
+
+    def gate_reach(test_pool: "GoldfishManaPool") -> tuple:
+        """Which still-open gates are reachable from `test_pool` (DEC-944).
+
+        One flag per gate that has not already fired this game: the comboLethal
+        gate, then one per unassembled KEY_COMBOS line. Hand and battlefield are
+        read as they stand, so only the mana differs between two calls.
+        """
+        reach = []
+        if combo_lines and not combo_ready_ever:
+            reach.append(combo_ready_this_turn(
+                turn=turn, hand=hand, permanents=permanents,
+                combo_lines=combo_lines, profiles=profiles,
+                tutor_meta=tutor_meta, reanim_names=reanim_names,
+                commander_in_play=commander_in_play,
+                commander_play_turn=commander_play_turn,
+                pool=test_pool, commander_name=commander_name))
+        for idx, line in enumerate(assembly_lines):
+            if assembly_turn[idx] is not None:
+                continue
+            reach.append(combo_assembled_this_turn(
+                turn=turn, hand=hand, permanents=permanents, library=library,
+                assembly_line=line, profiles=profiles, tutor_meta=tutor_meta,
+                pool=test_pool))
+        return tuple(reach)
+
+    def spend_keeps_gates(current_pool: "GoldfishManaPool", cost: dict,
+                          baseline: tuple | None = None) -> bool:
+        """Does paying `cost` leave every reachable gate still reachable (DEC-944)?"""
+        if not has_gates:
+            return True
+        if baseline is None:
+            baseline = gate_reach(current_pool)
+        if not any(baseline):
+            return True
+        after = gate_reach(current_pool.after_spending(cost))
+        return not any(was and not now for was, now in zip(baseline, after))
+
     by_turn = {}
 
     for turn in range(1, NUM_TURNS + 1):
@@ -2792,8 +2909,38 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if not candidates:
                 break
 
-            candidates.sort(key=lambda name: proactive_cast_priority(name, profiles[name], commander_name, commander_in_play))
-            chosen = candidates[0]
+            candidates.sort(key=lambda name: proactive_cast_priority(
+                name, profiles[name], commander_name, commander_in_play,
+                line_members))
+            # DEC-944 — cast priority. The commander, mana sources and the
+            # line's own pieces go first and are never held back. Anything
+            # else is filler, and filler only gets cast if the pool it leaves
+            # behind still pays for (b) the turn's combo/assembly gate and
+            # (c) the deck's configured paid activations. A hold the pool
+            # cannot afford in the first place is dropped rather than left to
+            # block development for nothing.
+            baseline = gate_reach(pool) if has_gates else ()
+            held = engine_hold_cost()
+            if held is not None and not pool.can_cast(held):
+                held = None
+            chosen = None
+            for name in candidates:
+                profile = profiles[name]
+                if (name == commander_name or name in line_members
+                        or profile["landRamp"]
+                        or profile["manaSourceDelay"] is not None):
+                    chosen = name
+                    break
+                if (held is not None
+                        and not pool.after_spending(
+                            profile["manaCost"]).can_cast(held)):
+                    continue
+                if not spend_keeps_gates(pool, profile["manaCost"], baseline):
+                    continue
+                chosen = name
+                break
+            if chosen is None:
+                break
             chosen_profile = profiles[chosen]
             pool = pool.after_spending(chosen_profile["manaCost"])
             if chosen in hand:
@@ -2964,35 +3111,20 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         # the top creature card of the library onto the battlefield free.
         if hatch_engine is not None:
             hatches_left = hatch_engine["maxHatchesPerTurn"]  # noqa: F841 (nonlocal)
-            board = {permanent["name"] for permanent in permanents}
             haste_now = (haste_sources is not None
                          and team_haste_active(haste_sources, permanents))
-            # The commander's {2},{T} needs her unsick *now*, which is a
-            # different question from "does a creature entering now get haste".
-            # A static grant covers her retroactively; Rhythm's riot only does
-            # if it was already out when she entered — that case is recorded on
-            # her own permanent by `on_permanent_entered`.
-            commander_record = next(
-                (permanent for permanent in permanents
-                 if permanent["name"] == commander_name), None)
-            commander_hasted_on_entry = (
-                commander_record is not None
-                and commander_record["combat"] > 0
-                and commander_record["combatReadyTurn"] <= turn)
-            commander_ready = (
-                commander_in_play and commander_play_turn is not None
-                and (commander_play_turn < turn
-                     or commander_hasted_on_entry
-                     or (haste_sources is not None
-                         and static_haste_active(haste_sources, permanents))))
-            instant_outlet = bool(hatch_engine["instantOutletNames"] & board)
-            limited_outlet = bool(hatch_engine["limitedOutletNames"] & board)
-            # The gate's outlet half. Skullclamp and Palani's Hatcher add
+            # `hatch_engine_state` holds the commander-readiness and outlet
+            # rules (DEC-944 moved them there so the activation hold and the
+            # activations themselves agree). Skullclamp and Palani's Hatcher add
             # own-turn capacity once an instant-speed outlet is online but do
             # not open the engine on their own (board scope, DEC-938) — Eggs
             # they would eat with no altar out are a floor.
-            outlet_online = instant_outlet or limited_outlet
-            engine_online = commander_ready and outlet_online
+            engine_state = hatch_engine_state()
+            board = engine_state["board"]
+            instant_outlet = engine_state["instantOutlet"]
+            limited_outlet = engine_state["limitedOutlet"]
+            outlet_online = engine_state["outletOnline"]
+            engine_online = engine_state["online"]
 
             # Own-turn commander activations: {2} each out of what the casts
             # left. The commander taps, so one per untap — Thornbite Staff
@@ -3007,7 +3139,9 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 for activation in range(min(untaps, hatch_engine["maxEggsPerTurn"])):
                     if activation > 0 and thornbite:
                         pass  # the Altar's {C}{C} from the last Egg pays for it
-                    elif pool.can_cast(hatch_engine["activationCost"]):
+                    elif (pool.can_cast(hatch_engine["activationCost"])
+                          and spend_keeps_gates(
+                              pool, hatch_engine["activationCost"])):
                         pool = pool.after_spending(hatch_engine["activationCost"])
                     else:
                         break
@@ -3024,7 +3158,9 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 # +1/-1 kills a 0/1 Egg; the 0/2 Dragon Eggs survive as 1/1s.
                 if hatch_engine["sorceryOutletName"] in board:
                     while (eggs_on_board > clamp_deaths
-                           and pool.can_cast(hatch_engine["sorceryOutletCost"])):
+                           and pool.can_cast(hatch_engine["sorceryOutletCost"])
+                           and spend_keeps_gates(
+                               pool, hatch_engine["sorceryOutletCost"])):
                         pool = pool.after_spending(hatch_engine["sorceryOutletCost"])
                         clamp_deaths += 1
                         for _ in range(hatch_engine["sorceryOutletDraw"]):
@@ -3032,21 +3168,35 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                                 hand.append(library.pop())
                 eggs_on_board -= clamp_deaths
                 free_deaths = eggs_on_board + tough_eggs_on_board
+                # DEC-944 — Palani's Hatcher sacrifices at the *beginning of
+                # combat*, so the Egg it eats and the creature that reveals
+                # belong to combat phase 0, not to the precombat main phase.
+                # That matters for the DEC-940 multipliers: Xenagos cannot
+                # target a creature that was not on the battlefield when his
+                # beginning-of-combat trigger went on the stack, and Zopandrel's
+                # doubling had already resolved. Split the free deaths so only
+                # the Hatcher's share carries the `combat_phase=0` mark. With an
+                # instant-speed outlet (Ashnod's Altar) the main phase has
+                # already eaten every Egg, so the Hatcher gets none.
+                combat_outlet_deaths = 0
                 if not instant_outlet:
-                    free_deaths = min(
-                        free_deaths,
-                        (1 if limited_outlet else 0)
-                        + (1 if hatch_engine["combatOutletNames"] & board else 0),
-                    )
+                    limited_capacity = 1 if limited_outlet else 0
+                    combat_capacity = (
+                        1 if hatch_engine["combatOutletNames"] & board else 0)
+                    free_deaths = min(free_deaths,
+                                      limited_capacity + combat_capacity)
+                    combat_outlet_deaths = max(0, free_deaths - limited_capacity)
                 # Spend the Clamp-proof Eggs on the free outlets first so the
                 # 0/1s stay as Clamp fuel for the next turn.
                 from_tough = min(free_deaths, tough_eggs_on_board)
                 tough_eggs_on_board -= from_tough
                 eggs_on_board -= free_deaths - from_tough
-                deaths = clamp_deaths + free_deaths
                 hatches_per_egg = 1 + len(hatch_engine["extraHatchNames"] & board)
-                run_hatches(deaths * hatches_per_egg,
+                main_deaths = clamp_deaths + free_deaths - combat_outlet_deaths
+                run_hatches(main_deaths * hatches_per_egg,
                             turn if haste_now else None)
+                run_hatches(combat_outlet_deaths * hatches_per_egg,
+                            turn if haste_now else None, combat_phase=0)
 
             # Attack-triggered hatches (Raph & Mikey): the creature enters
             # tapped and attacking, so it is combat-ready this turn. Annie Joins
@@ -3131,7 +3281,9 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if trigger_extras > 0:
                 trigger_extras -= 1
             elif (combat_modifiers["paidCombatName"] in board_now
-                  and pool.can_cast(combat_modifiers["paidCombatCost"])):
+                  and pool.can_cast(combat_modifiers["paidCombatCost"])
+                  and spend_keeps_gates(
+                      pool, combat_modifiers["paidCombatCost"])):
                 pool = pool.after_spending(combat_modifiers["paidCombatCost"])
             else:
                 break
@@ -3371,11 +3523,26 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
         },
         "methodology": (
             f"{GOLDFISH_GAMES:,}-game solitaire heuristic. Sequencing: land drop, cheapest ramp, "
-            "commander on affordability, biggest affordable threat, then other proactive spells. "
+            "commander on affordability, combo/assembly pieces, biggest affordable threat, then "
+            "other proactive spells. "
             "Mana is spent once per turn: the turn's pool is built after the land drop and each "
             "cast removes the sources it paid with, so the whole turn's casts (plus the combo and "
             "engine-activation gates, which are checked against what is left) never exceed the "
             "available mana (DEC-937). Sources that come online untapped mid-turn join the pool. "
+            "Cast priority holds mana for the line instead of emptying the pool into filler "
+            "(DEC-944). The commander, mana sources and the cards named by the deck's combo gate "
+            "or KEY_COMBOS assembly slots are cast freely — mana sources are mana-positive across "
+            "the turn and a piece cast advances a line rather than spending it. Every other cast "
+            "is filler, and filler is skipped when the pool it would leave behind no longer pays "
+            "for (a) a combo or assembly line that was reachable this turn before the cast, or "
+            "(b) the deck's configured paid activations: one commander Egg activation while the "
+            "hatch engine is online (DEC-938) and one Aggravated Assault combat while the "
+            "enchantment is out with an attacker (DEC-940). The gate outranks the activations: "
+            "an Egg activation, a Skullclamp equip or an extra combat is itself skipped when "
+            "paying for it would lose a reachable gate. A hold the pool cannot afford at all is "
+            "dropped rather than left blocking development. One activation of each kind is held, "
+            "not an open-ended budget. Decks with no combo win condition, no KEY_COMBOS entry and "
+            "no configured engine have no holds and sequence exactly as before. "
             f"Meaningful board = pressure score >= {meaningful_threshold} or 2+ threats. "
             f"Lethal proxy = cumulative combat-pressure proxy >= {GOLDFISH_LETHAL_DAMAGE_PROXY}; "
             "combat pressure uses mana-value-based creature scoring (min(8, MV) plus one for a "
