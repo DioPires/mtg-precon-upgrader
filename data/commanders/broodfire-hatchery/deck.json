@@ -80,10 +80,15 @@
       "type": "ai-inferred",
       "name": "Swap round 5 — DEC-935 second wave + Trigger-2 re-assessment (board-approved 2026-10-06)",
       "detail": "Verdict card 25d31940, all five lines approved after two adversarial reviews: ADD Surrak and Goreclaw / CUT Samut, Hazoret's Champion (haste is the most redundant function; a 2/2 is the weakest reveal; Surrak gives every hatch haste and trample); ADD Moraug, Fury of Akoum / CUT Combat Celebrant (landfall extra combat with full untap, Annie-doubled; Celebrant a 4/1); ADD Settle the Wreckage / CUT Farseek (closes removal-board 2 -> 3; ramp 9 -> 8; Elspeth not cut on the round-4 throughput grounds); ADD The Great Henge / CUT Caretaker's Talent (board-kept in round 3 for draw; draw count stays 7, draw per hatch replaces draw per turn; Fecund Greenshell was the named alternative); ADD Wooded Foothills / CUT one Forest (never tapped; Cinder Glade enters untapped as land 3/4/5 in only 19/41/61% of games). Trigger-2 re-assessment folded in: bar check (label 4, 7 GCs, T8 fleet-body row), hoser coverage pass, commander-dependency pass, stale-prose sweep clean, archetype recipes run (259 deltas triaged), owned sweep for removal-board and draw. Deferred: Pathbreaker Ibex, Doors of Durin, Etali Primal Storm, Unnatural Growth, Karlach, Samut Voice of Dissent, Hammer of Purphoros, Berserkers' Onslaught, True Conviction, Windcrag Siege, Wulfgar, Zetalpa, Evolutionary Leap, Awakening Zone, Court of Grace, Tribute to the World Tree, Soul of the Harvest, Elemental Bond, Toski, Divine Reckoning (first pick for a proactive sweep), Fecund Greenshell, Breath of Fury, Cinder Glade, Mana Vault, Grim Monolith, Ulvenwald Oddity, Enduring Courage, Ogre Battledriver, Port Razer, Scourge of the Throne. Rejected: tapped ramp and unconditionally tapped lands, cheat-into-play, Austere Command and symmetric wipes, Tragic Arrogance (eats the artifact/enchantment engine), Fell the Mighty, phoenix recursion, go-wide token makers, noncombat pingers and finishers (Fling, Chandra's Ignition, Kazuul's Fury: off the board's play pattern). Swap-round counter resets at this commit."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "Swap round 6 — DEC-935 Fecund Greenshell (board-approved 2026-10-06)",
+      "detail": "Board asked whether to consider Fecund Greenshell for its draw. Verdict card fa6ea19c, line A approved: ADD Fecund Greenshell / CUT Rising of the Day. Greenshell triggers on every Egg (0/1 Egg and Dinosaur Egg, 0/2 Dragon Egg) and on six toughness-heavy creature cards; each trigger is a land onto the battlefield tapped (a Moraug extra combat and a Nesting Dragon Egg in your main phase) or a card to hand — the Egg side of the engine, which The Great Henge (hatch side) does not cover. Rising of the Day was the third team-haste source after Rhythm of the Wild and Surrak and Goreclaw; team-anthem uptime by turn 5 falls from 30% to 21% before the Hatcher/Maskwood line and the tutors. Draw role 7 -> 8 of 10. Alternative cut offered and not taken: Guardian Project. Not offered: Vigor, Lightning Greaves (protection), Elesh Norn, Roaming Throne (engine doublers), Birds of Paradise, Jeska's Will (speed), Sylvan Library, Nesting Dragon (board-kept). The goldfish does not model Egg-side triggers, so the sim gives no credit. Swap round 1 since the round-5 reset."
     }
   ],
   "guideContent": {
-    "strategyOverview": "Broodfire Hatchery is a Naya combat deck built on one engine. Atla Palani, Nest Tender pays {2} and taps to make a 0/1 Egg token, and whenever an Egg you control dies she reveals cards from the top of your library until she hits a creature card and puts it straight onto the battlefield. The 99 is stocked with bodies that win a combat the moment they arrive — Worldspine Wurm, Blightsteel Colossus, Apex Altisaur, Zacama, Primal Calamity, Avacyn, Angel of Hope, Etali, Primal Conqueror, Ghalta and Mavren, Raph & Mikey, Troublemakers — so a random flip is never a blank. The play pattern is the one the board asked for: a big creature enters, big creatures attack.\n\nSpeed comes from free sacrifice outlets. Ashnod's Altar, Phyrexian Altar and Goblin Bombardment kill an Egg for no mana, Skullclamp does it for {1} and draws two cards, and High Market does it once a turn from a land slot. Maskwood Nexus makes every creature you control every creature type — so every creature is an Egg and any outlet becomes a repeatable \"sacrifice a creature, hatch a new one\" engine. Thornbite Staff gives Atla \"whenever a creature dies, untap this creature\", so with Ashnod's Altar the loop is mana-neutral and hatches the library; with a haste source on the battlefield, everything it hatches attacks the same turn. Because Atla is a Shaman, the Staff attaches to her for free if it is already on the battlefield when she enters.\n\nHaste is the hinge. Rhythm of the Wild gives every nontoken creature riot, Surrak and Goreclaw gives every other nontoken creature haste and a +1/+1 counter as it enters (and the team trample), Rising of the Day gives the team haste on an enchantment and the deck's 14 legendary creatures +1/+0 (15 when Xenagos is a creature), Palani's Hatcher gives Dinosaurs haste (every creature, under Maskwood Nexus), and Xenagos, God of Revels hands one creature haste and +X/+X where X is its power at each of your beginning-of-combat steps. Xenagos chooses its target when the trigger goes on the stack, so hatch in main phase 1 to use it that combat. Without a haste source, hatch at instant speed on the end step before your turn: Seedborn Muse untaps Atla during every opponent's untap step, so the Eggs are there and the bombs are ready when your turn starts.\n\nThe amplifiers turn one hatch into several attack steps. Aurelia, the Warleader and Tifa, Martial Artist each untap every creature you control — Atla included, so she makes another Egg mid-turn — and add a combat phase; Moraug, Fury of Akoum does it on every land that enters during a main phase (play the land in main phase 2, after the regular combat, so the whole board untaps for the extra one; a fetchland is two), and Aggravated Assault does the same for {3}{R}{R} as often as you can pay, at sorcery speed. Raph & Mikey hatch a creature tapped and attacking every time they attack. Raphael, the Nightwatcher gives every attacking creature double strike. Garruk's Uprising and Ajani's Anguish give the team trample, so one blocker does not absorb a doubled body, and Rogue's Passage makes one attacker unblockable for {4}. Zopandrel, Hunger Dominus doubles the team's power and toughness at every combat, yours and each opponent's, and doubles again in each extra combat. Annie Joins Up makes every legendary creature's triggered ability trigger twice — Atla hatches two creatures per Egg, Aurelia and Tifa each add two combats, Zopandrel doubles twice, Xenagos fires twice — and Roaming Throne (naming Shaman) stacks on top. Mondrak, Glory Dominus and Elspeth, Storm Slayer double every Egg token, and Elesh Norn, Mother of Machines doubles the enters-the-battlefield triggers of Craterhoof Behemoth, Palani's Hatcher, Etali and Apex Altisaur while blanking every opponent's.\n\nSupport is built for a creature deck that taps out on its own turn: 8 ramp sources for a turn-3 Atla plus The Great Henge once a bomb is out, 3 tutors (Worldly Tutor puts the next hatch on top of the library; Enlightened Tutor finds Rhythm of the Wild, Rising of the Day, Annie Joins Up, Aggravated Assault, Maskwood Nexus or an Altar; Natural Order finds a bomb and can sacrifice an Egg as its cost, which also hatches), 7 draw pieces tied to the hatches (The Great Henge draws a card for every hatch), and 4 protection pieces (Flawless Maneuver is free with the commander out, Lightning Greaves gives Atla shroud, and Vigor and Avacyn carry the hatched board through damage-based and destroy-based wipes). Interaction is chosen for hoser coverage: Grafdigger's Cage stops creature cards in libraries from entering the battlefield and blanks Atla outright, so Aura Shards answers it every time a creature enters, and Krosan Grip, Force of Vigor, Boseiju, Who Endures and Beast Within cover artifacts, enchantments and lands. Winds of Abandon overloaded exiles every creature the deck's opponents control before an alpha strike, and Settle the Wreckage exiles one player's attackers at instant speed. Bracket 4 with 7 Game Changers. The deck is tagged brewing until the goldfish simulation confirms the turn-7 kill rate (the True-B4 row after the DEC-937 re-fit).",
+    "strategyOverview": "Broodfire Hatchery is a Naya combat deck built on one engine. Atla Palani, Nest Tender pays {2} and taps to make a 0/1 Egg token, and whenever an Egg you control dies she reveals cards from the top of your library until she hits a creature card and puts it straight onto the battlefield. The 99 is stocked with bodies that win a combat the moment they arrive — Worldspine Wurm, Blightsteel Colossus, Apex Altisaur, Zacama, Primal Calamity, Avacyn, Angel of Hope, Etali, Primal Conqueror, Ghalta and Mavren, Raph & Mikey, Troublemakers — so a random flip is never a blank. The play pattern is the one the board asked for: a big creature enters, big creatures attack.\n\nSpeed comes from free sacrifice outlets. Ashnod's Altar, Phyrexian Altar and Goblin Bombardment kill an Egg for no mana, Skullclamp does it for {1} and draws two cards, and High Market does it once a turn from a land slot. Maskwood Nexus makes every creature you control every creature type — so every creature is an Egg and any outlet becomes a repeatable \"sacrifice a creature, hatch a new one\" engine. Thornbite Staff gives Atla \"whenever a creature dies, untap this creature\", so with Ashnod's Altar the loop is mana-neutral and hatches the library; with a haste source on the battlefield, everything it hatches attacks the same turn. Because Atla is a Shaman, the Staff attaches to her for free if it is already on the battlefield when she enters.\n\nHaste is the hinge. Rhythm of the Wild gives every nontoken creature riot, Surrak and Goreclaw gives every other nontoken creature haste and a +1/+1 counter as it enters (and the team trample), Palani's Hatcher gives Dinosaurs haste (every creature, under Maskwood Nexus), and Xenagos, God of Revels hands one creature haste and +X/+X where X is its power at each of your beginning-of-combat steps. Xenagos chooses its target when the trigger goes on the stack, so hatch in main phase 1 to use it that combat. Without a haste source, hatch at instant speed on the end step before your turn: Seedborn Muse untaps Atla during every opponent's untap step, so the Eggs are there and the bombs are ready when your turn starts.\n\nThe amplifiers turn one hatch into several attack steps. Aurelia, the Warleader and Tifa, Martial Artist each untap every creature you control — Atla included, so she makes another Egg mid-turn — and add a combat phase; Moraug, Fury of Akoum does it on every land that enters during a main phase (play the land in main phase 2, after the regular combat, so the whole board untaps for the extra one; a fetchland is two), and Aggravated Assault does the same for {3}{R}{R} as often as you can pay, at sorcery speed. Raph & Mikey hatch a creature tapped and attacking every time they attack. Raphael, the Nightwatcher gives every attacking creature double strike. Garruk's Uprising and Ajani's Anguish give the team trample, so one blocker does not absorb a doubled body, and Rogue's Passage makes one attacker unblockable for {4}. Zopandrel, Hunger Dominus doubles the team's power and toughness at every combat, yours and each opponent's, and doubles again in each extra combat. Annie Joins Up makes every legendary creature's triggered ability trigger twice — Atla hatches two creatures per Egg, Aurelia and Tifa each add two combats, Zopandrel doubles twice, Xenagos fires twice — and Roaming Throne (naming Shaman) stacks on top. Mondrak, Glory Dominus and Elspeth, Storm Slayer double every Egg token, and Elesh Norn, Mother of Machines doubles the enters-the-battlefield triggers of Craterhoof Behemoth, Palani's Hatcher, Etali and Apex Altisaur while blanking every opponent's.\n\nSupport is built for a creature deck that taps out on its own turn: 8 ramp sources for a turn-3 Atla plus The Great Henge once a bomb is out, 3 tutors (Worldly Tutor puts the next hatch on top of the library; Enlightened Tutor finds Rhythm of the Wild, Annie Joins Up, Aggravated Assault, Maskwood Nexus or an Altar; Natural Order finds a bomb and can sacrifice an Egg as its cost, which also hatches), 8 draw pieces tied to the engine (The Great Henge draws a card for every hatch; Fecund Greenshell looks at the top card for every Egg and either ramps the land or puts the card in hand), and 4 protection pieces (Flawless Maneuver is free with the commander out, Lightning Greaves gives Atla shroud, and Vigor and Avacyn carry the hatched board through damage-based and destroy-based wipes). Interaction is chosen for hoser coverage: Grafdigger's Cage stops creature cards in libraries from entering the battlefield and blanks Atla outright, so Aura Shards answers it every time a creature enters, and Krosan Grip, Force of Vigor, Boseiju, Who Endures and Beast Within cover artifacts, enchantments and lands. Winds of Abandon overloaded exiles every creature the deck's opponents control before an alpha strike, and Settle the Wreckage exiles one player's attackers at instant speed. Bracket 4 with 7 Game Changers. The deck is tagged brewing until the goldfish simulation confirms the turn-7 kill rate (the True-B4 row after the DEC-937 re-fit).",
     "deckCategories": [
       {
         "name": "The Egg Engine",
@@ -115,11 +120,10 @@
       },
       {
         "name": "Haste",
-        "description": "A hatched bomb without haste waits a turn, so the deck runs three team-wide sources plus a targeted one. Rhythm of the Wild gives every nontoken creature riot (haste or a +1/+1 counter, your choice per creature), Surrak and Goreclaw gives every other nontoken creature haste and a +1/+1 counter as it enters — the hatch case exactly, and Surrak is a 6/5 trample body Atla can hatch — Rising of the Day is a team anthem on an enchantment and gives the 14 legendary creatures +1/+0 (15 when Xenagos is a creature), Palani's Hatcher gives Dinosaurs haste (every creature under Maskwood Nexus), and Xenagos, God of Revels hands one creature haste and doubles its power at each of your beginning-of-combat steps — hatch in main phase 1, because Xenagos picks its target when the trigger goes on the stack. Lightning Greaves protects Atla and lets her make an Egg the turn she lands.",
+        "description": "A hatched bomb without haste waits a turn, so the deck runs two team-wide entry sources, a static one under Maskwood, and a targeted one. Rhythm of the Wild gives every nontoken creature riot (haste or a +1/+1 counter, your choice per creature), Surrak and Goreclaw gives every other nontoken creature haste and a +1/+1 counter as it enters — the hatch case exactly, and Surrak is a 6/5 trample body Atla can hatch — Palani's Hatcher gives Dinosaurs haste (every creature under Maskwood Nexus), and Xenagos, God of Revels hands one creature haste and doubles its power at each of your beginning-of-combat steps — hatch in main phase 1, because Xenagos picks its target when the trigger goes on the stack. Lightning Greaves protects Atla and lets her make an Egg the turn she lands.",
         "cards": [
           "Rhythm of the Wild",
           "Surrak and Goreclaw",
-          "Rising of the Day",
           "Xenagos, God of Revels",
           "Palani's Hatcher",
           "Lightning Greaves"
@@ -174,7 +178,7 @@
       },
       {
         "name": "Tutors",
-        "description": "Three tutors, each with a job: Worldly Tutor puts a creature on top of the library, which is exactly where Atla's next hatch comes from; Enlightened Tutor finds Rhythm of the Wild, Rising of the Day, Annie Joins Up, Aggravated Assault, Maskwood Nexus, Thornbite Staff or either Altar; Natural Order sacrifices an Egg (which hatches) and puts Craterhoof, Vigor, Worldspine Wurm or Zopandrel onto the battlefield.",
+        "description": "Three tutors, each with a job: Worldly Tutor puts a creature on top of the library, which is exactly where Atla's next hatch comes from; Enlightened Tutor finds Rhythm of the Wild, Annie Joins Up, The Great Henge, Aggravated Assault, Maskwood Nexus, Thornbite Staff or either Altar; Natural Order sacrifices an Egg (which hatches) and puts Craterhoof, Vigor, Worldspine Wurm or Zopandrel onto the battlefield.",
         "cards": [
           "Enlightened Tutor",
           "Worldly Tutor",
@@ -183,7 +187,7 @@
       },
       {
         "name": "Protection",
-        "description": "The deck taps out on its own turn with the commander on the battlefield, so every protection piece is chosen to be live then. Flawless Maneuver costs nothing while Atla is out, Lightning Greaves gives Atla shroud, and Vigor and Avacyn make the hatched board survive damage-based and destroy-based wipes. Clever Concealment was traded for a third haste anthem and Deflecting Swat for a second trample anthem at DEC-935, so the deck has no instant-speed answer to exile on Atla or on an attacking bomb: Greaves goes on Atla first, and Command Beacon recasts her past commander tax.",
+        "description": "The deck taps out on its own turn with the commander on the battlefield, so every protection piece is chosen to be live then. Flawless Maneuver costs nothing while Atla is out, Lightning Greaves gives Atla shroud, and Vigor and Avacyn make the hatched board survive damage-based and destroy-based wipes. Clever Concealment and Deflecting Swat were traded away at DEC-935 (for a haste anthem that later gave way to Fecund Greenshell, and for Ajani's Anguish), so the deck has no instant-speed answer to exile on Atla or on an attacking bomb: Greaves goes on Atla first, and Command Beacon recasts her past commander tax.",
         "cards": [
           "Flawless Maneuver",
           "Lightning Greaves",
@@ -224,7 +228,7 @@
       },
       {
         "name": "Card Advantage",
-        "description": "Draw is tied to the plan rather than bolted on: Guardian Project and Garruk's Uprising fire on the creatures Atla hatches, Vaultborn Tyrant draws for every power-4-or-more body that enters, Skullclamp turns a 0/1 Egg into two cards, Greater Good cashes a doomed bomb in for a hand, and The Great Henge draws a card and adds a +1/+1 counter for every nontoken creature that enters — one card per hatch, two or three with Annie Joins Up and Roaming Throne — while tapping for {G}{G} and 2 life. It costs {X} less where X is your greatest power: two to four mana with a bomb out, seven with only Atla, so it comes down after the first hatch. The hatch itself is the deck's real card advantage: every Egg is a free creature.",
+        "description": "Draw is tied to the plan rather than bolted on: Guardian Project and Garruk's Uprising fire on the creatures Atla hatches, Vaultborn Tyrant draws for every power-4-or-more body that enters, Skullclamp turns a 0/1 Egg into two cards, Greater Good cashes a doomed bomb in for a hand, and The Great Henge draws a card and adds a +1/+1 counter for every nontoken creature that enters — one card per hatch, two or three with Annie Joins Up and Roaming Throne — while tapping for {G}{G} and 2 life. It costs {X} less where X is your greatest power: two to four mana with a bomb out, seven with only Atla, so it comes down after the first hatch. The hatch itself is the deck's real card advantage: every Egg is a free creature. Fecund Greenshell works the other end of the engine: whenever it or another creature with toughness greater than its power enters — every Egg, Dragon Egg and Dinosaur Egg, plus Atla, Seedborn Muse, Elesh Norn, Zopandrel, Aurelia and Raphael — look at the top card; a land goes onto the battlefield tapped (a Moraug combat and a Nesting Dragon Egg in your main phase), anything else goes to hand. With Seedborn Muse or a token doubler that is three to eight looks per turn cycle.",
         "cards": [
           "Guardian Project",
           "Garruk's Uprising",
@@ -232,7 +236,8 @@
           "Skullclamp",
           "The Great Henge",
           "Greater Good",
-          "Vaultborn Tyrant"
+          "Vaultborn Tyrant",
+          "Fecund Greenshell"
         ]
       },
       {
@@ -262,7 +267,6 @@
       "cards": [
         "Rhythm of the Wild",
         "Surrak and Goreclaw",
-        "Rising of the Day",
         "Xenagos, God of Revels",
         "Zopandrel, Hunger Dominus",
         "Raphael, the Nightwatcher",
@@ -272,7 +276,7 @@
         "Etali, Primal Conqueror // Etali, Primal Sickness",
         "Ajani's Anguish"
       ],
-      "description": "Kill Eggs in main phase 1, the hatched bombs have haste (Rhythm of the Wild, Surrak and Goreclaw, Rising of the Day, or Xenagos on the biggest one), and they attack. Zopandrel doubles the team at the start of combat; Xenagos doubles one body on top of that, so a hatched Worldspine Wurm attacks as a 60/60 trampler and Blightsteel Colossus as 22 infect; Raphael, the Nightwatcher gives every attacker double strike on top. Craterhoof Behemoth finishes a wide board. Garruk's Uprising or Ajani's Anguish gives the team trample, so one chump block does not absorb the doubled body; Rogue's Passage makes it unblockable outright."
+      "description": "Kill Eggs in main phase 1, the hatched bombs have haste (Rhythm of the Wild, Surrak and Goreclaw, Palani's Hatcher under Maskwood Nexus, or Xenagos on the biggest one), and they attack. Zopandrel doubles the team at the start of combat; Xenagos doubles one body on top of that, so a hatched Worldspine Wurm attacks as a 60/60 trampler and Blightsteel Colossus as 22 infect; Raphael, the Nightwatcher gives every attacker double strike on top. Craterhoof Behemoth finishes a wide board. Garruk's Uprising or Ajani's Anguish gives the team trample, so one chump block does not absorb the doubled body; Rogue's Passage makes it unblockable outright."
     },
     {
       "title": "Extra Combat Chain",
@@ -362,7 +366,7 @@
         "Thornbite Staff",
         "Ashnod's Altar"
       ],
-      "description": "Equip Thornbite Staff to Atla (free if the Staff is already out when she enters, since she is a Shaman). Pay {2} and tap Atla for a 0/1 Egg, sacrifice the Egg to Ashnod's Altar for {C}{C}, and the death untaps Atla through the Staff. Net mana zero, one hatch per loop, and it is fully deterministic — no Maskwood Nexus required. Verified line: https://commanderspellbook.com/combo/240-2034-2178/ With Rhythm of the Wild, Surrak and Goreclaw or Rising of the Day on the battlefield, everything the loop hatches attacks the same turn.",
+      "description": "Equip Thornbite Staff to Atla (free if the Staff is already out when she enters, since she is a Shaman). Pay {2} and tap Atla for a 0/1 Egg, sacrifice the Egg to Ashnod's Altar for {C}{C}, and the death untaps Atla through the Staff. Net mana zero, one hatch per loop, and it is fully deterministic — no Maskwood Nexus required. Verified line: https://commanderspellbook.com/combo/240-2034-2178/ With Rhythm of the Wild or Surrak and Goreclaw on the battlefield, everything the loop hatches attacks the same turn.",
       "sources": [
         {
           "type": "commanderspellbook",
@@ -398,7 +402,7 @@
         "Moraug, Fury of Akoum",
         "Tifa, Martial Artist"
       ],
-      "description": "All three untap every creature you control when they add a combat phase (Moraug: at the beginning of the extra combat its landfall creates), and Atla is a creature. Pay {2}, tap her for a new Egg, kill it with a free outlet, and the bomb it hatches attacks in the extra combat with haste from Rhythm of the Wild, Surrak and Goreclaw or Rising of the Day. Tifa's extra combat has no main phase in between, so that hatch has to happen at instant speed; Moraug's extra combat follows a main phase, so a land played in main phase 2 gives you a sorcery-speed window first.",
+      "description": "All three untap every creature you control when they add a combat phase (Moraug: at the beginning of the extra combat its landfall creates), and Atla is a creature. Pay {2}, tap her for a new Egg, kill it with a free outlet, and the bomb it hatches attacks in the extra combat with haste from Rhythm of the Wild or Surrak and Goreclaw. Tifa's extra combat has no main phase in between, so that hatch has to happen at instant speed; Moraug's extra combat follows a main phase, so a land played in main phase 2 gives you a sorcery-speed window first.",
       "sources": [
         {
           "type": "scryfall",
@@ -487,18 +491,6 @@
       "price": "€3.85",
       "isGameChanger": false,
       "reason": "Riot for every nontoken creature you control, which covers every hatch: the bomb enters with haste (or a +1/+1 counter if it already has haste) and attacks the turn it arrives. Creature spells can't be countered.",
-      "sources": [
-        {
-          "type": "scryfall",
-          "name": "Scryfall"
-        }
-      ]
-    },
-    {
-      "name": "Rising of the Day",
-      "price": "€0.26",
-      "isGameChanger": false,
-      "reason": "{2}{R} enchantment: creatures you control have haste, legendary creatures +1/+0 (14 in the deck, Atla included; 15 when Xenagos is a creature). The third team-wide haste source, on the permanent type that survives a wipe.",
       "sources": [
         {
           "type": "scryfall",
@@ -775,6 +767,22 @@
         {
           "type": "ai-inferred",
           "name": "DEC-935 round 5 — second wave + Trigger-2 re-assessment (CEO, board-approved 2026-10-06)"
+        }
+      ]
+    },
+    {
+      "name": "Fecund Greenshell",
+      "price": "€0.54",
+      "isGameChanger": false,
+      "reason": "{3}{G}{G} 4/6 reach: whenever it or another creature you control with toughness greater than its power enters, look at the top card — a land goes onto the battlefield tapped, anything else to your hand. Every Egg is a trigger, so it draws on the side of the engine The Great Henge does not; the land hits feed Moraug and Nesting Dragon. With ten lands the team gets +2/+2.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-935 round 6 — board question, CEO review (approved 2026-10-06)"
         }
       ]
     }
@@ -1181,11 +1189,6 @@
       "primary_role": "payoff"
     },
     {
-      "name": "Rising of the Day",
-      "type": "Enchantment",
-      "primary_role": "engine"
-    },
-    {
       "name": "Ajani's Anguish",
       "type": "Enchantment",
       "primary_role": "utility",
@@ -1221,6 +1224,12 @@
       "name": "Wooded Foothills",
       "type": "Land",
       "primary_role": "land"
+    },
+    {
+      "name": "Fecund Greenshell",
+      "type": "Creature — Elemental Turtle",
+      "primary_role": "card-draw",
+      "secondary_role": "ramp"
     }
   ],
   "tokens": [

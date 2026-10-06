@@ -830,7 +830,9 @@ COMMANDER_HATCH_ENGINE = {
 # equip path.
 COMMANDER_HASTE_SOURCES = {
     "broodfire-hatchery": {
-        "staticNames": {"Rising of the Day"},
+        # Rising of the Day left at DEC-935 round 6 (Fecund Greenshell took the
+        # slot; its Egg-side card advantage is not modelled — a floor).
+        "staticNames": set(),
         # Palani's Hatcher grants haste to other Dinosaurs; Maskwood Nexus makes
         # every creature you control every creature type.
         "staticPairs": [("Palani's Hatcher", "Maskwood Nexus")],

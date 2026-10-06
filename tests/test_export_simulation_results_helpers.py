@@ -187,8 +187,11 @@ class HatchEngineHelperTests(unittest.TestCase):
         # round 5), so it is entry-gated like riot.
         self.assertFalse(exporter.static_haste_active(
             self.HASTE, self._board("Surrak and Goreclaw")))
+        # The static-name path is tested on a local copy of the config: the
+        # live broodfire config has no static anthem since DEC-935 round 6.
+        haste = dict(self.HASTE, staticNames={"Rising of the Day"})
         self.assertTrue(exporter.static_haste_active(
-            self.HASTE, self._board("Rising of the Day")))
+            haste, self._board("Rising of the Day")))
         self.assertTrue(exporter.static_haste_active(
             self.HASTE, self._board("Palani's Hatcher", "Maskwood Nexus")))
 
@@ -379,8 +382,13 @@ class HatchEngineGoldfishTests(unittest.TestCase):
 
     def test_static_haste_source_covers_the_commander_retroactively(self):
         # Rising of the Day is continuous ("Creatures you control have haste"),
-        # so it readies her even though the goldfish casts her first.
-        calls, _ = self._run(["Ashnod's Altar", "Rising of the Day"])
+        # so it readies her even though the goldfish casts her first. The live
+        # broodfire config has no static anthem since DEC-935 round 6, so the
+        # static path is tested on a local copy of the config.
+        haste = dict(exporter.COMMANDER_HASTE_SOURCES[self.DECK_ID],
+                     staticNames={"Rising of the Day"})
+        with patch.dict(exporter.COMMANDER_HASTE_SOURCES, {self.DECK_ID: haste}):
+            calls, _ = self._run(["Ashnod's Altar", "Rising of the Day"])
         self.assertEqual(self._per_turn(calls)[1], 1)
         # With haste the hatched creature is combat-ready the turn it entered.
         self.assertEqual(calls[0], (1, 1))
