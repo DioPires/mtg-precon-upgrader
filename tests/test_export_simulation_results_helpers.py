@@ -183,9 +183,12 @@ class HatchEngineHelperTests(unittest.TestCase):
         # continuous grant a permanent already on the battlefield can read.
         self.assertFalse(exporter.static_haste_active(
             self.HASTE, self._board("Rhythm of the Wild")))
-        for name in ("Samut, Hazoret's Champion", "Rising of the Day"):
-            self.assertTrue(exporter.static_haste_active(
-                self.HASTE, self._board(name)), name)
+        # Surrak and Goreclaw hastes creatures only as they enter (DEC-935
+        # round 5), so it is entry-gated like riot.
+        self.assertFalse(exporter.static_haste_active(
+            self.HASTE, self._board("Surrak and Goreclaw")))
+        self.assertTrue(exporter.static_haste_active(
+            self.HASTE, self._board("Rising of the Day")))
         self.assertTrue(exporter.static_haste_active(
             self.HASTE, self._board("Palani's Hatcher", "Maskwood Nexus")))
 
@@ -777,7 +780,12 @@ class CombatModifierGoldfishTests(unittest.TestCase):
         self.assertEqual(combat[3], 6)
 
     def test_combat_celebrant_exerts_every_other_turn_and_sits_out(self):
-        combat = self._run(["Combat Celebrant", "Attacker A", "Attacker B"])
+        # Combat Celebrant left the broodfire config at DEC-935 round 5; the
+        # exert mechanism is kept under test on a local copy of the config.
+        mods = dict(exporter.COMBAT_MODIFIERS[self.DECK_ID],
+                    exertCombatNames={"Combat Celebrant"})
+        with patch.dict(exporter.COMBAT_MODIFIERS, {self.DECK_ID: mods}):
+            combat = self._run(["Combat Celebrant", "Attacker A", "Attacker B"])
         # Turn 2: 3 attackers, then an extra combat without the exerted
         # Celebrant (it untaps all *other* creatures) = 3 + 2.
         self.assertEqual(combat[2], 5)

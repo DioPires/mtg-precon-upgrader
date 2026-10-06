@@ -153,6 +153,7 @@ LAND_COLORS: dict[str, frozenset] = {
     "Windswept Heath":  frozenset({"R", "G", "W"}),
     "Flooded Strand":   frozenset({"R", "G", "W"}),
     "Bloodstained Mire": frozenset({"R", "G", "W"}),
+    "Wooded Foothills":  frozenset({"R", "G", "W"}),  # DEC-935 round 5: Mountain/Forest fetch; Stomping Ground, Sacred Foundry, Temple Garden, Jetmir's Garden
 
     # Shocks / checkland / bondland / painlands — all modeled untapped
     # (pay-2-life, checkland condition and the 1 damage are free in a goldfish;

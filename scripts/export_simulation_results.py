@@ -830,11 +830,13 @@ COMMANDER_HATCH_ENGINE = {
 # equip path.
 COMMANDER_HASTE_SOURCES = {
     "broodfire-hatchery": {
-        "staticNames": {"Samut, Hazoret's Champion", "Rising of the Day"},
+        "staticNames": {"Rising of the Day"},
         # Palani's Hatcher grants haste to other Dinosaurs; Maskwood Nexus makes
         # every creature you control every creature type.
         "staticPairs": [("Palani's Hatcher", "Maskwood Nexus")],
-        "entryGatedNames": {"Rhythm of the Wild"},
+        # Surrak and Goreclaw: haste on each other nontoken creature as it
+        # enters (DEC-935 round 5) — entry-time only, like riot.
+        "entryGatedNames": {"Rhythm of the Wild", "Surrak and Goreclaw"},
         "printedHasteNames": {"Raph & Mikey, Troublemakers"},
     },
 }
@@ -912,7 +914,9 @@ COMBAT_MODIFIERS = {
         "largestDoublerNames": {"Xenagos, God of Revels"},
         "doubleStrikeGrantNames": {"Raphael, the Nightwatcher"},
         "extraCombatAttackerNames": {"Aurelia, the Warleader"},
-        "exertCombatNames": {"Combat Celebrant"},
+        # Combat Celebrant left at DEC-935 round 5; Moraug, Fury of Akoum
+        # (landfall extra combat) replaced it and is not modelled — a floor.
+        "exertCombatNames": set(),
         "powerGatedCombatNames": {"Tifa, Martial Artist"},
         "powerGateThreshold": 7,
         "paidCombatName": "Aggravated Assault",
