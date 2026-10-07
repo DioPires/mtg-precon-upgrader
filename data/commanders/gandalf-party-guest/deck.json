@@ -62,6 +62,11 @@
       "type": "other",
       "name": "Board swap approval, DEC-946, 2026-10-07",
       "detail": "Board verdict card b9c08040 on DEC-946 (2026-10-07), line C approved: IN Turbulent Shore, OUT Prairie Stream. Same colors and same types (Plains Island). Prairie Stream's two-basic clause was met 22-44% of the time in this 11-basic list (hypergeometric, T2-T7); Shore is untapped from turn 4 under the four-player model. Sim model updated: Shore joins Springs and Steppe in the Turbulent rule and the Plains/Island typed sets (Prairie Stream had fallen through to the colorless fallback)."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-948 Trigger-2 re-assessment (board verdict card 85a6a2a9, 2026-10-07)",
+      "detail": "Line A approved: five prose accuracy fixes, no card change. The One Ring is not a Mox Amber feeder (Amber reads legendary creatures and planeswalkers only); Mox Amber feeder count corrected to 19 legendary creatures in the 99 (20 with Gandalf); Eiganjo sentence 18 -> 19 legendary creatures; pip census 55U/23R/13W -> 52U/29R/17W (manabase_check.py 2026-10-07); Dovin's Veto named among the four counterspells. Line B (+Island / -Step Through, 39th land) deferred by the board. No card swap: metrics 88/93 gaps 0 unchanged vs DEC-547, sim 76.4, bar 4- holds, 4 Game Changers (uncapped). Full triage, defers and rejects in DEC-948 comment bb4fb3c3; do not re-triage. Trigger-2 swap-round counter resets at this commit."
     }
   ],
   "guideContent": {
@@ -138,7 +143,7 @@
       },
       {
         "name": "Draw Engines",
-        "description": "Three engines close the card-draw gap (swap round 3). Mystic Remora taxes every opponent noncreature spell from turn 1 — strongest in the turn 1–4 combo-assembly window, then sacrifices itself to cumulative upkeep. The One Ring is an indestructible legendary artifact (22nd legend for Mox Amber): protection from everything on cast shields the combo turn, then it draws 1, 2, 3... cards per turn for escalating life. Archmage of Runes draws on every instant or sorcery we cast — Gandalf's free cast included, doubled by Harmonic Prodigy — and discounts each one by {1}.",
+        "description": "Three engines close the card-draw gap (swap round 3). Mystic Remora taxes every opponent noncreature spell from turn 1 — strongest in the turn 1–4 combo-assembly window, then sacrifices itself to cumulative upkeep. The One Ring is an indestructible legendary artifact: protection from everything on cast shields the combo turn, then it draws 1, 2, 3... cards per turn for escalating life. Archmage of Runes draws on every instant or sorcery we cast — Gandalf's free cast included, doubled by Harmonic Prodigy — and discounts each one by {1}.",
         "cards": [
           "Mystic Remora",
           "The One Ring",
@@ -147,7 +152,7 @@
       },
       {
         "name": "Interaction & Protection",
-        "description": "Four counterspells (Force of Will pitches a blue card to come down free and answers creature spells that Fierce Guardianship cannot; Mana Sculpt refunds the countered spell's mana with a Wizard out; Fierce Guardianship and Muddle's counter mode are free on the combo turn), spot removal on every relevant permanent type — including the artifact/enchantment hosers that target this deck — two wipes (Olórin's Searing Light and the opponent-only Call Forth the Tempest), and Clever Concealment phasing the whole board out of danger. Guardian of Faith flashes in to phase the council out of a wipe, and Sevinne's Reclamation rebuys any fallen MV-3-or-less piece — combo starters included — twice thanks to flashback.",
+        "description": "Four counterspells (Force of Will pitches a blue card to come down free and answers creature spells that Fierce Guardianship cannot; Mana Sculpt refunds the countered spell's mana with a Wizard out; Dovin's Veto cannot be countered back; Fierce Guardianship is free on the combo turn, and Muddle the Mixture adds a fifth counter mode from the tutor suite), spot removal on every relevant permanent type — including the artifact/enchantment hosers that target this deck — two wipes (Olórin's Searing Light and the opponent-only Call Forth the Tempest), and Clever Concealment phasing the whole board out of danger. Guardian of Faith flashes in to phase the council out of a wipe, and Sevinne's Reclamation rebuys any fallen MV-3-or-less piece — combo starters included — twice thanks to flashback.",
         "cards": [
           "Force of Will",
           "Mana Sculpt",
@@ -167,7 +172,7 @@
       },
       {
         "name": "Mana Engine",
-        "description": "Six rocks headlined by Mox Amber (22 legends keep it live), on a 38-land base tuned to the 55U/23R/13W pip census. Reflecting Pool taps for any color a land you control could make, Training Center enters untapped in the four-player pod and fixes the U/R core, and Spire of Industry taps for any color off the artifact suite. Eiganjo, Seat of the Empire sits in a Plains slot: the same untapped W source, plus a channel mode that deals 4 damage to an attacking or blocking creature — with 18 other legendary creatures in the 99 it usually costs just {W} and a discard, at instant speed and uncounterable.",
+        "description": "Six rocks headlined by Mox Amber (19 legendary creatures in the 99 keep it live, 20 with Gandalf out), on a 38-land base tuned to the 52U/29R/17W pip census. Reflecting Pool taps for any color a land you control could make, Training Center enters untapped in the four-player pod and fixes the U/R core, and Spire of Industry taps for any color off the artifact suite. Eiganjo, Seat of the Empire sits in a Plains slot: the same untapped W source, plus a channel mode that deals 4 damage to an attacking or blocking creature — with 19 other legendary creatures in the 99 it usually costs just {W} and a discard, at instant speed and uncounterable.",
         "cards": [
           "Sol Ring",
           "Arcane Signet",
@@ -351,13 +356,13 @@
       ]
     },
     {
-      "title": "Mox Amber is live off 21 legends",
+      "title": "Mox Amber is live off 19 legendary creatures",
       "cards": [
         "Mox Amber",
         "Gandalf, Party Guest",
         "Vivi Ornitier"
       ],
-      "description": "Twenty legendary creatures in the 99 plus the commander mean Amber is a 0-mana rock from the moment any legend resolves — usually turn 1-2 in a deck whose curve peaks at two.",
+      "description": "Nineteen legendary creatures in the 99 plus the commander (Mox Amber reads legendary creatures and planeswalkers only, so The One Ring does not count) mean Amber is a 0-mana rock from the moment any legend resolves — usually turn 1-2 in a deck whose curve peaks at two.",
       "sources": [
         {
           "type": "ai-inferred",
