@@ -76,8 +76,8 @@ ROCK_DEFS = {
 
 # --- Land subtype definitions (for check lands and fetch targets) ---
 
-ISLAND_TYPED_LANDS = {"Island", "Watery Grave", "Steam Vents", "Sunken Hollow", "Turbulent Springs"}
-SWAMP_TYPED_LANDS = {"Swamp", "Watery Grave", "Blood Crypt", "Sunken Hollow", "Smoldering Marsh"}
+ISLAND_TYPED_LANDS = {"Island", "Watery Grave", "Steam Vents", "Turbulent Wetlands", "Turbulent Springs"}
+SWAMP_TYPED_LANDS = {"Swamp", "Watery Grave", "Blood Crypt", "Turbulent Wetlands", "Smoldering Marsh"}
 MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Steam Vents", "Smoldering Marsh", "Turbulent Springs"}
 
 FETCH_LANDS = {"Bloodstained Mire", "Polluted Delta"}
@@ -111,21 +111,18 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     # Slow land: untapped with two or more other lands
     if name == "Stormcarved Coast":
         return len(battlefield_lands) < 2
-    # Turbulent Springs: untapped once opponents control 8+ lands. Opponent
-    # boards are not tracked; under the vanilla 4-player model that holds from
-    # your turn 4 in every seat (turn 3 only in seats 3-4), so gate on this
-    # being at least the 4th land drop (conservative: drops the turn-3 case).
-    if name == "Turbulent Springs":
+    # Turbulent Springs / Turbulent Wetlands (DEC-688 / DEC-946): untapped once
+    # opponents control 8+ lands. Opponent boards are not tracked; under the
+    # vanilla 4-player model that holds from your turn 4 in every seat (turn 3
+    # only in seats 3-4), so gate on this being at least the 4th land drop
+    # (conservative: drops the turn-3 case).
+    if name in {"Turbulent Springs", "Turbulent Wetlands"}:
         return len(battlefield_lands) < 3
 
-    # Battle lands (need 2+ basics with the right types)
+    # Battle land (needs 2+ basics with the right types)
     if name == "Smoldering Marsh":
         basics = sum(1 for l in battlefield_lands
                      if l in SWAMP_TYPED_LANDS or l in MOUNTAIN_TYPED_LANDS)
-        return basics < 2
-    if name == "Sunken Hollow":
-        basics = sum(1 for l in battlefield_lands
-                     if l in ISLAND_TYPED_LANDS or l in SWAMP_TYPED_LANDS)
         return basics < 2
 
     # Gloomlake Verge: always enters untapped (color production is conditional, not ETB)
@@ -154,7 +151,7 @@ def compute_land_sources(name: str, battlefield_lands: list[str]) -> list[frozen
         return [frozenset({"U", "B", "R"})]
 
     # UB duals
-    if name in {"Watery Grave", "Morphic Pool", "Drowned Catacomb", "Sunken Hollow",
+    if name in {"Watery Grave", "Morphic Pool", "Drowned Catacomb", "Turbulent Wetlands",
                 "Underground River", "Darkslick Shores"}:
         return [frozenset({"U", "B"})]
 

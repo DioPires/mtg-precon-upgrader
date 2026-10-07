@@ -9,7 +9,7 @@
     "pairsTotal": 121,
     "triples": 40,
     "triplesTotal": 169,
-    "uncovered": 0
+    "uncovered": 1
   },
   "cycles": [
     {
@@ -659,52 +659,6 @@
     {
       "band": "strong",
       "cards": [
-        "Blasphemous Act",
-        "Mount Doom",
-        "Shivan Gorge",
-        "Theater of Horrors"
-      ],
-      "economies": [
-        "damage"
-      ],
-      "edges": [
-        {
-          "from": "Blasphemous Act",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 13,
-          "to": "Mount Doom",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Blasphemous Act",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 13,
-          "to": "Shivan Gorge",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Mount Doom",
-          "fromFeature": "ping_outlet",
-          "label": "Repeatable damage outlet ↔ Deals damage",
-          "magnitude": 1,
-          "to": "Theater of Horrors",
-          "toFeature": "damage"
-        },
-        {
-          "from": "Shivan Gorge",
-          "fromFeature": "ping_outlet",
-          "label": "Repeatable damage outlet ↔ Deals damage",
-          "magnitude": 1,
-          "to": "Theater of Horrors",
-          "toFeature": "damage"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Grab the Prize",
         "Mogis, God of Slaughter",
         "Mount Doom",
@@ -744,6 +698,52 @@
           "label": "Repeatable damage outlet ↔ Deals damage",
           "magnitude": 2,
           "to": "Mogis, God of Slaughter",
+          "toFeature": "damage"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Blasphemous Act",
+        "Mount Doom",
+        "Shivan Gorge",
+        "Theater of Horrors"
+      ],
+      "economies": [
+        "damage"
+      ],
+      "edges": [
+        {
+          "from": "Blasphemous Act",
+          "fromFeature": "damage",
+          "label": "Deals damage ↔ Repeatable damage outlet",
+          "magnitude": 13,
+          "to": "Mount Doom",
+          "toFeature": "ping_outlet"
+        },
+        {
+          "from": "Blasphemous Act",
+          "fromFeature": "damage",
+          "label": "Deals damage ↔ Repeatable damage outlet",
+          "magnitude": 13,
+          "to": "Shivan Gorge",
+          "toFeature": "ping_outlet"
+        },
+        {
+          "from": "Mount Doom",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Deals damage",
+          "magnitude": 1,
+          "to": "Theater of Horrors",
+          "toFeature": "damage"
+        },
+        {
+          "from": "Shivan Gorge",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Deals damage",
+          "magnitude": 1,
+          "to": "Theater of Horrors",
           "toFeature": "damage"
         }
       ]
@@ -1398,7 +1398,7 @@
     "crowdPriorApplied": true,
     "deckId": "eternal-agony",
     "deepFocused": false,
-    "generatedAt": "2026-09-05T15:40:29.178279+00:00",
+    "generatedAt": "2026-10-07T14:40:07.482829+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -1726,7 +1726,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Chandra, Awakened Inferno",
         "Mount Doom"
@@ -1746,7 +1746,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Mount Doom",
         "Rakdos Charm"
@@ -1766,7 +1766,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Mount Doom",
         "Roiling Vortex"
@@ -1786,7 +1786,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Mount Doom",
         "Shivan Gorge"
@@ -1806,7 +1806,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Mount Doom",
         "Sulfurous Springs"
@@ -1826,7 +1826,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Mount Doom",
         "Talisman of Indulgence"
@@ -1846,7 +1846,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Mount Doom",
         "The Lord of Pain"
@@ -1866,7 +1866,7 @@
       ]
     },
     {
-      "band": "speculative",
+      "band": "strong",
       "cards": [
         "Leechridden Swamp",
         "Syr Konrad, the Grim"
@@ -1988,26 +1988,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Bolas's Citadel",
-        "The Rollercrusher Ride"
-      ],
-      "economies": [
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Bolas's Citadel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 10,
-          "to": "The Rollercrusher Ride",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Orcish Bowmasters",
         "Shivan Gorge"
       ],
@@ -2022,6 +2002,26 @@
           "magnitude": 1,
           "to": "Orcish Bowmasters",
           "toFeature": "damage"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bolas's Citadel",
+        "The Rollercrusher Ride"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Bolas's Citadel",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 10,
+          "to": "The Rollercrusher Ride",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -2226,26 +2226,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Bolas's Citadel",
-        "Fake Your Own Death"
-      ],
-      "economies": [
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Bolas's Citadel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 10,
-          "to": "Fake Your Own Death",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Syr Konrad, the Grim",
         "Torment of Hailfire"
       ],
@@ -2346,6 +2326,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Bolas's Citadel",
+        "Fake Your Own Death"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Bolas's Citadel",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 10,
+          "to": "Fake Your Own Death",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "The Rollercrusher Ride",
         "Torment of Hailfire"
       ],
@@ -2355,6 +2355,26 @@
       "edges": [
         {
           "from": "The Rollercrusher Ride",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 3,
+          "to": "Torment of Hailfire",
+          "toFeature": "drain"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Orcish Bowmasters",
+        "Torment of Hailfire"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Orcish Bowmasters",
           "fromFeature": "etb_trigger",
           "label": "ETB payoff ↔ Life drain to opponents",
           "magnitude": 3,
@@ -2388,26 +2408,6 @@
           "magnitude": 1,
           "to": "Unholy Annex // Ritual Chamber",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Orcish Bowmasters",
-        "Torment of Hailfire"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 3,
-          "to": "Torment of Hailfire",
-          "toFeature": "drain"
         }
       ]
     },
@@ -2448,42 +2448,6 @@
           "magnitude": 2,
           "to": "Advanced Reconstruction",
           "toFeature": "damage"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Fake Your Own Death",
-        "Phyrexian Tower"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Phyrexian Tower",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -2550,29 +2514,36 @@
     {
       "band": "speculative",
       "cards": [
-        "Phyrexian Tower",
-        "Resurrection Orb"
+        "Fake Your Own Death",
+        "Phyrexian Tower"
       ],
       "economies": [
-        "dies",
         "sacrifice"
       ],
       "edges": [
         {
-          "from": "Resurrection Orb",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
+          "from": "Phyrexian Tower",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
           "magnitude": 1,
-          "to": "Phyrexian Tower",
-          "toFeature": "sac_outlet"
+          "to": "Fake Your Own Death",
+          "toFeature": "dies_trigger"
         },
         {
-          "from": "Resurrection Orb",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "from": "Phyrexian Tower",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Phyrexian Tower",
-          "toFeature": "sac_outlet"
+          "to": "Fake Your Own Death",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Tower",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Fake Your Own Death",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -2613,6 +2584,35 @@
           "magnitude": 1,
           "to": "Shivan Gorge",
           "toFeature": "ping_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Phyrexian Tower",
+        "Resurrection Orb"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Resurrection Orb",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Phyrexian Tower",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Resurrection Orb",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Phyrexian Tower",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -2679,6 +2679,26 @@
     {
       "band": "speculative",
       "cards": [
+        "Exsanguinate",
+        "Syr Konrad, the Grim"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Exsanguinate",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Syr Konrad, the Grim",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Syr Konrad, the Grim",
         "Wound Reflection"
       ],
@@ -2713,26 +2733,6 @@
           "magnitude": 1,
           "to": "Reanimate",
           "toFeature": "recursion"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Exsanguinate",
-        "Syr Konrad, the Grim"
-      ],
-      "economies": [
-        "drain"
-      ],
-      "edges": [
-        {
-          "from": "Exsanguinate",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Syr Konrad, the Grim",
-          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -3024,6 +3024,46 @@
     {
       "band": "speculative",
       "cards": [
+        "Exsanguinate",
+        "Orcish Bowmasters"
+      ],
+      "economies": [
+        "drain"
+      ],
+      "edges": [
+        {
+          "from": "Exsanguinate",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Orcish Bowmasters",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Orcish Bowmasters",
+        "Wound Reflection"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Orcish Bowmasters",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 1,
+          "to": "Wound Reflection",
+          "toFeature": "drain"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
         "Advanced Reconstruction",
         "Reanimate"
       ],
@@ -3052,26 +3092,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Orcish Bowmasters",
-        "Wound Reflection"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Orcish Bowmasters",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 1,
-          "to": "Wound Reflection",
-          "toFeature": "drain"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Advanced Reconstruction",
         "The Rollercrusher Ride"
       ],
@@ -3094,35 +3114,6 @@
           "magnitude": 1,
           "to": "Advanced Reconstruction",
           "toFeature": "self_mill"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Orcish Bowmasters",
-        "Unholy Annex // Ritual Chamber"
-      ],
-      "economies": [
-        "drain",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Unholy Annex // Ritual Chamber",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Orcish Bowmasters",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Unholy Annex // Ritual Chamber",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 1,
-          "to": "Orcish Bowmasters",
-          "toFeature": "etb_trigger"
         }
       ]
     }
@@ -3762,44 +3753,6 @@
       "band": "speculative",
       "cards": [
         "Bolas's Citadel",
-        "Fake Your Own Death",
-        "Rubble Rouser"
-      ],
-      "economies": [
-        "drain",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Bolas's Citadel",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 10,
-          "to": "Fake Your Own Death",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Rubble Rouser",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 10,
-          "to": "Bolas's Citadel",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Rubble Rouser",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Bolas's Citadel",
         "Resurrection Orb",
         "Syr Konrad, the Grim"
       ],
@@ -3832,6 +3785,44 @@
           "magnitude": 1,
           "to": "Syr Konrad, the Grim",
           "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Bolas's Citadel",
+        "Fake Your Own Death",
+        "Rubble Rouser"
+      ],
+      "economies": [
+        "drain",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Bolas's Citadel",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 10,
+          "to": "Fake Your Own Death",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Rubble Rouser",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 10,
+          "to": "Bolas's Citadel",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Rubble Rouser",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Fake Your Own Death",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4274,44 +4265,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Fake Your Own Death",
-        "Rubble Rouser",
-        "Torment of Hailfire"
-      ],
-      "economies": [
-        "drain",
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Rubble Rouser",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Fake Your Own Death",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Rubble Rouser",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Life drain to opponents",
-          "magnitude": 3,
-          "to": "Torment of Hailfire",
-          "toFeature": "drain"
-        },
-        {
-          "from": "Torment of Hailfire",
-          "fromFeature": "drain",
-          "label": "Life drain to opponents ↔ Death payoff",
-          "magnitude": 3,
-          "to": "Fake Your Own Death",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Bolas's Citadel",
         "Spiked Corridor // Torture Pit",
         "The Rollercrusher Ride"
@@ -4345,6 +4298,44 @@
           "magnitude": 3,
           "to": "The Rollercrusher Ride",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Fake Your Own Death",
+        "Rubble Rouser",
+        "Torment of Hailfire"
+      ],
+      "economies": [
+        "drain",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Rubble Rouser",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Fake Your Own Death",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Rubble Rouser",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Life drain to opponents",
+          "magnitude": 3,
+          "to": "Torment of Hailfire",
+          "toFeature": "drain"
+        },
+        {
+          "from": "Torment of Hailfire",
+          "fromFeature": "drain",
+          "label": "Life drain to opponents ↔ Death payoff",
+          "magnitude": 3,
+          "to": "Fake Your Own Death",
+          "toFeature": "dies_trigger"
         }
       ]
     },
@@ -4759,5 +4750,7 @@
       ]
     }
   ],
-  "uncovered": []
+  "uncovered": [
+    "Turbulent Crater"
+  ]
 }

@@ -76,13 +76,13 @@ BASIC_SWAMPS = {"Swamp"}
 BASIC_MOUNTAINS = {"Mountain"}
 
 # Lands with Swamp subtype (for Urborg/Coffers counting)
-SWAMP_TYPED_LANDS = {"Swamp", "Blood Crypt", "Smoldering Marsh", "Leechridden Swamp"}
-MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Smoldering Marsh"}
+SWAMP_TYPED_LANDS = {"Swamp", "Blood Crypt", "Smoldering Marsh", "Leechridden Swamp", "Turbulent Crater"}
+MOUNTAIN_TYPED_LANDS = {"Mountain", "Blood Crypt", "Smoldering Marsh", "Turbulent Crater"}
 
 # Lands that produce B
 B_PRODUCING_LANDS = {
     "Swamp", "Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs",
-    "Blackcleave Cliffs", "Dragonskull Summit", "Foreboding Ruins", "Smoldering Marsh",
+    "Blackcleave Cliffs", "Dragonskull Summit", "Turbulent Crater", "Smoldering Marsh",
     "Haunted Ridge", "Blightstep Pathway", "Castle Locthwain",
     "Urborg, Tomb of Yawgmoth", "Leechridden Swamp",
 }
@@ -90,7 +90,7 @@ B_PRODUCING_LANDS = {
 # Lands that produce R
 R_PRODUCING_LANDS = {
     "Mountain", "Blood Crypt", "Command Tower", "Luxury Suite", "Sulfurous Springs",
-    "Blackcleave Cliffs", "Dragonskull Summit", "Foreboding Ruins", "Smoldering Marsh",
+    "Blackcleave Cliffs", "Dragonskull Summit", "Turbulent Crater", "Smoldering Marsh",
     "Haunted Ridge", "Blightstep Pathway", "Mount Doom",
 }
 
@@ -177,13 +177,13 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
             return False
         return not has_swamp_or_mountain
 
-    if name == "Foreboding Ruins":
-        # Must reveal a card with Swamp or Mountain subtype from hand
-        can_reveal = any(
-            h in SWAMP_TYPED_LANDS or h in MOUNTAIN_TYPED_LANDS
-            for h in hand if h != name
-        )
-        return not can_reveal
+    if name == "Turbulent Crater":
+        # DEC-946 (replaced Foreboding Ruins). Untapped once opponents control
+        # 8+ lands. Opponent boards are not tracked; under the vanilla 4-player
+        # model that holds from your turn 4 in every seat (turn 3 only in seats
+        # 3-4), so gate on this being at least the 4th land drop (conservative;
+        # same model as Turbulent Crater in hoard-and-bleed, DEC-929).
+        return other_count < 3
 
     if name == "Smoldering Marsh":
         return basics < 2

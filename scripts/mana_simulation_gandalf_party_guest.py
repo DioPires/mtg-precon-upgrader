@@ -81,9 +81,9 @@ ROCK_DEFS = {
 
 # --- Land subtype definitions (for check lands and the battleland) ---
 
-PLAINS_TYPED_LANDS = {"Plains", "Turbulent Steppe",
+PLAINS_TYPED_LANDS = {"Plains", "Turbulent Steppe", "Turbulent Shore",
                       "Hallowed Fountain", "Sacred Foundry"}
-ISLAND_TYPED_LANDS = {"Island", "Turbulent Springs",
+ISLAND_TYPED_LANDS = {"Island", "Turbulent Springs", "Turbulent Shore",
                       "Steam Vents", "Hallowed Fountain"}
 MOUNTAIN_TYPED_LANDS = {"Mountain", "Turbulent Springs", "Turbulent Steppe",
                         "Steam Vents", "Sacred Foundry"}
@@ -116,7 +116,9 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], turn: int) -> bo
         return len(battlefield_lands) >= PAY_LIFE_DEV_LANDS
     # "Tapped unless your opponents control eight or more lands" — 4-player
     # model: 3 opponents make ~3 land drops per turn cycle, so untapped from T4.
-    if name in {"Turbulent Springs", "Turbulent Steppe"}:
+    # Turbulent Shore joined on DEC-946 (replaced Prairie Stream, which had
+    # fallen through to the untapped-colorless fallback).
+    if name in {"Turbulent Springs", "Turbulent Steppe", "Turbulent Shore"}:
         return turn < 4
 
     # Check lands (need a matching typed land on the battlefield)
@@ -187,7 +189,7 @@ def compute_land_sources(name: str, battlefield_lands: list[str],
         return [PLAZA_ATOM]
 
     # WU duals (Skycloud Expanse filter + Hengegate Pathway MDFC modeled as duals)
-    if name in {"Skycloud Expanse", "Adarkar Wastes",
+    if name in {"Skycloud Expanse", "Adarkar Wastes", "Turbulent Shore",
                 "Glacial Fortress", "Hengegate Pathway", "Hallowed Fountain"}:
         return [frozenset({"W", "U"})]
 
