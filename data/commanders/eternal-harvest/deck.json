@@ -105,7 +105,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks for acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, Bitterblossom for consistent token fodder, and Priest of Forgotten Gods for a multi-axis sac outlet that draws, drains, generates mana, and forces opponent sacrifices. Bloodghast provides self-recurring sac fodder that returns whenever a land enters under your control, Braids, Arisen Nightmare turns spare fodder into cards or opponent life loss at each end step, and Plaguecrafter loops with Meren for a repeating no-target edict. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Plumb the Forbidden provides instant-speed mass sacrifice and card draw, doubling as a board wipe response. Black Market Connections compounds the engine with Treasure ramp, card draw, and changeling bodies every turn. Colossal Grave-Reaver turns every mill into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Mikaeus, the Unhallowed gives all non-Human creatures undying, doubling the value of every sacrifice. With Yawgmoth's -1/-1 counters canceling undying's +1/+1 counters, the deck achieves infinite loops — draw the deck, drain all opponents with Blood Artist or Bastion of Remembrance, or repeatedly reanimate Gray Merchant and Kokusho for lethal drain. Avacyn, Angel of Horror returns every nontoken creature that dies at the next end step, so with a free outlet each creature can die once per end step, four times per turn cycle; Kokusho alone drains 20 per cycle that way, 40 with Drivnod. Walking Ballista at X=0 with Mikaeus creates the most compact infinite death trigger loop — Entomb + Reanimate assembles it. Gravecrawler provides a parallel infinite combo line with Phyrexian Altar and any other Zombie (Warren Soultrader or Gray Merchant of Asphodel). Simulacrum Shaper fetches a basic land on every entry and draws a card when it dies, so one sacrifice plus Meren's end-step return nets a land and a card each turn cycle. Late-game cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
+    "strategyOverview": "Golgari reanimation engine that accumulates experience counters through sacrifice, then uses Meren's end-step trigger to return creatures from graveyard to hand or battlefield. Early turns deploy mana dorks for acceleration, plus Overlord of the Balemurk via impending to start milling immediately. Mid-game establishes sacrifice loops with Spore Frog for protection, Sakura-Tribe Elder for ramp, Bitterblossom for consistent token fodder, and Priest of Forgotten Gods for a multi-axis sac outlet that draws, drains, generates mana, and forces opponent sacrifices. Bloodghast provides self-recurring sac fodder that returns whenever a land enters under your control, Braids, Arisen Nightmare turns spare fodder into cards or opponent life loss at each end step, and Plaguecrafter loops with Meren for a repeating no-target edict. The drain package — Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, and Sephiroth's permanent emblem — converts every death into opponent life loss. Bloodline Recollector turns any turn with three deaths into a repeatable draw-three for one black mana, and Meren returns it when it is sacrificed. Black Market Connections compounds the engine with Treasure ramp, card draw, and changeling bodies every turn. Colossal Grave-Reaver turns every mill into free reanimation, and Buried Alive into a tutor-plus-reanimate package. Mikaeus, the Unhallowed gives all non-Human creatures undying, doubling the value of every sacrifice. With Yawgmoth's -1/-1 counters canceling undying's +1/+1 counters, the deck achieves infinite loops — draw the deck, drain all opponents with Blood Artist or Bastion of Remembrance, or repeatedly reanimate Gray Merchant and Kokusho for lethal drain. Avacyn, Angel of Horror returns every nontoken creature that dies at the next end step, so with a free outlet each creature can die once per end step, four times per turn cycle; Kokusho alone drains 20 per cycle that way, 40 with Drivnod. Walking Ballista at X=0 with Mikaeus creates the most compact infinite death trigger loop — Entomb + Reanimate assembles it. Gravecrawler provides a parallel infinite combo line with Phyrexian Altar and any other Zombie (Warren Soultrader or Gray Merchant of Asphodel). Simulacrum Shaper fetches a basic land on every entry and draws a card when it dies, so one sacrifice plus Meren's end-step return nets a land and a card each turn cycle. Late-game cheats in Archon of Cruelty for devastating value, or casts Living Death to reanimate an entire graveyard at once. Grave Pact locks opponents out of creatures while the drain battery closes the game."
   },
   "categories": [
     {
@@ -167,7 +167,7 @@
       "name": "Card Advantage",
       "cards": [
         "Skullclamp",
-        "Plumb the Forbidden",
+        "Bloodline Recollector // Ancestral Craving",
         "Greater Good",
         "Black Market Connections",
         "Liliana, Dreadhorde General",
@@ -1084,6 +1084,27 @@
           "detail": "DEC-945 board-approved swap for Harvester of Souls (verdict card c8a17383, 2026-10-07)"
         }
       ]
+    },
+    {
+      "title": "Bloodline Recollector + Meren of Clan Nel Toth",
+      "cards": [
+        "Bloodline Recollector // Ancestral Craving",
+        "Meren of Clan Nel Toth"
+      ],
+      "description": "Sacrifice three creatures in a turn, cast Ancestral Craving at the end step after Recollector prepares, then sacrifice Recollector too; Meren returns it (mana value 2) at a later end step and the loop repeats.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall oracle + rulings",
+          "url": "https://scryfall.com/card/fra/49/bloodline-recollector-ancestral-craving",
+          "detail": "Oracle verified 2026-10-08; Prepared rulings (one copy per preparation, controller casts it, unprepares on cast)."
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-949 line D."
+        }
+      ]
     }
   ],
   "highlights": [
@@ -1492,15 +1513,21 @@
       ]
     },
     {
-      "name": "Plumb the Forbidden",
-      "price": "$1-2",
+      "name": "Bloodline Recollector // Ancestral Craving",
+      "price": "$5.37",
       "isGameChanger": false,
-      "reason": "Instant-speed mass card draw + sacrifice enabler. Sac X creatures as additional cost, draw X+1 cards. Board wipe response: sac everything, draw a new hand, trigger all death payoffs. Enables Sephiroth transform by saccing 4 in one shot.",
+      "reason": "2-mana body that prepares at any end step in which three or more creatures died (any player's, tokens included). Each preparation lets you cast Ancestral Craving for {B}: draw three, lose 3. Fourteen sacrifice outlets make three deaths a normal turn, and Meren returns the 2-MV body at the end step. Cast the Craving before sacrificing it: the exiled copy exists only while it stays on the battlefield prepared.",
       "sources": [
         {
-          "type": "edhrec",
-          "name": "EDHREC - Meren Sacrifice",
-          "url": "https://edhrec.com/commanders/meren-of-clan-nel-toth/sacrifice"
+          "type": "scryfall",
+          "name": "Scryfall oracle + rulings",
+          "url": "https://scryfall.com/card/fra/49/bloodline-recollector-ancestral-craving",
+          "detail": "Oracle verified 2026-10-08; Prepared rulings (one copy per preparation, controller casts it, unprepares on cast)."
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-949 line D: replaces Plumb the Forbidden (one-shot draw, 0 Combo Lab uses)."
         }
       ]
     },
@@ -1754,6 +1781,25 @@
           "detail": "DEC-931 board-approved swap for Culling the Weak (verdict card 682b6545, 2026-09-29)"
         }
       ]
+    },
+    {
+      "name": "Hall of Echoes",
+      "price": "$3.27",
+      "isGameChanger": false,
+      "reason": "Colorless utility land. {5}: becomes a copy of Meren in main phase 2 for a second end-step reanimation trigger (experience counters belong to the player), or a copy of Drivnod so every death trigger fires three times for the turn. Legend rule is off while the copy lasts.",
+      "sources": [
+        {
+          "type": "scryfall",
+          "name": "Scryfall oracle + rulings",
+          "url": "https://scryfall.com/card/fra/179/hall-of-echoes",
+          "detail": "Oracle verified 2026-10-08. Rulings: the copy does not enter the battlefield (no ETB), both effects expire together at end of turn."
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "DEC-949 line C: replaces one Swamp (5 to 4); Karsten B 25.1/20 after the cut."
+        }
+      ]
     }
   ],
   "decklist": [
@@ -1861,7 +1907,7 @@
     {
       "name": "Swamp",
       "type": "Land",
-      "quantity": 5,
+      "quantity": 4,
       "primary_role": "land"
     },
     {
@@ -1915,9 +1961,10 @@
       "primary_role": "card-draw"
     },
     {
-      "name": "Plumb the Forbidden",
-      "type": "Instant",
-      "primary_role": "card-draw"
+      "name": "Bloodline Recollector // Ancestral Craving",
+      "type": "Creature",
+      "primary_role": "card-draw",
+      "secondary_role": "utility"
     },
     {
       "name": "Greater Good",
@@ -2221,6 +2268,11 @@
       "name": "Crypt of Agadeem",
       "type": "Land",
       "quantity": 1,
+      "primary_role": "land"
+    },
+    {
+      "name": "Hall of Echoes",
+      "type": "Land",
       "primary_role": "land"
     },
     {

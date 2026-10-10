@@ -110,7 +110,7 @@ G_PRODUCING_LANDS = {
 }
 
 C_ONLY_LANDS = {
-    "Phyrexian Tower", "High Market", "Volrath's Stronghold",
+    "Phyrexian Tower", "High Market", "Volrath's Stronghold", "Hall of Echoes",
 }
 
 # Lands with Swamp subtype (for Urborg, Woodland Cemetery checks, fetch targets)
