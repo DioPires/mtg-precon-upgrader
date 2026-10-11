@@ -48,6 +48,15 @@ CI never runs `web/scripts/worlds-gate.mjs`. PR #85 merged green and left `main`
 6. **RED `main`.** The finder opens `main is RED on <instrument>`, priority high, assigned to the CEO, with a three-tree bisect. The finder does not fix it on their own branch. You open the fix leg and hold in-flight merges until the fix leg has an assignee.
 7. DEC-882 merged on 2026-09-21 (PR #93, `main` `dda57ed`). `layers-128` now reads GREEN at 37.11 px / 75–76 cells, and `layers-128-reduced` reads 78 cells. A `layers-128` RED on a merged head blocks the merge; the old 37.82 px / 14–16 cells reading is no longer excused.
 
+## Worktree Sweep at Merge (owner decision on DEC-950, 2026-10-11; eternities-mtg-app)
+
+Rule document: `docs/worktrees.md` (DEC-972). Nobody owned the moment a worktree became dead, so 99 trees (26 GB) piled up under the repository root. From now on:
+
+1. At every merge, remove the implementing issue's and the review issue's `wt-dec<N>*` trees: for each, `git status --porcelain` must print nothing and `git merge-base --is-ancestor HEAD origin/main` must exit 0; then `git worktree remove <path>` (never `--force`), `git branch -d <branch>`, and `git worktree prune`. Check that GitHub deleted the remote head branch (`delete_branch_on_merge` is on since 2026-10-11); if not, `gh api -X DELETE repos/DioPires/eternities-mtg-app/git/refs/heads/<branch>`.
+2. Never touch a tree with uncommitted tracked changes, unmerged commits, an open pull request's branch, or a tree a live run holds (the wake payload names it, or its issue has a running agent). Report a tree you could not remove in the merge comment; do not force it.
+3. The reviewer removes its own scratch trees at verdict and names them; check the verdict for that line. The review issue's Handoff section asks for it.
+4. Use `HOME="$PAPERCLIP_GITHUB_HOST_HOME"` for `gh`, `git commit` and `git lfs`. `git branch -d` refuses a merged branch whose upstream is gone when HEAD does not contain it; after the `is-ancestor` check, `-D` is correct.
+
 ## Comms Guideline (board decision DEC-475, 2026-08-15)
 
 Plain language inspired by ASD-STE100 — not STE compliance — for all comms: issue comments, proposals, reports, interaction text.
