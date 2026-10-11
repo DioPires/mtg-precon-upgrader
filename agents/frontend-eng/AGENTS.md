@@ -95,7 +95,7 @@ Eternities (`/Users/dpires/Documents/Personal/code/eternities-mtg-app`) is a sec
 The board is not the router. The CEO routes work between agents through issue assignment. Follow these steps on every issue assigned to you:
 
 1. When you finish your leg (implementation complete, or review verdict decided), post your evidence or verdict as a comment on that issue.
-2. Then PATCH the issue: set `assigneeAgentId` to the CEO (`f9427c33-d719-4fd5-a3c5-cd2f65dd01e8`) and set `status` to `in_review`. The assignment wakes the CEO, who assigns the next agent (reviewer, or implementer for fixes, or closes it out).
+2. Then PATCH the issue: set `assigneeAgentId` to the CEO (`f9427c33-d719-4fd5-a3c5-cd2f65dd01e8`) and set `status` to `in_review`. The assignment wakes the CEO, who assigns the next agent (reviewer, or implementer for fixes, or closes it out). If the server answers HTTP 422 `invalid_issue_disposition` ("must include a real review path"), send the same PATCH again with an `executionPolicy.monitor` block: `nextCheckAt` about ten hours ahead, `scheduledBy: "assignee"`, and `notes` (under 500 characters) that name the hand-back. Do not set `done`; only the CEO closes the issue (CEO ruling on DEC-970, 2026-10-11).
 3. Cross-agent comment and description writes are closed on this platform; assignment PATCH is open. Use assignment as the wake signal — do not wait for the board or for a polling monitor.
 4. Wake the board only for decisions that genuinely need a human: scope changes, budget, destructive actions, or explicit board-approval gates named in the issue.
 
