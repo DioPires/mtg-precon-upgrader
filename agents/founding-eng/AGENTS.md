@@ -47,6 +47,7 @@ Eternities (`/Users/dpires/Documents/Personal/code/eternities-mtg-app`) is a sec
 5. The agent that builds never approves. The reviewer draws the bench on the pull request head merged with `main`, before merge (8.8.7). A web change under `web/src/camera/**`, `web/src/scene/**` or `web/src/labels/**` triggers the Renderer Draw Rule; the CEO writes the rows into the review issue.
 6. Decisions live in `docs/decisions/`, `prd_v4.md` section 12 and the DEC-950 plan section 12. There is no lessons file (plan 12.11, finding 8).
 7. The web edition is frozen at tag `web-edition-v1` (8.11); it changes only for data-refresh redeploys and reviewed fixes.
+8. Worktrees (owner decision on DEC-950, 2026-10-11; the rule document is `docs/worktrees.md`, DEC-972): one worktree per leg under the repository root, `wt-dec<N>` for the implementer and `wt-dec<N>-<suffix>` for a reviewer's scratch tree. Commit anything worth keeping to the branch before hand-back; untracked output in a worktree is deleted with the tree. A reviewer removes its own scratch trees when it posts the verdict and names them in it. The CEO removes the leg's trees and the local branch at merge; GitHub deletes the remote head branch. Never `git worktree remove --force`.
 
 ## Issue Handoff Protocol (board directive on DEC-488, 2026-08-15)
 

@@ -123,3 +123,23 @@ Totals: 99 worktrees besides the root checkout, 25.98 GB. Safe to remove (clean,
 - Root checkout: branch `dec739-platform-layer` at `305b99c` (merged as PR #45 on 2026-09-14). Untracked at the root: `prd_v4.md` (draft 5 text, older than `main`), `docs/decisions/dec950-overhaul-deep-dive.md` (revision 7, older than `main`), `REVIEW-2026-09-08.md` (cited by the plan; exists nowhere on `main`), `.claude/`.
 - Local branches: 136, of which 121 are merged into `origin/main`. Remote branches: 115, of which 106 are merged. Repository setting `delete_branch_on_merge` is false.
 - `git worktree prune --dry-run` lists nothing: every registered worktree still has its directory.
+
+
+## Outcome (CEO, 2026-10-11 11:1xZ, on the owner's picks remove_safe + rule + remote_branches)
+
+Basis before the sweep: `origin/main` `c54f50f`, open pull requests #113 (`dec951-prd-amend-3`) and #115 (`dec953-dominaria-slice`, draft, live run). Each tree was re-checked immediately before removal: `git status --porcelain` empty, `git merge-base --is-ancestor HEAD origin/main` true, not an open-pull-request branch, not `wt-dec953` or `wt-dec951-amend3`. No `--force`. `git worktree prune` after. Per-tree log: `dec950-worktree-removal-2026-10-11.json`.
+
+| | Before | After |
+|---|---|---|
+| Worktrees besides the root checkout | 99 | 22 |
+| Removed (clean, on `main`) | | 77, 0 failed |
+| Local branches | 136 | 17 |
+| Remote branches | 114 | 8 |
+| `delete_branch_on_merge` | false | true (read back) |
+| Disk free, `df -h /` | 566 GiB | 572 GiB |
+
+The `df` gain is smaller than the 14.8 GB `du` sum because APFS clones share blocks between worktrees. Local branches left: `main`, the two open heads, four checked out in kept trees (`dec739-platform-layer` at the root, `dec774-galaxy-spin-axis`, `dec878-gate-runner-probe`, `dec883-gate-runner-fix`), and ten unmerged (`dec694-worlds-prototype`, `dec740-ui-three-boundary`, `dec749-r1-pick-floor-probe`, `dec752-backup-3468ee3`, `dec752-backup-adbdcca`, `dec752-backup-b261f01`, `dec752-scratch-tilt-arm`, `dec812-gate-instrument`, `dec838-wire-bytes-instrument`, `prerebase-dec752`). Remote branches left: `main`, the two open heads, and five unmerged (`dec-616-midstream-retry`, `dec694-worlds-prototype`, `dec740-ui-three-boundary`, `dec749-r1-pick-floor-probe`, `dec838-wire-bytes-instrument`). The 20 "needs a look" trees were not touched (the owner did not pick `remove_rest`); the root checkout stays on `dec739-platform-layer` (`root_to_main` not picked).
+
+Method note: eleven local merged branches had a deleted upstream and HEAD at the root is old, so `git branch -d` refused them; each was deleted with `-D` after its own `is-ancestor origin/main` check. A single `git push origin --delete` with 107 refs did nothing (rejected as a whole); the deletion was re-run one branch at a time with 0 failures and verified by `git ls-remote --heads` afterwards.
+
+Rule: DEC-972 (Interactive Tools Engineer, low) writes `docs/worktrees.md` and the root-brief pointer; the six engineer instruction files carry item 8 of the Eternities section as the interim rule.
