@@ -1,4 +1,6 @@
+import contextlib
 import importlib
+import io
 import unittest
 
 
@@ -724,6 +726,124 @@ class PerArchetypeTypeConstraintTests(unittest.TestCase):
         self.assertEqual(score, 0.0)
         self.assertEqual(breakdown, {"disqualified": "no archetype match"})
         self.assertEqual(matched, [])
+
+
+class CandidatePinTests(unittest.TestCase):
+    """DEC-992: deck.json candidate_pins seat cards below the cut, flagged pinned."""
+
+    DECK_ID = "dec992-test-deck"
+
+    def _playbook(self):
+        return {
+            "archetypes": {
+                "etb-flicker": {
+                    "name": "ETB Value / Flicker",
+                    "oracle_patterns": ["exile [^.]*then return", "when [^.]*enters"],
+                    "type_constraints": [],
+                    "staples": [],
+                    "anti_patterns": [],
+                }
+            }
+        }
+
+    def _card(self, name, oracle_text, cmc=3, color_identity=("W",)):
+        return {
+            "name": name,
+            "cmc": cmc,
+            "mana_cost": "",
+            "type_line": "Creature — Dog",
+            "oracle_text": oracle_text,
+            "color_identity": list(color_identity),
+        }
+
+    def _cards(self):
+        blink = (
+            "When this creature enters, exile another target creature you control, "
+            "then return it to the battlefield."
+        )
+        return [
+            self._card("Test Commander", "Vigilance"),
+            self._card("Strong Blinker A", blink),
+            self._card("Strong Blinker B", blink),
+            self._card("Weak Blinker", "When this creature enters, you gain 1 life.", cmc=9),
+            self._card("Off-Colour Blinker", blink, color_identity=("U",)),
+            self._card("Vanilla Dog", "Vigilance"),
+        ]
+
+    def _generate(self, pins=None, decklist=(), limit=2):
+        cards = self._cards()
+        deck = {
+            "commander": "Test Commander",
+            "archetypes": ["etb-flicker"],
+            "decklist": [{"name": n, "quantity": 1} for n in decklist],
+        }
+        if pins is not None:
+            deck["candidate_pins"] = [{"name": n, "reason": "Test pin (DEC-992)."} for n in pins]
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            out = candidate_pool.generate_for_deck(
+                self.DECK_ID,
+                deck,
+                cards,
+                {c["name"]: c for c in cards},
+                self._playbook(),
+                owned=set(),
+                game_changers=set(),
+                mirror_updated_at="test",
+                limit=limit,
+            )
+        return out, stderr.getvalue()
+
+    def _names(self, out):
+        return [c["name"] for c in out["candidates"]]
+
+    def test_pinned_card_below_cut_is_seated_with_flag(self):
+        out, _stderr = self._generate(pins=["Weak Blinker"])
+        self.assertEqual(self._names(out), ["Strong Blinker A", "Strong Blinker B", "Weak Blinker"])
+        self.assertEqual(out["candidate_count"], 3)
+        weak = out["candidates"][2]
+        self.assertIs(weak["pinned"], True)
+        self.assertGreater(weak["score"], 0)
+        self.assertLess(weak["score"], out["candidates"][1]["score"])
+        self.assertNotIn("pinned", out["candidates"][0])
+        self.assertNotIn("pinned", out["candidates"][1])
+
+    def test_pinned_card_keeps_score_order_position(self):
+        out, _stderr = self._generate(pins=["Weak Blinker"], limit=1)
+        self.assertEqual(self._names(out), ["Strong Blinker A", "Weak Blinker"])
+
+    def test_pinned_card_inside_top_n_carries_flag(self):
+        out, _stderr = self._generate(pins=["Strong Blinker B"])
+        self.assertEqual(self._names(out), ["Strong Blinker A", "Strong Blinker B"])
+        self.assertEqual(out["candidate_count"], 2)
+        self.assertNotIn("pinned", out["candidates"][0])
+        self.assertIs(out["candidates"][1]["pinned"], True)
+
+    def test_unknown_pin_is_skipped_with_warning(self):
+        out, stderr = self._generate(pins=["No Such Card"])
+        self.assertEqual(self._names(out), ["Strong Blinker A", "Strong Blinker B"])
+        self.assertIn("'No Such Card' skipped: not in the Scryfall mirror", stderr)
+        self.assertFalse(any("pinned" in c for c in out["candidates"]))
+
+    def test_ineligible_pins_are_skipped_with_warning(self):
+        cases = {
+            "Off-Colour Blinker": "outside the colour identity W",
+            "Vanilla Dog": "scores 0 for this deck",
+            "Weak Blinker": "already in the decklist",
+            "Test Commander": "already in the decklist",
+        }
+        for name, reason in cases.items():
+            with self.subTest(pin=name):
+                out, stderr = self._generate(pins=[name], decklist=["Weak Blinker"], limit=1)
+                self.assertIn(f"{name!r} skipped: {reason}", stderr)
+                self.assertEqual(self._names(out), ["Strong Blinker A"])
+
+    def test_deck_without_pins_has_no_pinned_key(self):
+        out, stderr = self._generate()
+        self.assertEqual(self._names(out), ["Strong Blinker A", "Strong Blinker B"])
+        self.assertEqual(out["candidate_count"], 2)
+        self.assertFalse(any("pinned" in c for c in out["candidates"]))
+        self.assertNotIn("candidate-pin", stderr)
 
 
 if __name__ == "__main__":
