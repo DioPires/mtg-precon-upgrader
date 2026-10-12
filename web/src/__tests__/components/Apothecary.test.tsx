@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { Apothecary } from '../../components/organisms/Apothecary';
-import type { DeckApothecary, DeckPin, RawCandidate } from '../../data/types';
+import type { DeckApothecary, DeckPin, RawCandidate, RawMetricsGap } from '../../data/types';
 
 function makeApothecary(over: Partial<DeckApothecary> = {}): DeckApothecary {
   return {
@@ -278,7 +278,7 @@ describe('Apothecary', () => {
       const grid = remedyGrid(container);
       const entry = grid.querySelector('article[data-card-name="Flickering Hound"]') as HTMLElement;
       expect(entry).toHaveClass('is-pinned');
-      expect(within(entry).getByText('pinned')).toHaveClass('gv1-apo-tag', 'gv1-apo-tag-pinned');
+      expect(within(entry).getByText('board pick')).toHaveClass('gv1-apo-tag', 'gv1-apo-tag-pinned');
       expect(grid.querySelectorAll('.is-pinned')).toHaveLength(1);
       expect(grid.querySelectorAll('.gv1-apo-tag-pinned')).toHaveLength(1);
 
@@ -353,6 +353,148 @@ describe('Apothecary', () => {
       expect(screen.getByText(/no remedies match/i)).toBeInTheDocument();
       const strip = screen.getByRole('region', { name: 'Board picks' });
       expect(within(strip).getByText('Flickering Hound')).toBeInTheDocument();
+    });
+  });
+
+  describe('resilience maladies (DEC-1007)', () => {
+    // The anvil-chorus gaps[] as committed 2026-10-12: one role gap, two resilience gaps.
+    const TUTOR: RawMetricsGap = { role: 'tutor', actual: 1, target: 4, score: 25 };
+    const RECURSION: RawMetricsGap = {
+      resilience_component: 'recursion',
+      score_pct: 33,
+      max: 30,
+      actual: 1,
+      target: 3,
+      wincon_style: 'combat',
+    };
+    const REDUNDANCY: RawMetricsGap = {
+      resilience_component: 'redundancy',
+      score_pct: 50,
+      max: 25,
+      lines: 2,
+      floor: 1,
+      wincon_style: 'combat',
+    };
+
+    const chips = (container: HTMLElement) => [...container.querySelectorAll<HTMLElement>('.gv1-apo-malady')];
+    const part = (chip: HTMLElement, cls: string) => chip.querySelector(cls)?.textContent ?? null;
+    const gridNames = (container: HTMLElement) =>
+      [...remedyGrid(container).querySelectorAll('.gv1-apo-remedy-name')].map((n) => n.textContent);
+
+    // React reports a missing or duplicate key through console.error.
+    let errors: MockInstance;
+    beforeEach(() => {
+      errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+    afterEach(() => {
+      errors.mockRestore();
+    });
+
+    it('labels a resilience gap beside a role gap and logs no key warning', () => {
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ maladies: [TUTOR, RECURSION, REDUNDANCY] })} />,
+      );
+
+      const [tutor, recursion, redundancy] = chips(container);
+      expect(chips(container)).toHaveLength(3);
+      expect(part(tutor, '.gv1-apo-malady-label')).toBe('Tutors');
+      expect(part(tutor, '.gv1-apo-malady-fig')).toBe('1 / 4');
+      expect(part(recursion, '.gv1-apo-malady-kind')).toBe('resilience');
+      expect(part(recursion, '.gv1-apo-malady-label')).toBe('Recursion');
+      expect(part(recursion, '.gv1-apo-malady-fig')).toBe('1 / 3');
+      expect(part(redundancy, '.gv1-apo-malady-label')).toBe('Redundancy');
+      expect(part(redundancy, '.gv1-apo-malady-fig')).toBe('2 lines · floor 1');
+
+      // score_pct on the role chips' thresholds: 33 is bad, 50 is warn.
+      expect(recursion).toHaveClass('gv1-apo-tier-bad');
+      expect(redundancy).toHaveClass('gv1-apo-tier-warn');
+      expect(errors).not.toHaveBeenCalled();
+    });
+
+    it('renders a resilience gap as a static chip that leaves the remedy grid alone', () => {
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ maladies: [TUTOR, RECURSION] })} />,
+      );
+      const before = gridNames(container);
+      const recursion = chips(container)[1];
+
+      expect(recursion.tagName).not.toBe('BUTTON');
+      expect(recursion).not.toHaveAttribute('aria-pressed');
+      expect(screen.queryByRole('button', { name: /recursion/i })).not.toBeInTheDocument();
+      expect(screen.getAllByRole('button', { pressed: false })).toHaveLength(1);
+
+      fireEvent.click(recursion);
+
+      expect(gridNames(container)).toEqual(before);
+      expect(screen.queryByRole('button', { name: /clear filter/i })).not.toBeInTheDocument();
+      expect(screen.getByText(/gap-addressers floated/)).toBeInTheDocument();
+    });
+
+    it('keeps the role filter working next to a resilience chip', () => {
+      const { container } = render(
+        <Apothecary
+          apothecary={makeApothecary({
+            maladies: [{ role: 'card-draw', actual: 4, target: 10, score: 40 }, RECURSION],
+          })}
+        />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /card draw/i, pressed: false }));
+      expect(gridNames(container)).toEqual(['Rhystic Study']);
+      expect(chips(container)).toHaveLength(2);
+    });
+
+    it('keys a role gap and a resilience gap of the same name apart', () => {
+      // grave-dividends carries `protection` in both shapes.
+      const { container } = render(
+        <Apothecary
+          apothecary={makeApothecary({
+            maladies: [
+              { role: 'protection', actual: 2.5, target: 4, score: 62 },
+              { resilience_component: 'protection', score_pct: 62, max: 25, actual: 2.5, target: 4 },
+            ],
+          })}
+        />,
+      );
+
+      const [role, resilience] = chips(container);
+      expect(chips(container)).toHaveLength(2);
+      expect(role.tagName).toBe('BUTTON');
+      expect(part(role, '.gv1-apo-malady-kind')).toBeNull();
+      expect(part(resilience, '.gv1-apo-malady-kind')).toBe('resilience');
+      expect(part(resilience, '.gv1-apo-malady-label')).toBe('Protection');
+      expect(part(resilience, '.gv1-apo-malady-fig')).toBe('2.5 / 4');
+      expect(errors).not.toHaveBeenCalled();
+    });
+
+    it('falls back to the percentage and the raw name for a component it has no counts or label for', () => {
+      const { container } = render(
+        <Apothecary
+          apothecary={makeApothecary({
+            maladies: [
+              { resilience_component: 'gy_second_hand', score_pct: 50, max: 20, actual: 3, target: 6 },
+              { resilience_component: 'mana_denial', score_pct: 10, max: 15 },
+            ],
+          })}
+        />,
+      );
+
+      const [gy, unknown] = chips(container);
+      expect(part(gy, '.gv1-apo-malady-label')).toBe('Graveyard second hand');
+      expect(part(gy, '.gv1-apo-malady-fig')).toBe('3 / 6');
+      expect(part(unknown, '.gv1-apo-malady-label')).toBe('mana_denial');
+      expect(part(unknown, '.gv1-apo-malady-fig')).toBe('10%');
+      expect(unknown).toHaveClass('gv1-apo-tier-crit');
+    });
+
+    it('offers the filter hint only when a chip can filter', () => {
+      const { unmount } = render(<Apothecary apothecary={makeApothecary({ maladies: [TUTOR, RECURSION] })} />);
+      expect(screen.getByText('click to filter remedies')).toBeInTheDocument();
+      unmount();
+
+      // broodfire-hatchery: a recursion gap and nothing else.
+      render(<Apothecary apothecary={makeApothecary({ maladies: [RECURSION] })} />);
+      expect(screen.getByText('MALADIES')).toBeInTheDocument();
+      expect(screen.queryByText('click to filter remedies')).not.toBeInTheDocument();
     });
   });
 

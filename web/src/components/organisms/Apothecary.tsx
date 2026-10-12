@@ -1,9 +1,9 @@
 // Port of gv1-perf.jsx GV1Apothecary (lines 56–355).
 // Co-locates the ScoreRing SVG until the Phase 7 atoms refactor lands.
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ManaCost } from '../atoms/ManaCost';
-import type { DeckApothecary, RawCandidate, RawMetricsGap } from '../../data/types';
+import type { DeckApothecary, RawCandidate, RawResilienceGap, RawRoleGap } from '../../data/types';
 
 const METRICS_KEYS = [
   'manabase_health',
@@ -40,6 +40,14 @@ const ROLE_LABELS: Record<string, string> = {
   counterspell: 'Counters',
 };
 
+// DEC-1007 — metrics.json gaps[] entries keyed by `resilience_component` (DEC-308).
+const RESILIENCE_LABELS: Record<string, string> = {
+  recursion: 'Recursion',
+  redundancy: 'Redundancy',
+  protection: 'Protection',
+  gy_second_hand: 'Graveyard second hand',
+};
+
 const REMEDIES_TOP_N = 30;
 
 function gradeForGlobalHealth(s: number | null | undefined): string {
@@ -65,6 +73,29 @@ function maladyTier(s: number | null | undefined): 'ok' | 'warn' | 'bad' | 'crit
 function fmtFigure(v: number | null | undefined): string {
   if (v == null) return '—';
   return Number.isInteger(v) ? String(v) : v.toFixed(1);
+}
+
+// DEC-1007 — `actual / target` like a role chip when the gap carries both.
+// Redundancy carries win lines and a floor instead: the floor is where the
+// score starts, not the count to reach, so it is not written as `lines / floor`.
+function resilienceFigure(g: RawResilienceGap): ReactNode {
+  if (g.actual != null && g.target != null) {
+    return (
+      <>
+        {fmtFigure(g.actual)}
+        <span className="gv1-dim"> / {fmtFigure(g.target)}</span>
+      </>
+    );
+  }
+  if (g.lines != null && g.floor != null) {
+    return (
+      <>
+        {fmtFigure(g.lines)} {g.lines === 1 ? 'line' : 'lines'}
+        <span className="gv1-dim"> · floor {fmtFigure(g.floor)}</span>
+      </>
+    );
+  }
+  return g.score_pct != null ? `${Math.round(g.score_pct)}%` : '—';
 }
 
 // DEC-311 — render T-prefixed numbers (`T6`) or em-dash when unreached.
@@ -141,7 +172,10 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
     }
   }
 
-  const activeRoles = new Set((maladies || []).map((g) => g.role));
+  // DEC-1007 — only role gaps can filter: a pool entry's `deck_role` and
+  // `mitigates_gap` hold roles, never resilience components.
+  const roleGaps = (maladies || []).filter((g): g is RawRoleGap => 'role' in g);
+  const activeRoles = new Set(roleGaps.map((g) => g.role));
   const effectiveFilter = filterRole && activeRoles.has(filterRole) ? filterRole : null;
 
   let pool: RawCandidate[] = (remedies || []).slice(0, REMEDIES_TOP_N);
@@ -263,15 +297,29 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
           <div className="gv1-apo-subhead">
             <span className="gv1-mono-xs gv1-rune">MALADIES</span>
             <span className="gv1-apo-rule" aria-hidden="true" />
-            <span className="gv1-mono-xs gv1-dim">click to filter remedies</span>
+            {roleGaps.length > 0 && <span className="gv1-mono-xs gv1-dim">click to filter remedies</span>}
           </div>
           <div className="gv1-apo-maladies">
-            {maladies.map((g: RawMetricsGap) => {
+            {maladies.map((g) => {
+              if (!('role' in g)) {
+                return (
+                  <div
+                    key={'resilience:' + g.resilience_component}
+                    className={'gv1-apo-malady gv1-apo-malady-static gv1-apo-tier-' + maladyTier(g.score_pct)}
+                  >
+                    <span className="gv1-mono-xs gv1-dim gv1-apo-malady-kind">resilience</span>
+                    <span className="gv1-apo-malady-label">
+                      {RESILIENCE_LABELS[g.resilience_component] || g.resilience_component}
+                    </span>
+                    <span className="gv1-mono-xs gv1-apo-malady-fig">{resilienceFigure(g)}</span>
+                  </div>
+                );
+              }
               const tier = maladyTier(g.score);
               const isActive = effectiveFilter === g.role;
               return (
                 <button
-                  key={g.role}
+                  key={'role:' + g.role}
                   type="button"
                   className={'gv1-apo-malady gv1-apo-tier-' + tier + (isActive ? ' is-active' : '')}
                   onClick={() => setFilterRole(isActive ? null : g.role)}
@@ -374,7 +422,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
                     )}
                     {c.owned && <span className="gv1-apo-tag gv1-apo-tag-owned">owned</span>}
                     {c.game_changer && <span className="gv1-apo-tag gv1-apo-tag-gc">game changer</span>}
-                    {c.pinned === true && <span className="gv1-apo-tag gv1-apo-tag-pinned">pinned</span>}
+                    {c.pinned === true && <span className="gv1-apo-tag gv1-apo-tag-pinned">board pick</span>}
                     {c.deck_role && c.deck_role !== c.mitigates_gap && (
                       <span className="gv1-apo-tag gv1-apo-tag-role">
                         {ROLE_LABELS[c.deck_role] || c.deck_role}
