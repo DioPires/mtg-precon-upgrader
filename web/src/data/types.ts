@@ -207,12 +207,33 @@ export interface RawSimulation {
   curveEfficiency?: RawSimCurveEfficiency;
 }
 
-export interface RawMetricsGap {
+export interface RawRoleGap {
   role: string;
   actual: number;
   target: number;
   score: number;
+  wincon_style?: string | null;
 }
+
+/**
+ * DEC-308 — a resilience component under 70% of its max (`resilience_health`
+ * in `scripts/compute_deck_metrics.py`). `resilience_component` is one of
+ * `recursion`, `redundancy`, `protection`, `gy_second_hand`. Redundancy
+ * carries `lines`/`floor`; the other three carry `actual`/`target`.
+ */
+export interface RawResilienceGap {
+  resilience_component: string;
+  score_pct: number;
+  max: number;
+  actual?: number;
+  target?: number;
+  lines?: number;
+  floor?: number;
+  wincon_style?: string | null;
+}
+
+/** `metrics.json` `gaps[]` holds both shapes; tell them apart by `'role' in gap`. */
+export type RawMetricsGap = RawRoleGap | RawResilienceGap;
 
 export interface RawMetricsComponent {
   score: number;
