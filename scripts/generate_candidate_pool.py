@@ -33,7 +33,7 @@ MIRROR_META = PROJECT_ROOT / "priv_data" / "scryfall-oracle.meta.json"
 OWNED_FILE = PROJECT_ROOT / "priv_data" / "owned_formatted.csv"
 EDHREC_RATES_DIR = PROJECT_ROOT / "priv_data" / "edhrec"
 
-METHODOLOGY_VERSION = "candidate-pool-v6"
+METHODOLOGY_VERSION = "candidate-pool-v7"
 DEFAULT_LIMIT = 200
 SATURATION_THRESHOLD = 8
 SATURATION_FLOOR = 0.35
@@ -389,8 +389,6 @@ def score_card(
     raw_pattern_score = 0.0
     adjusted_pattern_score = 0.0
     total_patterns = 0
-    type_constraint_satisfied = False
-    type_constraint_required = False
     saturated_archetypes = []
     position_weights_applied: dict[str, float] = {}
 
@@ -399,11 +397,8 @@ def score_card(
             if anti.search(oracle):
                 return 0.0, {"disqualified": "anti-pattern", "archetype": arch["name"]}, []
 
-        if arch["_type_constraints"]:
-            type_constraint_required = True
-            if any(tc in type_blob for tc in arch["_type_constraints"]):
-                type_constraint_satisfied = True
-
+        # type_constraints gate their own archetype only (DEC-990): a card off the
+        # constrained type gets no hit here but can still hit the deck's other archetypes.
         arch_strength, n_patterns = archetype_raw_strength(oracle, type_blob, name, arch)
         if arch_strength > 0:
             archetype_hits.append((arch["name"], arch_strength))
@@ -427,9 +422,6 @@ def score_card(
     # Sort matched archetypes by per-archetype strength desc, preserving order for ties
     archetype_hits.sort(key=lambda t: -t[1])
     matched_archetypes = [n for n, _ in archetype_hits]
-    if type_constraint_required and not type_constraint_satisfied:
-        # Voltron archetype with type_constraints requires Equipment/Aura
-        return 0.0, {"disqualified": "type constraint not satisfied"}, []
 
     # 1. Keyword density (0–40)
     raw_density = (raw_pattern_score / total_patterns) if total_patterns else 0.0
