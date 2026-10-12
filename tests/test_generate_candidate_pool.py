@@ -642,5 +642,89 @@ class DecklistExclusionNormalizationTests(unittest.TestCase):
         self.assertTrue(breakdown["decklist_demoted"])
 
 
+class PerArchetypeTypeConstraintTests(unittest.TestCase):
+    """DEC-990: type_constraints gate their own archetype, not the whole deck."""
+
+    def _archetypes(self):
+        flicker = candidate_pool.compile_archetype(
+            {
+                "name": "ETB Value / Flicker",
+                "oracle_patterns": ["exile [^.]*then return.*?to the battlefield", "when [^.]*enters"],
+                "type_constraints": [],
+                "staples": [],
+                "anti_patterns": [],
+            }
+        )
+        changeling = candidate_pool.compile_archetype(
+            {
+                "name": "Changeling Omnitype Tribal",
+                "oracle_patterns": ["changeling", "of the chosen type"],
+                "type_constraints": ["Creature — Shapeshifter"],
+                "staples": [],
+                "anti_patterns": [],
+            }
+        )
+        return [flicker, changeling]
+
+    def _score(self, card, archetypes):
+        return candidate_pool.score_card(
+            card,
+            archetypes,
+            deck_avg_cmc=3,
+            decklist_names=set(),
+            owned=set(),
+            game_changers=set(),
+            bracket=4,
+            context={
+                "archetype_ids": {"etb-flicker", "changeling-omnitype-tribal"},
+                "archetype_counts": {},
+                "asymmetric_only": False,
+                "creature_count": 30,
+                "sac_outlet_count": 0,
+            },
+        )
+
+    def test_off_type_card_still_hits_unconstrained_archetype(self):
+        card = {
+            "name": "Flickering Hound",
+            "cmc": 4,
+            "type_line": "Creature — Dog",
+            "oracle_text": (
+                "Whenever you cast a creature spell, exile up to one other target creature "
+                "you control, then return that card to the battlefield under its owner's control."
+            ),
+        }
+        score, breakdown, matched = self._score(card, self._archetypes())
+        self.assertGreater(score, 0)
+        self.assertNotIn("disqualified", breakdown)
+        self.assertEqual(matched, ["ETB Value / Flicker"])
+
+    def test_on_type_card_keeps_constrained_archetype_hit(self):
+        card = {
+            "name": "Test Changeling Blinker",
+            "cmc": 3,
+            "type_line": "Creature — Shapeshifter",
+            "oracle_text": (
+                "Changeling\nWhen this creature enters, exile another target creature you control, "
+                "then return it to the battlefield."
+            ),
+        }
+        score, _breakdown, matched = self._score(card, self._archetypes())
+        self.assertGreater(score, 0)
+        self.assertCountEqual(matched, ["ETB Value / Flicker", "Changeling Omnitype Tribal"])
+
+    def test_off_type_card_gets_no_constrained_archetype_hit(self):
+        card = {
+            "name": "Test Chosen-Type Lord",
+            "cmc": 3,
+            "type_line": "Creature — Human",
+            "oracle_text": "Creatures you control of the chosen type get +1/+1.",
+        }
+        score, breakdown, matched = self._score(card, self._archetypes())
+        self.assertEqual(score, 0.0)
+        self.assertEqual(breakdown, {"disqualified": "no archetype match"})
+        self.assertEqual(matched, [])
+
+
 if __name__ == "__main__":
     unittest.main()

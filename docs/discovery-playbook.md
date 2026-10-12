@@ -77,7 +77,7 @@ The boost is a **tiebreaker by design**: at +5 it sits below the owned boost (+1
   "name": "Human-readable name",
   "summary": "1-line strategic summary",
   "oracle_patterns": ["case-insensitive Python regex"],   // matched against oracle_text
-  "type_constraints": ["Equipment", "Aura"],              // optional; substring match against type_line
+  "type_constraints": ["Equipment", "Aura"],              // optional; substring match against type_line; gates this archetype only
   "cmc_max": 5,                                           // optional; cards above this are demoted
   "staples": ["Reanimate", "Animate Dead"],              // always-consider list, even if low pattern density
   "anti_patterns": ["graveyard hate"]                    // patterns that disqualify a card despite matches
@@ -102,6 +102,8 @@ Each candidate card is scored 0–100 by the generator. Components:
 8. **Quality-aware role redundancy:** for each candidate, the scorer looks up the in-deck cards that share the candidate's `primary_role` and computes their median candidate-pool score (scored as fresh candidates, ignoring the decklist cap). If the role bucket is saturated (≥ 8 in-deck cards in that role) **and** the candidate scores below the bucket median, the candidate's total is multiplied by `0.65`. The intent is to stop strictly-worse alternatives bubbling up under tuned decks: a colorless ramp deck running Mana Crypt + Thran Dynamo should not score Dreamstone Hedron above genuine upgrades just because the ramp role is open. Surfaced as `score_breakdown.redundancy_below_roster_median` with role, bucket count, bucket median, and the applied multiplier. The deck-level `role_pool` field on the candidates JSON exposes the per-role count and median used.
 
 Anti-patterns disqualify outright (return score 0).
+
+`type_constraints` gate their own archetype only (DEC-990, `candidate-pool-v7`). A constrained archetype gives a card a hit only when the card's type line contains one of its constraints. A card off that type still scores against the deck's other archetypes. A card with no archetype hit scores 0. Before v7 the check was deck-wide: one constrained archetype disqualified every off-type card for the whole deck, so Anvil Chorus (`tokens-go-wide`, `etb-flicker`, `changeling-omnitype-tribal`) kept only 21 Shapeshifters.
 
 Deck-context anti-synergy rules are scored separately from playbook `anti_patterns`.
 They do not disqualify a card by default; instead, they subtract named point
