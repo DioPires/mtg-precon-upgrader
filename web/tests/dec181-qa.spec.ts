@@ -19,12 +19,21 @@ async function getFirstDeck(page: Page): Promise<string> {
   return idx.commanders[0].id;
 }
 
+// DEC-1008: `.gv1-root` is `overflow: hidden`, so content wider than the
+// viewport never reaches `documentElement` — the root swallows it, and script
+// can still scroll the root sideways. Read the root as well as the document.
 async function pageOverflows(page: Page): Promise<boolean> {
-  const m = await page.evaluate(() => ({
-    win: window.innerWidth,
-    doc: document.documentElement.scrollWidth,
-  }));
-  return m.doc > m.win + 1;
+  const m = await page.evaluate(() => {
+    const root = document.querySelector('.gv1-root');
+    return {
+      win: window.innerWidth,
+      doc: document.documentElement.scrollWidth,
+      rootScroll: root?.scrollWidth ?? 0,
+      rootClient: root?.clientWidth ?? 0,
+      rootLeft: root?.scrollLeft ?? 0,
+    };
+  });
+  return m.doc > m.win + 1 || m.rootScroll > m.rootClient + 1 || m.rootLeft !== 0;
 }
 
 for (const width of WIDTHS) {
