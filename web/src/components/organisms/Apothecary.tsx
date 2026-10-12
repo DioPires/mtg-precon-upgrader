@@ -422,7 +422,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
                     )}
                     {c.owned && <span className="gv1-apo-tag gv1-apo-tag-owned">owned</span>}
                     {c.game_changer && <span className="gv1-apo-tag gv1-apo-tag-gc">game changer</span>}
-                    {c.pinned === true && <span className="gv1-apo-tag gv1-apo-tag-pinned">pinned</span>}
+                    {c.pinned === true && <span className="gv1-apo-tag gv1-apo-tag-pinned">board pick</span>}
                     {c.deck_role && c.deck_role !== c.mitigates_gap && (
                       <span className="gv1-apo-tag gv1-apo-tag-role">
                         {ROLE_LABELS[c.deck_role] || c.deck_role}

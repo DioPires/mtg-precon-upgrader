@@ -278,7 +278,7 @@ describe('Apothecary', () => {
       const grid = remedyGrid(container);
       const entry = grid.querySelector('article[data-card-name="Flickering Hound"]') as HTMLElement;
       expect(entry).toHaveClass('is-pinned');
-      expect(within(entry).getByText('pinned')).toHaveClass('gv1-apo-tag', 'gv1-apo-tag-pinned');
+      expect(within(entry).getByText('board pick')).toHaveClass('gv1-apo-tag', 'gv1-apo-tag-pinned');
       expect(grid.querySelectorAll('.is-pinned')).toHaveLength(1);
       expect(grid.querySelectorAll('.gv1-apo-tag-pinned')).toHaveLength(1);
 
