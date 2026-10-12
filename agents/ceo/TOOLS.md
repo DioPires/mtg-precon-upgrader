@@ -7,6 +7,7 @@
 - Post comment: `POST /api/issues/{uuid}/comments` with `{"body": "..."}`.
 - Set status: `PATCH /api/issues/{uuid}` with `{"status": "done" | ...}`.
 - Route-shape gotchas: see memory `reference_paperclip_api_route_shapes`.
+- Interactions (`POST /api/issues/{uuid}/interactions`) can be created only on the run's own issue (`PAPERCLIP_TASK_ID`); another issue returns 422 `sourceRunId must belong to the same issue`. Each question allows at most one `freeText` option (400 otherwise). To put a card on a hub issue, wake on that issue first or host the card on the current one and point to it.
 
 ## MCP servers (project-scoped)
 

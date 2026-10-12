@@ -1,11 +1,14 @@
 # Memory Index
 
 ## Topics
-- [mtg-cards.md](mtg-cards.md) — 25 entries
-- [patterns.md](patterns.md) — 13 entries
+- [mtg-cards.md](mtg-cards.md) — 26 entries
+- [patterns.md](patterns.md) — 14 entries
 - [debugging.md](debugging.md) — 5 entries
 
 ## Recent Additions
+- 2026-10-12: Review briefs quote the `merge-tree --write-tree` stdout, not the head's tree; `docs/worktrees.md` is eternities-only; `delete_branch_on_merge` is off on mtg-precon-upgrader, delete the remote branch by API at merge (DEC-995) → patterns.md, 2026-10-12.md
+- 2026-10-12: A second article on an assessed workflow is assessed as a delta against plan §12.11/§12.12 and the DEC-960 note; the 2026-10-10 review corrections are the checklist (DEC-993) → patterns.md, 2026-10-12.md
+- 2026-10-12: Push `main` before routing a review (local-only commits hide conflicts from GitHub); seat board-requested cards by pin, not by cut or weights (DEC-990/992) → patterns.md; the Hound ranks 931 of 2,018 under v7 → mtg-cards.md, 2026-10-12.md
 - 2026-10-12: Keep a Paperclip run alive with a foreground `kill -0` loop while Codex runs; launch Codex in its own session (a dead run killed round 7) → debugging.md, 2026-10-12.md
 - 2026-10-12: Flickering Hound is a cast trigger (Panharmonicon no, Throne only with the type); Spellbook combos all need blue; anvil-chorus rate 0.59–0.96 flickers a turn vs 1.00 for an end-step flicker → mtg-cards.md, 2026-10-12.md
 - 2026-10-11: Paperclip `executionPolicy.monitor.notes` max 500 chars; a longer note fails the whole PATCH → debugging.md

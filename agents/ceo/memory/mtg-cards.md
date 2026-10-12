@@ -177,3 +177,14 @@ Badgermole Cub is **2 CMC** (not 3), so does not compete in the 3-drop slot.
 ### Pattern of Rebirth — Reactive Without Sac Outlet
 `{G}` aura on a creature: when enchanted creature dies, search your library for any creature card and put it onto the battlefield. In Verdant Tide (Eladamri), the deck had **no creature sac outlet** at time of assessment — Pattern becomes fully reactive, waiting for opponent removal or a board wipe. Aura is also vulnerable to exile removal (creature exiled instead of dying = no trigger). Useful in decks with a free sac outlet (e.g., Phyrexian Altar) but only a defensive reactive tool otherwise. Rank: below Unnatural Growth for impact in Verdant Tide.
 - Source: session bd142394, 2026-05-19
+
+---
+
+### Flickering Hound (FRA, 2026-10-02): cast trigger, not ETB
+{3}{W} 2/2 Dog. "Whenever you cast a creature spell, exile up to one other target creature you control, then return that card to the battlefield under its owner's control." The return is immediate and the trigger resolves before the cast spell, so the flickered creature's ETB lands first. It is a cast trigger: Panharmonicon does not double it; Roaming Throne doubles it only when the Hound carries the named type (e.g. under Maskwood Nexus). Commander Spellbook: four combos, all need blue (Spell Queller; Guile + a flash counterspell creature). Cannot target itself or noncreature artifacts (no The One Ring reset). Assessed for anvil-chorus on DEC-987 (2026-10-12): cheaper and better-timed than Conjurer's Closet, not faster (0.59–0.96 flickers a turn vs 1.00).
+- Source: DEC-987, 2026-10-12
+
+## Flickering Hound under candidate-pool-v7 (anvil-chorus, 2026-10-12)
+
+After the DEC-990 fix the Hound scores 33.7 in anvil-chorus and ranks 931 of 2,018 eligible cards; the 200th card scores 48.2. Its oracle text matches 1 of the 7 flicker patterns (raw density 5.7 of 40), the deck already holds 28 flicker pieces (saturation ×0.35), `etb-flicker` is the second archetype (×0.5), it is unowned and has no EDHREC rate. Without any dampener it would score 38.4, still below the cut. It enters the pool by pin (DEC-992), not by rank.
+- Source: DEC-990 comment 6264fb4d (Founding), 2026-10-12
