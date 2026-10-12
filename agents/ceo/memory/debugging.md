@@ -45,3 +45,7 @@ Same cause as `gh`: the run's HOME is not the owner's home, so `codex exec` cann
 
 ### Keeping a Paperclip run alive while an external process runs (2026-10-12)
 Ending the turn with only a background waiter pending ended the run twice (16:10Z, 16:39Z) and the second time the Codex child died with it. Launch the child in its own session (`python3 -I` + `subprocess.Popen(..., start_new_session=True)`, stdin DEVNULL, HOME and CODEX_HOME set; macOS has no `setsid`) and hold in the foreground with `while kill -0 $PID; do sleep 10; done` under a `timeout` up to 590000 ms, re-issued on expiry. A sleep inside a loop is not blocked.
+
+## Daily notes under `agents/ceo/memory/` are gitignored (2026-10-12)
+
+`.gitignore:59` (`memory/`) ignores the whole directory; only `MEMORY.md`, `debugging.md`, `mtg-cards.md` and `patterns.md` are tracked (added before or around the rule). A plain `git add` of the daily note fails with "paths are ignored", and `git add -f` tracks a file the repository means to keep local. Commit the four topic files only; the daily notes stay on disk. The DEC-995 run force-added `2026-10-12.md` in `df8a6c2` and untracked it again in the next commit.
