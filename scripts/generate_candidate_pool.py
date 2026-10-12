@@ -3,7 +3,9 @@
 
 Reads the local Scryfall mirror, applies archetype filters from the discovery
 playbook, scores cards against deck criteria, and writes top-N candidates to
-data/commanders/{id}/candidates.json.
+data/commanders/{id}/candidates.json. Cards named in the deck's optional
+`candidate_pins` list are seated too, at their score-order position, with
+`"pinned": true` (DEC-992).
 
 DEC-90 phase 3.
 
@@ -622,6 +624,61 @@ def load_gap_roles(deck_id: str) -> list[str]:
     return [g.get("role") for g in metrics.get("gaps", []) if g.get("role")]
 
 
+def candidate_pin_names(deck_id: str, deck: dict) -> list[str]:
+    """Return the card names in deck.json `candidate_pins` (DEC-992), in file order."""
+    names: list[str] = []
+    for item in deck.get("candidate_pins") or []:
+        name = item.get("name") if isinstance(item, dict) else None
+        if not isinstance(name, str) or not name.strip():
+            print(f"  [{deck_id}] candidate-pin: entry without a name skipped: {item!r}", file=sys.stderr)
+            continue
+        if name.strip() not in names:
+            names.append(name.strip())
+    return names
+
+
+def resolve_candidate_pins(
+    deck_id: str,
+    pin_names: list[str],
+    candidates: list[tuple[float, dict, dict, list[str]]],
+    mirror_index: dict[str, dict],
+    deck_ci: set[str],
+    decklist_names: set[str],
+    commander_name: str,
+) -> set[str]:
+    """Return the mirror names of pinned cards to seat; warn and skip the rest.
+
+    Pins add an entry; they change no score (DEC-992). A pin is skipped when the
+    name is not in the mirror, the card is outside the colour identity, the card is
+    the commander or already in the decklist, or the card scores 0 for this deck.
+    """
+    rank_by_name = {c.get("name"): i for i, (_s, c, _b, _m) in enumerate(candidates)}
+    seated: set[str] = set()
+    for pin in pin_names:
+        card = mirror_index.get(pin) or next(
+            (c for n, c in mirror_index.items() if front_face(n) == pin), None
+        )
+        if card is None:
+            reason = "not in the Scryfall mirror"
+        elif not color_identity_subset(card.get("color_identity", []), deck_ci):
+            reason = f"outside the colour identity {''.join(sorted(deck_ci))}"
+        elif front_face(card["name"]) in decklist_names or front_face(card["name"]) == front_face(commander_name):
+            reason = "already in the decklist"
+        elif card["name"] not in rank_by_name:
+            reason = "scores 0 for this deck"
+        else:
+            rank = rank_by_name[card["name"]]
+            print(
+                f"  [{deck_id}] candidate-pin: {pin!r} seated at rank {rank + 1} "
+                f"(score {candidates[rank][0]:.1f}).",
+                file=sys.stderr,
+            )
+            seated.add(card["name"])
+            continue
+        print(f"  [{deck_id}] candidate-pin: {pin!r} skipped: {reason}.", file=sys.stderr)
+    return seated
+
+
 def trim_card(
     card: dict,
     score: float,
@@ -711,7 +768,12 @@ def generate_for_deck(
         candidates.append((score, card, breakdown, matched))
 
     candidates.sort(key=lambda t: (-t[0], t[1].get("name", "")))
-    top = candidates[:limit]
+    # DEC-992: pinned cards below the cut keep their score-order position.
+    pinned = resolve_candidate_pins(
+        deck_id, candidate_pin_names(deck_id, deck), candidates,
+        mirror_index, deck_ci, decklist_names, commander_name,
+    )
+    top = [t for i, t in enumerate(candidates) if i < limit or t[1].get("name") in pinned]
 
     gap_roles = load_gap_roles(deck_id)
     gap_role_set = set(gap_roles)
@@ -721,17 +783,18 @@ def generate_for_deck(
         role, _conf = classify_role(c)
         strategy_line = m[0] if m else None
         mitigates = role if role and role in gap_role_set else None
-        enriched.append(
-            trim_card(
-                c, s, b, m,
-                c.get("name") in owned,
-                c.get("name") in game_changers,
-                role,
-                strategy_line,
-                mitigates,
-                edhrec_rate_for(c.get("name", ""), edhrec_rates),
-            )
+        entry = trim_card(
+            c, s, b, m,
+            c.get("name") in owned,
+            c.get("name") in game_changers,
+            role,
+            strategy_line,
+            mitigates,
+            edhrec_rate_for(c.get("name", ""), edhrec_rates),
         )
+        if c.get("name") in pinned:
+            entry["pinned"] = True
+        enriched.append(entry)
 
     output = {
         "version": 1,
@@ -830,8 +893,9 @@ def main(argv: list[str]) -> int:
             and existing.get("deck_gaps") == out.get("deck_gaps")
             and existing.get("asymmetric_only") == out.get("asymmetric_only")
         ):
-            existing_names = [c.get("name") for c in existing.get("candidates", [])]
-            new_names = [c.get("name") for c in out["candidates"]]
+            # the pinned flag is compared too, so pinning a card already in the top N writes
+            existing_names = [(c.get("name"), bool(c.get("pinned"))) for c in existing.get("candidates", [])]
+            new_names = [(c.get("name"), bool(c.get("pinned"))) for c in out["candidates"]]
             if existing_names == new_names:
                 print(f"  [{deck_id}] no change ({len(new_names)} candidates).", file=sys.stderr)
                 continue
