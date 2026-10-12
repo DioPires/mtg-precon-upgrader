@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { bracketBase, bracketOrder, buildDeckStubs, colorsToGlyphs, normalizeBracket, normalizeDeck, splitTitle } from '../../data/normalize';
-import type { RawDeckBundle } from '../../data/types';
+import type { RawCandidate, RawDeckBundle } from '../../data/types';
 
 function makeBundle(over: Partial<RawDeckBundle> = {}): RawDeckBundle {
   return {
@@ -248,6 +248,94 @@ describe('normalizeDeck', () => {
     bundle.metrics = { ...bundle.metrics!, global_health_normalized: 64 };
     const present = normalizeDeck(bundle, 1);
     expect(present.apothecary?.diagnosis.scoreNormalized).toBe(64);
+  });
+
+  describe('apothecary pins (DEC-1000)', () => {
+    const artifact = (name: string, score: number, pinned?: boolean): RawCandidate => ({
+      name,
+      cmc: 2,
+      mana_cost: '{2}',
+      type_line: 'Artifact',
+      score,
+      ...(pinned ? { pinned } : {}),
+    });
+
+    function withPins(pool: RawCandidate[], pins: unknown): RawDeckBundle {
+      const bundle = makeBundle();
+      bundle.candidates = { deck_id: bundle.id, candidates: pool };
+      bundle.deck = { ...bundle.deck, candidate_pins: pins as RawDeckBundle['deck']['candidate_pins'] };
+      return bundle;
+    }
+
+    it('joins candidate_pins to their pinned pool entries with rank and poolSize', () => {
+      const pool = [
+        artifact('Dreamstone Hedron', 49.9),
+        artifact('Hedron Archive', 41.2, true),
+        artifact('Mind Stone', 30),
+        artifact('Thought Vessel', 12.5, true),
+      ];
+      const before = structuredClone(pool);
+      const out = normalizeDeck(
+        withPins(pool, [
+          { name: 'Thought Vessel', reason: 'First in the file, last in the pool.' },
+          { name: 'Hedron Archive', reason: 'Second in the file.' },
+        ]),
+        1,
+      );
+
+      expect(out.apothecary?.pins).toEqual([
+        { name: 'Thought Vessel', reason: 'First in the file, last in the pool.', card: pool[3], rank: 4, poolSize: 4 },
+        { name: 'Hedron Archive', reason: 'Second in the file.', card: pool[1], rank: 2, poolSize: 4 },
+      ]);
+      expect(out.apothecary?.remedies).toEqual(before);
+    });
+
+    it('drops a pin the generator did not seat', () => {
+      const pool = [artifact('Dreamstone Hedron', 49.9), artifact('Mind Stone', 30)];
+      const out = normalizeDeck(
+        withPins(pool, [
+          { name: 'Sol Ring', reason: 'Already in the decklist: no pool entry.' },
+          { name: 'Mind Stone', reason: 'In the pool on merit, never flagged pinned.' },
+        ]),
+        1,
+      );
+      expect(out.apothecary?.pins).toEqual([]);
+      expect(out.apothecary?.remedies).toHaveLength(2);
+    });
+
+    it('joins a front-face pin name to its Front // Back pool entry', () => {
+      const dfc: RawCandidate = {
+        name: 'Wedding Announcement // Wedding Festivity',
+        cmc: 3,
+        mana_cost: '',
+        type_line: 'Enchantment // Enchantment',
+        score: 56.1,
+        pinned: true,
+      };
+      const out = normalizeDeck(
+        withPins([artifact('Dreamstone Hedron', 60), dfc], [{ name: 'Wedding Announcement', reason: 'Pinned by front face.' }]),
+        1,
+      );
+      expect(out.apothecary?.pins).toEqual([
+        { name: 'Wedding Announcement', reason: 'Pinned by front face.', card: dfc, rank: 2, poolSize: 2 },
+      ]);
+    });
+
+    it('returns no pins when the deck has no candidate_pins', () => {
+      expect(normalizeDeck(makeBundle(), 1).apothecary?.pins).toEqual([]);
+    });
+
+    it('tolerates malformed candidate_pins: nameless, duplicate, reasonless, non-array', () => {
+      const pool = [artifact('Hedron Archive', 41.2, true)];
+      const out = normalizeDeck(
+        withPins(pool, [null, { reason: 'no name' }, { name: ' Hedron Archive ' }, { name: 'Hedron Archive', reason: 'dup' }]),
+        1,
+      );
+      expect(out.apothecary?.pins).toEqual([
+        { name: 'Hedron Archive', reason: '', card: pool[0], rank: 1, poolSize: 1 },
+      ]);
+      expect(normalizeDeck(withPins(pool, 'Hedron Archive'), 1).apothecary?.pins).toEqual([]);
+    });
   });
 
   it('returns apothecary=null when metrics or candidates missing', () => {

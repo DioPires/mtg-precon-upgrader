@@ -16,9 +16,11 @@ import type {
   DeckFuncEntry,
   DeckFull,
   DeckListGroup,
+  DeckPin,
   DeckStub,
   DeckToken,
   DeckWincon,
+  RawCandidate,
   RawCardMetadata,
   RawCardMetadataEntry,
   RawCategory,
@@ -30,6 +32,7 @@ import type {
   RawWinCondition,
   SplitTitle,
 } from './types';
+import { frontFace } from './cardName';
 
 const COLOR_TO_GLYPH: Record<string, string> = {
   W: '⚪',
@@ -243,9 +246,33 @@ function transformCombos(deck: RawDeck, ctx: DeckCtx): DeckCombo[] {
   });
 }
 
+// DEC-1000 — join deck.json `candidate_pins` to the pool entries the generator
+// seated for them (DEC-992). The generator resolves a pin by mirror name or by
+// front face, so the join accepts both. A pin with no seated entry was skipped
+// upstream (wrong colour, already in the decklist, scores 0): nothing to show.
+function transformPins(deck: RawDeck, pool: RawCandidate[]): DeckPin[] {
+  const raw = Array.isArray(deck.candidate_pins) ? deck.candidate_pins : [];
+  const pins: DeckPin[] = [];
+  raw.forEach((pin) => {
+    const name = typeof pin?.name === 'string' ? pin.name.trim() : '';
+    if (!name) return;
+    const idx = pool.findIndex((c) => c.pinned === true && (c.name === name || frontFace(c.name) === name));
+    if (idx === -1 || pins.some((p) => p.card === pool[idx])) return;
+    pins.push({
+      name,
+      reason: typeof pin.reason === 'string' ? pin.reason : '',
+      card: pool[idx],
+      rank: idx + 1,
+      poolSize: pool.length,
+    });
+  });
+  return pins;
+}
+
 function transformApothecary(bundle: RawDeckBundle): DeckApothecary | null {
   const { metrics, candidates } = bundle;
   if (!metrics || !candidates) return null;
+  const pool = candidates.candidates || [];
   return {
     diagnosis: {
       score: metrics.global_health,
@@ -258,7 +285,8 @@ function transformApothecary(bundle: RawDeckBundle): DeckApothecary | null {
       winTurn: metrics.win_turn ?? null,
     },
     maladies: metrics.gaps || [],
-    remedies: candidates.candidates || [],
+    remedies: pool,
+    pins: transformPins(bundle.deck, pool),
   };
 }
 

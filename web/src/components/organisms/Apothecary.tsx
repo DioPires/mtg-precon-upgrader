@@ -61,7 +61,8 @@ function maladyTier(s: number | null | undefined): 'ok' | 'warn' | 'bad' | 'crit
   return 'crit';
 }
 
-function fmtMaladyCount(v: number | null | undefined): string {
+// At most one decimal; em-dash when absent. Malady counts and pin scores.
+function fmtFigure(v: number | null | undefined): string {
   if (v == null) return '—';
   return Number.isInteger(v) ? String(v) : v.toFixed(1);
 }
@@ -124,7 +125,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
     );
   }
 
-  const { diagnosis, maladies, remedies } = apothecary;
+  const { diagnosis, maladies, remedies, pins } = apothecary;
   const score = Math.round(diagnosis.score ?? 0);
   const grade = gradeForGlobalHealth(diagnosis.score);
   const margin = diagnosis.confidenceMargin;
@@ -278,8 +279,8 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
                 >
                   <span className="gv1-apo-malady-label">{ROLE_LABELS[g.role] || g.role}</span>
                   <span className="gv1-mono-xs gv1-apo-malady-fig">
-                    {fmtMaladyCount(g.actual)}
-                    <span className="gv1-dim"> / {fmtMaladyCount(g.target)}</span>
+                    {fmtFigure(g.actual)}
+                    <span className="gv1-dim"> / {fmtFigure(g.target)}</span>
                   </span>
                 </button>
               );
@@ -298,12 +299,44 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
         <span className="gv1-mono-xs gv1-rune">REMEDIES</span>
         <span className="gv1-apo-rule" aria-hidden="true" />
         <span className="gv1-mono-xs gv1-dim">
-          top {REMEDIES_TOP_N} candidates
+          top {REMEDIES_TOP_N} by archetype fit, cards we own and EDHREC play rate · not a quality order
           {effectiveFilter
             ? ` · filtered: ${ROLE_LABELS[effectiveFilter] || effectiveFilter}`
             : ' · gap-addressers floated'}
         </span>
       </div>
+
+      {/* DEC-1000 — board picks (deck.json candidate_pins). Outside the malady
+          filter and the top-N cut: a pick stays visible wherever it ranks. */}
+      {(pins || []).length > 0 && (
+        <section className="gv1-apo-pins" aria-label="Board picks">
+          {pins.map((p) => {
+            const c = p.card;
+            const fit = (c.matched_archetypes || []).join(' · ');
+            return (
+              <article key={p.name} className="gv1-apo-pin" data-card-name={c.name}>
+                <span className="gv1-apo-tag gv1-apo-pin-label">board pick</span>
+                <div className="gv1-apo-remedy-body">
+                  <div className="gv1-apo-remedy-head">
+                    <span className="gv1-apo-remedy-name">{c.name}</span>
+                    <ManaCost mv={c.mana_cost || (c.cmc != null ? `{${c.cmc}}` : '—')} />
+                  </div>
+                  <div className="gv1-mono-xs gv1-dim gv1-apo-remedy-type">{c.type_line || ''}</div>
+                  <div className="gv1-mono-xs gv1-apo-pin-meta">
+                    {fit && <span className="gv1-apo-pin-fit">{fit}</span>}
+                    <span className="gv1-dim">{`rank ${p.rank} of ${p.poolSize}`}</span>
+                    <span className="gv1-dim">score {fmtFigure(c.score)}</span>
+                  </div>
+                  {p.reason && <div className="gv1-apo-remedy-rationale">{p.reason}</div>}
+                </div>
+                <div className="gv1-apo-remedy-score">
+                  <ScoreRing score={c.score} max={maxRemedyScore} />
+                </div>
+              </article>
+            );
+          })}
+        </section>
+      )}
 
       {pool.length === 0 ? (
         <div className="gv1-empty">
@@ -322,6 +355,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
             const cls = ['gv1-apo-remedy'];
             if (isGapAddr) cls.push('is-gap-addresser');
             if (c.owned) cls.push('is-owned');
+            if (c.pinned === true) cls.push('is-pinned');
             return (
               <article key={c.name + i} className={cls.join(' ')} data-card-name={c.name}>
                 <div className="gv1-apo-remedy-num gv1-mono-xs gv1-dim">{String(i + 1).padStart(2, '0')}</div>
@@ -340,6 +374,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
                     )}
                     {c.owned && <span className="gv1-apo-tag gv1-apo-tag-owned">owned</span>}
                     {c.game_changer && <span className="gv1-apo-tag gv1-apo-tag-gc">game changer</span>}
+                    {c.pinned === true && <span className="gv1-apo-tag gv1-apo-tag-pinned">pinned</span>}
                     {c.deck_role && c.deck_role !== c.mitigates_gap && (
                       <span className="gv1-apo-tag gv1-apo-tag-role">
                         {ROLE_LABELS[c.deck_role] || c.deck_role}
