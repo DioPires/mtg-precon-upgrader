@@ -202,22 +202,6 @@ def color_identity_subset(card_ci: list[str], deck_ci: set[str]) -> bool:
     return set(card_ci or []).issubset(deck_ci)
 
 
-def archetype_match_score(card_oracle: str, card_type: str, archetype: dict) -> tuple[int, list[str]]:
-    """Return (matches_count, matched_pattern_names). Anti-patterns short-circuit to (-1, ...)."""
-    for anti in archetype["_anti_compiled"]:
-        if anti.search(card_oracle):
-            return -1, []
-    matches = []
-    for compiled, raw in zip(archetype["_compiled"], archetype.get("oracle_patterns", [])):
-        if compiled.search(card_oracle):
-            matches.append(raw)
-    if archetype["_type_constraints"]:
-        if not any(tc in card_type for tc in archetype["_type_constraints"]):
-            matches.append("__type_match_missing__")
-            matches.pop()
-    return len(matches), matches
-
-
 def archetype_raw_strength(
     card_oracle: str,
     card_type: str,
@@ -650,7 +634,8 @@ def resolve_candidate_pins(
 
     Pins add an entry; they change no score (DEC-992). A pin is skipped when the
     name is not in the mirror, the card is outside the colour identity, the card is
-    the commander or already in the decklist, or the card scores 0 for this deck.
+    the commander, the card is already in the decklist, or the card scores 0 for
+    this deck. Each skip prints its own reason.
     """
     rank_by_name = {c.get("name"): i for i, (_s, c, _b, _m) in enumerate(candidates)}
     seated: set[str] = set()
@@ -662,7 +647,9 @@ def resolve_candidate_pins(
             reason = "not in the Scryfall mirror"
         elif not color_identity_subset(card.get("color_identity", []), deck_ci):
             reason = f"outside the colour identity {''.join(sorted(deck_ci))}"
-        elif front_face(card["name"]) in decklist_names or front_face(card["name"]) == front_face(commander_name):
+        elif front_face(card["name"]) == front_face(commander_name):
+            reason = "is the commander"
+        elif front_face(card["name"]) in decklist_names:
             reason = "already in the decklist"
         elif card["name"] not in rank_by_name:
             reason = "scores 0 for this deck"
