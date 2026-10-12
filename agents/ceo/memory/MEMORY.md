@@ -6,6 +6,7 @@
 - [debugging.md](debugging.md) — 5 entries
 
 ## Recent Additions
+- 2026-10-12: Filter the full pool before the top-N cut: a top-30-then-filter view shows an empty grid when the hits rank below 30 (gap-role cards sit at 49–195); measure top-N hits / full hits / first rank and put the table in the follow-up; `executionPolicy: null` clears a monitor; PATCH `blockedByIssueIds` is not echoed by GET (DEC-1013/1015/1016) → patterns.md, 2026-10-12.md
 - 2026-10-12: A web change that renders script output is reviewed by the script's owner; implementer calls become numbered rulings, script follow-ups are asked as advice notes; scope the 390 px overflow check to the touched element when a sibling issue owns the page overflow (DEC-1007/DEC-1013) → patterns.md, 2026-10-12.md
 - 2026-10-12: Merge check on an unprotected repo = `rev-parse origin/main^{tree}` equals the reviewer's `merge-tree` stdout; the issue list omits monitors, read them per issue; route non-blocking review notes to the open issue in the same block/component (DEC-1009) → patterns.md, debugging.md, 2026-10-12.md
 - 2026-10-12: Web review briefs cite `web/src/styles/tokens.css`, the `.gv1-*` rules and `designs/exports/*.png`; `design_handoff_grimoire/prototype/` is not in git; side defects from a hand-back get their own low issues at routing time (DEC-1009/1007/1008) → patterns.md, 2026-10-12.md
