@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { Apothecary } from '../../components/organisms/Apothecary';
-import type { DeckApothecary } from '../../data/types';
+import type { DeckApothecary, DeckPin, RawCandidate } from '../../data/types';
 
 function makeApothecary(over: Partial<DeckApothecary> = {}): DeckApothecary {
   return {
@@ -54,7 +54,41 @@ function makeApothecary(over: Partial<DeckApothecary> = {}): DeckApothecary {
         mitigates_gap: null,
       },
     ],
+    pins: over.pins ?? [],
   };
+}
+
+// DEC-1000 — the anvil-chorus pool entry seated by `candidate_pins` (DEC-992).
+const HOUND: RawCandidate = {
+  name: 'Flickering Hound',
+  cmc: 4,
+  mana_cost: '{3}{W}',
+  type_line: 'Creature — Dog',
+  score: 33.7,
+  matched_archetypes: ['ETB Value / Flicker'],
+  strategy_line: 'ETB Value / Flicker',
+  mitigates_gap: null,
+  pinned: true,
+};
+const HOUND_REASON = 'DEC-987 board decision 2026-10-12: skip in the 99, keep in the pool.';
+
+function fillers(n: number): RawCandidate[] {
+  return Array.from({ length: n }, (_, i) => ({
+    name: `Filler ${i + 1}`,
+    cmc: 2,
+    mana_cost: '{2}',
+    type_line: 'Artifact',
+    score: 70 - i,
+    mitigates_gap: null,
+  }));
+}
+
+function pinFor(pool: RawCandidate[], card: RawCandidate, reason = HOUND_REASON): DeckPin {
+  return { name: card.name, reason, card, rank: pool.indexOf(card) + 1, poolSize: pool.length };
+}
+
+function remedyGrid(container: HTMLElement): HTMLElement {
+  return container.querySelector('.gv1-apo-remedies') as HTMLElement;
 }
 
 describe('Apothecary', () => {
@@ -211,5 +245,125 @@ describe('Apothecary', () => {
     expect(screen.queryByText('A+')).not.toBeInTheDocument();
     expect(screen.queryByText('A-')).not.toBeInTheDocument();
     expect(screen.getByText('B')).toBeInTheDocument();
+  });
+
+  describe('board picks (DEC-1000)', () => {
+    it('shows a pin below the top 30 in the strip, not in the grid', () => {
+      const pool = [...fillers(30), HOUND];
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ remedies: pool, pins: [pinFor(pool, HOUND)] })} />,
+      );
+
+      const strip = screen.getByRole('region', { name: 'Board picks' });
+      expect(within(strip).getByText('board pick')).toBeInTheDocument();
+      expect(within(strip).getByText('Flickering Hound')).toBeInTheDocument();
+      expect(within(strip).getByText('Creature — Dog')).toBeInTheDocument();
+      expect(within(strip).getByText('ETB Value / Flicker')).toBeInTheDocument();
+      expect(within(strip).getByText('rank 31 of 31')).toBeInTheDocument();
+      expect(within(strip).getByText('score 33.7')).toBeInTheDocument();
+      expect(within(strip).getByText(HOUND_REASON)).toBeInTheDocument();
+
+      const grid = remedyGrid(container);
+      expect(grid.querySelectorAll('article')).toHaveLength(30);
+      expect(within(grid).queryByText('Flickering Hound')).not.toBeInTheDocument();
+      expect(grid.querySelector('.gv1-apo-tag-pinned')).toBeNull();
+    });
+
+    it('badges a pin inside the top 30 in the grid and keeps it in the strip', () => {
+      const pool = [...fillers(2), HOUND, ...fillers(1).map((c) => ({ ...c, name: 'Tail Filler', score: 20 }))];
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ remedies: pool, pins: [pinFor(pool, HOUND)] })} />,
+      );
+
+      const grid = remedyGrid(container);
+      const entry = grid.querySelector('article[data-card-name="Flickering Hound"]') as HTMLElement;
+      expect(entry).toHaveClass('is-pinned');
+      expect(within(entry).getByText('pinned')).toHaveClass('gv1-apo-tag', 'gv1-apo-tag-pinned');
+      expect(grid.querySelectorAll('.is-pinned')).toHaveLength(1);
+      expect(grid.querySelectorAll('.gv1-apo-tag-pinned')).toHaveLength(1);
+
+      const strip = screen.getByRole('region', { name: 'Board picks' });
+      expect(within(strip).getByText('Flickering Hound')).toBeInTheDocument();
+      expect(within(strip).getByText('rank 3 of 4')).toBeInTheDocument();
+
+      // Same score against the same max: the strip ring and the grid ring agree.
+      const dash = (el: HTMLElement) => el.querySelector('.gv1-apo-ring-fill')?.getAttribute('stroke-dashoffset');
+      expect(dash(strip)).toBeTruthy();
+      expect(dash(strip)).toBe(dash(entry));
+    });
+
+    it('renders pins in the order given', () => {
+      const second: RawCandidate = { ...HOUND, name: 'Second Pick', score: 12 };
+      const pool = [...fillers(3), HOUND, second];
+      render(
+        <Apothecary
+          apothecary={makeApothecary({
+            remedies: pool,
+            pins: [pinFor(pool, second, 'Later in the pool, first in the file.'), pinFor(pool, HOUND)],
+          })}
+        />,
+      );
+
+      const strip = screen.getByRole('region', { name: 'Board picks' });
+      const names = [...strip.querySelectorAll('.gv1-apo-remedy-name')].map((n) => n.textContent);
+      expect(names).toEqual(['Second Pick', 'Flickering Hound']);
+      expect(within(strip).getAllByText('board pick')).toHaveLength(2);
+    });
+
+    it('renders no strip and no badge when there are no pins', () => {
+      const { container } = render(<Apothecary apothecary={makeApothecary()} />);
+      expect(screen.queryByRole('region', { name: 'Board picks' })).not.toBeInTheDocument();
+      expect(screen.queryByText('board pick')).not.toBeInTheDocument();
+      expect(container.querySelector('.gv1-apo-pins')).toBeNull();
+      expect(container.querySelector('.gv1-apo-tag-pinned')).toBeNull();
+      expect(container.querySelector('.is-pinned')).toBeNull();
+    });
+
+    it('keeps the strip while a malady filter is active', () => {
+      const base = makeApothecary().remedies;
+      const pool = [...base, HOUND];
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ remedies: pool, pins: [pinFor(pool, HOUND)] })} />,
+      );
+      expect(within(remedyGrid(container)).getByText('Flickering Hound')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /card draw/i, pressed: false }));
+
+      const grid = remedyGrid(container);
+      expect(within(grid).getByText('Rhystic Study')).toBeInTheDocument();
+      expect(within(grid).queryByText('Flickering Hound')).not.toBeInTheDocument();
+      const strip = screen.getByRole('region', { name: 'Board picks' });
+      expect(within(strip).getByText('Flickering Hound')).toBeInTheDocument();
+      expect(within(strip).getByText(HOUND_REASON)).toBeInTheDocument();
+    });
+
+    it('keeps the strip above the empty state when the filter matches nothing', () => {
+      const pool = [HOUND];
+      render(
+        <Apothecary
+          apothecary={makeApothecary({
+            maladies: [{ role: 'tutor', actual: 0, target: 2, score: 0 }],
+            remedies: pool,
+            pins: [pinFor(pool, HOUND)],
+          })}
+        />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /tutors/i, pressed: false }));
+
+      expect(screen.getByText(/no remedies match/i)).toBeInTheDocument();
+      const strip = screen.getByRole('region', { name: 'Board picks' });
+      expect(within(strip).getByText('Flickering Hound')).toBeInTheDocument();
+    });
+  });
+
+  it('labels the remedies order as fit, ownership and play rate, not quality (DEC-1000)', () => {
+    render(<Apothecary apothecary={makeApothecary()} />);
+    const label =
+      'top 30 by archetype fit, cards we own and EDHREC play rate · not a quality order';
+    expect(screen.getByText(`${label} · gap-addressers floated`)).toBeInTheDocument();
+    expect(screen.queryByText(/top 30 candidates/i)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /card draw/i, pressed: false }));
+    expect(screen.getByText(`${label} · filtered: Card Draw`)).toBeInTheDocument();
   });
 });

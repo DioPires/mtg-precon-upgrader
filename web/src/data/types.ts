@@ -130,6 +130,8 @@ export interface RawDeck {
   winConditions?: RawWinCondition[];
   decklist: RawDecklistCard[];
   tokens?: DeckToken[];
+  /** DEC-992 — board picks the pool generator seats below the cut, in file order. */
+  candidate_pins?: { name: string; reason: string }[];
 }
 
 export interface RawDeckHealthScore {
@@ -271,6 +273,8 @@ export interface RawCandidate {
   strategy_line?: string;
   mitigates_gap?: string | null;
   score_breakdown?: Record<string, unknown>;
+  /** DEC-992 — true on the pool entry seated by a deck.json `candidate_pins` line. */
+  pinned?: boolean;
 }
 
 export interface RawCandidates {
@@ -369,6 +373,16 @@ export interface DeckCombo {
   tag: string;
 }
 
+/** DEC-1000 — a board pick joined to its pool entry. */
+export interface DeckPin {
+  name: string;
+  reason: string;
+  card: RawCandidate;
+  /** 1-based index of `card` in the pool. */
+  rank: number;
+  poolSize: number;
+}
+
 export interface DeckApothecary {
   diagnosis: {
     score: number;
@@ -384,6 +398,8 @@ export interface DeckApothecary {
   };
   maladies: RawMetricsGap[];
   remedies: RawCandidate[];
+  /** DEC-1000 — board picks in `candidate_pins` order; empty for most decks. */
+  pins: DeckPin[];
 }
 
 export interface DeckCurveEntry {

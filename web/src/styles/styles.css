@@ -1125,7 +1125,32 @@ em { font-style: italic; color: var(--gv1-gold); }
   color: var(--gv1-bg); background: var(--gv1-gold);
   border-color: var(--gv1-gold);
 }
+.gv1-apo-tag-pinned,
+.gv1-apo-pin-label {
+  color: var(--gv1-gold); border: 1px dashed var(--gv1-gold);
+}
 .gv1-apo-remedy-score { padding-top: 2px; }
+
+/* Board picks (DEC-1000) — pinned pool cards, shown above the grid whatever
+   their rank. Full-width rows with a gold rule and a "board pick" tag in the
+   ordinal column, so a pick never reads as a ranked grid entry. */
+.gv1-apo-pins {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 14px;
+}
+.gv1-apo-pin {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 16px;
+  background: var(--gv1-bg-2);
+  border: 1px solid var(--gv1-line);
+  border-left: 2px solid var(--gv1-gold);
+}
+.gv1-apo-pin-label { justify-self: start; margin-top: 4px; }
+.gv1-apo-pin-meta { display: flex; flex-wrap: wrap; gap: 2px 14px; }
+.gv1-apo-pin-fit { color: var(--gv1-rune); }
 
 /* Score ring — SVG track + fill, with HTML number overlay */
 .gv1-apo-ring {
@@ -1160,6 +1185,9 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-apo-vitals-divider { display: none; }
   .gv1-apo-details-btn { align-self: flex-start; margin-left: 0; }
   .gv1-apo-remedies { grid-template-columns: 1fr; }
+  /* The "board pick" tag takes its own row once the grid is one column. */
+  .gv1-apo-pin { grid-template-columns: 1fr auto; }
+  .gv1-apo-pin-label { grid-column: 1 / -1; margin-top: 0; }
 }
 
 /* Performance */

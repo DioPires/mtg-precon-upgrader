@@ -145,6 +145,7 @@ describe('Compare', () => {
           diagnosis: { score: 85, scoreNormalized: 64, methodology: 'deck-metrics-v2', components: {} },
           maladies: [],
           remedies: [],
+          pins: [],
         },
       }),
     ]);
@@ -164,6 +165,7 @@ describe('Compare', () => {
           diagnosis: { score: 77, scoreNormalized: null, methodology: 'deck-metrics-v2', components: {} },
           maladies: [],
           remedies: [],
+          pins: [],
         },
       }),
     ]);
@@ -181,6 +183,7 @@ describe('Compare', () => {
           diagnosis: { score: 50, scoreNormalized: norm, methodology: 'deck-metrics-v2', components: {} },
           maladies: [],
           remedies: [],
+          pins: [],
         },
       });
     renderCompare([

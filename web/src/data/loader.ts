@@ -227,7 +227,9 @@ import type { DeckTierBLoops } from './tierB';
 // v143 -> v144 (DEC-942 2026-10-01): persisted envelope shape change — the four
 // large per-deck artifacts are no longer written to localStorage.
 // v148 -> v149 (DEC-945 2026-10-07): eternal-harvest +Avacyn, Angel of Horror / -Harvester of Souls.
-const STORAGE_PREFIX = 'gv1-deck-data-v153:';
+// v153 -> v154 (DEC-1000 2026-10-12): anvil-chorus deck.json gained `candidate_pins`
+// (DEC-992, 649c1b2); deck.json is persisted, so a pre-pin envelope would hide the Pinned strip.
+const STORAGE_PREFIX = 'gv1-deck-data-v154:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
