@@ -1,11 +1,20 @@
 # Memory Index
 
 ## Topics
-- [mtg-cards.md](mtg-cards.md) — 24 entries
+- [mtg-cards.md](mtg-cards.md) — 25 entries
 - [patterns.md](patterns.md) — 13 entries
-- [debugging.md](debugging.md) — 3 entries
+- [debugging.md](debugging.md) — 5 entries
 
 ## Recent Additions
+- 2026-10-12: Keep a Paperclip run alive with a foreground `kill -0` loop while Codex runs; launch Codex in its own session (a dead run killed round 7) → debugging.md, 2026-10-12.md
+- 2026-10-12: Flickering Hound is a cast trigger (Panharmonicon no, Throne only with the type); Spellbook combos all need blue; anvil-chorus rate 0.59–0.96 flickers a turn vs 1.00 for an end-step flicker → mtg-cards.md, 2026-10-12.md
+- 2026-10-11: Paperclip `executionPolicy.monitor.notes` max 500 chars; a longer note fails the whole PATCH → debugging.md
+- 2026-10-11: `enforce_admins` on `main` is on since 07:35Z (DEC-966/968); a skipped required job still counts as satisfied, so only `unity/`-touching PRs wait on the runner → 2026-10-11.md
+- 2026-10-11: Branch protection on `main` does not bind administrators (enforce_admins false); owner decision DEC-966 → 2026-10-11.md
+- 2026-10-11: A `todo` issue assigned to the CEO wakes a second CEO run at once; later writes from the creating run get 409 → 2026-10-11.md
+- 2026-10-10: Proposals: cite the PRD section for every "already ours" claim; no hidden items under a card; cost names what it displaces (DEC-950 adversarial review) → patterns.md
+- 2026-10-10: codex CLI needs HOME=/Users/dpires and stdin closed in agent runs (401 otherwise) → debugging.md
+- 2026-10-10: gh CLI needs HOME=/Users/dpires in agent runs (401 otherwise) → debugging.md
 - 2026-08-15: Comms guideline — plain language, not ASD-STE100 (DEC-475) → patterns.md
 - 2026-07-20: Paperclip interactions API payload schema (version:1 + prompt required) → debugging.md
 - 2026-07-20: Work methodology proposal (tiered plan-and-delegate) → docs/work-methodology.md, DEC-458 in_review
