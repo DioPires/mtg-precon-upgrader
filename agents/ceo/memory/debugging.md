@@ -49,3 +49,4 @@ Ending the turn with only a background waiter pending ended the run twice (16:10
 ## Daily notes under `agents/ceo/memory/` are gitignored (2026-10-12)
 
 `.gitignore:59` (`memory/`) ignores the whole directory; only `MEMORY.md`, `debugging.md`, `mtg-cards.md` and `patterns.md` are tracked (added before or around the rule). A plain `git add` of the daily note fails with "paths are ignored", and `git add -f` tracks a file the repository means to keep local. Commit the four topic files only; the daily notes stay on disk. The DEC-995 run force-added `2026-10-12.md` in `df8a6c2` and untracked it again in the next commit.
+- **Paperclip checkout body (2026-10-12).** `POST /api/issues/{id}/checkout` with `{}` returns 400 "Validation error": the body needs `{"agentId": "<my agent id>", "expectedStatuses": ["todo", "in_review", ...]}`. The harness checks out the wake's own issue; send the full body only when switching to a sibling issue.
