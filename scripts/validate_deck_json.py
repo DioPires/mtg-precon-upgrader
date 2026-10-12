@@ -3,7 +3,8 @@
 
 Checks that every card-name reference resolves against the local Scryfall
 oracle mirror, then checks that category/highlight/synergy/win-condition
-references point at cards actually present in the deck.
+references point at cards actually present in the deck. An optional
+`candidate_pins` field must be a list of objects with a non-empty `name`.
 """
 
 from __future__ import annotations
@@ -180,6 +181,30 @@ def iter_deck_core_references(
             yield reference
 
 
+def iter_candidate_pin_issues(
+    deck: Mapping[str, object],
+    deck_file: Path,
+) -> Iterator[ValidationIssue]:
+    """Yield shape issues for `candidate_pins`: a list of objects with a non-empty string name.
+
+    The pool generator warns and skips a bad pin (DEC-992); the validator fails it.
+    """
+    if "candidate_pins" not in deck:
+        return
+    deck_id = str(deck.get("id") or deck_file.parent.name)
+    detail = f"Deck {deck_id}: candidate_pins must be a list of objects, each with a non-empty string name."
+    pins = deck["candidate_pins"]
+    if not isinstance(pins, list):
+        reference = CardReference(deck_id, deck_file, "candidate_pins", repr(pins), False)
+        yield ValidationIssue("invalid_candidate_pins", reference, detail)
+        return
+    for index, item in enumerate(pins):
+        name = item.get("name") if isinstance(item, Mapping) else None
+        if not isinstance(name, str) or not name.strip():
+            reference = CardReference(deck_id, deck_file, f"candidate_pins[{index}]", repr(item), False)
+            yield ValidationIssue("invalid_candidate_pins", reference, detail)
+
+
 def _canonical_deck_card_names(
     deck: Mapping[str, object],
     deck_file: Path,
@@ -224,6 +249,8 @@ def validate_deck_json(
                     )
                 )
 
+        issues.extend(iter_candidate_pin_issues(deck, deck_file))
+
     return issues
 
 
@@ -242,7 +269,7 @@ def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
         description=(
             "Fail if deck.json card references are absent from the local Scryfall "
-            "mirror or point outside the decklist."
+            "mirror or point outside the decklist, or if candidate_pins is malformed."
         )
     )
     parser.add_argument(
