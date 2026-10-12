@@ -178,11 +178,13 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
   const activeRoles = new Set(roleGaps.map((g) => g.role));
   const effectiveFilter = filterRole && activeRoles.has(filterRole) ? filterRole : null;
 
-  let pool: RawCandidate[] = (remedies || []).slice(0, REMEDIES_TOP_N);
+  // DEC-1015 — filter the whole pool, then cut to the top N. The cards that
+  // fill a gap mostly rank below N, so cutting first left the grid empty.
+  let pool: RawCandidate[] = remedies || [];
   if (effectiveFilter) {
     pool = pool.filter((c) => c.deck_role === effectiveFilter || c.mitigates_gap === effectiveFilter);
   }
-  pool = pool.slice().sort((a, b) => {
+  pool = pool.slice(0, REMEDIES_TOP_N).sort((a, b) => {
     const ga = a.mitigates_gap ? 0 : 1;
     const gb = b.mitigates_gap ? 0 : 1;
     if (ga !== gb) return ga - gb;
