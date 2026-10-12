@@ -6,6 +6,7 @@
 - [debugging.md](debugging.md) — 5 entries
 
 ## Recent Additions
+- 2026-10-12: Pool rank = fit + owned + EDHREC + multiplayer, not quality; unowned flicker card caps at 47.0 < 48.2 cut in anvil-chorus, pins are the only door; answer "is X better than the 200?" with the component table (DEC-995) → mtg-cards.md, 2026-10-12.md
 - 2026-10-12: Review briefs quote the `merge-tree --write-tree` stdout, not the head's tree; `docs/worktrees.md` is eternities-only; `delete_branch_on_merge` is off on mtg-precon-upgrader, delete the remote branch by API at merge (DEC-995) → patterns.md, 2026-10-12.md
 - 2026-10-12: A second article on an assessed workflow is assessed as a delta against plan §12.11/§12.12 and the DEC-960 note; the 2026-10-10 review corrections are the checklist (DEC-993) → patterns.md, 2026-10-12.md
 - 2026-10-12: Push `main` before routing a review (local-only commits hide conflicts from GitHub); seat board-requested cards by pin, not by cut or weights (DEC-990/992) → patterns.md; the Hound ranks 931 of 2,018 under v7 → mtg-cards.md, 2026-10-12.md

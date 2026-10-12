@@ -187,4 +187,6 @@ Badgermole Cub is **2 CMC** (not 3), so does not compete in the 3-drop slot.
 ## Flickering Hound under candidate-pool-v7 (anvil-chorus, 2026-10-12)
 
 After the DEC-990 fix the Hound scores 33.7 in anvil-chorus and ranks 931 of 2,018 eligible cards; the 200th card scores 48.2. Its oracle text matches 1 of the 7 flicker patterns (raw density 5.7 of 40), the deck already holds 28 flicker pieces (saturation ×0.35), `etb-flicker` is the second archetype (×0.5), it is unowned and has no EDHREC rate. Without any dampener it would score 38.4, still below the cut. It enters the pool by pin (DEC-992), not by rank.
+
+Decomposition (DEC-995, 2026-10-12): the Hound ties the pool's first card, Dwarven Mattock (71.8), on archetype fit (1.0 of 40). The gap is owned +15, EDHREC +18.5 (Mattock 46.2% on the Fíli page), multiplayer +5. Flicker fit in anvil-chorus caps at 7.0 (40 × 0.35 × 0.5), so an unowned flicker card with no EDHREC record caps at 47.0 < the 48.2 cut and can never enter the pool without a pin. Owned, the Hound would score 48.7 (rank ≈166).
 - Source: DEC-990 comment 6264fb4d (Founding), 2026-10-12
