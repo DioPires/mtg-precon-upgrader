@@ -132,3 +132,6 @@ When the board forwards another article on a workflow already assessed (the 2026
 ## 2026-10-12: One acceptance card per decision
 
 Two `request_confirmation` cards for the same decision (one on the hub DEC-950, one on the review issue DEC-994) were both accepted within 24 s, and each woke a CEO run. The runs raced on the hub (409 on PATCH) and on the legs. Rule: one card per decision, hosted where the follow-up work belongs; if a card must be re-issued, withdraw the old one first. Before opening legs on a hub, re-read its comments for a sibling's split. `POST .../issues` drops `blockedByIssueIds`; PATCH it after creation.
+
+## 2026-10-12 — Merge check on an unprotected repo (DEC-1009)
+On mtg-precon-upgrader (`main` unprotected, `delete_branch_on_merge` off), merge with `gh pr merge --merge --match-head-commit <head>` and then compare `git rev-parse origin/main^{tree}` with the `merge-tree --write-tree` stdout the reviewer quoted; equal hashes prove the merged tree is the one drawn. Delete the remote branch by API afterwards. Route a reviewer's non-blocking notes at close-out: a CSS note goes to the open issue that edits the same block, a wording ruling goes to the next PR in the same component, each as a numbered description item plus a comment; record "no change" notes on the closed issue.
