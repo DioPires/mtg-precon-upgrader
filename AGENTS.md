@@ -22,7 +22,7 @@ The Python test suite runs from the repository root:
 uv run --with pytest python -m pytest -q
 ```
 
-`tests/test_prerelease_tools.py` and `tests/test_sealed_sim.py` are pytest modules (fixtures, `pytest.raises`, `skipif`), so a bare `uv run python -m unittest` run fails to import them.
+`tests/test_prerelease_tools.py` and `tests/test_sealed_sim.py` are pytest modules (fixtures, `pytest.raises`), so a bare `uv run python -m unittest` run fails to import them.
 
 Production deploy (`vercel.json`) runs `npm run build` in `web/`, copies `data/` into `dist/data/`, and serves `web/dist/` as the host root.
 

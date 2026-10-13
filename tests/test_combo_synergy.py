@@ -224,12 +224,10 @@ def test_export_config_has_compat_idf_and_constants():
 
 
 # --------------------------------------------------------------------------- #
-# Integration smoke against the committed artifacts (skip if absent)           #
+# Integration smoke against the committed artifacts                            #
 # --------------------------------------------------------------------------- #
-def test_feature_index_round_trips_if_present():
+def test_feature_index_round_trips():
     fi = ROOT / "data" / "combo-kb" / "feature-index.json"
-    if not fi.exists():
-        return
     by_oid, name_to_oid = L.load_index_from_feature_index(str(fi))
     assert len(by_oid) > 1000
     # A known aristocrats pairing resolves and produces at least one edge.
@@ -245,8 +243,6 @@ def test_parity_fixture_matches_engine():
     other half)."""
     fx = ROOT / "web" / "src" / "lib" / "__fixtures__" / "synergy-parity.json"
     fi = ROOT / "data" / "combo-kb" / "feature-index.json"
-    if not (fx.exists() and fi.exists()):
-        return
     fixture = json.loads(fx.read_text())
     by_oid, name_to_oid = L.load_index_from_feature_index(str(fi))
     ont = L.load_ontology()
