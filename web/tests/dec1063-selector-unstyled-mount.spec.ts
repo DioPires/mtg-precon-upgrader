@@ -98,8 +98,10 @@ async function mountUnstyled(page: Page, deck: string): Promise<void> {
 }
 
 // The track's `overflow-x` when the selector began to observe it, and at each
-// size observation the browser then made of it.
-type Order = { mounted: string[]; observed: string[] };
+// size observation the browser then made of it. While `withhold` is true the
+// selector's observer is given the first of those observations and no later
+// one; a case sets it to false to let the later ones through.
+type Order = { mounted: string[]; observed: string[]; withhold: boolean };
 
 // As `mountUnstyled`, but the sheet goes sooner. This route gives WebKit's
 // order: the styles apply after the selector's mount effects and before its
@@ -112,10 +114,16 @@ type Order = { mounted: string[]; observed: string[] };
 // at that call. A microtask runs before the next rendering update, and the
 // first observation comes with that update.
 //
-// The route passes the selector's observer that first observation and no
-// later one. The web fonts swap in a moment afterwards and make the track a
-// pixel taller, and a selector that ignored its first observation would do
-// all the work at that second one.
+// The route passes the selector's observer that first observation, and it
+// withholds every later one while `withhold` is true. The web fonts swap in a
+// moment afterwards and make the track a pixel taller, and a selector that
+// ignored its first observation would do all the work at that second one.
+//
+// The pill case sets `withhold` to false at its end and then changes the
+// track's size once: a selector that centred at its first observation and
+// kept the centring pending would scroll a second time there. The fade case
+// never sets it, so this route does not run a later observation in the fade
+// case.
 //
 // Every later load on this page mounts this way too.
 async function mountUnstyledInWebKitOrder(page: Page, deck: string): Promise<void> {
@@ -136,7 +144,7 @@ async function mountUnstyledInWebKitOrder(page: Page, deck: string): Promise<voi
       return add.apply(this, args);
     };
 
-    const order: Order = { mounted: [], observed: [] };
+    const order: Order = { mounted: [], observed: [], withhold: true };
     (window as unknown as { __dec1063Order: Order }).__dec1063Order = order;
     const isTrack = (el: Element) => el.classList.contains('gv1-selector-track');
     const overflowX = (el: Element) => getComputedStyle(el).overflowX;
@@ -148,7 +156,7 @@ async function mountUnstyledInWebKitOrder(page: Page, deck: string): Promise<voi
           const track = entries.find((entry) => isTrack(entry.target))?.target;
           if (track) {
             order.observed.push(overflowX(track));
-            if (heard.has(observer)) return;
+            if (order.withhold && heard.has(observer)) return;
             heard.add(observer);
           }
           callback(entries, observer);
@@ -383,6 +391,20 @@ test.describe('DEC-1063 @ 390px, the styles apply before the first observation',
     // One scroll for the deck, as on a styled mount.
     expect(await trackScrolls(page)).toBe(1);
     await expectWebKitOrder(page);
+
+    // From here the selector's observer gets every observation again. A later
+    // size change must not centre a second time: that would pull back a rail
+    // the user has scrolled.
+    await page.evaluate(() => {
+      (window as unknown as { __dec1063Order: Order }).__dec1063Order.withhold = false;
+    });
+    const before = await rail(page);
+    await narrowSelector(page, 60);
+    await expect.poll(async () => (await rail(page)).clientWidth).toBe(before.clientWidth - 60);
+    // Time for a second scroll to start, if one is coming.
+    await page.waitForTimeout(300);
+    await settled(page);
+    expect(await trackScrolls(page)).toBe(1);
   });
 });
 
