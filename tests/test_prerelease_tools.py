@@ -27,11 +27,6 @@ import setlib  # noqa: E402
 FIXTURES = pathlib.Path(__file__).parent / "fixtures" / "prerelease"
 DEC925 = ROOT / "agents" / "ceo" / "analysis" / "dec925"
 
-requires_dec925 = pytest.mark.skipif(
-    not (DEC925 / "fra_all_cards.json").exists(),
-    reason="DEC-925 worked example is absent",
-)
-
 
 @pytest.fixture(scope="module")
 def fixture_cards() -> list:
@@ -271,7 +266,6 @@ def test_pearson_on_a_known_pair():
 # ----------------------------------------------------------------- regression
 
 
-@requires_dec925
 def test_build_grades_reproduces_the_dec925_grades(tmp_path):
     work = tmp_path / "dec925"
     work.mkdir()
@@ -284,7 +278,6 @@ def test_build_grades_reproduces_the_dec925_grades(tmp_path):
     assert json.dumps(built, indent=1) == (DEC925 / "grades.json").read_text(encoding="utf-8")
 
 
-@requires_dec925
 def test_build_cheat_sheet_reproduces_the_dec925_cheat_sheet(tmp_path):
     work = tmp_path / "dec925"
     work.mkdir()

@@ -7,14 +7,28 @@ on:
       - 'scripts/**'
       - 'data/**'
       - 'tests/**'
+      - 'agents/ceo/analysis/dec925/**'
+      - 'web/src/lib/__fixtures__/synergy-parity.json'
       - 'pytest.ini'
+      - 'conftest.py'
+      - 'pyproject.toml'
+      - 'uv.toml'
+      - 'pytest.toml'
+      - '.pytest.toml'
       - '.github/workflows/python-tests.yml'
   pull_request:
     paths:
       - 'scripts/**'
       - 'data/**'
       - 'tests/**'
+      - 'agents/ceo/analysis/dec925/**'
+      - 'web/src/lib/__fixtures__/synergy-parity.json'
       - 'pytest.ini'
+      - 'conftest.py'
+      - 'pyproject.toml'
+      - 'uv.toml'
+      - 'pytest.toml'
+      - '.pytest.toml'
       - '.github/workflows/python-tests.yml'
 
 permissions:
@@ -25,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # setup-uv stopped publishing floating major tags at v8; v10.3.0 is an
       # immutable release tag. Python matches the minor version uv runs on
       # the reference Mac. No lockfile, so the uv cache stays off.
@@ -33,8 +47,12 @@ jobs:
         with:
           python-version: '3.14'
           enable-cache: false
-      - run: uv run --with pytest python -VV
-      # The suite command AGENTS.md names (DEC-1047). -rs lists each skip
-      # with its reason; the Scryfall mirror test skips here because
-      # priv_data/scryfall-oracle.json is gitignored.
-      - run: uv run --with pytest python -m pytest -q -rs
+      # uv and pytest float (no pin), so the log names both versions:
+      # setup-uv prints uv's, this step prints Python's and pytest's.
+      - run: |
+          uv run --with pytest python -VV
+          uv run --with pytest python -m pytest --version
+      # The suite command AGENTS.md names (DEC-1047). -rfEs lists each
+      # failure, error and skip in the short summary; the Scryfall mirror
+      # test skips here because priv_data/scryfall-oracle.json is gitignored.
+      - run: uv run --with pytest python -m pytest -q -rfEs

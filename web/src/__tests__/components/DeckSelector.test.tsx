@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { DeckSelector } from '../../components/organisms/DeckSelector';
 import type { DeckStub } from '../../data/types';
 
@@ -41,18 +41,94 @@ describe('DeckSelector scroll (DEC-1008)', () => {
     proto.scrollIntoView = original.scrollIntoView;
   });
 
-  it('scrolls the track to the active pill and never calls scrollIntoView on the pill', () => {
+  it('scrolls the track to the active pill and never calls scrollIntoView', () => {
     const decks = makeDecks(5);
     const { rerender } = render(<DeckSelector decks={decks} activeIdx={5} onSelect={() => {}} />);
 
     expect(scrollTo).toHaveBeenCalledTimes(1);
     expect(scrollTo).toHaveBeenLastCalledWith(expect.objectContaining({ behavior: 'smooth' }));
-    // scrollIntoView on the pill scrolls every ancestor, `.gv1-root` included.
-    expect(intoViewTargets).toEqual(['gv1-selector-track']);
 
     rerender(<DeckSelector decks={decks} activeIdx={2} onSelect={() => {}} />);
     expect(scrollTo).toHaveBeenCalledTimes(2);
-    expect(intoViewTargets).toEqual(['gv1-selector-track', 'gv1-selector-track']);
+    // On the pill it scrolls every ancestor, `.gv1-root` included (DEC-1008).
+    // On the track it moves Chromium's focus starting point (DEC-1048).
+    expect(intoViewTargets).toEqual([]);
+  });
+
+  describe('bringing the rail into view (DEC-1048)', () => {
+    const root = document.documentElement;
+    let scrollBy: ReturnType<typeof vi.spyOn>;
+    beforeEach(() => {
+      scrollBy = vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
+      Object.defineProperty(root, 'clientHeight', { configurable: true, value: 768 });
+    });
+    afterEach(() => {
+      scrollBy.mockRestore();
+      delete (root as { clientHeight?: number }).clientHeight;
+    });
+
+    // jsdom has no layout: give the track a rect, and the viewport 768px.
+    const trackAt = (top: number) =>
+      vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+        this: HTMLElement,
+      ) {
+        return this.classList.contains('gv1-selector-track')
+          ? new DOMRect(0, top, 300, 150)
+          : new DOMRect(0, 0, 0, 0);
+      });
+
+    it.each([
+      ['above the viewport', -400, -400],
+      ['below the viewport', 900, 900 + 150 - 768],
+    ])('scrolls the page by the least amount when the track is %s', (_, top, dy) => {
+      const rect = trackAt(top);
+      render(<DeckSelector decks={makeDecks(5)} activeIdx={3} onSelect={() => {}} />);
+      expect(scrollBy).toHaveBeenCalledTimes(1);
+      expect(scrollBy).toHaveBeenCalledWith({ top: dy, behavior: 'smooth' });
+      rect.mockRestore();
+    });
+
+    it('leaves the page alone when the track is in view', () => {
+      const rect = trackAt(200);
+      render(<DeckSelector decks={makeDecks(5)} activeIdx={3} onSelect={() => {}} />);
+      expect(scrollBy).not.toHaveBeenCalled();
+      rect.mockRestore();
+    });
+  });
+});
+
+describe('DeckSelector right-edge fade (DEC-1048)', () => {
+  // jsdom has no layout: give the track its scroll metrics by hand.
+  function setTrack(track: HTMLElement, scrollLeft: number, clientWidth: number, scrollWidth: number) {
+    Object.defineProperty(track, 'clientWidth', { configurable: true, value: clientWidth });
+    Object.defineProperty(track, 'scrollWidth', { configurable: true, value: scrollWidth });
+    track.scrollLeft = scrollLeft;
+    fireEvent.scroll(track);
+  }
+
+  it('marks the selector while the track is scrolled to its end', () => {
+    const { getByRole, container } = render(
+      <DeckSelector decks={makeDecks(5)} activeIdx={1} onSelect={() => {}} />,
+    );
+    const nav = getByRole('tablist');
+    const track = container.querySelector<HTMLElement>('.gv1-selector-track')!;
+
+    setTrack(track, 0, 300, 1200);
+    expect(nav).not.toHaveAttribute('data-at-end');
+
+    setTrack(track, 899.5, 300, 1200);
+    expect(nav).toHaveAttribute('data-at-end');
+
+    setTrack(track, 400, 300, 1200);
+    expect(nav).not.toHaveAttribute('data-at-end');
+  });
+
+  it('marks the selector when the track does not overflow', () => {
+    const { getByRole, container } = render(
+      <DeckSelector decks={makeDecks(2)} activeIdx={1} onSelect={() => {}} />,
+    );
+    setTrack(container.querySelector<HTMLElement>('.gv1-selector-track')!, 0, 600, 600);
+    expect(getByRole('tablist')).toHaveAttribute('data-at-end');
   });
 });
 

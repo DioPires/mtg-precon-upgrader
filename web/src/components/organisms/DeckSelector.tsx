@@ -3,7 +3,7 @@
 // DEC-297: brewing decks render at the end of the rail under a divider, with
 // a BREWING badge on each pill.
 
-import { Fragment, useEffect, useMemo, useRef, type KeyboardEvent } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { GV1ManaPips } from '../atoms/GV1ManaPips';
 import type { DeckStub } from '../../data/types';
 
@@ -44,10 +44,27 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
       behavior: 'smooth',
     });
     // Still bring the rail into view when a deck is opened from a scrolled
-    // page. The track is never wider than the page, so `nearest` only ever
-    // moves the page vertically.
-    track.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    // page: scroll the page by the least amount, as `block: 'nearest'` would.
+    // Not `track.scrollIntoView` (DEC-1048): Chromium moves its sequential
+    // focus starting point to the element, so the first Tab from load skipped
+    // the topbar and landed on the active pill.
+    const below = t.bottom - document.documentElement.clientHeight;
+    const dy = t.top < 0 ? t.top : below > 0 ? Math.min(below, t.top) : 0;
+    if (dy) window.scrollBy({ top: dy, behavior: 'smooth' });
   }, [activeIdx]);
+
+  // DEC-1048: the right-edge fade means "more pills this way". Drop it while
+  // the track is scrolled to its end, or when the track does not overflow.
+  const [atEnd, setAtEnd] = useState(false);
+  const updateAtEnd = useCallback(() => {
+    const track = trackRef.current;
+    if (track) setAtEnd(track.scrollLeft + track.clientWidth >= track.scrollWidth - 1);
+  }, []);
+  useEffect(() => {
+    updateAtEnd();
+    window.addEventListener('resize', updateAtEnd);
+    return () => window.removeEventListener('resize', updateAtEnd);
+  }, [updateAtEnd, ordered.length]);
 
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
@@ -64,7 +81,12 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
   };
 
   return (
-    <nav className="gv1-selector" aria-label="Deck selector" role="tablist">
+    <nav
+      className="gv1-selector"
+      aria-label="Deck selector"
+      role="tablist"
+      data-at-end={atEnd || undefined}
+    >
       <div className="gv1-selector-head">
         <div className="gv1-selector-head-l">
           <span className="gv1-mono-xs gv1-rune">
@@ -83,7 +105,12 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
           <span className="gv1-mono-xs gv1-chip">bracket 4</span>
         </div>
       </div>
-      <div className="gv1-selector-track" ref={trackRef} onKeyDown={onKey}>
+      <div
+        className="gv1-selector-track"
+        ref={trackRef}
+        onKeyDown={onKey}
+        onScroll={updateAtEnd}
+      >
         {ordered.map((d, i) => {
           const active = d.idx === activeIdx;
           const stub = !d.hasDetail;

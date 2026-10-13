@@ -20,11 +20,6 @@ CARDS_PATH = DATA / "fra_all_cards.json"
 PAIRS_PATH = DATA / "echoed_pairs.json"
 CONFIG_PATH = DATA / "collation.json"
 
-pytestmark = pytest.mark.skipif(
-    not CARDS_PATH.exists(),
-    reason="DEC-925 card dump is untracked; skip when it is absent",
-)
-
 
 @pytest.fixture(scope="module")
 def cards():
