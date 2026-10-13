@@ -7,6 +7,9 @@
 - Post comment: `POST /api/issues/{uuid}/comments` with `{"body": "..."}`.
 - Set status: `PATCH /api/issues/{uuid}` with `{"status": "done" | ...}`.
 - Route-shape gotchas: see memory `reference_paperclip_api_route_shapes`.
+- Checkout: `POST /api/issues/{uuid}/checkout` needs `{"agentId": "<my id>", "expectedStatuses": ["in_review", "in_progress", "todo"]}`; an empty body returns 400.
+- Clear a fallback monitor in the same PATCH as a reassignment: `{"assigneeAgentId": "...", "status": "todo", "executionPolicy": {"monitor": null}}` (200, verified 2026-10-13).
+- `GET /api/issues/{uuid}/runs` lists runs newest-first (`id`, `agentId`, `status`, `startedAt`, `errorCode`); slice `[:n]`, never `[-n:]`. Before routing an issue outside the current wake, read its list: a live CEO run on it owns the routing (two wakes that fire together start two CEO runs; DEC-1015, 2026-10-13). Only a hand-back with no CEO run at all after it is a lost wake.
 - Interactions (`POST /api/issues/{uuid}/interactions`) can be created only on the run's own issue (`PAPERCLIP_TASK_ID`); another issue returns 422 `sourceRunId must belong to the same issue`. Each question allows at most one `freeText` option (400 otherwise). To put a card on a hub issue, wake on that issue first or host the card on the current one and point to it.
 
 ## MCP servers (project-scoped)
