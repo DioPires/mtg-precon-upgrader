@@ -1240,13 +1240,24 @@ em { font-style: italic; color: var(--gv1-gold); }
 }
 .gv1-perf-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding: 0; background: var(--gv1-line); }
 .gv1-kpi { background: var(--gv1-bg-2); padding: 24px; display: flex; flex-direction: column; gap: 6px; }
-.gv1-curve { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding-top: 8px; }
-.gv1-curve-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; }
-.gv1-curve-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; position: relative; }
-.gv1-curve-bar { width: 100%; background: var(--gv1-rune-dim); }
+/* Role chart: one row of bars on a shared baseline, one row of labels. Each
+   count is a child of its bar and sits 4px above it. A column is at least as
+   wide as the longest word of its label: equal columns at 1280px make
+   "Protection" 14px wider than its column and run it into the next label. */
+.gv1-curve {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(min-content, 1fr);
+  grid-template-rows: 130px auto;
+  gap: 6px 8px;
+  padding-top: 22px;
+}
+.gv1-curve-col { display: contents; }
+.gv1-curve-bar-wrap { display: flex; align-items: flex-end; }
+.gv1-curve-bar { position: relative; width: 100%; background: var(--gv1-rune-dim); }
 .gv1-curve-col.gv1-peak .gv1-curve-bar { background: var(--gv1-rune); box-shadow: 0 0 12px rgba(124, 200, 146, 0.5); }
-.gv1-curve-n { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); }
-.gv1-curve-l { margin-top: 2px; }
+.gv1-curve-n { position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); }
+.gv1-curve-l { justify-self: center; margin-top: 2px; }
 .gv1-func-rows { display: flex; flex-direction: column; gap: 10px; }
 .gv1-func-row { display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: center; }
 .gv1-func-label { color: var(--gv1-ink); opacity: 0.8; }
@@ -1271,24 +1282,13 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-wincon-cards,
   .gv1-combo-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-  /* Eight role labels do not fit side by side on a phone. Lay the chart out
-     as a grid (equal columns, one shared label row) and turn the labels to
-     read upwards. */
-  .gv1-curve {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
-    grid-template-rows: 120px auto;
-    align-items: stretch;
-    gap: 6px 4px;
-    height: auto;
-  }
-  .gv1-curve-col { display: contents; }
+  /* Eight role labels do not fit side by side on a phone. Shorten the bar
+     row, close up the columns and turn the labels to read upwards. */
+  .gv1-curve { grid-template-rows: 120px auto; gap: 6px 4px; }
   .gv1-curve-l {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     white-space: nowrap;
-    justify-self: center;
     align-self: start;
     margin-top: 0;
   }
