@@ -3,6 +3,7 @@ redundancy `target` and the join of role gaps with resilience gaps."""
 
 from __future__ import annotations
 
+import copy
 import sys
 import unittest
 from pathlib import Path
@@ -67,6 +68,11 @@ class RedundancyTargetTests(unittest.TestCase):
             },
         )
 
+    def test_gap_entry_target_follows_the_style_floor(self):
+        _, gaps = m.resilience_health(_lines_deck("discrete-threats", 3), 4)
+        (entry,) = _named(gaps, "redundancy")
+        self.assertEqual((entry["lines"], entry["floor"], entry["target"]), (3, 2, 4))
+
     def test_full_score_arrives_at_target_and_not_before(self):
         for style in ("combo", "discrete-threats"):
             floor = m.RESILIENCE_WINCON_LINE_FLOOR[style]
@@ -78,6 +84,15 @@ class RedundancyTargetTests(unittest.TestCase):
                 self.assertEqual(at["components"]["redundancy"]["score"], 25)
                 self.assertEqual(at["components"]["redundancy"]["target"], target)
                 self.assertEqual(_named(at_gaps, "redundancy"), [])
+
+    def test_ratio_and_target_follow_the_constant(self):
+        with mock.patch.object(m, "RESILIENCE_REDUNDANCY_EXTRA_LINES", 3):
+            res, gaps = m.resilience_health(_lines_deck("combo", 3), 4)
+        block = res["components"]["redundancy"]
+        self.assertEqual(block["target"], 4)
+        self.assertEqual(block["score"], 16.7)
+        (entry,) = _named(gaps, "redundancy")
+        self.assertEqual(entry["target"], 4)
 
 
 class MergeGapsTests(unittest.TestCase):
@@ -106,6 +121,20 @@ class MergeGapsTests(unittest.TestCase):
             [tutor, self.RESILIENCE, redundancy],
         )
         self.assertEqual(m.merge_gaps([], [self.RESILIENCE]), [self.RESILIENCE])
+
+    def test_leaves_both_arguments_unchanged(self):
+        role_gaps = [{"role": "tutor", "actual": 2.5, "target": 4, "score": 62}]
+        resilience_gaps = [{
+            "resilience_component": "redundancy", "score_pct": 50, "max": 25,
+            "lines": 2, "floor": 1, "target": 3, "wincon_style": "combo",
+        }]
+        role_before = copy.deepcopy(role_gaps)
+        resilience_before = copy.deepcopy(resilience_gaps)
+        merged = m.merge_gaps(role_gaps, resilience_gaps)
+        self.assertEqual(merged, role_before + resilience_before)
+        self.assertEqual(role_gaps, role_before)
+        self.assertEqual(resilience_gaps, resilience_before)
+        self.assertIsNot(merged, role_gaps)
 
 
 class ComputeGapsJoinTests(unittest.TestCase):
