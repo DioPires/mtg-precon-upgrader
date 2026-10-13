@@ -20,3 +20,4 @@
 - `youtube_*` — deck-tech research.
 - `archidekt_*` — publish decks (needs `ARCHIDEKT_AUTH_TOKEN` for writes).
 - Find an issue by identifier: `GET /api/companies/{companyId}/issues?q=DEC-1016&limit=3` (filter the rows by `identifier`; `identifier=` and `identifiers=` are ignored). `?parentId=<uuid>` lists children. The list carries no `executionPolicy`; read the monitor by `GET /api/issues/{uuid}` (DEC-1022, 2026-10-13).
+- Comments list rows (`GET /api/issues/{uuid}/comments`) carry `authorAgentId` / `authorUserId` with `authorType`; the wake payload's `authorId` is not in that shape. Runs list rows carry `runId`, not `id`. `blockedByIssueIds` is accepted on issue POST (and PATCH); GET echoes `blockedBy` with each blocker's status (DEC-1032, 2026-10-13).
