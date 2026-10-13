@@ -2,10 +2,11 @@
 
 ## Topics
 - [mtg-cards.md](mtg-cards.md) — 26 entries
-- [patterns.md](patterns.md) — 15 entries
-- [debugging.md](debugging.md) — 5 entries
+- [patterns.md](patterns.md) — 18 entries
+- [debugging.md](debugging.md) — 8 entries
 
 ## Recent Additions
+- 2026-10-13: Route every "not fixed" note of a review verdict at the merge (correct the open follow-up, one new low issue per component, setup lessons into every brief); merge proof = three-way tree equality, no local re-run; `/runs` is newest-first (slice `[:n]`), and two CEO runs live at once resolve by first-writer-wins (DEC-1015); `PLAYWRIGHT_BROWSERS_PATH` under the host home; root `overflow: hidden` kills `position: sticky` (DEC-1018/1008/1015) → patterns.md, debugging.md, 2026-10-13.md
 - 2026-10-12: Filter the full pool before the top-N cut: a top-30-then-filter view shows an empty grid when the hits rank below 30 (gap-role cards sit at 49–195); measure top-N hits / full hits / first rank and put the table in the follow-up; `executionPolicy: null` clears a monitor; PATCH `blockedByIssueIds` is not echoed by GET (DEC-1013/1015/1016) → patterns.md, 2026-10-12.md
 - 2026-10-12: A web change that renders script output is reviewed by the script's owner; implementer calls become numbered rulings, script follow-ups are asked as advice notes; scope the 390 px overflow check to the touched element when a sibling issue owns the page overflow (DEC-1007/DEC-1013) → patterns.md, 2026-10-12.md
 - 2026-10-12: Merge check on an unprotected repo = `rev-parse origin/main^{tree}` equals the reviewer's `merge-tree` stdout; the issue list omits monitors, read them per issue; route non-blocking review notes to the open issue in the same block/component (DEC-1009) → patterns.md, debugging.md, 2026-10-12.md
@@ -17,6 +18,7 @@
 - 2026-10-12: Push `main` before routing a review (local-only commits hide conflicts from GitHub); seat board-requested cards by pin, not by cut or weights (DEC-990/992) → patterns.md; the Hound ranks 931 of 2,018 under v7 → mtg-cards.md, 2026-10-12.md
 - 2026-10-12: Keep a Paperclip run alive with a foreground `kill -0` loop while Codex runs; launch Codex in its own session (a dead run killed round 7) → debugging.md, 2026-10-12.md
 - 2026-10-12: Flickering Hound is a cast trigger (Panharmonicon no, Throne only with the type); Spellbook combos all need blue; anvil-chorus rate 0.59–0.96 flickers a turn vs 1.00 for an end-step flicker → mtg-cards.md, 2026-10-12.md
+- 2026-10-12: Responsive CSS PR review brief: draw both sides of every breakpoint, implementer's visual calls become design rulings, the hand-back's "not fixed" list becomes lettered sub-rulings with the measured follow-up opened first and blocked by the hub; negative control swaps `web/src` only; Playwright reuses a 4173 server, name the `lsof` check; a hidden-overflow root hides page overflow and still scrolls by script, measure the clipping ancestor (DEC-1008/1017/1018) → patterns.md, debugging.md, 2026-10-12.md
 - 2026-10-11: Paperclip `executionPolicy.monitor.notes` max 500 chars; a longer note fails the whole PATCH → debugging.md
 - 2026-10-11: `enforce_admins` on `main` is on since 07:35Z (DEC-966/968); a skipped required job still counts as satisfied, so only `unity/`-touching PRs wait on the runner → 2026-10-11.md
 - 2026-10-11: Branch protection on `main` does not bind administrators (enforce_admins false); owner decision DEC-966 → 2026-10-11.md

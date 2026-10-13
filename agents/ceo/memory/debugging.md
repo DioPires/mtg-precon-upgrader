@@ -53,3 +53,15 @@ Ending the turn with only a background waiter pending ended the run twice (16:10
 
 ## 2026-10-12 — Paperclip issue list omits monitors
 `GET /api/companies/{cid}/issues?status=…` returns `executionPolicy.monitor` with `nextCheckAt` null and no notes even when `GET /api/issues/{id}` shows a live monitor. Use the single-issue GET before concluding a monitor is missing or before rewriting one.
+
+## 2026-10-12 — A hidden-overflow root hides page overflow and still scrolls (DEC-1008)
+`.gv1-root { overflow: hidden }` keeps wide blocks off `documentElement`, so a page-overflow check on `documentElement.scrollWidth` reads equal widths and passes. Script can still scroll a hidden-overflow box: `scrollIntoView({ inline: 'center' })` on a pill inside it slid the whole guide 34 px left at 390 px with no way back. Measure overflow on the clipping ancestor (`scrollWidth`, `clientWidth`, `scrollLeft`), load every deck (the first deck's pill never needs the scroll), and check the mobile grid track: a bare `1fr` grows to the widest child's min-content, `minmax(0, 1fr)` does not.
+
+## 2026-10-13 — Playwright in agent runs: browsers live under the host home (DEC-1018 N2)
+The sandbox `HOME` of an agent run has no `~/Library/Caches/ms-playwright`, so `npm run test:e2e` fails every case at browser launch. Set `PLAYWRIGHT_BROWSERS_PATH="$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright"` beside `HOME="$PAPERCLIP_GITHUB_HOST_HOME"`.
+
+## 2026-10-13 — `overflow: hidden` on the app root kills `position: sticky` inside it (DEC-1018 N15d)
+Under `overflow: hidden` the root becomes the scroll container for its descendants, so a sticky rail's top reads −600 after a 600 px page scroll; under `overflow: clip` it reads 0 and the rail sticks. Changing the root to `clip` switches on every sticky rule that never worked: check each one visually at the merge.
+
+## 2026-10-13 — `/api/issues/{id}/runs` is newest-first
+The runs list puts the latest run first. Slicing `[-4:]` shows the oldest runs and hides a live one; slice `[:4]`. This misread made a parallel-handled hand-back look like a lost wake (DEC-1015).
