@@ -3088,6 +3088,12 @@ em { font-style: italic; color: var(--gv1-gold); }
       top: 0;
       z-index: 10;
     }
+    /* Keep keyboard focus out from under the pinned rail: a control that is
+       already on screen, under the rail, does not scroll when it takes focus.
+       216px is the rail at its tallest (200px, 600–625px wide) plus 16px. */
+    .gv1-shop-rail ~ .gv1-shop-section :is(a, button, input, select, label, [tabindex]) {
+      scroll-margin-top: 216px;
+    }
   }
   .gv1-shop-rail-head {
     flex-wrap: wrap;
