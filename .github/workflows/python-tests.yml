@@ -1,0 +1,40 @@
+name: python-tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'data/**'
+      - 'tests/**'
+      - 'pytest.ini'
+      - '.github/workflows/python-tests.yml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'data/**'
+      - 'tests/**'
+      - 'pytest.ini'
+      - '.github/workflows/python-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # setup-uv stopped publishing floating major tags at v8; v10.3.0 is an
+      # immutable release tag. Python matches the minor version uv runs on
+      # the reference Mac. No lockfile, so the uv cache stays off.
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          python-version: '3.14'
+          enable-cache: false
+      - run: uv run --with pytest python -VV
+      # The suite command AGENTS.md names (DEC-1047). -rs lists each skip with its reason; the
+      # Scryfall mirror test skips here because priv_data/scryfall-oracle.json
+      # is gitignored.
+      - run: uv run --with pytest python -m pytest -q -rs
