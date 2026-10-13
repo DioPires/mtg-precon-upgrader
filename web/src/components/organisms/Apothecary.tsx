@@ -346,7 +346,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
             })}
             {effectiveFilter && (
               <button type="button" className="gv1-apo-malady-clear" onClick={clearFilter}>
-                Clear filter ×
+                Clear filter <span aria-hidden="true">×</span>
               </button>
             )}
           </div>
