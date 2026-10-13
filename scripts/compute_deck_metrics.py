@@ -112,6 +112,9 @@ RESILIENCE_WINCON_LINE_FLOOR: dict[str | None, int] = {
     "mixed": 1,
     None: 1,
 }
+# winConditions[] lines above the floor that earn full redundancy credit. The
+# score ratio and the emitted `target` (floor + this) share the one number.
+RESILIENCE_REDUNDANCY_EXTRA_LINES = 2
 RESILIENCE_PROTECTION_TARGETS = {3: 2, 4: 4, 5: 5}
 RESILIENCE_GY_TARGET = 6
 RESILIENCE_GY_ROLES = {"recursion", "engine"}
@@ -787,8 +790,9 @@ def resilience_health(deck: dict, bracket: int) -> tuple[dict, list[dict]]:
     recursion_ratio = (recursion_count / recursion_target) if recursion_target else 1.0
     recursion_score = round(min(recursion_ratio, 1.2) * 30, 1)
 
+    redundancy_target = wincon_floor + RESILIENCE_REDUNDANCY_EXTRA_LINES
     redundancy_extra = max(0.0, wincon_lines - wincon_floor)
-    redundancy_ratio = min(redundancy_extra / 2.0, 1.0)
+    redundancy_ratio = min(redundancy_extra / RESILIENCE_REDUNDANCY_EXTRA_LINES, 1.0)
     redundancy_score = round(redundancy_ratio * 25, 1)
 
     protection_ratio = min(protection_count / protection_target, 1.0) if protection_target else 1.0
@@ -802,7 +806,7 @@ def resilience_health(deck: dict, bracket: int) -> tuple[dict, list[dict]]:
 
     components = {
         "recursion":      {"score": recursion_score, "actual": round(recursion_count, 1), "target": recursion_target, "max": 30},
-        "redundancy":     {"score": redundancy_score, "lines": wincon_lines, "floor": wincon_floor, "max": 25},
+        "redundancy":     {"score": redundancy_score, "lines": wincon_lines, "floor": wincon_floor, "target": redundancy_target, "max": 25},
         "protection":     {"score": protection_score, "actual": round(protection_count, 1), "target": protection_target, "max": 25},
         "gy_second_hand": {"score": gy_score, "actual": round(gy_count, 1), "target": RESILIENCE_GY_TARGET, "max": 20},
     }
@@ -816,7 +820,7 @@ def resilience_health(deck: dict, bracket: int) -> tuple[dict, list[dict]]:
             if name == "recursion":
                 gap_entry.update({"actual": comp["actual"], "target": comp["target"], "wincon_style": wincon_style})
             elif name == "redundancy":
-                gap_entry.update({"lines": comp["lines"], "floor": comp["floor"], "wincon_style": wincon_style})
+                gap_entry.update({"lines": comp["lines"], "floor": comp["floor"], "target": comp["target"], "wincon_style": wincon_style})
             elif name == "protection":
                 gap_entry.update({"actual": comp["actual"], "target": comp["target"]})
             elif name == "gy_second_hand":
@@ -834,6 +838,21 @@ def resilience_health(deck: dict, bracket: int) -> tuple[dict, list[dict]]:
         },
         gaps,
     )
+
+
+def merge_gaps(role_gaps: list[dict], resilience_gaps: list[dict]) -> list[dict]:
+    """Role gaps, then resilience gaps, minus a resilience gap a role gap repeats.
+
+    A resilience component named like a role (protection today) reports the
+    role gap's shortfall a second time while both tables hold one target. The
+    figures are compared, not only the name: if the tables are tuned apart,
+    the resilience gap carries its own figures and stays.
+    """
+    role_figures = {g["role"]: (g["actual"], g["target"]) for g in role_gaps}
+    return role_gaps + [
+        g for g in resilience_gaps
+        if role_figures.get(g["resilience_component"]) != (g.get("actual"), g.get("target"))
+    ]
 
 
 # ---- Win-turn triple (DEC-311) ---------------------------------------------
@@ -1226,7 +1245,7 @@ def compute(
         "confidence_margin": confidence["margin"],
         "confidence_inputs": confidence["inputs"],
         "win_turn": win_turn,
-        "gaps": role_gaps + resilience_gaps,
+        "gaps": merge_gaps(role_gaps, resilience_gaps),
     }
 
 
