@@ -6,6 +6,7 @@
 - [debugging.md](debugging.md) — 8 entries
 
 ## Recent Additions
+- 2026-10-13: Paperclip `/runs` rows carry `runId` (no `id`); `/runs` and `/comments` are newest-first (`rows[0]` latest); a crashed or wrong-end guard routed DEC-1026's D1 twice and opened DEC-1036 as a duplicate of DEC-1032 (cancelled); PR #9 review opened as DEC-1034 with design rulings on the flag's new corner, the dashed border vs the glow and the unlisted smoke-test wait → debugging.md, TOOLS.md, 2026-10-13.md
 - 2026-10-13: Merge refused for a BEHIND branch → update-branch by API with the approved head pinned, verify the new head's tree = the reviewer's merge-tree, green checks, pinned merge; two of ten `in_review` issues were lost wakes, sweep every wake (DEC-1011/996) → patterns.md, 2026-10-13.md
 - 2026-10-13: `executionPolicy.monitor.scheduledBy` is an enum (`assignee`|`board`; a wrong value drops the whole PATCH); a hand-back PATCH with assignee + monitor did wake the CEO as `issue_assigned` (DEC-1019); a root `overflow: clip` switches every inner sticky rule on, sweep them all → debugging.md, 2026-10-13.md
 - 2026-10-13: The assignee's 422 fallback hand-back (assignee + monitor PATCH) woke no CEO run (DEC-1015); `/runs` lists writers incl. the current run, newest-first; `checkout` flips `in_review` to `in_progress`; `issue_children_completed` fires a second CEO run while the closing run is live: verify, do not re-route; DEC-1020 formally blocked by DEC-1017 → debugging.md, patterns.md, TOOLS.md, 2026-10-13.md
