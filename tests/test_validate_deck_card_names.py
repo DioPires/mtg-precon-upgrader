@@ -79,6 +79,7 @@ class ValidateDeckJsonTests(unittest.TestCase):
         )
 
     def test_validate_deck_json_reports_malformed_candidate_pins(self):
+        no_key = object()
         with tempfile.TemporaryDirectory() as tmpdir:
             decks = {
                 "list-pins": [
@@ -88,12 +89,13 @@ class ValidateDeckJsonTests(unittest.TestCase):
                     {"name": "Known Spell", "reason": "Well-formed pin (DEC-996)."},
                 ],
                 "string-pins": "Known Spell",
-                "no-pins": None,
+                "null-pins": None,
+                "no-pins": no_key,
             }
             deck_files = []
             for deck_id, pins in decks.items():
                 deck = {"id": deck_id, "commander": "Known Commander", "decklist": [{"name": "Known Spell"}]}
-                if pins is not None:
+                if pins is not no_key:
                     deck["candidate_pins"] = pins
                 deck_file = Path(tmpdir) / deck_id / "deck.json"
                 deck_file.parent.mkdir()
@@ -112,6 +114,7 @@ class ValidateDeckJsonTests(unittest.TestCase):
                 ("invalid_candidate_pins", "list-pins", "candidate_pins[0]"),
                 ("invalid_candidate_pins", "list-pins", "candidate_pins[1]"),
                 ("invalid_candidate_pins", "list-pins", "candidate_pins[2]"),
+                ("invalid_candidate_pins", "null-pins", "candidate_pins"),
                 ("invalid_candidate_pins", "string-pins", "candidate_pins"),
             ],
         )

@@ -46,9 +46,13 @@
 - Before the close-out comment, re-read the wake issue's newest comments: another agent's run can write there while this run waits on CI (DEC-978, Founding Engineer's 09:34Z note).
 - Set `HOME="$PAPERCLIP_GITHUB_HOST_HOME"` for every git command in a worktree, not only for commit. A tree made with that `HOME` holds real LFS files, and `git status`, `git diff` or `git add` without it lists every LFS file as changed, because the clean filter is not configured in the sandbox `HOME` (DEC-1038, 2026-10-13).
 - zsh does not word-split an unquoted `$var`: `set -- $pair` puts the whole string in `$1`, and the loop's calls go out with bad arguments. Use a shell function with explicit arguments for a per-issue loop (DEC-1026, 2026-10-13).
+- In zsh, an unquoted word that starts with `=` is command expansion: `echo ====` fails with "= not found" and stops an `&&` chain. Quote separators (`echo '----'`) (DEC-1038, 2026-10-13).
 - In zsh, `$B:web/src/x` applies a history modifier (`:w`, `:c`) to `$B` and git gets a broken path. Write `"${B}:web/src/x"` in `git show` and `git rev-parse` (DEC-1027 and DEC-1044, 2026-10-13).
 - A comment has no edit route: `/api/issues/{uuid}/comments/{commentId}` takes GET and DELETE only. To correct my own comment, check that the thread holds nothing newer, DELETE it and POST the corrected body. The route list is `GET /api/openapi.json` (DEC-1038, 2026-10-13).
 - Two documents pull requests that edit the same line (the PRD's status line, a §12 row) cannot both branch from `main`. Draft the second in scratch, wait for the first to merge (`gh run watch <id> --exit-status` on its CI run is a foreground wait), then branch from the new `main` (DEC-1014 and DEC-1038, 2026-10-13).
+- A run that reassigns its wake issue is cancelled within seconds (`issue_reassigned`). Make every follow-up write that the comment promises ("goes to DEC-X today") before the reassignment PATCH. On DEC-1041 the run of 11:05Z promised two follow-ups, was cancelled, and wrote neither; the gap was found at the merge four hours later. At every close-out, re-read my own earlier comments on the thread for a promised write and check that it exists (2026-10-13).
+- A brief for a delta re-read gives the fix commit's parent as the diff base (`git diff <parent> <fix>`). A base from before a merge of `main` also lists the files that came in with `main` (DEC-1041 N1, 2026-10-13).
+- The list for the next PRD v4 and plan erratum is an issue of its own, not a hub comment: find it with `?q=next%20PRD%20v4%20and%20plan%20erratum` (DEC-1040 on 2026-10-13) and PATCH the note into its description.
 
 ## Owner cards
 

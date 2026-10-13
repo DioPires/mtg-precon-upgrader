@@ -1,7 +1,7 @@
 // Port of gv1-perf.jsx GV1Apothecary (lines 56–355).
 // Co-locates the ScoreRing SVG until the Phase 7 atoms refactor lands.
 
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { ManaCost } from '../atoms/ManaCost';
 import type { DeckApothecary, RawCandidate, RawResilienceGap, RawRoleGap } from '../../data/types';
 
@@ -143,6 +143,7 @@ interface ApothecaryProps {
 export function Apothecary({ apothecary }: ApothecaryProps) {
   const [filterRole, setFilterRole] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const activeChipRef = useRef<HTMLButtonElement | null>(null);
 
   if (!apothecary) {
     return (
@@ -177,6 +178,13 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
   const roleGaps = (maladies || []).filter((g): g is RawRoleGap => 'role' in g);
   const activeRoles = new Set(roleGaps.map((g) => g.role));
   const effectiveFilter = filterRole && activeRoles.has(filterRole) ? filterRole : null;
+
+  // DEC-1028 — `Clear filter ×` unmounts on the next render. Move focus to the
+  // chip it clears first, so a keyboard or screen-reader user keeps their place.
+  const clearFilter = () => {
+    activeChipRef.current?.focus();
+    setFilterRole(null);
+  };
 
   // DEC-1015 — filter the whole pool, then cut to the top N. The cards that
   // fill a gap mostly rank below N, so cutting first left the grid empty.
@@ -322,6 +330,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
               return (
                 <button
                   key={'role:' + g.role}
+                  ref={isActive ? activeChipRef : undefined}
                   type="button"
                   className={'gv1-apo-malady gv1-apo-tier-' + tier + (isActive ? ' is-active' : '')}
                   onClick={() => setFilterRole(isActive ? null : g.role)}
@@ -336,7 +345,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
               );
             })}
             {effectiveFilter && (
-              <button type="button" className="gv1-apo-malady-clear" onClick={() => setFilterRole(null)}>
+              <button type="button" className="gv1-apo-malady-clear" onClick={clearFilter}>
                 Clear filter ×
               </button>
             )}
@@ -391,9 +400,9 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
       {pool.length === 0 ? (
         <div className="gv1-empty">
           {effectiveFilter ? (
-            <>
+            <span>
               No remedies match <em>{ROLE_LABELS[effectiveFilter] || effectiveFilter}</em>.
-            </>
+            </span>
           ) : (
             'No remedies available.'
           )}
