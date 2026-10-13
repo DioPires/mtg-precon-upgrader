@@ -66,9 +66,10 @@ export function Performance({ curve, func, sources, health, composition, assessm
           <div className="gv1-curve">
             {curve.map((c, i) => (
               <div key={i} className={'gv1-curve-col' + (c.peak ? ' gv1-peak' : '')}>
-                <div className="gv1-curve-n gv1-mono-xs">{c.n}</div>
                 <div className="gv1-curve-bar-wrap">
-                  <div className="gv1-curve-bar" style={{ height: (c.n / maxCurve) * 100 + '%' }} />
+                  <div className="gv1-curve-bar" style={{ height: (c.n / maxCurve) * 100 + '%' }}>
+                    <div className="gv1-curve-n gv1-mono-xs">{c.n}</div>
+                  </div>
                 </div>
                 <div className="gv1-curve-l gv1-mono-xs gv1-dim">{c.cmc}</div>
               </div>
