@@ -10,7 +10,7 @@
 // Every deck is loaded because both halves of the bug depend on the deck:
 // which block is widest, and whether its pill needs the scroll.
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/test';
 
 // 769 is the first width above the phone layout. Seven blocks kept their
 // desktop tracks there and ran past the viewport on every deck (DEC-1017).
