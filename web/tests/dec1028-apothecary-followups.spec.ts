@@ -6,7 +6,7 @@
 // across three nodes stacked on three lines. `Clear filter ×` wraps to a line
 // of its own at this width, where no chip stretches it to 44px.
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/test';
 
 const DECK = 'stampede-acres';
 const ROLE = 'removal-board';
@@ -56,6 +56,9 @@ test.describe('DEC-1028 @ 390px', () => {
 
     expect(chip!.height).toBeGreaterThanOrEqual(44);
     expect(clear!.height).toBeGreaterThanOrEqual(44);
+
+    // DEC-1052: the `×` is hidden from the accessibility tree, so the name is the words alone.
+    await expect(page.getByRole('button', { name: 'Clear filter', exact: true })).toHaveCount(1);
   });
 
   test('Enter on the clear button moves focus to the chip it cleared', async ({ page }) => {

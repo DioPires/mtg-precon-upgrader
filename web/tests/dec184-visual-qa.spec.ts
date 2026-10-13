@@ -6,7 +6,7 @@
 //   web/qa-screenshots/dec-184/{surface}-{width}.png
 //   web/qa-screenshots/dec-184/findings.json   (tap-target violations + overflow notes)
 
-import { test, type Page } from '@playwright/test';
+import { test, type Page } from './support/test';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
