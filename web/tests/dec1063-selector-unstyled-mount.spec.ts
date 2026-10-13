@@ -12,7 +12,9 @@
 // also ran past the bottom edge, and the effect scrolled the page.
 //
 // CI runs Chromium, which holds the module script until the stylesheets are
-// in. `mountUnstyled` gives the mount effects an unstyled track there.
+// in. Two routes give the mount effects an unstyled track there. They differ
+// in when the styles then apply: `mountUnstyled` after the first observation
+// of the selector's size observer, `mountUnstyledInWebKitOrder` before it.
 
 import { expect, test, type Page } from '@playwright/test';
 
@@ -58,6 +60,9 @@ async function openSettled(page: Page, deck: string): Promise<void> {
 // mount effects have run on that layout, drop the sheet: all the styles apply
 // at once, with no scroll and no window resize, as they do in WebKit.
 //
+// On this route the selector's size observer gets its first observation on
+// the unstyled track, and the styles follow as a change of the track's size.
+//
 // Every later load on this page mounts unstyled too.
 async function mountUnstyled(page: Page, deck: string): Promise<void> {
   await page.addInitScript(() => {
@@ -90,6 +95,93 @@ async function mountUnstyled(page: Page, deck: string): Promise<void> {
     document.adoptedStyleSheets = [];
   });
   await settled(page);
+}
+
+// The track's `overflow-x` when the selector began to observe it, and at each
+// size observation the browser then made of it.
+type Order = { mounted: string[]; observed: string[] };
+
+// As `mountUnstyled`, but the sheet goes sooner. This route gives WebKit's
+// order: the styles apply after the selector's mount effects and before its
+// size observer's first observation. WebKit delivers no observation while the
+// track is unstyled, so there the styles are never a change of size: the
+// first observation has to centre the pill and re-read the fade.
+//
+// The selector's fade effect adds the window's `resize` listener right after
+// it reads the track. The init script drops the sheet in a microtask queued
+// at that call. A microtask runs before the next rendering update, and the
+// first observation comes with that update.
+//
+// The route passes the selector's observer that first observation and no
+// later one. The web fonts swap in a moment afterwards and make the track a
+// pixel taller, and a selector that ignored its first observation would do
+// all the work at that second one.
+//
+// Every later load on this page mounts this way too.
+async function mountUnstyledInWebKitOrder(page: Page, deck: string): Promise<void> {
+  await page.addInitScript(() => {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync('*, *::before, *::after { all: revert !important; }');
+    document.adoptedStyleSheets = [sheet];
+
+    const add = window.addEventListener as (this: Window, ...args: unknown[]) => void;
+    let dropped = false;
+    window.addEventListener = function (this: Window, ...args: unknown[]) {
+      if (args[0] === 'resize' && !dropped && document.querySelector('.gv1-selector-track')) {
+        dropped = true;
+        queueMicrotask(() => {
+          document.adoptedStyleSheets = [];
+        });
+      }
+      return add.apply(this, args);
+    };
+
+    const order: Order = { mounted: [], observed: [] };
+    (window as unknown as { __dec1063Order: Order }).__dec1063Order = order;
+    const isTrack = (el: Element) => el.classList.contains('gv1-selector-track');
+    const overflowX = (el: Element) => getComputedStyle(el).overflowX;
+    const heard = new WeakSet<ResizeObserver>();
+    const Native = window.ResizeObserver;
+    window.ResizeObserver = class extends Native {
+      constructor(callback: ResizeObserverCallback) {
+        super((entries, observer) => {
+          const track = entries.find((entry) => isTrack(entry.target))?.target;
+          if (track) {
+            order.observed.push(overflowX(track));
+            if (heard.has(observer)) return;
+            heard.add(observer);
+          }
+          callback(entries, observer);
+        });
+      }
+      observe(target: Element, options?: ResizeObserverOptions) {
+        if (isTrack(target)) order.mounted.push(overflowX(target));
+        super.observe(target, options);
+      }
+    };
+  });
+  await page.goto(`/deck/${deck}`);
+  await page.locator('.gv1-selector-track .gv1-active').waitFor({ state: 'attached' });
+  await expect
+    .poll(() => page.evaluate(() => document.adoptedStyleSheets.length), {
+      message: 'the route drops its sheet when the selector adds its resize listener',
+    })
+    .toBe(0);
+  await settled(page);
+}
+
+// Show that a load made by `mountUnstyledInWebKitOrder` ran in that order,
+// from what the selector's own observer was given. Without the first check
+// the load could have mounted styled; without the second it could have run
+// in `mountUnstyled`'s order.
+async function expectWebKitOrder(page: Page): Promise<void> {
+  const order = await page.evaluate(
+    () => (window as unknown as { __dec1063Order: Order }).__dec1063Order,
+  );
+  expect(order.mounted, "the track's overflow-x when the selector began to observe it").toEqual([
+    'visible',
+  ]);
+  expect(order.observed[0], "the track's overflow-x at the first observation").toBe('auto');
 }
 
 // Count the selector's `scrollTo` calls on the track, on every later load.
@@ -254,6 +346,45 @@ for (const width of WIDTHS) {
     }
   });
 }
+
+// WebKit's order of the styles and the first size observation, which the
+// cases above do not run. One width: the order does not depend on it.
+test.describe('DEC-1063 @ 390px, the styles apply before the first observation', () => {
+  test.use({ viewport: { width: 390, height: 900 } });
+
+  test('the fade shows on the first deck', async ({ page }) => {
+    await mountUnstyledInWebKitOrder(page, 'titan-convergence');
+
+    // The styled track is at its start and overflows.
+    await expect.poll(async () => (await rail(page)).fade).toBe('1');
+    const r = await rail(page);
+    expect(r.scrollLeft).toBe(0);
+    expect(r.scrollWidth).toBeGreaterThan(r.clientWidth + 1);
+    expect(r.atEnd).toBe(false);
+    await expectWebKitOrder(page);
+  });
+
+  test('the active pill of anvil-chorus reaches its place', async ({ page }) => {
+    await countTrackScrolls(page);
+    await openSettled(page, 'anvil-chorus');
+    const styled = await activePill(page);
+    expect(await trackScrolls(page)).toBe(1);
+
+    await mountUnstyledInWebKitOrder(page, 'anvil-chorus');
+
+    await expect
+      .poll(async () => Math.abs((await activePill(page)).x - styled.x), {
+        message: `the pill's x from the selector's corner, against ${styled.x} on a styled mount`,
+      })
+      .toBeLessThanOrEqual(1);
+    const late = await activePill(page);
+    expect(Math.abs(late.y - styled.y)).toBeLessThanOrEqual(1);
+    expect(late.scrollY).toBe(styled.scrollY);
+    // One scroll for the deck, as on a styled mount.
+    expect(await trackScrolls(page)).toBe(1);
+    await expectWebKitOrder(page);
+  });
+});
 
 // At 390px the unstyled track is 600px tall or more (y 121 to 722 in WebKit).
 // On a viewport that ends above its bottom edge the mount effect scrolled the
