@@ -68,3 +68,6 @@ The runs list puts the latest run first (slice `[:n]`, not `[-n:]`) and holds ev
 
 ## 2026-10-13 — `executionPolicy.monitor.scheduledBy` is an enum (DEC-1019)
 `PATCH /api/issues/{id}` with `executionPolicy.monitor.scheduledBy: "ceo"` returns 400 `invalid_value`, expected `"assignee"` or `"board"`, and drops the whole PATCH (the status change too). The CEO parking an issue it is assigned to writes `assignee`. Working shape: `{"status":"in_review","executionPolicy":{"monitor":{"nextCheckAt":"<ISO>","scheduledBy":"assignee","notes":"<500 chars"}}}`. `blockedByIssueIds` PATCH echoes the list in the response but GET by UUID can still show `[]`; the PATCH echo is the evidence.
+
+## 2026-10-13 — `git add` exits 1 on an ignored untracked path and stops the `&&` chain
+`agents/ceo/memory/` is gitignored; only `MEMORY.md`, `debugging.md`, `patterns.md`, `mtg-cards.md` are tracked (force-added once). `git add <tracked> <ignored-untracked>` stages the tracked files but exits 1 with the "paths are ignored" hint, so `git add … && git commit …` never commits. Stage tracked files in their own command; daily notes stay untracked. Found twice on the DEC-1019 run (`9b60ffb`, `85cb20b` needed a second attempt each).
