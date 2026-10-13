@@ -28,4 +28,5 @@ cd web && npx playwright test tests/dec184-visual-qa.spec.ts --workers=1
 
 ## Findings
 
-`findings.json` — JSON dump of all violations (155 raw → 3 distinct fix clusters).
+`findings.json` — JSON dump of all violations (155 raw → 3 distinct fix clusters in the DEC-184 pass).
+The spec rewrites it on every run, so it is no longer tracked (DEC-1017); re-run the spec to get it.
