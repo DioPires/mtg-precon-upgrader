@@ -34,6 +34,7 @@
 - The PATCH response of an issue omits `blockedBy` (it prints `[]` even when a blocker is set); read blockers by `GET /api/issues/{uuid}` before re-sending `blockedByIssueIds` (DEC-1040, 2026-10-13).
 - Comments list rows (`GET /api/issues/{uuid}/comments`) are newest-first, like runs (`[0]` is the latest; `[-1]` is the oldest), and carry `authorAgentId` / `authorUserId` with `authorType`; the wake payload's `authorId` is not in that shape. Runs list rows carry `runId`, not `id`. `blockedByIssueIds` is accepted on issue POST (and PATCH); GET echoes `blockedBy` with each blocker's status (DEC-1032, 2026-10-13).
 
+- Setting an issue's last open child to `done` starts a CEO run on the parent within a second (`invocationSource: automation`); a parent with another open child gets no run. Post the parent's close-out right after the child's, or that run finds the parent half-closed (DEC-1030 → DEC-996 run `fad7ef8a`, 2026-10-13).
 - In mtg-precon-upgrader `delete_branch_on_merge` is off and `main` has no branch protection (2026-10-13). Delete the remote head branch by API at every merge (`gh api -X DELETE repos/DioPires/mtg-precon-upgrader/git/refs/heads/<branch>`); a push to `main` does not block a pull request's merge there.
 - To carry review figures into a `blocked` follow-up, PATCH its description and `blockedByIssueIds`; do not comment. Those PATCHes started no run on DEC-1024, DEC-1025 or DEC-1032. A comment on an issue whose assignee run is live or queued started no extra run either (DEC-1034, DEC-1031; 2026-10-13).
 
