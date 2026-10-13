@@ -3049,10 +3049,12 @@ em { font-style: italic; color: var(--gv1-gold); }
 @media (min-width: 769px) and (max-width: 990px) {
   .gv1-engine-panel-head { flex-wrap: wrap; gap: 8px 16px; }
 }
-/* Shopping summary: four stats and the actions on one row need up to 977px
-   (every deck selected, nearly all priced). The actions take their own row. */
-@media (max-width: 980px) {
-  .gv1-shop-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 24px; }
+/* Shopping summary: four stats and the actions on one row, with the copy
+   button and the A-Z chip on one line each, need up to 1074px (every deck and
+   the brewing decks selected, nearly all priced). The actions take their own
+   row. */
+@media (max-width: 1080px) {
+  .gv1-shop-summary { grid-template-columns: repeat(4, auto); gap: 16px 24px; }
   .gv1-shop-summary-actions {
     grid-column: 1 / -1;
     justify-self: stretch;
@@ -3064,8 +3066,8 @@ em { font-style: italic; color: var(--gv1-gold); }
 @media (max-width: 960px) {
   .gv1-wincons-grid { grid-template-columns: minmax(0, 1fr); }
 }
-/* Codex toolbar: sort and filter on one row need 926px, and 942px to stay
-   16px apart. */
+/* Codex toolbar: sort and filter on one row, each chip label on one line,
+   need 940px. At 951px the two halves are 11.6px apart. */
 @media (max-width: 950px) {
   .gv1-codex-toolbar { flex-wrap: wrap; gap: 8px 16px; }
 }
