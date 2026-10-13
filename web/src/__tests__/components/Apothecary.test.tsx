@@ -547,7 +547,8 @@ describe('Apothecary', () => {
         type_line: 'Sorcery',
         score: 50 - i,
         deck_role: 'tutor',
-        mitigates_gap: null,
+        // DEC-1028 — one gap-addresser below the cut: a sort before the cut would float `Tutor 33` in.
+        mitigates_gap: i === 32 ? 'tutor' : null,
       }));
       const pool = [...fillers(10), ...hits];
       const { container } = render(
@@ -571,11 +572,28 @@ describe('Apothecary', () => {
       fireEvent.click(screen.getByRole('button', { name: /board wipes/i, pressed: false }));
 
       expect(container.querySelector('.gv1-empty')?.textContent).toBe('No remedies match Board Wipes.');
+      // DEC-1028 — `.gv1-empty` is a grid: one child node keeps the sentence on one line.
+      expect(container.querySelector('.gv1-empty')?.childNodes).toHaveLength(1);
       expect(remedyGrid(container)).toBeNull();
 
       fireEvent.click(screen.getByRole('button', { name: /clear filter/i }));
       expect(container.querySelector('.gv1-empty')).toBeNull();
       expect(gridNames(container)).toHaveLength(30);
+    });
+
+    it('moves focus to the chip it cleared when the clear button is used (DEC-1028)', () => {
+      // Two role chips, the second one active: focus must land on that chip, not on the first.
+      render(<Apothecary apothecary={makeApothecary()} />);
+      fireEvent.click(screen.getByRole('button', { name: /card draw/i, pressed: false }));
+      const chip = screen.getByRole('button', { name: /card draw/i, pressed: true });
+
+      const clear = screen.getByRole('button', { name: /clear filter/i });
+      clear.focus();
+      fireEvent.click(clear);
+
+      expect(screen.queryByRole('button', { name: /clear filter/i })).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(chip);
+      expect(chip).toHaveAttribute('aria-pressed', 'false');
     });
 
     it('leaves the unfiltered grid at the top 30, gap-addressers first', () => {
