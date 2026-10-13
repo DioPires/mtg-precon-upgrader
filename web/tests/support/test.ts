@@ -52,8 +52,9 @@ function seedCardCache(entries: Record<string, object>): void {
   }
 }
 
-// What became of a request that ended without the mark the stub leaves. Null
-// means that it never left the browser and that no one answered it.
+// What became of a request that got an answer or failed without the mark the
+// stub leaves. Null means that it never left the browser and that no one
+// answered it.
 function outcomeOf(request: Request): string | null {
   const failure = request.failure()?.errorText;
   // A page that moves on cancels its open requests, also one that the stub
@@ -94,9 +95,14 @@ export const test = base.extend<StubOptions & StubFixtures>({
       const notFound = new Set<string>();
 
       // A spec can take a request away from the stub: its own route, or unroute().
-      // Such a request ends here without the mark the stub leaves.
-      const onEnd = (request: Request) => {
-        if (answered.has(request) || !isScryfallHost(new URL(request.url()).hostname)) return;
+      // Such a request comes here without the mark the stub leaves, when its
+      // answer arrives or when it fails. The check does not wait for the end of
+      // the body: a test that reads only the status can end before that.
+      const named = new WeakSet<Request>();
+      const judge = (request: Request) => {
+        if (answered.has(request) || named.has(request)) return;
+        if (!isScryfallHost(new URL(request.url()).hostname)) return;
+        named.add(request);
         const outcome = outcomeOf(request);
         if (outcome) unanswered.push(`${request.method()} ${request.url()} (${outcome})`);
       };
@@ -136,8 +142,8 @@ export const test = base.extend<StubOptions & StubFixtures>({
           );
         }
         if (cards === 'seeded') await context.addInitScript(seedCardCache, cardCacheSeed());
-        context.on('requestfinished', onEnd);
-        context.on('requestfailed', onEnd);
+        context.on('response', (response) => judge(response.request()));
+        context.on('requestfailed', judge);
       };
 
       // While the test runs, every context of this browser starts with the stub.
