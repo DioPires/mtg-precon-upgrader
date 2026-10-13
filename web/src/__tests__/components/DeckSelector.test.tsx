@@ -203,6 +203,105 @@ describe('DeckSelector track size (DEC-1063)', () => {
     unmount();
     expect(observer.disconnected).toBe(true);
   });
+
+  describe('centring a selector that mounted before the styles applied', () => {
+    const proto = Element.prototype as unknown as Scrollable;
+    const originalScrollTo = proto.scrollTo;
+    const root = document.documentElement;
+    let scrollTo: ReturnType<typeof vi.fn>;
+    let scrollBy: ReturnType<typeof vi.spyOn>;
+    let rect: ReturnType<typeof vi.spyOn>;
+    let sheet: HTMLStyleElement;
+
+    beforeEach(() => {
+      scrollTo = vi.fn();
+      proto.scrollTo = scrollTo;
+      scrollBy = vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
+      // The track sits 400px above a 768px viewport.
+      Object.defineProperty(root, 'clientHeight', { configurable: true, value: 768 });
+      rect = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+        this: HTMLElement,
+      ) {
+        return this.classList.contains('gv1-selector-track')
+          ? new DOMRect(0, -400, 300, 150)
+          : new DOMRect(0, 0, 0, 0);
+      });
+      sheet = document.createElement('style');
+      document.head.appendChild(sheet);
+    });
+    afterEach(() => {
+      proto.scrollTo = originalScrollTo;
+      scrollBy.mockRestore();
+      rect.mockRestore();
+      delete (root as { clientHeight?: number }).clientHeight;
+      sheet.remove();
+    });
+
+    // jsdom computes no initial values. A browser computes `overflow-x:
+    // visible` on the track until the stylesheet sets `auto`.
+    const stylesOut = () => {
+      sheet.textContent = '.gv1-selector-track { overflow-x: visible; }';
+    };
+    const stylesIn = () => {
+      sheet.textContent = '.gv1-selector-track { overflow-x: auto; }';
+    };
+
+    it('waits for the styles, then scrolls the track and the page once', () => {
+      stylesOut();
+      render(<DeckSelector decks={makeDecks(5)} activeIdx={5} onSelect={() => {}} />);
+      const [observer] = StubResizeObserver.made;
+      expect(scrollTo).not.toHaveBeenCalled();
+      expect(scrollBy).not.toHaveBeenCalled();
+
+      // The observation that follows observe(): the track is still unstyled.
+      observer.deliver();
+      expect(scrollTo).not.toHaveBeenCalled();
+      expect(scrollBy).not.toHaveBeenCalled();
+
+      stylesIn();
+      observer.deliver();
+      expect(scrollTo).toHaveBeenCalledTimes(1);
+      expect(scrollTo).toHaveBeenLastCalledWith(expect.objectContaining({ behavior: 'smooth' }));
+      expect(scrollBy).toHaveBeenCalledTimes(1);
+      expect(scrollBy).toHaveBeenCalledWith({ top: -400, behavior: 'smooth' });
+
+      // Centred on a styled track: a later size change leaves the rail alone.
+      observer.deliver();
+      expect(scrollTo).toHaveBeenCalledTimes(1);
+      expect(scrollBy).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps waiting through a deck change made while the styles are out', () => {
+      stylesOut();
+      const decks = makeDecks(5);
+      const { rerender } = render(<DeckSelector decks={decks} activeIdx={5} onSelect={() => {}} />);
+      rerender(<DeckSelector decks={decks} activeIdx={2} onSelect={() => {}} />);
+      expect(scrollTo).not.toHaveBeenCalled();
+
+      stylesIn();
+      StubResizeObserver.made[0].deliver();
+      expect(scrollTo).toHaveBeenCalledTimes(1);
+    });
+
+    it('scrolls a styled mount once for each deck change, whatever the observer reports', () => {
+      stylesIn();
+      const decks = makeDecks(5);
+      const { rerender } = render(<DeckSelector decks={decks} activeIdx={5} onSelect={() => {}} />);
+      const [observer] = StubResizeObserver.made;
+      expect(scrollTo).toHaveBeenCalledTimes(1);
+
+      // The observation that follows observe().
+      observer.deliver();
+      expect(scrollTo).toHaveBeenCalledTimes(1);
+
+      rerender(<DeckSelector decks={decks} activeIdx={2} onSelect={() => {}} />);
+      expect(scrollTo).toHaveBeenCalledTimes(2);
+      observer.deliver();
+      expect(scrollTo).toHaveBeenCalledTimes(2);
+      expect(scrollBy).toHaveBeenCalledTimes(2);
+      expect(StubResizeObserver.made).toHaveLength(1);
+    });
+  });
 });
 
 describe('DeckSelector brewing pill (DEC-1021)', () => {

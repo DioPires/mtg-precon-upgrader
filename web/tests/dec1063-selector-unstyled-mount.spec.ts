@@ -1,10 +1,15 @@
 // DEC-1063: the deck selector reads its track again when the track's own size
-// changes, so the right-edge fade follows it.
+// changes, so the right-edge fade follows it, and it centres the active pill
+// once the track has its styled layout.
 //
 // WebKit can mount the selector before the page's stylesheets apply. The
 // unstyled track is a block that does not overflow, so the mount effect read
 // "at its end" and set `data-at-end`. The styles then applied with no scroll
 // and no window resize, and the fade stayed hidden on a rail at its start.
+// The centring effect read the same layout: `scrollTo` cannot move a track
+// that is not a scroll container, so the active pill stayed where the styles
+// put it, off screen for a late deck. On a short viewport the unstyled track
+// also ran past the bottom edge, and the effect scrolled the page.
 //
 // CI runs Chromium, which holds the module script until the stylesheets are
 // in. `mountUnstyled` gives the mount effects an unstyled track there.
@@ -87,6 +92,21 @@ async function mountUnstyled(page: Page, deck: string): Promise<void> {
   await settled(page);
 }
 
+// Count the selector's `scrollTo` calls on the track, on every later load.
+const countTrackScrolls = (page: Page) =>
+  page.addInitScript(() => {
+    const counts = window as unknown as { __dec1063TrackScrolls: number };
+    counts.__dec1063TrackScrolls = 0;
+    const scrollTo = Element.prototype.scrollTo as (this: Element, ...args: unknown[]) => void;
+    Element.prototype.scrollTo = function (this: Element, ...args: unknown[]) {
+      if (this.classList.contains('gv1-selector-track')) counts.__dec1063TrackScrolls += 1;
+      return scrollTo.apply(this, args);
+    };
+  });
+
+const trackScrolls = (page: Page) =>
+  page.evaluate(() => (window as unknown as { __dec1063TrackScrolls: number }).__dec1063TrackScrolls);
+
 type Rail = { scrollLeft: number; clientWidth: number; scrollWidth: number; atEnd: boolean; fade: string };
 
 const rail = (page: Page): Promise<Rail> =>
@@ -100,6 +120,17 @@ const rail = (page: Page): Promise<Rail> =>
       atEnd: selector.hasAttribute('data-at-end'),
       fade: getComputedStyle(selector, '::after').opacity,
     };
+  });
+
+// Where the active pill sits: its corner from the selector's corner.
+type Pill = { x: number; y: number; scrollY: number };
+
+const activePill = (page: Page): Promise<Pill> =>
+  page.evaluate(() => {
+    const selector = document.querySelector('.gv1-selector')!;
+    const s = selector.getBoundingClientRect();
+    const p = selector.querySelector('.gv1-selector-track .gv1-active')!.getBoundingClientRect();
+    return { x: p.left - s.left, y: p.top - s.top, scrollY: window.scrollY };
   });
 
 // Narrow the selector with an inline style: the track shrinks with it, and
@@ -142,5 +173,96 @@ for (const width of WIDTHS) {
       expect(r.scrollWidth).toBeGreaterThan(r.clientWidth + 1);
       expect(r.atEnd).toBe(false);
     });
+
+    // hidden-legion's pill centres away from both ends; anvil-chorus is the
+    // last pill, and the track stops at its end.
+    for (const deck of ['hidden-legion', 'anvil-chorus']) {
+      test(`the active pill of ${deck} reaches its place when the selector mounts before the styles apply`, async ({
+        page,
+      }) => {
+        await countTrackScrolls(page);
+        await openSettled(page, deck);
+        const styled = await activePill(page);
+        expect(await trackScrolls(page)).toBe(1);
+
+        await mountUnstyled(page, deck);
+
+        await expect
+          .poll(async () => Math.abs((await activePill(page)).x - styled.x), {
+            message: `the pill's x from the selector's corner, against ${styled.x} on a styled mount`,
+          })
+          .toBeLessThanOrEqual(1);
+        const late = await activePill(page);
+        expect(Math.abs(late.y - styled.y)).toBeLessThanOrEqual(1);
+        expect(late.scrollY).toBe(styled.scrollY);
+        // One scroll for the deck, as on a styled mount.
+        expect(await trackScrolls(page)).toBe(1);
+      });
+    }
+
+    test('a styled mount scrolls the track once for each deck change', async ({ page }) => {
+      await countTrackScrolls(page);
+      await openSettled(page, 'hidden-legion');
+      expect(await trackScrolls(page)).toBe(1);
+
+      // A client-side route change: the selector stays mounted.
+      await page.evaluate(() => {
+        history.pushState({}, '', '/deck/anvil-chorus');
+        dispatchEvent(new PopStateEvent('popstate'));
+      });
+      await page.locator('.gv1-selector-track .gv1-active', { hasText: 'Anvil Chorus' }).waitFor();
+      await settled(page);
+      expect(await trackScrolls(page)).toBe(2);
+    });
+
+    for (const mount of ['a styled', 'an unstyled'] as const) {
+      test(`after ${mount} mount, a rail the user has scrolled stays put when the track changes size`, async ({
+        page,
+      }) => {
+        await openSettled(page, 'hidden-legion');
+        const centred = await rail(page);
+        // The pill centres with room to scroll 300px further.
+        expect(centred.scrollLeft).toBeGreaterThan(0);
+        expect(centred.scrollLeft + 300).toBeLessThan(centred.scrollWidth - centred.clientWidth);
+
+        if (mount === 'an unstyled') {
+          await mountUnstyled(page, 'hidden-legion');
+          await expect.poll(async () => (await rail(page)).scrollLeft).toBe(centred.scrollLeft);
+        }
+
+        const box = (await page.locator('.gv1-selector-track').boundingBox())!;
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.wheel(300, 0);
+        await expect.poll(async () => (await rail(page)).scrollLeft).toBe(centred.scrollLeft + 300);
+
+        await narrowSelector(page, 60);
+        await expect.poll(async () => (await rail(page)).clientWidth).toBe(centred.clientWidth - 60);
+        // Time for a scroll back to the centre to run, if one started.
+        await page.waitForTimeout(300);
+        await settled(page);
+
+        expect((await rail(page)).scrollLeft).toBe(centred.scrollLeft + 300);
+      });
+    }
   });
 }
+
+// At 390px the unstyled track is 600px tall or more (y 121 to 722 in WebKit).
+// On a viewport that ends above its bottom edge the mount effect scrolled the
+// page to bring it into view, and the page stayed there.
+test.describe('DEC-1063 @ 390x664px', () => {
+  test.use({ viewport: { width: 390, height: 664 } });
+
+  test('a selector that mounts before the styles apply does not scroll the page', async ({ page }) => {
+    // The first pill: the track has nowhere to scroll, so only the page can move.
+    await openSettled(page, 'titan-convergence');
+    const styled = await activePill(page);
+
+    await mountUnstyled(page, 'titan-convergence');
+
+    const late = await activePill(page);
+    expect(late.scrollY).toBe(styled.scrollY);
+    expect(Math.abs(late.x - styled.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(late.y - styled.y)).toBeLessThanOrEqual(1);
+  });
+});
