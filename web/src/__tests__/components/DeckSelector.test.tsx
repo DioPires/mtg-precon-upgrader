@@ -330,6 +330,10 @@ describe('DeckSelector track size (DEC-1063)', () => {
       stylesIn();
       StubResizeObserver.made[0].deliver();
       expect(scrollTo).toHaveBeenCalledTimes(1);
+
+      // A later size change (the font swap) leaves the rail alone.
+      StubResizeObserver.made[0].deliver();
+      expect(scrollTo).toHaveBeenCalledTimes(1);
     });
 
     it('scrolls a styled mount once for each deck change, whatever the observer reports', () => {
