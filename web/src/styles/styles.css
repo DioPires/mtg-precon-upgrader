@@ -346,7 +346,11 @@ em { font-style: italic; color: var(--gv1-gold); }
   width: 80px;
   background: linear-gradient(90deg, transparent, var(--gv1-bg));
   pointer-events: none;
+  transition: opacity var(--gv1-duration-quick) var(--gv1-ease-out);
 }
+/* DEC-1048: nothing more scrolls in once the track is at its end (or does
+   not overflow), and the fade would only dim the last pill. */
+.gv1-selector[data-at-end]::after { opacity: 0; }
 .gv1-selector-head {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 16px;
@@ -380,6 +384,13 @@ em { font-style: italic; color: var(--gv1-gold); }
   border-left: 1px dashed var(--gv1-line);
 }
 .gv1-sel-group-label {
+  /* DEC-1048: vertical text is as wide as its line height. With `normal`
+     the marker grew from 38px to 39px when JetBrains Mono replaced the
+     fallback font, after the selector had centred the active pill. The
+     track's end moved 1px further out, so the last pill stopped 1px short
+     of it and the track clipped that pill's focus ring. 14px is the loaded
+     font's own line height. */
+  line-height: 14px;
   letter-spacing: 0.18em;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
@@ -419,7 +430,11 @@ em { font-style: italic; color: var(--gv1-gold); }
   gap: 12px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 2px 2px 8px;
+  /* DEC-1048: the focus ring sits 4px outside the pill (2px offset, 2px
+     wide), and the track clips whatever lies past its padding. The negative
+     margins keep the pills where the 2px padding put them. */
+  padding: 4px 4px 8px;
+  margin: -2px -2px 0;
   scrollbar-width: thin;
   scrollbar-color: var(--gv1-rune-dim) transparent;
 }
