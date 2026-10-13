@@ -377,6 +377,10 @@ def karsten_threshold(cmc: float, pips: int) -> int:
 
 def manabase_health(deck: dict, mirror: dict[str, dict], deck_ci: set[str]) -> dict:
     decklist = deck.get("decklist", [])
+    # deck_ci is a set, so its iteration order follows the per-process hash
+    # seed. The emitted color maps use WUBRG order so metrics.json keeps the
+    # same key order on every run (DEC-996).
+    ci_order = [c for c in "WUBRG" if c in deck_ci]
 
     # Land inventory
     total_lands = 0.0
@@ -424,7 +428,7 @@ def manabase_health(deck: dict, mirror: dict[str, dict], deck_ci: set[str]) -> d
     if deck_ci and any(requirements[c] > 0 for c in deck_ci):
         ratios = []
         per_color: dict[str, dict] = {}
-        for c in deck_ci:
+        for c in ci_order:
             req = requirements[c]
             if req <= 0:
                 continue
@@ -473,7 +477,7 @@ def manabase_health(deck: dict, mirror: dict[str, dict], deck_ci: set[str]) -> d
             "fetch_lands": round(fetch_lands, 1),
             "avg_nonland_cmc": round(avg_cmc, 2),
             "target_lands": round(target_lands, 1),
-            "color_sources": {c: round(sources_by_color.get(c, 0.0), 1) for c in deck_ci},
+            "color_sources": {c: round(sources_by_color.get(c, 0.0), 1) for c in ci_order},
             "color_requirements": per_color,
         },
     }
