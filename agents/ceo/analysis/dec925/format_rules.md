@@ -4,3 +4,4 @@
 - **Threshold = 7 cards in your graveyard.** Needs 4+ mill or surveil cards; otherwise use the base grade.
 - **Basic landcycling {2}** on five commons: splash and flood insurance, not fixing.
 - **3 damage kills 68% of creatures; 4 damage kills 87%.** Respect open {1}{R} and {1}{B}: No Admittance, Last Gasp, Stingerquill Charm.
+
