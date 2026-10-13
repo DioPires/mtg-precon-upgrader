@@ -830,7 +830,7 @@ class CandidatePinTests(unittest.TestCase):
             "Off-Colour Blinker": "outside the colour identity W",
             "Vanilla Dog": "scores 0 for this deck",
             "Weak Blinker": "already in the decklist",
-            "Test Commander": "already in the decklist",
+            "Test Commander": "is the commander",
         }
         for name, reason in cases.items():
             with self.subTest(pin=name):
