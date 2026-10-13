@@ -28,11 +28,24 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
   }, [decks]);
   const brewingCount = ordered.filter((d) => d.status === 'brewing').length;
 
+  // DEC-1008: centre the active pill by scrolling the track itself. Calling
+  // scrollIntoView on the pill also scrolls every scrollable ancestor, and
+  // `.gv1-root` (overflow: hidden) is one — the whole page slid sideways for
+  // pills the track could not centre on its own.
   useEffect(() => {
-    const el = trackRef.current?.querySelector('.gv1-active');
-    if (el && (el as HTMLElement).scrollIntoView) {
-      (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
+    const track = trackRef.current;
+    const el = track?.querySelector<HTMLElement>('.gv1-active');
+    if (!track || !el || !track.scrollTo) return;
+    const t = track.getBoundingClientRect();
+    const p = el.getBoundingClientRect();
+    track.scrollTo({
+      left: track.scrollLeft + (p.left + p.width / 2) - (t.left + t.width / 2),
+      behavior: 'smooth',
+    });
+    // Still bring the rail into view when a deck is opened from a scrolled
+    // page. The track is never wider than the page, so `nearest` only ever
+    // moves the page vertically.
+    track.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   }, [activeIdx]);
 
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {

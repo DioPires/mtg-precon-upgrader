@@ -66,13 +66,17 @@ async function getFirstDeckId(page: Page): Promise<string> {
 }
 
 async function checkOverflow(page: Page, surface: string, width: number): Promise<void> {
+  // DEC-1008: `.gv1-root` (overflow: hidden) swallows wide content before it
+  // reaches documentElement, so read the root too.
   const overflows = await page.evaluate(() => {
     const win = window.innerWidth;
     const doc = document.documentElement.scrollWidth;
-    return doc > win + 1;
+    const root = document.querySelector('.gv1-root');
+    const rootOver = !!root && (root.scrollWidth > root.clientWidth + 1 || root.scrollLeft !== 0);
+    return doc > win + 1 || rootOver;
   });
   if (overflows) {
-    findings.push({ type: 'page-overflow', surface, width, detail: `documentElement.scrollWidth > window.innerWidth at ${width}px` });
+    findings.push({ type: 'page-overflow', surface, width, detail: `documentElement or .gv1-root scrollWidth > viewport width (or .gv1-root scrolled sideways) at ${width}px` });
   }
 }
 

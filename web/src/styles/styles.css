@@ -669,6 +669,7 @@ em { font-style: italic; color: var(--gv1-gold); }
   line-height: 1.2;
   color: var(--gv1-ink);
   text-wrap: balance;
+  overflow-wrap: break-word;
 }
 .gv1-card-gc .gv1-card-tile-name { color: var(--gv1-gold); }
 .gv1-card-tile-type {
@@ -683,6 +684,7 @@ em { font-style: italic; color: var(--gv1-gold); }
   opacity: 0.72;
   line-height: 1.35;
   margin-top: 4px;
+  overflow-wrap: break-word;
 }
 .gv1-card-tile-foot {
   margin-top: auto;
@@ -1197,7 +1199,9 @@ em { font-style: italic; color: var(--gv1-gold); }
 /* Performance */
 .gv1-perf-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* minmax(0, …): a bare 1fr track grows to its widest block's min-content,
+     which pushed the grid past the viewport (DEC-1008). */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 .gv1-perf-block {
@@ -1226,9 +1230,45 @@ em { font-style: italic; color: var(--gv1-gold); }
 .gv1-func-bar { height: 100%; background: var(--gv1-rune-dim); transition: width 0.3s; }
 .gv1-func-bar-n { position: absolute; right: 8px; color: var(--gv1-ink); }
 .gv1-src-list { display: flex; flex-direction: column; }
-.gv1-src-row { display: grid; grid-template-columns: 24px 80px 1fr auto; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px dashed var(--gv1-line); }
+.gv1-src-row { display: grid; grid-template-columns: 24px 80px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px dashed var(--gv1-line); }
 .gv1-src-row:last-child { border-bottom: none; }
+.gv1-src-row .gv1-serif-sm { overflow-wrap: break-word; }
 .gv1-src-link { cursor: pointer; }
+
+/* DEC-1008: two blocks side by side cannot hold the KPI tiles and the
+   eight-column chart below ~1084px, so the grid stacks from here down. */
+@media (max-width: 1100px) {
+  .gv1-perf-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  /* Three card tiles across leave ~74px for a card name, and one long name
+     widened the whole win-con / combo card. Two across, on tracks the
+     content cannot stretch. */
+  .gv1-wincon-cards,
+  .gv1-combo-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* Eight role labels do not fit side by side on a phone. Lay the chart out
+     as a grid (equal columns, one shared label row) and turn the labels to
+     read upwards. */
+  .gv1-curve {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-template-rows: 120px auto;
+    align-items: stretch;
+    gap: 6px 4px;
+    height: auto;
+  }
+  .gv1-curve-col { display: contents; }
+  .gv1-curve-l {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    justify-self: center;
+    align-self: start;
+    margin-top: 0;
+  }
+}
 
 /* Decklist manifest */
 .gv1-dl-toolbar {
@@ -2964,6 +3004,17 @@ em { font-style: italic; color: var(--gv1-gold); }
 }
 .gv1-topbar-mobile-menu .gv1-nav-item:last-child { border-bottom: none; }
 
+/* DEC-1008: the full topbar needs 1206px. Shed its two decorative ends before
+   it can spill past the viewport — right meta first, then the prompt. */
+@media (max-width: 1240px) {
+  .gv1-topbar-right { display: none; }
+}
+@media (max-width: 1100px) {
+  .gv1-topbar { gap: 12px; padding: 10px 16px; }
+  .gv1-topbar-prompt { display: none; }
+  .gv1-topbar-nav .gv1-nav-item { padding-inline: 10px; }
+}
+
 @media (max-width: 768px) {
   /* Topbar collapses: prompt, full nav, right meta hide; hamburger shows. */
   .gv1-topbar {
@@ -3060,6 +3111,11 @@ em { font-style: italic; color: var(--gv1-gold); }
     gap: 8px;
   }
 
+  /* DEC-1008: the selector's tally and filter chips wrap instead of running
+     past the edge (the chip row alone is 352px wide). */
+  .gv1-selector-head-l,
+  .gv1-selector-head-r { flex-wrap: wrap; }
+
   /* Section padding on phones — desktop's 72px gutter is too much. */
   .gv1-section { padding: 32px 16px; }
   .gv1-section-head {
@@ -3106,10 +3162,15 @@ em { font-style: italic; color: var(--gv1-gold); }
 
   /* Wincons / Combos / Performance — 2-col → 1-col */
   .gv1-wincons-grid,
-  .gv1-combo-grid,
-  .gv1-perf-grid { grid-template-columns: 1fr; gap: 18px; }
+  .gv1-combo-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .gv1-perf-grid { gap: 18px; }
   .gv1-wincon, .gv1-combo, .gv1-perf-block { padding: 18px; }
   .gv1-wincon-title, .gv1-combo-title { font-size: 24px; }
+  /* DEC-1008: the KPI tiles stay edge to edge (the 18px above is for the
+     other blocks), and their values scale down so two fit across a phone. */
+  .gv1-perf-kpis { padding: 0; }
+  .gv1-kpi { padding: 16px; }
+  .gv1-kpi .gv1-serif-xxl { font-size: clamp(28px, 9vw, 56px); }
 
   /* Decklist columns → single column */
   .gv1-decklist-cols { grid-template-columns: 1fr; gap: 16px; }
@@ -3137,6 +3198,8 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-apo-malady { min-height: 44px; }
   .gv1-apo-remedies { gap: 12px; }
   .gv1-apo-remedy { padding: 14px; }
+  .gv1-apo-pins { gap: 12px; }
+  .gv1-apo-pin { padding: 14px; }
 }
 
 /* Scrying mobile banner — phones below 480px nudge to desktop for the
