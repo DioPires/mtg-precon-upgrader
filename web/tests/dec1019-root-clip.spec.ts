@@ -7,7 +7,7 @@
 // so none of them had ever pinned. `clip` switches them on. Two are too tall
 // to pin and stay in the flow; the cases below hold each one to that.
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/test';
 
 // Scroll `past` px beyond the rail's own position and read where it ends up:
 // 0 when it pins, `-past` when it scrolls with the page.

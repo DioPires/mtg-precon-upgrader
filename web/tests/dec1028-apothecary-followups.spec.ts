@@ -6,7 +6,7 @@
 // across three nodes stacked on three lines. `Clear filter ×` wraps to a line
 // of its own at this width, where no chip stretches it to 44px.
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/test';
 
 const DECK = 'stampede-acres';
 const ROLE = 'removal-board';

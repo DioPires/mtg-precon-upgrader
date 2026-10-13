@@ -9,7 +9,7 @@
 // Every deck is loaded because what sits under the flag depends on the deck:
 // its status, its number of pips and the length of its commander line.
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/test';
 
 const WIDTHS = [390, 1280];
 
