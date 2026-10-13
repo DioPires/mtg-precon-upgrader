@@ -71,3 +71,6 @@ The runs list puts the latest run first (slice `[:n]`, not `[-n:]`) and holds ev
 
 ## 2026-10-13 — `git add` exits 1 on an ignored untracked path and stops the `&&` chain
 `agents/ceo/memory/` is gitignored; only `MEMORY.md`, `debugging.md`, `patterns.md`, `mtg-cards.md` are tracked (force-added once). `git add <tracked> <ignored-untracked>` stages the tracked files but exits 1 with the "paths are ignored" hint, so `git add … && git commit …` never commits. Stage tracked files in their own command; daily notes stay untracked. Found twice on the DEC-1019 run (`9b60ffb`, `85cb20b` needed a second attempt each).
+
+## 2026-10-13 — zsh eats `$B:path` in `git show $B:scripts/x.py`
+In zsh, `$B:scripts/compute_deck_metrics.py` applies the `:s/…/…/` history modifier to `$B` and git sees `origin/dec-pool-hygienek_metrics.py`. Write `"${B}:scripts/x.py"`. Also quote `--include='*.ts'`: unquoted, zsh fails the command with "no matches found" instead of passing the pattern to grep.
