@@ -91,6 +91,10 @@ function remedyGrid(container: HTMLElement): HTMLElement {
   return container.querySelector('.gv1-apo-remedies') as HTMLElement;
 }
 
+function gridNames(container: HTMLElement): (string | null)[] {
+  return [...container.querySelectorAll('.gv1-apo-remedies .gv1-apo-remedy-name')].map((n) => n.textContent);
+}
+
 describe('Apothecary', () => {
   it('renders an empty state when apothecary is null', () => {
     render(<Apothecary apothecary={null} />);
@@ -378,8 +382,6 @@ describe('Apothecary', () => {
 
     const chips = (container: HTMLElement) => [...container.querySelectorAll<HTMLElement>('.gv1-apo-malady')];
     const part = (chip: HTMLElement, cls: string) => chip.querySelector(cls)?.textContent ?? null;
-    const gridNames = (container: HTMLElement) =>
-      [...remedyGrid(container).querySelectorAll('.gv1-apo-remedy-name')].map((n) => n.textContent);
 
     // React reports a missing or duplicate key through console.error.
     let errors: MockInstance;
@@ -495,6 +497,98 @@ describe('Apothecary', () => {
       render(<Apothecary apothecary={makeApothecary({ maladies: [RECURSION] })} />);
       expect(screen.getByText('MALADIES')).toBeInTheDocument();
       expect(screen.queryByText('click to filter remedies')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('role filter over the full pool (DEC-1015)', () => {
+    const TUTOR_GAP: RawMetricsGap = { role: 'tutor', actual: 1, target: 4, score: 25 };
+    // anvil-chorus as committed 2026-10-12: the one tutor in a pool of 201 sits at rank 195.
+    const OSWALD: RawCandidate = {
+      name: 'Oswald Fiddlebender',
+      cmc: 2,
+      mana_cost: '{1}{W}',
+      type_line: 'Legendary Creature — Gnome Artificer',
+      score: 48.3,
+      deck_role: 'tutor',
+      mitigates_gap: 'tutor',
+    };
+
+    it('shows a role hit ranked below the top 30 when its chip is clicked', () => {
+      const pool = [...fillers(40), OSWALD];
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ maladies: [TUTOR_GAP], remedies: pool })} />,
+      );
+      expect(gridNames(container)).not.toContain('Oswald Fiddlebender');
+
+      fireEvent.click(screen.getByRole('button', { name: /tutors/i, pressed: false }));
+
+      expect(gridNames(container)).toEqual(['Oswald Fiddlebender']);
+      expect(screen.queryByText(/no remedies match/i)).not.toBeInTheDocument();
+      expect(screen.getByText(/· filtered: Tutors$/)).toBeInTheDocument();
+    });
+
+    it('matches on deck_role as well as mitigates_gap below the top 30', () => {
+      const byRole: RawCandidate = { ...OSWALD, name: 'Role Only Tutor', score: 20, mitigates_gap: null };
+      const pool = [...fillers(40), byRole, OSWALD];
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ maladies: [TUTOR_GAP], remedies: pool })} />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /tutors/i, pressed: false }));
+
+      // The gap-addresser floats above the role-only match, as in the unfiltered grid.
+      expect(gridNames(container)).toEqual(['Oswald Fiddlebender', 'Role Only Tutor']);
+    });
+
+    it('cuts a filtered pool of more than 30 to its first 30', () => {
+      const hits: RawCandidate[] = Array.from({ length: 35 }, (_, i) => ({
+        name: `Tutor ${i + 1}`,
+        cmc: 2,
+        mana_cost: '{1}{B}',
+        type_line: 'Sorcery',
+        score: 50 - i,
+        deck_role: 'tutor',
+        mitigates_gap: null,
+      }));
+      const pool = [...fillers(10), ...hits];
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ maladies: [TUTOR_GAP], remedies: pool })} />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /tutors/i, pressed: false }));
+
+      expect(gridNames(container)).toEqual(hits.slice(0, 30).map((c) => c.name));
+    });
+
+    it('shows the empty state and the clear button when no card in the pool has the role', () => {
+      // stampede-acres: a board-wipe gap and no board wipe among its 200 candidates.
+      const { container } = render(
+        <Apothecary
+          apothecary={makeApothecary({
+            maladies: [{ role: 'removal-board', actual: 2, target: 3, score: 67 }],
+            remedies: fillers(40),
+          })}
+        />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /board wipes/i, pressed: false }));
+
+      expect(container.querySelector('.gv1-empty')?.textContent).toBe('No remedies match Board Wipes.');
+      expect(remedyGrid(container)).toBeNull();
+
+      fireEvent.click(screen.getByRole('button', { name: /clear filter/i }));
+      expect(container.querySelector('.gv1-empty')).toBeNull();
+      expect(gridNames(container)).toHaveLength(30);
+    });
+
+    it('leaves the unfiltered grid at the top 30, gap-addressers first', () => {
+      // Gap-addressers at ranks 5, 20 and 33: the cut drops rank 33 before the sort floats it.
+      const gapAt: Record<number, string> = { 5: 'tutor', 20: 'tutor', 33: 'tutor' };
+      const pool = fillers(35).map((c, i) => (gapAt[i + 1] ? { ...c, mitigates_gap: gapAt[i + 1] } : c));
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ maladies: [TUTOR_GAP], remedies: pool })} />,
+      );
+
+      const rest = Array.from({ length: 30 }, (_, i) => i + 1).filter((n) => n !== 5 && n !== 20);
+      expect(gridNames(container)).toEqual(['Filler 5', 'Filler 20', ...rest.map((n) => `Filler ${n}`)]);
+      expect(gridNames(container)).toHaveLength(30);
     });
   });
 
