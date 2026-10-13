@@ -16,7 +16,7 @@
 // in when the styles then apply: `mountUnstyled` after the first observation
 // of the selector's size observer, `mountUnstyledInWebKitOrder` before it.
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/test';
 
 const WIDTHS = [390, 1280];
 
