@@ -74,3 +74,6 @@ The runs list puts the latest run first (slice `[:n]`, not `[-n:]`) and holds ev
 
 ## 2026-10-13 — zsh eats `$B:path` in `git show $B:scripts/x.py`
 In zsh, `$B:scripts/compute_deck_metrics.py` applies the `:s/…/…/` history modifier to `$B` and git sees `origin/dec-pool-hygienek_metrics.py`. Write `"${B}:scripts/x.py"`. Also quote `--include='*.ts'`: unquoted, zsh fails the command with "no matches found" instead of passing the pattern to grep.
+
+## 2026-10-13 — A model-limit failure on a wake is a lost wake (DEC-1021, DEC-1026, DEC-1028)
+When a CEO run dies on the provider limit (`errorCode: claude_transient_upstream`; the issue's only new comment reads "You've reached your Fable limit"), Paperclip schedules no retry for that wake. The hand-back it carried sits `in_review` with me until its ten-hour monitor fires or the board comments ("lets continue", 09:06Z, six hours later). An `issue_assigned` wake can also leave no run on the issue at all (DEC-1028: hand-back 02:55Z, next run 09:06Z). On the first wake after such a failure, sweep every `in_review` issue for a hand-back newer than my last write and route each one from the current run, scoped by the wake-at-once rule in `patterns.md`.
