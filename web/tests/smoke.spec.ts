@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 test('home renders the token-themed shell with topbar', async ({ page }) => {
   // `/` redirects to `/codex` post-DEC-167.

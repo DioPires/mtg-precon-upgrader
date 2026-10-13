@@ -12,7 +12,7 @@
 // Every deck is loaded for the ring because where the active pill sits in the
 // track (first, centred, last) depends on the deck.
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/test';
 
 const WIDTHS = [390, 1280];
 

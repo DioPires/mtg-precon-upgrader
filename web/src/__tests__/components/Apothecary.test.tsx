@@ -588,6 +588,9 @@ describe('Apothecary', () => {
       const chip = screen.getByRole('button', { name: /card draw/i, pressed: true });
 
       const clear = screen.getByRole('button', { name: /clear filter/i });
+      // DEC-1052 — the `×` is hidden from the accessibility tree. A string name matches the whole name.
+      expect(screen.getByRole('button', { name: 'Clear filter' })).toBe(clear);
+      expect(clear).toHaveTextContent('Clear filter ×');
       clear.focus();
       fireEvent.click(clear);
 

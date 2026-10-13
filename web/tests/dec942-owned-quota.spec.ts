@@ -3,7 +3,7 @@
 // /shopping, the owned-map write threw QuotaExceededError, saveOwned swallowed
 // it, and /atlas showed "not imported" (DEC-941).
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 const OWNED_KEY = 'grimoire-owned-cards';
 const ROWS = 4500;
@@ -20,7 +20,7 @@ function manaboxCsv(): string {
   return lines.join('\n');
 }
 
-async function storageChars(page: import('@playwright/test').Page): Promise<number> {
+async function storageChars(page: import('./support/test').Page): Promise<number> {
   return page.evaluate(() => {
     let n = 0;
     for (let i = 0; i < localStorage.length; i += 1) {
