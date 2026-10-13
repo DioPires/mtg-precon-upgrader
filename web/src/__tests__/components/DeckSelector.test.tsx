@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { DeckSelector } from '../../components/organisms/DeckSelector';
 import type { DeckStub } from '../../data/types';
 
@@ -129,6 +129,79 @@ describe('DeckSelector right-edge fade (DEC-1048)', () => {
     );
     setTrack(container.querySelector<HTMLElement>('.gv1-selector-track')!, 0, 600, 600);
     expect(getByRole('tablist')).toHaveAttribute('data-at-end');
+  });
+});
+
+// jsdom has no ResizeObserver. This one records what it observes and lets a
+// test deliver an observation.
+class StubResizeObserver {
+  static made: StubResizeObserver[] = [];
+  observed: Element[] = [];
+  disconnected = false;
+  constructor(private callback: ResizeObserverCallback) {
+    StubResizeObserver.made.push(this);
+  }
+  observe(el: Element) {
+    this.observed.push(el);
+  }
+  unobserve() {}
+  disconnect() {
+    this.disconnected = true;
+  }
+  deliver() {
+    act(() => this.callback([], this as unknown as ResizeObserver));
+  }
+}
+
+describe('DeckSelector track size (DEC-1063)', () => {
+  beforeEach(() => {
+    StubResizeObserver.made = [];
+    vi.stubGlobal('ResizeObserver', StubResizeObserver);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  // The track's metrics change with no scroll event and no window resize.
+  function sizeTrack(track: HTMLElement, clientWidth: number, scrollWidth: number) {
+    Object.defineProperty(track, 'clientWidth', { configurable: true, value: clientWidth });
+    Object.defineProperty(track, 'scrollWidth', { configurable: true, value: scrollWidth });
+  }
+
+  it('re-reads the fade when the track changes size', () => {
+    const { getByRole, container } = render(
+      <DeckSelector decks={makeDecks(5)} activeIdx={1} onSelect={() => {}} />,
+    );
+    const nav = getByRole('tablist');
+    const track = container.querySelector<HTMLElement>('.gv1-selector-track')!;
+    const [observer] = StubResizeObserver.made;
+    expect(StubResizeObserver.made).toHaveLength(1);
+    expect(observer.observed).toEqual([track]);
+
+    // Mounted before the stylesheets applied: the unstyled track reads no
+    // overflow, so the selector is marked.
+    expect(nav).toHaveAttribute('data-at-end');
+
+    // The styles apply: the track overflows and sits at its start.
+    sizeTrack(track, 330, 5641);
+    observer.deliver();
+    expect(nav).not.toHaveAttribute('data-at-end');
+
+    // It grows until nothing overflows.
+    sizeTrack(track, 6340, 6340);
+    observer.deliver();
+    expect(nav).toHaveAttribute('data-at-end');
+  });
+
+  it('disconnects the observer on unmount', () => {
+    const { unmount } = render(
+      <DeckSelector decks={makeDecks(5)} activeIdx={1} onSelect={() => {}} />,
+    );
+    const [observer] = StubResizeObserver.made;
+    expect(observer.disconnected).toBe(false);
+
+    unmount();
+    expect(observer.disconnected).toBe(true);
   });
 });
 

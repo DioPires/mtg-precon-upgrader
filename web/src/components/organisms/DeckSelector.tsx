@@ -60,10 +60,21 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
     const track = trackRef.current;
     if (track) setAtEnd(track.scrollLeft + track.clientWidth >= track.scrollWidth - 1);
   }, []);
+  // DEC-1063: follow the track's own size too. It changes with no scroll and
+  // no window resize when WebKit mounts the selector before the stylesheets
+  // apply (the unstyled track does not overflow), and when the selector is
+  // narrowed around it. jsdom has no ResizeObserver.
   useEffect(() => {
     updateAtEnd();
     window.addEventListener('resize', updateAtEnd);
-    return () => window.removeEventListener('resize', updateAtEnd);
+    const track = trackRef.current;
+    const sized =
+      track && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateAtEnd) : null;
+    if (track) sized?.observe(track);
+    return () => {
+      window.removeEventListener('resize', updateAtEnd);
+      sized?.disconnect();
+    };
   }, [updateAtEnd, ordered.length]);
 
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
