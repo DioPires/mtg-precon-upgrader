@@ -8,7 +8,7 @@
 // `tests/smoke.spec.ts` covers the 390×844 happy-path; this file is
 // the broader regression gate.
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/test';
 
 // 769 and 900 sit between the phone layout and the desktop one, where the
 // Codex toolbar and the Shopping summary ran past the viewport (DEC-1017).

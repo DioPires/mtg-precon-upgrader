@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 // DEC-185 — The Manifest sorts each subsection by mana value ascending,
 // alphabetical tiebreak. Verifies the cmc map populated via cardCache (Scryfall).
