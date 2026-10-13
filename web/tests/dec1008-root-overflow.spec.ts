@@ -10,7 +10,9 @@
 
 import { expect, test, type Page } from '@playwright/test';
 
-const WIDTHS = [390, 1100];
+// 769 is the first width above the phone layout. Seven blocks kept their
+// desktop tracks there and ran past the viewport on every deck (DEC-1017).
+const WIDTHS = [390, 769, 1100];
 
 type RootBox = {
   docScrollWidth: number;
@@ -27,7 +29,9 @@ async function deckIds(page: Page): Promise<string[]> {
 }
 
 // The selector's smooth scroll is still running when the guide first paints.
-// Resolve once neither the root nor the track has moved for 300ms.
+// Resolve once neither the root nor the track has moved for 300ms. The web
+// fonts come first: the fallback faces are wider, and at 769px a section
+// heading set in them runs past the viewport (DEC-1017).
 async function settledRootBox(page: Page): Promise<RootBox> {
   return page.evaluate(
     () =>
@@ -56,7 +60,7 @@ async function settledRootBox(page: Page): Promise<RootBox> {
             pillInTrack: !!p && p.left >= t.left - 1 && p.right <= t.right + 1,
           });
         };
-        setTimeout(tick, 50);
+        void document.fonts.ready.then(() => setTimeout(tick, 50));
       }),
   );
 }

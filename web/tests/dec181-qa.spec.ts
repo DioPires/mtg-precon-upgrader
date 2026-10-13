@@ -10,7 +10,9 @@
 
 import { expect, test, type Page } from '@playwright/test';
 
-const WIDTHS = [360, 375, 390, 430, 768, 1024];
+// 769 and 900 sit between the phone layout and the desktop one, where the
+// Codex toolbar and the Shopping summary ran past the viewport (DEC-1017).
+const WIDTHS = [360, 375, 390, 430, 768, 769, 900, 1024];
 const HEIGHT = 900;
 
 async function getFirstDeck(page: Page): Promise<string> {
@@ -23,7 +25,10 @@ async function getFirstDeck(page: Page): Promise<string> {
 // viewport never reaches `documentElement` — the root swallows it, and script
 // can still scroll the root sideways. Read the root as well as the document.
 async function pageOverflows(page: Page): Promise<boolean> {
-  const m = await page.evaluate(() => {
+  const m = await page.evaluate(async () => {
+    // DEC-1017: web fonts first. The fallback faces are wider, and at 769px
+    // the first paint of the Codex sits a few px past the viewport.
+    await document.fonts.ready;
     const root = document.querySelector('.gv1-root');
     return {
       win: window.innerWidth,
