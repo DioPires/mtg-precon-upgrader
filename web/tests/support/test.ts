@@ -30,11 +30,7 @@ export interface StubOptions {
 }
 
 interface StubFixtures {
-  /**
-   * Gives one context the stub and the per-test check. The `context` fixture has
-   * both, and so has a context that a test opens with `browser.newContext()` or
-   * `browser.newPage()`. Call it for a context that comes from somewhere else.
-   */
+  /** Gives one context the stub and the per-test check. `context` and `browser.newContext()` call it. */
   scryfallStub: (context: BrowserContext) => Promise<void>;
 }
 
@@ -146,18 +142,15 @@ export const test = base.extend<StubOptions & StubFixtures>({
         context.on('requestfailed', judge);
       };
 
-      // While the test runs, every context of this browser starts with the stub.
+      // While the test runs, every context that this browser opens gets the stub.
       const newContext = browser.newContext;
       browser.newContext = async (options) => {
         const context = await newContext.call(browser, options);
         await stub(context);
         return context;
       };
-      try {
-        await runTest(stub);
-      } finally {
-        browser.newContext = newContext;
-      }
+      await runTest(stub);
+      browser.newContext = newContext;
 
       if (Object.keys(counts).length > 0) {
         await testInfo.attach('scryfall-stub', {
