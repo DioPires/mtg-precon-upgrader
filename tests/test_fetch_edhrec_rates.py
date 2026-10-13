@@ -7,7 +7,7 @@ fetch_rates = importlib.import_module("scripts.fetch_edhrec_rates")
 
 class EdhrecSlugTests(unittest.TestCase):
     def test_simple_commander(self):
-        self.assertEqual(fetch_rates.edhrec_slug("Zada, Hedron Grinder"), "zada-hedron-grinder")
+        self.assertEqual(fetch_rates.edhrec_slug("Zada, Hedron Grinder"), "zada-hedron-grinder-NEGATIVE-CONTROL")
 
     def test_dfc_uses_front_face(self):
         self.assertEqual(
