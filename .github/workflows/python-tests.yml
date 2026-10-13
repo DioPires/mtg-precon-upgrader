@@ -34,7 +34,7 @@ jobs:
           python-version: '3.14'
           enable-cache: false
       - run: uv run --with pytest python -VV
-      # The suite command AGENTS.md names (DEC-1047). -rs lists each skip with its reason; the
-      # Scryfall mirror test skips here because priv_data/scryfall-oracle.json
-      # is gitignored.
+      # The suite command AGENTS.md names (DEC-1047). -rs lists each skip
+      # with its reason; the Scryfall mirror test skips here because
+      # priv_data/scryfall-oracle.json is gitignored.
       - run: uv run --with pytest python -m pytest -q -rs
