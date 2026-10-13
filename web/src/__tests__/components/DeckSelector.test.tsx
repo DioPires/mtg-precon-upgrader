@@ -55,3 +55,33 @@ describe('DeckSelector scroll (DEC-1008)', () => {
     expect(intoViewTargets).toEqual(['gv1-selector-track', 'gv1-selector-track']);
   });
 });
+
+describe('DeckSelector brewing pill (DEC-1021)', () => {
+  it('marks only the brewing deck with the brewing class and the BREWING badge', () => {
+    const decks = makeDecks(3);
+    decks[2].status = 'brewing';
+    const { getAllByRole } = render(<DeckSelector decks={decks} activeIdx={3} onSelect={() => {}} />);
+    const [built, , brewing] = getAllByRole('tab');
+
+    expect(brewing).toHaveClass('gv1-sel-pill', 'gv1-sel-pill-brewing', 'gv1-active');
+    expect(brewing.querySelector('.gv1-brewing-pill')).toHaveTextContent('BREWING');
+    // The active brewing pill carries the badge and the flag together.
+    expect(brewing.querySelector('.gv1-sel-pill-flag')).toHaveTextContent('NOW SCRYING');
+
+    expect(built).toHaveClass('gv1-sel-pill');
+    expect(built).not.toHaveClass('gv1-sel-pill-brewing');
+    expect(built.querySelector('.gv1-brewing-pill')).toBeNull();
+  });
+
+  it('keeps the brewing class and the badge on a brewing pill that is not active', () => {
+    const decks = makeDecks(3);
+    decks[2].status = 'brewing';
+    const { getAllByRole } = render(<DeckSelector decks={decks} activeIdx={1} onSelect={() => {}} />);
+    const brewing = getAllByRole('tab')[2];
+
+    expect(brewing).toHaveClass('gv1-sel-pill-brewing');
+    expect(brewing).not.toHaveClass('gv1-active');
+    expect(brewing.querySelector('.gv1-brewing-pill')).toHaveTextContent('BREWING');
+    expect(brewing.querySelector('.gv1-sel-pill-flag')).toBeNull();
+  });
+});
