@@ -19,9 +19,10 @@ async function getFirstDeck(page: Page): Promise<string> {
   return idx.commanders[0].id;
 }
 
-// DEC-1008: `.gv1-root` is `overflow: hidden`, so content wider than the
-// viewport never reaches `documentElement` — the root swallows it, and script
-// can still scroll the root sideways. Read the root as well as the document.
+// DEC-1008: `.gv1-root` clips its overflow, so content wider than the viewport
+// never reaches `documentElement` — the root swallows it. Read the root as
+// well as the document. Where the root falls back to `overflow: hidden`
+// (DEC-1019), script can also scroll it sideways.
 async function pageOverflows(page: Page): Promise<boolean> {
   const m = await page.evaluate(() => {
     const root = document.querySelector('.gv1-root');

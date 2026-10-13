@@ -226,6 +226,15 @@
    same opt-out pattern app.css uses for the deck guide. */
 .gv1-app > main:has([data-gv1-screen="combolab"]){padding:0}
 
+/* DEC-1019: the prototype pins the control rail (`position:sticky;top:20px`
+   above). It never pinned in production: `.gv1-root` was `overflow:hidden`,
+   so the root was the rail's scroll container. `overflow:clip` on the root
+   switches the pin on, and the rail is 1329px tall with the fleet's decks —
+   pinned, most of Contents, the tier legend and the exports stay below the
+   fold of an 800px screen for the length of the report. Keep the rail in the
+   flow, as before. */
+.gv1-lab-rail{position:static}
+
 /* Empty states — ported from the prototype's gv1-states.css (production
    styles.css has a different .gv1-empty), scoped to this screen. */
 [data-gv1-screen="combolab"] .gv1-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:48px 32px;border:1px dashed var(--gv1-line);background:linear-gradient(180deg,rgba(124,200,146,0.02),transparent 60%);font-family:var(--gv1-serif);font-style:italic;font-size:15px;color:var(--gv1-ink-dim);text-align:center;text-wrap:balance}
