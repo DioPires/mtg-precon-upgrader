@@ -66,8 +66,8 @@ async function getFirstDeckId(page: Page): Promise<string> {
 }
 
 async function checkOverflow(page: Page, surface: string, width: number): Promise<void> {
-  // DEC-1008: `.gv1-root` (overflow: hidden) swallows wide content before it
-  // reaches documentElement, so read the root too.
+  // DEC-1008: `.gv1-root` clips its overflow and swallows wide content before
+  // it reaches documentElement, so read the root too.
   const overflows = await page.evaluate(() => {
     const win = window.innerWidth;
     const doc = document.documentElement.scrollWidth;

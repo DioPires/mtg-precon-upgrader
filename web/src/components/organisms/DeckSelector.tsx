@@ -30,8 +30,9 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
 
   // DEC-1008: centre the active pill by scrolling the track itself. Calling
   // scrollIntoView on the pill also scrolls every scrollable ancestor, and
-  // `.gv1-root` (overflow: hidden) is one — the whole page slid sideways for
-  // pills the track could not centre on its own.
+  // `.gv1-root` was one while it was `overflow: hidden` — the whole page slid
+  // sideways for pills the track could not centre on its own. It still is one
+  // where `overflow: clip` falls back to `hidden` (DEC-1019).
   useEffect(() => {
     const track = trackRef.current;
     const el = track?.querySelector<HTMLElement>('.gv1-active');

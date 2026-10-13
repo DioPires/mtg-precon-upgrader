@@ -15,7 +15,11 @@
   font-feature-settings: "liga" 1, "onum" 1;
   min-height: 100%;
   position: relative;
+  /* DEC-1019: `clip`, not `hidden`. Script can scroll a `hidden` box sideways
+     and the reader cannot scroll it back (DEC-1008); a `clip` box never
+     scrolls. `hidden` stays as the fallback for Safari before 16. */
   overflow: hidden;
+  overflow: clip;
 }
 .gv1-root::before {
   content: '';
@@ -3005,8 +3009,10 @@ em { font-style: italic; color: var(--gv1-gold); }
 .gv1-topbar-mobile-menu .gv1-nav-item:last-child { border-bottom: none; }
 
 /* DEC-1008: the full topbar needs 1206px. Shed its two decorative ends before
-   it can spill past the viewport — right meta first, then the prompt. */
-@media (max-width: 1240px) {
+   it can spill past the viewport — right meta first, then the prompt.
+   DEC-1019: the two ends wrap to two lines below 1326px, so the right meta
+   goes first at 1330px. */
+@media (max-width: 1330px) {
   .gv1-topbar-right { display: none; }
 }
 @media (max-width: 1100px) {
@@ -3067,12 +3073,27 @@ em { font-style: italic; color: var(--gv1-gold); }
      compressing the chip row. */
   .gv1-shop-section { padding-top: 16px; }
   .gv1-shop-section.gv1-shop-rail {
-    position: sticky;
-    top: 0;
-    z-index: 10;
     background: var(--gv1-bg);
     padding-bottom: 10px;
     border-bottom: 1px solid var(--gv1-line);
+  }
+  /* DEC-1019: the rail never pinned while `.gv1-root` was `overflow: hidden`
+     (the root was its scroll container). Under `overflow: clip` it does, so
+     pin it only where it takes a quarter of the screen or less. It is 222px
+     tall on a phone (39% of 320×568) and 200px at 600px wide, which leaves
+     tablet portrait. Phones keep the rail in the flow, as before. */
+  @media (min-width: 600px) and (min-height: 800px) {
+    .gv1-shop-section.gv1-shop-rail {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    /* Keep keyboard focus out from under the pinned rail: a control that is
+       already on screen, under the rail, does not scroll when it takes focus.
+       216px is the rail at its tallest (200px, 600–625px wide) plus 16px. */
+    .gv1-shop-rail ~ .gv1-shop-section :is(a, button, input, select, label, [tabindex]) {
+      scroll-margin-top: 216px;
+    }
   }
   .gv1-shop-rail-head {
     flex-wrap: wrap;

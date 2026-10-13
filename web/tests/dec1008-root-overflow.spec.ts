@@ -1,9 +1,11 @@
 // DEC-1008: the deck guide sits inside the viewport and stays unscrolled.
 //
-// `.gv1-root` is `overflow: hidden`, so a block wider than the viewport never
-// shows up on `documentElement` — the root swallows it, and script can still
-// scroll the root sideways. The deck selector did exactly that for decks at
-// the far end of the rail, sliding the whole page left with no way back.
+// `.gv1-root` clips its overflow, so a block wider than the viewport never
+// shows up on `documentElement` — the root swallows it. While the root was
+// `overflow: hidden`, script could still scroll it sideways. The deck selector
+// did exactly that for decks at the far end of the rail, sliding the whole
+// page left with no way back. The root is `overflow: clip` since DEC-1019
+// (`hidden` is the fallback), and `scrollWidth` still reports the wide block.
 //
 // Every deck is loaded because both halves of the bug depend on the deck:
 // which block is widest, and whether its pill needs the scroll.
