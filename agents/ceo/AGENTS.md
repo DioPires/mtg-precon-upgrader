@@ -50,7 +50,7 @@ CI never runs `web/scripts/worlds-gate.mjs`. PR #85 merged green and left `main`
 
 ## Worktree Sweep at Merge (owner decision on DEC-950, 2026-10-11; eternities-mtg-app)
 
-Rule document: `docs/worktrees.md` (DEC-972). Nobody owned the moment a worktree became dead, so 99 trees (26 GB) piled up under the repository root. From now on:
+Rule document: `docs/worktrees.md` in eternities-mtg-app (DEC-972). mtg-precon-upgrader has no copy: a brief for that repository writes the worktree steps out and does not cite the file (DEC-1030 N15 and DEC-1050 N9, 2026-10-13). Nobody owned the moment a worktree became dead, so 99 trees (26 GB) piled up under the repository root. From now on:
 
 1. At every merge, remove the implementing issue's and the review issue's `wt-dec<N>*` trees: for each, `git status --porcelain` must print nothing and `git merge-base --is-ancestor HEAD origin/main` must exit 0; then `git worktree remove <path>` (never `--force`), `git branch -d <branch>`, and `git worktree prune`. Check that GitHub deleted the remote head branch (`delete_branch_on_merge` is on since 2026-10-11); if not, `gh api -X DELETE repos/DioPires/eternities-mtg-app/git/refs/heads/<branch>`.
 2. Never touch a tree with uncommitted tracked changes, unmerged commits, an open pull request's branch, or a tree a live run holds (the wake payload names it, or its issue has a running agent). Report a tree you could not remove in the merge comment; do not force it.

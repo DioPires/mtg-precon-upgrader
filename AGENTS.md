@@ -16,6 +16,14 @@ npm run lint
 npm run typecheck
 ```
 
+The Python test suite runs from the repository root:
+
+```bash
+uv run --with pytest python -m pytest -q
+```
+
+`tests/test_prerelease_tools.py` and `tests/test_sealed_sim.py` are pytest modules (fixtures, `pytest.raises`, `skipif`), so a bare `uv run python -m unittest` run fails to import them.
+
 Production deploy (`vercel.json`) runs `npm run build` in `web/`, copies `data/` into `dist/data/`, and serves `web/dist/` as the host root.
 
 **Python scripts: run with `uv run python`** (e.g. `uv run python scripts/refresh_card_pool.py --deck {id}`). Bare `python` is not on PATH in all shells; the project uses `uv` for env + deps.

@@ -3026,6 +3026,63 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-topbar-nav .gv1-nav-item { padding-inline: 10px; }
 }
 
+/* DEC-1017: above the phone layout, seven blocks kept their desktop tracks
+   after the page got too narrow for them and ran past the viewport, where the
+   root clips them. Each steps down at the width its desktop layout stops
+   fitting inside the page gutter on every deck (the figure in each comment).
+   They sit ahead of the 768px block, which sets the same properties again and
+   so keeps the last word on phones. */
+
+/* Combos: two side by side need 1052px (eternal-agony). */
+@media (max-width: 1060px) {
+  .gv1-combo-grid { grid-template-columns: minmax(0, 1fr); }
+}
+/* Commander: beside the 420px art, the 88px deck name needs 1017px
+   (witherbloom-the-balancer). The art moves above the dossier. */
+@media (max-width: 1020px) {
+  .gv1-cmd-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .gv1-cmd-art { max-width: 320px; }
+}
+/* Decklist: three columns need 1001px (witherbloom-the-balancer). */
+@media (max-width: 1010px) {
+  .gv1-decklist-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Engine: four tiles beside the 260px tab rail need 984px (eternal-agony,
+   second role). Two across, on tracks the tiles cannot stretch. */
+@media (max-width: 990px) {
+  .gv1-engine-shell { grid-template-columns: 260px minmax(0, 1fr); }
+  .gv1-engine-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Beside the rail the panel can be as narrow as 301px, so the card count
+   drops under a role title too long to share its row ("Counteroffensive"
+   needs 329px). Bounded below because the 768px block has no rule for the
+   panel head to fall back on. */
+@media (min-width: 769px) and (max-width: 990px) {
+  .gv1-engine-panel-head { flex-wrap: wrap; gap: 8px 16px; }
+}
+/* Shopping summary: four stats and the actions on one row, with the copy
+   button and the A-Z chip on one line each, need up to 1074px (every deck and
+   the brewing decks selected, nearly all priced). The actions take their own
+   row. */
+@media (max-width: 1080px) {
+  .gv1-shop-summary { grid-template-columns: repeat(4, auto); gap: 16px 24px; }
+  .gv1-shop-summary-actions {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+/* Win conditions: two side by side need 954px (zada-hedron-grinder). */
+@media (max-width: 960px) {
+  .gv1-wincons-grid { grid-template-columns: minmax(0, 1fr); }
+}
+/* Codex toolbar: sort and filter on one row, each chip label on one line,
+   need 940px. At 951px the two halves are 11.6px apart. */
+@media (max-width: 950px) {
+  .gv1-codex-toolbar { flex-wrap: wrap; gap: 8px 16px; }
+}
+
 @media (max-width: 768px) {
   /* Topbar collapses: prompt, full nav, right meta hide; hamburger shows. */
   .gv1-topbar {
