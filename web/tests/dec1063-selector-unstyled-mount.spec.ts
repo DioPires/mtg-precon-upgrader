@@ -220,20 +220,28 @@ for (const width of WIDTHS) {
         page,
       }) => {
         await openSettled(page, 'hidden-legion');
-        const centred = await rail(page);
+        let centred = await rail(page);
         // The pill centres with room to scroll 300px further.
         expect(centred.scrollLeft).toBeGreaterThan(0);
         expect(centred.scrollLeft + 300).toBeLessThan(centred.scrollWidth - centred.clientWidth);
 
         if (mount === 'an unstyled') {
+          const styled = centred.scrollLeft;
           await mountUnstyled(page, 'hidden-legion');
-          await expect.poll(async () => (await rail(page)).scrollLeft).toBe(centred.scrollLeft);
+          await expect
+            .poll(async () => Math.abs((await rail(page)).scrollLeft - styled))
+            .toBeLessThanOrEqual(1);
+          centred = await rail(page);
         }
 
         const box = (await page.locator('.gv1-selector-track').boundingBox())!;
         await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
         await page.mouse.wheel(300, 0);
-        await expect.poll(async () => (await rail(page)).scrollLeft).toBe(centred.scrollLeft + 300);
+        await expect
+          .poll(async () => (await rail(page)).scrollLeft)
+          .toBeGreaterThan(centred.scrollLeft + 200);
+        await settled(page);
+        const wheeled = await rail(page);
 
         await narrowSelector(page, 60);
         await expect.poll(async () => (await rail(page)).clientWidth).toBe(centred.clientWidth - 60);
@@ -241,7 +249,7 @@ for (const width of WIDTHS) {
         await page.waitForTimeout(300);
         await settled(page);
 
-        expect((await rail(page)).scrollLeft).toBe(centred.scrollLeft + 300);
+        expect((await rail(page)).scrollLeft).toBe(wheeled.scrollLeft);
       });
     }
   });

@@ -94,6 +94,24 @@ describe('DeckSelector scroll (DEC-1008)', () => {
       expect(scrollBy).not.toHaveBeenCalled();
       rect.mockRestore();
     });
+
+    // DEC-1063: a track taller than the viewport, y 100 to 1000 against 768.
+    // Its bottom is 232px past the edge, but 100px already brings its top to
+    // the viewport's: `Math.min` picks the top, so the start of the rail
+    // stays in view.
+    it('stops at the top of a track that is taller than the viewport', () => {
+      const rect = vi
+        .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(function (this: HTMLElement) {
+          return this.classList.contains('gv1-selector-track')
+            ? new DOMRect(0, 100, 300, 900)
+            : new DOMRect(0, 0, 0, 0);
+        });
+      render(<DeckSelector decks={makeDecks(5)} activeIdx={3} onSelect={() => {}} />);
+      expect(scrollBy).toHaveBeenCalledTimes(1);
+      expect(scrollBy).toHaveBeenCalledWith({ top: 100, behavior: 'smooth' });
+      rect.mockRestore();
+    });
   });
 });
 
