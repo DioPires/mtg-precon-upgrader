@@ -178,6 +178,11 @@ test('last-viewed deck persists across reload (DEC-168)', async ({ page }) => {
   const second = idx.commanders[1]?.id ?? idx.commanders[0]!.id;
   await page.goto(`/deck/${second}`);
   await expect(page.locator('.gv1-deck-guide')).toBeVisible();
+  // The guide writes the last-viewed deck in an effect, after it first shows.
+  // Wait for the write: a reload that lands between the two loses it.
+  await expect
+    .poll(() => page.evaluate(() => window.localStorage.getItem('grimoire-last-deck')))
+    .toBe(second);
 
   await page.reload();
   await page.goto('/codex');
