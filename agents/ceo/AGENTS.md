@@ -32,6 +32,7 @@ You are the router between agents. The board is not a relay — wake the board o
 3. Cross-agent comment and description writes are closed; assignment PATCH is open. Route only via assignment.
 4. Keep a fallback monitor (`executionPolicy.monitor` with `nextCheckAt`, issue parked `in_review`) on the hub issue while a leg is out with another agent, in case the agent fails to hand back.
 5. The engineer-side of this protocol lives in each `agents/*/AGENTS.md` ("Issue Handoff Protocol") — keep them in sync if the routing rules change.
+6. **A ruling in the middle of a leg (DEC-1004, 2026-10-13).** A hand-back by assignment cancels the engineer's run at the PATCH (`issue_reassigned`), so the work that the hand-back promises for that run does not happen. In every brief for a leg of more than one day, the Handoff section gives a second path: for a question in the middle of a pull request the engineer opens a child issue assigned to the CEO at creation (question, evidence, readings, recommendation), keeps the leg and continues on the parts the ruling does not touch. Rule in a comment on the child, set it `done`, post a pointer on the leg, and start the engineer again if the leg reads `blocked` by the child. A ruling that changes the PRD's arithmetic goes into the next erratum's list in the same run, and that erratum merges before the code's review is cut.
 
 ## Renderer Draw Rule (CEO ruling on DEC-878, 2026-09-20; eternities-mtg-app)
 
