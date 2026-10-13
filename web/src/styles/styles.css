@@ -380,7 +380,6 @@ em { font-style: italic; color: var(--gv1-gold); }
   writing-mode: vertical-rl;
   transform: rotate(180deg);
 }
-.gv1-sel-pill-brewing { border-style: dashed; }
 
 /* DEC-297 — brewing-deck marker. Used wherever a deck identity is shown to
    flag virtual builds excluded from card-usage analysis. */
@@ -456,6 +455,9 @@ em { font-style: italic; color: var(--gv1-gold); }
   box-shadow: 0 0 24px rgba(124, 200, 146, 0.12), inset 0 0 0 1px rgba(124, 200, 146, 0.15);
 }
 .gv1-sel-pill.gv1-active::before { background: var(--gv1-rune); }
+/* DEC-1021: a brewing deck's pill has a dashed border. The rule sits after
+   `.gv1-sel-pill`: above it, the `border` shorthand there reset the style. */
+.gv1-sel-pill.gv1-sel-pill-brewing { border-style: dashed; }
 
 .gv1-sel-pill-top {
   display: flex; justify-content: space-between; align-items: center;
@@ -495,9 +497,12 @@ em { font-style: italic; color: var(--gv1-gold); }
   letter-spacing: 0.08em;
 }
 .gv1-sel-pill.gv1-active .gv1-sel-pill-bracket { color: var(--gv1-rune); }
+/* DEC-1021: the flag sits in the bottom-right corner, beside the bracket. In
+   the top-right corner it covered the mana pips, and the BREWING badge on a
+   brewing deck. */
 .gv1-sel-pill-flag {
   position: absolute;
-  top: -1px; right: -1px;
+  bottom: -1px; right: -1px;
   background: var(--gv1-rune);
   color: var(--gv1-bg);
   padding: 3px 8px;
