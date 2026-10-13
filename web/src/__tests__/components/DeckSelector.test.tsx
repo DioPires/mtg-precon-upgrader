@@ -222,6 +222,37 @@ describe('DeckSelector track size (DEC-1063)', () => {
     expect(observer.disconnected).toBe(true);
   });
 
+  // The cleanup ends the window listener too. After unmount the listener
+  // finds no track and does nothing, so only the calls show that it is gone.
+  it('removes its resize listener on unmount', () => {
+    const add = vi.spyOn(window, 'addEventListener');
+    const remove = vi.spyOn(window, 'removeEventListener');
+    const { unmount } = render(
+      <DeckSelector decks={makeDecks(5)} activeIdx={1} onSelect={() => {}} />,
+    );
+    const added = add.mock.calls.filter(([type]) => type === 'resize').map(([, listener]) => listener);
+    expect(added).toHaveLength(1);
+
+    unmount();
+    expect(remove).toHaveBeenCalledWith('resize', added[0]);
+    add.mockRestore();
+    remove.mockRestore();
+  });
+
+  // More pills change the track's `scrollWidth`, not its own box: no
+  // observation, no scroll event and no window resize follows.
+  it('re-reads the fade when the number of decks changes', () => {
+    const { getByRole, container, rerender } = render(
+      <DeckSelector decks={makeDecks(2)} activeIdx={1} onSelect={() => {}} />,
+    );
+    const nav = getByRole('tablist');
+    expect(nav).toHaveAttribute('data-at-end');
+
+    sizeTrack(container.querySelector<HTMLElement>('.gv1-selector-track')!, 330, 5641);
+    rerender(<DeckSelector decks={makeDecks(40)} activeIdx={1} onSelect={() => {}} />);
+    expect(nav).not.toHaveAttribute('data-at-end');
+  });
+
   describe('centring a selector that mounted before the styles applied', () => {
     const proto = Element.prototype as unknown as Scrollable;
     const originalScrollTo = proto.scrollTo;
@@ -318,6 +349,33 @@ describe('DeckSelector track size (DEC-1063)', () => {
       expect(scrollTo).toHaveBeenCalledTimes(2);
       expect(scrollBy).toHaveBeenCalledTimes(2);
       expect(StubResizeObserver.made).toHaveLength(1);
+    });
+
+    // An absent pill is not a pending centring. If it were, a pill that
+    // arrived under the same `activeIdx` would be centred at the next size
+    // change, which can come after the user has scrolled the rail.
+    it('leaves no centring pending when the active pill is absent', () => {
+      stylesIn();
+      const decks = makeDecks(5);
+      const { container, rerender } = render(
+        <DeckSelector decks={decks} activeIdx={9} onSelect={() => {}} />,
+      );
+      const [observer] = StubResizeObserver.made;
+      expect(container.querySelector('.gv1-active')).toBeNull();
+      observer.deliver();
+      expect(scrollTo).not.toHaveBeenCalled();
+
+      // The pill arrives under the same activeIdx, with the same deck count.
+      const next = decks.map((d, i) => (i === 4 ? { ...d, idx: 9 } : d));
+      rerender(<DeckSelector decks={next} activeIdx={9} onSelect={() => {}} />);
+      expect(container.querySelector('.gv1-active')).not.toBeNull();
+      expect(StubResizeObserver.made).toHaveLength(1);
+      observer.deliver();
+      expect(scrollTo).not.toHaveBeenCalled();
+
+      // A deck change still centres, once.
+      rerender(<DeckSelector decks={next} activeIdx={2} onSelect={() => {}} />);
+      expect(scrollTo).toHaveBeenCalledTimes(1);
     });
   });
 });
