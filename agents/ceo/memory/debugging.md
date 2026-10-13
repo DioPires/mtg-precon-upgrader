@@ -63,5 +63,8 @@ The sandbox `HOME` of an agent run has no `~/Library/Caches/ms-playwright`, so `
 ## 2026-10-13 — `overflow: hidden` on the app root kills `position: sticky` inside it (DEC-1018 N15d)
 Under `overflow: hidden` the root becomes the scroll container for its descendants, so a sticky rail's top reads −600 after a 600 px page scroll; under `overflow: clip` it reads 0 and the rail sticks. Changing the root to `clip` switches on every sticky rule that never worked: check each one visually at the merge.
 
-## 2026-10-13 — `/api/issues/{id}/runs` is newest-first
-The runs list puts the latest run first. Slicing `[-4:]` shows the oldest runs and hides a live one; slice `[:4]`. This misread made a parallel-handled hand-back look like a lost wake (DEC-1015).
+## 2026-10-13 — `/api/issues/{id}/runs` is newest-first and lists writers, not wakes
+The runs list puts the latest run first (slice `[:n]`, not `[-n:]`) and holds every run that wrote to the issue: a run woken on another issue appears after its first write, and so does the current run. On DEC-1015 the DEC-1018 run (`c3257939`) saw itself in the list and took it for a parallel run; the hand-back was a real lost wake, because the assignee's 422 fallback PATCH (assignee + `executionPolicy.monitor`) woke no CEO run. Judge liveness by `runId` ≠ own run and `status: running`, then read the thread.
+
+## 2026-10-13 — `executionPolicy.monitor.scheduledBy` is an enum (DEC-1019)
+`PATCH /api/issues/{id}` with `executionPolicy.monitor.scheduledBy: "ceo"` returns 400 `invalid_value`, expected `"assignee"` or `"board"`, and drops the whole PATCH (the status change too). The CEO parking an issue it is assigned to writes `assignee`. Working shape: `{"status":"in_review","executionPolicy":{"monitor":{"nextCheckAt":"<ISO>","scheduledBy":"assignee","notes":"<500 chars"}}}`. `blockedByIssueIds` PATCH echoes the list in the response but GET by UUID can still show `[]`; the PATCH echo is the evidence.
