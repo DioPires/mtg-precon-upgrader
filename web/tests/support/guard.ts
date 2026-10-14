@@ -6,17 +6,28 @@ import { join, relative } from 'node:path';
 
 const SCRYFALL_DOMAINS = ['scryfall.com', 'scryfall.io'];
 
+// A host name can end in the root dot. `api.scryfall.com.` is the same host as
+// `api.scryfall.com`, and new URL() keeps the dot (DEC-1071).
+function isHostOf(domains: string[], hostname: string): boolean {
+  const host = hostname.replace(/\.$/, '');
+  return domains.some((d) => host === d || host.endsWith(`.${d}`));
+}
+
 export function isScryfallHost(hostname: string): boolean {
-  return SCRYFALL_DOMAINS.some((d) => hostname === d || hostname.endsWith(`.${d}`));
+  return isHostOf(SCRYFALL_DOMAINS, hostname);
 }
 
 // Chromium fails the name lookup for every Scryfall host, so a request that the
 // stub in ./test did not answer ends in net::ERR_NAME_NOT_RESOLVED on this
 // machine. It never reaches Scryfall and never counts against its rate limit.
+// A rule without the root dot does not match a name with it, so each name has
+// a rule in both forms.
 const RESOLVER_RULES = '--host-resolver-rules=';
 export const BLOCK_SCRYFALL_DNS =
   RESOLVER_RULES +
-  SCRYFALL_DOMAINS.flatMap((d) => [`MAP ${d} ~NOTFOUND`, `MAP *.${d} ~NOTFOUND`]).join(', ');
+  SCRYFALL_DOMAINS.flatMap((d) => [d, `*.${d}`])
+    .flatMap((name) => [`MAP ${name} ~NOTFOUND`, `MAP ${name}. ~NOTFOUND`])
+    .join(', ');
 
 // Browser arguments with the block in. Chromium takes one set of resolver
 // rules, so rules that a spec passes itself give way to the block.
