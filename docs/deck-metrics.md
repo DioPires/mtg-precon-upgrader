@@ -2,7 +2,7 @@
 
 Deterministic, formula-driven metrics for every deck. Each metric is a 0–100 score with explicit inputs — no opinion, no LLM calls. Outputs land in `data/commanders/{id}/metrics.json` (computed by P7.5, DEC-119).
 
-Why deterministic: metrics drive **gaps[]** (P7.6, DEC-120) which then drive **candidate enrichment** (P7.7, DEC-121). Anything subjective belongs in human review notes, not in the score.
+Why deterministic: metrics drive **gaps[]** (P7.6, DEC-120). The pool generator (P7.7, DEC-121) reads the `role` entries of `gaps[]`: it labels pool cards of a gap role and seats more of them after the top N (DEC-1078). It adds no score. Anything subjective belongs in human review notes, not in the score.
 
 Roles below refer to the closed set in [`role-taxonomy.md`](role-taxonomy.md).
 
@@ -166,7 +166,7 @@ Components:
 | Component | Weight | Formula |
 |---|---|---|
 | `recursion` | 30 | `min(recursion_count / recursion_target(wincon_style, bracket), 1.2) × 30`. `recursion_count` = primary + 0.5 × secondary on the `recursion` role, plus commander. |
-| `redundancy` | 25 | `min((wincon_lines − floor(wincon_style)) / 2, 1.0) × 25`. Counts *extra* `winConditions[]` lines beyond the per-style floor — one redundant assembly is full credit. |
+| `redundancy` | 25 | `min((wincon_lines − floor(wincon_style)) / 2, 1.0) × 25`. Counts *extra* `winConditions[]` lines beyond the per-style floor. Two extra lines give full credit and one gives half (anvil-chorus: 2 lines, floor 1, 12.5 of 25). |
 | `protection` | 25 | `min(protection_count / protection_target(bracket), 1.0) × 25`. Whole-deck protection count (primary + 0.5 × secondary + commander); not piece-overlap. |
 | `gy_second_hand` | 20 | `min(gy_role_card_count / 6, 1.0) × 20`. `gy_role_card_count` = cards whose primary OR secondary role is in `{recursion, engine}`. Tag-only — no oracle-text re-derivation (see anti-double-counting below). |
 
@@ -190,7 +190,11 @@ Rationale: a tuned `combo` deck closing on T6 doesn't need five recursion slots;
 
 **Anti-double-counting:** `gy_second_hand` is constrained to cards already tagged `recursion` or `engine`. Oracle-text re-derivation is explicitly forbidden — every Animate Dead, every Reanimate would otherwise count three times (recursion role → recursion component, "from your graveyard" text → re-counted, and again as the engine half). The intent of this component is "the deck rebuilds its hand from the yard", which is the engine half of the recursion universe (Deep Analysis, Snapcaster, Bone Shards on engine creatures, …). Set overlap between the `recursion` and `gy_second_hand` populations is by design and is bounded by the hard `min(count/6, 1) × 20` cap.
 
-**`gaps[]` surfacing:** any component whose percentage-of-max is `< 70` is appended to `metrics.json`'s `gaps[]` as `{resilience_component, score_pct, max, ...}` (with component-specific fields — actual/target for recursion/protection/gy, lines/floor for redundancy, and `wincon_style` on recursion/redundancy entries). This rides the same `gaps[]` feed that role-coverage already uses, so candidate enrichment (P7.7) can prioritize cards that close a resilience gap just like it prioritizes role gaps.
+**`gaps[]` surfacing:** a component whose percentage-of-max is `< 70` is appended to `metrics.json`'s `gaps[]` as `{resilience_component, score_pct, max, ...}` (with component-specific fields — actual/target for recursion/protection/gy, `lines`, `floor` and `target` for redundancy, and `wincon_style` on recursion/redundancy entries). The role gaps come first, then the resilience gaps.
+
+One resilience entry is left out (`merge_gaps`, PR #21, DEC-1062): the entry of a component that has the name of a role gap and the same `actual` and `target`. Only `protection` is both a role and a component, so only a protection entry can be left out. The join compares the name and the figures. The name does work today: titan-convergence's recursion gap is `2.0 / 3` and its `removal-board` role gap is `2.0 / 3`, so a join on the figures alone would drop the recursion entry. If the role table and the component table are tuned apart, the protection entry carries its own figures and stays.
+
+The pool generator reads only the `role` entries of `gaps[]`. A resilience entry labels and seats no pool card.
 
 ### Confidence band: `confidence_margin` (±2…±15) — DEC-310
 
@@ -295,7 +299,7 @@ Two-score semantics:
 | `global_health` | Does the deck meet its **own declared** bar? | Yes — the bar itself moves |
 | `global_health_normalized` | How does the deck rank on **one fixed ruler** (B3 targets)? | No |
 
-The normalized pass emits no gaps — `gaps[]` stays scored against the deck's own declared bar, since that is what drives candidate enrichment. A deck declared at B3 with no combo wincon scores identically on both rulers. The `normalized` block in `metrics.json` echoes the reference bracket and the six component scores used, so the blend is reproducible from the file alone. `confidence_margin` applies to both scores — it channels data completeness, not bracket targets.
+The normalized pass emits no gaps — `gaps[]` stays scored against the deck's own declared bar, since that is the bar that the pool generator's gap labels and gap seats read. A deck declared at B3 with no combo wincon scores identically on both rulers. The `normalized` block in `metrics.json` echoes the reference bracket and the six component scores used, so the blend is reproducible from the file alone. `confidence_margin` applies to both scores — it channels data completeness, not bracket targets.
 
 ## Output schema (`data/commanders/{id}/metrics.json`)
 
@@ -310,7 +314,7 @@ The normalized pass emits no gaps — `gaps[]` stays scored against the deck's o
   "weights": { "manabase": 0.25, "role": 0.25, "curve": 0.15, "interaction": 0.15, "cohesion": 0.10, "resilience": 0.10 },
   "metrics": {
     "manabase_health":      { "score": 82, "components": { "karsten": 40.0, "untapped": 29.2, "fetch": 5.0, "land_count": 7.5 } },
-    "role_coverage_health": { "score": 86, "by_role": { "ramp": 100, "card-draw": 70, "removal-spot": 90, "removal-board": 66, "protection": 50, "tutor": 100, "wincon": 100, "counterspell": 83 } },
+    "role_coverage_health": { "score": 86, "by_role": { "ramp": 100, "card-draw": 70, "removal-spot": 90, "removal-board": 67, "protection": 50, "tutor": 100, "wincon": 100, "counterspell": 83 } },
     "curve_health":         { "score": 95, "actual_avg_cmc": 2.58, "target_avg_cmc": 2.8 },
     "interaction_density":  { "score": 118, "weighted": 16.5, "target": 14 },
     "gameplan_cohesion":    { "score": 24, "in_set_pct": 0.24, "archetype_extensions": ["recursion"] },
@@ -318,8 +322,8 @@ The normalized pass emits no gaps — `gaps[]` stays scored against the deck's o
       "score": 88,
       "components": {
         "recursion":      { "score": 30.0, "actual": 4.5, "target": 2, "max": 30 },
-        "redundancy":     { "score": 25.0, "lines": 9, "floor": 1, "max": 25 },
-        "protection":     { "score": 13.8, "actual": 2.0, "target": 4, "max": 25 },
+        "redundancy":     { "score": 25.0, "lines": 9, "floor": 1, "target": 3, "max": 25 },
+        "protection":     { "score": 12.5, "actual": 2.0, "target": 4, "max": 25 },
         "gy_second_hand": { "score": 20.0, "actual": 13.0, "target": 6, "max": 20 }
       },
       "inputs": { "wincon_style": "value-incremental", "bracket_effective": 4 }
@@ -334,13 +338,15 @@ The normalized pass emits no gaps — `gaps[]` stays scored against the deck's o
   "confidence_margin": 5,
   "win_turn": { "best": 6, "typical": 7, "contested": 8, "source": "max", "bracket_drag": 1, "thresholds": { "best": 15.0, "typical": 50.0 }, "window_last_turn": 10 },
   "gaps": [
-    { "role": "protection", "actual": 2, "target": 4, "score": 50 },
-    { "resilience_component": "protection", "score_pct": 55, "max": 25, "actual": 2.0, "target": 4 }
+    { "role": "removal-board", "actual": 2.0, "target": 3, "score": 67 },
+    { "role": "protection", "actual": 2.0, "target": 4, "score": 50 }
   ]
 }
 ```
 
-`gaps[]` is the **single feed** into the candidate-enrichment step (P7.7) — that step prioritizes candidate cards whose `primary_role` matches a gap.
+The resilience `protection` component (`2.0` of `4`, 50% of its max) is under 70% too. The join leaves it out because the `protection` role gap holds the same `actual` and `target`.
+
+The pool generator (P7.7) reads only the `role` entries of `gaps[]`. A pool card whose role (`deck_role`, read from its oracle text) is a gap role carries `mitigates_gap: <role>`. When a gap role has fewer than 5 pool cards, the generator seats more cards of that role after the top N, flagged `seeded_for_gap: <role>` (DEC-1078, [`discovery-playbook.md`](discovery-playbook.md)). It adds no score, and the top N do not move.
 
 ## A–F grade table (DEC-90 P8.1)
 

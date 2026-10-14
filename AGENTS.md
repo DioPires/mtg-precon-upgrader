@@ -184,8 +184,8 @@ Before recommending changes to any deck:
 When tagging cards, building decks, or reading metrics output:
 
 - **Roles**: every `decklist[]` card has `primary_role` (required) and optional `secondary_role` from the closed 15-role set in [`docs/role-taxonomy.md`](docs/role-taxonomy.md). Commander has `commanderRoles` at deck root. `wincon` cards carry `wincon_style`; MDFCs are flagged `is_mdfc_land: true`.
-- **Metrics**: `data/commanders/{id}/metrics.json` carries 5 deterministic scores (manabase health, role coverage, curve, interaction density, gameplan cohesion) + `global_health` + `gaps[]`. Formulas in [`docs/deck-metrics.md`](docs/deck-metrics.md).
-- **Use gaps[] to drive review** — top-50 candidate review (step 3 above) should explicitly check whether each candidate addresses a `gaps[]` entry. The candidate-pool generator (P7.7) boosts gap-addressing cards in the score.
+- **Metrics**: `data/commanders/{id}/metrics.json` carries 6 deterministic scores (manabase health, role coverage, curve, interaction density, gameplan cohesion, resilience health) + `global_health` + `gaps[]`. Formulas in [`docs/deck-metrics.md`](docs/deck-metrics.md).
+- **Use gaps[] to drive review** — top-50 candidate review (step 3 above) should explicitly check whether each candidate addresses a `gaps[]` entry. The candidate-pool generator (P7.7) reads only the `role` entries of `gaps[]` and adds no score for them: it labels pool cards of a gap role (`mitigates_gap`) and seats cards of a gap role with fewer than 5 pool cards after the top N (`seeded_for_gap`, DEC-1078).
 
 ## Fleet Re-Audit Policy (DEC-396)
 
