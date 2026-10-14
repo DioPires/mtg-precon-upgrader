@@ -47,7 +47,7 @@
 - A web rule that keeps a block inside its edge with any face can still hide what is inside it. `minmax(0, 1fr)` tracks let a cell grow narrower than its content, so with the fallback faces the next cell covered the last digit of "3.16" (PR #33 at `2e74974`; `main`'s plain `1fr` tracks showed it whole). A web brief that asks for `minmax(0, 1fr)` or `min-width: 0` also asks for a fonts-blocked read of each child against its own cell, not only of the block against the viewport (DEC-1043 ruling `8288eed2`, 2026-10-14).
 ## MCP servers (project-scoped)
 
-- `scryfall_*` — card oracle text / search / bulk collection. Mandatory for any card claim.
+- `scryfall_*` — card oracle text / search / bulk collection. Mandatory for any card claim. Only a session that loads `.mcp.json` has these tools, and today that means the owner's sessions. Paperclip starts every agent run with `--strict-mcp-config` and the two Paperclip servers only, so no agent run since at least 2026-09-17 had a card tool (DEC-1092 live check, 2026-10-14). In a run, start the server over stdio with `.mcp.json`'s command and `env` block (`analysis/dec1092-live/live_call.py`, run by the server's own `.venv` python), or use `scripts/scryfall_api.py`. Do not `curl` `api.scryfall.com`: that request skips the shared limiter. The gap for the engineers' instruction files is open on DEC-1072 (comment `0d6660b9`).
 - `commanderspellbook_find_combos` — combo + near-miss lookup (MCP pydantic crash workaround: curl backend, see memory).
 - `youtube_*` — deck-tech research.
 - `archidekt_*` — publish decks (needs `ARCHIDEKT_AUTH_TOKEN` for writes).
