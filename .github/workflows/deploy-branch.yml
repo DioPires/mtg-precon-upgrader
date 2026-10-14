@@ -1,0 +1,66 @@
+name: deploy-branch
+
+# Vercel builds the `deploy` branch as production (DEC-1066). This workflow
+# fast-forwards `deploy` to a push on `main` that changes a build input, so a
+# commit that changes only notes under agents/ costs no production deployment.
+#
+# Build inputs: vercel.json's installCommand and buildCommand read web/ and
+# copy data/. Keep the paths list in step with vercel.json.
+#
+# Never delete the `deploy` branch: production follows it.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'data/**'
+      - 'vercel.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# One run at a time. Runs can still start out of order, so the step below
+# never moves `deploy` back: it only fast-forwards.
+concurrency:
+  group: deploy-branch
+  cancel-in-progress: false
+
+jobs:
+  fast-forward-deploy:
+    # A manual run from another branch must not publish that branch.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fast-forward deploy to ${{ github.sha }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          current=$(gh api "repos/$REPO/git/matching-refs/heads/deploy" \
+            --jq '.[] | select(.ref == "refs/heads/deploy") | .object.sha')
+          if [ -z "$current" ]; then
+            gh api -X POST "repos/$REPO/git/refs" \
+              -f ref=refs/heads/deploy -f sha="$SHA" --silent
+            echo "Created deploy at $SHA."
+            exit 0
+          fi
+          status=$(gh api "repos/$REPO/compare/$current...$SHA" --jq .status)
+          case "$status" in
+            identical)
+              echo "deploy is already at $SHA." ;;
+            behind)
+              echo "deploy is at $current, which already contains $SHA. deploy stays." ;;
+            ahead)
+              # force=false: GitHub refuses an update that is not a fast-forward.
+              gh api -X PATCH "repos/$REPO/git/refs/heads/deploy" \
+                -f sha="$SHA" -F force=false --silent
+              echo "Moved deploy from $current to $SHA." ;;
+            *)
+              echo "::error::deploy ($current) and $SHA have diverged ($status). deploy did not move."
+              exit 1 ;;
+          esac

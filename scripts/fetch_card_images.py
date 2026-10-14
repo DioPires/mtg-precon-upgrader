@@ -6,6 +6,8 @@ via Scryfall Collection API, downloads normal and art_crop variants.
 
 Every request to api.scryfall.com goes through scryfall_api, which keeps
 Scryfall's rate limit. A 429 or a failed batch ends the run with exit code 1.
+A batch holds the front face of a ``//`` name: Scryfall does not find the full
+name (DEC-1076).
 """
 
 import json
@@ -34,7 +36,9 @@ VARIANTS = ["normal", "art_crop"]
 def request_with_retry(send, label: str = "") -> bytes:
     """Run ``send()`` with exponential backoff on 5xx errors and network errors.
 
-    A 429 is never retried: it raises scryfall_api.ScryfallRateLimited.
+    A timeout inside ``read()`` raises TimeoutError, not URLError; it counts as
+    a network error. A 429 is never retried: it raises
+    scryfall_api.ScryfallRateLimited.
     """
     backoff = INITIAL_BACKOFF
     for attempt in range(MAX_RETRIES):
@@ -50,7 +54,7 @@ def request_with_retry(send, label: str = "") -> bytes:
                     time.sleep(wait)
                     continue
             raise
-        except urllib.error.URLError:
+        except (urllib.error.URLError, TimeoutError):
             if attempt < MAX_RETRIES - 1:
                 wait = backoff * (2 ** attempt)
                 print(f"    {label}Network error, retrying in {wait:.1f}s (attempt {attempt + 1}/{MAX_RETRIES})")
@@ -90,10 +94,14 @@ def collect_card_names() -> set[str]:
 def fetch_image_uris(names: list[str]) -> dict[str, dict]:
     """Fetch image URIs from Scryfall Collection API in batches of 75.
 
-    Returns dict mapping card_name -> {"front": {image_uris}, "back": {image_uris}|None}.
-    A batch that still fails after the retries raises, so the run ends.
+    A ``//`` name goes into the batch as its front face. Returns dict mapping
+    card_name -> {"front": {image_uris}, "back": {image_uris}|None}, under the
+    full name that Scryfall returned and under its front face.
+    A batch that still fails after the retries, or an answer without ``data``,
+    raises, so the run ends.
     """
     uris = {}
+    names = sorted({name.split(" // ")[0] for name in names})
     batches = [names[i : i + BATCH_SIZE] for i in range(0, len(names), BATCH_SIZE)]
 
     for i, batch in enumerate(batches):
@@ -105,7 +113,7 @@ def fetch_image_uris(names: list[str]) -> dict[str, dict]:
         )
         data = json.loads(raw)
 
-        for card in data.get("data", []):
+        for card in data["data"]:
             card_name = card["name"]
             layout = card.get("layout", "normal")
             faces = card.get("card_faces", [])
@@ -137,7 +145,7 @@ def download_image(url: str, dest: Path) -> bool:
     req = urllib.request.Request(url, headers={"User-Agent": scryfall_api.USER_AGENT})
 
     def send() -> bytes:
-        with urllib.request.urlopen(req) as resp:
+        with urllib.request.urlopen(req, timeout=scryfall_api.TIMEOUT) as resp:
             return resp.read()
 
     try:
@@ -170,7 +178,7 @@ def main() -> int:
     except scryfall_api.ScryfallRateLimited as e:
         print(f"\n{e}\nNo image downloaded.")
         return 1
-    except (OSError, ValueError) as e:
+    except (OSError, ValueError, KeyError) as e:
         print(f"\nA batch failed: {type(e).__name__}: {e}\nNo image downloaded.")
         return 1
     print(f"Got URIs for {len(uris)} cards.\n")

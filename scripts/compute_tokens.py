@@ -15,16 +15,21 @@ Sources:
   - amass {Type} oracle parsing → {Type} Army token
   - Oracle-text fallback for markers Scryfall doesn't always link
     (e.g. ascend → City's Blessing); resolved by Scryfall name lookup.
+
+Every request goes through scryfall_api, which keeps Scryfall's rate limit. A
+429 ends the run: the script writes no deck file and exits with 1 (DEC-1076).
 """
 
 import argparse
 import json
 import re
 import sys
-import time
 import urllib.parse
-import urllib.request
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import scryfall_api  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
@@ -32,8 +37,6 @@ COMMANDERS_DIR = DATA_DIR / "commanders"
 SCRYFALL_COLLECTION_URL = "https://api.scryfall.com/cards/collection"
 SCRYFALL_NAMED_URL = "https://api.scryfall.com/cards/named"
 BATCH_SIZE = 75
-RATE_LIMIT_DELAY = 0.1  # 100ms between requests
-USER_AGENT = "MTGPreconUpgrader/1.0"
 
 # Oracle-text fallback table: regex → exact Scryfall card name to fetch.
 # Used only for markers not linked via all_parts. Day/Night, monarch, etc.
@@ -49,13 +52,8 @@ ORACLE_MARKER_FALLBACKS: list[tuple[re.Pattern, str]] = [
 NEGATION_PATTERN = re.compile(r"can[’']t\s+become\s+the\s+monarch", re.I)
 
 
-def _request(url: str, data: bytes | None = None) -> dict:
-    headers = {"Accept": "application/json", "User-Agent": USER_AGENT}
-    if data:
-        headers["Content-Type"] = "application/json"
-    req = urllib.request.Request(url, data=data, headers=headers)
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read())
+def _request(url: str, body: dict | None = None) -> dict:
+    return json.loads(scryfall_api.request(url, body))
 
 
 def fetch_collection(names: list[str]) -> list[dict]:
@@ -70,19 +68,18 @@ def fetch_collection(names: list[str]) -> list[dict]:
 
     for i, batch in enumerate(batches):
         print(f"  Batch {i + 1}/{len(batches)} ({len(batch)} cards)...")
-        body = json.dumps({"identifiers": [{"name": n} for n in batch]}).encode()
+        body = {"identifiers": [{"name": n} for n in batch]}
 
         try:
-            data = _request(SCRYFALL_COLLECTION_URL, data=body)
+            data = _request(SCRYFALL_COLLECTION_URL, body)
             cards.extend(data.get("data", []))
             not_found_names.extend(
                 nf.get("name", "") for nf in data.get("not_found", []) if nf.get("name")
             )
+        except scryfall_api.ScryfallRateLimited:
+            raise
         except Exception as e:
             print(f"    Batch {i + 1} failed: {e}")
-
-        if i < len(batches) - 1:
-            time.sleep(RATE_LIMIT_DELAY)
 
     if not_found_names:
         print(f"    Retrying {len(not_found_names)} via fuzzy named lookup...")
@@ -90,12 +87,13 @@ def fetch_collection(names: list[str]) -> list[dict]:
             front = name.split("//")[0].strip()
             url = f"{SCRYFALL_NAMED_URL}?fuzzy={urllib.parse.quote(front)}"
             try:
-                time.sleep(RATE_LIMIT_DELAY)
                 c = _request(url)
                 if c.get("object") == "error":
                     print(f"      Still not found: {name}")
                     continue
                 cards.append(c)
+            except scryfall_api.ScryfallRateLimited:
+                raise
             except Exception as e:
                 print(f"      Lookup failed for {name}: {e}")
 
@@ -105,8 +103,9 @@ def fetch_collection(names: list[str]) -> list[dict]:
 def fetch_token(uri: str) -> dict | None:
     """Fetch a single token/marker card by URI."""
     try:
-        time.sleep(RATE_LIMIT_DELAY)
         return _request(uri)
+    except scryfall_api.ScryfallRateLimited:
+        raise
     except Exception as e:
         print(f"    Failed to fetch token {uri}: {e}")
         return None
@@ -118,7 +117,6 @@ def fetch_named_exact(name: str, _cache: dict[str, dict | None] = {}) -> dict | 
         return _cache[name]
     url = f"{SCRYFALL_NAMED_URL}?exact={urllib.parse.quote(name)}"
     try:
-        time.sleep(RATE_LIMIT_DELAY)
         c = _request(url)
         if c.get("object") == "error":
             print(f"    Marker lookup failed for '{name}': {c.get('details', '')[:80]}")
@@ -126,6 +124,8 @@ def fetch_named_exact(name: str, _cache: dict[str, dict | None] = {}) -> dict | 
             return None
         _cache[name] = c
         return c
+    except scryfall_api.ScryfallRateLimited:
+        raise
     except Exception as e:
         print(f"    Marker lookup failed for '{name}': {e}")
         _cache[name] = None
@@ -136,10 +136,11 @@ def search_token(query: str) -> dict | None:
     """Search Scryfall for a token card."""
     url = f"https://api.scryfall.com/cards/search?q={urllib.parse.quote(query)}"
     try:
-        time.sleep(RATE_LIMIT_DELAY)
         data = _request(url)
         results = data.get("data", [])
         return results[0] if results else None
+    except scryfall_api.ScryfallRateLimited:
+        raise
     except Exception as e:
         print(f"    Token search failed for '{query}': {e}")
         return None
@@ -383,7 +384,7 @@ def deck_paths_for_ids(deck_ids: list[str] | None) -> list[Path]:
     return [COMMANDERS_DIR / deck_id / "deck.json" for deck_id in deck_ids]
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(
         description="Compute token/emblem/marker data and write it into deck.json files."
     )
@@ -404,6 +405,8 @@ def main():
 
     print(f"Found {len(deck_paths)} decks.\n")
 
+    # Every deck first, then every write: a 429 leaves every deck file as it was.
+    decks = []
     for path in deck_paths:
         with open(path) as f:
             deck = json.load(f)
@@ -411,17 +414,23 @@ def main():
         deck_name = deck.get("name", path.parent.name)
         print(f"Processing: {deck_name}")
 
-        tokens = compute_tokens_for_deck(deck)
-        deck["tokens"] = tokens
+        try:
+            deck["tokens"] = compute_tokens_for_deck(deck)
+        except scryfall_api.ScryfallRateLimited as e:
+            print(f"\n{e}\nNo file written.")
+            return 1
+        decks.append((path, deck))
+        print(f"  -> {len(deck['tokens'])} tokens\n")
 
+    for path, deck in decks:
         with open(path, "w") as f:
             json.dump(deck, f, indent=2, ensure_ascii=False)
             f.write("\n")
-
-        print(f"  -> {len(tokens)} tokens written\n")
+        print(f"Wrote {path}")
 
     print("Done.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -5,7 +5,9 @@ Three checks, any failure exits 1:
 
 1. **List drift** — diff `data/game-changers.json` against the live Scryfall
    `format:commander is:gamechanger` search (paginated; Scryfall requires a
-   User-Agent header, per DEC-370). Skip with `--offline`.
+   User-Agent header, per DEC-370). Skip with `--offline`. Every page goes
+   through scryfall_api, which keeps Scryfall's rate limit; a 429 ends the
+   run with exit code 1 before the other checks (DEC-1076).
 2. **Mirror sync** — the `web/src/data/gameChangers.ts` copy must contain the
    exact same card set as the JSON source of truth.
 3. **Fleet recount** — every deck's `gameChangers` field must equal the count
@@ -25,8 +27,11 @@ import json
 import re
 import sys
 import urllib.parse
-import urllib.request
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import scryfall_api  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 GC_JSON = PROJECT_ROOT / "data" / "game-changers.json"
@@ -35,7 +40,6 @@ INDEX_JSON = PROJECT_ROOT / "data" / "index.json"
 COMMANDERS_DIR = PROJECT_ROOT / "data" / "commanders"
 
 SCRYFALL_SEARCH = "https://api.scryfall.com/cards/search"
-USER_AGENT = "mtg-precon-upgrader/1.0 (github.com/DioPires/mtg-precon-upgrader)"
 
 # Board-set hard caps (DEC-369); bracket caps are derived from `bracket`.
 HARD_CAPS = {"verdant-tide": 1}
@@ -50,11 +54,7 @@ def fetch_remote_gc_names() -> set[str]:
     url = f"{SCRYFALL_SEARCH}?q={query}"
     names: set[str] = set()
     while url:
-        req = urllib.request.Request(
-            url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"}
-        )
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            page = json.load(resp)
+        page = json.loads(scryfall_api.request(url))
         names.update(front_face(card["name"]) for card in page["data"])
         url = page.get("next_page")
     return names
@@ -123,7 +123,11 @@ def main() -> int:
     if args.offline:
         print("list drift: SKIPPED (--offline)")
     else:
-        remote = fetch_remote_gc_names()
+        try:
+            remote = fetch_remote_gc_names()
+        except scryfall_api.ScryfallRateLimited as e:
+            print(f"list drift: {e}")
+            return 1
         added = sorted(remote - local)
         removed = sorted(local - remote)
         if added or removed:

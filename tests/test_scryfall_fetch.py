@@ -1,19 +1,25 @@
 """DEC-1075 — the fetch scripts keep Scryfall's limits.
 
-No test here sends a live request: FakeScryfall stands in for ``urlopen`` and
-for the clock.
+No test here sends a live request: FakeScryfall stands in for ``urlopen``, for
+the helper's opener and for the clock. RedirectCases run the helper's real
+opener over a fake https transport.
 """
 
 import contextlib
+import email.message
 import importlib
 import io
 import json
 import re
 import runpy
+import shutil
 import tempfile
+import types
 import unittest
 import urllib.error
 import urllib.parse
+import urllib.request
+import urllib.response
 from collections import namedtuple
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -100,7 +106,8 @@ class FakeScryfall:
 
     The API answers as Scryfall does (DEC-1072, live reading 1): it finds a
     card by its full name when that name has no ``//``, or by its front face,
-    and it does not find a full ``//`` name.
+    and it does not find a full ``//`` name. ``pages`` holds the answer to
+    other GET addresses: address -> JSON object.
     """
 
     LATENCY = 0.25
@@ -112,6 +119,7 @@ class FakeScryfall:
         self.sleeps: list[float] = []
         # Request index -> an HTTP status, an exception or a raw body.
         self.failures: dict[int, object] = {}
+        self.pages: dict[str, object] = {}
 
     def monotonic(self) -> float:
         return self.now
@@ -137,6 +145,8 @@ class FakeScryfall:
         if isinstance(failure, bytes):
             return FakeResponse(failure)
 
+        if url in self.pages:
+            return FakeResponse(json.dumps(self.pages[url]).encode())
         parts = urllib.parse.urlsplit(url)
         if parts.hostname == "cards.scryfall.io":
             return FakeResponse(b"image bytes")
@@ -158,11 +168,13 @@ class FakeScryfall:
         raise urllib.error.HTTPError(url, 404, "status 404", {}, io.BytesIO())
 
     def installed(self) -> contextlib.ExitStack:
-        """Patch ``urlopen`` and the clock everywhere, and reset the helper's state."""
+        """Patch ``urlopen``, the helper's opener and the clock, and reset the helper's state."""
         scryfall_api._last_answer_at = None
         scryfall_api._rate_limited = False
         stack = contextlib.ExitStack()
         stack.enter_context(mock.patch("urllib.request.urlopen", self.urlopen))
+        stack.enter_context(
+            mock.patch.object(scryfall_api, "_OPENER", types.SimpleNamespace(open=self.urlopen)))
         stack.enter_context(mock.patch("time.monotonic", self.monotonic))
         stack.enter_context(mock.patch("time.sleep", self.sleep))
         return stack
@@ -1002,3 +1014,182 @@ class MatchOrderKillCases(DeckDirCase):
         metadata = json.loads(self.output.read_text())
         self.assertEqual(sorted(metadata), ["Twin"])
         self.assertEqual(metadata["Twin"]["image"], image_path("Twin"))
+
+
+# DEC-1076: the gaps N2, N3 and N8 of the DEC-1080 review, and the front face of a // name
+# in fetch_card_images.py.
+
+
+class RedirectCases(unittest.TestCase):
+    """N3: the helper's opener has no HTTPRedirectHandler, so a 3xx raises HTTPError.
+
+    These cases run the real opener; only the https transport and the clock are fake.
+    """
+
+    def setUp(self):
+        self.fake = FakeScryfall()
+        scryfall_api._last_answer_at = None
+        scryfall_api._rate_limited = False
+
+    def test_opener_has_no_redirect_handler(self):
+        """The opener keeps a proxy of the environment, as urlopen() does."""
+        self.assertEqual(
+            sorted(type(handler).__name__ for handler in scryfall_api._OPENER.handlers),
+            sorted(type(handler).__name__ for handler in scryfall_api._build_opener().handlers))
+        with mock.patch.dict("os.environ", {"https_proxy": "http://proxy.invalid:3128"}):
+            handlers = sorted(type(handler).__name__ for handler in scryfall_api._build_opener().handlers)
+        self.assertEqual(
+            handlers,
+            ["HTTPDefaultErrorHandler", "HTTPErrorProcessor", "HTTPSHandler", "ProxyHandler"])
+
+    def test_3xx_raises_and_no_second_request_goes_out(self):
+        for code in (301, 302, 303, 307, 308):
+            for body in (None, {"identifiers": []}):
+                with self.subTest(code=code, method="GET" if body is None else "POST"):
+                    opened = []
+
+                    def https_open(handler, req, code=code):
+                        opened.append(req.full_url)
+                        headers = email.message.Message()
+                        headers["Location"] = "https://example.invalid/cards/collection"
+                        answer = urllib.response.addinfourl(
+                            io.BytesIO(b""), headers, req.full_url, code)
+                        answer.msg = "Redirect"
+                        return answer
+
+                    with mock.patch("time.monotonic", self.fake.monotonic), \
+                            mock.patch("time.sleep", self.fake.sleep), \
+                            mock.patch.object(urllib.request.HTTPSHandler, "https_open", https_open):
+                        with self.assertRaises(urllib.error.HTTPError) as raised:
+                            scryfall_api.request(COLLECTION_URL, body)
+
+                    self.assertEqual(raised.exception.code, code)
+                    self.assertEqual(opened, [COLLECTION_URL])
+
+    def test_request_refuses_http(self):
+        with self.fake.installed():
+            with self.assertRaises(ValueError):
+                scryfall_api.request("http://api.scryfall.com/cards/collection", {"identifiers": []})
+        self.assertEqual(self.fake.sent, [])
+
+
+class StallingRead(FakeScryfall):
+    """The answers to the requests in ``stalls`` raise TimeoutError inside ``read()``."""
+
+    def __init__(self, cards=()):
+        super().__init__(cards)
+        self.stalls: set[int] = set()
+
+    def urlopen(self, req, timeout=None):
+        index = len(self.sent)
+        answer = super().urlopen(req, timeout)
+        if index not in self.stalls:
+            return answer
+
+        class Stalls(FakeResponse):
+            def read(self):
+                raise TimeoutError("The read operation timed out")
+
+        return Stalls(b"")
+
+
+class ImagesDec1076Cases(DeckDirCase):
+    def setUp(self):
+        super().setUp()
+        self.images = self.root / "images"
+
+    def run_images(self, fake: FakeScryfall) -> tuple[int, str]:
+        out = io.StringIO()
+        with fake.installed(), \
+                mock.patch.object(fetch_images, "COMMANDERS_DIR", self.commanders), \
+                mock.patch.object(fetch_images, "IMAGES_DIR", self.images), \
+                contextlib.redirect_stdout(out):
+            code = fetch_images.main()
+        return code, out.getvalue()
+
+    def test_slash_name_goes_out_as_its_front_face(self):
+        """Item 4: the batch holds each front face once, in order, and each // card gets its images.
+
+        Ten more cards make an unsorted batch differ from the sorted one in all but 1 of 14! orders.
+        """
+        fillers = [f"Card {n:02d}" for n in range(10)]
+        self.write_deck(
+            "one", "Sol Ring", "Bonecrusher Giant // Stomp", "Valakut Awakening // Valakut Stoneforge",
+            "Grave Researcher", "Grave Researcher // Reanimate", *fillers)
+        fake = FakeScryfall([
+            make_card("Sol Ring"),
+            make_card("Bonecrusher Giant // Stomp", layout="adventure"),
+            make_card("Valakut Awakening // Valakut Stoneforge", layout="modal_dfc"),
+            make_card("Grave Researcher // Reanimate", layout="adventure"),
+            *(make_card(name) for name in fillers),
+        ])
+
+        code, out = self.run_images(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual(
+            fake.asked_names(),
+            ["Bonecrusher Giant", *fillers, "Grave Researcher", "Sol Ring", "Valakut Awakening"])
+        self.assertNotIn("No URIs", out)
+        expected = [
+            f"{slug}-{variant}.jpg"
+            for slug in ("bonecrusher-giant-stomp", "grave-researcher",
+                         "grave-researcher-reanimate", "sol-ring",
+                         "valakut-awakening-valakut-stoneforge",
+                         "valakut-awakening-valakut-stoneforge-back",
+                         *(f"card-{n:02d}" for n in range(10)))
+            for variant in ("normal", "art_crop")
+        ]
+        self.assertEqual(sorted(p.name for p in self.images.iterdir()), sorted(expected))
+
+    def test_answer_without_data_ends_the_run(self):
+        """N2: status 200 and no ``data`` key: exit code 1, no download."""
+        self.write_deck("one", "Sol Ring")
+        fake = FakeScryfall([make_card("Sol Ring")])
+        fake.failures[0] = b'{"object": "error", "status": 400, "details": "bad"}'
+
+        code, out = self.run_images(fake)
+
+        self.assertEqual(code, 1)
+        self.assertIn("A batch failed: KeyError", out)
+        self.assertIn("No image downloaded.", out)
+        self.assertEqual(len(fake.sent), 1)
+        self.assertFalse(self.images.exists())
+
+    def test_download_carries_the_30_s_timeout(self):
+        """N8: a download waits 30 s at most, the helper's TIMEOUT."""
+        self.write_deck("one", "Sol Ring")
+        fake = FakeScryfall([make_card("Sol Ring")])
+        timeouts = []
+        send = fake.urlopen
+
+        def urlopen(req, timeout=None):
+            timeouts.append((urllib.parse.urlsplit(req.full_url).hostname, timeout))
+            return send(req, timeout)
+
+        fake.urlopen = urlopen
+
+        code, _ = self.run_images(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual(timeouts, [
+            ("api.scryfall.com", 30), ("cards.scryfall.io", 30), ("cards.scryfall.io", 30)])
+
+    def test_timeout_inside_read_is_retried(self):
+        """N8: a TimeoutError inside read() counts as a network error, for a batch and a download."""
+        self.write_deck("one", "Sol Ring")
+        for index, label in ((0, "batch"), (1, "download")):
+            with self.subTest(request=label):
+                shutil.rmtree(self.images, ignore_errors=True)
+                fake = StallingRead([make_card("Sol Ring")])
+                fake.stalls = {index}
+
+                code, out = self.run_images(fake)
+
+                self.assertEqual(code, 0)
+                self.assertIn("Network error, retrying in 1.0s (attempt 1/5)", out)
+                self.assertEqual(len(fake.sent), 4)
+                self.assertEqual(fake.sent[index].url, fake.sent[index + 1].url)
+                self.assertEqual(
+                    sorted(p.name for p in self.images.iterdir()),
+                    ["sol-ring-art_crop.jpg", "sol-ring-normal.jpg"])

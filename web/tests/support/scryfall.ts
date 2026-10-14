@@ -31,6 +31,8 @@ interface Repo {
   prices: Record<string, PriceRow>;
   /** Folded full name, and each folded face of a `//` name → name in card-metadata.json. */
   byKey: Map<string, string>;
+  /** Front face of a `//` name → that `//` name. */
+  byFront: Map<string, string>;
 }
 
 let repo: Repo | undefined;
@@ -54,7 +56,8 @@ function loadRepo(): Repo {
       if (!byKey.has(key)) byKey.set(key, name);
     }
   }
-  repo = { meta, prices, byKey };
+  const byFront = new Map(names.filter((name) => name.includes('//')).map((name) => [faces(name)[0], name]));
+  repo = { meta, prices, byKey, byFront };
   return repo;
 }
 
@@ -94,6 +97,27 @@ function priceRow(name: string): PriceRow {
 
 const money = (amount: number | null) => (amount == null ? null : amount.toFixed(2));
 
+/**
+ * Scryfall's `card_faces` for a one-sided card with two halves (adventure, split,
+ * room, prepare): card-metadata.json holds both mana costs and both type lines,
+ * joined by ` // `, under the `//` name and again under the front name alone.
+ * The whole card keeps the joined values and the pictures, as Scryfall sends
+ * them. A two-sided card (transform, modal_dfc) gets no faces: card-metadata.json
+ * holds only the cost of its front, which is the cost that the app shows.
+ */
+function cardFaces(name: string, card: CardMeta) {
+  const costs = card.mana_cost.split(' // ');
+  const types = card.type_line.split(' // ');
+  const names = faces(loadRepo().byFront.get(name) ?? name);
+  if (costs.length !== 2 || types.length !== 2 || names.length !== 2) return undefined;
+  return names.map((face, i) => ({
+    object: 'card_face',
+    name: face,
+    mana_cost: costs[i],
+    type_line: types[i],
+  }));
+}
+
 /** The card object for `/cards/named`, or null when card-metadata.json has no such name. */
 function cardObject(query: string) {
   const { meta, byKey } = loadRepo();
@@ -101,6 +125,7 @@ function cardObject(query: string) {
   if (!name) return null;
   const card = meta[name];
   const [eur, usd] = priceRow(name);
+  const card_faces = cardFaces(name, card);
   return {
     object: 'card',
     name,
@@ -111,6 +136,7 @@ function cardObject(query: string) {
     oracle_text: card.oracle_text,
     colors: card.colors,
     ...(card.power == null ? {} : { power: card.power, toughness: card.toughness }),
+    ...(card_faces ? { card_faces } : {}),
     image_uris: imageUris(name),
     prices: { usd: money(usd), eur: money(eur) },
   };
@@ -199,7 +225,7 @@ export function cardCacheSeed(): Record<string, object> {
     return {
       status: 'loaded',
       name: card.name,
-      mana_cost: card.mana_cost,
+      mana_cost: card.card_faces?.[0].mana_cost || card.mana_cost,
       cmc: card.cmc,
       type_line: card.type_line,
       image_small: card.image_uris.small,

@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
+"""Write owned_formatted.csv from Owned.csv, with card metadata from Scryfall.
+
+Every request goes through scripts/scryfall_api.py, which keeps Scryfall's
+rate limit. A 429 ends the run: the script writes no file and exits with 1
+(DEC-1076). The script imports the helper from ../scripts by its path.
+"""
 from __future__ import annotations
 
 import csv
 import json
 import sys
-import time
 from pathlib import Path
-from urllib import error, request
+from urllib import error
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPT_DIR.parent / "scripts"))
+
+import scryfall_api  # noqa: E402
+
 OWNED_CSV = SCRIPT_DIR / "Owned.csv"
 FORMATTED_CSV = SCRIPT_DIR / "owned_formatted.csv"
 SCRYFALL_COLLECTION_URL = "https://api.scryfall.com/cards/collection"
 SCRYFALL_BATCH_SIZE = 75
-SCRYFALL_RATE_LIMIT_S = 0.1
-SCRYFALL_BACKOFF_DELAYS_S = (1, 2, 4)
-SCRYFALL_REQUEST_TIMEOUT_S = 30
 FORMATTED_FIELDNAMES = [
     "name",
     "quantity",
@@ -119,29 +125,7 @@ def normalize_scryfall_card(card: dict) -> dict[str, str]:
 
 
 def post_scryfall_collection(identifiers: list[dict[str, str]]) -> dict:
-    payload = json.dumps({"identifiers": identifiers}).encode("utf-8")
-    req = request.Request(
-        SCRYFALL_COLLECTION_URL,
-        data=payload,
-        method="POST",
-        headers={
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "User-Agent": "mtg-precon-upgrader/1.0",
-        },
-    )
-
-    for attempt in range(1 + len(SCRYFALL_BACKOFF_DELAYS_S)):
-        try:
-            with request.urlopen(req, timeout=SCRYFALL_REQUEST_TIMEOUT_S) as response:
-                return json.load(response)
-        except error.HTTPError as exc:
-            if exc.code == 429 and attempt < len(SCRYFALL_BACKOFF_DELAYS_S):
-                time.sleep(SCRYFALL_BACKOFF_DELAYS_S[attempt])
-                continue
-            raise
-
-    raise RuntimeError("Scryfall retry loop exited without returning")
+    return json.loads(scryfall_api.request(SCRYFALL_COLLECTION_URL, {"identifiers": identifiers}))
 
 
 def fetch_missing_metadata(cards_to_fetch: list[dict[str, str | int]]) -> tuple[dict[str, dict[str, str]], list[str]]:
@@ -187,9 +171,6 @@ def fetch_missing_metadata(cards_to_fetch: list[dict[str, str | int]]) -> tuple[
                 continue
             fetched[name] = normalize_scryfall_card(match)
 
-        if index + SCRYFALL_BATCH_SIZE < len(cards_to_fetch):
-            time.sleep(SCRYFALL_RATE_LIMIT_S)
-
     return fetched, missing_names
 
 
@@ -216,7 +197,7 @@ def write_owned_cards_to_file(
             )
 
 
-def main():
+def main() -> int:
     owned_cards = get_owned_cards(OWNED_CSV)
     metadata_cache = load_cached_metadata(FORMATTED_CSV)
 
@@ -227,7 +208,11 @@ def main():
             continue
         cards_to_fetch.append(card)
 
-    fetched_metadata, missing_names = fetch_missing_metadata(cards_to_fetch) if cards_to_fetch else ({}, [])
+    try:
+        fetched_metadata, missing_names = fetch_missing_metadata(cards_to_fetch) if cards_to_fetch else ({}, [])
+    except scryfall_api.ScryfallRateLimited as e:
+        print(f"\n{e}\nNo file written.")
+        return 1
     metadata_cache.update(fetched_metadata)
     write_owned_cards_to_file(FORMATTED_CSV, owned_cards, metadata_cache)
 
@@ -242,7 +227,8 @@ def main():
             + ", ".join(sorted(missing_names)),
             file=sys.stderr,
         )
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
