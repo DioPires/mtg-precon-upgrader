@@ -17,6 +17,7 @@ import json
 import multiprocessing
 import os
 import tempfile
+import threading
 import time
 import unittest
 import urllib.error
@@ -366,6 +367,32 @@ class StopTests(unittest.TestCase):
                 send(fake, NAMED)
         self.assertEqual(str(raised.exception), (
             "Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:38Z (in 30 s). "
+            "Call again after that time."))
+
+
+class TimeOfThe429Tests(unittest.TestCase):
+    def test_429_at_a_fraction_over_one_half_names_the_second_it_came(self):
+        now = {"t": AT_10_41_07 + 0.6 - 0.05}
+
+        def transmit():
+            now["t"] += 0.05
+            raise urllib.error.HTTPError(NAMED, 429, "Too Many Requests", email.message.Message(), io.BytesIO())
+
+        with tempfile.TemporaryDirectory() as folder, \
+                mock.patch.dict(os.environ, {"SCRYFALL_LIMIT_DIR": folder}), \
+                mock.patch("time.time", lambda: now["t"]), mock.patch("time.monotonic", lambda: now["t"]), \
+                mock.patch("time.sleep", lambda s: None):
+            with self.assertRaises(limit.Stopped) as raised:
+                limit.send(NAMED, transmit)
+            now["t"] = AT_10_41_07 + 7.6
+            with self.assertRaises(limit.Stopped) as later:
+                limit.send(NAMED, lambda: b"{}")
+        print(f"\n  the 429 call: {raised.exception}\n  a call 7 s later: {later.exception}")
+        self.assertEqual(str(raised.exception), (
+            "Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:38Z (in 30 s). "
+            "Call again after that time."))
+        self.assertEqual(str(later.exception), (
+            "Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:38Z (in 23 s). "
             "Call again after that time."))
 
 
@@ -759,6 +786,61 @@ class CrossProcessTests(unittest.TestCase):
                          ("stopped", 0, tries["0.5 s before blocked_until"][2]))
         self.assertIn("(in 1 s)", tries["0.5 s before blocked_until"][2])
         self.assertEqual(tries["at blocked_until"], ("sent", 1, ""))
+
+
+class TwoThreadsTests(unittest.TestCase):
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.old = os.environ.get("SCRYFALL_LIMIT_DIR")
+        os.environ["SCRYFALL_LIMIT_DIR"] = tmp.name
+        self.addCleanup(self.restore)
+
+    def restore(self):
+        if self.old is None:
+            os.environ.pop("SCRYFALL_LIMIT_DIR", None)
+        else:
+            os.environ["SCRYFALL_LIMIT_DIR"] = self.old
+
+    def sends_from_two_threads(self, url, count=3):
+        sent, lock, start = [], threading.Lock(), threading.Event()
+
+        def worker():
+            start.wait(10)
+            for _ in range(count):
+                def transmit():
+                    began = time.time()
+                    time.sleep(LATENCY)
+                    with lock:
+                        sent.append((threading.get_ident(), began, time.time()))
+                    return b"{}"
+                limit.send(url, transmit)
+
+        threads = [threading.Thread(target=worker) for _ in range(2)]
+        for thread in threads:
+            thread.start()
+        start.set()
+        for thread in threads:
+            thread.join(30)
+        sent.sort(key=lambda row: row[1])
+        print(f"\n{url} ({limit.__file__})")
+        for (ident, began, ended), nxt in zip(sent, sent[1:] + [None]):
+            gap = "" if nxt is None else f"  gap to next start {nxt[1] - ended:.4f} s"
+            print(f"  thread {ident % 100000:05d}  start {began:.4f}  end {ended:.4f}{gap}")
+        return sent
+
+    def assert_gaps(self, sent, interval):
+        self.assertEqual(len(sent), 6)
+        self.assertEqual(len({ident for ident, _, _ in sent}), 2)
+        for (_, _, ended), (_, began, _) in zip(sent, sent[1:]):
+            # 2 ms for the drift between the wall clock and the monotonic clock of the sleep.
+            self.assertGreaterEqual(began - ended, interval - 0.002)
+
+    def test_600ms_wait_holds_across_two_threads(self):
+        self.assert_gaps(self.sends_from_two_threads(NAMED), 0.6)
+
+    def test_100ms_wait_holds_across_two_threads(self):
+        self.assert_gaps(self.sends_from_two_threads(CARD), 0.1)
 
 
 if __name__ == "__main__":
