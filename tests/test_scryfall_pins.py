@@ -99,28 +99,37 @@ class MethodKill(callers.CallerCase):
         case = callers.ComputeTokensTests("test_clean_run_writes_every_deck")
         case.setUp()
         self.addCleanup(case.doCleanups)
-        case.write_deck("one", "Goblin Maker", "Orc Caller", "Crown Seeker", callers.VALAKUT)
+        case.write_deck("one", "Goblin Maker", "Orc Caller", "Crown Seeker", callers.MISSPELT)
         fake = callers.token_fake()
         code, _ = case.run_main(fake)
         self.assertEqual(code, 0)
         self.assertEqual(len(fake.sent), 5)
         assert_gets_carry_no_body(self, fake, post_urls={COLLECTION_URL})
 
-    def test_compute_tokens_batch_holds_each_name_as_the_deck_spells_it(self):
-        """R5: the batch holds the front face of a // name.
+    def test_compute_tokens_batch_holds_each_front_face_once(self):
+        """DEC-1098 item 2: the batch holds the full // name, each front face more than once,
+        or the front faces out of order.
 
-        The head sends the full // name; Scryfall does not find it, and the script asks
-        /cards/named?fuzzy= for its front face (DEC-1076 reading R3).
+        Ten more cards make an unsorted batch differ from the sorted one in all but 1 of 13! orders.
+        No // name costs a /cards/named?fuzzy= request.
         """
         case = callers.ComputeTokensTests("test_clean_run_writes_every_deck")
         case.setUp()
         self.addCleanup(case.doCleanups)
-        case.write_deck("one", "Sol Ring", callers.VALAKUT)
-        fake = callers.token_fake()
+        fillers = [f"Card {n:02d}" for n in range(10)]
+        case.write_deck(
+            "one", "Sol Ring", callers.VALAKUT, "Grave Researcher", "Grave Researcher // Reanimate",
+            *fillers)
+        fake = callers.token_fake([
+            make_card(callers.VALAKUT, layout="modal_dfc"),
+            make_card("Grave Researcher // Reanimate", layout="adventure"),
+            *(make_card(name) for name in fillers),
+        ])
         code, _ = case.run_main(fake)
         self.assertEqual(code, 0)
-        self.assertEqual(fake.sent[0].body, {"identifiers": [{"name": "Sol Ring"}, {"name": callers.VALAKUT}]})
-        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, callers.VALAKUT_URL])
+        self.assertEqual(fake.sent[0].body, {"identifiers": [
+            {"name": name} for name in (*fillers, "Grave Researcher", "Sol Ring", "Valakut Awakening")]})
+        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL])
 
     def test_check_game_changers_sends_each_page_as_a_get(self):
         """R7: ``scryfall_api.request(url, {})``: each page goes out as a POST."""
