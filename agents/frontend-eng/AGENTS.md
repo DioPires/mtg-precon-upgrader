@@ -60,7 +60,7 @@ Eternities (`/Users/dpires/Documents/Personal/code/eternities-mtg-app`) is a sec
 
 ## The shared Mac: push and start timing (CEO rulings on DEC-1010 N5 and N6 and on DEC-1058, 2026-10-13)
 
-One self-hosted runner shares the reference Mac with every agent's Unity editor and player. A push of an eternities-mtg-app branch that touches a path of CI's `unity-changes` filter (`unity/`, `.github/workflows/ci.yml`, `.gitattributes`, `.gitignore` or `.lfsconfig`) starts four Unity jobs within 30 s. Only `unity-bench-smoke` waits for another editor or player (every 15 s, for up to 15 minutes). `unity-compile`, `unity-editmode` and `unity-playmode` start beside it.
+One self-hosted runner shares the reference Mac with every agent's Unity editor and player. A push of an eternities-mtg-app branch that touches a path of CI's `unity-changes` filter (`unity/`, `.github/workflows/ci.yml`, `.gitattributes`, `.gitignore` or `.lfsconfig`) starts four Unity jobs within 30 s. Only `unity-bench-smoke` waits for another editor, a player or Blender (every 15 s, for up to 15 minutes). `unity-compile`, `unity-editmode` and `unity-playmode` start beside it.
 
 1. Put the process check and the CI queue check in the same shell line as each such push (`git push` or `gh pr update-branch`) and as each start of a Unity editor or player. Do not run the check a minute before.
 
@@ -73,7 +73,7 @@ One self-hosted runner shares the reference Mac with every agent's Unity editor 
    `gh` keeps only the last `--status` flag, so use the `--jq` filter, not two `--status` flags.
 2. If the check fails, wait and repeat it. Do not push or start over a running editor, player or CI job. Wait on the real condition: `caffeinate -w <pid>` returns when that process exits, and `gh run watch <id> --interval 15` returns when a CI run ends.
 3. Start every player run for a bench reading with `unity/Eternities/bench.sh --locked-only <player path> ...` (`unity/Eternities/README.md`, the bench section). It runs only while the screen is locked, and it starts nothing otherwise.
-4. Blender loads the same machine. Until DEC-1053 lands, start a derivation script, or Blender with no window, only when no runner job runs, and put the check in the same command as the start: `[ -z "$(pgrep -f 'Runner\.[W]orker')" ] && <command>` (DEC-1041 N4).
+4. Blender loads the same machine. Since PR #138 (`main` `f9fd71c`, DEC-1053, 2026-10-14), `derive.sh` waits for the runner before each Blender start, and the bench gate waits for Blender. Start any other Blender run only when no runner job runs, and put the check in the same command as the start: `[ -z "$(pgrep -f 'Runner\.[W]orker')" ] && <command>` (DEC-1041 N4). An agent of another company also runs Blender on this Mac and checks for nothing (DEC-1090 N5). Until DEC-1099 lands, put `[ -z "$(pgrep -ix Blender)" ]` in the same command as each `bench.sh` start. Before you quote a draw's figures, read its `.others` file: make a draw again if Blender was busy during it.
 5. Write no command line that holds `MacOS/` and the app's name in plain words. `pgrep -f` reads whole command lines, so such a line (a `sed` or `grep` pattern, a here-document, a comment body passed as an argument) matches the bench gate and every agent's push check while it runs. Write `MacOS/[E]ternities` in every pattern, also in one that only counts or masks, and post a comment body that quotes the path from a file.
 
 ## Environment of an agent run (both repositories; CEO, 2026-10-13)

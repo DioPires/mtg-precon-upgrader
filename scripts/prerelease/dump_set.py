@@ -12,6 +12,9 @@ It first asks the Scryfall sets API for the code and prints the set name,
 release date and card count, so a wrong code fails loudly instead of
 producing a plausible-looking empty dump.
 
+Every request goes through scripts/scryfall_api.py, which keeps Scryfall's rate
+limit. A 429 ends the run: the script writes no file and exits with 1 (DEC-1076).
+
 Use --from-dump to rebuild grading_sheet.txt and set_facts.md from dumps that
 are already on disk, without touching the network.
 """
@@ -24,12 +27,13 @@ import json
 import os
 import re
 import sys
-import time
 import urllib.error
 import urllib.parse
-import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import scryfall_api  # noqa: E402
 
 from setlib import (  # noqa: E402
     COLOR_ORDER,
@@ -42,15 +46,10 @@ from setlib import (  # noqa: E402
 )
 
 API = "https://api.scryfall.com"
-# Scryfall asks for an identifying User-Agent and about 100 ms between calls.
-USER_AGENT = "mtg-precon-upgrader/prerelease-dump (github.com/DioPires)"
-PAGE_DELAY_SECONDS = 0.1
 
 
 def _get_json(url: str) -> dict:
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.load(resp)
+    return json.loads(scryfall_api.request(url))
 
 
 def verify_set(code: str) -> dict:
@@ -67,7 +66,7 @@ def verify_set(code: str) -> dict:
 
 
 def search_all(query: str, unique: str) -> list:
-    """Page through a Scryfall search, waiting between pages."""
+    """Page through a Scryfall search. The helper waits between pages."""
     url = (
         f"{API}/cards/search?q={urllib.parse.quote(query)}"
         f"&unique={unique}&order=set&include_extras=false"
@@ -77,8 +76,6 @@ def search_all(query: str, unique: str) -> list:
         page = _get_json(url)
         out.extend(page.get("data", []))
         url = page.get("next_page")
-        if url:
-            time.sleep(PAGE_DELAY_SECONDS)
     return out
 
 
@@ -369,10 +366,13 @@ def main() -> int:
             "card_count": len(cards),
         }
     else:
-        info = verify_set(code)
-        cards = search_all(f"set:{code}", "cards")
-        time.sleep(PAGE_DELAY_SECONDS)
-        prints = search_all(f"set:{code}", "prints")
+        try:
+            info = verify_set(code)
+            cards = search_all(f"set:{code}", "cards")
+            prints = search_all(f"set:{code}", "prints")
+        except scryfall_api.ScryfallRateLimited as e:
+            print(f"\n{e}\nNo file written.")
+            return 1
         print(f"  dumped {len(cards)} cards, {len(prints)} printings")
 
     write_outputs(args.out_dir, code, cards, prints, info)
