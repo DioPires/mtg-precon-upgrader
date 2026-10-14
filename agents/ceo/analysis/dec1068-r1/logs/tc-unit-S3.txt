@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /private/tmp/dec1097-ceo/tc/web
+
+ ❯ src/__tests__/components/Apothecary.test.tsx (36 tests | 1 failed) 234ms
+   × Apothecary > filter status line (DEC-1068) > a filter carried from another deck, and a count of zero (DEC-1097) > reads "0 remedies" after Clear filter on a deck with no remedies 6ms
+     → expected 'Filter cleared: 0 remedy.' to be 'Filter cleared: 0 remedies.' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.test.tsx > Apothecary > filter status line (DEC-1068) > a filter carried from another deck, and a count of zero (DEC-1097) > reads "0 remedies" after Clear filter on a deck with no remedies
+AssertionError: expected 'Filter cleared: 0 remedy.' to be 'Filter cleared: 0 remedies.' // Object.is equality
+
+Expected: "Filter cleared: 0 remedies."
+Received: "Filter cleared: 0 remedy."
+
+ ❯ src/__tests__/components/Apothecary.test.tsx:769:51
+    767| 
+    768|         fireEvent.click(screen.getByRole('button', { name: /clear filt…
+    769|         expect(statusLine(container).textContent).toBe('Filter cleared…
+       |                                                   ^
+    770|       });
+    771|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 35 passed (36)
+   Start at  12:35:36
+   Duration  592ms (transform 40ms, setup 21ms, collect 53ms, tests 234ms, environment 112ms, prepare 42ms)
+

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import {
   Shopping,
@@ -436,5 +436,24 @@ describe('Shopping organism', () => {
     expect(screen.getByText(/cards loaded — saved locally/i)).toBeInTheDocument();
     // Pre-owned cards should not appear in the Need-to-buy list
     expect(screen.queryByText('Swords to Plowshares')).not.toBeInTheDocument();
+  });
+
+  it('puts the import control in the tab order, and a click on it clicks the file input (DEC-1083)', () => {
+    const { container } = renderShopping([ALPHA]);
+    const button = screen.getByRole('button', { name: 'Import owned cards' });
+    expect(button).toHaveAttribute('type', 'button');
+    // The class alone gives the button the look the label had (DEC-1088 B1).
+    expect(button.className).toBe('gv1-shop-btn');
+    expect(button.tabIndex).not.toBe(-1);
+
+    // The input stays out of the tab order and the accessibility tree.
+    const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+    expect(input).toHaveAttribute('type', 'file');
+    expect(input.tabIndex).toBe(-1);
+    expect(input).toHaveAttribute('aria-hidden', 'true');
+
+    const click = vi.spyOn(input, 'click');
+    fireEvent.click(button);
+    expect(click).toHaveBeenCalledTimes(1);
   });
 });

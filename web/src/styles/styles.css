@@ -1243,7 +1243,11 @@ em { font-style: italic; color: var(--gv1-gold); }
 /* Role chart: one row of bars on a shared baseline, one row of labels. Each
    count is a child of its bar and sits 4px above it. A column is at least as
    wide as the longest word of its label: equal columns at 1280px make
-   "Protection" 14px wider than its column and run it into the next label. */
+   "Protection" 14px wider than its column and run it into the next label.
+   DEC-1074: so the columns differ in width, and each bar is 24px wide and
+   centred in its column. Equal counts then draw equal areas. Above 560px no
+   column is narrower than a four-letter label ("Ramp": 28.17px on macOS,
+   29.76px on Linux), so a bar stays inside its column. */
 .gv1-curve {
   display: grid;
   grid-auto-flow: column;
@@ -1253,10 +1257,13 @@ em { font-style: italic; color: var(--gv1-gold); }
   padding-top: 22px;
 }
 .gv1-curve-col { display: contents; }
-.gv1-curve-bar-wrap { display: flex; align-items: flex-end; }
-.gv1-curve-bar { position: relative; width: 100%; background: var(--gv1-rune-dim); }
+.gv1-curve-bar-wrap { display: flex; align-items: flex-end; justify-content: center; }
+.gv1-curve-bar { position: relative; width: 24px; background: var(--gv1-rune-dim); }
 .gv1-curve-col.gv1-peak .gv1-curve-bar { background: var(--gv1-rune); box-shadow: 0 0 12px rgba(124, 200, 146, 0.5); }
-.gv1-curve-n { position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); }
+/* The count's line is 14px in every face, so the 22px above the bar row holds
+   the 4px gap, the count and 4px of room. Left normal, the line is 14px in
+   JetBrains Mono and 13px in the fallback face. */
+.gv1-curve-n { position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); line-height: 14px; }
 .gv1-curve-l { justify-self: center; margin-top: 2px; }
 .gv1-func-rows { display: flex; flex-direction: column; gap: 10px; }
 .gv1-func-row { display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: center; }
@@ -1271,8 +1278,13 @@ em { font-style: italic; color: var(--gv1-gold); }
 .gv1-src-link { cursor: pointer; }
 
 /* DEC-1008: two blocks side by side cannot hold the KPI tiles and the
-   eight-column chart below ~1084px, so the grid stacks from here down. */
-@media (max-width: 1100px) {
+   eight-column chart below ~1084px, so the grid stacks from here down.
+   DEC-1074: side by side, the chart is 416.5px wide at 1101px and gains
+   0.5px a pixel. The widest decks' labels (the-white-forge, slivers) need
+   422.1px on macOS and 442.9px on Linux, where Chromium rounds each glyph of
+   the 11px mono to 7px. The grid stacks up to 1190px; at 1191px the chart is
+   461.5px, two characters more than the widest decks need on Linux. */
+@media (max-width: 1190px) {
   .gv1-perf-grid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
@@ -1283,8 +1295,10 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-combo-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   /* Eight role labels do not fit side by side on a phone. Shorten the bar
-     row, close up the columns and turn the labels to read upwards. */
+     row, close up the columns and turn the labels to read upwards. The
+     columns are equal here, so each bar fills its column. */
   .gv1-curve { grid-template-rows: 120px auto; gap: 6px 4px; }
+  .gv1-curve-bar { width: 100%; }
   .gv1-curve-l {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
