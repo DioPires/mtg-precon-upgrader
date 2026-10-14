@@ -9,12 +9,13 @@ import importlib
 import io
 import json
 import re
+import runpy
 import tempfile
 import unittest
 import urllib.error
 import urllib.parse
 from collections import namedtuple
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest import mock
 
@@ -26,6 +27,7 @@ scryfall_api = fetch_metadata.scryfall_api
 
 COLLECTION_URL = "https://api.scryfall.com/cards/collection"
 STAMP = "1700000000"
+SCRIPTS = Path(fetch_metadata.__file__).resolve().parent
 
 Sent = namedtuple("Sent", "started answered url body headers")
 
@@ -710,3 +712,293 @@ class FetchCardImagesRunTests(DeckDirCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# DEC-1080 review of PR #24: each case below fails on the mutant that its docstring names.
+
+
+class SlowBodyScryfall(FakeScryfall):
+    """The body of an answer takes BODY seconds of fake time to arrive after its headers."""
+
+    BODY = 0.4
+
+    def urlopen(self, req, timeout=None):
+        index = len(self.sent)
+        answer = super().urlopen(req, timeout)
+        fake = self
+
+        class SlowBody(FakeResponse):
+            def read(self):
+                fake.now += fake.BODY
+                fake.sent[index] = fake.sent[index]._replace(answered=fake.now)
+                return super().read()
+
+        return SlowBody(answer.read())
+
+
+class HelperKillCases(DeckDirCase):
+    def test_wait_counts_from_the_end_of_the_body(self):
+        """O3: the 600 ms run from the answer's headers, not from the end of its body."""
+        fake = SlowBodyScryfall()
+        with fake.installed():
+            for _ in range(3):
+                scryfall_api.request(COLLECTION_URL, {"identifiers": []})
+        self.assertEqual(len(fake.gaps()), 2)
+        for gap in fake.gaps():
+            self.assertAlmostEqual(gap, 0.6, places=9)
+
+    def test_request_carries_the_30_s_timeout(self):
+        """O1: the helper sends without a timeout."""
+        fake = FakeScryfall()
+        timeouts = []
+        send = fake.urlopen
+
+        def urlopen(req, timeout=None):
+            timeouts.append(timeout)
+            return send(req, timeout)
+
+        fake.urlopen = urlopen
+        with fake.installed():
+            scryfall_api.request(COLLECTION_URL, {"identifiers": []})
+        self.assertEqual(timeouts, [30])
+
+    def test_wait_ends_by_the_clock_when_a_sleep_returns_early(self):
+        """O4 (optional): one sleep, no loop on the clock."""
+        fake = FakeScryfall()
+        asked = []
+
+        def sleep(seconds):
+            # The first sleep returns after half of its time.
+            asked.append(seconds)
+            fake.now += seconds / 2 if len(asked) == 1 else seconds
+
+        fake.sleep = sleep
+        with fake.installed():
+            scryfall_api.request(COLLECTION_URL, {"identifiers": []})
+            scryfall_api.request(COLLECTION_URL, {"identifiers": []})
+        self.assertGreaterEqual(fake.gaps()[0], 0.6 - 1e-9)
+
+
+class MetadataKillCases(DeckDirCase):
+    def test_prices_as_of_is_read_before_the_first_request(self):
+        """S9: prices_as_of is taken after fetch_metadata returns. O31: it carries microseconds."""
+        names = [f"Card {n:03d}" for n in range(160)]
+        self.write_deck("big", *names)
+        fake = FakeScryfall(make_card(name) for name in names)
+        start = datetime(2026, 1, 2, 3, 4, 5, 678901, tzinfo=timezone.utc)
+        zones = []
+
+        class Clock(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                # One hour passes with each request that went out.
+                zones.append(tz)
+                return start + timedelta(hours=len(fake.sent))
+
+        with mock.patch.object(fetch_metadata, "datetime", Clock):
+            code, _ = self.run_metadata(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual(len(fake.sent), 3)
+        self.assertEqual(zones, [timezone.utc])
+        meta = json.loads(self.meta.read_text())
+        self.assertEqual(meta["prices_as_of"], "2026-01-02T03:04:05+00:00")
+
+    def test_price_that_is_not_a_number_ends_the_run(self):
+        """S4: ``if not value: return None``. O12: a price that is not a number becomes null."""
+        self.write_deck("one", "Sol Ring", "Odd Price")
+        for bad in ("", "n/a"):
+            with self.subTest(price=bad):
+                fake = FakeScryfall([make_card("Sol Ring"), make_card("Odd Price", usd=bad)])
+
+                code, out = self.run_metadata(fake)
+
+                self.assertNotEqual(code, 0)
+                self.assertIn("Odd Price", out)
+                self.assert_no_file_written()
+
+    def test_name_that_scryfall_returns_in_another_case_is_found(self):
+        """O22: no casefold() in the match. O29: the entry is not stored under the name asked."""
+        self.write_deck("one", "sol ring", "bonecrusher giant // stomp")
+        fake = FakeScryfall()
+        # Scryfall matches a name without regard to case and returns its own spelling.
+        fake.by_name = {
+            "sol ring": make_card("Sol Ring"),
+            "bonecrusher giant": make_card("Bonecrusher Giant // Stomp", layout="adventure"),
+        }
+
+        code, _ = self.run_metadata(fake)
+
+        self.assertEqual(code, 0)
+        metadata = json.loads(self.output.read_text())
+        self.assertEqual(sorted(metadata), [
+            "Bonecrusher Giant",
+            "Bonecrusher Giant // Stomp",
+            "Sol Ring",
+            "bonecrusher giant // stomp",
+            "sol ring",
+        ])
+        self.assertEqual(metadata["sol ring"], metadata["Sol Ring"])
+        self.assertEqual(
+            metadata["bonecrusher giant // stomp"]["image"], image_path("Bonecrusher Giant // Stomp"))
+
+    def test_name_with_no_card_and_no_not_found_line_ends_the_run(self):
+        """O32: a name with no card and no not_found line counts as not found."""
+        self.write_deck("one", "Sol Ring")
+        old = {"Old Extra": {"cmc": 2.0, "type_line": "Artifact"}}
+        self.output.write_text(json.dumps(old))
+        fake = FakeScryfall([make_card("Sol Ring")])
+        fake.failures[0] = json.dumps(
+            {"object": "list", "not_found": [], "data": [make_card("Sol Ring")]}).encode()
+
+        code, out = self.run_metadata(fake)
+
+        self.assertNotEqual(code, 0)
+        self.assertIn("Old Extra", out)
+        self.assertEqual(json.loads(self.output.read_text()), old)
+        self.assertFalse(self.meta.exists())
+
+    def test_output_directory_is_made(self):
+        """O8: write_outputs does not make the output directory."""
+        self.write_deck("one", "Sol Ring")
+        self.output = self.root / "new" / "dir" / "card-metadata.json"
+
+        code, _ = self.run_metadata(FakeScryfall([make_card("Sol Ring")]))
+
+        self.assertEqual(code, 0)
+        self.assertEqual(sorted(json.loads(self.output.read_text())), ["Sol Ring"])
+        self.assertTrue(self.output.with_suffix(".meta.json").exists())
+
+    def test_both_files_are_written_sorted_and_indented(self):
+        """O7: card-metadata.json without sort_keys. O19: the meta file on one line, no final newline."""
+        self.write_deck("one", "Sol Ring", "Bonecrusher Giant // Stomp")
+        fake = FakeScryfall([
+            make_card("Sol Ring"), make_card("Bonecrusher Giant // Stomp", layout="adventure")])
+
+        code, _ = self.run_metadata(fake)
+
+        self.assertEqual(code, 0)
+        text = self.output.read_text()
+        self.assertEqual(text, json.dumps(json.loads(text), indent=2, sort_keys=True))
+        meta_text = self.meta.read_text()
+        self.assertEqual(meta_text, json.dumps(json.loads(meta_text), indent=2, sort_keys=True) + "\n")
+
+    def test_falsy_top_level_image_uris_falls_back_to_the_front_face(self):
+        """O23: card_faces is not read when the card has an ``image_uris`` key."""
+        name = "Westvale Abbey // Ormendahl, Profane Prince"
+        self.write_deck("one", name)
+        for falsy in (None, {}):
+            with self.subTest(image_uris=falsy):
+                card = make_card(name, layout="transform")
+                card["image_uris"] = falsy
+
+                code, _ = self.run_metadata(FakeScryfall([card]))
+
+                self.assertEqual(code, 0)
+                metadata = json.loads(self.output.read_text())
+                self.assertEqual(metadata[name]["image"], image_path(name, "front"))
+
+
+class ScriptExitCodeKillCases(DeckDirCase):
+    """The ``__main__`` block of each script hands main()'s code to sys.exit.
+
+    The scripts run as scripts here, so they read the real deck files. The first request
+    answers 429, so neither run writes a file.
+    """
+
+    def run_script(self, name: str, *argv: str):
+        fake = FakeScryfall()
+        fake.failures[0] = 429
+        out = io.StringIO()
+        with fake.installed(), contextlib.redirect_stdout(out), \
+                mock.patch("sys.argv", [name, *argv]), \
+                self.assertRaises(SystemExit) as raised:
+            runpy.run_path(str(SCRIPTS / name), run_name="__main__")
+        return raised.exception.code, out.getvalue(), fake
+
+    def test_fetch_card_metadata_exits_with_1_on_a_429(self):
+        """O5: fetch_card_metadata.py does not pass main()'s code to sys.exit."""
+        code, out, fake = self.run_script("fetch_card_metadata.py", "--output-file", str(self.output))
+        self.assertEqual(code, 1)
+        self.assertIn("wait 30 seconds or more", out)
+        self.assertEqual(len(fake.sent), 1)
+        self.assert_no_file_written()
+
+    def test_fetch_card_images_exits_with_1_on_a_429(self):
+        """O6: fetch_card_images.py does not pass main()'s code to sys.exit."""
+        code, out, fake = self.run_script("fetch_card_images.py")
+        self.assertEqual(code, 1)
+        self.assertIn("wait 30 seconds or more", out)
+        self.assertEqual(len(fake.sent), 1)
+
+
+class ImagesKillCases(DeckDirCase):
+    def setUp(self):
+        super().setUp()
+        self.images = self.root / "images"
+
+    def run_images(self, fake: FakeScryfall) -> tuple[int, str]:
+        out = io.StringIO()
+        with fake.installed(), \
+                mock.patch.object(fetch_images, "COMMANDERS_DIR", self.commanders), \
+                mock.patch.object(fetch_images, "IMAGES_DIR", self.images), \
+                contextlib.redirect_stdout(out):
+            code = fetch_images.main()
+        return code, out.getvalue()
+
+    def test_download_carries_the_user_agent(self):
+        """O13: a download carries no User-Agent of ours."""
+        self.write_deck("one", "Sol Ring")
+        fake = FakeScryfall([make_card("Sol Ring")])
+
+        code, _ = self.run_images(fake)
+
+        self.assertEqual(code, 0)
+        downloads = [s for s in fake.sent if s.url.startswith("https://cards.scryfall.io/")]
+        self.assertEqual(len(downloads), 2)
+        for sent in downloads:
+            self.assertEqual(sent.headers.get("user-agent"), "MTGPreconUpgrader/1.0")
+
+    def test_500_on_a_batch_is_retried(self):
+        """O18: a 500 is not retried (``e.code > 500``)."""
+        self.write_deck("one", "Sol Ring")
+        fake = FakeScryfall([make_card("Sol Ring")])
+        fake.failures[0] = 500
+
+        code, _ = self.run_images(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.api_requests()], [COLLECTION_URL] * 2)
+
+    def test_429_on_a_download_prints_the_wait(self):
+        """O30: the 429 of a download is printed without "wait 30 seconds or more"."""
+        self.write_deck("one", "Sol Ring")
+        fake = FakeScryfall([make_card("Sol Ring")])
+        fake.failures[1] = 429  # the first download
+
+        code, out = self.run_images(fake)
+
+        self.assertNotEqual(code, 0)
+        self.assertIn("429", out)
+        self.assertIn("wait 30 seconds or more", out)
+        self.assertEqual(len(fake.sent), 2)
+
+
+class MatchOrderKillCases(DeckDirCase):
+    def test_full_name_answers_before_a_front_face_of_the_same_spelling(self):
+        """O27: the front face answers before the full name (the two lookups swapped).
+
+        The answer holds the card "Twin" and the card "Twin // Other". That input lies outside
+        Scryfall's documented answer (one card for each identifier), so the case feeds the body raw.
+        """
+        self.write_deck("one", "Twin")
+        fake = FakeScryfall()
+        fake.failures[0] = json.dumps({"object": "list", "not_found": [], "data": [
+            make_card("Twin // Other", layout="split"), make_card("Twin")]}).encode()
+
+        code, _ = self.run_metadata(fake)
+
+        self.assertEqual(code, 0)
+        metadata = json.loads(self.output.read_text())
+        self.assertEqual(sorted(metadata), ["Twin"])
+        self.assertEqual(metadata["Twin"]["image"], image_path("Twin"))
