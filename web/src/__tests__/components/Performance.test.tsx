@@ -35,11 +35,14 @@ describe('Performance role chart', () => {
 
   // The count is positioned from the top of its own bar (DEC-1064). Outside
   // the bar it has no positioned ancestor in the chart and lands at the top
-  // of the page, under the topbar.
+  // of the page, under the topbar. It is set in the 11px mono type of the
+  // labels (DEC-1074): the spec reads its line's height, not its face.
   it('puts each count inside its bar', () => {
     for (const col of renderChart(CURVE)) {
       const bar = col.querySelector('.gv1-curve-bar')!;
-      expect(bar).toContainElement(col.querySelector<HTMLElement>('.gv1-curve-n'));
+      const count = col.querySelector<HTMLElement>('.gv1-curve-n');
+      expect(bar).toContainElement(count);
+      expect(count).toHaveClass('gv1-mono-xs');
     }
   });
 
