@@ -1,0 +1,47 @@
+(node:38938) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:42453) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/dec1043-band-rules.spec.ts:152:3 › DEC-1101 kill cases, web fonts › stats strip in the band: the cells fill each row, share it evenly, keep 16px sides, and the bracket rows sit 8px apart (1.8s)
+  ✓  2 [chromium] › tests/dec1043-band-rules.spec.ts:185:3 › DEC-1101 kill cases, web fonts › Performance heading in the band: the note at its narrowest, a balanced two-line title at 769px, one line at 824px, the base rune track (2.2s)
+  ✓  3 [chromium] › tests/dec1043-band-rules.spec.ts:214:3 › DEC-1101 kill cases, web fonts › the band starts at 769px and ends at 824px: two strip cells a row at 768px, two card columns at 769 and 824px, three at 825px (2.2s)
+  ✘  4 [chromium] › tests/dec1043-band-rules.spec.ts:234:3 › DEC-1101 kill cases, web fonts › Commander: the art column stays 420px wide above 1020px (1.5s)
+(node:42845) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓  5 [chromium] › tests/dec1043-band-rules.spec.ts:250:3 › DEC-1101 kill cases, a face wider than the web fonts › stats strip in the band: every cell and value stays inside the strip with Verdana and Menlo (2.4s)
+  ✓  6 [chromium] › tests/dec1043-gutter-blocks.spec.ts:148:3 › DEC-1043 @ 769px, web fonts › the Codex card grid, the stats strip and the Performance heading stay inside their content edge (1.5s)
+  ✓  7 [chromium] › tests/dec1043-gutter-blocks.spec.ts:163:3 › DEC-1043, web fonts blocked › /codex and a deck guide at 769px, and titan-convergence at 1024px, fit the viewport; every Codex stat shows whole (2.8s)
+
+
+  1) [chromium] › tests/dec1043-band-rules.spec.ts:234:3 › DEC-1101 kill cases, web fonts › Commander: the art column stays 420px wide above 1020px 
+
+    Error: Commander art column
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 4[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "1024px: art column 400.0px",[39m
+    [31m+   "1440px: art column 400.0px",[39m
+    [31m+ ][39m
+
+      241 |       if (Math.abs(art - 420) > 0.5) faults.push(`${width}px: art column ${art.toFixed(1)}px`);
+      242 |     }
+    > 243 |     expect(faults, 'Commander art column').toEqual([]);
+          |                                            ^
+      244 |   });
+      245 | });
+      246 |
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1101-ceo/web/tests/dec1043-band-rules.spec.ts:243:44
+
+    Error Context: test-results/dec1043-band-rules-DEC-110-14bf5-ays-420px-wide-above-1020px-chromium/error-context.md
+
+  1 failed
+    [chromium] › tests/dec1043-band-rules.spec.ts:234:3 › DEC-1101 kill cases, web fonts › Commander: the art column stays 420px wide above 1020px 
+  6 passed (19.4s)

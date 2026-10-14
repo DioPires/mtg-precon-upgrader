@@ -1,0 +1,41 @@
+== mutant F1: the 429's time is rounded, not truncated
+
+  the 429 call: Scryfall answered HTTP 429 at 10:41:08Z. No request until 10:41:38Z (in 30 s). Call again after that time.
+  a call 7 s later: Scryfall answered HTTP 429 at 10:41:08Z. No request until 10:41:38Z (in 23 s). Call again after that time.
+F
+=================================== FAILURES ===================================
+_ TimeOfThe429Tests.test_429_at_a_fraction_over_one_half_names_the_second_it_came _
+
+self = <test_f1_429_time.TimeOfThe429Tests testMethod=test_429_at_a_fraction_over_one_half_names_the_second_it_came>
+
+    def test_429_at_a_fraction_over_one_half_names_the_second_it_came(self):
+        now = {"t": AT + 0.6 - 0.05}
+    
+        def transmit():
+            now["t"] += 0.05
+            raise urllib.error.HTTPError(NAMED, 429, "Too Many Requests", email.message.Message(), io.BytesIO())
+    
+        with tempfile.TemporaryDirectory() as folder, \
+                mock.patch.dict(os.environ, {"SCRYFALL_LIMIT_DIR": folder}), \
+                mock.patch("time.time", lambda: now["t"]), mock.patch("time.monotonic", lambda: now["t"]), \
+                mock.patch("time.sleep", lambda s: None):
+            with self.assertRaises(limit.Stopped) as raised:
+                limit.send(NAMED, transmit)
+            now["t"] = AT + 7.6
+            with self.assertRaises(limit.Stopped) as later:
+                limit.send(NAMED, lambda: b"{}")
+        print(f"\n  the 429 call: {raised.exception}\n  a call 7 s later: {later.exception}")
+>       self.assertEqual(str(raised.exception), (
+            "Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:38Z (in 30 s). "
+            "Call again after that time."))
+E       AssertionError: 'Scry[28 chars]:41:08Z. No request until 10:41:38Z (in 30 s).[24 chars]ime.' != 'Scry[28 chars]:41:07Z. No request until 10:41:38Z (in 30 s).[24 chars]ime.'
+E       - Scryfall answered HTTP 429 at 10:41:08Z. No request until 10:41:38Z (in 30 s). Call again after that time.
+E       ?                                      ^
+E       + Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:38Z (in 30 s). Call again after that time.
+E       ?                                      ^
+
+/tmp/dec1107/kill/test_f1_429_time.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../../../../../tmp/dec1107/kill/test_f1_429_time.py::TimeOfThe429Tests::test_429_at_a_fraction_over_one_half_names_the_second_it_came
+1 failed in 0.01s
+== exit code of the command on mutant F1: 1
