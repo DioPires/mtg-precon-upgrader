@@ -792,4 +792,48 @@ describe('Apothecary', () => {
       });
     });
   });
+
+  describe('role labels from the shared map (DEC-1077)', () => {
+    function remedy(name: string, deck_role: string, mitigates_gap: string | null = null): RawCandidate {
+      return { name, cmc: 2, mana_cost: '{2}', type_line: 'Artifact', score: 40, deck_role, mitigates_gap };
+    }
+
+    function roleTags(container: HTMLElement): (string | null)[] {
+      return [...container.querySelectorAll('.gv1-apo-remedies .gv1-apo-tag-role')].map((t) => t.textContent);
+    }
+
+    it('tags a land remedy "Lands", not the raw key', () => {
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ remedies: [remedy('Command Tower', 'land')] })} />,
+      );
+      expect(roleTags(container)).toEqual(['Lands']);
+    });
+
+    it('tags a utility remedy "Utility", not the raw key', () => {
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ remedies: [remedy('Mind Stone', 'utility')] })} />,
+      );
+      expect(roleTags(container)).toEqual(['Utility']);
+    });
+
+    it('reads "Win-Cons" on the wincon chip, in the status line and in the tags after a press', () => {
+      const { container } = render(
+        <Apothecary
+          apothecary={makeApothecary({
+            maladies: [{ role: 'wincon', actual: 1, target: 3, score: 33 }],
+            remedies: [remedy('Craterhoof Behemoth', 'threat', 'wincon'), remedy('Filler', 'ramp')],
+          })}
+        />,
+      );
+      const chip = screen.getByRole('button', { name: /win-cons/i, pressed: false });
+      expect(chip.querySelector('.gv1-apo-malady-label')?.textContent).toBe('Win-Cons');
+
+      fireEvent.click(chip);
+      const status = within(container.querySelector('.gv1-apothecary') as HTMLElement).getByRole('status');
+      expect(status.textContent).toBe('Filtered by Win-Cons: 1 remedy.');
+      expect(screen.getByText(/ · filtered: Win-Cons$/)).toBeInTheDocument();
+      expect(container.querySelector('.gv1-apo-tag-addresses')?.textContent).toBe('addresses · Win-Cons');
+      expect(roleTags(container)).toEqual(['Threats']);
+    });
+  });
 });
