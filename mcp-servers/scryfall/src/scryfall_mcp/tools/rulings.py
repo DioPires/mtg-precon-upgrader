@@ -5,9 +5,8 @@ import asyncio
 from ..config import RULING_TTL
 from ..models import RulingEntry, RulingsResult
 from ..services.cache import Cache
-from ..services.client import ScryfallClient
+from ..services.client import client as _client
 
-_client = ScryfallClient()
 _cache = Cache()
 
 

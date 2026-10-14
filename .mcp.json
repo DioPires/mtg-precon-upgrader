@@ -6,7 +6,11 @@
     },
     "scryfall": {
       "command": "/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/mcp-servers/scryfall/.venv/bin/python",
-      "args": ["-m", "scryfall_mcp.server"]
+      "args": ["-m", "scryfall_mcp.server"],
+      "env": {
+        "XDG_CACHE_HOME": "/Users/dpires/.cache",
+        "SCRYFALL_LIMIT_DIR": "/tmp/scryfall-limit"
+      }
     },
     "commanderspellbook": {
       "command": "/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/mcp-servers/commanderspellbook/.venv/bin/python",
@@ -14,7 +18,10 @@
     },
     "archidekt": {
       "command": "/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/mcp-servers/archidekt/.venv/bin/python",
-      "args": ["-m", "archidekt_mcp.server"]
+      "args": ["-m", "archidekt_mcp.server"],
+      "env": {
+        "SCRYFALL_LIMIT_DIR": "/tmp/scryfall-limit"
+      }
     }
   }
 }
