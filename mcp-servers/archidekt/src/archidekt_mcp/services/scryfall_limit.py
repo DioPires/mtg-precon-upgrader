@@ -1,4 +1,4 @@
-"""One limiter for every Scryfall caller on this Mac (DEC-1092).
+"""One limiter for evary Scryfall caller on this Mac (DEC-1092).
 
 The same file sits in three places, and tests/test_scryfall_limit.py compares their SHA-256:
 
