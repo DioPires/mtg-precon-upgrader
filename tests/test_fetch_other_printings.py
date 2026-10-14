@@ -265,6 +265,38 @@ class OtherPrintingRuleCases(DeckDirCase):
         self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL])
         self.assertIn("Asking once more for the 0 cards whose printing lacks a price", out)
 
+    def test_reversible_card_searches_by_the_oracle_id_of_its_front_face(self):
+        """DEC-1112 B1: a reversible_card has no top-level oracle_id.
+
+        As the ecl printings of run 2 do, the batch printing carries its oracle
+        id and its image on each face only. The back face here has another id,
+        so a search by the back face finds nothing (404) and takes no price.
+        """
+        self.write_deck("one", "Sol Ring", "Blood Crypt")
+        batch = make_card("Blood Crypt // Blood Crypt", layout="reversible_card",
+                          usd=None, eur=None)
+        del batch["oracle_id"], batch["image_uris"]
+        batch["card_faces"] = [
+            {"name": "Blood Crypt", "oracle_id": "oracle-front",
+             "image_uris": image_uris(image_path("Blood Crypt", "front"))},
+            {"name": "Blood Crypt", "oracle_id": "oracle-back",
+             "image_uris": image_uris(image_path("Blood Crypt", "back"))},
+        ]
+        fake = PrintsScryfall([make_card("Sol Ring"), batch], {"oracle-front": [
+            printing("Blood Crypt", "rna", usd="9.00", eur="7.50")]})
+
+        code, _ = self.run_metadata(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [
+            COLLECTION_URL,
+            f"{SEARCH_URL}?q=oracleid%3Aoracle-front+game%3Apaper&unique=prints&order=usd&dir=asc",
+        ])
+        entry = json.loads(self.output.read_text())["Blood Crypt"]
+        self.assertEqual(
+            (entry["usd"], entry["eur"], entry["image"]),
+            (9.0, 7.5, image_path("Blood Crypt", "front")))
+
 
 class OtherPrintingFailureCases(DeckDirCase):
     """A failed search ends the run as a failed batch does: no file, exit code 1."""

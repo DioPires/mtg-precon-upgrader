@@ -371,7 +371,10 @@ def fetch_metadata(names: set[str], existing: dict | None = None,
                     problems.append(str(e))
                     continue
                 if entry["usd"] is None or entry["eur"] is None:
-                    lacking.setdefault(card["oracle_id"], (card["name"], []))[1].append(entry)
+                    # A reversible_card carries its oracle id on each face
+                    # only (DEC-1112 B1). The front face answered the name.
+                    oracle_id = card.get("oracle_id") or card["card_faces"][0]["oracle_id"]
+                    lacking.setdefault(oracle_id, (card["name"], []))[1].append(entry)
 
             for name in asked_by_request[request_name]:
                 # A ``//`` name is found only when the card has that full name.
