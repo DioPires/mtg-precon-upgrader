@@ -10,7 +10,7 @@ import { expect, test, type BrowserContext, type Page } from './support/test';
 const DATA = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', 'data');
 const FILE = JSON.parse(readFileSync(resolve(DATA, 'card-metadata.json'), 'utf8')) as Record<
   string,
-  { usd: number | null }
+  { usd: number | null; mana_cost: string }
 >;
 const USD = new Map(Object.entries(FILE).map(([name, entry]) => [name.toLowerCase(), entry.usd]));
 const PRICES_AS_OF = (
@@ -93,6 +93,32 @@ test('/shopping shows its priced count at first paint, with no request to api.sc
 
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1_000);
+  expect(seen.api).toEqual([]);
+});
+
+test("/shopping shows the front half's cost of a two-part card from the file", async ({ page, context }) => {
+  const seen = watch(context);
+  const joined = new Map(
+    Object.entries(FILE)
+      .filter(([, entry]) => entry.mana_cost.includes(' // '))
+      .map(([name, entry]) => [name.toLowerCase(), entry.mana_cost]),
+  );
+  await page.goto('/shopping');
+  await page.locator('.gv1-shop-row').first().waitFor();
+  // Tidal Legion holds Harmonized Trio, whose two costs the file joins with ` // `.
+  await page.getByRole('button', { name: 'Add Tidal Legion' }).click();
+  const rows = await page.locator('.gv1-shop-row').evaluateAll((els) =>
+    els.map((el) => ({
+      name: el.getAttribute('data-card-name') ?? '',
+      cost: el.querySelector('.gv1-shop-mana')?.getAttribute('aria-label') ?? null,
+    })),
+  );
+  const twoPart = rows.filter((row) => joined.has(row.name.toLowerCase()));
+  expect(twoPart.length).toBeGreaterThan(0);
+  for (const row of twoPart) {
+    const front = joined.get(row.name.toLowerCase())!.split(' // ')[0];
+    expect(row.cost, row.name).toBe(`mana cost ${front}`);
+  }
   expect(seen.api).toEqual([]);
 });
 
