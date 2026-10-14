@@ -1,21 +1,25 @@
-"""Synchronous Scryfall HTTP client with rate limiting and retry."""
+"""Synchronous Scryfall HTTP client. Every request goes through the shared limiter."""
 
 import json
-import time
 import urllib.parse
 import urllib.request
-from http.client import HTTPResponse
-from typing import Any
 
-from ..config import BASE_URL, COLLECTION_BATCH_SIZE, RATE_LIMIT_MS, USER_AGENT
+from fastmcp.exceptions import ToolError
+
+from ..config import BASE_URL, USER_AGENT
+from . import scryfall_limit
 
 
 class CardNotFoundError(Exception):
     """Card not found (404). Message includes Scryfall's suggestion if available."""
 
 
-class ScryfallRateLimitError(Exception):
-    """Rate limit exceeded after retry exhaustion (429)."""
+class ScryfallRateLimitError(ToolError):
+    """Scryfall answered 429, to this call or to another caller on this Mac (DEC-1092).
+
+    A ToolError, so the agent reads the message as it stands: the time of the 429 and the
+    end of the stop.
+    """
 
 
 class ScryfallMaintenanceError(Exception):
@@ -27,23 +31,10 @@ class ScryfallTimeoutError(Exception):
 
 
 class ScryfallClient:
-    """Sync HTTP client for Scryfall API."""
-
-    def __init__(self):
-        self._last_request_time: float = 0
-
-    def _rate_limit(self) -> None:
-        """Enforce minimum delay between requests."""
-        now = time.monotonic()
-        elapsed_ms = (now - self._last_request_time) * 1000
-        if elapsed_ms < RATE_LIMIT_MS:
-            time.sleep((RATE_LIMIT_MS - elapsed_ms) / 1000)
-        self._last_request_time = time.monotonic()
+    """Sync HTTP client for Scryfall API. It keeps no clock: scryfall_limit holds the waits."""
 
     def _request(self, url: str, data: bytes | None = None, method: str = "GET") -> dict:
-        """Make an HTTP request with rate limiting and retry on 429."""
-        self._rate_limit()
-
+        """Make an HTTP request through the shared limiter. Nothing retries a 429."""
         headers = {
             "Accept": "application/json",
             "User-Agent": USER_AGENT,
@@ -53,41 +44,34 @@ class ScryfallClient:
 
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
 
-        backoff_delays = [1, 2, 4]
-        last_error: Exception | None = None
-
-        for attempt in range(1 + len(backoff_delays)):
-            try:
-                resp: HTTPResponse = urllib.request.urlopen(req, timeout=30)
+        def transmit() -> dict:
+            with urllib.request.urlopen(req, timeout=30) as resp:
                 return json.loads(resp.read())
-            except urllib.error.HTTPError as e:
-                body = {}
-                try:
-                    body = json.loads(e.read())
-                except Exception:
-                    pass
 
-                if e.code == 404:
-                    details = body.get("details", "")
-                    raise CardNotFoundError(details or f"Not found: {url}") from e
-                elif e.code == 429:
-                    if attempt < len(backoff_delays):
-                        time.sleep(backoff_delays[attempt])
-                        self._rate_limit()
-                        continue
-                    raise ScryfallRateLimitError("Rate limit exceeded after retries") from e
-                elif e.code == 503:
-                    raise ScryfallMaintenanceError(body.get("details", "Scryfall maintenance")) from e
-                else:
-                    raise
-            except urllib.error.URLError as e:
-                if "timed out" in str(e).lower() or "timeout" in str(e).lower():
-                    raise ScryfallTimeoutError(f"Timeout: {url}") from e
+        try:
+            return scryfall_limit.send(url, transmit)
+        except scryfall_limit.Stopped as e:
+            raise ScryfallRateLimitError(str(e)) from e
+        except urllib.error.HTTPError as e:
+            body = {}
+            try:
+                body = json.loads(e.read())
+            except Exception:
+                pass
+
+            if e.code == 404:
+                details = body.get("details", "")
+                raise CardNotFoundError(details or f"Not found: {url}") from e
+            elif e.code == 503:
+                raise ScryfallMaintenanceError(body.get("details", "Scryfall maintenance")) from e
+            else:
                 raise
-            except TimeoutError as e:
+        except urllib.error.URLError as e:
+            if "timed out" in str(e).lower() or "timeout" in str(e).lower():
                 raise ScryfallTimeoutError(f"Timeout: {url}") from e
-
-        raise last_error or ScryfallRateLimitError("Exhausted retries")
+            raise
+        except TimeoutError as e:
+            raise ScryfallTimeoutError(f"Timeout: {url}") from e
 
     def card_by_name(self, name: str, exact: bool = False) -> dict:
         """Fetch a card by name.
@@ -124,3 +108,7 @@ class ScryfallClient:
         """Fetch rulings for a card by Scryfall UUID."""
         url = f"{BASE_URL}/cards/{scryfall_id}/rulings"
         return self._request(url)
+
+
+# One client for each server process (DEC-1092): every tool module sends through it.
+client = ScryfallClient()

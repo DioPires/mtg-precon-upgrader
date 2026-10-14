@@ -1,0 +1,48 @@
+== mutant K1: one open state.lock for the process (threads share the lock)
+
+https://api.scryfall.com/cards/0c082aa8-bf7f-47f2-baf8-43ad253fd7d7 (/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1107-review/scripts/scryfall_limit.py)
+  thread 66720  start 1792001352.3903  end 1792001352.4453  gap to next start 0.1050 s
+  thread 93088  start 1792001352.5503  end 1792001352.6004  gap to next start -0.0501 s
+  thread 66720  start 1792001352.5503  end 1792001352.6005  gap to next start 0.1019 s
+  thread 93088  start 1792001352.7023  end 1792001352.7574  gap to next start -0.0520 s
+  thread 66720  start 1792001352.7054  end 1792001352.7604  gap to next start 0.1020 s
+  thread 93088  start 1792001352.8624  end 1792001352.9174
+F
+https://api.scryfall.com/cards/named?exact=Sol%20Ring (/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1107-review/scripts/scryfall_limit.py)
+  thread 93088  start 1792001352.9246  end 1792001352.9781  gap to next start 0.6032 s
+  thread 93088  start 1792001353.5813  end 1792001353.6336  gap to next start -0.0524 s
+  thread 66720  start 1792001353.5813  end 1792001353.6336  gap to next start 0.6043 s
+  thread 93088  start 1792001354.2379  end 1792001354.2929  gap to next start -0.0542 s
+  thread 66720  start 1792001354.2387  end 1792001354.2937  gap to next start 0.6050 s
+  thread 66720  start 1792001354.8987  end 1792001354.9537
+F
+=================================== FAILURES ===================================
+___________ TwoThreadsTests.test_100ms_wait_holds_across_two_threads ___________
+
+self = <test_k1_threads.TwoThreadsTests testMethod=test_100ms_wait_holds_across_two_threads>
+
+    def test_100ms_wait_holds_across_two_threads(self):
+>       self.assert_gaps(self.sends_from_two_threads(CARD), 0.1)
+
+/tmp/dec1107/kill/test_k1_threads.py:80: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/dec1107/kill/test_k1_threads.py:74: in assert_gaps
+    self.assertGreaterEqual(began - ended, interval - 0.002)
+E   AssertionError: -0.050071001052856445 not greater than or equal to 0.098
+___________ TwoThreadsTests.test_600ms_wait_holds_across_two_threads ___________
+
+self = <test_k1_threads.TwoThreadsTests testMethod=test_600ms_wait_holds_across_two_threads>
+
+    def test_600ms_wait_holds_across_two_threads(self):
+>       self.assert_gaps(self.sends_from_two_threads(NAMED), 0.6)
+
+/tmp/dec1107/kill/test_k1_threads.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/dec1107/kill/test_k1_threads.py:74: in assert_gaps
+    self.assertGreaterEqual(began - ended, interval - 0.002)
+E   AssertionError: -0.05238485336303711 not greater than or equal to 0.598
+=========================== short test summary info ============================
+FAILED ../../../../../../../tmp/dec1107/kill/test_k1_threads.py::TwoThreadsTests::test_100ms_wait_holds_across_two_threads
+FAILED ../../../../../../../tmp/dec1107/kill/test_k1_threads.py::TwoThreadsTests::test_600ms_wait_holds_across_two_threads
+2 failed in 2.57s
+== exit code of the command on mutant K1: 1

@@ -1,0 +1,50 @@
+== mutant K1: one open state.lock for the process (threads share the lock)
+............................................FF                                                         [100%]
+=================================== FAILURES ===================================
+___________ TwoThreadsTests.test_100ms_wait_holds_across_two_threads ___________
+
+self = <tests.test_scryfall_limit.TwoThreadsTests testMethod=test_100ms_wait_holds_across_two_threads>
+
+    def test_100ms_wait_holds_across_two_threads(self):
+>       self.assert_gaps(self.sends_from_two_threads(CARD), 0.1)
+
+tests/test_scryfall_limit.py:843: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_scryfall_limit.py:837: in assert_gaps
+    self.assertGreaterEqual(began - ended, interval - 0.002)
+E   AssertionError: -0.055011749267578125 not greater than or equal to 0.098
+----------------------------- Captured stdout call -----------------------------
+
+https://api.scryfall.com/cards/0c082aa8-bf7f-47f2-baf8-43ad253fd7d7 (/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1107-ceo/scripts/scryfall_limit.py)
+  thread 68192  start 1792003400.9807  end 1792003401.0309  gap to next start 0.1050 s
+  thread 68192  start 1792003401.1359  end 1792003401.1910  gap to next start -0.0550 s
+  thread 94560  start 1792003401.1359  end 1792003401.1910  gap to next start 0.1031 s
+  thread 68192  start 1792003401.2941  end 1792003401.3479  gap to next start -0.0523 s
+  thread 94560  start 1792003401.2955  end 1792003401.3483  gap to next start 0.1007 s
+  thread 94560  start 1792003401.4490  end 1792003401.5040
+___________ TwoThreadsTests.test_600ms_wait_holds_across_two_threads ___________
+
+self = <tests.test_scryfall_limit.TwoThreadsTests testMethod=test_600ms_wait_holds_across_two_threads>
+
+    def test_600ms_wait_holds_across_two_threads(self):
+>       self.assert_gaps(self.sends_from_two_threads(NAMED), 0.6)
+
+tests/test_scryfall_limit.py:840: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_scryfall_limit.py:837: in assert_gaps
+    self.assertGreaterEqual(began - ended, interval - 0.002)
+E   AssertionError: -0.05265498161315918 not greater than or equal to 0.598
+----------------------------- Captured stdout call -----------------------------
+
+https://api.scryfall.com/cards/named?exact=Sol%20Ring (/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1107-ceo/scripts/scryfall_limit.py)
+  thread 21120  start 1792003401.5214  end 1792003401.5742  gap to next start 0.6027 s
+  thread 21120  start 1792003402.1769  end 1792003402.2319  gap to next start -0.0527 s
+  thread 94752  start 1792003402.1793  end 1792003402.2326  gap to next start 0.6044 s
+  thread 21120  start 1792003402.8370  end 1792003402.8898  gap to next start -0.0529 s
+  thread 94752  start 1792003402.8370  end 1792003402.8899  gap to next start 0.6050 s
+  thread 94752  start 1792003403.4949  end 1792003403.5487
+=========================== short test summary info ============================
+FAILED tests/test_scryfall_limit.py::TwoThreadsTests::test_100ms_wait_holds_across_two_threads
+FAILED tests/test_scryfall_limit.py::TwoThreadsTests::test_600ms_wait_holds_across_two_threads
+2 failed, 44 passed, 42 subtests passed in 7.38s
+== exit code of the command on mutant K1: 1
