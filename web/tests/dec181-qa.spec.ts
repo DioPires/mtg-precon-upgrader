@@ -79,6 +79,12 @@ for (const width of WIDTHS) {
       await page.goto('/shopping');
       await page.locator('.gv1-shop-rail').waitFor();
       if (await pageOverflows(page)) overflows.push('shopping');
+      // The read above needs the final priced count. The seed gives it at first
+      // paint, so the count does not move when the lookups end (DEC-1071).
+      const priced = page.locator('.gv1-shop-summary .gv1-shop-stat', { hasText: 'EST. COST' }).locator('span').nth(2);
+      const atRead = await priced.textContent();
+      await page.waitForLoadState('networkidle');
+      expect(await priced.textContent(), 'the Shopping read saw the final priced count').toBe(atRead);
 
       await page.goto(`/scrying/${deck}`);
       await page.locator('[data-gv1-screen="scrying"]').waitFor();

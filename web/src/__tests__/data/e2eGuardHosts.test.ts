@@ -6,7 +6,7 @@
 // (DEC-1087 verdict, N4). The cases build no request.
 
 import { describe, it, expect } from 'vitest';
-import { isMoxfieldHost, isScryfallHost } from '../../../tests/support/guard';
+import { BLOCK_SCRYFALL_DNS, isMoxfieldHost, isScryfallHost } from '../../../tests/support/guard';
 
 describe('e2e harness: host tests', () => {
   it('isScryfallHost takes a Scryfall name that ends in the root dot, and no other name', () => {
@@ -25,5 +25,24 @@ describe('e2e harness: host tests', () => {
     for (const host of ['notmoxfield.com', 'moxfield.com.evil.test', 'api.scryfall.com']) {
       expect(isMoxfieldHost(host), host).toBe(false);
     }
+  });
+
+  it('BLOCK_SCRYFALL_DNS fails the lookup of each Scryfall and Moxfield name, with and without the root dot', () => {
+    const prefix = '--host-resolver-rules=';
+    expect(BLOCK_SCRYFALL_DNS.startsWith(prefix)).toBe(true);
+    expect(BLOCK_SCRYFALL_DNS.slice(prefix.length).split(', ').sort()).toEqual([
+      'MAP *.moxfield.com ~NOTFOUND',
+      'MAP *.moxfield.com. ~NOTFOUND',
+      'MAP *.scryfall.com ~NOTFOUND',
+      'MAP *.scryfall.com. ~NOTFOUND',
+      'MAP *.scryfall.io ~NOTFOUND',
+      'MAP *.scryfall.io. ~NOTFOUND',
+      'MAP moxfield.com ~NOTFOUND',
+      'MAP moxfield.com. ~NOTFOUND',
+      'MAP scryfall.com ~NOTFOUND',
+      'MAP scryfall.com. ~NOTFOUND',
+      'MAP scryfall.io ~NOTFOUND',
+      'MAP scryfall.io. ~NOTFOUND',
+    ]);
   });
 });
