@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'scripts/**'
+      # The two server copies of scripts/scryfall_limit.py: tests/test_scryfall_limit.py
+      # compares their SHA-256 with it (DEC-1092).
+      - 'mcp-servers/scryfall/src/scryfall_mcp/services/scryfall_limit.py'
+      - 'mcp-servers/archidekt/src/archidekt_mcp/services/scryfall_limit.py'
       - 'data/**'
       - 'tests/**'
       - 'agents/ceo/analysis/dec925/**'
@@ -19,6 +23,10 @@ on:
   pull_request:
     paths:
       - 'scripts/**'
+      # The two server copies of scripts/scryfall_limit.py: tests/test_scryfall_limit.py
+      # compares their SHA-256 with it (DEC-1092).
+      - 'mcp-servers/scryfall/src/scryfall_mcp/services/scryfall_limit.py'
+      - 'mcp-servers/archidekt/src/archidekt_mcp/services/scryfall_limit.py'
       - 'data/**'
       - 'tests/**'
       - 'agents/ceo/analysis/dec925/**'
