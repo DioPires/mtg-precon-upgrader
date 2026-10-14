@@ -44,6 +44,10 @@ test.use({ cards: 'none' });    // no card answers: every lookup and every card 
 test.use({ fonts: 'blocked' }); // the Google Fonts hosts fail, so the fallback fonts show
 ```
 
+A read that measures a page with every price in uses `cards: 'seeded'`. The /shopping summary
+then shows its final priced count at first paint, so the read needs no wait. The overflow read
+of `dec181-qa` and the shots and audits of `dec184-visual-qa` do this.
+
 The seed of `cards: 'seeded'` writes 1,602 entries, about 804,000 characters, into
 `localStorage`. That is 15 % of the 5 MB quota. A seeded spec that measures the quota starts
 from that level, not from zero.
@@ -71,10 +75,20 @@ Three checks keep a spec off the live API. Each has limits, and they are listed 
      card lookups fail at the DNS block.
    - `page.request`, `context.request` and `route.fetch()` send from Node. No route, no check
      and no DNS block applies to them. Do not give them a Scryfall URL.
+   - A host name that ends in the root dot (`api.scryfall.com.`) is the same host. The stub
+     answers it, and the check reads it.
+   - A request to a Moxfield host (`moxfield.com` and every name under it) needs an answer from
+     a route of the spec. Unlike for Scryfall, a spec's own route answer passes. The IN-2 case
+     of `combo-lab.spec.ts` answers `api2.moxfield.com` with HTTP 403, the refusal that the
+     live host gives a headless browser. The stub stops a Moxfield request that no route of
+     the spec answered, and the check names it. The check also names a Moxfield request that
+     the network answered (a spec's `route.continue()`). It does not name one that a spec's
+     route sent on and that then failed in the network. No DNS block applies to Moxfield.
 3. **The DNS block.** Chromium gets `--host-resolver-rules`, so it cannot resolve a Scryfall
    host name. A request that passes the stub fails on this machine with
    `net::ERR_NAME_NOT_RESOLVED` and does not reach Scryfall. The flag stays when a spec sets
-   its own `launchOptions`.
+   its own `launchOptions`. Each name has a rule without and a rule with the root dot: a rule
+   without the dot does not match `api.scryfall.com.`.
    - Behind an HTTP proxy (the `proxy` option, or `--proxy-server`) the proxy resolves the
      names, and the block does nothing. The stub and the per-test check still apply.
    - A browser that a spec launches itself has the flag only if the spec passes it:
@@ -104,7 +118,8 @@ its own `vite preview` prints after it holds the port.
 
 Without the variable nothing is checked: a local run reuses a server that already listens on
 4173, which can be the build of another checkout. CI runs without the variable and always
-starts its own server.
+starts its own server. In CI the run also writes the HTML report to `playwright-report/`, and
+web-ci uploads it when the `e2e` job fails.
 
 ## Layout
 
