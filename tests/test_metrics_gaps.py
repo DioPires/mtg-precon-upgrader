@@ -136,6 +136,20 @@ class MergeGapsTests(unittest.TestCase):
         self.assertEqual(resilience_gaps, resilience_before)
         self.assertIsNot(merged, role_gaps)
 
+    def test_leaves_both_arguments_unchanged_when_an_entry_is_skipped(self):
+        role_gaps = [copy.deepcopy(self.ROLE)]
+        resilience_gaps = [copy.deepcopy(self.RESILIENCE)]
+        merged = m.merge_gaps(role_gaps, resilience_gaps)
+        self.assertEqual(merged, [self.ROLE])
+        self.assertEqual(role_gaps, [self.ROLE])
+        self.assertEqual(resilience_gaps, [self.RESILIENCE])
+
+    def test_returns_a_new_list_when_there_is_no_role_gap(self):
+        resilience_gaps = [copy.deepcopy(self.RESILIENCE)]
+        merged = m.merge_gaps([], resilience_gaps)
+        self.assertEqual(merged, resilience_gaps)
+        self.assertIsNot(merged, resilience_gaps)
+
 
 class ComputeGapsJoinTests(unittest.TestCase):
     def test_protection_shortfall_appears_once_and_component_stays(self):
@@ -158,6 +172,19 @@ class ComputeGapsJoinTests(unittest.TestCase):
                 {"role": "protection", "actual": 2.5, "target": 4, "score": 62},
                 {"resilience_component": "protection", "score_pct": 50, "max": 25, "actual": 2.5, "target": 5},
             ],
+        )
+
+    def test_protection_shortfall_appears_once_at_bracket_5(self):
+        deck = _protection_short_deck()
+        deck["bracket"] = "5"
+        payload = m.compute(deck, "test-deck-gaps", {}, "test")
+        self.assertEqual(
+            _named(payload["gaps"], "protection"),
+            [{"role": "protection", "actual": 2.5, "target": 5, "score": 50}],
+        )
+        self.assertEqual(
+            payload["metrics"]["resilience_health"]["components"]["protection"],
+            {"score": 12.5, "actual": 2.5, "target": 5, "max": 25},
         )
 
 
