@@ -6,6 +6,10 @@ and one input then give equal exports, and the CPU count (which sets only the
 worker count) does not change them. Both tests run the whole export of one deck
 through a real multiprocessing pool at a small game count, so a worker that
 takes two chunks in a row is part of the test.
+
+Hidden Legion's Bloom Tender built its mana sources in set order, which follows
+the string hash seed of each worker process; BloomTenderOrderTests guards the
+fixed WUBRG order.
 """
 import copy
 import importlib
@@ -52,6 +56,19 @@ class ManaSimSeedingTests(unittest.TestCase):
         with patch("os.cpu_count", return_value=18):
             eighteen = export_without_date(self.metadata)
         self.assertEqual(two, eighteen)
+
+
+class BloomTenderOrderTests(unittest.TestCase):
+    def test_bloom_tender_sources_follow_wubrg_order(self):
+        # Set order follows the string hash seed, which differs per process.
+        # With all five colors, set order matched WUBRG for 1 of 200 hash
+        # seeds (0 to 199), so the old code fails this test 199 times in 200.
+        sources = exporter.sim_hidden_legion.dork_sources(
+            "Bloom Tender", {"colors_present": {"G", "R", "B", "U", "W"}})
+        self.assertEqual(sources, [frozenset({c}) for c in "WUBRG"])
+        sources = exporter.sim_hidden_legion.dork_sources(
+            "Bloom Tender", {"colors_present": set()})
+        self.assertEqual(sources, [frozenset({"G"})])
 
 
 if __name__ == "__main__":
