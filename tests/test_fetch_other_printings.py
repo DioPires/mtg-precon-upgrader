@@ -42,10 +42,12 @@ def search_url(name: str, currency: str) -> str:
 
 
 def printing(name: str, set_code: str, usd=None, eur=None, released="2020-01-01",
-             games=("paper",), **prices) -> dict:
-    """One printing of ``name``: its own image, its release date, its games and its prices."""
+             games=("paper",), set_type="expansion", **prices) -> dict:
+    """One printing of ``name``: its own image, its release date, its games, its set type
+    and its prices."""
     card = make_card(name, usd=usd, eur=eur, set=set_code, released_at=released,
-                     games=list(games), image_uris=image_uris(f"front/p/p/{set_code}.jpg?1"))
+                     games=list(games), set_type=set_type,
+                     image_uris=image_uris(f"front/p/p/{set_code}.jpg?1"))
     card["prices"].update(prices)
     return card
 
@@ -206,10 +208,49 @@ class OtherPrintingRuleCases(DeckDirCase):
             with self.subTest(card=name):
                 self.assertEqual((metadata[name]["usd"], metadata[name]["eur"]), (None, None))
                 self.assertIn(
-                    f"    {name}: no released paper printing has a non-foil usd price; "
-                    f"no released paper printing has a non-foil eur price\n", out)
+                    f"    {name}: no released paper printing outside memorabilia has a "
+                    f"non-foil usd price; no released paper printing outside memorabilia "
+                    f"has a non-foil eur price\n", out)
         meta = json.loads(self.meta.read_text())
         self.assertEqual(meta["prices_from_other_printing"], NO_PRICES)
+
+    def test_a_memorabilia_printing_does_not_count(self):
+        """Step 3a of round 2 (Q2): the prices of Strip Mine in the first live run."""
+        self.write_deck("one", "Strip Mine", "Volrath's Stronghold")
+        strip_mine = make_card("Strip Mine", usd=None, eur=None)
+        stronghold = make_card("Volrath's Stronghold", usd=None, eur=None)
+        prints = {
+            # One page with every printing: the gold-bordered ptc one is the cheapest.
+            strip_mine["oracle_id"]: [
+                printing("Strip Mine", "ptc", usd="10.71", eur="5.69", set_type="memorabilia"),
+                printing("Strip Mine", "4bb", usd="15.49", eur="9.00"),
+                printing("Strip Mine", "ren", usd="20.00", eur="6.51"),
+            ],
+            # Only memorabilia printings have a price.
+            stronghold["oracle_id"]: [
+                printing("Volrath's Stronghold", "wc98", usd="31.68", eur="24.60",
+                         set_type="memorabilia"),
+                printing("Volrath's Stronghold", "sth", usd_foil="200.00"),
+            ],
+        }
+        fake = PrintsScryfall([strip_mine, stronghold], prints)
+
+        code, out = self.run_metadata(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [
+            COLLECTION_URL, search_url("Strip Mine", "usd"), search_url("Volrath's Stronghold", "usd")])
+        metadata = json.loads(self.output.read_text())
+        self.assertEqual((metadata["Strip Mine"]["usd"], metadata["Strip Mine"]["eur"]), (15.49, 6.51))
+        self.assertEqual(
+            (metadata["Volrath's Stronghold"]["usd"], metadata["Volrath's Stronghold"]["eur"]),
+            (None, None))
+        self.assertIn(
+            "    Volrath's Stronghold: no released paper printing outside memorabilia has a "
+            "non-foil usd price; no released paper printing outside memorabilia has a "
+            "non-foil eur price\n", out)
+        meta = json.loads(self.meta.read_text())
+        self.assertEqual(meta["prices_from_other_printing"], {"eur": 1, "usd": 1})
 
     def test_a_card_with_both_prices_sends_no_search(self):
         self.write_deck("one", "Sol Ring")
@@ -402,7 +443,8 @@ class FirstPageProofCases(DeckDirCase):
             printing("Swamp", "x"),
             printing("Swamp", "y"))
         self.assertIsNone(price)
-        self.assertIn("    Swamp: no released paper printing has a non-foil usd price\n", out)
+        self.assertIn(
+            "    Swamp: no released paper printing outside memorabilia has a non-foil usd price\n", out)
 
     def test_page_out_of_order_proves_nothing(self):
         """The order of the first live run: the most expensive first."""
@@ -417,6 +459,48 @@ class FirstPageProofCases(DeckDirCase):
             printing("Wastes", "x"), printing("Wastes", "n1", usd="0.10")])
         self.assertIsNone(price)
         self.assertIn("does not prove the lowest usd price", out)
+
+    def test_page_whose_only_prices_are_memorabilia_proves_nothing(self):
+        """Step 3b of round 2: the last card has a price, so a printing that counts may follow."""
+        price, out = self.run_pass(
+            "Island",
+            printing("Island", "wc97", usd="0.10", set_type="memorabilia"),
+            printing("Island", "wc98", usd="0.20", set_type="memorabilia"),
+            printing("Island", "n1", usd="0.30"))
+        self.assertIsNone(price)
+        self.assertIn(
+            "    Island: the first page does not prove the lowest usd price: no price taken\n", out)
+
+    def test_page_with_memorabilia_first_gives_the_price_of_the_card_that_counts(self):
+        """Step 3c of round 2."""
+        price, out = self.run_pass(
+            "Plains",
+            printing("Plains", "wc97", usd="0.10", set_type="memorabilia"),
+            printing("Plains", "ced", usd="0.20", set_type="memorabilia"),
+            printing("Plains", "n1", usd="0.30"),
+            printing("Plains", "n2", usd="0.40"),
+            page_size=3)
+        self.assertEqual(price, 0.3)
+        self.assertIn("    Plains: usd 0.3 from another printing\n", out)
+
+    def test_page_with_memorabilia_prices_whose_last_card_has_no_price_proves_no_price(self):
+        price, out = self.run_pass(
+            "Swamp",
+            printing("Swamp", "olep", usd="0.10", set_type="memorabilia"),
+            printing("Swamp", "x"),
+            printing("Swamp", "y"))
+        self.assertIsNone(price)
+        self.assertIn(
+            "    Swamp: no released paper printing outside memorabilia has a non-foil usd price\n", out)
+
+    def test_order_check_reads_the_memorabilia_cards_too(self):
+        """Without the memorabilia card the page would be in order and give 0.10."""
+        price, out = self.run_pass("Forest", raw_page=[
+            printing("Forest", "n1", usd="0.10"),
+            printing("Forest", "30a", usd="0.05", set_type="memorabilia")])
+        self.assertIsNone(price)
+        self.assertIn(
+            "    Forest: the first page does not prove the lowest usd price: no price taken\n", out)
 
     def test_page_with_every_printing_needs_no_order(self):
         price, out = self.run_pass("Thought Vessel", has_more=False, raw_page=[
