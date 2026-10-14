@@ -52,6 +52,7 @@ def make_card(name: str, layout: str = "normal", usd="1.50", eur="1.20", **extra
     card = {
         "object": "card",
         "name": name,
+        "oracle_id": "oracle-" + re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-"),
         "layout": layout,
         "type_line": "Instant",
         "cmc": 1.0,
@@ -595,7 +596,8 @@ class FetchCardMetadataRunTests(DeckDirCase):
         fake = FakeScryfall([make_card("Sol Ring"), make_card("Arcane Signet")])
 
         with mock.patch.object(
-                fetch_metadata, "fetch_metadata", return_value={"Sol Ring": {"cmc": 1.0}}):
+                fetch_metadata, "fetch_metadata",
+                return_value=({"Sol Ring": {"cmc": 1.0}}, {"usd": 0, "eur": 0})):
             code, out = self.run_metadata(fake)
 
         self.assertNotEqual(code, 0)
@@ -613,8 +615,10 @@ class FetchCardMetadataRunTests(DeckDirCase):
 
         self.assertEqual(code, 0)
         meta = json.loads(self.meta.read_text())
-        self.assertEqual(sorted(meta), ["count", "prices_as_of", "source"])
+        self.assertEqual(
+            sorted(meta), ["count", "prices_as_of", "prices_from_other_printing", "source"])
         self.assertEqual(meta["count"], 3)
+        self.assertEqual(meta["prices_from_other_printing"], {"eur": 0, "usd": 0})
         self.assertEqual(meta["count"], len(json.loads(self.output.read_text())))
         self.assertEqual(meta["source"], "scryfall-cards-collection")
         self.assertTrue(meta["prices_as_of"].endswith("+00:00"))
