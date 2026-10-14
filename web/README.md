@@ -11,7 +11,7 @@ npm run dev          # vite dev server on :5173
 npm run build        # tsc -b + vite build → dist/
 npm run preview      # serve dist/ on :4173
 npm run lint         # eslint
-npm run typecheck    # tsc -b --noEmit
+npm run typecheck    # tsc: src/ and the Vite config, then tests/ and playwright.config.ts
 npm run test         # vitest run
 npm run test:e2e     # playwright (builds + previews under the hood)
 ```
@@ -25,6 +25,10 @@ Scryfall host from repository data, so a card gives the same answer on every run
 - A card lookup reads the mana cost, mana value and type line from `data/card-metadata.json`
   and the USD price from `data/spellbook/price-index.json`. A name that `card-metadata.json`
   lacks gets a 404.
+- A card with two halves on one side (adventure, split, room, prepare) comes with
+  `card_faces`, as Scryfall sends it, so the app shows the mana cost of the first half.
+- 68 of the 1,556 names have no row in the price index, so the stub gives them no price. The
+  default selection on /shopping therefore reads 80/88 priced, and never "all priced".
 - Every card image is one flat rectangle of the size that the page asked for.
 - The app still sends one lookup every 120 ms. A page with 88 cards has them all after about
   11 s (`networkidle`). The Shopping summary redraws on a 1.5 s timer, so it can show a lower
@@ -40,15 +44,41 @@ test.use({ cards: 'none' });    // no card answers: every lookup and every card 
 test.use({ fonts: 'blocked' }); // the Google Fonts hosts fail, so the fallback fonts show
 ```
 
-Three checks keep a spec off the live API:
+The seed of `cards: 'seeded'` writes 1,602 entries, about 804,000 characters, into
+`localStorage`. That is 15 % of the 5 MB quota. A seeded spec that measures the quota starts
+from that level, not from zero.
 
-- `playwright.config.ts` stops the run before it starts when a file in `tests/` imports
-  `@playwright/test` directly, and names the line.
-- A request to a Scryfall host that the stub did not answer fails its test. The error names
-  the request.
-- Chromium cannot resolve a Scryfall host name during a run, so such a request fails on this
-  machine and never reaches Scryfall. A context that a spec opens itself with
-  `browser.newContext()` has no stub; its card lookups fail in this way.
+Three checks keep a spec off the live API. Each has limits, and they are listed here.
+
+1. **The import scan.** `playwright.config.ts` reads every script file under `tests/` as text.
+   It stops the run before the build when one of them imports, requires or names in a comment
+   `@playwright/test`, `playwright/test`, `playwright` or `playwright-core`. The import can
+   break across lines. The error names the file and the line that holds the module name.
+   - The scan does not see a dynamic import whose module name is put together at run time.
+   - The scan does not read files outside `tests/`. A helper there that passes Playwright's
+     own `test` on gives a spec no stub.
+2. **The per-test check.** The stub and this check are on the `context` fixture, and on every
+   context that a test or a `beforeEach` opens with `browser.newContext()` or
+   `browser.newPage()`. A request to a Scryfall host that the stub did not answer fails its
+   test, and the error names the request and what happened to it.
+   - A spec cannot answer a Scryfall host with its own route: that request fails the test too
+     ("a route of the spec answered it"). The check cannot see where a route took its answer
+     from, and `route.fetch()` calls the live API from Node. To change the timing of an answer,
+     wait in the route and then call `route.fallback()`; the stub answers.
+   - A request that the page cancelled (`net::ERR_ABORTED`) does not fail the test. It did not
+     leave the browser. A spec's own `route.abort('aborted')` reads the same.
+   - A context that a spec opens in `beforeAll` or `afterAll` has no stub and no check. Its
+     card lookups fail at the DNS block.
+   - `page.request`, `context.request` and `route.fetch()` send from Node. No route, no check
+     and no DNS block applies to them. Do not give them a Scryfall URL.
+3. **The DNS block.** Chromium gets `--host-resolver-rules`, so it cannot resolve a Scryfall
+   host name. A request that passes the stub fails on this machine with
+   `net::ERR_NAME_NOT_RESOLVED` and does not reach Scryfall. The flag stays when a spec sets
+   its own `launchOptions`.
+   - Behind an HTTP proxy (the `proxy` option, or `--proxy-server`) the proxy resolves the
+     names, and the block does nothing. The stub and the per-test check still apply.
+   - A browser that a spec launches itself has the flag only if the spec passes it:
+     `withScryfallDnsBlock(args)` in `tests/support/guard.ts`.
 
 `GRIMOIRE_E2E_PORT` moves the preview server off port 4173:
 
@@ -56,9 +86,25 @@ Three checks keep a spec off the live API:
 GRIMOIRE_E2E_PORT=4319 npm run test:e2e
 ```
 
-With the variable set, the run always builds and serves this checkout, and it stops if the
-port is taken. Without it, a local run reuses a server that already listens on 4173, which
-can be the build of another checkout.
+On a machine that other checkouts share, set the variable on every run, with a port value of
+your own. With it set, the run builds this checkout, starts its own server and sends its
+cases to that server only. It does not ask the port who is there. It waits for the line that
+its own `vite preview` prints after it holds the port.
+
+- If another process holds the port on 127.0.0.1, the run stops after the build with
+  `Port <n> is already in use`, and no case runs. That takes the build time and about one
+  second: 3 s to 4 s on a warm build. A listener that accepts and never answers stops the run
+  in the same way.
+- If two runs with one port value overlap, the run whose server takes the port first runs
+  the cases, on its own build. The other stops with the same message. A run whose server
+  starts after the other run has ended takes the free port and runs its cases on its own
+  build.
+- On macOS a server that listens on every address (`*:<n>`) does not stop the run. The run's
+  server binds 127.0.0.1 next to it and gets the cases.
+
+Without the variable nothing is checked: a local run reuses a server that already listens on
+4173, which can be the build of another checkout. CI runs without the variable and always
+starts its own server.
 
 ## Layout
 
