@@ -22,31 +22,57 @@ The e2e suite does not call Scryfall. Every spec imports `test` and `expect` fro
 `tests/support/test.ts`, not from `@playwright/test`. That module answers each request to a
 Scryfall host from repository data, so a card gives the same answer on every run:
 
-- A card lookup reads the mana cost, mana value and type line from `data/card-metadata.json`
-  and the USD price from `data/spellbook/price-index.json`. A name that `card-metadata.json`
-  lacks gets a 404.
+- The app takes every deck card from `data/card-metadata.json` (see "Scryfall requests"
+  below): the facts, the picture addresses on `cards.scryfall.io` and the USD price. A deck
+  page and /shopping therefore send no lookup, and /shopping shows its priced count at first
+  paint.
+- A card lookup reads the mana cost, mana value, type line, picture path and USD price from
+  the same file, so a lookup gives the entry that the app's own seed holds. A name that
+  `card-metadata.json` lacks gets a 404. `data/spellbook/price-index.json` stays the Combo
+  Lab's price source; the stub does not read it.
 - A card with two halves on one side (adventure, split, room, prepare) comes with
   `card_faces`, as Scryfall sends it, so the app shows the mana cost of the first half.
-- 68 of the 1,556 names have no row in the price index, so the stub gives them no price. The
-  default selection on /shopping therefore reads 80/88 priced, and never "all priced".
+- A name whose `usd` is null in `card-metadata.json` has no price, in the app and in the stub.
+  Do not write a priced count into a spec: read it from the file, because the prices change.
 - Every card image is one flat rectangle of the size that the page asked for.
-- The app still sends one lookup every 120 ms. A page with 88 cards has them all after about
-  11 s (`networkidle`). The Shopping summary redraws on a 1.5 s timer, so it can show a lower
-  priced count for a moment longer.
+- A name outside the file gets one lookup through the limiter, 600 ms or more after the last.
+  The 20 lookups of /combos take about 12 s.
 
 A spec picks another state with `test.use`:
 
 ```ts
 import { expect, test } from './support/test';
 
-test.use({ cards: 'seeded' });  // every card answer is in the app's cache before first paint
-test.use({ cards: 'none' });    // no card answers: every lookup and every card image fails
-test.use({ fonts: 'blocked' }); // the Google Fonts hosts fail, so the fallback fonts show
+test.use({ cards: 'seeded' });     // as 'repo', plus a gv1-card: entry for each name before first paint
+test.use({ cards: 'none' });       // every lookup and card image fails; card-metadata.json has no prices
+test.use({ fonts: 'blocked' });    // the Google Fonts hosts fail, so the fallback fonts show
+test.use({ scryfall429From: 3 });  // /cards/named and /cards/collection answer 429 from their 3rd request on
+test.use({ rateClock: 'page' });   // the rate check reads the page's clock: a spec that moves page.clock
 ```
 
-The seed of `cards: 'seeded'` writes 1,602 entries, about 804,000 characters, into
-`localStorage`. That is 15 % of the 5 MB quota. A seeded spec that measures the quota starts
-from that level, not from zero.
+The seed of `cards: 'seeded'` writes 1,602 entries, about 992,000 characters, into
+`localStorage`: one for each name of `card-metadata.json` and one for each face of a `//` name
+that the file does not hold as a name. The app's own seed drops the entries of the file's
+names when a page loads deck data, so for those names a seeded page is the page of the
+default `'repo'`, and 46 entries (about 30,000 characters) stay. A seeded spec that measures
+the quota before a deck page starts from about 19 % of the 5 MB quota, not from zero.
+
+`cards: 'none'` also answers `/data/card-metadata.json` with `usd` and `eur` set to null, so
+the page shows its layout with no prices.
+
+**The rate check.** A test fails when one browser context sent more than 2 requests to
+`/cards/named` and `/cards/collection` in any 1 s. Scryfall allows 2 a second on those
+methods. The stub counts the requests at its route, in real time, so every case proves the
+app's limit. The `scryfall-stub` attachment of each test gives the count, the peak in 1 s and
+the number of 429 answers (`bucketOne`).
+
+- A spec that moves `page.clock` can start several requests in one real second, because the
+  page's timers run ahead of real time. Such a spec sets `rateClock: 'page'`. The check then
+  reads the page's own clock each time the app calls `fetch` for those methods, and the limit
+  of 2 in 1 s holds in the time that the app sees. Every other spec keeps `'real'`.
+- `scryfall429From: n` makes the stub answer 429 with no CORS header from the n-th request to
+  those methods on, counted over the test. The browser then shows the app a `fetch` that
+  rejects, as with Scryfall's own 429.
 
 Three checks keep a spec off the live API. Each has limits, and they are listed here.
 
@@ -105,6 +131,20 @@ its own `vite preview` prints after it holds the port.
 Without the variable nothing is checked: a local run reuses a server that already listens on
 4173, which can be the build of another checkout. CI runs without the variable and always
 starts its own server.
+
+## Scryfall requests
+
+`src/data/scryfallLimiter.ts` sends every request to `api.scryfall.com`; no other file names
+that host. Bucket 1 holds `/cards/named` and `/cards/collection`: a request starts 600 ms or
+more after the last start, and only after the last answer has arrived. The tabs of one origin
+share it through `navigator.locks` and `localStorage`. Bucket 2 holds `/cards/autocomplete`,
+120 ms apart. A 429, or a `fetch` to that host that rejects, stops both buckets for 30 s; the
+request that met it goes first when the stop ends. If that one fails too, the stop doubles, up
+to 300 s, and a success resets it. The stop's end lives in `localStorage`, so a reload and a
+second tab obey it. The card cache takes every deck card from `data/card-metadata.json`
+before a page can show it: facts, USD price, and Scryfall's picture addresses on
+`cards.scryfall.io`. It looks up only a name that the file lacks, and once a card whose picture
+from the file failed to load.
 
 ## Layout
 
