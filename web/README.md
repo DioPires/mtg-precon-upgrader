@@ -25,9 +25,9 @@ Scryfall host from repository data, so a card gives the same answer on every run
 - A card lookup reads the mana cost, mana value and type line from `data/card-metadata.json`
   and the USD price from `data/spellbook/price-index.json`. A name that `card-metadata.json`
   lacks gets a 404.
-- A card with two halves on one side (adventure, split, room) comes with `card_faces`, as
-  Scryfall sends it, so the app shows the mana cost of the first half.
-- 68 of the 1,552 names have no row in the price index, so the stub gives them no price. The
+- A card with two halves on one side (adventure, split, room, prepare) comes with
+  `card_faces`, as Scryfall sends it, so the app shows the mana cost of the first half.
+- 68 of the 1,556 names have no row in the price index, so the stub gives them no price. The
   default selection on /shopping therefore reads 80/88 priced, and never "all priced".
 - Every card image is one flat rectangle of the size that the page asked for.
 - The app still sends one lookup every 120 ms. A page with 88 cards has them all after about
@@ -95,8 +95,10 @@ its own `vite preview` prints after it holds the port.
   `Port <n> is already in use`, and no case runs. That takes the build time and about one
   second: 3 s to 4 s on a warm build. A listener that accepts and never answers stops the run
   in the same way.
-- If two runs start with one port value, at most one of them runs cases, on its own build.
-  The other stops with the same message.
+- If two runs with one port value overlap, the run whose server takes the port first runs
+  the cases, on its own build. The other stops with the same message. A run whose server
+  starts after the other run has ended takes the free port and runs its cases on its own
+  build.
 - On macOS a server that listens on every address (`*:<n>`) does not stop the run. The run's
   server binds 127.0.0.1 next to it and gets the cases.
 

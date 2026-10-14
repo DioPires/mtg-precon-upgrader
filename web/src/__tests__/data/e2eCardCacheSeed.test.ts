@@ -30,4 +30,11 @@ describe('e2e stub: cardCacheSeed()', () => {
     expect(Object.keys(seed).length).toBeGreaterThan(1500);
     expect(fromApp).toStrictEqual(seed);
   });
+
+  it('holds no joined mana cost: the stub sends card_faces for every // card', () => {
+    const joined = Object.entries(cardCacheSeed()).filter(([, e]) =>
+      (e as { mana_cost: string }).mana_cost.includes(' // '),
+    );
+    expect(joined.map(([key]) => key)).toEqual([]);
+  });
 });
