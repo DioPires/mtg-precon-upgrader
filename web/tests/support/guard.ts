@@ -22,15 +22,17 @@ export function isMoxfieldHost(hostname: string): boolean {
   return isHostOf(MOXFIELD_DOMAINS, hostname);
 }
 
-// Chromium fails the name lookup for every Scryfall host, so a request that the
-// stub in ./test did not answer ends in net::ERR_NAME_NOT_RESOLVED on this
-// machine. It never reaches Scryfall and never counts against its rate limit.
-// A rule without the root dot does not match a name with it, so each name has
-// a rule in both forms.
+// Chromium fails the name lookup for every Scryfall host and every Moxfield
+// host, so a request to one of them that no route answered ends in
+// net::ERR_NAME_NOT_RESOLVED on this machine. It never reaches Scryfall or
+// Moxfield, and never counts against Scryfall's rate limit. The per-test check
+// in ./test names such a request (DEC-1071). A rule without the root dot does
+// not match a name with it, so each name has a rule in both forms. Behind an
+// HTTP proxy the proxy resolves the name, and the block does nothing.
 const RESOLVER_RULES = '--host-resolver-rules=';
 export const BLOCK_SCRYFALL_DNS =
   RESOLVER_RULES +
-  SCRYFALL_DOMAINS.flatMap((d) => [d, `*.${d}`])
+  [...SCRYFALL_DOMAINS, ...MOXFIELD_DOMAINS].flatMap((d) => [d, `*.${d}`])
     .flatMap((name) => [`MAP ${name} ~NOTFOUND`, `MAP ${name}. ~NOTFOUND`])
     .join(', ');
 

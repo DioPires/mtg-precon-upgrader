@@ -1,7 +1,9 @@
-// The stub's Moxfield route and the per-test check (DEC-1071). Each case sends its
-// Moxfield request through a proxy that the test starts on 127.0.0.1. That proxy
-// answers a plain HTTP request itself and refuses every CONNECT, so a request that
-// gets past the stub stops there and never reaches a Moxfield host.
+// The stub's Moxfield route and the per-test check (DEC-1071). The first two cases
+// send their Moxfield request through a proxy that the test starts on 127.0.0.1.
+// That proxy answers a plain HTTP request itself and refuses every CONNECT, so a
+// request that gets past the stub stops there and never reaches a Moxfield host.
+// The third case opens no proxy: the DNS block (./support/guard) applies only
+// without one, and it fails the lookup of the request.
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { expect, test } from './support/test';
@@ -58,6 +60,14 @@ for (const fonts of ['live', 'blocked'] as const) {
       expect(status).toBe(200);
       expect(seen).toEqual(['GET http://api2.moxfield.com/v3/decks/all/dec1071']);
       test.fail(true, 'the check names the request');
+    });
+
+    test('the check names a Moxfield request that a route of the spec sends on and the DNS block stops', async ({ page, baseURL }) => {
+      await page.route('https://api2.moxfield.com/**', (route) => route.continue());
+      await page.goto(`${baseURL}/data/index.json`);
+      // The lookup fails with net::ERR_NAME_NOT_RESOLVED, so the fetch rejects.
+      await page.evaluate(() => fetch('https://api2.moxfield.com/v3/decks/all/dec1071').catch(() => undefined));
+      test.fail(true, 'the check names the request that the DNS block stopped');
     });
   });
 }

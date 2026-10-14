@@ -100,6 +100,10 @@ export const test = base.extend<StubOptions & StubFixtures>({
       // A spec may answer Moxfield with its own route; the IN-2 case of
       // combo-lab does. The check names a Moxfield request that the network
       // answered, and the stub stops and names one that no route answered.
+      // The DNS block (./guard) fails the lookup of a Moxfield request that a
+      // route of the spec sends on, so the check names that one by its error.
+      // It also names a spec's own route.abort('namenotresolved'): the browser
+      // gives both the same error and the same timing.
       const named = new WeakSet<Request>();
       const moxfield: string[] = [];
       const judge = (request: Request) => {
@@ -112,7 +116,7 @@ export const test = base.extend<StubOptions & StubFixtures>({
         if (!outcome) return;
         const line = `${request.method()} ${request.url()} (${outcome})`;
         if (scryfall) unanswered.push(line);
-        else if (outcome === NETWORK_ANSWERED) moxfield.push(line);
+        else if (outcome === NETWORK_ANSWERED || outcome === 'net::ERR_NAME_NOT_RESOLVED') moxfield.push(line);
       };
 
       const stub = async (context: BrowserContext) => {
