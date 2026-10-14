@@ -618,11 +618,15 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
             accept=".csv,.txt"
             onChange={onFile}
             hidden
+            tabIndex={-1}
+            aria-hidden="true"
           />
-          <label htmlFor="gv1-shop-owned-file" className="gv1-shop-btn">
+          {/* A button, not a <label> for the input: neither a label nor a
+              `hidden` input takes keyboard focus (DEC-1083, WCAG 2.1.1). */}
+          <button type="button" className="gv1-shop-btn" onClick={() => fileRef.current?.click()}>
             <span aria-hidden="true">⬆</span>
             <span>Import owned cards</span>
-          </label>
+          </button>
           <span className="gv1-mono-xs gv1-dim">
             {owned.size > 0
               ? `${[...owned.values()].reduce((s, q) => s + q, 0)} cards loaded — `
