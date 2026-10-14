@@ -14,7 +14,7 @@
 // DEC-1074: each bar is 24px wide above 560px, so equal counts also draw equal
 // areas; the count's line is 14px high in every face, so the case runs with
 // the web fonts and without them; and the Performance blocks stack until the
-// chart can hold slivers' eight labels.
+// chart can hold every deck's eight labels.
 
 import { expect, test, type Page } from './support/test';
 
@@ -286,6 +286,37 @@ for (const { width, blocked } of BLOCKED.flatMap((blocked) => WIDTHS.map((width)
           'bars off the centre of their column',
         )
         .toEqual([]);
+
+      // A9 (DEC-1095). Each bar is painted: the peak in the rune colour with
+      // its glow, every other bar in the dim rune colour without one.
+      const paint = await page.evaluate(() => {
+        const token = (name: string) => {
+          const probe = document.createElement('div');
+          probe.style.backgroundColor = `var(${name})`;
+          document.body.append(probe);
+          const colour = getComputedStyle(probe).backgroundColor;
+          probe.remove();
+          return colour;
+        };
+        return {
+          rune: token('--gv1-rune'),
+          dim: token('--gv1-rune-dim'),
+          bars: [...document.querySelectorAll('.gv1-curve-bar')].map((bar) => {
+            const style = getComputedStyle(bar);
+            return { colour: style.backgroundColor, glow: style.boxShadow !== 'none' };
+          }),
+        };
+      });
+      expect.soft(paint.dim, 'the dim rune colour').not.toBe(paint.rune);
+      expect
+        .soft(
+          cols
+            .map((c, i) => ({ c, ...paint.bars[i], isPeak: c.count === peak.count }))
+            .filter(({ colour, glow, isPeak }) => colour !== (isPeak ? paint.rune : paint.dim) || glow !== isPeak)
+            .map(({ c, colour, glow }) => `${name(c)}: ${colour}${glow ? ' with a glow' : ''}`),
+          'bars in the wrong colour',
+        )
+        .toEqual([]);
     });
   });
 }
@@ -294,38 +325,47 @@ for (const { width, blocked } of BLOCKED.flatMap((blocked) => WIDTHS.map((width)
 // slivers' eight labels need 422.1px on macOS and 442.9px on Linux, where
 // Chromium rounds each glyph's advance to 7px, so "Recursion" ran past the
 // chart. The Performance blocks now stack up to 1190px, and at 1191px the
-// chart is 461.5px wide.
+// chart is 461.5px wide. The case reads every deck at 1191px (DEC-1095 N1),
+// so a deck whose labels need more fails on CI's own layout.
 const STACKED_UP_TO = 1190;
 
 test.describe('DEC-1074 Performance blocks', () => {
-  test(`stack up to ${STACKED_UP_TO}px, and side by side slivers' chart holds its columns`, async ({ page }) => {
+  test(`stack up to ${STACKED_UP_TO}px, and side by side every deck's chart holds its columns`, async ({ page }) => {
     const tracks = () => page.locator('.gv1-perf-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
 
     await page.setViewportSize({ width: STACKED_UP_TO, height: 900 });
     await openSettled(page, 'slivers');
     expect.soft(await tracks(), `blocks across at ${STACKED_UP_TO}px`).toBe(1);
 
+    // DEC-1095 guard (a): every deck at the first width with the blocks side by side.
     await page.setViewportSize({ width: STACKED_UP_TO + 1, height: 900 });
-    await settle(page);
-    expect.soft(await tracks(), `blocks across at ${STACKED_UP_TO + 1}px`).toBe(2);
-
-    const fit = await page.locator('.gv1-curve').evaluate((chart) => {
-      const box = chart.getBoundingClientRect();
-      const faults = [...chart.querySelectorAll('.gv1-curve-col')].flatMap((col) => {
-        const label = col.querySelector('.gv1-curve-l')!;
-        const w = col.querySelector('.gv1-curve-bar-wrap')!.getBoundingClientRect();
-        const range = document.createRange();
-        range.selectNodeContents(label);
-        const text = [...range.getClientRects()];
-        const name = label.textContent ?? '';
-        return [
-          ...(w.right > box.right + 0.5 ? [`${name}: column ${Math.round((w.right - box.right) * 100) / 100}px past the chart`] : []),
-          ...(text.some((r) => r.left < w.left - 0.5 || r.right > w.right + 0.5) ? [`${name}: text wider than its column`] : []),
-        ];
+    const decks: string[] = await page.evaluate(async () =>
+      ((await (await fetch('/data/index.json')).json()) as { commanders: Array<{ id: string }> }).commanders.map((c) => c.id),
+    );
+    const faults: string[] = [];
+    for (const deck of decks) {
+      await openSettled(page, deck);
+      expect.soft(await tracks(), `${deck}: blocks across at ${STACKED_UP_TO + 1}px`).toBe(2);
+      const fit = await page.locator('.gv1-curve').evaluate((chart) => {
+        const box = chart.getBoundingClientRect();
+        const faults = [...chart.querySelectorAll('.gv1-curve-col')].flatMap((col) => {
+          const label = col.querySelector('.gv1-curve-l')!;
+          const w = col.querySelector('.gv1-curve-bar-wrap')!.getBoundingClientRect();
+          const range = document.createRange();
+          range.selectNodeContents(label);
+          const text = [...range.getClientRects()];
+          const name = label.textContent ?? '';
+          return [
+            ...(w.right > box.right + 0.5 ? [`${name}: column ${Math.round((w.right - box.right) * 100) / 100}px past the chart`] : []),
+            ...(text.some((r) => r.left < w.left - 0.5 || r.right > w.right + 0.5) ? [`${name}: text wider than its column`] : []),
+          ];
+        });
+        return { scrollWidth: chart.scrollWidth, clientWidth: chart.clientWidth, faults };
       });
-      return { scrollWidth: chart.scrollWidth, clientWidth: chart.clientWidth, faults };
-    });
-    expect.soft(fit.faults, 'columns past the chart, labels past their column').toEqual([]);
-    expect.soft(fit.scrollWidth, 'scrollWidth of the chart').toBeLessThanOrEqual(fit.clientWidth);
+      faults.push(...fit.faults.map((f) => `${deck}: ${f}`));
+      if (fit.scrollWidth > fit.clientWidth) faults.push(`${deck}: scrollWidth ${fit.scrollWidth} > clientWidth ${fit.clientWidth}`);
+    }
+    expect(decks.length).toBeGreaterThan(0);
+    expect.soft(faults, 'columns past the chart, labels past their column').toEqual([]);
   });
 });
