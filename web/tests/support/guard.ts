@@ -5,6 +5,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 const SCRYFALL_DOMAINS = ['scryfall.com', 'scryfall.io'];
+const MOXFIELD_DOMAINS = ['moxfield.com'];
 
 // A host name can end in the root dot. `api.scryfall.com.` is the same host as
 // `api.scryfall.com`, and new URL() keeps the dot (DEC-1071).
@@ -15,6 +16,10 @@ function isHostOf(domains: string[], hostname: string): boolean {
 
 export function isScryfallHost(hostname: string): boolean {
   return isHostOf(SCRYFALL_DOMAINS, hostname);
+}
+
+export function isMoxfieldHost(hostname: string): boolean {
+  return isHostOf(MOXFIELD_DOMAINS, hostname);
 }
 
 // Chromium fails the name lookup for every Scryfall host, so a request that the

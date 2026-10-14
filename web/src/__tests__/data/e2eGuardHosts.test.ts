@@ -6,7 +6,7 @@
 // (DEC-1087 verdict, N4). The cases build no request.
 
 import { describe, it, expect } from 'vitest';
-import { isScryfallHost } from '../../../tests/support/guard';
+import { isMoxfieldHost, isScryfallHost } from '../../../tests/support/guard';
 
 describe('e2e harness: host tests', () => {
   it('isScryfallHost takes a Scryfall name that ends in the root dot, and no other name', () => {
@@ -15,6 +15,15 @@ describe('e2e harness: host tests', () => {
     }
     for (const host of ['notscryfall.com.', 'scryfall.com.evil.test']) {
       expect(isScryfallHost(host), host).toBe(false);
+    }
+  });
+
+  it('isMoxfieldHost takes a Moxfield name with or without the root dot, and no other name', () => {
+    for (const host of ['api2.moxfield.com', 'api2.moxfield.com.', 'moxfield.com']) {
+      expect(isMoxfieldHost(host), host).toBe(true);
+    }
+    for (const host of ['notmoxfield.com', 'moxfield.com.evil.test', 'api.scryfall.com']) {
+      expect(isMoxfieldHost(host), host).toBe(false);
     }
   });
 });

@@ -3,15 +3,16 @@
 // It answers each request to a Scryfall host from repository data (./scryfall),
 // so a spec never calls the live API and reads the same card data on every run.
 // A request to a Scryfall host that the stub did not answer fails the test and
-// is named in the error. playwright.config.ts rejects a spec that imports
-// '@playwright/test' directly (./guard).
+// is named in the error. A request to a Moxfield host that no route of the spec
+// answered fails the test in the same way (DEC-1071). playwright.config.ts
+// rejects a spec that imports '@playwright/test' directly (./guard).
 //
 //   test.use({ cards: 'seeded' })    every card answer is in before first paint
 //   test.use({ cards: 'none' })      every lookup fails: the layout with no prices
 //   test.use({ fonts: 'blocked' })   the web fonts do not load
 
 import { test as base, type BrowserContext, type Request } from '@playwright/test';
-import { isScryfallHost, withScryfallDnsBlock } from './guard';
+import { isMoxfieldHost, isScryfallHost, withScryfallDnsBlock } from './guard';
 import { answerFor, cardCacheSeed, type AnswerKind } from './scryfall';
 
 export * from '@playwright/test';
@@ -35,6 +36,7 @@ interface StubFixtures {
 }
 
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+const NETWORK_ANSWERED = 'the network answered it';
 
 // Runs in the page. `fetchedAt` is the page's own clock, so an entry is never stale.
 function seedCardCache(entries: Record<string, object>): void {
@@ -60,7 +62,7 @@ function outcomeOf(request: Request): string | null {
   // The browser sets no send time on a request that a route answers.
   return request.timing().requestStart < 0
     ? 'a route of the spec answered it, and the browser did not send it'
-    : 'the network answered it';
+    : NETWORK_ANSWERED;
 }
 
 export const test = base.extend<StubOptions & StubFixtures>({
@@ -94,18 +96,30 @@ export const test = base.extend<StubOptions & StubFixtures>({
       // Such a request comes here without the mark the stub leaves, when its
       // answer arrives or when it fails. The check does not wait for the end of
       // the body: a test that reads only the status can end before that.
+      //
+      // A spec may answer Moxfield with its own route; the IN-2 case of
+      // combo-lab does. The check names a Moxfield request that the network
+      // answered, and the stub stops and names one that no route answered.
       const named = new WeakSet<Request>();
+      const moxfield: string[] = [];
       const judge = (request: Request) => {
         if (answered.has(request) || named.has(request)) return;
-        if (!isScryfallHost(new URL(request.url()).hostname)) return;
+        const host = new URL(request.url()).hostname;
+        const scryfall = isScryfallHost(host);
+        if (!scryfall && !isMoxfieldHost(host)) return;
         named.add(request);
         const outcome = outcomeOf(request);
-        if (outcome) unanswered.push(`${request.method()} ${request.url()} (${outcome})`);
+        if (!outcome) return;
+        const line = `${request.method()} ${request.url()} (${outcome})`;
+        if (scryfall) unanswered.push(line);
+        else if (outcome === NETWORK_ANSWERED) moxfield.push(line);
       };
 
       const stub = async (context: BrowserContext) => {
         if (stubbed.has(context)) return;
         stubbed.add(context);
+        // The app keeps asking while a test ends, and the page may close first.
+        const pageGone = () => undefined;
         await context.route(
           (url) => isScryfallHost(url.hostname),
           async (route) => {
@@ -117,8 +131,6 @@ export const test = base.extend<StubOptions & StubFixtures>({
             } else {
               counts[answer.kind] = (counts[answer.kind] ?? 0) + 1;
             }
-            // The app keeps asking while a test ends, and the page may close first.
-            const pageGone = () => undefined;
             if (!answer || cards === 'none') return route.abort().catch(pageGone);
             if (answer.notFound) notFound.add(answer.notFound);
             return route
@@ -129,6 +141,18 @@ export const test = base.extend<StubOptions & StubFixtures>({
                 body: answer.body,
               })
               .catch(pageGone);
+          },
+        );
+        // A route of the spec comes before this one: page.route() always, and
+        // context.route() because the spec adds it later. A request that gets
+        // here passed every route of the spec, so it would leave the browser.
+        await context.route(
+          (url) => isMoxfieldHost(url.hostname),
+          async (route) => {
+            const request = route.request();
+            answered.add(request);
+            moxfield.push(`${request.method()} ${request.url()} (no route of the spec answered it, so the stub stopped it)`);
+            return route.abort().catch(pageGone);
           },
         );
         if (fonts === 'blocked') {
@@ -158,14 +182,26 @@ export const test = base.extend<StubOptions & StubFixtures>({
           body: JSON.stringify({ cards, requests: counts, notFound: [...notFound].sort() }, null, 2),
         });
       }
+      const requests = (lines: string[]) =>
+        `${lines.length} request${lines.length === 1 ? '' : 's'}`;
+      const failures: string[] = [];
       if (unanswered.length > 0) {
-        throw new Error(
-          `${unanswered.length} request${unanswered.length === 1 ? '' : 's'} to a Scryfall host got no answer from the stub:\n` +
+        failures.push(
+          `${requests(unanswered)} to a Scryfall host got no answer from the stub:\n` +
             unanswered.map((line) => `  ${line}`).join('\n') +
             `\nThe e2e suite does not call Scryfall, and only the stub answers for it: the check cannot\n` +
             `see where a spec's own route took its answer from (web/README.md, "End-to-end tests").`,
         );
       }
+      if (moxfield.length > 0) {
+        failures.push(
+          `${requests(moxfield)} to a Moxfield host got no answer from a route of the spec:\n` +
+            moxfield.map((line) => `  ${line}`).join('\n') +
+            `\nThe e2e suite does not call Moxfield. A spec that loads a Moxfield deck URL answers it\n` +
+            `with its own route, as the IN-2 case of combo-lab.spec.ts does (web/README.md, "End-to-end tests").`,
+        );
+      }
+      if (failures.length > 0) throw new Error(failures.join('\n'));
     },
     { auto: true },
   ],
