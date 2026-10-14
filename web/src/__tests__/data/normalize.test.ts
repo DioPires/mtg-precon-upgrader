@@ -359,6 +359,15 @@ describe('normalizeDeck', () => {
     expect(out.list[out.list.length - 1].name.startsWith('Lands')).toBe(true);
   });
 
+  it('names the mana-fixing role "Fixing" in the chart, Function mix and the decklist (DEC-1074)', () => {
+    const { deck } = makeBundle();
+    const decklist = [...(deck.decklist ?? []), { name: 'Bloom Tender', type: 'Creature', primary_role: 'mana-fixing' }];
+    const out = normalizeDeck(makeBundle({ deck: { ...deck, decklist } }), 1);
+    expect(out.curve.map((c) => c.cmc)).toContain('Fixing');
+    expect(out.func.map((f) => f.l)).toContain('Fixing');
+    expect(out.list.map((g) => g.name)).toContain('Fixing (1)');
+  });
+
   it('marks land tiles with mv "LAND"', () => {
     const out = normalizeDeck(makeBundle(), 1);
     const lands = out.list.find((g) => g.name.startsWith('Lands'));

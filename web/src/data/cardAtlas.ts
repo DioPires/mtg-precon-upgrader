@@ -10,24 +10,7 @@
 
 import type { DeckFull } from './types';
 import { frontFace } from './cardName';
-
-const ROLE_LABEL: Record<string, string> = {
-  land: 'Lands',
-  ramp: 'Ramp',
-  'card-draw': 'Card Draw',
-  counterspell: 'Counters',
-  'removal-spot': 'Spot Removal',
-  'removal-board': 'Board Wipes',
-  recursion: 'Recursion',
-  protection: 'Protection',
-  payoff: 'Payoffs',
-  threat: 'Threats',
-  wincon: 'Win-Cons',
-  engine: 'Engine',
-  tutor: 'Tutors',
-  utility: 'Utility',
-  other: 'Other',
-};
+import { ROLE_LABEL } from './roleLabels';
 
 export interface CardUsage {
   deckSlug: string;
