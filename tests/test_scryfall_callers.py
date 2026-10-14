@@ -150,6 +150,19 @@ class ComputeTokensTests(CallerCase):
             [("Goblin", ["Goblin Maker"]), ("Orc Army", ["Orc Caller"]),
              ("The Monarch", ["Crown Seeker"])])
 
+    def test_clean_run_writes_every_deck(self):
+        first = self.write_deck("a-first", "Arcane Signet")
+        second = self.write_deck("b-second", "Goblin Maker")
+        fake = token_fake([make_card("Arcane Signet")])
+
+        code, _ = self.run_main(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, COLLECTION_URL, GOBLIN_URL])
+        self.assert_600ms_gaps(fake, 2)
+        self.assertEqual(json.loads(first.read_text())["tokens"], [])
+        self.assertEqual([t["name"] for t in json.loads(second.read_text())["tokens"]], ["Goblin"])
+
     def test_429_ends_the_run_at_each_request_kind(self):
         """Rule 2. The 429 answers the last request of the run, so a swallowed 429 writes files."""
         kinds = {
