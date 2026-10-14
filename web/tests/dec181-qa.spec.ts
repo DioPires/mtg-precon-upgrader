@@ -43,8 +43,11 @@ async function pageOverflows(page: Page): Promise<boolean> {
 }
 
 for (const width of WIDTHS) {
+  // The overflow read measures each surface with every price in: the Shopping
+  // summary is at its widest then (DEC-1017). With the seed the summary shows
+  // its final priced count at first paint (DEC-1071).
   test.describe(`DEC-181 QA @ ${width}px`, () => {
-    test.use({ viewport: { width, height: HEIGHT } });
+    test.use({ viewport: { width, height: HEIGHT }, cards: 'seeded' });
 
     test('every surface renders without page-level overflow', async ({ page }) => {
       const overflows: string[] = [];
@@ -89,6 +92,11 @@ for (const width of WIDTHS) {
 
       expect(overflows, `Pages with horizontal overflow at ${width}px`).toEqual([]);
     });
+  });
+
+  // The topbar reads no card data, so this block keeps the default lookups.
+  test.describe(`DEC-181 QA @ ${width}px`, () => {
+    test.use({ viewport: { width, height: HEIGHT } });
 
     test('topbar a11y + behavior', async ({ page }) => {
       await page.goto('/codex');

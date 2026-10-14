@@ -132,7 +132,10 @@ test.describe.configure({ mode: 'serial' });
 
 for (const vp of VIEWPORTS) {
   test.describe(`DEC-184 ${vp.label}px`, () => {
-    test.use({ viewport: { width: vp.width, height: vp.height } });
+    // The shots and the audits read each surface with every price in. With the
+    // seed the Shopping summary shows its final priced count at first paint;
+    // looked up one by one, it lags the rows by up to 1.5 s (DEC-1071).
+    test.use({ viewport: { width: vp.width, height: vp.height }, cards: 'seeded' });
 
     test(`capture + audit @ ${vp.label}px`, async ({ page }) => {
       const deck = await getFirstDeckId(page);
