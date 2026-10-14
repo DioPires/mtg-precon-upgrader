@@ -201,9 +201,14 @@ describe('scryfallLimiter', () => {
   });
 
   it('starts no bucket 1 request while an answer is out', async () => {
-    const { scry, cache } = setup(2_000);
-    ['A', 'B', 'C'].forEach((name) => cache.enqueue(name));
+    // Three callers at once: the cache hands over one name at a time, so the
+    // limiter itself must hold the other callers.
+    const { scry, limiter, cache } = setup(2_000);
+    const direct = [limiter.fetch(lookupUrl('A')), limiter.fetch(lookupUrl('B'))];
+    cache.enqueue('C');
     await advance(10_000);
+    await Promise.all(direct);
+    expect(scry.names()).toEqual(['A', 'B', 'C']);
     expect(gaps(scry.times())).toEqual([2_000, 2_000]);
   });
 

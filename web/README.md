@@ -70,9 +70,10 @@ the number of 429 answers (`bucketOne`).
   page's timers run ahead of real time. Such a spec sets `rateClock: 'page'`. The check then
   reads the page's own clock each time the app calls `fetch` for those methods, and the limit
   of 2 in 1 s holds in the time that the app sees. Every other spec keeps `'real'`.
-- `scryfall429From: n` makes the stub answer 429 with no CORS header from the n-th request to
-  those methods on, counted over the test. The browser then shows the app a `fetch` that
-  rejects, as with Scryfall's own 429.
+- `scryfall429From: n` makes the stub answer 429 from the n-th request to those methods on,
+  counted over the test. Scryfall's own 429 has no CORS header, so the browser blocks it and
+  the app's `fetch` rejects. Playwright adds that header to an answer without one, so the stub
+  sends a header for another origin, and the browser blocks the answer in the same way.
 
 Three checks keep a spec off the live API. Each has limits, and they are listed here.
 

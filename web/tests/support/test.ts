@@ -42,8 +42,9 @@ export interface StubOptions {
   fonts: 'live' | 'blocked';
   /**
    * From this request of bucket 1 on (counted over the test, from 1), the stub
-   * answers 429 with no CORS header, as Scryfall does. The browser shows the app
-   * a fetch that rejects. 0 means never.
+   * answers 429 with a CORS header for another origin. The browser blocks it, as
+   * it blocks Scryfall's own 429 (which has no CORS header), and shows the app a
+   * fetch that rejects. 0 means never.
    */
   scryfall429From: number;
   /**
@@ -199,9 +200,17 @@ export const test = base.extend<StubOptions & StubFixtures>({
               if (rateClock === 'real') stamp(context, Date.now());
               if (scryfall429From > 0 && bucketOneCount >= scryfall429From) {
                 limited += 1;
-                // No CORS header, as Scryfall's own 429: the app's fetch rejects.
+                // Scryfall's own 429 has no CORS header, so the browser blocks it and
+                // the app's fetch rejects. Playwright adds the header to an answer
+                // without one (its issue #12929); a header for another origin gives
+                // the same block.
                 return route
-                  .fulfill({ status: 429, contentType: 'application/json', body: '{"object":"error","status":429}' })
+                  .fulfill({
+                    status: 429,
+                    contentType: 'application/json',
+                    headers: { 'access-control-allow-origin': 'https://scryfall.com' },
+                    body: '{"object":"error","status":429}',
+                  })
                   .catch(pageGone);
               }
             }
