@@ -76,14 +76,16 @@ function fmtFigure(v: number | null | undefined): string {
 }
 
 // DEC-1007 — `actual / target` like a role chip when the gap carries both.
-// Redundancy carries win lines and a floor instead: the floor is where the
-// score starts, not the count to reach, so it is not written as `lines / floor`.
+// Redundancy carries win lines, a floor and a target instead (DEC-1077). It
+// reads `lines / target lines`: the target is the line count for the full
+// score, and the script owns it. The floor is where the score starts, not the
+// count to reach. An entry from before PR #21 has no target: `lines · floor`.
 function resilienceFigure(g: RawResilienceGap): ReactNode {
-  if (g.actual != null && g.target != null) {
+  if (g.lines != null && g.target != null) {
     return (
       <>
-        {fmtFigure(g.actual)}
-        <span className="gv1-dim"> / {fmtFigure(g.target)}</span>
+        {fmtFigure(g.lines)}
+        <span className="gv1-dim"> / {fmtFigure(g.target)} lines</span>
       </>
     );
   }
@@ -92,6 +94,14 @@ function resilienceFigure(g: RawResilienceGap): ReactNode {
       <>
         {fmtFigure(g.lines)} {g.lines === 1 ? 'line' : 'lines'}
         <span className="gv1-dim"> · floor {fmtFigure(g.floor)}</span>
+      </>
+    );
+  }
+  if (g.actual != null && g.target != null) {
+    return (
+      <>
+        {fmtFigure(g.actual)}
+        <span className="gv1-dim"> / {fmtFigure(g.target)}</span>
       </>
     );
   }

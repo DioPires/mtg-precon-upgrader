@@ -378,6 +378,7 @@ describe('Apothecary', () => {
       max: 25,
       lines: 2,
       floor: 1,
+      target: 3,
       wincon_style: 'combat',
     };
 
@@ -406,7 +407,9 @@ describe('Apothecary', () => {
       expect(part(recursion, '.gv1-apo-malady-label')).toBe('Recursion');
       expect(part(recursion, '.gv1-apo-malady-fig')).toBe('1 / 3');
       expect(part(redundancy, '.gv1-apo-malady-label')).toBe('Redundancy');
-      expect(part(redundancy, '.gv1-apo-malady-fig')).toBe('2 lines · floor 1');
+      expect(part(redundancy, '.gv1-apo-malady-fig')).toBe('2 / 3 lines');
+      // DEC-1077 — the count first, the rest dim, as on a role chip.
+      expect(part(redundancy, '.gv1-apo-malady-fig .gv1-dim')).toBe(' / 3 lines');
 
       // score_pct on the role chips' thresholds: 33 is bad, 50 is warn.
       expect(recursion).toHaveClass('gv1-apo-tier-bad');
@@ -467,6 +470,25 @@ describe('Apothecary', () => {
       expect(part(resilience, '.gv1-apo-malady-label')).toBe('Protection');
       expect(part(resilience, '.gv1-apo-malady-fig')).toBe('2.5 / 4');
       expect(errors).not.toHaveBeenCalled();
+    });
+
+    // DEC-1077 — redundancy reads `lines / target lines`; `target` comes from the
+    // script (floor + 2 today), and an entry from before PR #21 has none.
+    it.each([
+      ['reads the lines over the target', { lines: 3, floor: 2, target: 4 }, '3 / 4 lines'],
+      ['reads the target from the entry, not floor + 2', { lines: 2, floor: 1, target: 4 }, '2 / 4 lines'],
+      ['keeps lines and floor for an entry with no target', { lines: 2, floor: 1 }, '2 lines · floor 1'],
+      ['says lines for a count of one', { lines: 1, floor: 1, target: 3 }, '1 / 3 lines'],
+      ['takes its branch also when the entry carries actual', { actual: 2, target: 3, lines: 2, floor: 1 }, '2 / 3 lines'],
+    ])('the redundancy chip %s', (_, entry, fig) => {
+      const { container } = render(
+        <Apothecary
+          apothecary={makeApothecary({
+            maladies: [{ resilience_component: 'redundancy', score_pct: 50, max: 25, ...entry }],
+          })}
+        />,
+      );
+      expect(part(chips(container)[0], '.gv1-apo-malady-fig')).toBe(fig);
     });
 
     it('falls back to the percentage and the raw name for a component it has no counts or label for', () => {
