@@ -222,3 +222,26 @@ test('two tabs of one context open /combos at once: they share bucket 1, and the
   // fixture's rate check, 2 in any 1 s for the context, is what held them.
   expect(seen.lookups.length).toBeGreaterThan(perName.size);
 });
+
+test.describe('the seed and storage', () => {
+  test.use({ cards: 'seeded' });
+
+  test("a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once", async ({
+    page,
+  }) => {
+    const cardKeys = () =>
+      page.evaluate(() => Object.keys(localStorage).filter((key) => key.startsWith('gv1-card:')).map((key) => key.slice(9)));
+    await page.goto('/data/index.json');
+    const before = await cardKeys();
+    expect(before.filter((key) => USD.has(key)).length).toBe(USD.size);
+
+    await page.goto('/deck/creeping-corruption');
+    await page.locator('.gv1-card-tile').first().waitFor();
+    // The stub's seed runs again at each navigation; the app's seed follows it.
+    await expect.poll(async () => (await cardKeys()).filter((key) => USD.has(key)).length).toBe(0);
+    // Only the faces that the file does not hold as names stay.
+    const after = await cardKeys();
+    expect(after.length).toBeGreaterThan(0);
+    expect(after.length).toBeLessThan(100);
+  });
+});
