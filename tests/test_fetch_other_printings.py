@@ -36,6 +36,7 @@ def search_url(name: str, currency: str) -> str:
         "q": f"oracleid:{make_card(name)['oracle_id']} game:paper",
         "unique": "prints",
         "order": currency,
+        "dir": "asc",
     })
     return f"{SEARCH_URL}?{query}"
 
@@ -52,12 +53,14 @@ def printing(name: str, set_code: str, usd=None, eur=None, released="2020-01-01"
 class PrintsScryfall(FakeScryfall):
     """FakeScryfall that also answers a search of a card's printings.
 
-    ``prints`` maps an oracle id to the card's printings. As Scryfall does, the
-    answer keeps the printings with "paper" in ``games`` when the query holds
-    ``game:paper``, orders them by the lowest known price of ``order`` over every
-    finish, nulls last, and holds the first PAGE_SIZE with ``has_more``. A search
-    that matches nothing answers 404. The answer goes out as a raw body through
-    ``failures``, so a case can still set a failure for a search.
+    ``prints`` maps an oracle id to the card's printings. As Scryfall did in the
+    first live run of DEC-1079, the answer keeps the printings with "paper" in
+    ``games`` when the query holds ``game:paper``, and orders them by the
+    non-foil price of ``order``, else the foil one, else the etched one, nulls
+    last: the most expensive first, or the cheapest first with ``dir=asc``. It
+    holds the first PAGE_SIZE, with ``has_more``. A search that matches nothing
+    answers 404. The answer goes out as a raw body through ``failures``, so a
+    case can still set a failure for a search.
     """
 
     PAGE_SIZE = 175
@@ -76,19 +79,24 @@ class PrintsScryfall(FakeScryfall):
         return super().urlopen(req, timeout)
 
     def search(self, query: dict) -> dict | None:
-        assert sorted(query) == ["order", "q", "unique"] and query["unique"] == ["prints"], query
+        assert set(query) <= {"q", "unique", "order", "dir"}, query
+        assert query["unique"] == ["prints"] and query.get("dir", ["asc"]) == ["asc"], query
         match = re.fullmatch(r"oracleid:(\S+)((?: game:paper)?)", query["q"][0])
         assert match, query
         order = query["order"][0]
         cards = [card for card in self.prints.get(match[1], [])
                  if not match[2] or "paper" in card["games"]]
 
-        def lowest_known(card):
-            prices = [float(value) for key, value in card["prices"].items()
-                      if key.split("_")[0] == order and re.fullmatch(r"[0-9.]+", value or "")]
-            return (not prices, min(prices, default=0.0))
+        def key(card):
+            for finish in (order, f"{order}_foil", f"{order}_etched"):
+                value = card["prices"].get(finish)
+                if value is not None:
+                    return float(value)
+            return None
 
-        cards.sort(key=lowest_known)
+        priced = sorted((card for card in cards if key(card) is not None),
+                        key=key, reverse="dir" not in query)
+        cards = priced + [card for card in cards if key(card) is None]
         page = cards[:self.PAGE_SIZE]
         if not page:
             return None
@@ -118,7 +126,7 @@ class OtherPrintingRuleCases(DeckDirCase):
         self.assertEqual([s.url for s in fake.sent], [
             COLLECTION_URL,
             "https://api.scryfall.com/cards/search"
-            "?q=oracleid%3Aoracle-blood-crypt+game%3Apaper&unique=prints&order=usd",
+            "?q=oracleid%3Aoracle-blood-crypt+game%3Apaper&unique=prints&order=usd&dir=asc",
         ])
         metadata = json.loads(self.output.read_text())
         # usd from gtc, eur from rna; the image stays the batch printing's.
@@ -262,21 +270,13 @@ class OtherPrintingFailureCases(DeckDirCase):
         self.assert_no_file_written()
 
     def test_a_price_that_is_not_a_number_ends_the_run(self):
-        """A non-foil price on the page, and a foil price of the page's last card."""
-        for key in ("usd", "usd_foil"):
+        """A non-foil price, and the foil price that is the sort key of a card on a page with more."""
+        for key, has_more in (("usd", False), ("usd_foil", True)):
             with self.subTest(price=key):
-                prints = {
-                    card["oracle_id"]: [
-                        printing(card["name"], "rna", usd="9.00", eur="7.50"),
-                        printing(card["name"], "gtc", **{"usd": "9.50", "eur": "7.00", key: "n/a"}),
-                        printing(card["name"], "m19", usd="10.00", eur="8.00"),
-                    ]
-                    for card in self.cards
-                }
-                fake = PrintsScryfall(self.cards, prints)
-                # The usd case reads the bad price among three; the usd_foil case as the
-                # floor of a page of two.
-                fake.PAGE_SIZE = 2 if key == "usd_foil" else 3
+                bad = printing("Blood Crypt", "gtc", **{"usd": None, "eur": "7.00", key: "n/a"})
+                fake = PrintsScryfall(self.cards, self.prints)
+                fake.failures[1] = json.dumps({"object": "list", "has_more": has_more, "data": [
+                    printing("Blood Crypt", "rna", usd="9.00", eur="7.50"), bad]}).encode()
 
                 code, out = self.run_metadata(fake)
 
@@ -345,50 +345,47 @@ class OtherPrintingCostCases(DeckDirCase):
 
 
 class FirstPageProofCases(DeckDirCase):
-    """No search reads a second page; the run says when the first page proves nothing."""
+    """No search reads a second page. A page with ``has_more`` gives a price only when it proves it."""
 
-    def run_pass(self, name: str, *prints: dict, page_size: int = 2) -> tuple[float | None, str]:
-        """The usd price that the pass gives ``name``, and the run's text. The batch has eur."""
+    def run_pass(self, name: str, *prints: dict, page_size: int = 2,
+                 raw_page: list[dict] | None = None, has_more: bool = True):
+        """The usd price that the pass gives ``name``, and the run's text. The batch has eur.
+
+        ``raw_page`` is the page that the search answers, as it stands, with ``has_more``.
+        """
         batch = make_card(name, usd=None, eur="0.05")
         fake = PrintsScryfall([batch], {batch["oracle_id"]: list(prints)})
         fake.PAGE_SIZE = page_size
+        if raw_page is not None:
+            fake.failures[1] = json.dumps(
+                {"object": "list", "has_more": has_more, "data": raw_page}).encode()
         out = io.StringIO()
         with fake.installed(), contextlib.redirect_stdout(out):
             metadata, _ = fetch_metadata.fetch_metadata({name}, today="2026-10-14")
         self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, search_url(name, "usd")])
         return metadata[name]["usd"], out.getvalue()
 
-    def test_page_with_only_foil_prices_and_more_printings_after_it(self):
+    def test_page_of_foil_prices_with_more_after_it_proves_nothing(self):
         price, out = self.run_pass(
             "Island",
             printing("Island", "f1", usd_foil="0.01"),
             printing("Island", "f2", usd_foil="0.02"),
             printing("Island", "n1", usd="0.10"))
         self.assertIsNone(price)
-        self.assertIn("    Island: the first page does not prove the lowest usd price; "
-                      "no released paper printing has a non-foil usd price\n", out)
+        self.assertIn(
+            "    Island: the first page does not prove the lowest usd price: no price taken\n", out)
 
-    def test_page_whose_lowest_price_is_above_the_last_card_takes_it_and_says_so(self):
-        price, out = self.run_pass(
-            "Swamp",
-            printing("Swamp", "a", usd="0.05", usd_foil="0.01"),
-            printing("Swamp", "b", usd="0.08", usd_foil="0.02"),
-            printing("Swamp", "c", usd="0.03"))
-        self.assertEqual(price, 0.05)
-        self.assertIn("    Swamp: the first page does not prove the lowest usd price; "
-                      "usd 0.05 from another printing\n", out)
-
-    def test_page_whose_lowest_price_is_not_above_the_last_card_is_proof(self):
+    def test_page_in_order_with_a_price_is_proof(self):
+        """Two keys of the same value are in order."""
         price, out = self.run_pass(
             "Plains",
-            printing("Plains", "f1", usd_foil="0.01"),
-            printing("Plains", "n1", usd="0.03", usd_foil="0.04"),
+            printing("Plains", "f1", usd_foil="0.03"),
+            printing("Plains", "n1", usd="0.03", usd_foil="0.01"),
             printing("Plains", "n3", usd="0.035"))
         self.assertEqual(price, 0.03)
         self.assertIn("    Plains: usd 0.03 from another printing\n", out)
 
-    def test_page_whose_last_card_has_no_price_is_proof(self):
-        """Nulls come last, so no printing after the page has a price."""
+    def test_page_ending_with_cards_without_price_is_proof(self):
         price, out = self.run_pass(
             "Mountain",
             printing("Mountain", "n1", usd="0.10"),
@@ -397,13 +394,47 @@ class FirstPageProofCases(DeckDirCase):
         self.assertEqual(price, 0.1)
         self.assertIn("    Mountain: usd 0.1 from another printing\n", out)
 
-    def test_page_with_every_printing_is_proof(self):
+    def test_page_whose_last_card_has_no_price_proves_no_price(self):
+        """Nulls come last, so no printing after the page has a price."""
         price, out = self.run_pass(
-            "Wastes",
-            printing("Wastes", "a", usd="0.50", usd_foil="0.10"),
-            printing("Wastes", "b", usd_foil="0.20"))
-        self.assertEqual(price, 0.5)
-        self.assertIn("    Wastes: usd 0.5 from another printing\n", out)
+            "Swamp",
+            printing("Swamp", "f1", usd_foil="0.10"),
+            printing("Swamp", "x"),
+            printing("Swamp", "y"))
+        self.assertIsNone(price)
+        self.assertIn("    Swamp: no released paper printing has a non-foil usd price\n", out)
+
+    def test_page_out_of_order_proves_nothing(self):
+        """The order of the first live run: the most expensive first."""
+        price, out = self.run_pass("Forest", raw_page=[
+            printing("Forest", "a", usd="0.50"), printing("Forest", "b", usd="0.05")])
+        self.assertIsNone(price)
+        self.assertIn(
+            "    Forest: the first page does not prove the lowest usd price: no price taken\n", out)
+
+    def test_page_with_a_card_without_price_before_a_price_proves_nothing(self):
+        price, out = self.run_pass("Wastes", raw_page=[
+            printing("Wastes", "x"), printing("Wastes", "n1", usd="0.10")])
+        self.assertIsNone(price)
+        self.assertIn("does not prove the lowest usd price", out)
+
+    def test_page_with_every_printing_needs_no_order(self):
+        price, out = self.run_pass("Thought Vessel", has_more=False, raw_page=[
+            printing("Thought Vessel", "a", usd="0.50"),
+            printing("Thought Vessel", "b", usd="0.05")])
+        self.assertEqual(price, 0.05)
+        self.assertIn("    Thought Vessel: usd 0.05 from another printing\n", out)
+
+    def test_sort_key_is_the_non_foil_price_else_the_foil_else_the_etched_one(self):
+        """Keys 0.05, 0.20 and 0.30 are in order. By the lowest price they would be 0.05, 0.20
+        and 0.10; by the non-foil price only, None, 0.20 and None; with etched before foil,
+        0.05, 0.20 and 0.10."""
+        price, out = self.run_pass("Mind Stone", raw_page=[
+            printing("Mind Stone", "a", usd_foil="0.05"),
+            printing("Mind Stone", "b", usd="0.20"),
+            printing("Mind Stone", "c", usd_foil="0.30", usd_etched="0.10")])
+        self.assertEqual(price, 0.2)
+        self.assertIn("    Mind Stone: usd 0.2 from another printing\n", out)
 
 
 class AtomicWriteCases(DeckDirCase):

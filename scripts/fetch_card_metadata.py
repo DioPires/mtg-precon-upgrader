@@ -126,27 +126,46 @@ def _price(card: dict, currency: str) -> float | None:
             f"{card['name']}: the {currency} price is {value!r}, not a number") from None
 
 
-def _lowest_known(card: dict, currency: str) -> float | None:
-    """The card's lowest price in ``currency`` over every finish, or None.
+def _sort_key(card: dict, currency: str) -> float | None:
+    """The price by which Scryfall orders a search with ``order=<currency>``.
 
-    ``usd``, ``usd_foil`` and ``usd_etched`` for usd; ``eur`` and ``eur_foil``
-    for eur. Scryfall orders a search by "the lowest known" price, nulls last,
-    and that price may be a foil one. So no card later in that order has a
-    non-foil price below this value.
+    The non-foil price, else the foil one, else the etched one; None when the
+    card has none. Each of the 57 pages of the first DEC-1079 live run (sent
+    without ``dir``, so the most expensive first) is in this order, nulls
+    last. For a card with a non-foil price, the key is that price.
     """
-    prices = [_price(card, key) for key in card["prices"] if key.split("_")[0] == currency]
-    return min((price for price in prices if price is not None), default=None)
+    for key in (currency, f"{currency}_foil", f"{currency}_etched"):
+        price = _price(card, key)
+        if price is not None:
+            return price
+    return None
+
+
+def _first_page_proves(cards: list[dict], currency: str, price: float | None) -> bool:
+    """Whether the first page of a search holds the lowest non-foil price of all.
+
+    ``price`` is the lowest non-foil price of a released printing on the
+    page. The page must be in _sort_key order, cheapest first and nulls last.
+    Then each printing after the page has a key of at least the page's last
+    key, or no price at all, and a printing's non-foil price is its key. So
+    the page proves ``price`` when it has one, and it proves "no price" when
+    its last card has no key.
+    """
+    keys = [_sort_key(card, currency) for card in cards]
+    in_order = all(b is None or (a is not None and a <= b) for a, b in zip(keys, keys[1:]))
+    return in_order and (price is not None or keys[-1] is None)
 
 
 def _search_prints(name: str, oracle_id: str, currency: str) -> dict:
     """The first page of the card's paper printings, cheapest in ``currency`` first.
 
     One request, and never a second page: a basic land has thousands of
-    printings. A 404 is Scryfall's answer for "no card matches", so it gives
-    an empty page. Any other failure raises FetchFailed.
+    printings. Without ``dir=asc`` Scryfall puts the most expensive first.
+    A 404 is Scryfall's answer for "no card matches", so it gives an empty
+    page. Any other failure raises FetchFailed.
     """
-    query = urllib.parse.urlencode(
-        {"q": f"oracleid:{oracle_id} game:paper", "unique": "prints", "order": currency})
+    query = urllib.parse.urlencode({"q": f"oracleid:{oracle_id} game:paper",
+                                    "unique": "prints", "order": currency, "dir": "asc"})
     try:
         page = json.loads(scryfall_api.request(f"{SEARCH_URL}?{query}"))
         return {"data": page["data"], "has_more": page["has_more"]}
@@ -170,9 +189,9 @@ def _prices_from_other_printings(lacking: dict, today: str) -> dict[str, list[di
     The first search is ordered by the first currency that lacks a price. When
     its page holds every printing (``has_more`` false), it gives the other
     currency too; else a second search, ordered by that currency, does. A page
-    with ``has_more`` holds the cheapest printings. The run prints a line when
-    the page cannot prove that its lowest price is the lowest of all, and takes
-    that price all the same.
+    with ``has_more`` holds the cheapest printings. When such a page cannot
+    prove that its lowest price is the lowest of all (_first_page_proves), the
+    run prints a line and takes no price.
 
     Returns, for each currency, the entries that gained a price in it.
     """
@@ -188,10 +207,10 @@ def _prices_from_other_printings(lacking: dict, today: str) -> dict[str, list[di
             prices = [_price(card, currency) for card in page["data"]
                       if card["released_at"] <= today]
             price = min((p for p in prices if p is not None), default=None)
-            if page["has_more"]:
-                floor = _lowest_known(page["data"][-1], currency)
-                if floor is not None and (price is None or price > floor):
-                    lines.append(f"the first page does not prove the lowest {currency} price")
+            if page["has_more"] and not _first_page_proves(page["data"], currency, price):
+                lines.append(f"the first page does not prove the lowest {currency} price: "
+                             f"no price taken")
+                continue
             if price is None:
                 lines.append(f"no released paper printing has a non-foil {currency} price")
                 continue
