@@ -504,6 +504,14 @@ class FirstPageProofCases(DeckDirCase):
         self.assertIn(
             "    Island: the first page does not prove the lowest usd price: no price taken\n", out)
 
+    def test_page_with_a_card_without_price_after_a_price_of_zero_proves_nothing(self):
+        """A printing without a key sorts below every key, 0.00 too, so it cannot follow one."""
+        price, out = self.run_pass("Island", raw_page=[
+            printing("Island", "n0", usd="0.00"), printing("Island", "x")])
+        self.assertIsNone(price)
+        self.assertIn(
+            "    Island: the first page does not prove the lowest usd price: no price taken\n", out)
+
     def test_page_whose_only_prices_are_memorabilia_proves_nothing(self):
         """Step 3b of round 2: the last card has a price, so a printing that counts may follow."""
         price, out = self.run_pass(
