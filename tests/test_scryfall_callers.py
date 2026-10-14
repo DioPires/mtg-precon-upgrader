@@ -18,6 +18,7 @@ import io
 import json
 import runpy
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -410,6 +411,28 @@ class FormatOwnedListTests(CallerCase):
 
     def test_helper_is_the_scripts_module(self):
         self.assertIs(format_owned.scryfall_api, scryfall_api)
+
+
+class HelperImportTests(unittest.TestCase):
+    def test_each_script_finds_the_helper_by_its_own_path(self):
+        """A fresh interpreter in isolated mode loads each script by its path, without running
+        main(): only the script's own sys.path line can find scripts/scryfall_api.py."""
+        load = (
+            "import importlib.util, sys\n"
+            "spec = importlib.util.spec_from_file_location('caller', sys.argv[1])\n"
+            "module = importlib.util.module_from_spec(spec)\n"
+            "spec.loader.exec_module(module)\n"
+            "print(module.scryfall_api.__file__)\n"
+        )
+        for script in ("scripts/compute_tokens.py", "scripts/check_game_changers.py",
+                       "scripts/prerelease/dump_set.py", "priv_data/format_owned_list.py"):
+            with self.subTest(script=script):
+                result = subprocess.run(
+                    [sys.executable, "-I", "-c", load, str(ROOT / script)],
+                    capture_output=True, text=True, timeout=60)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(
+                    Path(result.stdout.strip()).resolve(), ROOT / "scripts" / "scryfall_api.py")
 
 
 if __name__ == "__main__":
