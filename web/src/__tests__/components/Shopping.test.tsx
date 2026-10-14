@@ -442,6 +442,8 @@ describe('Shopping organism', () => {
     const { container } = renderShopping([ALPHA]);
     const button = screen.getByRole('button', { name: 'Import owned cards' });
     expect(button).toHaveAttribute('type', 'button');
+    // The class alone gives the button the look the label had (DEC-1088 B1).
+    expect(button.className).toBe('gv1-shop-btn');
     expect(button.tabIndex).not.toBe(-1);
 
     // The input stays out of the tab order and the accessibility tree.

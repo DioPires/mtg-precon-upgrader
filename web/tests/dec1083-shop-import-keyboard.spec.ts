@@ -116,3 +116,46 @@ for (const fonts of ['live', 'blocked'] as const) {
     }
   });
 }
+
+// The look of the button at rest (DEC-1088 B1). The ring check above cannot
+// tell whether the button still carries `.gv1-shop-btn`, because the rule
+// `.gv1-root :focus-visible` gives every control the same 2 px ring. Each
+// value below comes from a CSS rule, not from the font's metrics, so both
+// font arms read the same figures.
+for (const fonts of ['live', 'blocked'] as const) {
+  test.describe(`DEC-1083 owned-cards import, look (fonts ${fonts})`, () => {
+    test.use({ fonts, viewport: { width: 1440, height: 900 } });
+
+    test('the import button keeps the look of .gv1-shop-btn at rest', async ({ page }) => {
+      await page.goto('/shopping');
+      const button = importButton(page);
+      await button.waitFor();
+      await page.mouse.move(1, 1);
+      const look = await button.evaluate(async (el) => {
+        await Promise.all(el.getAnimations().map((a) => a.finished));
+        const cs = getComputedStyle(el);
+        return {
+          backgroundColor: cs.backgroundColor,
+          color: cs.color,
+          border: [cs.borderTop, cs.borderRight, cs.borderBottom, cs.borderLeft],
+          padding: [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft],
+          fontFamily: cs.fontFamily,
+          fontSize: cs.fontSize,
+          letterSpacing: cs.letterSpacing,
+          cursor: cs.cursor,
+        };
+      });
+      const border = '1px solid rgba(232, 225, 207, 0.22)';
+      expect(look).toEqual({
+        backgroundColor: 'rgb(20, 31, 51)',
+        color: 'rgb(232, 225, 207)',
+        border: [border, border, border, border],
+        padding: ['8px', '14px', '8px', '14px'],
+        fontFamily: '"JetBrains Mono", "Fira Code", ui-monospace, "Cascadia Code", monospace',
+        fontSize: '12px',
+        letterSpacing: '0.48px',
+        cursor: 'pointer',
+      });
+    });
+  });
+}
