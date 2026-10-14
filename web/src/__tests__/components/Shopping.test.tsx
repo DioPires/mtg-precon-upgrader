@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
   Shopping,
   aggregateCards,
@@ -455,5 +455,29 @@ describe('Shopping organism', () => {
     const click = vi.spyOn(input, 'click');
     fireEvent.click(button);
     expect(click).toHaveBeenCalledTimes(1);
+  });
+
+  it('says that an import adds to the cards loaded, when one file is imported twice (DEC-1094)', async () => {
+    const { container } = renderShopping([ALPHA]);
+    const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+    // Two lines, three cards. jsdom's File has no text(), so the test gives it one.
+    const body = 'Sol Ring\n2x Arcane Signet\n';
+    const file = new File([body], 'owned.txt', { type: 'text/plain' });
+    Object.defineProperty(file, 'text', { value: () => Promise.resolve(body) });
+    const hint = 'To replace the list, use Clear owned first.';
+
+    fireEvent.change(input, { target: { files: [file] } });
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      `Added 2 unique cards (3 total). 3 cards loaded. ${hint}`,
+    ));
+    expect(screen.getByText('3 cards loaded — saved locally')).toBeInTheDocument();
+
+    // The same file again: the counts add, and the new total is twice the first.
+    fireEvent.change(input, { target: { files: [file] } });
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      `Added 2 unique cards (3 total). 6 cards loaded. ${hint}`,
+    ));
+    expect(screen.getByText('6 cards loaded — saved locally')).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toEqual([['Sol Ring', 2], ['Arcane Signet', 4]]);
   });
 });
