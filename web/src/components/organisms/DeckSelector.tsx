@@ -33,10 +33,17 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
   // `.gv1-root` was one while it was `overflow: hidden` — the whole page slid
   // sideways for pills the track could not centre on its own. It still is one
   // where `overflow: clip` falls back to `hidden` (DEC-1019).
-  useEffect(() => {
+  //
+  // DEC-1063: WebKit can mount the selector before the page's stylesheets
+  // apply. Until they do the track's `overflow-x` computes to `visible`: it
+  // is not a scroll container, `scrollTo` cannot move it, and its rect is the
+  // unstyled one (tall enough to scroll a short page). Read nothing then and
+  // return false; the size observer below asks again.
+  const centreActive = useCallback(() => {
     const track = trackRef.current;
     const el = track?.querySelector<HTMLElement>('.gv1-active');
-    if (!track || !el || !track.scrollTo) return;
+    if (!track || !el || !track.scrollTo) return true;
+    if (getComputedStyle(track).overflowX === 'visible') return false;
     const t = track.getBoundingClientRect();
     const p = el.getBoundingClientRect();
     track.scrollTo({
@@ -51,7 +58,12 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
     const below = t.bottom - document.documentElement.clientHeight;
     const dy = t.top < 0 ? t.top : below > 0 ? Math.min(below, t.top) : 0;
     if (dy) window.scrollBy({ top: dy, behavior: 'smooth' });
-  }, [activeIdx]);
+    return true;
+  }, []);
+  const centrePending = useRef(false);
+  useEffect(() => {
+    centrePending.current = !centreActive();
+  }, [activeIdx, centreActive]);
 
   // DEC-1048: the right-edge fade means "more pills this way". Drop it while
   // the track is scrolled to its end, or when the track does not overflow.
@@ -60,11 +72,31 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
     const track = trackRef.current;
     if (track) setAtEnd(track.scrollLeft + track.clientWidth >= track.scrollWidth - 1);
   }, []);
+  // DEC-1063: follow the track's own size too. It changes with no scroll and
+  // no window resize when the styles reach a selector that mounted without
+  // them (the unstyled track does not overflow), and when the selector is
+  // narrowed around it. jsdom has no ResizeObserver.
+  //
+  // The same size change is when a centring that found the track unstyled
+  // can run. Only that one: once the pill has been centred on a styled track,
+  // a size change must not pull back a rail the user has scrolled.
   useEffect(() => {
     updateAtEnd();
     window.addEventListener('resize', updateAtEnd);
-    return () => window.removeEventListener('resize', updateAtEnd);
-  }, [updateAtEnd, ordered.length]);
+    const track = trackRef.current;
+    const sized =
+      track && typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => {
+            if (centrePending.current) centrePending.current = !centreActive();
+            updateAtEnd();
+          })
+        : null;
+    if (track) sized?.observe(track);
+    return () => {
+      window.removeEventListener('resize', updateAtEnd);
+      sized?.disconnect();
+    };
+  }, [updateAtEnd, centreActive, ordered.length]);
 
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
