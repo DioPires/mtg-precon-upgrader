@@ -1,0 +1,90 @@
+diff --git a/web/src/__tests__/data/e2eGuardHosts.test.ts b/web/src/__tests__/data/e2eGuardHosts.test.ts
+index 4a5132b..f25c9fd 100644
+--- a/web/src/__tests__/data/e2eGuardHosts.test.ts
++++ b/web/src/__tests__/data/e2eGuardHosts.test.ts
+@@ -6,7 +6,7 @@
+ // (DEC-1087 verdict, N4). The cases build no request.
+ 
+ import { describe, it, expect } from 'vitest';
+-import { isMoxfieldHost, isScryfallHost } from '../../../tests/support/guard';
++import { BLOCK_SCRYFALL_DNS, isMoxfieldHost, isScryfallHost } from '../../../tests/support/guard';
+ 
+ describe('e2e harness: host tests', () => {
+   it('isScryfallHost takes a Scryfall name that ends in the root dot, and no other name', () => {
+@@ -26,4 +26,19 @@ describe('e2e harness: host tests', () => {
+       expect(isMoxfieldHost(host), host).toBe(false);
+     }
+   });
++
++  it('BLOCK_SCRYFALL_DNS fails the lookup of each Scryfall name, with and without the root dot', () => {
++    const prefix = '--host-resolver-rules=';
++    expect(BLOCK_SCRYFALL_DNS.startsWith(prefix)).toBe(true);
++    expect(BLOCK_SCRYFALL_DNS.slice(prefix.length).split(', ').sort()).toEqual([
++      'MAP *.scryfall.com ~NOTFOUND',
++      'MAP *.scryfall.com. ~NOTFOUND',
++      'MAP *.scryfall.io ~NOTFOUND',
++      'MAP *.scryfall.io. ~NOTFOUND',
++      'MAP scryfall.com ~NOTFOUND',
++      'MAP scryfall.com. ~NOTFOUND',
++      'MAP scryfall.io ~NOTFOUND',
++      'MAP scryfall.io. ~NOTFOUND',
++    ]);
++  });
+ });
+diff --git a/web/tests/combo-lab.spec.ts b/web/tests/combo-lab.spec.ts
+index cc3ef9b..ba09072 100644
+--- a/web/tests/combo-lab.spec.ts
++++ b/web/tests/combo-lab.spec.ts
+@@ -151,4 +151,5 @@ test('deck-URL input degrades with an actionable message when blocked (IN-2)', a
+   await page.getByRole('button', { name: /^load$/i }).click();
+   // Either it resolves or (far more likely, CORS-blocked) it shows a paste-fallback message.
+   await expect(page.locator('.gv1-lab-url-msg')).toBeVisible({ timeout: 15000 });
++  await expect(page.locator('.gv1-lab-url-msg')).toContainText('moxfield returned HTTP 403');
+ });
+diff --git a/web/tests/dec181-qa.spec.ts b/web/tests/dec181-qa.spec.ts
+index 1f4005c..b21be9f 100644
+--- a/web/tests/dec181-qa.spec.ts
++++ b/web/tests/dec181-qa.spec.ts
+@@ -79,6 +79,12 @@ for (const width of WIDTHS) {
+       await page.goto('/shopping');
+       await page.locator('.gv1-shop-rail').waitFor();
+       if (await pageOverflows(page)) overflows.push('shopping');
++      // The read above needs the final priced count. The seed gives it at first
++      // paint, so the count does not move when the lookups end (DEC-1071).
++      const priced = page.locator('.gv1-shop-summary .gv1-shop-stat', { hasText: 'EST. COST' }).locator('span').nth(2);
++      const atRead = await priced.textContent();
++      await page.waitForLoadState('networkidle');
++      expect(await priced.textContent(), 'the Shopping read saw the final priced count').toBe(atRead);
+ 
+       await page.goto(`/scrying/${deck}`);
+       await page.locator('[data-gv1-screen="scrying"]').waitFor();
+diff --git a/web/tests/dec184-visual-qa.spec.ts b/web/tests/dec184-visual-qa.spec.ts
+index 0ac3244..9f156ef 100644
+--- a/web/tests/dec184-visual-qa.spec.ts
++++ b/web/tests/dec184-visual-qa.spec.ts
+@@ -6,7 +6,7 @@
+ //   web/qa-screenshots/dec-184/{surface}-{width}.png
+ //   web/qa-screenshots/dec-184/findings.json   (tap-target violations + overflow notes)
+ 
+-import { test, type Page } from './support/test';
++import { expect, test, type Page } from './support/test';
+ import * as fs from 'fs';
+ import * as path from 'path';
+ import { fileURLToPath } from 'url';
+@@ -180,6 +180,16 @@ for (const vp of VIEWPORTS) {
+       await page.locator('.gv1-shop-rail').waitFor();
+       await page.waitForLoadState('networkidle');
+       await checkOverflow(page, 'shopping', w);
++      // The shot and the audits need every price in: the summary counts each
++      // row that shows a price (DEC-1071).
++      const counts = await page.evaluate(() => {
++        const rows = document.querySelectorAll('.gv1-shop-row .gv1-shop-row-price .gv1-rune').length;
++        const stat = [...document.querySelectorAll('.gv1-shop-summary .gv1-shop-stat')].find((s) => s.textContent?.includes('EST. COST'));
++        const text = stat?.querySelectorAll('span')[2]?.textContent ?? '';
++        const m = /(\d+)\/\d+ priced/.exec(text);
++        return { rows, summary: m ? Number(m[1]) : /all priced/.test(text) ? rows : -1 };
++      });
++      expect(counts.summary, 'the Shopping summary counts every row that shows a price').toBe(counts.rows);
+       await auditTapTargets(page, 'shopping', w);
+       await shotFull(page, `shopping-${lbl}.png`);
+ 

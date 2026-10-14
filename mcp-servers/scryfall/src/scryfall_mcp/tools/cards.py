@@ -5,9 +5,8 @@ import asyncio
 from ..config import CARD_TTL, KEEP_FIELDS
 from ..models import CardResult, SearchResults
 from ..services.cache import Cache
-from ..services.client import ScryfallClient
+from ..services.client import client as _client
 
-_client = ScryfallClient()
 _cache = Cache()
 
 
