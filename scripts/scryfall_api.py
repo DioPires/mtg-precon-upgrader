@@ -7,7 +7,9 @@ and a caller that keeps overloading the API can be banned. So:
 
 - a request starts MIN_INTERVAL or more after the last answer arrived;
 - a 429 raises ScryfallRateLimited, and from then on this process sends no
-  further request: every later call raises again without sending.
+  further request: every later call raises again without sending;
+- a 3xx raises urllib.error.HTTPError: the helper follows no redirect, so
+  every request goes to API_HOST and waits MIN_INTERVAL (DEC-1076).
 
 A caller ends its run on ScryfallRateLimited. Nothing retries a 429.
 """
@@ -28,6 +30,21 @@ _last_answer_at: float | None = None  # time.monotonic() of the last answer or f
 _rate_limited = False
 
 
+def _build_opener() -> urllib.request.OpenerDirector:
+    """build_opener()'s handlers for https, without HTTPRedirectHandler.
+
+    ProxyHandler registers only when the environment names a proxy.
+    """
+    opener = urllib.request.OpenerDirector()
+    for handler in (urllib.request.ProxyHandler, urllib.request.HTTPSHandler,
+                    urllib.request.HTTPDefaultErrorHandler, urllib.request.HTTPErrorProcessor):
+        opener.add_handler(handler())
+    return opener
+
+
+_OPENER = _build_opener()
+
+
 class ScryfallRateLimited(Exception):
     """Scryfall answered HTTP 429. The run must end."""
 
@@ -43,12 +60,13 @@ def request(url: str, body: dict | None = None) -> bytes:
 
     A GET when ``body`` is None, else a JSON POST. A 429 raises
     ScryfallRateLimited. Every other failure (urllib.error.URLError and its
-    subclasses, a timeout) passes through to the caller.
+    subclasses, a 3xx among them, a timeout) passes through to the caller.
     """
     global _last_answer_at, _rate_limited
 
-    if urllib.parse.urlsplit(url).hostname != API_HOST:
-        raise ValueError(f"Not an {API_HOST} address: {url}")
+    parts = urllib.parse.urlsplit(url)
+    if parts.scheme != "https" or parts.hostname != API_HOST:
+        raise ValueError(f"Not an https://{API_HOST} address: {url}")
     if _rate_limited:
         raise ScryfallRateLimited()
 
@@ -65,7 +83,7 @@ def request(url: str, body: dict | None = None) -> bytes:
             time.sleep(wait)
 
     try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+        with _OPENER.open(req, timeout=TIMEOUT) as resp:
             return resp.read()
     except urllib.error.HTTPError as e:
         if e.code == 429:
