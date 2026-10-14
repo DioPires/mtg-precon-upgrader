@@ -709,5 +709,65 @@ describe('Apothecary', () => {
       expect(gridCount(container)).toBe(5);
       expect(statusLine(container).textContent).toBe('');
     });
+
+    describe('a filter carried from another deck, and a count of zero (DEC-1097)', () => {
+      const RAMP_GAP: RawMetricsGap = { role: 'ramp', actual: 6, target: 10, score: 60 };
+
+      function card(i: number, role?: string): RawCandidate {
+        return { name: `Card ${i}`, cmc: 2, mana_cost: '{2}', type_line: 'Artifact', score: 40 - i, deck_role: role, mitigates_gap: null };
+      }
+
+      function deck(remedies: RawCandidate[]): DeckApothecary {
+        return {
+          diagnosis: {
+            score: 72,
+            scoreNormalized: null,
+            methodology: 'deck-metrics-v1',
+            generatedAt: '2026-05-01T00:00:00Z',
+            mirrorUpdatedAt: '2026-05-01T00:00:00Z',
+            components: { manabase_health: { score: 80 } },
+          },
+          maladies: [RAMP_GAP],
+          remedies,
+          pins: [],
+        } as DeckApothecary;
+      }
+
+      // Kills S1 (clearFilter calls setFilterRole(null)) and M2 (filterBy(null) skips setFilteredDeck).
+      it('speaks the cleared result when Clear filter follows a filter carried from another deck', () => {
+        const { container, rerender } = render(<Apothecary apothecary={deck([card(1, 'ramp'), card(2)])} />);
+        fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: false }));
+        expect(statusLine(container).textContent).toBe('Filtered by Ramp: 1 remedy.');
+
+        rerender(<Apothecary apothecary={deck([card(1, 'ramp'), card(2, 'ramp'), card(3)])} />);
+        expect(screen.getByRole('button', { name: /ramp/i, pressed: true })).toBeInTheDocument();
+        expect(statusLine(container).textContent).toBe('');
+
+        fireEvent.click(screen.getByRole('button', { name: /clear filter/i }));
+        expect(statusLine(container).textContent).toBe('Filter cleared: 3 remedies.');
+      });
+
+      // Kills M2 (filterBy(null) skips setFilteredDeck): the second-press path of the active chip.
+      it('speaks the cleared result when a press on the active chip follows a filter carried from another deck', () => {
+        const { container, rerender } = render(<Apothecary apothecary={deck([card(1, 'ramp'), card(2)])} />);
+        fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: false }));
+
+        rerender(<Apothecary apothecary={deck([card(1, 'ramp'), card(2, 'ramp'), card(3)])} />);
+        expect(statusLine(container).textContent).toBe('');
+
+        fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: true }));
+        expect(statusLine(container).textContent).toBe('Filter cleared: 3 remedies.');
+      });
+
+      // Kills S3 (the plural reads `pool.length > 1`): a count of zero after Clear filter.
+      it('reads "0 remedies" after Clear filter on a deck with no remedies', () => {
+        const { container } = render(<Apothecary apothecary={deck([])} />);
+        fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: false }));
+        expect(statusLine(container).textContent).toBe('No remedies match Ramp.');
+
+        fireEvent.click(screen.getByRole('button', { name: /clear filter/i }));
+        expect(statusLine(container).textContent).toBe('Filter cleared: 0 remedies.');
+      });
+    });
   });
 });
