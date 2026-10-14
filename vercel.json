@@ -2,6 +2,11 @@
   "installCommand": "cd web && npm install",
   "buildCommand": "cd web && npm run build && mkdir -p dist/data && cp -R ../data/* dist/data/",
   "outputDirectory": "web/dist",
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  },
   "rewrites": [
     { "source": "/((?!data/|assets/|.*\\..*).*)", "destination": "/index.html" }
   ]
