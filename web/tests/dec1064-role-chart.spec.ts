@@ -290,11 +290,12 @@ for (const { width, blocked } of BLOCKED.flatMap((blocked) => WIDTHS.map((width)
   });
 }
 
-// DEC-1074 (DEC-1070 N7). Side by side at 1101px the chart was 416.5px wide,
-// and slivers' eight labels need 422.1px: "Recursion" ran 5.63px past the
-// chart. The Performance blocks now stack up to 1140px, and at 1141px the
-// chart is 436.5px wide.
-const STACKED_UP_TO = 1140;
+// DEC-1074 (DEC-1070 N7). Side by side at 1101px the chart was 416.5px wide.
+// slivers' eight labels need 422.1px on macOS and 442.9px on Linux, where
+// Chromium rounds each glyph's advance to 7px, so "Recursion" ran past the
+// chart. The Performance blocks now stack up to 1190px, and at 1191px the
+// chart is 461.5px wide.
+const STACKED_UP_TO = 1190;
 
 test.describe('DEC-1074 Performance blocks', () => {
   test(`stack up to ${STACKED_UP_TO}px, and side by side slivers' chart holds its columns`, async ({ page }) => {

@@ -1246,8 +1246,8 @@ em { font-style: italic; color: var(--gv1-gold); }
    "Protection" 14px wider than its column and run it into the next label.
    DEC-1074: so the columns differ in width, and each bar is 24px wide and
    centred in its column. Equal counts then draw equal areas. Above 560px no
-   column is narrower than a four-letter label ("Ramp", 28.17px), so a bar
-   stays inside its column. */
+   column is narrower than a four-letter label ("Ramp": 28.17px on macOS,
+   29.76px on Linux), so a bar stays inside its column. */
 .gv1-curve {
   display: grid;
   grid-auto-flow: column;
@@ -1281,8 +1281,10 @@ em { font-style: italic; color: var(--gv1-gold); }
    eight-column chart below ~1084px, so the grid stacks from here down.
    DEC-1074: side by side, the chart is 416.5px wide at 1101px and gains
    0.5px a pixel. The widest decks' labels (the-white-forge, slivers) need
-   422.1px, so the grid stacks up to 1140px; at 1141px the chart is 436.5px. */
-@media (max-width: 1140px) {
+   422.1px on macOS and 442.9px on Linux, where Chromium rounds each glyph of
+   the 11px mono to 7px. The grid stacks up to 1190px; at 1191px the chart is
+   461.5px, two characters more than the widest decks need on Linux. */
+@media (max-width: 1190px) {
   .gv1-perf-grid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
