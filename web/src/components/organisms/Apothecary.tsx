@@ -142,6 +142,9 @@ interface ApothecaryProps {
 
 export function Apothecary({ apothecary }: ApothecaryProps) {
   const [filterRole, setFilterRole] = useState<string | null>(null);
+  // DEC-1068 — the deck of the user's last filter action. The status line
+  // speaks only for that deck, so a load or another deck speaks no result.
+  const [filteredDeck, setFilteredDeck] = useState<DeckApothecary | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const activeChipRef = useRef<HTMLButtonElement | null>(null);
 
@@ -179,11 +182,16 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
   const activeRoles = new Set(roleGaps.map((g) => g.role));
   const effectiveFilter = filterRole && activeRoles.has(filterRole) ? filterRole : null;
 
+  const filterBy = (role: string | null) => {
+    setFilterRole(role);
+    setFilteredDeck(apothecary);
+  };
+
   // DEC-1028 — `Clear filter ×` unmounts on the next render. Move focus to the
   // chip it clears first, so a keyboard or screen-reader user keeps their place.
   const clearFilter = () => {
     activeChipRef.current?.focus();
-    setFilterRole(null);
+    filterBy(null);
   };
 
   // DEC-1015 — filter the whole pool, then cut to the top N. The cards that
@@ -200,6 +208,17 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
   });
 
   const maxRemedyScore = Math.max(50, ...pool.map((c) => c.score ?? 0));
+
+  // DEC-1068 — WCAG 4.1.3: the filter's result for a screen reader. The count
+  // is the grid's, after the cut; the board picks sit outside the filter.
+  const filterLabel = effectiveFilter && (ROLE_LABELS[effectiveFilter] || effectiveFilter);
+  const remedyCount = `${pool.length} ${pool.length === 1 ? 'remedy' : 'remedies'}`;
+  let filterStatus = '';
+  if (filteredDeck === apothecary) {
+    if (!filterLabel) filterStatus = `Filter cleared: ${remedyCount}.`;
+    else if (pool.length === 0) filterStatus = `No remedies match ${filterLabel}.`;
+    else filterStatus = `Filtered by ${filterLabel}: ${remedyCount}.`;
+  }
 
   return (
     <section className="gv1-section gv1-apothecary">
@@ -333,7 +352,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
                   ref={isActive ? activeChipRef : undefined}
                   type="button"
                   className={'gv1-apo-malady gv1-apo-tier-' + tier + (isActive ? ' is-active' : '')}
-                  onClick={() => setFilterRole(isActive ? null : g.role)}
+                  onClick={() => filterBy(isActive ? null : g.role)}
                   aria-pressed={isActive}
                 >
                   <span className="gv1-apo-malady-label">{ROLE_LABELS[g.role] || g.role}</span>
@@ -363,6 +382,9 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
             ? ` · filtered: ${ROLE_LABELS[effectiveFilter] || effectiveFilter}`
             : ' · gap-addressers floated'}
         </span>
+      </div>
+      <div className="gv1-sr-only" aria-live="polite" role="status">
+        {filterStatus}
       </div>
 
       {/* DEC-1000 — board picks (deck.json candidate_pins). Outside the malady

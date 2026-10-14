@@ -354,7 +354,8 @@ describe('Apothecary', () => {
       );
       fireEvent.click(screen.getByRole('button', { name: /tutors/i, pressed: false }));
 
-      expect(screen.getByText(/no remedies match/i)).toBeInTheDocument();
+      // DEC-1068 — the status line speaks the same words; this reads the visible empty state.
+      expect(screen.getByText(/no remedies match/i, { selector: '.gv1-empty span' })).toBeInTheDocument();
       const strip = screen.getByRole('region', { name: 'Board picks' });
       expect(within(strip).getByText('Flickering Hound')).toBeInTheDocument();
     });
@@ -622,5 +623,91 @@ describe('Apothecary', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /card draw/i, pressed: false }));
     expect(screen.getByText(`${label} · filtered: Card Draw`)).toBeInTheDocument();
+  });
+
+  describe('filter status line (DEC-1068)', () => {
+    const BOARD_WIPE_GAP: RawMetricsGap = { role: 'removal-board', actual: 2, target: 3, score: 67 };
+
+    function statusLine(container: HTMLElement): HTMLElement {
+      return within(container.querySelector('.gv1-apothecary') as HTMLElement).getByRole('status');
+    }
+
+    function gridCount(container: HTMLElement): number {
+      return container.querySelectorAll('.gv1-apo-remedies article.gv1-apo-remedy').length;
+    }
+
+    it('is mounted and empty at load', () => {
+      const { container } = render(<Apothecary apothecary={makeApothecary()} />);
+      const status = statusLine(container);
+      expect(status).toHaveAttribute('aria-live', 'polite');
+      expect(status).toHaveClass('gv1-sr-only');
+      expect(status.textContent).toBe('');
+    });
+
+    it('names the role and counts the grid after a chip press, not the board picks', () => {
+      const pool = [...makeApothecary().remedies, HOUND];
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ remedies: pool, pins: [pinFor(pool, HOUND)] })} />,
+      );
+      const status = statusLine(container);
+
+      fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: false }));
+      expect(gridCount(container)).toBe(2);
+      expect(container.querySelectorAll('.gv1-apo-pin')).toHaveLength(1);
+      expect(status.textContent).toBe('Filtered by Ramp: 2 remedies.');
+
+      fireEvent.click(screen.getByRole('button', { name: /card draw/i, pressed: false }));
+      expect(gridCount(container)).toBe(1);
+      expect(status.textContent).toBe('Filtered by Card Draw: 1 remedy.');
+    });
+
+    it('speaks the empty-state words when the filter matches nothing', () => {
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ maladies: [BOARD_WIPE_GAP], remedies: fillers(40) })} />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /board wipes/i, pressed: false }));
+
+      expect(statusLine(container).textContent).toBe('No remedies match Board Wipes.');
+      expect(statusLine(container).textContent).toBe(container.querySelector('.gv1-empty')?.textContent);
+    });
+
+    it('says the filter is cleared and counts the whole grid after Clear filter', () => {
+      const { container } = render(
+        <Apothecary apothecary={makeApothecary({ maladies: [BOARD_WIPE_GAP], remedies: fillers(40) })} />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /board wipes/i, pressed: false }));
+      fireEvent.click(screen.getByRole('button', { name: /clear filter/i }));
+
+      expect(gridCount(container)).toBe(30);
+      expect(statusLine(container).textContent).toBe('Filter cleared: 30 remedies.');
+    });
+
+    it('gives the same text for a second press on the active chip as for Clear filter', () => {
+      const { container } = render(<Apothecary apothecary={makeApothecary()} />);
+      const status = statusLine(container);
+
+      fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: false }));
+      fireEvent.click(screen.getByRole('button', { name: /clear filter/i }));
+      const byClear = status.textContent;
+
+      fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: false }));
+      expect(status.textContent).toBe('Filtered by Ramp: 2 remedies.');
+      fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: true }));
+
+      expect(byClear).toBe('Filter cleared: 3 remedies.');
+      expect(status.textContent).toBe(byClear);
+    });
+
+    it('goes empty, not stale, when another deck renders into the same Apothecary', () => {
+      const { container, rerender } = render(<Apothecary apothecary={makeApothecary()} />);
+      fireEvent.click(screen.getByRole('button', { name: /ramp/i, pressed: false }));
+      expect(statusLine(container).textContent).toBe('Filtered by Ramp: 2 remedies.');
+
+      // The next deck has a ramp gap too, so the filter stays set on its grid.
+      const nextDeck = makeApothecary({ remedies: fillers(5).map((c) => ({ ...c, deck_role: 'ramp' })) });
+      rerender(<Apothecary apothecary={nextDeck} />);
+      expect(gridCount(container)).toBe(5);
+      expect(statusLine(container).textContent).toBe('');
+    });
   });
 });
