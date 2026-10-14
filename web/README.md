@@ -36,7 +36,8 @@ Scryfall host from repository data, so a card gives the same answer on every run
   Do not write a priced count into a spec: read it from the file, because the prices change.
 - Every card image is one flat rectangle of the size that the page asked for.
 - A name outside the file gets one lookup through the limiter, 600 ms or more after the last.
-  The 20 lookups of /combos take about 12 s.
+  The first deck of /combos shows 20 cards; 16 of them are outside the file, and their 16
+  lookups take about 10 s.
 
 A spec picks another state with `test.use`:
 

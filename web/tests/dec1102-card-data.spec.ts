@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { formatPricesDate } from '../src/lib/pricesDate';
-import { expect, test, type BrowserContext, type Page } from './support/test';
+import { expect, test, type BrowserContext, type Locator, type Page } from './support/test';
 
 const DATA = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', 'data');
 const FILE = JSON.parse(readFileSync(resolve(DATA, 'card-metadata.json'), 'utf8')) as Record<
@@ -40,6 +40,21 @@ async function scrollToEnd(page: Page) {
     await page.evaluate((top) => window.scrollTo(0, top), y);
     await page.waitForTimeout(100);
   }
+}
+
+/**
+ * Opens the hover frame of one name. Any scroll closes the frame, so the
+ * pointer comes only after the scroll has ended. hover() would scroll again, so
+ * the pointer moves to the box itself. It leaves first: a pointer that does not
+ * move fires no mouseover.
+ */
+async function hoverName(page: Page, name: Locator) {
+  await page.mouse.move(0, 0);
+  await name.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(250);
+  const box = (await name.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 5 });
+  await expect(page.locator('.gv1-cardhover')).toBeVisible();
 }
 
 test('a scroll to the end of a deck guide sends nothing to api.scryfall.com or /data/images/cards/', async ({
@@ -130,13 +145,14 @@ test('a hover over ten commanders on /codex sends nothing, and the frame comes f
   await page.goto('/codex');
   const names = page.locator('[data-card-name]');
   await names.first().waitFor();
+  // The deck selector scrolls its active pill into view after load: let it end first.
+  await page.waitForTimeout(1_500);
   const hovered: string[] = [];
   for (let i = 0; hovered.length < 10; i += 1) {
     const name = (await names.nth(i).getAttribute('data-card-name'))!;
     if (hovered.includes(name)) continue;
     hovered.push(name);
-    await names.nth(i).scrollIntoViewIfNeeded();
-    await names.nth(i).hover();
+    await hoverName(page, names.nth(i));
     await expect(page.locator('.gv1-cardhover img')).toHaveAttribute('src', /^https:\/\/cards\.scryfall\.io\/large\/front\//);
   }
   expect(hovered.every((name) => USD.has(name.toLowerCase()))).toBe(true);
@@ -163,15 +179,7 @@ test('a hover over names outside the file looks them up through the limiter, wit
   // scroll closes the frame: let it end first.
   await page.waitForTimeout(1_500);
   for (const i of outside) {
-    // The pointer leaves first: a pointer that does not move fires no mouseover.
-    await page.mouse.move(0, 0);
-    await names.nth(i).scrollIntoViewIfNeeded();
-    // A scroll closes the frame; let it end before the pointer comes. hover()
-    // would scroll again, so the pointer moves to the box itself.
-    await page.waitForTimeout(250);
-    const box = (await names.nth(i).boundingBox())!;
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 5 });
-    await expect(page.locator('.gv1-cardhover')).toBeVisible();
+    await hoverName(page, names.nth(i));
     await page.waitForTimeout(300);
   }
   await page.mouse.move(0, 0);
