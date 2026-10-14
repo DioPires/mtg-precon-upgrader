@@ -50,11 +50,9 @@ class Stopped(Exception):
     """Scryfall answered HTTP 429: no process on this Mac sends until ``until``."""
 
     def __init__(self, answered_at: float, until: float, now: float) -> None:
-        self.answered_at = answered_at
         self.until = until
         # Whole seconds, rounded up, so a call at the time named never meets the stop.
-        # round() first: (t + 30.0) - t can come out a hair above 30.0.
-        left = math.ceil(round(until - now, 3))
+        left = math.ceil(until - now)
         super().__init__(
             f"Scryfall answered HTTP 429 at {_clock_text(answered_at)}. "
             f"No request until {_clock_text(math.ceil(until))} (in {left} s). "
@@ -94,7 +92,8 @@ def send(url: str, transmit, slow: bool | None = None):
         now = time.time()
         until = state.get("blocked_until", -math.inf)
         if now < until:
-            at = state.get("blocked_at", now)
+            # A stop without its start (a hand-written state) counts as STOP long.
+            at = state.get("blocked_at", until - STOP)
             if now < at:
                 # The clock stepped back: the stop ends one stop length from now.
                 at, until = now, now + (until - at)
@@ -146,12 +145,12 @@ def _answered(directory: str, state: dict, slow: bool, error: BaseException | No
 
 def _retry_after(error: urllib.error.HTTPError, answered: float) -> float:
     """Seconds that the answer's Retry-After asks for (delay-seconds or an HTTP-date), else 0."""
-    value = (error.headers or {}).get("Retry-After")
+    value = error.headers.get("Retry-After")
     if value is None:
         return 0.0
     with contextlib.suppress(ValueError):
         return float(int(value))
-    with contextlib.suppress(TypeError, ValueError):
+    with contextlib.suppress(ValueError):
         return email.utils.parsedate_to_datetime(value).timestamp() - answered
     return 0.0
 
@@ -174,6 +173,5 @@ def _write_state(directory: str, state: dict) -> None:
             json.dump(state, handle)
         os.replace(temporary, os.path.join(directory, "state.json"))
     except BaseException:
-        with contextlib.suppress(OSError):
-            os.unlink(temporary)
+        os.unlink(temporary)
         raise

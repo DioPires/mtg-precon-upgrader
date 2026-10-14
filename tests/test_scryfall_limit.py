@@ -74,6 +74,10 @@ def state() -> dict:
     return json.loads((Path(limit.limit_dir()) / "state.json").read_text())
 
 
+class Crash(BaseException):
+    """A process that dies in the middle of a request or a write."""
+
+
 class CopiesTests(unittest.TestCase):
     def test_three_copies_are_the_same_file(self):
         """Rule 9: one module, one copy in scripts/ and one in each server."""
@@ -201,6 +205,18 @@ class WaitTests(unittest.TestCase):
                     send(fake, NAMED)
                 self.assertAlmostEqual(fake.gaps()[0], 0.6, places=9)
 
+    def test_interrupted_request_counts_as_an_answer(self):
+        fake = answering([NAMED])
+
+        def transmit():
+            fake.now += 0.25
+            raise Crash()
+
+        with fake.clock():
+            with self.assertRaises(Crash):
+                limit.send(NAMED, transmit)
+            self.assertEqual(state(), {"last_answer": fake.now, "last_slow_answer": fake.now})
+
     def test_wait_reads_the_times_that_another_process_wrote(self):
         fake = answering([NAMED])
         fake.state = {"last_answer": fake.now - 0.2, "last_slow_answer": fake.now - 0.2}
@@ -300,8 +316,8 @@ class StopTests(unittest.TestCase):
         self.assertEqual(fake.sent, [])
         self.assertEqual(fake.sleeps, [])
 
-    def test_stop_without_its_start_still_stops(self):
-        """A state.json that holds blocked_until alone: the stop holds, no clock check moves it."""
+    def test_stop_without_its_start_counts_as_30s_long(self):
+        """A hand-written state.json that holds blocked_until alone."""
         fake = answering([NAMED])
         fake.now = AT_10_41_07 + 7
         fake.state = {"blocked_until": AT_10_41_07 + 30}
@@ -309,13 +325,13 @@ class StopTests(unittest.TestCase):
             with self.assertRaises(limit.Stopped) as raised:
                 send(fake, NAMED)
             self.assertEqual(state(), {"blocked_until": AT_10_41_07 + 30})
-        self.assertIn("No request until 10:41:37Z (in 23 s)", str(raised.exception))
+        self.assertEqual(str(raised.exception), EXAMPLE)
         self.assertEqual(fake.sent, [])
 
     def test_retry_after_sets_a_longer_stop(self):
         answered = AT_10_41_07
         cases = {
-            "60": 60, "10": 30, " 45 ": 45, "-5": 30, "soon": 30, "1.5": 30,
+            "60": 60, "10": 30, " 45 ": 45, "-5": 30, "soon": 30, "1.5": 30, "1e2": 30,
             email.utils.formatdate(answered + 90, usegmt=True): 90,
             email.utils.formatdate(answered - 90, usegmt=True): 30,
         }
@@ -351,6 +367,85 @@ class StopTests(unittest.TestCase):
         self.assertEqual(str(raised.exception), (
             "Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:38Z (in 30 s). "
             "Call again after that time."))
+
+
+class StopTextTests(unittest.TestCase):
+    def test_times_are_utc_in_any_local_zone(self):
+        old = os.environ.get("TZ")
+        os.environ["TZ"] = "Asia/Tokyo"
+        time.tzset()
+        try:
+            text = str(limit.Stopped(AT_10_41_07, AT_10_41_07 + 30, AT_10_41_07 + 7))
+        finally:
+            if old is None:
+                del os.environ["TZ"]
+            else:
+                os.environ["TZ"] = old
+            time.tzset()
+        self.assertEqual(text, EXAMPLE)
+
+
+class OffsetClock(FakeScryfall):
+    """time.time() reads ``offset`` seconds ahead of time.monotonic(), as on a real machine."""
+
+    def __init__(self, cards=()):
+        super().__init__(cards)
+        self.offset = 1_000_000.0
+
+    def time(self) -> float:
+        return self.now + self.offset
+
+
+class WallClockTests(unittest.TestCase):
+    """Rule 1: the state holds wall-clock times; the sleep of one wait runs on the monotonic clock."""
+
+    def offset_fake(self) -> OffsetClock:
+        fake = OffsetClock()
+        fake.pages = {NAMED: {}}
+        return fake
+
+    def test_state_holds_wall_clock_times(self):
+        fake = self.offset_fake()
+        with fake.clock():
+            send(fake, NAMED)
+            self.assertEqual(state(), {"last_answer": fake.time(), "last_slow_answer": fake.time()})
+
+    def test_wait_reads_the_wall_clock(self):
+        fake = self.offset_fake()
+        fake.state = {"last_answer": fake.time() - 0.2, "last_slow_answer": fake.time() - 0.2}
+        with fake.clock():
+            send(fake, NAMED)
+        self.assertEqual(len(fake.sleeps), 1)
+        self.assertAlmostEqual(fake.sleeps[0], 0.4, places=6)
+
+    def test_stop_reads_the_wall_clock(self):
+        fake = self.offset_fake()
+        fake.state = {"blocked_at": fake.time() - 5, "blocked_until": fake.time() + 25}
+        with fake.clock():
+            with self.assertRaises(limit.Stopped) as raised:
+                send(fake, NAMED)
+            fake.now += 25
+            send(fake, NAMED)
+        self.assertIn("(in 25 s)", str(raised.exception))
+        self.assertEqual(len(fake.sent), 1)
+
+    def test_wait_ignores_a_wall_clock_step_during_the_sleep(self):
+        fake = self.offset_fake()
+        steps = []
+
+        def sleep(seconds):
+            if not steps:
+                steps.append(seconds)
+                fake.offset -= 3600
+            fake.sleeps.append(seconds)
+            fake.now += seconds
+
+        fake.sleep = sleep
+        with fake.clock():
+            send(fake, NAMED)
+            send(fake, NAMED)
+        self.assertEqual(len(fake.sleeps), 1)
+        self.assertAlmostEqual(fake.sleeps[0], 0.6, places=6)
 
 
 class ClockStepTests(unittest.TestCase):
@@ -398,10 +493,6 @@ class ClockStepTests(unittest.TestCase):
                 self.assertAlmostEqual(fake.sleeps[0], 0.6, places=6)
 
 
-class Crash(BaseException):
-    """A process that dies in the middle of a write."""
-
-
 class StateFileTests(unittest.TestCase):
     def test_missing_or_unreadable_state_counts_as_empty(self):
         for text in (None, "", "{not json", "[1, 2]", '"last_answer"', "7",
@@ -426,9 +517,12 @@ class StateFileTests(unittest.TestCase):
         fake.now = AT_10_41_07 - fake.LATENCY
         fake.failures[0] = http_429()
 
+        during = []
+
         def half_then_crash(obj, handle, **kwargs):
             handle.write(json.dumps(obj)[:10])
             handle.flush()
+            during.append(sorted(p.name for p in Path(limit.limit_dir()).iterdir()))
             raise Crash()
 
         with fake.clock():
@@ -439,6 +533,11 @@ class StateFileTests(unittest.TestCase):
             with mock.patch("json.dump", half_then_crash), self.assertRaises(Crash):
                 send(fake, NAMED)
             self.assertEqual((Path(limit.limit_dir()) / "state.json").read_text(), before)
+            # The half-written file was a temporary file in <dir>, and it is gone.
+            [names] = during
+            temporary = [name for name in names if name not in ("state.json", "state.lock")]
+            self.assertEqual(len(names), 3)
+            self.assertRegex(temporary[0], r"^state\..+\.tmp$")
             self.assertEqual(sorted(p.name for p in Path(limit.limit_dir()).iterdir()),
                              ["state.json", "state.lock"])
             with self.assertRaises(limit.Stopped):

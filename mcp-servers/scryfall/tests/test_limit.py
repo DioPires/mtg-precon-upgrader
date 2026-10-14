@@ -24,7 +24,8 @@ from scryfall_mcp.models import CardResult, RulingsResult, SearchResults
 from scryfall_mcp.server import mcp
 from scryfall_mcp.services import client as client_module
 from scryfall_mcp.services.cache import Cache
-from scryfall_mcp.services.client import ScryfallRateLimitError
+from scryfall_mcp.services.client import (
+    CardNotFoundError, ScryfallMaintenanceError, ScryfallRateLimitError, ScryfallTimeoutError)
 from scryfall_mcp.tools import cards, collection, rulings
 
 API = "https://api.scryfall.com"
@@ -385,3 +386,34 @@ def test_two_processes_write_and_read_one_database(tmp_path):
         assert all(db.get(f"{p}{n}") == {"n": n} for p in "ab" for n in range(200))
     finally:
         db.close()
+
+
+# ------------------------------------------------------------------ the client's other errors
+# The pull request moved these branches out of the old retry loop, so each case pins one.
+
+NAMED_URL = f"{API}/cards/named?exact=Sol%20Ring"
+
+
+def http_error(code: int, body: bytes) -> urllib.error.HTTPError:
+    return urllib.error.HTTPError(NAMED_URL, code, "error", email.message.Message(), io.BytesIO(body))
+
+
+@pytest.mark.parametrize("failure, error, text", [
+    (http_error(404, b'{"details": "No card named that."}'), CardNotFoundError, "No card named that."),
+    (http_error(404, b"{}"), CardNotFoundError, f"Not found: {NAMED_URL}"),
+    (http_error(404, b"<html>not json</html>"), CardNotFoundError, f"Not found: {NAMED_URL}"),
+    (http_error(503, b'{"details": "Down for a while."}'), ScryfallMaintenanceError, "Down for a while."),
+    (http_error(503, b"{}"), ScryfallMaintenanceError, "Scryfall maintenance"),
+    (http_error(500, b"{}"), urllib.error.HTTPError, "HTTP Error 500: error"),
+    (urllib.error.URLError("timed out"), ScryfallTimeoutError, f"Timeout: {NAMED_URL}"),
+    (urllib.error.URLError("Read Timeout"), ScryfallTimeoutError, f"Timeout: {NAMED_URL}"),
+    (urllib.error.URLError("connection refused"), urllib.error.URLError, "<urlopen error connection refused>"),
+    (TimeoutError("The read operation timed out"), ScryfallTimeoutError, f"Timeout: {NAMED_URL}"),
+])
+def test_client_error(failure, error, text):
+    with patch("urllib.request.urlopen", side_effect=failure) as urlopen:
+        with pytest.raises(error) as raised:
+            client_module.client.card_by_name("Sol Ring", exact=True)
+    assert type(raised.value) is error
+    assert str(raised.value) == text
+    assert urlopen.call_count == 1

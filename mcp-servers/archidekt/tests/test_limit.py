@@ -65,6 +65,7 @@ class Fake:
         self.cards = {c["name"].split(" // ")[0]: c for c in cards}
         self.pages = {}
         self.statuses = {}  # request index -> HTTP status
+        self.bodies = {}  # request index -> the raw body of a 200 answer
         self.sent = []  # (started, answered, url, method, body, headers, timeout)
         self.sleeps = []
 
@@ -85,6 +86,8 @@ class Fake:
         if index in self.statuses:
             raise urllib.error.HTTPError(req.full_url, self.statuses[index], "error",
                                          email.message.Message(), io.BytesIO(b"{}"))
+        if index in self.bodies:
+            return Response(self.bodies[index])
         if req.full_url in self.pages:
             return Response(json.dumps(self.pages[req.full_url]).encode())
         parts = urllib.parse.urlsplit(req.full_url)
@@ -164,6 +167,27 @@ async def test_slash_name_goes_into_the_batch_as_its_front_face(client):
         COMMANDER, "Sol Ring", "Bonecrusher Giant", "Grave Researcher")]}
     assert headers == {"accept": "application/json", "user-agent": "TheGrimoire-MCP/1.0",
                        "content-type": "application/json"}
+
+
+@pytest.mark.asyncio
+async def test_front_faces_fill_one_batch_of_75(client):
+    """76 names, 75 front faces: one batch, not a second empty one."""
+    names = [f"Card {n:02d}" for n in range(73)] + ["Grave Researcher", "Grave Researcher // Reanimate"]
+    fake = Fake(card(COMMANDER), card("Grave Researcher // Reanimate"), *(card(n) for n in names[:73]))
+    with fake.installed():
+        result = await publish(deck(*names))
+    assert result.errors == []
+    assert [len(s[4]["identifiers"]) for s in fake.sent] == [75]
+
+
+@pytest.mark.asyncio
+async def test_empty_answer_body_reads_as_no_card(client):
+    fake = Fake(card(COMMANDER))
+    fake.bodies[0] = b""
+    with fake.installed():
+        result = await publish(deck())
+    assert result.errors == [f"Could not resolve: {COMMANDER}"]
+    assert fake.urls() == [COLLECTION]
 
 
 @pytest.mark.asyncio
