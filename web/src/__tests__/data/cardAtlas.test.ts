@@ -6,6 +6,7 @@ import {
   scryfallSuggest,
 } from '../../data/cardAtlas';
 import type { DeckFull } from '../../data/types';
+import { createScryfallLimiter } from '../../data/scryfallLimiter';
 
 const OWNED_KEY = 'grimoire-owned-cards';
 
@@ -226,25 +227,34 @@ describe('localSuggest', () => {
 });
 
 describe('scryfallSuggest', () => {
-  it('returns the data array on a successful response', async () => {
-    const fakeFetch = vi.fn(async () => ({
-      ok: true,
-      json: async () => ({ data: ['Counterspell', 'Counterflux'] }),
-    })) as unknown as typeof fetch;
-    const out = await scryfallSuggest('count', fakeFetch);
+  const limiterWith = (fetchImpl: typeof fetch) => createScryfallLimiter({ fetchImpl, storage: null, locks: null });
+
+  it('returns the data array on a successful response, from bucket 2 of the limiter', async () => {
+    const fakeFetch = vi.fn(async () =>
+      new Response(JSON.stringify({ data: ['Counterspell', 'Counterflux'] }), { status: 200 }),
+    );
+    const out = await scryfallSuggest('count', undefined, limiterWith(fakeFetch as unknown as typeof fetch));
     expect(out).toEqual(['Counterspell', 'Counterflux']);
+    expect(fakeFetch).toHaveBeenCalledWith('https://api.scryfall.com/cards/autocomplete?q=count');
   });
 
   it('returns [] for queries shorter than 2 chars', async () => {
     const fakeFetch = vi.fn() as unknown as typeof fetch;
-    expect(await scryfallSuggest('a', fakeFetch)).toEqual([]);
+    expect(await scryfallSuggest('a', undefined, limiterWith(fakeFetch))).toEqual([]);
+    expect(fakeFetch).not.toHaveBeenCalled();
   });
 
-  it('returns [] when the network fails', async () => {
-    const fakeFetch = vi.fn(async () => {
-      throw new Error('network down');
-    }) as unknown as typeof fetch;
-    expect(await scryfallSuggest('counter', fakeFetch)).toEqual([]);
+  it('returns [] on an error status', async () => {
+    const fakeFetch = vi.fn(async () => new Response('{}', { status: 500 })) as unknown as typeof fetch;
+    expect(await scryfallSuggest('counter', undefined, limiterWith(fakeFetch))).toEqual([]);
+  });
+
+  it('returns [] when the caller aborts', async () => {
+    const fakeFetch = vi.fn() as unknown as typeof fetch;
+    const ctrl = new AbortController();
+    ctrl.abort();
+    expect(await scryfallSuggest('counter', ctrl.signal, limiterWith(fakeFetch))).toEqual([]);
+    expect(fakeFetch).not.toHaveBeenCalled();
   });
 });
 

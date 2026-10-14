@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { localCardImageUrl } from '../../data/cardImages';
+import { useState } from 'react';
+import { cardCache } from '../../data/cardCache';
+import { useCard } from '../../hooks/useCard';
 
 type Status = 'loading' | 'loaded' | 'error';
-type ImageSource = 'local' | 'remote';
 
 interface GV1CommanderArtProps {
   name: string;
@@ -10,33 +10,32 @@ interface GV1CommanderArtProps {
 }
 
 export function GV1CommanderArt({ name, slug }: GV1CommanderArtProps) {
-  const [status, setStatus] = useState<Status>('loading');
-  const [source, setSource] = useState<ImageSource>('local');
-  const localSrc = localCardImageUrl(name, 'art_crop');
-  const remoteSrc = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}&format=image&version=art_crop`;
-  const src = source === 'local' ? localSrc : remoteSrc;
-  useEffect(() => {
-    setStatus('loading');
-    setSource('local');
-  }, [name, slug]);
+  // `art_crop` from the card entry (DEC-1102). A commander that the file lacks
+  // is looked up before the other cards of the page.
+  const entry = useCard(name, { first: true });
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const src = entry?.status === 'loaded' ? entry.art_crop || null : null;
+  const status: Status =
+    src && src === loadedSrc
+      ? 'loaded'
+      : entry?.status === 'error' || (entry?.status === 'loaded' && !src) || (src && src === failedSrc)
+        ? 'error'
+        : 'loading';
   const glowId = `cmd-glow-${slug}`;
   return (
     <div className="gv1-cmd-art">
       <div className="gv1-cmd-art-inner">
-        {status !== 'error' && (
+        {src && status !== 'error' && (
           <img
-            key={`${slug}-${source}`}
+            key={`${slug}-${src}`}
             src={src}
             alt={name}
             className={`gv1-cmd-art-img${status === 'loaded' ? ' gv1-loaded' : ''}`}
-            onLoad={() => setStatus('loaded')}
+            onLoad={() => setLoadedSrc(src)}
             onError={() => {
-              if (source === 'local') {
-                setSource('remote');
-                setStatus('loading');
-              } else {
-                setStatus('error');
-              }
+              setFailedSrc(src);
+              cardCache.imageFailed(name);
             }}
             draggable={false}
           />
@@ -82,7 +81,7 @@ export function GV1CommanderArt({ name, slug }: GV1CommanderArtProps) {
       </div>
       <div className="gv1-cmd-art-caption">
         <span className="gv1-mono-xs gv1-dim">
-          ◇ {source === 'local' ? 'local atlas' : 'scryfall.com'} · art_crop
+          ◇ scryfall.com · art_crop
         </span>
       </div>
     </div>

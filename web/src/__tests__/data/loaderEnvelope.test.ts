@@ -124,3 +124,38 @@ describe('deck loader persisted envelope (DEC-942)', () => {
     expect(bundle?.candidates).toEqual({ candidates: ['BIG'] });
   });
 });
+
+// DEC-1102: every deck bundle waits for card-metadata.json, and the loader seeds
+// the card cache with it before the bundle resolves. A page takes its card
+// names from a bundle, so it cannot ask the cache for a name of the file first.
+describe('deck loader seeds the card cache (DEC-1102)', () => {
+  it('seeds before the first bundle resolves, from the network and from storage', async () => {
+    for (const round of ['network', 'storage']) {
+      let resolved = false;
+      const seeds: Array<{ metadata: unknown; beforeBundle: boolean }> = [];
+      const seed = (metadata: unknown) => seeds.push({ metadata, beforeBundle: !resolved });
+      const deckLoader = createDeckLoader({
+        fetchImpl: fetchImpl as unknown as typeof fetch,
+        storage,
+        cardCache: { seed },
+      });
+      const bundle = await deckLoader.loadDeck('alpha').then((b) => {
+        resolved = true;
+        return b;
+      });
+      expect(seeds, round).toEqual([{ metadata: { 'Sol Ring': { mana_cost: '{1}' } }, beforeBundle: true }]);
+      expect(bundle?.cardMetadata).toBe(seeds[0].metadata);
+      await deckLoader.loadAll();
+      expect(seeds, `${round}: one seed per loader`).toHaveLength(1);
+    }
+    // The second round read the persisted copy, not the network.
+    const metadataFetches = fetchImpl.mock.calls.filter(([url]) => String(url).endsWith('/card-metadata.json'));
+    expect(metadataFetches).toHaveLength(1);
+  });
+
+  it('writes its envelopes under v155', async () => {
+    await loader().loadDeck('alpha');
+    const keys = [...Array(storage.length).keys()].map((i) => storage.key(i)!);
+    expect(keys.filter((k) => k.startsWith('gv1-deck-data-')).every((k) => k.startsWith('gv1-deck-data-v155:'))).toBe(true);
+  });
+});
