@@ -10,6 +10,7 @@ import email.message
 import importlib
 import io
 import json
+import os
 import re
 import runpy
 import shutil
@@ -85,8 +86,11 @@ def make_card(name: str, layout: str = "normal", usd="1.50", eur="1.20", **extra
 
 
 def reset_helper_state() -> None:
-    """Give the helper the state of a new process: no last answer, no 429."""
-    scryfall_api._last_answer_at = None
+    """Give the helper the state of a new process: no 429.
+
+    Since DEC-1092 the helper holds no time: the shared limiter keeps its times in
+    state.json under SCRYFALL_LIMIT_DIR, and FakeScryfall.clock() gives each block its own.
+    """
     scryfall_api._rate_limited = False
 
 
@@ -126,8 +130,14 @@ class FakeScryfall:
         # Request index -> an HTTP status, an exception or a raw body.
         self.failures: dict[int, object] = {}
         self.pages: dict[str, object] = {}
+        # The shared limiter's state.json at the start, as another process left it.
+        self.state: dict | None = None
 
     def monotonic(self) -> float:
+        return self.now
+
+    def time(self) -> float:
+        """The wall clock that the shared limiter reads: the same fake time."""
         return self.now
 
     def sleep(self, seconds: float) -> None:
@@ -173,11 +183,28 @@ class FakeScryfall:
                 return FakeResponse(json.dumps(card).encode())
         raise urllib.error.HTTPError(url, 404, "status 404", {}, io.BytesIO())
 
+    def clock(self) -> contextlib.ExitStack:
+        """Patch the clocks and the sleep, and give the shared limiter an empty state.
+
+        Each call makes a new temporary SCRYFALL_LIMIT_DIR, so no case reads or writes
+        /tmp/scryfall-limit (DEC-1092 rule 8).
+        """
+        stack = contextlib.ExitStack()
+        limit_dir = stack.enter_context(tempfile.TemporaryDirectory())
+        if self.state is not None:
+            (Path(limit_dir) / "state.json").write_text(json.dumps(self.state))
+        stack.enter_context(mock.patch.dict("os.environ", {"SCRYFALL_LIMIT_DIR": limit_dir}))
+        stack.enter_context(mock.patch("time.monotonic", self.monotonic))
+        stack.enter_context(mock.patch("time.time", self.time))
+        stack.enter_context(mock.patch("time.sleep", self.sleep))
+        return stack
+
     def installed(self) -> contextlib.ExitStack:
         """Patch ``urlopen``, the helper's opener and the clock.
 
         The helper's state is reset when the block starts and again when it ends, so no
-        later code inherits a 429 or a time of the fake clock (DEC-1098).
+        later code inherits a 429. The times of the fake clock stay in the block's own
+        SCRYFALL_LIMIT_DIR, which clock() removes when the block ends (DEC-1098).
         """
         reset_helper_state()
         stack = contextlib.ExitStack()
@@ -185,8 +212,7 @@ class FakeScryfall:
         stack.enter_context(mock.patch("urllib.request.urlopen", self.urlopen))
         stack.enter_context(
             mock.patch.object(scryfall_api, "_OPENER", types.SimpleNamespace(open=self.urlopen)))
-        stack.enter_context(mock.patch("time.monotonic", self.monotonic))
-        stack.enter_context(mock.patch("time.sleep", self.sleep))
+        stack.enter_context(self.clock())
         return stack
 
     def api_requests(self) -> list[Sent]:
@@ -1068,8 +1094,7 @@ class RedirectCases(unittest.TestCase):
                         answer.msg = "Redirect"
                         return answer
 
-                    with mock.patch("time.monotonic", self.fake.monotonic), \
-                            mock.patch("time.sleep", self.fake.sleep), \
+                    with self.fake.clock(), \
                             mock.patch.object(urllib.request.HTTPSHandler, "https_open", https_open):
                         with self.assertRaises(urllib.error.HTTPError) as raised:
                             scryfall_api.request(COLLECTION_URL, body)
@@ -1207,41 +1232,76 @@ class ImagesDec1076Cases(DeckDirCase):
 
 
 # DEC-1098 item 3 (N3 of the DEC-1093 review): the helper's state is reset when a fake ends.
+# Since DEC-1092 the helper holds _rate_limited only. The shared limiter keeps its times in
+# state.json under SCRYFALL_LIMIT_DIR, and FakeScryfall.clock() gives each block its own folder.
 
 
 class HelperStateResetCases(unittest.TestCase):
-    def assert_new_process_state(self):
-        self.assertIsNone(scryfall_api._last_answer_at)
-        self.assertFalse(scryfall_api._rate_limited)
+    def setUp(self):
+        # A failed case must not leave a 429 to the cases after it.
+        self.addCleanup(reset_helper_state)
+
+    def later_call(self) -> FakeScryfall:
+        """Send one request as a later case can: a fake transport and clock, no reset."""
+        fake = FakeScryfall()
+        with fake.clock(), \
+                mock.patch.object(scryfall_api, "_OPENER", types.SimpleNamespace(open=fake.urlopen)):
+            scryfall_api.request(COLLECTION_URL, {"identifiers": []})
+        return fake
 
     def test_installed_resets_the_helper_state_when_it_closes(self):
-        """A 429 and a time of the fake clock stay in the helper after the block."""
+        """A 429 and the times of the fake clock stay inside the block."""
+        limit_dir_before = os.environ.get("SCRYFALL_LIMIT_DIR")
         for ends_by_error in (False, True):
             with self.subTest(ends_by_error=ends_by_error):
                 fake = FakeScryfall()
                 fake.failures[1] = 429
                 with contextlib.suppress(KeyError), fake.installed():
+                    block_dir = Path(os.environ["SCRYFALL_LIMIT_DIR"])
                     scryfall_api.request(COLLECTION_URL, {"identifiers": []})
                     with self.assertRaises(scryfall_api.ScryfallRateLimited):
                         scryfall_api.request(COLLECTION_URL, {"identifiers": []})
                     self.assertTrue(scryfall_api._rate_limited)
-                    self.assertGreater(scryfall_api._last_answer_at, 50_000)
+                    state = json.loads((block_dir / "state.json").read_text())
+                    self.assertGreater(state["last_answer"], 50_000)
+                    self.assertGreater(state["blocked_until"], 50_000)
                     if ends_by_error:
                         raise KeyError("the block ends by an exception")
-                self.assert_new_process_state()
+                self.assertFalse(scryfall_api._rate_limited)
+                self.assertFalse(block_dir.exists())
+                self.assertEqual(os.environ.get("SCRYFALL_LIMIT_DIR"), limit_dir_before)
+                # A later call without a reset of its own sends: it inherits no 429.
+                self.assertEqual(len(self.later_call().sent), 1)
 
     def test_installed_resets_the_helper_state_when_it_opens(self):
-        self.addCleanup(reset_helper_state)
-        scryfall_api._last_answer_at = 1.0
         scryfall_api._rate_limited = True
         with FakeScryfall().installed():
-            self.assert_new_process_state()
+            self.assertFalse(scryfall_api._rate_limited)
+            # The block's limiter starts empty: no time of an earlier block.
+            self.assertEqual(os.listdir(os.environ["SCRYFALL_LIMIT_DIR"]), [])
 
-    def test_redirect_case_resets_the_helper_state_when_it_starts_and_ends(self):
+    def test_redirect_case_resets_the_helper_state_when_it_starts(self):
         """test_3xx_raises_and_no_second_request_goes_out sends outside installed()."""
-        self.addCleanup(reset_helper_state)
         scryfall_api._rate_limited = True
         result = unittest.TestResult()
         RedirectCases("test_3xx_raises_and_no_second_request_goes_out").run(result)
         self.assertTrue(result.wasSuccessful(), result.failures + result.errors)
-        self.assert_new_process_state()
+        self.assertFalse(scryfall_api._rate_limited)
+
+    def test_redirect_case_resets_the_helper_state_when_it_ends(self):
+        """A RedirectCases case that ends on a 429 leaves no 429 to the next case."""
+
+        class EndsOnA429(RedirectCases):
+            def runTest(self):
+                self.fake.failures[0] = 429
+                with self.fake.clock(), mock.patch.object(
+                        scryfall_api, "_OPENER", types.SimpleNamespace(open=self.fake.urlopen)):
+                    with self.assertRaises(scryfall_api.ScryfallRateLimited):
+                        scryfall_api.request(COLLECTION_URL, {"identifiers": []})
+                self.assertTrue(scryfall_api._rate_limited)
+
+        result = unittest.TestResult()
+        EndsOnA429().run(result)
+        self.assertTrue(result.wasSuccessful(), result.failures + result.errors)
+        self.assertEqual(result.testsRun, 1)
+        self.assertFalse(scryfall_api._rate_limited)

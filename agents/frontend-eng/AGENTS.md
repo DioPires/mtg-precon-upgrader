@@ -24,7 +24,7 @@ Read these before any work:
 
 - **Stack**: Vite + React 18 + TypeScript + react-router. Static output.
 - **Styling**: CSS modules + global tokens. No Tailwind, no CSS-in-JS.
-- **Data fetching**: `useCard()` hook for Scryfall; deck JSON via `fetch` with localStorage TTL cache (24h).
+- **Data fetching**: `useCard()` hook for Scryfall; deck JSON via `fetch`; deck, simulation and metrics sit in a localStorage cache with a 1h TTL (DEC-226, DEC-942).
 - **Component lib**: none — components live in `web/src/components/` directly.
 - **Test stack**: Vitest (unit, esp. data normalization) + Playwright (e2e).
 - **Deploy**: static `web/dist/` on Vercel; no backend.
