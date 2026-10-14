@@ -440,8 +440,9 @@ class HelperImportTests(unittest.TestCase):
         for script in ("scripts/compute_tokens.py", "scripts/check_game_changers.py",
                        "scripts/prerelease/dump_set.py", "priv_data/format_owned_list.py"):
             with self.subTest(script=script):
+                # -B: -I ignores PYTHONDONTWRITEBYTECODE, and the case writes no .pyc file.
                 result = subprocess.run(
-                    [sys.executable, "-I", "-c", load, str(ROOT / script)],
+                    [sys.executable, "-I", "-B", "-c", load, str(ROOT / script)],
                     capture_output=True, text=True, timeout=60)
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertEqual(
