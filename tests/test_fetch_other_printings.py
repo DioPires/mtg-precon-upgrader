@@ -56,13 +56,15 @@ class PrintsScryfall(FakeScryfall):
     """FakeScryfall that also answers a search of a card's printings.
 
     ``prints`` maps an oracle id to the card's printings. As Scryfall did in the
-    first live run of DEC-1079, the answer keeps the printings with "paper" in
+    two live runs of DEC-1079, the answer keeps the printings with "paper" in
     ``games`` when the query holds ``game:paper``, and orders them by the
-    non-foil price of ``order``, else the foil one, else the etched one, nulls
-    last: the most expensive first, or the cheapest first with ``dir=asc``. It
-    holds the first PAGE_SIZE, with ``has_more``. A search that matches nothing
-    answers 404. The answer goes out as a raw body through ``failures``, so a
-    case can still set a failure for a search.
+    non-foil price of ``order``, else the foil one, else the etched one. A
+    printing without a key sorts as the lowest: with ``dir=asc`` the printings
+    without a key come first and then the cheapest (run 2); without ``dir``
+    the most expensive come first and the printings without a key last
+    (run 1). It holds the first PAGE_SIZE, with ``has_more``. A search that
+    matches nothing answers 404. The answer goes out as a raw body through
+    ``failures``, so a case can still set a failure for a search.
     """
 
     PAGE_SIZE = 175
@@ -98,7 +100,8 @@ class PrintsScryfall(FakeScryfall):
 
         priced = sorted((card for card in cards if key(card) is not None),
                         key=key, reverse="dir" not in query)
-        cards = priced + [card for card in cards if key(card) is None]
+        unpriced = [card for card in cards if key(card) is None]
+        cards = unpriced + priced if "dir" in query else priced + unpriced
         page = cards[:self.PAGE_SIZE]
         if not page:
             return None
@@ -426,17 +429,19 @@ class FirstPageProofCases(DeckDirCase):
         self.assertEqual(price, 0.03)
         self.assertIn("    Plains: usd 0.03 from another printing\n", out)
 
-    def test_page_ending_with_cards_without_price_is_proof(self):
+    def test_page_of_cards_without_price_before_a_price_proves_nothing(self):
+        """With ``dir=asc`` the two printings without a key fill the page; 0.10 follows it."""
         price, out = self.run_pass(
             "Mountain",
             printing("Mountain", "n1", usd="0.10"),
             printing("Mountain", "x"),
             printing("Mountain", "y"))
-        self.assertEqual(price, 0.1)
-        self.assertIn("    Mountain: usd 0.1 from another printing\n", out)
+        self.assertIsNone(price)
+        self.assertIn(
+            "    Mountain: the first page does not prove the lowest usd price: no price taken\n", out)
 
-    def test_page_whose_last_card_has_no_price_proves_no_price(self):
-        """Nulls come last, so no printing after the page has a price."""
+    def test_page_whose_last_card_has_no_price_proves_nothing(self):
+        """The page holds the two printings without a key; a foil key follows it."""
         price, out = self.run_pass(
             "Swamp",
             printing("Swamp", "f1", usd_foil="0.10"),
@@ -444,7 +449,8 @@ class FirstPageProofCases(DeckDirCase):
             printing("Swamp", "y"))
         self.assertIsNone(price)
         self.assertIn(
-            "    Swamp: no released paper printing outside memorabilia has a non-foil usd price\n", out)
+            "    Swamp: the first page does not prove the lowest usd price: no price taken\n", out)
+        self.assertNotIn("no released paper printing", out)
 
     def test_page_out_of_order_proves_nothing(self):
         """The order of the first live run: the most expensive first."""
@@ -454,11 +460,49 @@ class FirstPageProofCases(DeckDirCase):
         self.assertIn(
             "    Forest: the first page does not prove the lowest usd price: no price taken\n", out)
 
-    def test_page_with_a_card_without_price_before_a_price_proves_nothing(self):
+    def test_page_with_a_card_without_price_before_a_price_is_proof(self):
+        """The order of run 2: the printings without a key first."""
         price, out = self.run_pass("Wastes", raw_page=[
             printing("Wastes", "x"), printing("Wastes", "n1", usd="0.10")])
+        self.assertEqual(price, 0.1)
+        self.assertIn("    Wastes: usd 0.1 from another printing\n", out)
+
+    def test_page_in_the_shape_of_run_2_gives_the_lowest_price(self):
+        """Step 5a of round 3: two printings without a key, a foil-only printing at 0.01,
+        then printings that count at 0.09, 0.09 and 0.15. One more follows the page."""
+        price, out = self.run_pass(
+            "Forest",
+            printing("Forest", "c15", usd="0.15"),
+            printing("Forest", "m20", usd="0.09"),
+            printing("Forest", "x"),
+            printing("Forest", "f1", usd_foil="0.01"),
+            printing("Forest", "y"),
+            printing("Forest", "dtk", usd="0.09"),
+            printing("Forest", "z", usd="0.16"),
+            page_size=6)
+        self.assertEqual(price, 0.09)
+        self.assertIn("    Forest: usd 0.09 from another printing\n", out)
+
+    def test_page_whose_every_printing_has_no_price_proves_nothing(self):
+        """Step 5b of round 3: no printing has a key, and the page has more after it.
+        The page proves nothing, and no line says that the card has no price."""
+        price, out = self.run_pass(
+            "Plains",
+            printing("Plains", "x"),
+            printing("Plains", "y"),
+            printing("Plains", "z"))
         self.assertIsNone(price)
-        self.assertIn("does not prove the lowest usd price", out)
+        self.assertIn(
+            "    Plains: the first page does not prove the lowest usd price: no price taken\n", out)
+        self.assertNotIn("no released paper printing", out)
+
+    def test_page_with_a_card_without_price_after_a_price_proves_nothing(self):
+        """Step 5c of round 3: the direction of run 1, a price and then no key."""
+        price, out = self.run_pass("Island", raw_page=[
+            printing("Island", "n1", usd="0.10"), printing("Island", "x")])
+        self.assertIsNone(price)
+        self.assertIn(
+            "    Island: the first page does not prove the lowest usd price: no price taken\n", out)
 
     def test_page_whose_only_prices_are_memorabilia_proves_nothing(self):
         """Step 3b of round 2: the last card has a price, so a printing that counts may follow."""
@@ -483,15 +527,17 @@ class FirstPageProofCases(DeckDirCase):
         self.assertEqual(price, 0.3)
         self.assertIn("    Plains: usd 0.3 from another printing\n", out)
 
-    def test_page_with_memorabilia_prices_whose_last_card_has_no_price_proves_no_price(self):
-        price, out = self.run_pass(
-            "Swamp",
+    def test_page_with_memorabilia_prices_whose_last_card_has_no_price_proves_nothing(self):
+        """The page of round 2's second rule: no card that counts has a price, and the last
+        card has no key. With ``dir=asc`` a printing without a key cannot follow a price."""
+        price, out = self.run_pass("Swamp", raw_page=[
             printing("Swamp", "olep", usd="0.10", set_type="memorabilia"),
             printing("Swamp", "x"),
-            printing("Swamp", "y"))
+            printing("Swamp", "y")])
         self.assertIsNone(price)
         self.assertIn(
-            "    Swamp: no released paper printing outside memorabilia has a non-foil usd price\n", out)
+            "    Swamp: the first page does not prove the lowest usd price: no price taken\n", out)
+        self.assertNotIn("no released paper printing", out)
 
     def test_order_check_reads_the_memorabilia_cards_too(self):
         """Without the memorabilia card the page would be in order and give 0.10."""

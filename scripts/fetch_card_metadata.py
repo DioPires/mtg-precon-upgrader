@@ -134,9 +134,11 @@ def _sort_key(card: dict, currency: str) -> float | None:
     """The price by which Scryfall orders a search with ``order=<currency>``.
 
     The non-foil price, else the foil one, else the etched one; None when the
-    card has none. Each of the 57 pages of the first DEC-1079 live run (sent
-    without ``dir``, so the most expensive first) is in this order, nulls
-    last. For a card with a non-foil price, the key is that price.
+    card has none. For a card with a non-foil price, the key is that price.
+    Scryfall sorts a printing without a key as the lowest: last in its default
+    order (the most expensive first), first with ``dir=asc``. The 114 search
+    pages of the two DEC-1079 live runs fit this order with 0 inversions: the
+    57 of run 1 (sent without ``dir``) and the 57 of run 2 (``dir=asc``).
     """
     for key in (currency, f"{currency}_foil", f"{currency}_etched"):
         price = _price(card, key)
@@ -146,21 +148,24 @@ def _sort_key(card: dict, currency: str) -> float | None:
 
 
 def _first_page_proves(cards: list[dict], currency: str, price: float | None) -> bool:
-    """Whether the first page of a search holds the lowest non-foil price of all.
+    """Whether the first page of a search sent with ``dir=asc`` proves that
+    ``price`` is the lowest non-foil price of all its printings that count.
 
     ``price`` is the lowest non-foil price on the page among the printings
     that count (_counts). The order check reads every card of the page, as
     Scryfall sorts the printings that do not count with the others. The page
-    must be in _sort_key order, cheapest first and nulls last. Then each
-    printing after the page has a key of at least the page's last key, or no
-    price at all, and a printing's non-foil price is its key. So the page
-    proves ``price`` when it has one, and it proves "no price" when its last
-    card has no key. A page with no ``price`` whose last card has a key
-    proves nothing: a printing that counts may follow it with a price.
+    must be in Scryfall's order with ``dir=asc`` (_sort_key): the printings
+    without a key first, then the keys from the cheapest up. Then each
+    printing after the page has a key at or above the page's last key, and a
+    printing's non-foil price is its key, so no printing after the page has a
+    non-foil price below ``price``. A page with no ``price`` proves nothing,
+    neither a price nor "no price": printings without a key, memorabilia,
+    foil-only keys or later releases can fill it, and a printing that counts
+    can follow it with a price. A page out of order proves nothing either.
     """
     keys = [_sort_key(card, currency) for card in cards]
-    in_order = all(b is None or (a is not None and a <= b) for a, b in zip(keys, keys[1:]))
-    return in_order and (price is not None or keys[-1] is None)
+    in_order = all(a is None or (b is not None and a <= b) for a, b in zip(keys, keys[1:]))
+    return price is not None and in_order
 
 
 def _counts(card: dict, today: str) -> bool:
@@ -170,10 +175,11 @@ def _counts(card: dict, today: str) -> bool:
 
 
 def _search_prints(name: str, oracle_id: str, currency: str) -> dict:
-    """The first page of the card's paper printings, cheapest in ``currency`` first.
+    """The first page of the card's paper printings, in ``currency`` order from the cheapest up.
 
     One request, and never a second page: a basic land has thousands of
-    printings. Without ``dir=asc`` Scryfall puts the most expensive first.
+    printings. With ``dir=asc`` Scryfall puts the printings without a price
+    first, then the cheapest (_sort_key); without it, the most expensive first.
     A 404 is Scryfall's answer for "no card matches", so it gives an empty
     page. Any other failure raises FetchFailed.
     """
@@ -204,9 +210,10 @@ def _prices_from_other_printings(lacking: dict, today: str) -> dict[str, list[di
     The first search is ordered by the first currency that lacks a price. When
     its page holds every printing (``has_more`` false), it gives the other
     currency too; else a second search, ordered by that currency, does. A page
-    with ``has_more`` holds the cheapest printings. When such a page cannot
-    prove that its lowest price is the lowest of all (_first_page_proves), the
-    run prints a line and takes no price.
+    with ``has_more`` holds the printings without a price and then the
+    cheapest ones. When such a page cannot prove that its lowest price is the
+    lowest of all (_first_page_proves), the run prints a line and takes no
+    price; such a page never proves that a card has no price.
 
     Returns, for each currency, the entries that gained a price in it.
     """
