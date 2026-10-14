@@ -1108,15 +1108,20 @@ class ImagesDec1076Cases(DeckDirCase):
         return code, out.getvalue()
 
     def test_slash_name_goes_out_as_its_front_face(self):
-        """Item 4: the batch holds each front face once, and each // card gets its images."""
+        """Item 4: the batch holds each front face once, in order, and each // card gets its images.
+
+        Ten more cards make an unsorted batch differ from the sorted one in all but 1 of 14! orders.
+        """
+        fillers = [f"Card {n:02d}" for n in range(10)]
         self.write_deck(
             "one", "Sol Ring", "Bonecrusher Giant // Stomp", "Valakut Awakening // Valakut Stoneforge",
-            "Grave Researcher", "Grave Researcher // Reanimate")
+            "Grave Researcher", "Grave Researcher // Reanimate", *fillers)
         fake = FakeScryfall([
             make_card("Sol Ring"),
             make_card("Bonecrusher Giant // Stomp", layout="adventure"),
             make_card("Valakut Awakening // Valakut Stoneforge", layout="modal_dfc"),
             make_card("Grave Researcher // Reanimate", layout="adventure"),
+            *(make_card(name) for name in fillers),
         ])
 
         code, out = self.run_images(fake)
@@ -1124,14 +1129,15 @@ class ImagesDec1076Cases(DeckDirCase):
         self.assertEqual(code, 0)
         self.assertEqual(
             fake.asked_names(),
-            ["Bonecrusher Giant", "Grave Researcher", "Sol Ring", "Valakut Awakening"])
+            ["Bonecrusher Giant", *fillers, "Grave Researcher", "Sol Ring", "Valakut Awakening"])
         self.assertNotIn("No URIs", out)
         expected = [
             f"{slug}-{variant}.jpg"
             for slug in ("bonecrusher-giant-stomp", "grave-researcher",
                          "grave-researcher-reanimate", "sol-ring",
                          "valakut-awakening-valakut-stoneforge",
-                         "valakut-awakening-valakut-stoneforge-back")
+                         "valakut-awakening-valakut-stoneforge-back",
+                         *(f"card-{n:02d}" for n in range(10)))
             for variant in ("normal", "art_crop")
         ]
         self.assertEqual(sorted(p.name for p in self.images.iterdir()), sorted(expected))
