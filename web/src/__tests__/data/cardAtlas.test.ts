@@ -82,6 +82,7 @@ describe('buildCardAtlasIndex', () => {
         rawDecklist: [
           { name: 'Sol Ring', type: 'Artifact', primary_role: 'ramp' },
           { name: 'Cyclonic Rift', type: 'Instant', primary_role: 'removal-board' },
+          { name: 'Bloom Tender', type: 'Creature', primary_role: 'mana-fixing' },
         ],
       }),
       makeDeck({
@@ -99,6 +100,7 @@ describe('buildCardAtlasIndex', () => {
     expect(idx.byName.get('sol ring')).toHaveLength(2);
     expect(idx.byName.get('sol ring')?.[0].role).toBe('Ramp');
     expect(idx.byName.get('cyclonic rift')?.[0].role).toBe('Board Wipes');
+    expect(idx.byName.get('bloom tender')?.[0].role).toBe('Fixing');
 
     const alesha = idx.byName.get('alesha, who smiles at death');
     expect(alesha?.[0].role).toBe('Commander');

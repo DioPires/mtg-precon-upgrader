@@ -1,0 +1,40 @@
+--- a/web/tests/dec1064-role-chart.spec.ts
++++ b/web/tests/dec1064-role-chart.spec.ts
+@@ -286,6 +286,37 @@
+           'bars off the centre of their column',
+         )
+         .toEqual([]);
++
++      // A9 (DEC-1095). Each bar is painted: the peak in the rune colour with
++      // its glow, every other bar in the dim rune colour without one.
++      const paint = await page.evaluate(() => {
++        const token = (name: string) => {
++          const probe = document.createElement('div');
++          probe.style.backgroundColor = `var(${name})`;
++          document.body.append(probe);
++          const colour = getComputedStyle(probe).backgroundColor;
++          probe.remove();
++          return colour;
++        };
++        return {
++          rune: token('--gv1-rune'),
++          dim: token('--gv1-rune-dim'),
++          bars: [...document.querySelectorAll('.gv1-curve-bar')].map((bar) => {
++            const style = getComputedStyle(bar);
++            return { colour: style.backgroundColor, glow: style.boxShadow !== 'none' };
++          }),
++        };
++      });
++      expect.soft(paint.dim, 'the dim rune colour').not.toBe(paint.rune);
++      expect
++        .soft(
++          cols
++            .map((c, i) => ({ c, ...paint.bars[i], isPeak: c.count === peak.count }))
++            .filter(({ colour, glow, isPeak }) => colour !== (isPeak ? paint.rune : paint.dim) || glow !== isPeak)
++            .map(({ c, colour, glow }) => `${name(c)}: ${colour}${glow ? ' with a glow' : ''}`),
++          'bars in the wrong colour',
++        )
++        .toEqual([]);
+     });
+   });
+ }

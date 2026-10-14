@@ -33,6 +33,7 @@ import type {
   SplitTitle,
 } from './types';
 import { frontFace } from './cardName';
+import { ROLE_LABEL } from './roleLabels';
 
 const COLOR_TO_GLYPH: Record<string, string> = {
   W: '⚪',
@@ -49,24 +50,6 @@ const ROMAN_TO_NUMERIC: Record<string, string> = {
   III: '3',
   IV: '4',
   V: '5',
-};
-
-const ROLE_LABEL: Record<string, string> = {
-  land: 'Lands',
-  ramp: 'Ramp',
-  'card-draw': 'Card Draw',
-  counterspell: 'Counters',
-  'removal-spot': 'Spot Removal',
-  'removal-board': 'Board Wipes',
-  recursion: 'Recursion',
-  protection: 'Protection',
-  payoff: 'Payoffs',
-  threat: 'Threats',
-  wincon: 'Win-Cons',
-  engine: 'Engine',
-  tutor: 'Tutors',
-  utility: 'Utility',
-  other: 'Other',
 };
 
 const SRC_LABEL: Record<string, string> = {

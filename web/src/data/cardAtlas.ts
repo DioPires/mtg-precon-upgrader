@@ -10,25 +10,8 @@
 
 import type { DeckFull } from './types';
 import { frontFace } from './cardName';
+import { ROLE_LABEL } from './roleLabels';
 import { autocompleteUrl, scryfallLimiter, type ScryfallLimiter } from './scryfallLimiter';
-
-const ROLE_LABEL: Record<string, string> = {
-  land: 'Lands',
-  ramp: 'Ramp',
-  'card-draw': 'Card Draw',
-  counterspell: 'Counters',
-  'removal-spot': 'Spot Removal',
-  'removal-board': 'Board Wipes',
-  recursion: 'Recursion',
-  protection: 'Protection',
-  payoff: 'Payoffs',
-  threat: 'Threats',
-  wincon: 'Win-Cons',
-  engine: 'Engine',
-  tutor: 'Tutors',
-  utility: 'Utility',
-  other: 'Other',
-};
 
 export interface CardUsage {
   deckSlug: string;
