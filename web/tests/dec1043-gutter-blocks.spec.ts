@@ -10,7 +10,9 @@
 // viewport, where the root clips them: at 769px /codex read 773 / 769 and
 // every deck guide 860 / 769. At 1024px one word of the Commander's deck name
 // pushed the dossier past it (titan-convergence 1042 / 1024). The second case
-// fails the web-font requests and reads the root.
+// fails the web-font requests and reads the root. It also reads each value of
+// the Codex stats strip against its cell: with even tracks "3.16" (97px in
+// Georgia) ran under the next cell, which hid its last digit.
 
 import { expect, test, type Page } from './support/test';
 
@@ -112,6 +114,34 @@ async function readRoot(page: Page): Promise<RootReading> {
   });
 }
 
+// Each child of each Codex stat cell against the cell's content edge. A
+// child's box is as wide as the cell, so its text is read too: a value wider
+// than the cell runs past the box, under the next cell.
+async function statsPastCell(page: Page): Promise<string[]> {
+  return page.evaluate(() => {
+    const out: string[] = [];
+    for (const cell of document.querySelectorAll('.gv1-codex-stats > .gv1-codex-stat')) {
+      const cs = getComputedStyle(cell);
+      const edge = cell.getBoundingClientRect().right - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth);
+      const label = (cell.firstElementChild?.textContent ?? '').trim();
+      for (const child of cell.children) {
+        let reach = child.getBoundingClientRect().right;
+        const range = document.createRange();
+        range.selectNodeContents(child);
+        for (const r of range.getClientRects()) if (r.width > 0) reach = Math.max(reach, r.right);
+        if (reach > edge + 0.5) {
+          const cls = (child.getAttribute('class') ?? '').trim().split(/\s+/).join('.');
+          const text = (child.textContent ?? '').trim().replace(/\s+/g, ' ');
+          out.push(
+            `${label} cell, ${child.tagName.toLowerCase()}.${cls} "${text}": reaches ${reach.toFixed(1)} against the content edge at ${edge.toFixed(1)}`,
+          );
+        }
+      }
+    }
+    return out;
+  });
+}
+
 test.describe('DEC-1043 @ 769px, web fonts', () => {
   test.use({ cards: 'seeded', viewport: { width: 769, height: 900 } });
 
@@ -130,7 +160,9 @@ test.describe('DEC-1043 @ 769px, web fonts', () => {
 test.describe('DEC-1043, web fonts blocked', () => {
   test.use({ cards: 'seeded', fonts: 'blocked' });
 
-  test('/codex and a deck guide at 769px, and titan-convergence at 1024px, fit the viewport', async ({ page }) => {
+  test('/codex and a deck guide at 769px, and titan-convergence at 1024px, fit the viewport; every Codex stat shows whole', async ({
+    page,
+  }) => {
     const pages = [
       { path: '/codex', width: 769, ready: '.gv1-codex-grid .gv1-codex-card' },
       { path: '/deck/eternal-agony', width: 769, ready: '.gv1-perf-grid' },
@@ -150,5 +182,14 @@ test.describe('DEC-1043, web fonts blocked', () => {
     }
 
     expect(offenders, 'Pages wider than the viewport in the fallback faces').toEqual([]);
+
+    const cut: string[] = [];
+    for (const width of [769, 824]) {
+      await page.setViewportSize({ width, height: 900 });
+      await openSettled(page, '/codex', '.gv1-codex-grid .gv1-codex-card');
+      for (const line of await statsPastCell(page)) cut.push(`/codex @ ${width}px: ${line}`);
+    }
+
+    expect(cut, 'Codex stats past their cell in the fallback faces').toEqual([]);
   });
 });

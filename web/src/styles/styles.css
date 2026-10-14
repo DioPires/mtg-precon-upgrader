@@ -3125,13 +3125,17 @@ em { font-style: italic; color: var(--gv1-gold); }
   /* Codex cards: two even tracks. Three would leave a 126px card body at
      769px, narrower than one word of a deck name ("Witherbloom", 145px). */
   .gv1-codex-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* Codex stats: five even tracks with the phone's 16px side padding. The
-     bracket counts wrap. */
-  .gv1-codex-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .gv1-codex-stat { padding-inline: 16px; }
+  /* Codex stats: the phone's 16px side padding, and the bracket counts wrap.
+     Five even cells on one row; a cell never shrinks below its value ("3.16"
+     is 73px in the web font, 97px in Georgia), and a cell that does not fit
+     moves to a second row. */
+  .gv1-codex-stats { display: flex; flex-wrap: wrap; }
+  .gv1-codex-stat { flex: 1 1 0; padding-inline: 16px; }
   .gv1-codex-stat-brackets { flex-wrap: wrap; row-gap: 8px; }
   /* Performance: the note keeps its narrowest width, and the title wraps
-     only where it cannot sit beside it. */
+     only where it cannot sit beside it. Known limit: in the fallback faces
+     the note passes the viewport from 825 to 859px (option A, ruling
+     8288eed2 on DEC-1043). */
   .gv1-perf .gv1-section-head { grid-template-columns: 48px 1fr min-content; }
   .gv1-perf .gv1-section-title { white-space: normal; text-wrap: balance; }
 }
