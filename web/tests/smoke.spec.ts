@@ -12,6 +12,8 @@ test('home renders the token-themed shell with topbar', async ({ page }) => {
   );
   // --gv1-bg → --gv1-ink-blue-900 → #0b1220 → rgb(11, 18, 32)
   expect(bg).toBe('rgb(11, 18, 32)');
+  // DEC-1071 upload proof: this assertion fails on purpose. Do not merge.
+  expect(bg, 'DEC-1071 upload proof').toBe('rgb(0, 0, 0)');
 });
 
 test('unknown deck slugs land on the not-found stub', async ({ page }) => {
