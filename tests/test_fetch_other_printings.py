@@ -630,7 +630,9 @@ class AtomicWriteCases(DeckDirCase):
         replace = os.replace
 
         def recording_replace(src, dst):
-            moves.append((Path(src), Path(dst)))
+            # The limiter's state.json moves too (DEC-1092); keep the moves into this folder.
+            if Path(dst).parent == self.root:
+                moves.append((Path(src), Path(dst)))
             replace(src, dst)
 
         with mock.patch("os.replace", recording_replace):
