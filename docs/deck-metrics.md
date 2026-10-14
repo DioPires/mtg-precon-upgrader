@@ -221,7 +221,7 @@ margin = clamp(default + penalties − bonuses, 2, 15)
 
 The cap was lowered from `±25` to `±15` deliberately — a band that spans three full letter grades is presentationally useless (an "82 ± 22" deck could be anywhere between F and A and the reader learns nothing).
 
-Implementation detail: `candidates.json` carries an internal `generated_at` timestamp (written by `scripts/generate_candidate_pool.py`); the margin reads that and falls back to file mtime only if the field is missing.
+Implementation detail: `candidates.json` carries an internal `generated_at` timestamp (written by `scripts/generate_candidate_pool.py`); the margin reads that and falls back to file mtime only if the field is missing. The stored `confidence_inputs.penalties.candidates_age_days` is the age at the last write that changed another field, because `write_metrics` leaves it out of its comparison as it leaves out `generated_at` (DEC-1078); `candidates_stale` (over 90 days) and `bonus_floor_eligible` (over 30 days) stay in the comparison, so a flip of either still causes a write.
 
 ### Win-turn triple: `win_turn` (DEC-311)
 
