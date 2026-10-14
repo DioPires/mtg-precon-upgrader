@@ -1,0 +1,58 @@
+"""DEC-1115: the export's mana sims are seeded.
+
+run_parallel splits the games into MANA_SIM_CHUNKS fixed chunks and seeds each
+chunk inside the worker, as the goldfish does (DEC-363). Two runs on one tree
+and one input then give equal exports, and the CPU count (which sets only the
+worker count) does not change them. Both tests run the whole export of one deck
+through a real multiprocessing pool at a small game count, so a worker that
+takes two chunks in a row is part of the test.
+"""
+import copy
+import importlib
+import json
+import unittest
+from unittest.mock import patch
+
+
+exporter = importlib.import_module("scripts.export_simulation_results")
+
+# Hidden Legion is the deck of the DEC-1085 seed control.
+DECK_ID = "hidden-legion"
+# 100 mana-sim games and 10 goldfish games in each of the 16 chunks.
+GAMES = 1_600
+GOLDFISH_GAMES = 160
+
+
+def export_without_date(metadata: dict) -> dict:
+    """Export DECK_ID at the small game counts; drop generatedAt."""
+    _name, export_fn = exporter.DECK_MAP[DECK_ID]
+    with patch.object(exporter, "NUM_GAMES", GAMES), \
+            patch.object(exporter, "GOLDFISH_GAMES", GOLDFISH_GAMES):
+        result = copy.deepcopy(export_fn(metadata))
+    result["metadata"].pop("generatedAt")
+    return result
+
+
+class ManaSimSeedingTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        with open(exporter.METADATA_FILE) as f:
+            cls.metadata = json.load(f)
+
+    def test_two_runs_give_equal_exports(self):
+        first = export_without_date(self.metadata)
+        second = export_without_date(self.metadata)
+        self.assertEqual(first["metadata"]["numGames"], GAMES)
+        self.assertEqual(first, second)
+
+    def test_cpu_count_does_not_change_the_export(self):
+        # 2 workers take 8 chunks each; 18 CPUs give 16 workers, one chunk each.
+        with patch("os.cpu_count", return_value=2):
+            two = export_without_date(self.metadata)
+        with patch("os.cpu_count", return_value=18):
+            eighteen = export_without_date(self.metadata)
+        self.assertEqual(two, eighteen)
+
+
+if __name__ == "__main__":
+    unittest.main()
