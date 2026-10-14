@@ -6,16 +6,18 @@ import urllib.request
 import urllib.parse
 from http.client import HTTPResponse
 
+from fastmcp.exceptions import ToolError
+
 from ..config import (
     API_BASE,
     SCRYFALL_API,
     USER_AGENT,
     RATE_LIMIT_MS,
-    SCRYFALL_RATE_LIMIT_MS,
     ARCHIDEKT_AUTH_TOKEN,
     ARCHIDEKT_USERNAME,
     DECK_FORMAT_COMMANDER,
 )
+from . import scryfall_limit
 
 
 class ArchidektError(Exception):
@@ -30,26 +32,27 @@ class ScryfallError(Exception):
     """Error from Scryfall API."""
 
 
+class ScryfallStopped(ToolError):
+    """Scryfall answered 429, to this call or to another caller on this Mac (DEC-1092).
+
+    Not a ScryfallError, so no caller reports it as "Not found on Scryfall". A ToolError, so
+    the agent reads the message as it stands: the time of the 429 and the end of the stop.
+    """
+
+
 class ArchidektClient:
     """HTTP client for Archidekt API operations."""
 
     def __init__(self):
         self._last_archidekt_request: float = 0
-        self._last_scryfall_request: float = 0
         self._scryfall_cache: dict[str, dict] = {}
 
-    def _rate_limit(self, api: str = "archidekt") -> None:
-        now = time.monotonic()
-        if api == "scryfall":
-            elapsed_ms = (now - self._last_scryfall_request) * 1000
-            if elapsed_ms < SCRYFALL_RATE_LIMIT_MS:
-                time.sleep((SCRYFALL_RATE_LIMIT_MS - elapsed_ms) / 1000)
-            self._last_scryfall_request = time.monotonic()
-        else:
-            elapsed_ms = (now - self._last_archidekt_request) * 1000
-            if elapsed_ms < RATE_LIMIT_MS:
-                time.sleep((RATE_LIMIT_MS - elapsed_ms) / 1000)
-            self._last_archidekt_request = time.monotonic()
+    def _rate_limit(self) -> None:
+        """Wait RATE_LIMIT_MS between Archidekt requests."""
+        elapsed_ms = (time.monotonic() - self._last_archidekt_request) * 1000
+        if elapsed_ms < RATE_LIMIT_MS:
+            time.sleep((RATE_LIMIT_MS - elapsed_ms) / 1000)
+        self._last_archidekt_request = time.monotonic()
 
     def _request(
         self,
@@ -57,7 +60,6 @@ class ArchidektClient:
         method: str = "GET",
         data: dict | None = None,
         auth: bool = False,
-        api: str = "archidekt",
     ) -> dict | list:
         headers = {
             "Accept": "application/json",
@@ -80,7 +82,7 @@ class ArchidektClient:
 
         backoff_delays = [1, 2, 4]
         for attempt in range(1 + len(backoff_delays)):
-            self._rate_limit(api)
+            self._rate_limit()
             try:
                 resp: HTTPResponse = urllib.request.urlopen(req, timeout=30)
                 resp_body = resp.read()
@@ -102,6 +104,34 @@ class ArchidektClient:
                 raise ArchidektError(f"HTTP {e.code}: {url}") from e
 
         raise ArchidektError("Exhausted retries")
+
+    def _scryfall_request(self, url: str, data: dict | None = None) -> dict:
+        """One request to api.scryfall.com through the shared limiter (DEC-1092).
+
+        A 429 stops every Scryfall caller on this Mac and raises ScryfallStopped; nothing
+        retries it. A 5xx gets one retry, under the same waits. Every other HTTP error raises
+        ArchidektError, as before.
+        """
+        headers = {"Accept": "application/json", "User-Agent": USER_AGENT}
+        body = None
+        if data is not None:
+            headers["Content-Type"] = "application/json"
+            body = json.dumps(data).encode("utf-8")
+        req = urllib.request.Request(url, data=body, headers=headers)
+
+        def transmit() -> dict:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                resp_body = resp.read()
+            return json.loads(resp_body) if resp_body else {}
+
+        for attempt in range(2):
+            try:
+                return scryfall_limit.send(url, transmit)
+            except scryfall_limit.Stopped as e:
+                raise ScryfallStopped(str(e)) from e
+            except urllib.error.HTTPError as e:
+                if e.code < 500 or attempt == 1:
+                    raise ArchidektError(f"HTTP {e.code}: {url}") from e
 
     # --- Archidekt deck operations ---
 
@@ -170,7 +200,7 @@ class ArchidektClient:
             f"?exact={urllib.parse.quote(card_name)}"
         )
         try:
-            result = self._request(url, api="scryfall")
+            result = self._scryfall_request(url)
         except ArchidektError as e:
             raise ScryfallError(f"Failed to resolve '{card_name}': {e}") from e
 
@@ -193,17 +223,17 @@ class ArchidektClient:
             else:
                 uncached.append(name)
 
-        # Batch resolve uncached cards (75 per request)
-        for i in range(0, len(uncached), 75):
-            batch = uncached[i : i + 75]
+        # Batch resolve uncached cards (75 per request). A // name goes into the batch as
+        # its front face: Scryfall finds the card by it, and answers not_found for the full
+        # name (DEC-1072). The final loop below maps the full name to the card.
+        fronts = list(dict.fromkeys(name.split(" // ")[0] for name in uncached))
+        for i in range(0, len(fronts), 75):
+            batch = fronts[i : i + 75]
             identifiers = [{"name": name} for name in batch]
             url = f"{SCRYFALL_API}/cards/collection"
 
-            self._rate_limit("scryfall")
             try:
-                resp = self._request(
-                    url, method="POST", data={"identifiers": identifiers}, api="scryfall"
-                )
+                resp = self._scryfall_request(url, data={"identifiers": identifiers})
             except ArchidektError as e:
                 raise ScryfallError(f"Bulk resolve failed: {e}") from e
 
@@ -212,7 +242,8 @@ class ArchidektClient:
                 self._scryfall_cache[name] = card
                 results[name] = card
 
-            # Handle not_found — retry with single-card lookup (handles DFCs)
+            # Handle not_found — retry with single-card lookup (handles DFCs). A stop raises
+            # ScryfallStopped out of the loop, so no further name goes out.
             for nf in resp.get("not_found", []):
                 nf_name = nf.get("name", "unknown")
                 try:

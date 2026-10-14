@@ -1,0 +1,42 @@
+== mutant F1: the 429's time is rounded, not truncated
+.......................F......................                                                         [100%]
+=================================== FAILURES ===================================
+_ TimeOfThe429Tests.test_429_at_a_fraction_over_one_half_names_the_second_it_came _
+
+self = <tests.test_scryfall_limit.TimeOfThe429Tests testMethod=test_429_at_a_fraction_over_one_half_names_the_second_it_came>
+
+    def test_429_at_a_fraction_over_one_half_names_the_second_it_came(self):
+        now = {"t": AT_10_41_07 + 0.6 - 0.05}
+    
+        def transmit():
+            now["t"] += 0.05
+            raise urllib.error.HTTPError(NAMED, 429, "Too Many Requests", email.message.Message(), io.BytesIO())
+    
+        with tempfile.TemporaryDirectory() as folder, \
+                mock.patch.dict(os.environ, {"SCRYFALL_LIMIT_DIR": folder}), \
+                mock.patch("time.time", lambda: now["t"]), mock.patch("time.monotonic", lambda: now["t"]), \
+                mock.patch("time.sleep", lambda s: None):
+            with self.assertRaises(limit.Stopped) as raised:
+                limit.send(NAMED, transmit)
+            now["t"] = AT_10_41_07 + 7.6
+            with self.assertRaises(limit.Stopped) as later:
+                limit.send(NAMED, lambda: b"{}")
+        print(f"\n  the 429 call: {raised.exception}\n  a call 7 s later: {later.exception}")
+>       self.assertEqual(str(raised.exception), (
+            "Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:38Z (in 30 s). "
+            "Call again after that time."))
+E       AssertionError: 'Scry[28 chars]:41:08Z. No request until 10:41:38Z (in 30 s).[24 chars]ime.' != 'Scry[28 chars]:41:07Z. No request until 10:41:38Z (in 30 s).[24 chars]ime.'
+E       - Scryfall answered HTTP 429 at 10:41:08Z. No request until 10:41:38Z (in 30 s). Call again after that time.
+E       ?                                      ^
+E       + Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:38Z (in 30 s). Call again after that time.
+E       ?                                      ^
+
+tests/test_scryfall_limit.py:391: AssertionError
+----------------------------- Captured stdout call -----------------------------
+
+  the 429 call: Scryfall answered HTTP 429 at 10:41:08Z. No request until 10:41:38Z (in 30 s). Call again after that time.
+  a call 7 s later: Scryfall answered HTTP 429 at 10:41:08Z. No request until 10:41:38Z (in 23 s). Call again after that time.
+=========================== short test summary info ============================
+FAILED tests/test_scryfall_limit.py::TimeOfThe429Tests::test_429_at_a_fraction_over_one_half_names_the_second_it_came
+1 failed, 45 passed, 42 subtests passed in 10.10s
+== exit code of the command on mutant F1: 1
