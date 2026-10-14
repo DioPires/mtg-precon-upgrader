@@ -258,4 +258,37 @@ describe('scryfallLimiter', () => {
     const { limiter } = setup(0);
     await expect(limiter.fetch('https://cards.scryfall.io/large/front/x.jpg')).rejects.toThrow(TypeError);
   });
+
+  // DEC-1110 B1: a clock that went back. The cap is written back on the first
+  // read, so it holds when the clock moves on.
+  it('a stored stop 10 h ahead with `ms` 30 s lets the next request go at T0 + 30 s', async () => {
+    storage.setItem(STOP_KEY, JSON.stringify({ until: T0 + 36_000_000, ms: 30_000 }));
+    const { scry, limiter, cache } = setup(0);
+    cache.enqueue('Sol Ring');
+    const readings = [limiter.stoppedUntil()];
+    const stored = JSON.parse(storage.getItem(STOP_KEY)!);
+    await advance(10_000);
+    readings.push(limiter.stoppedUntil());
+    await advance(20_000 - 1);
+    const sentBefore = scry.sends.length;
+    await advance(36_000_000);
+
+    expect(sentBefore).toBe(0);
+    expect(scry.times()[0] - T0).toBe(30_000);
+    expect(readings).toEqual([T0 + 30_000, T0 + 30_000]);
+    expect(stored).toEqual({ until: T0 + 30_000, ms: 30_000 });
+  });
+
+  it('a stored last start 1 h ahead lets the next lookup go at T0 + 600 ms', async () => {
+    storage.setItem(LAST_START_KEY, String(T0 + 3_600_000));
+    const { scry, cache } = setup(0);
+    cache.enqueue('Sol Ring');
+    await advance(600 - 1);
+    const sentBefore = scry.sends.length;
+    await advance(3_600_000 + 1_000);
+
+    expect(sentBefore).toBe(0);
+    expect(scry.times()[0] - T0).toBe(600);
+    expect(Number(storage.getItem(LAST_START_KEY))).toBeLessThanOrEqual(T0 + 600);
+  });
 });

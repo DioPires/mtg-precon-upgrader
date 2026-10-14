@@ -167,14 +167,23 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
       if (!raw) return null;
       const stop = JSON.parse(raw) as Stop;
       if (typeof stop?.until !== 'number' || typeof stop?.ms !== 'number') return null;
-      // A clock that went back must not stretch a stop past its own length.
-      return { until: Math.min(stop.until, now() + stop.ms), ms: stop.ms };
+      // A clock that went back must not stretch a stop past its own length. An
+      // end past now + the length becomes now + the length, in memory and in
+      // storage, so the next read finds it and the stop ends one length after
+      // this read. No listener hears of it, so a read inside notifyListeners()
+      // cannot start another.
+      const cap = now() + stop.ms;
+      if (stop.until <= cap) return { until: stop.until, ms: stop.ms };
+      const capped = { until: cap, ms: stop.ms };
+      storeStop(capped);
+      return capped;
     } catch {
       return memoryStop;
     }
   }
 
-  function writeStop(stop: Stop | null): void {
+  /** Puts the stop in memory and in storage. Tells no listener. */
+  function storeStop(stop: Stop | null): void {
     memoryStop = stop;
     stopInMemoryOnly = false;
     const storage = resolveStorage();
@@ -187,6 +196,10 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
         stopInMemoryOnly = true;
       }
     }
+  }
+
+  function writeStop(stop: Stop | null): void {
+    storeStop(stop);
     notifyListeners();
   }
 
@@ -246,8 +259,13 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
         // Fall back to this tab's own last start.
       }
     }
-    // A last start in the future (a clock that went back) waits one spacing at most.
-    return Math.min(last, now());
+    // A last start in the future (a clock that went back) becomes now, in this
+    // tab and, for bucket 1, in storage, so the bucket waits one spacing after
+    // this read at most.
+    const t = now();
+    if (last <= t) return last;
+    markStart(bucket, t);
+    return t;
   }
 
   function markStart(bucket: BucketState, at: number): void {
