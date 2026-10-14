@@ -120,8 +120,14 @@ class FakeScryfall:
         # Request index -> an HTTP status, an exception or a raw body.
         self.failures: dict[int, object] = {}
         self.pages: dict[str, object] = {}
+        # The shared limiter's state.json at the start, as another process left it.
+        self.state: dict | None = None
 
     def monotonic(self) -> float:
+        return self.now
+
+    def time(self) -> float:
+        """The wall clock that the shared limiter reads: the same fake time."""
         return self.now
 
     def sleep(self, seconds: float) -> None:
@@ -167,16 +173,30 @@ class FakeScryfall:
                 return FakeResponse(json.dumps(card).encode())
         raise urllib.error.HTTPError(url, 404, "status 404", {}, io.BytesIO())
 
+    def clock(self) -> contextlib.ExitStack:
+        """Patch the clocks and the sleep, and give the shared limiter an empty state.
+
+        Each call makes a new temporary SCRYFALL_LIMIT_DIR, so no case reads or writes
+        /tmp/scryfall-limit (DEC-1092 rule 8).
+        """
+        stack = contextlib.ExitStack()
+        limit_dir = stack.enter_context(tempfile.TemporaryDirectory())
+        if self.state is not None:
+            (Path(limit_dir) / "state.json").write_text(json.dumps(self.state))
+        stack.enter_context(mock.patch.dict("os.environ", {"SCRYFALL_LIMIT_DIR": limit_dir}))
+        stack.enter_context(mock.patch("time.monotonic", self.monotonic))
+        stack.enter_context(mock.patch("time.time", self.time))
+        stack.enter_context(mock.patch("time.sleep", self.sleep))
+        return stack
+
     def installed(self) -> contextlib.ExitStack:
         """Patch ``urlopen``, the helper's opener and the clock, and reset the helper's state."""
-        scryfall_api._last_answer_at = None
         scryfall_api._rate_limited = False
         stack = contextlib.ExitStack()
         stack.enter_context(mock.patch("urllib.request.urlopen", self.urlopen))
         stack.enter_context(
             mock.patch.object(scryfall_api, "_OPENER", types.SimpleNamespace(open=self.urlopen)))
-        stack.enter_context(mock.patch("time.monotonic", self.monotonic))
-        stack.enter_context(mock.patch("time.sleep", self.sleep))
+        stack.enter_context(self.clock())
         return stack
 
     def api_requests(self) -> list[Sent]:
@@ -1028,7 +1048,6 @@ class RedirectCases(unittest.TestCase):
 
     def setUp(self):
         self.fake = FakeScryfall()
-        scryfall_api._last_answer_at = None
         scryfall_api._rate_limited = False
 
     def test_opener_has_no_redirect_handler(self):
@@ -1057,8 +1076,7 @@ class RedirectCases(unittest.TestCase):
                         answer.msg = "Redirect"
                         return answer
 
-                    with mock.patch("time.monotonic", self.fake.monotonic), \
-                            mock.patch("time.sleep", self.fake.sleep), \
+                    with self.fake.clock(), \
                             mock.patch.object(urllib.request.HTTPSHandler, "https_open", https_open):
                         with self.assertRaises(urllib.error.HTTPError) as raised:
                             scryfall_api.request(COLLECTION_URL, body)
