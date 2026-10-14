@@ -63,9 +63,11 @@ the page shows its layout with no prices.
 
 **The rate check.** A test fails when one browser context sent more than 2 requests to
 `/cards/named` and `/cards/collection` in any 1 s. Scryfall allows 2 a second on those
-methods. The stub counts the requests at its route, in real time, so every case proves the
-app's limit. The `scryfall-stub` attachment of each test gives the count, the peak in 1 s and
-the number of 429 answers (`bucketOne`).
+methods. The stub counts the requests at its route, in real time. A case proves the app's
+limit only when it queues more lookups than the limit allows in 1 s. A case that sends one or
+two lookups, or paces its own hovers, reads a low peak whatever the app does. The
+`scryfall-stub` attachment of each test that sent a Scryfall request gives the count, the peak
+in 1 s and the number of 429 answers (`bucketOne`).
 
 - A spec that moves `page.clock` can start several requests in one real second, because the
   page's timers run ahead of real time. Such a spec sets `rateClock: 'page'`. The check then
@@ -93,6 +95,11 @@ Three checks keep a spec off the live API. Each has limits, and they are listed 
      ("a route of the spec answered it"). The check cannot see where a route took its answer
      from, and `route.fetch()` calls the live API from Node. To change the timing of an answer,
      wait in the route and then call `route.fallback()`; the stub answers.
+   - With `rateClock: 'real'`, the rate check stamps a request to `/cards/named` or
+     `/cards/collection` when the stub's route answers it. A request that a spec's route holds
+     and then passes on with `route.fallback()` counts at its release, not at its send, so a
+     held request can read as a burst. Pull request 3 of design D (DEC-1072) moves the stamp to
+     the request event.
    - A request that the page cancelled (`net::ERR_ABORTED`) does not fail the test. It did not
      leave the browser. A spec's own `route.abort('aborted')` reads the same.
    - A context that a spec opens in `beforeAll` or `afterAll` has no stub and no check. Its
