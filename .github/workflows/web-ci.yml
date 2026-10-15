@@ -44,7 +44,13 @@ jobs:
           cache-dependency-path: web/package-lock.json
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - name: Runner size
+        run: nproc && free -m
+      - name: Chooser (measure)
+        continue-on-error: true
+        run: npx playwright test tests/dec1083-shop-import-keyboard.spec.ts tests/dec1083-control.spec.ts --grep "imports a list" --repeat-each=30 --retries=0 --workers=2
+      - name: Playwright (measure)
+        run: npx playwright test --grep-invert CHOOSER-CONTROL --repeat-each=3 --retries=0 --workers=2
       - if: failure()
         uses: actions/upload-artifact@v7
         with:
