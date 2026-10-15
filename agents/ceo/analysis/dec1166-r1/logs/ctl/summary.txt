@@ -1,0 +1,26 @@
+BASE (no mutant: the four specs): expected 0, unexpected 0, flaky 0; porcelain empty
+    load before: 23:34  up 2 days,  8:28, 19 users, load averages: 15.69 6.19 6.51
+    load after:  23:34  up 2 days,  8:28, 19 users, load averages: 25.50 8.56 7.35
+S4 (the real clock stamps every /cards/ request, also /cards/autocomplete): expected 8, unexpected 1, flaky 0; porcelain empty
+    load before: 23:34  up 2 days,  8:28, 19 users, load averages: 25.50 8.56 7.35
+    load after:  23:34  up 2 days,  8:28, 19 users, load averages: 24.10 8.55 7.35
+    dec1152-rate-check-post.spec.ts:46 the rate check, real clock: only /cards/named and /cards/collection count › three autocompletes at once pass [unexpected]
+        Error: One browser context started 3 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.
+R1 (the page clock: the Request's method wins over init's): expected 8, unexpected 1, flaky 0; porcelain empty
+    load before: 23:34  up 2 days,  8:28, 19 users, load averages: 24.10 8.55 7.35
+    load after:  23:35  up 2 days,  8:28, 19 users, load averages: 21.08 8.42 7.32
+    dec1152-rate-check-post.spec.ts:66 the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(request, init) [unexpected]
+        
+S4X (S4 against the four specs): expected 34, unexpected 1, flaky 0; porcelain empty
+    load before: 23:35  up 2 days,  8:28, 19 users, load averages: 21.08 8.42 7.32
+    load after:  23:35  up 2 days,  8:29, 19 users, load averages: 14.51 8.01 7.21
+    dec1152-rate-check-post.spec.ts:46 the rate check, real clock: only /cards/named and /cards/collection count › three autocompletes at once pass [unexpected]
+        Error: One browser context started 3 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.
+R1X (R1 against the four specs): expected 34, unexpected 1, flaky 0; porcelain empty
+    load before: 23:35  up 2 days,  8:29, 19 users, load averages: 14.51 8.01 7.21
+    load after:  23:36  up 2 days,  8:29, 19 users, load averages: 10.31 7.69 7.12
+    dec1152-rate-check-post.spec.ts:66 the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(request, init) [unexpected]
+        
+BASE (no mutant: the four specs): expected 35, unexpected 0, flaky 0; porcelain empty
+    load before: 23:36  up 2 days,  8:29, 19 users, load averages: 9.03 7.50 7.06
+    load after:  23:36  up 2 days,  8:30, 19 users, load averages: 8.47 7.46 7.06
