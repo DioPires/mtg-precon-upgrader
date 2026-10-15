@@ -22,7 +22,7 @@ Read these before any work:
 
 ## Standards
 
-- Every card recommendation must be verified via Scryfall MCP tools before inclusion
+- Every card recommendation must be verified before inclusion. A session that has the card tools uses the Scryfall MCP tools. An agent run has no card tools: it runs `uv run python scripts/card_lookup.py "NAME"` (from eternities-mtg-app, by its absolute path `/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/scripts/card_lookup.py`). Nobody sends `curl`, or any request outside `scripts/scryfall_api.py`, to `api.scryfall.com`.
 - Every add/synergy must have a `sources` array for traceability
 - Use Commander Spellbook to find combos in decklists
 - Attribute all recommendations to their source(s)

@@ -509,6 +509,59 @@ describe('Shopping organism', () => {
       [['Sol Ring', 1], ['Arcane Signet', 3], ['Swords to Plowshares', 1]],
     );
   });
+
+  describe('the singular noun for a count of one (DEC-1123)', () => {
+    // jsdom's File has no text(), so the test gives it one.
+    const pick = (input: HTMLInputElement, body: string) => {
+      const file = new File([body], 'owned.txt', { type: 'text/plain' });
+      Object.defineProperty(file, 'text', { value: () => Promise.resolve(body) });
+      fireEvent.change(input, { target: { files: [file] } });
+    };
+    const hint = 'To replace the list, use Clear owned first.';
+
+    it('reads `1 unique card` and `1 card loaded` for a one-line file of one copy', async () => {
+      const { container } = renderShopping([ALPHA]);
+      const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+      pick(input, 'Sol Ring\n');
+      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+        `Added 1 unique card (1 total). 1 card loaded. ${hint}`,
+      ));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+
+      // The same file again: the file still holds 1 card, and the list now holds 2.
+      pick(input, 'Sol Ring\n');
+      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+        `Added 1 unique card (1 total). 2 cards loaded. ${hint}`,
+      ));
+      expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('reads `1 unique card` and `4 cards loaded` for a one-line file of four copies', async () => {
+      const { container } = renderShopping([ALPHA]);
+      pick(container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!, '4x Sol Ring\n');
+      // One message holds both forms: the unique count is 1 and the card count is 4.
+      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+        `Added 1 unique card (4 total). 4 cards loaded. ${hint}`,
+      ));
+      expect(screen.getByText('4 cards loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('reads `1 unique card` for a one-name file when the list already holds another name (DEC-1139 B1)', async () => {
+      const { container } = renderShopping([ALPHA]);
+      const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+      pick(input, 'Sol Ring\n');
+      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+        `Added 1 unique card (1 total). 1 card loaded. ${hint}`,
+      ));
+
+      // The file holds 1 unique card; the list then holds 2 unique cards and 2 cards.
+      pick(input, 'Arcane Signet\n');
+      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+        `Added 1 unique card (1 total). 2 cards loaded. ${hint}`,
+      ));
+      expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
+    });
+  });
 });
 
 describe('the date of the prices in the footer (DEC-1102)', () => {

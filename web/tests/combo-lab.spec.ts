@@ -142,9 +142,15 @@ test('completions auto-run with price + owned filters (NM-1/NM-5)', async ({ pag
 });
 
 test('deck-URL input degrades with an actionable message when blocked (IN-2)', async ({ page }) => {
+  // Moxfield's deck API refuses a headless browser. Give that refusal here, so
+  // the case sends nothing to the host (DEC-1071). The stub stops and names a
+  // Moxfield request that no route of the spec answers.
+  await page.route('https://api2.moxfield.com/**', (route) => route.fulfill({ status: 403, body: '' }));
   await page.goto('/combos?mode=paste');
   await page.getByPlaceholder(/moxfield\.com\/decks/i).fill('https://www.moxfield.com/decks/xxxxx');
   await page.getByRole('button', { name: /^load$/i }).click();
-  // Either it resolves or (far more likely, CORS-blocked) it shows a paste-fallback message.
+  // The route above answers 403, the refusal that the live host gives a
+  // headless browser. The page shows that status and the paste fallback.
   await expect(page.locator('.gv1-lab-url-msg')).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('.gv1-lab-url-msg')).toContainText('moxfield returned HTTP 403');
 });
