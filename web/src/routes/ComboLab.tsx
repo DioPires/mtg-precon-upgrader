@@ -47,6 +47,7 @@ import {
   type TierCCompletion,
 } from '../lib/nearMissComplete';
 import { resolveDeckUrl, DeckUrlError } from '../lib/deckUrl';
+import { cardNoun } from '../lib/cardNoun';
 import { loadTierBIndex } from '../data/tierBIndex';
 import { verifyDeck } from '../lib/comboVerify';
 
@@ -284,7 +285,7 @@ export function ComboLab() {
       setText(deck.cardNames.join('\n'));
       setCommander(deck.commanderNames.join('\n'));
       setUrlMsg(
-        `Loaded ${deck.cardNames.length} cards from ${deck.site}${
+        `Loaded ${deck.cardNames.length} ${cardNoun(deck.cardNames.length)} from ${deck.site}${
           deck.name ? ` — “${deck.name}”` : ''
         }. Review, then Analyze.`,
       );
