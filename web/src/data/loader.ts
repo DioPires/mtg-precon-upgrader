@@ -234,7 +234,11 @@ import type { DeckTierBLoops } from './tierB';
 // v154 -> v155 (DEC-1102 2026-10-14): the app takes deck cards' pictures and prices from
 // card-metadata.json, whose entries gained `image`, `usd` and `eur` (DEC-1075, PR #24). A
 // persisted copy from before PR #24 has none of the three.
-const STORAGE_PREFIX = 'gv1-deck-data-v155:';
+// v155 -> v156 (DEC-1085 2026-10-15): eternal-agony's simulation.json regenerated. PR #24
+// filled the `oracle_text` of Blightstep Pathway // Searstep Pathway (+1 black source),
+// Unholy Annex // Ritual Chamber (+1 draw) and Spiked Corridor // Torture Pit
+// (+1 interaction), so reliabilityMetrics, goldfish and deckHealthScore move.
+const STORAGE_PREFIX = 'gv1-deck-data-v156:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
