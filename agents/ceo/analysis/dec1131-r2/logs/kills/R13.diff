@@ -1,0 +1,13 @@
+diff --git a/web/src/data/scryfallLimiter.ts b/web/src/data/scryfallLimiter.ts
+index e9e8c9a..ebdb2f3 100644
+--- a/web/src/data/scryfallLimiter.ts
++++ b/web/src/data/scryfallLimiter.ts
+@@ -235,7 +235,7 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
+       const parsed = JSON.parse(raw) as Partial<Stop> | null;
+       if (typeof parsed?.until !== 'number' || typeof parsed?.ms !== 'number') return null;
+       // A record from before the stop number (PR #38) is one stop, number 0.
+-      const stop: Stop = { until: parsed.until, ms: parsed.ms, n: typeof parsed.n === 'number' ? parsed.n : 0 };
++      const stop: Stop = { until: parsed.until, ms: parsed.ms, n: parsed.n as number };
+       if (isOld(stop)) return null;
+       const cap = now() + stop.ms;
+       if (stop.until <= cap) return stop;
