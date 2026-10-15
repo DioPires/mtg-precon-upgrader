@@ -41,7 +41,7 @@ Every deck's `simulation.json` also holds `reliabilityMetrics`, `deckHealthScore
 - Match existing code patterns in sim scripts (multiprocessing, 100k games, same output schema structure)
 - Extend `simulation.json` schema — never break existing fields
 - Card names must match exactly with `card-metadata.json` and `deck.json`
-- Use Scryfall MCP tools to verify card oracle text when classifying cards (threats, draw, interaction)
+- Verify card oracle text when classifying cards (threats, draw, interaction). A session that has the card tools uses the Scryfall MCP tools. An agent run has no card tools: it runs `uv run python scripts/card_lookup.py "NAME"` (from eternities-mtg-app, by its absolute path `/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/scripts/card_lookup.py`). Nobody sends `curl`, or any request outside `scripts/scryfall_api.py`, to `api.scryfall.com`.
 - Document methodology in code comments
 - Commit with conventional commits (`feat:`, `fix:`, `chore:`)
 

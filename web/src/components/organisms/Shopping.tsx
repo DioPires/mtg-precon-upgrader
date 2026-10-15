@@ -49,6 +49,11 @@ function usePricesDate(): string | null {
   return date;
 }
 
+/** The noun for a count of cards: `card` for one, `cards` for any other count (DEC-1123). */
+function cardNoun(count: number): string {
+  return count === 1 ? 'card' : 'cards';
+}
+
 // CSV parser that respects quoted fields.
 export function parseCsvRows(text: string): string[][] {
   const rows: string[][] = [];
@@ -484,7 +489,8 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
       const loadedCards = [...merged.values()].reduce((s, q) => s + q, 0);
       setImportMsg({
         ok: true,
-        text: `Added ${parsed.size} unique cards (${fileCards} total). ${loadedCards} cards loaded. `
+        text: `Added ${parsed.size} unique ${cardNoun(parsed.size)} (${fileCards} total). `
+          + `${loadedCards} ${cardNoun(loadedCards)} loaded. `
           + 'To replace the list, use Clear owned first.',
       });
     } catch (err) {
@@ -521,6 +527,8 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
       window.setTimeout(() => setCopyState(null), 1500);
     }
   };
+
+  const ownedCards = [...owned.values()].reduce((s, q) => s + q, 0);
 
   if (!decks.length) {
     return (
@@ -654,7 +662,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           </button>
           <span className="gv1-mono-xs gv1-dim">
             {owned.size > 0
-              ? `${[...owned.values()].reduce((s, q) => s + q, 0)} cards loaded — `
+              ? `${ownedCards} ${cardNoun(ownedCards)} loaded — `
                 + (savedLocally ? 'saved locally' : 'NOT saved (browser storage full)')
               : '// .csv (Name,Quantity) or .txt (one card per line)'}
           </span>
