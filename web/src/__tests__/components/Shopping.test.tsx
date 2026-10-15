@@ -601,6 +601,7 @@ describe('Shopping organism', () => {
     await waitFor(() => expect(status).toHaveTextContent('Added 1 unique card (1 total). 1 card loaded.'));
     expect(status.textContent).toMatch(/^◆Added /);
     expect(status.firstElementChild).toHaveClass('gv1-shop-import-msg', 'gv1-shop-import-ok');
+    expect([...status.firstElementChild!.children].map((el) => el.className)).toEqual(['gv1-mono-xs', 'gv1-mono-xs']);
     expect(alert).toBeEmptyDOMElement();
 
     // A file with no card: the alert region holds the error, and the status region is empty again.
@@ -608,6 +609,7 @@ describe('Shopping organism', () => {
     await waitFor(() => expect(alert).toHaveTextContent('No cards detected in that file.'));
     expect(alert.textContent).toMatch(/^⚠No cards /);
     expect(alert.firstElementChild).toHaveClass('gv1-shop-import-msg', 'gv1-shop-import-err');
+    expect([...alert.firstElementChild!.children].map((el) => el.className)).toEqual(['gv1-mono-xs', 'gv1-mono-xs']);
     expect(status).toBeEmptyDOMElement();
 
     // The regions that hold the messages are the nodes of the first paint.
