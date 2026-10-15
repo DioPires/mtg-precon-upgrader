@@ -709,7 +709,7 @@ def seat_gap_cards(
     pool += [c for _s, c, _b, _m in below if c.get("name") in pinned]
     seated: dict[str, str] = {}
     step2: list[tuple[float, dict, dict, list[str]]] = []
-    for gap in gap_roles:
+    for gap in dict.fromkeys(gap_roles):
         before = sum(1 for c in pool if role(c) == gap)
         if before >= GAP_SEAT_FLOOR:
             continue
