@@ -2,7 +2,7 @@
 
 ## Tooling
 
-The Grimoire is a Vite + React + TypeScript app in [`web/`](web). DEC-149 cutover landed 2026-05-05; the previous vanilla-JS app is archived in [`legacy/`](legacy) for one release.
+The Grimoire is a Vite + React + TypeScript app in [`web/`](web). DEC-149 cutover landed 2026-05-05; the previous vanilla-JS app is archived in [`legacy/`](legacy). No build, deploy or CI file uses `legacy/`.
 
 ```bash
 cd web
@@ -11,7 +11,7 @@ npm run dev      # http://localhost:5173 — vite serves /data/* via middleware
 npm run build    # tsc -b && vite build → web/dist/
 npm run preview  # http://127.0.0.1:4173 — serves dist/
 npm run test     # vitest (unit + data layer)
-npm run test:e2e # playwright smoke per artboard
+npm run test:e2e # playwright; answers Scryfall from repo data (tests/support/); GRIMOIRE_E2E_PORT sets the port (default 4173)
 npm run lint
 npm run typecheck
 ```
@@ -24,7 +24,7 @@ uv run --with pytest python -m pytest -q
 
 `tests/test_prerelease_tools.py` and `tests/test_sealed_sim.py` are pytest modules (fixtures, `pytest.raises`), so a bare `uv run python -m unittest` run fails to import them.
 
-Production deploy (`vercel.json`) runs `npm run build` in `web/`, copies `data/` into `dist/data/`, and serves `web/dist/` as the host root.
+Vercel builds only the `deploy` branch as production (`vercel.json` `git.deploymentEnabled`): `main` and pull request branches get no deployment. `.github/workflows/deploy-branch.yml` fast-forwards `deploy` to each push on `main` that changes `web/`, `data/` or `vercel.json`. The build (`vercel.json`) runs `npm run build` in `web/`, copies `data/` into `dist/data/`, and serves `web/dist/` as the host root.
 
 **Python scripts: run with `uv run python`** (e.g. `uv run python scripts/refresh_card_pool.py --deck {id}`). Bare `python` is not on PATH in all shells; the project uses `uv` for env + deps.
 
@@ -34,9 +34,9 @@ A web application that provides recommended commander deck builds for Magic: The
 
 ## Architecture
 
-- **Frontend**: React 18 + Vite + TypeScript SPA (`web/`), react-router with `?deck=...&view=...` URL state, 6 routes (Deck Guide, Codex, Compare, Shopping, Scrying, Dev). Every surface is fully responsive at phone widths; the iPhone-bezel `/m/:id` artboard retired per DEC-183 — `/m/:id` is now a redirect-only stub kept for one release.
-- **Data**: JSON files in `data/commanders/{id}/{deck,simulation,metrics,candidates}.json`, fetched at runtime and normalized via `web/src/data/normalize.ts` (`DeckFull` shape)
-- **Card metadata**: Scryfall via `useCard()` hook (`web/src/hooks/useCard.ts`) — 80ms throttle + dedupe + 24h localStorage cache
+- **Frontend**: React 18 + Vite + TypeScript SPA (`web/`), react-router path routes in `web/src/App.tsx`: `/` (sends to `/codex`), `/codex`, `/atlas`, `/deck/:id`, `/compare`, `/shopping`, `/combos`, `/scrying/:id`, `/_dev` and a not-found page for any other path. Every surface is fully responsive at phone widths; the iPhone-bezel `/m/:id` artboard retired per DEC-183 — `/m/:id` now sends to `/deck/:id`, and `/mobile/:id` sends to `/m/:id`.
+- **Data**: JSON files in `data/commanders/{id}/`: `deck`, `simulation`, `metrics`, `candidates`, `spellbook-combos`, `synergy-candidates` and `tier-b-loops` (`.json`). `web/src/data/loader.ts` fetches all seven at runtime, with `data/index.json` and `data/card-metadata.json`; no file in a deck folder is read only by scripts. `web/src/data/normalize.ts` turns the deck bundle into the `DeckFull` shape; the Combo Lab reads the last three files
+- **Card metadata**: `data/card-metadata.json` (merged in `normalize.ts`) and Scryfall via `useCard()` hook (`web/src/hooks/useCard.ts`) — it reads `web/src/data/cardCache.ts`: dedupe + 24h localStorage cache + a queue that waits 120 ms between `/cards/named` calls
 - **Styling**: CSS modules + global tokens in `web/src/styles/tokens.css` (3-layer: primitive → semantic → component). No Tailwind, no CSS-in-JS.
 - **Hosting**: Static `web/dist/` (no backend)
 
@@ -45,15 +45,15 @@ A web application that provides recommended commander deck builds for Magic: The
 | File | Purpose |
 |------|---------|
 | `web/src/App.tsx` | Routing root |
-| `web/src/data/loader.ts` | Deck JSON loader (24h localStorage TTL) |
-| `web/src/data/normalize.ts` | Raw deck.json → `DeckFull` normalization + types |
+| `web/src/data/loader.ts` | Deck JSON loader (1h localStorage TTL, DEC-226; only deck, simulation and metrics persist, DEC-942) |
+| `web/src/data/normalize.ts` | Raw deck bundle → `DeckFull` normalization (types in `web/src/data/types.ts`) |
 | `web/src/hooks/useCard.ts` | Scryfall card cache hook |
 | `web/src/components/` | Atoms / molecules / organisms / global |
 | `web/src/styles/tokens.css` | Design-token system (`--gv1-*`) |
 | `data/index.json` | Deck catalog (commanders) |
 | `data/commanders/{id}/deck.json` | Per-commander deck data (canonical) |
 | `data/game-changers.json` | Official Game Changers card list |
-| `legacy/` | Archived vanilla-JS app (one release; delete in follow-up) |
+| `legacy/` | Archived vanilla-JS app from before the DEC-149 cutover; no build, deploy or CI file uses it |
 
 ## Commander Deck Data Structure
 

@@ -1,0 +1,75 @@
+(node:6117) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 8 tests using 8 workers
+
+(node:6542) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6548) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6541) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6547) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6545) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6543) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6546) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:6544) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  6 [chromium] › tests/dec1071-moxfield-check.spec.ts:32:5 › Moxfield check (fonts blocked) › the stub stops and names a Moxfield request that no route of the spec answers (130ms)
+  ✘  4 [chromium] › tests/dec1071-moxfield-check.spec.ts:47:5 › Moxfield check (fonts blocked) › the check names a Moxfield request that a route of the spec sends on and the network answers (159ms)
+  ✘  5 [chromium] › tests/dec1071-moxfield-check.spec.ts:65:5 › Moxfield check (fonts live) › the check names a Moxfield request that a route of the spec sends on and the DNS block stops (163ms)
+  ✘  8 [chromium] › tests/dec1071-moxfield-check.spec.ts:65:5 › Moxfield check (fonts blocked) › the check names a Moxfield request that a route of the spec sends on and the DNS block stops (153ms)
+  ✘  1 [chromium] › tests/dec1071-moxfield-check.spec.ts:32:5 › Moxfield check (fonts live) › the stub stops and names a Moxfield request that no route of the spec answers (189ms)
+  ✘  2 [chromium] › tests/dec1071-moxfield-check.spec.ts:47:5 › Moxfield check (fonts live) › the check names a Moxfield request that a route of the spec sends on and the network answers (219ms)
+  ✘  7 [chromium] › tests/dec1071-moxfield-check.spec.ts:73:5 › Moxfield check (fonts live) › the check passes a Moxfield request that a route of the spec aborts (169ms)
+  ✘  3 [chromium] › tests/dec1071-moxfield-check.spec.ts:73:5 › Moxfield check (fonts blocked) › the check passes a Moxfield request that a route of the spec aborts (171ms)
+
+
+  1) [chromium] › tests/dec1071-moxfield-check.spec.ts:73:5 › Moxfield check (fonts live) › the check passes a Moxfield request that a route of the spec aborts 
+
+    Error: 1 request to a Moxfield host got no answer from a route of the spec:
+      GET https://api2.moxfield.com/v3/decks/all/dec1071 (net::ERR_FAILED)
+    The e2e suite does not call Moxfield. A spec that loads a Moxfield deck URL answers it
+    with its own route, as the IN-2 case of combo-lab.spec.ts does (web/README.md, "End-to-end tests").
+
+       at support/test.ts:208
+
+      206 |         );
+      207 |       }
+    > 208 |       if (failures.length > 0) throw new Error(failures.join('\n'));
+          |                                      ^
+      209 |     },
+      210 |     { auto: true },
+      211 |   ],
+        at Object.base.extend.scryfallStub.auto (/private/tmp/dec1071-delta2/mut/web/tests/support/test.ts:208:38)
+
+    Error Context: test-results/dec1071-moxfield-check-Mox-5dca5--a-route-of-the-spec-aborts-chromium/error-context.md
+
+  2) [chromium] › tests/dec1071-moxfield-check.spec.ts:73:5 › Moxfield check (fonts blocked) › the check passes a Moxfield request that a route of the spec aborts 
+
+    Error: 1 request to a Moxfield host got no answer from a route of the spec:
+      GET https://api2.moxfield.com/v3/decks/all/dec1071 (net::ERR_FAILED)
+    The e2e suite does not call Moxfield. A spec that loads a Moxfield deck URL answers it
+    with its own route, as the IN-2 case of combo-lab.spec.ts does (web/README.md, "End-to-end tests").
+
+       at support/test.ts:208
+
+      206 |         );
+      207 |       }
+    > 208 |       if (failures.length > 0) throw new Error(failures.join('\n'));
+          |                                      ^
+      209 |     },
+      210 |     { auto: true },
+      211 |   ],
+        at Object.base.extend.scryfallStub.auto (/private/tmp/dec1071-delta2/mut/web/tests/support/test.ts:208:38)
+
+    Error Context: test-results/dec1071-moxfield-check-Mox-975a4--a-route-of-the-spec-aborts-chromium/error-context.md
+
+  2 failed
+    [chromium] › tests/dec1071-moxfield-check.spec.ts:73:5 › Moxfield check (fonts live) › the check passes a Moxfield request that a route of the spec aborts 
+    [chromium] › tests/dec1071-moxfield-check.spec.ts:73:5 › Moxfield check (fonts blocked) › the check passes a Moxfield request that a route of the spec aborts 
+  6 passed (7.7s)

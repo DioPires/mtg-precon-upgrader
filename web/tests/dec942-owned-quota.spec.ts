@@ -54,7 +54,7 @@ test('a 4,500-row owned import persists and reaches /atlas', async ({ page }) =>
   });
 
   // Honest success, not a swallowed failure.
-  await expect(page.locator('.gv1-shop-import-ok')).toContainText(/Imported \d+ unique cards/);
+  await expect(page.locator('.gv1-shop-import-ok')).toContainText(/Added \d+ unique cards/);
   await expect(page.locator('.gv1-shop-import-err')).toHaveCount(0);
   await expect(page.locator('.gv1-shop-owned-bar')).toContainText('saved locally');
   await expect(page.locator('.gv1-shop-owned-bar')).not.toContainText('NOT saved');

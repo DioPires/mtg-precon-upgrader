@@ -7,7 +7,6 @@ API_BASE = f"{BASE_URL}/api"
 SCRYFALL_API = "https://api.scryfall.com"
 USER_AGENT = "TheGrimoire-MCP/1.0"
 RATE_LIMIT_MS = 100
-SCRYFALL_RATE_LIMIT_MS = 75
 
 ARCHIDEKT_USERNAME = os.environ.get("ARCHIDEKT_USERNAME", "pirex")
 ARCHIDEKT_AUTH_TOKEN = os.environ.get("ARCHIDEKT_AUTH_TOKEN", "")
