@@ -7,7 +7,8 @@ import { GV1CardHoverLayer } from '../../components/global/GV1CardHoverLayer';
 import { GV1CommanderArt } from '../../components/molecules/GV1CommanderArt';
 import { cardCache } from '../../data/cardCache';
 import type { RawCardMetadata } from '../../data/types';
-import { cardJson } from '../data/scryfallFakes';
+import { COLLECTION_URL } from '../../data/scryfallLimiter';
+import { cardJson, collectionJson, identifiersOf } from '../data/scryfallFakes';
 
 const ATLA = 'front/1/2/12345678-0000-0000-0000-000000000000.jpg?1700000000';
 const FILE: RawCardMetadata = {
@@ -83,9 +84,10 @@ describe('GV1CardHoverLayer', () => {
     expect(hoverImg()).toBeNull();
     noFormatImage();
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
-    expect(String(fetchSpy.mock.calls[0][0])).toBe('https://api.scryfall.com/cards/named?fuzzy=Mana%20Crypt');
+    expect(String(fetchSpy.mock.calls[0][0])).toBe(COLLECTION_URL);
+    expect(identifiersOf(fetchSpy.mock.calls[0][1]?.body)).toEqual(['Mana Crypt']);
 
-    await act(async () => answer(new Response(JSON.stringify(cardJson('Mana Crypt')), { status: 200 })));
+    await act(async () => answer(new Response(JSON.stringify(collectionJson(['Mana Crypt'])), { status: 200 })));
     await waitFor(() => expect(hoverImg()?.getAttribute('src')).toBe(cardJson('Mana Crypt').image_uris.large));
     enqueue.mockRestore();
   });
@@ -125,7 +127,7 @@ describe('GV1CommanderArt', () => {
     expect(screen.getByText('◆ SCRYING SCRYFALL ◆')).toBeInTheDocument();
     expect(document.querySelector('img.gv1-cmd-art-img')).toBeNull();
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
-    await act(async () => answer(new Response(JSON.stringify(cardJson('Mana Crypt')), { status: 200 })));
+    await act(async () => answer(new Response(JSON.stringify(collectionJson(['Mana Crypt'])), { status: 200 })));
     await waitFor(() =>
       expect(document.querySelector('img.gv1-cmd-art-img')?.getAttribute('src')).toBe(
         cardJson('Mana Crypt').image_uris.art_crop,

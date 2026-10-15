@@ -1,0 +1,12 @@
+diff --git a/web/src/data/cardCache.ts b/web/src/data/cardCache.ts
+index 9f54ff1..2ebdda3 100644
+--- a/web/src/data/cardCache.ts
++++ b/web/src/data/cardCache.ts
+@@ -440,7 +440,6 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
+     if (!fileEntries.has(key)) return;
+     const entry = cache.get(key);
+     if (entry?.status !== 'loaded' || !priceIsOld(entry)) return;
+-    if (isLive(entry.priceCheckedAt)) return;
+     if (pricePending(name)) return;
+     want(key, name, 'price');
+   }

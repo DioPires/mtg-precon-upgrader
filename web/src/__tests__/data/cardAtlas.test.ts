@@ -6,7 +6,7 @@ import {
   scryfallSuggest,
 } from '../../data/cardAtlas';
 import type { DeckFull } from '../../data/types';
-import { createScryfallLimiter } from '../../data/scryfallLimiter';
+import { createScryfallLimiter, STOP_KEY } from '../../data/scryfallLimiter';
 
 const OWNED_KEY = 'grimoire-owned-cards';
 
@@ -237,7 +237,8 @@ describe('scryfallSuggest', () => {
     );
     const out = await scryfallSuggest('count', undefined, limiterWith(fakeFetch as unknown as typeof fetch));
     expect(out).toEqual(['Counterspell', 'Counterflux']);
-    expect(fakeFetch).toHaveBeenCalledWith('https://api.scryfall.com/cards/autocomplete?q=count');
+    expect(fakeFetch).toHaveBeenCalledTimes(1);
+    expect(String((fakeFetch.mock.calls[0] as unknown[])[0])).toBe('https://api.scryfall.com/cards/autocomplete?q=count');
   });
 
   it('returns [] for queries shorter than 2 chars', async () => {
@@ -249,6 +250,31 @@ describe('scryfallSuggest', () => {
   it('returns [] on an error status', async () => {
     const fakeFetch = vi.fn(async () => new Response('{}', { status: 500 })) as unknown as typeof fetch;
     expect(await scryfallSuggest('counter', undefined, limiterWith(fakeFetch))).toEqual([]);
+  });
+
+  // DEC-1131 N5: autocomplete sends nothing while a stop holds.
+  it('sends nothing and returns [] at once while a stop holds', async () => {
+    const storage = new Map<string, string>();
+    const store = {
+      getItem: (k: string) => storage.get(k) ?? null,
+      setItem: (k: string, v: string) => void storage.set(k, v),
+      removeItem: (k: string) => void storage.delete(k),
+      key: () => null,
+      clear: () => storage.clear(),
+      length: 0,
+    } as Storage;
+    store.setItem(STOP_KEY, JSON.stringify({ until: Date.now() + 30_000, ms: 30_000, n: 1 }));
+    const fakeFetch = vi.fn(async () => new Response('{"data":["Counterspell"]}', { status: 200 }));
+    const limiter = createScryfallLimiter({ fetchImpl: fakeFetch as unknown as typeof fetch, storage: store, locks: null });
+    expect(limiter.stoppedUntil()).not.toBeNull();
+    const started = Date.now();
+    expect(await scryfallSuggest('counter', undefined, limiter)).toEqual([]);
+    expect(Date.now() - started).toBeLessThan(1_000);
+    expect(fakeFetch).not.toHaveBeenCalled();
+    // When the stop has gone, the request goes.
+    store.removeItem(STOP_KEY);
+    expect(await scryfallSuggest('counter', undefined, limiter)).toEqual(['Counterspell']);
+    expect(fakeFetch).toHaveBeenCalledTimes(1);
   });
 
   it('returns [] when the caller aborts', async () => {

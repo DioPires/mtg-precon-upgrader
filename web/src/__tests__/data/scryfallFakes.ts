@@ -1,5 +1,6 @@
-// A fake api.scryfall.com for the limiter and card cache cases (DEC-1102).
-// Every send is logged with the fake clock's time. Not a test file itself.
+// A fake api.scryfall.com for the limiter and card cache cases (DEC-1102,
+// DEC-1131). Every send is logged with the fake clock's times. Not a test file
+// itself.
 
 export class MemoryStorage implements Storage {
   private store = new Map<string, string>();
@@ -11,22 +12,31 @@ export class MemoryStorage implements Storage {
   key(i: number): string | null { return Array.from(this.store.keys())[i] ?? null; }
 }
 
-/** What the fake does with one request: a status, or 'reject' for a fetch that rejects. */
-export type Outcome = number | 'reject';
+/** What the fake does with one request: a status, 'reject' for a fetch that rejects, or 'hang' for no answer. */
+export type Outcome = number | 'reject' | 'hang';
 
 export interface Send {
   url: string;
-  /** The card name of a lookup, or the query of an autocomplete. */
+  method: string;
+  /** The names of a /cards/collection batch, or the query of an autocomplete. */
+  names: string[];
+  /** The first of `names`. */
   name: string;
+  /** The wall clock (Date.now()) at the send. */
   at: number;
+  /** The tab's own clock (performance.now()) at the send. */
+  elapsed: number;
 }
 
 export interface FakeScryfall {
   fetch: typeof fetch;
   sends: Send[];
-  /** The fake clock's times of the sends. */
+  /** The wall clock's times of the sends. */
   times(): number[];
+  /** The names of every send, in order: each batch's names, and each autocomplete's query. */
   names(): string[];
+  /** The names of each send. */
+  batches(): string[][];
 }
 
 export function cardJson(name: string) {
@@ -51,31 +61,66 @@ function abortError(): DOMException {
   return new DOMException('The operation was aborted.', 'AbortError');
 }
 
+/** The names of a /cards/collection body. */
+export function identifiersOf(body: unknown): string[] {
+  try {
+    const parsed = JSON.parse(String(body)) as { identifiers?: Array<{ name?: string }> };
+    return (parsed.identifiers ?? []).map((id) => id.name ?? '');
+  } catch {
+    return [];
+  }
+}
+
+/** A /cards/collection answer: the card of each name that `card` knows, in the order asked, and the rest in not_found. */
+export function collectionJson(names: string[], card: (name: string) => object | null = cardJson) {
+  const data: object[] = [];
+  const notFound: Array<{ name: string }> = [];
+  for (const name of names) {
+    const found = card(name);
+    if (found) data.push(found);
+    else notFound.push({ name });
+  }
+  return { object: 'list', not_found: notFound, data };
+}
+
 /**
  * `delayMs`: the time each answer takes. `outcome(n, url)`: the answer to the
- * n-th send (from 1); 200 by default.
+ * n-th send (from 1); 200 by default. `card(name)`: the card of a batch's name,
+ * or null for not_found; cardJson(name) by default.
  */
 export function fakeScryfall(
-  options: { delayMs?: number; outcome?: (n: number, url: string) => Outcome } = {},
+  options: {
+    delayMs?: number;
+    outcome?: (n: number, url: string) => Outcome;
+    card?: (name: string) => object | null;
+  } = {},
 ): FakeScryfall {
   const delayMs = options.delayMs ?? 0;
   const sends: Send[] = [];
   const fetchImpl = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const url = String(input);
     const parsed = new URL(url);
-    const name = parsed.searchParams.get('fuzzy') ?? parsed.searchParams.get('q') ?? '';
-    sends.push({ url, name, at: Date.now() });
+    const method = init?.method ?? 'GET';
+    const names = parsed.pathname === '/cards/collection'
+      ? identifiersOf(init?.body)
+      : [parsed.searchParams.get('q') ?? ''];
+    sends.push({ url, method, names, name: names[0] ?? '', at: Date.now(), elapsed: performance.now() });
     const outcome = options.outcome?.(sends.length, url) ?? 200;
     const answer = (): Response => {
       if (outcome === 'reject') throw new TypeError('Failed to fetch');
-      if (outcome !== 200) return new Response('{"object":"error"}', { status: outcome });
+      if (outcome !== 200) return new Response('{"object":"error"}', { status: outcome as number });
       const body = parsed.pathname === '/cards/autocomplete'
-        ? { object: 'catalog', data: [`${name} One`, `${name} Two`] }
-        : cardJson(name);
+        ? { object: 'catalog', data: [`${names[0]} One`, `${names[0]} Two`] }
+        : collectionJson(names, options.card);
       return new Response(JSON.stringify(body), { status: 200 });
     };
     const signal = init?.signal;
     if (signal?.aborted) return Promise.reject(abortError());
+    if (outcome === 'hang') {
+      return new Promise<Response>((_resolve, reject) => {
+        signal?.addEventListener('abort', () => reject(abortError()));
+      });
+    }
     if (delayMs === 0) {
       try {
         return Promise.resolve(answer());
@@ -101,7 +146,8 @@ export function fakeScryfall(
     fetch: fetchImpl as typeof fetch,
     sends,
     times: () => sends.map((s) => s.at),
-    names: () => sends.map((s) => s.name),
+    names: () => sends.flatMap((s) => s.names),
+    batches: () => sends.map((s) => s.names),
   };
 }
 
