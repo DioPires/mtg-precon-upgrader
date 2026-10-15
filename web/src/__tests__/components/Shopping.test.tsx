@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import {
   Shopping,
   aggregateCards,
@@ -560,6 +560,57 @@ describe('Shopping organism', () => {
         `Added 1 unique card (1 total). 2 cards loaded. ${hint}`,
       ));
       expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
+    });
+  });
+
+  describe('the count of cards in the Need to buy and Already own headers (DEC-1142)', () => {
+    // Each deck holds its commander and one other card, Sol Ring. With both decks
+    // selected, a header holds 1 unique card and 2 cards, so the noun follows the
+    // card count.
+    const SOLO_A = makeDeck({
+      slug: 'solo-a',
+      deckName: 'Solo A',
+      commander: 'Solo A Commander',
+      list: [group('Commander', ['Solo A Commander']), group('Ramp (1)', ['Sol Ring'])],
+    });
+    const SOLO_B = makeDeck({
+      idx: 2,
+      slug: 'solo-b',
+      deckName: 'Solo B',
+      commander: 'Solo B Commander',
+      list: [group('Commander', ['Solo B Commander']), group('Ramp (1)', ['Sol Ring'])],
+    });
+    const buyHead = () => screen.getByRole('heading', { name: 'Need to buy' }).parentElement!;
+    const ownHead = () => screen.getByRole('button', { name: /Already own/ });
+
+    // The user owns both commanders, so Need to buy holds Sol Ring alone.
+    const ownCommanders = () =>
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Solo A Commander', 1], ['Solo B Commander', 1]]));
+
+    it('reads `1 unique · 1 card` to buy for one deck that wants one Sol Ring', () => {
+      ownCommanders();
+      renderShopping([SOLO_A, SOLO_B]);
+      expect(within(buyHead()).getByText('· 1 unique · 1 card')).toBeInTheDocument();
+    });
+
+    it('reads `1 unique · 2 cards` to buy for two decks that each want one Sol Ring', () => {
+      ownCommanders();
+      renderShopping([SOLO_A, SOLO_B]);
+      fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
+      expect(within(buyHead()).getByText('· 1 unique · 2 cards')).toBeInTheDocument();
+    });
+
+    it('reads `1 unique · 1 card` owned for an import of one Sol Ring and a deck that holds it', () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Sol Ring', 1]]));
+      renderShopping([SOLO_A]);
+      expect(within(ownHead()).getByText('· 1 unique · 1 card')).toBeInTheDocument();
+    });
+
+    it('reads `1 unique · 2 cards` owned for an import of two Sol Rings and two decks that hold it', () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Sol Ring', 2]]));
+      renderShopping([SOLO_A, SOLO_B]);
+      fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
+      expect(within(ownHead()).getByText('· 1 unique · 2 cards')).toBeInTheDocument();
     });
   });
 });
