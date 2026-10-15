@@ -67,7 +67,8 @@ export function DeckGuide() {
         composition={deck.composition}
         assessment={deck.assessment}
       />
-      <Apothecary apothecary={deck.apothecary} />
+      {/* DEC-1077: each deck mounts its own Apothecary, so no filter carries over. */}
+      <Apothecary key={deck.slug} apothecary={deck.apothecary} />
       <Decklist list={deck.list} commander={deck.commander} partner={deck.partner} />
     </div>
   );

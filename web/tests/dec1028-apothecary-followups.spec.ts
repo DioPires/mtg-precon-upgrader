@@ -51,7 +51,16 @@ test.describe('DEC-1028 @ 390px', () => {
   });
 
   test('the clear button is as tall as the chips', async ({ page }) => {
-    const chip = await page.locator('.gv1-apothecary button.gv1-apo-malady.is-active').boundingBox();
+    // DEC-1077: the click leaves the pointer on the chip, and `:hover` moves the
+    // chip by `translateY` over 0.15 s. A box read in that time came out a hair
+    // under 44 (43.999996…). Move the pointer off, then read the box when the
+    // chip's transitions have ended.
+    const active = page.locator('.gv1-apothecary button.gv1-apo-malady.is-active');
+    await page.mouse.move(0, 0);
+    await active.evaluate(async (el) => {
+      await Promise.all(el.getAnimations().map((a) => a.finished));
+    });
+    const chip = await active.boundingBox();
     const clear = await page.locator('.gv1-apo-malady-clear').boundingBox();
 
     expect(chip!.height).toBeGreaterThanOrEqual(44);
