@@ -1,0 +1,28 @@
+diff --git a/web/src/components/organisms/Shopping.tsx b/web/src/components/organisms/Shopping.tsx
+index a2041ba..71c9049 100644
+--- a/web/src/components/organisms/Shopping.tsx
++++ b/web/src/components/organisms/Shopping.tsx
+@@ -745,8 +745,8 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
+         </div>
+       </section>
+ 
+-      {selected.size > 0 && (
+-        <section className="gv1-section gv1-shop-section">
++      <section className={selected.size > 0 ? 'gv1-section gv1-shop-section' : undefined}>
++        {selected.size > 0 && (
+           <div className="gv1-shop-summary">
+             <div className="gv1-shop-stat">
+               <span className="gv1-mono-xs gv1-dim">NEED TO BUY</span>
+@@ -800,9 +800,9 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
+               </button>
+             </div>
+           </div>
+-          <PricePausedLine waiting={waitingForPrice} pricesDate={shownPricesDate} />
+-        </section>
+-      )}
++        )}
++        <PricePausedLine waiting={waitingForPrice} pricesDate={shownPricesDate} />
++      </section>
+ 
+       {selected.size > 0 && (
+         <section className="gv1-section gv1-shop-section">

@@ -19,6 +19,7 @@ import {
 import { frontFace } from '../../data/cardName';
 import { deckLoader } from '../../data/loader';
 import { formatPricesDate } from '../../lib/pricesDate';
+import { cardNoun } from '../../lib/cardNoun';
 import { OWNED_KEY, saveOwned } from '../../data/ownedCards';
 import { useBuiltDecks } from '../../hooks/useBuiltDecks';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
@@ -58,11 +59,6 @@ function useCardUpdates(names: string[]): void {
     const unsubs = key ? key.split('\n').map((name) => cardCache.subscribe(name, () => bump((n) => n + 1))) : [];
     return () => unsubs.forEach((unsub) => unsub());
   }, [key]);
-}
-
-/** The noun for a count of cards: `card` for one, `cards` for any other count (DEC-1123). */
-function cardNoun(count: number): string {
-  return count === 1 ? 'card' : 'cards';
 }
 
 // CSV parser that respects quoted fields.
@@ -111,7 +107,10 @@ export function parseOwnedFile(text: string): Map<string, number> {
       rows.slice(1).forEach((r) => {
         const name = (r[ni] || '').trim();
         if (!name) return;
-        const q = parseInt((r[qi] || '1').trim(), 10) || 1;
+        // An owned quantity is a whole number of 1 or more. A cell that reads
+        // as less (0, a negative number, empty, text) counts as 1 (DEC-1141).
+        const read = parseInt((r[qi] || '1').trim(), 10);
+        const q = read >= 1 ? read : 1;
         const key = frontFace(name);
         out.set(key, (out.get(key) || 0) + q);
       });
@@ -141,8 +140,16 @@ function loadOwned(): Map<string, number> {
     if (raw) {
       // Re-key to front-face on load so legacy/full-DFC entries reconcile
       // with deck.json names. Idempotent for non-DFC cards.
+      // The app writes only [name, quantity] pairs, but a hand edit or a
+      // damaged store can hold other entries. The load drops each entry that
+      // is not a pair of a name with text and a whole number of 1 or more,
+      // keeps the rest and writes nothing back (DEC-1141).
       const out = new Map<string, number>();
-      (JSON.parse(raw) as Array<[string, number]>).forEach(([n, q]) => {
+      (JSON.parse(raw) as unknown[]).forEach((entry) => {
+        if (!Array.isArray(entry) || entry.length !== 2) return;
+        const [n, q] = entry;
+        if (typeof n !== 'string' || !n.trim()) return;
+        if (!Number.isInteger(q) || q < 1) return;
         const key = frontFace(n);
         out.set(key, (out.get(key) || 0) + q);
       });
@@ -790,7 +797,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           <div className="gv1-section-head">
             <span className="gv1-mono-xs gv1-rune" aria-hidden="true">▾</span>
             <h3 className="gv1-serif-xl">Need to buy</h3>
-            <span className="gv1-mono-xs gv1-dim">· {buy.length} unique · {buyTotal} cards</span>
+            <span className="gv1-mono-xs gv1-dim">· {buy.length} unique · {buyTotal} {cardNoun(buyTotal)}</span>
           </div>
           {buy.length === 0 ? (
             <div className="gv1-empty">
@@ -836,7 +843,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           >
             <span className="gv1-mono-xs gv1-dim" aria-hidden="true">{ownedCollapsed ? '▸' : '▾'}</span>
             <span className="gv1-serif-xl">Already own</span>
-            <span className="gv1-mono-xs gv1-dim">· {own.length} unique · {ownTotal} cards</span>
+            <span className="gv1-mono-xs gv1-dim">· {own.length} unique · {ownTotal} {cardNoun(ownTotal)}</span>
           </button>
           {!ownedCollapsed && (
             <div className="gv1-shop-list">

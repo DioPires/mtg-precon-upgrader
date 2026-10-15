@@ -331,6 +331,8 @@ const STACKED_UP_TO = 1190;
 
 test.describe('DEC-1074 Performance blocks', () => {
   test(`stack up to ${STACKED_UP_TO}px, and side by side every deck's chart holds its columns`, async ({ page }) => {
+    // The case opens 22 deck pages, and run 38749587883 timed it out at 30 s on all three attempts.
+    test.slow();
     const tracks = () => page.locator('.gv1-perf-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
 
     await page.setViewportSize({ width: STACKED_UP_TO, height: 900 });
