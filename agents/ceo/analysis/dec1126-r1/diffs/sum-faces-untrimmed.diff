@@ -1,0 +1,11 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -131,7 +131,7 @@
+     out["legalities"] = {"commander": (card.get("legalities") or {}).get("commander")}
+     faces = card.get("card_faces")
+     out["card_faces"] = (
+-        [{key: face[key] for key in FACE_FIELDS if key in face} for face in faces]
++        [dict(face) for face in faces]
+         if faces else None
+     )
+     out["source"] = source

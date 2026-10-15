@@ -1,0 +1,18 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -96,12 +96,12 @@
+ 
+ def find_mirror() -> Path | None:
+     """The repository's mirror, else the main worktree's copy, else None."""
++    main = main_worktree()
++    if main is not None and (main / MIRROR).is_file():
++        return main / MIRROR
+     own = PROJECT_ROOT / MIRROR
+     if own.is_file():
+         return own
+-    main = main_worktree()
+-    if main is not None and (main / MIRROR).is_file():
+-        return main / MIRROR
+     return None
+ 
+ 

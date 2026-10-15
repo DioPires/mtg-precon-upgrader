@@ -1,0 +1,23 @@
+............................F..                                        [100%]
+=================================== FAILURES ===================================
+____ ReviewCases.test_script_runs_by_its_absolute_path_from_another_folder _____
+
+self = <tests.test_card_lookup.ReviewCases testMethod=test_script_runs_by_its_absolute_path_from_another_folder>
+
+    def test_script_runs_by_its_absolute_path_from_another_folder(self):
+        """An agent run calls the script by its absolute path from another repository. The
+        script puts its own folder on sys.path, so it imports the helper also when Python
+        leaves that folder out (-I). --help sends no request."""
+        proc = subprocess.run([sys.executable, "-I", "-B", str(SCRIPT), "--help"],
+                              cwd=self.tmp, capture_output=True, text=True)
+>       self.assertEqual(proc.returncode, 0, proc.stderr)
+E       AssertionError: 1 != 0 : Traceback (most recent call last):
+E         File "/private/tmp/dec1126-ceo/wt/scripts/card_lookup.py", line 53, in <module>
+E           import scryfall_api  # noqa: E402
+E           ^^^^^^^^^^^^^^^^^^^
+E       ModuleNotFoundError: No module named 'scryfall_api'
+
+tests/test_card_lookup.py:504: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_card_lookup.py::ReviewCases::test_script_runs_by_its_absolute_path_from_another_folder
+1 failed, 30 passed, 2 subtests passed in 0.50s

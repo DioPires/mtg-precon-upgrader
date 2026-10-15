@@ -1254,12 +1254,19 @@ def write_metrics(deck_id: str, payload: dict) -> bool:
     new_text = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if out_path.exists():
         existing = out_path.read_text()
-        # Idempotency: ignore generated_at when comparing
+        # Idempotency: ignore the two fields that read the clock when
+        # comparing: generated_at and the pool's age (DEC-1078). The age's
+        # thresholds still cause a write through candidates_stale and
+        # bonus_floor_eligible, which stay in the comparison.
         try:
             old = json.loads(existing)
             new = json.loads(new_text)
-            old.pop("generated_at", None)
-            new.pop("generated_at", None)
+            for doc in (old, new):
+                doc.pop("generated_at", None)
+                inputs = doc.get("confidence_inputs")
+                penalties = inputs.get("penalties") if isinstance(inputs, dict) else None
+                if isinstance(penalties, dict):
+                    penalties.pop("candidates_age_days", None)
             if old == new:
                 return False
         except json.JSONDecodeError:

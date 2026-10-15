@@ -4,8 +4,9 @@
 // While the root was `overflow: hidden` it was a scroll container. Script
 // could move it sideways with no way back (DEC-1008), and every
 // `position: sticky` rail inside it was pinned to a box that never scrolls —
-// so none of them had ever pinned. `clip` switches them on. Two are too tall
-// to pin and stay in the flow; the cases below hold each one to that.
+// so none of them had ever pinned. `clip` switches them on. The Shopping rail
+// pins only where it fits, and the cases below hold it to that. The Combo Lab
+// rail pins from Contents down: dec1032-lab-rail-pin holds that one.
 
 import { expect, test, type Page } from './support/test';
 
@@ -118,23 +119,5 @@ test.describe('DEC-1019 Shopping rail, keyboard @ 768×1024', () => {
     const railBottom = await rail.evaluate((el) => el.getBoundingClientRect().bottom);
     const sortTop = await sort.evaluate((el) => el.getBoundingClientRect().top);
     expect(sortTop, `top of the focused control (the rail ends at ${railBottom})`).toBeGreaterThanOrEqual(railBottom);
-  });
-});
-
-test.describe('DEC-1019 Combo Lab rail @ 1280×800', () => {
-  test.use({ viewport: { width: 1280, height: 800 } });
-
-  // The control rail is taller than the screen with the fleet's decks in it.
-  // Pinned, its lower blocks (Contents, the tier legend, the exports) would
-  // sit below the fold for the length of the report.
-  test('the control rail scrolls with the page', async ({ page }) => {
-    await page.goto('/combos');
-    await expect(page.locator('.gv1-lab-attrib')).toBeVisible();
-    await expect(page.locator('.gv1-lab-combo').first()).toBeVisible();
-
-    const railHeight = await page.locator('.gv1-lab-rail').evaluate((el) => el.getBoundingClientRect().height);
-    expect(railHeight, 'the rail is taller than the screen; if it no longer is, it can pin').toBeGreaterThan(800);
-
-    expectWithin1px(await railTopScrolledPast(page, '.gv1-lab-rail', 600), -600);
   });
 });
