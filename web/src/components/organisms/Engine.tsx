@@ -3,6 +3,7 @@
 
 import { useState, type KeyboardEvent } from 'react';
 import { CardTile } from '../molecules/CardTile';
+import { cardNoun } from '../../lib/cardNoun';
 import type { DeckEngineSection } from '../../data/types';
 
 interface EngineProps {
@@ -104,7 +105,7 @@ export function Engine({ engine }: EngineProps) {
               </div>
               <h3 className="gv1-serif-xl">{cur.title}</h3>
             </div>
-            <div className="gv1-mono-xs gv1-dim">{cur.count} cards · hover for full frame</div>
+            <div className="gv1-mono-xs gv1-dim">{cur.count} {cardNoun(cur.count)} · hover for full frame</div>
           </div>
           <div className="gv1-engine-cards">
             {cur.cards.map((c, i) => (
