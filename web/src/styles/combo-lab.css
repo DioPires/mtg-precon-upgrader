@@ -1,5 +1,6 @@
 /* Combo Lab — DEC-534 redesign (gv1-lab-*).
- * Lab-bench layout: sticky control rail (mode, deck, contents, export)
+ * Lab-bench layout: control rail (mode, deck, contents, export; it pins from
+ * contents down on wide, tall screens, see the production additions)
  * + report column (disclosure → tier A → tier B → near-misses → tier C
  * → completions). Ported verbatim from design_handoff_combo_lab/design/
  * gv1-combolab.css (pixel source of truth); production additions are at
@@ -226,14 +227,27 @@
    same opt-out pattern app.css uses for the deck guide. */
 .gv1-app > main:has([data-gv1-screen="combolab"]){padding:0}
 
-/* DEC-1019: the prototype pins the control rail (`position:sticky;top:20px`
-   above). It never pinned in production: `.gv1-root` was `overflow:hidden`,
-   so the root was the rail's scroll container. `overflow:clip` on the root
-   switches the pin on, and the rail is 1329px tall with the fleet's decks —
-   pinned, most of Contents, the tier legend and the exports stay below the
-   fold of an 800px screen for the length of the report. Keep the rail in the
-   flow, as before. */
+/* DEC-1019, DEC-1032: the prototype pins the whole control rail
+   (`position:sticky;top:20px` above). It never pinned in production while
+   `.gv1-root` was `overflow:hidden` (the root was its scroll container), and
+   it cannot pin whole under `overflow:clip`: it is 1329px tall with the
+   fleet's decks. So the rail stays in the flow, the mode switch and the deck
+   picker scroll with the page, and the rail from Contents down (Contents, the
+   tier legend, the exports and the small print) pins as one part. */
 .gv1-lab-rail{position:static}
+.gv1-lab-rail-pin{display:flex;flex-direction:column;gap:20px}
+/* The part is 659px tall at its tallest (1280–1920px wide, fonts live; 639px
+   with them blocked), so it pins only where it fits whole, 20px from the top
+   and the bottom: 699px. The rail stretches to the report's height to give it
+   room to stay pinned. Nothing in the rail follows the part, and the deck
+   picker has left the screen before the part pins, so no control sits under
+   it and keyboard focus needs no scroll margin. */
+@container gv1lab (width > 1080px){
+  @media (min-height:700px){
+    .gv1-lab-rail{align-self:stretch}
+    .gv1-lab-rail-pin{position:sticky;top:20px}
+  }
+}
 
 /* Empty states — ported from the prototype's gv1-states.css (production
    styles.css has a different .gv1-empty), scoped to this screen. */
