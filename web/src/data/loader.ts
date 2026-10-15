@@ -238,7 +238,10 @@ import type { DeckTierBLoops } from './tierB';
 // filled the `oracle_text` of Blightstep Pathway // Searstep Pathway (+1 black source),
 // Unholy Annex // Ritual Chamber (+1 draw) and Spiked Corridor // Torture Pit
 // (+1 interaction), so reliabilityMetrics, goldfish and deckHealthScore move.
-const STORAGE_PREFIX = 'gv1-deck-data-v156:';
+// v156 -> v157 (DEC-1127 2026-10-15): slivers and stampede-acres winConditions and
+// witherbloom-the-balancer synergies gained `title` (8 renamed from `name`, 2 new).
+// deck.json is persisted, so an older copy keeps the empty titles until its TTL ends.
+const STORAGE_PREFIX = 'gv1-deck-data-v157:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
