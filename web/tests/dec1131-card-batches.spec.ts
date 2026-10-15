@@ -159,6 +159,33 @@ test.describe('/shopping refreshes the prices older than 24 h', () => {
   });
 });
 
+test.describe('/shopping refreshes a `//` card', () => {
+  test.use({ scryfallUsdBump: 1 });
+
+  test('through its front face: the row of a `//` name shows the refreshed price', async ({ page, context }) => {
+    test.setTimeout(60_000);
+    const seen = watch(context);
+    await page.clock.install({ time: pricesAreOld() });
+    await page.goto('/shopping');
+    await page.locator('.gv1-shop-row').first().waitFor();
+    // Witherbloom Balance holds several `//` cards with a price in the file.
+    await page.getByRole('button', { name: 'Add Witherbloom Balance' }).click();
+    const split = async () => {
+      const prices = await rowPrices(page);
+      return [...prices.entries()].filter(([name]) => name.includes(' // ') && USD.get(name.toLowerCase()) != null);
+    };
+    await expect.poll(async () => (await split()).length).toBeGreaterThan(0);
+    await expect
+      .poll(async () => (await split()).filter(([name, price]) => price !== usdText(USD.get(name.toLowerCase())! + 1)), {
+        timeout: 30_000,
+      })
+      .toEqual([]);
+    const sent = seen.batches.flat();
+    expect(sent.filter((name) => name.includes('//'))).toEqual([]);
+    for (const [name] of await split()) expect(sent, name).toContain(front(name));
+  });
+});
+
 test.describe('/shopping while a stop holds the refresh', () => {
   test.use({ scryfall429From: 1, rateClock: 'page' });
 

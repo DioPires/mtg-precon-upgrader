@@ -394,21 +394,24 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
   }
 
   /**
-   * One fetch with the timeout. Resolves with the answer, with null when no
-   * answer came inside REQUEST_TIMEOUT_MS (the fetch is aborted), or rejects as
-   * the fetch rejects. The caller's abort aborts the fetch.
+   * One fetch with the timeout. Gives the answer; or `timedOut` when no answer
+   * came inside REQUEST_TIMEOUT_MS (the timer aborts the fetch, and a flag, not
+   * the order in which the promises settle, says so); or the error of a fetch
+   * that rejects. The caller's abort aborts the fetch.
    */
   async function fetchWithTimeout(
     fetchImpl: typeof fetch,
     request: ApiRequest,
     signal: AbortSignal | undefined,
-  ): Promise<Response | null> {
+  ): Promise<{ response: Response | null; error: unknown; timedOut: boolean }> {
     const controller = new AbortController();
     const forward = () => controller.abort(signal ? abortReason(signal) : undefined);
     signal?.addEventListener('abort', forward, { once: true });
+    let timedOut = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<null>((resolve) => {
       timer = setTimeout(() => {
+        timedOut = true;
         controller.abort(new DOMException('No answer from api.scryfall.com in 20 s.', 'TimeoutError'));
         resolve(null);
       }, REQUEST_TIMEOUT_MS);
@@ -421,7 +424,10 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
       const fetching = fetchImpl(request.url, init);
       // After a timeout the aborted fetch rejects, and nobody waits for it.
       fetching.catch(() => undefined);
-      return await Promise.race([fetching, timeout]);
+      const response = await Promise.race([fetching, timeout]);
+      return { response: timedOut ? null : response, error: null, timedOut };
+    } catch (error) {
+      return { response: null, error, timedOut };
     } finally {
       clearTimeout(timer);
       signal?.removeEventListener('abort', forward);
@@ -448,13 +454,7 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
     const noted = stopNumber();
     markStart(bucket);
     inFlight += 1;
-    let response: Response | null = null;
-    let error: unknown = null;
-    try {
-      response = await fetchWithTimeout(fetchImpl, request, job.signal);
-    } catch (err) {
-      error = err;
-    }
+    const { response, error, timedOut } = await fetchWithTimeout(fetchImpl, request, job.signal);
     if (run !== generation) return;
     inFlight = Math.max(0, inFlight - 1);
     if (inFlight === 0) {
@@ -464,9 +464,8 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
     }
 
     // A timeout is a failure; the caller's own abort is not.
-    const timedOut = response === null && error === null;
     if (!timedOut && job.signal?.aborted) return finish(job, { error: error ?? abortReason(job.signal) });
-    if (!response || response.status === 429) {
+    if (timedOut || !response || response.status === 429) {
       // The request that met the stop goes first when the stop ends.
       bucket.jobs.unshift(job);
       fail(noted);
