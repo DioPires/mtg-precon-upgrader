@@ -1,0 +1,33 @@
+........................F......                                        [100%]
+=================================== FAILURES ===================================
+_ ReviewCases.test_full_name_answers_before_a_front_face_of_the_same_spelling __
+
+self = <tests.test_card_lookup.ReviewCases testMethod=test_full_name_answers_before_a_front_face_of_the_same_spelling>
+
+    def test_full_name_answers_before_a_front_face_of_the_same_spelling(self):
+        """A card named "Fire" beside "Fire // Ice": "fire" finds "Fire" (load_mirror's setdefault)."""
+        fire = {"name": "Fire", "mana_cost": "{R}", "cmc": 1.0, "type_line": "Instant",
+                "oracle_text": "Fire deals 1 damage to any target.", "colors": ["R"],
+                "color_identity": ["R"], "legalities": {"commander": "legal"}}
+        root = self.tmp / "collision"
+        write_mirror(root, MIRROR_CARDS + [fire])
+        fake = FakeScryfall()
+        code, out, _ = self.run_lookup(fake, "fire", "Fire // Ice", root=root)
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.sent, [])
+>       self.assertEqual([c["name"] for c in objects(out)], ["Fire", "Fire // Ice"])
+E       AssertionError: Lists differ: ['Fire // Ice', 'Fire // Ice'] != ['Fire', 'Fire // Ice']
+E       
+E       First differing element 0:
+E       'Fire // Ice'
+E       'Fire'
+E       
+E       - ['Fire // Ice', 'Fire // Ice']
+E       ?       -------
+E       
+E       + ['Fire', 'Fire // Ice']
+
+tests/test_card_lookup.py:381: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_card_lookup.py::ReviewCases::test_full_name_answers_before_a_front_face_of_the_same_spelling
+1 failed, 30 passed, 2 subtests passed in 0.41s

@@ -1,0 +1,11 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -162,7 +162,7 @@
+         if card is not None:
+             print(json.dumps(summary(card, source), ensure_ascii=False))
+             continue
+-        card = lookup_api(name.strip())
++        card = lookup_api(name)
+         if card is None:
+             print(f"not found: {name}")
+             missing = True
