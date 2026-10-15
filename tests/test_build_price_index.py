@@ -21,6 +21,8 @@ import json
 import os
 import re
 import socket
+import subprocess
+import sys
 import tempfile
 import unittest
 import urllib.parse
@@ -639,6 +641,19 @@ class LiveRunTests(IndexCase):
         self.assertFalse(folder.exists())
         for path, text in old.items():
             self.assertEqual(path.read_text(), text)
+
+
+class ImportTests(unittest.TestCase):
+    def test_the_module_imports_in_a_new_process(self):
+        """The script puts its own folder on sys.path, so scryfall_api imports
+        without another module having done it first."""
+        root = Path(bpi.__file__).resolve().parent.parent
+        proc = subprocess.run(
+            [sys.executable, "-c",
+             "import scripts.build_price_index as m; print(m.scryfall_api.API_HOST)"],
+            cwd=root, capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertEqual(proc.stdout.strip(), "api.scryfall.com")
 
 
 class SocketGuardTests(unittest.TestCase):
