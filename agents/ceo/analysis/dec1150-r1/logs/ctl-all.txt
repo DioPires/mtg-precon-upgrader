@@ -1,0 +1,58 @@
+head  Tests  45 passed (45)
+M3   killed   Tests  2 failed | 43 passed (45)         CSV bound becomes the old `read || 1`
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > counts a CSV quantity of -1 as 1 in the import message and the owned bar
+    failed: src/__tests__/components/Shopping.test.tsx > parseOwnedFile > counts a CSV quantity below 1 as 1 and keeps a quantity of 1 or more (DEC-1141)
+M9   killed   Tests  3 failed | 42 passed (45)         stored-list check drops the name check (whole line)
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry whose name has no text
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry whose name is not a string
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: stored list > K3: drops a stored entry whose name is null, an object or an array, and keeps the rest
+M12  killed   Tests  1 failed | 44 passed (45)         stored-list check drops Number.isInteger
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored quantity of 1 or more that is not a whole number
+M13  killed   Tests  2 failed | 43 passed (45)         stored-list check drops q >= 1 (q < 1)
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored quantity below 1
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: stored list > K4: drops a stored quantity of 0
+R1   killed   Tests  1 failed | 44 passed (45)         CSV bound becomes Math.max(read, 1)
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: CSV quantity cell > K1: counts a quantity cell with text as 1
+R2   killed   Tests  1 failed | 44 passed (45)         CSV bound becomes read < 1 ? 1 : read
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: CSV quantity cell > K1: counts a quantity cell with text as 1
+R3   killed   Tests  1 failed | 44 passed (45)         entry.length !== 2 becomes entry.length < 2
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry that is not a two-item array
+R4   killed   Tests  7 failed | 38 passed (45)         q < 1 becomes q <= 1
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry that is not a two-item array
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry whose name has no text
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry whose name is not a string
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored quantity below 1
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored quantity of 1 or more that is not a whole number
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > persists imported owned cards in localStorage on mount and removes them from the buy list
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: stored list > K3: drops a stored entry whose name is null, an object or an array, and keeps the rest
+R5   killed   Tests  1 failed | 44 passed (45)         typeof n !== 'string' becomes typeof n === 'number'
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: stored list > K3: drops a stored entry whose name is null, an object or an array, and keeps the rest
+R6   SURVIVED Tests  45 passed (45)                    CSV default cell '1' becomes '0'
+R7   SURVIVED Tests  45 passed (45)                    CSV read drops .trim()
+R8   killed   Tests  1 failed | 44 passed (45)         CSV read drops the radix 10
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: CSV quantity cell > K2: reads a 0x cell in base 10, so 0x10 counts as 1
+R9   killed   Tests  1 failed | 44 passed (45)         array check || becomes &&
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry that is not a two-item array
+R10  killed   Tests  3 failed | 42 passed (45)         quantity check || becomes &&
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored quantity below 1
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored quantity of 1 or more that is not a whole number
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: stored list > K4: drops a stored quantity of 0
+R11  killed   Tests  3 failed | 42 passed (45)         name check || becomes &&
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry whose name has no text
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry whose name is not a string
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: stored list > K3: drops a stored entry whose name is null, an object or an array, and keeps the rest
+R12  killed   Tests  1 failed | 44 passed (45)         Number.isInteger becomes Number.isFinite
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored quantity of 1 or more that is not a whole number
+R13  killed   Tests  1 failed | 44 passed (45)         q < 1 becomes q < 0
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: stored list > K4: drops a stored quantity of 0
+R14  SURVIVED Tests  45 passed (45)                    CSV bound >= 1 becomes >= 2
+R15  killed   Tests  4 failed | 41 passed (45)         CSV else branch 1 becomes 0
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > counts a CSV quantity of -1 as 1 in the import message and the owned bar
+    failed: src/__tests__/components/Shopping.test.tsx > parseOwnedFile > counts a CSV quantity below 1 as 1 and keeps a quantity of 1 or more (DEC-1141)
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: CSV quantity cell > K1: counts a quantity cell with text as 1
+    failed: src/__tests__/dec1150/kill-shopping.test.tsx > DEC-1150 kill cases: CSV quantity cell > K2: reads a 0x cell in base 10, so 0x10 counts as 1
+R16  SURVIVED Tests  45 passed (45)                    entry.length !== 2 becomes entry.length > 2
+R17  killed   Tests  1 failed | 44 passed (45)         name check !n.trim() becomes !n
+    failed: src/__tests__/components/Shopping.test.tsx > Shopping organism > an owned quantity is a whole number of 1 or more (DEC-1141) > drops a stored entry whose name has no text
+tree clean after all runs
+ctl exit 0

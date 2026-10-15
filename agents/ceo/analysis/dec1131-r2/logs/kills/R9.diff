@@ -1,0 +1,13 @@
+diff --git a/web/src/components/organisms/Shopping.tsx b/web/src/components/organisms/Shopping.tsx
+index e0617bd..67532a7 100644
+--- a/web/src/components/organisms/Shopping.tsx
++++ b/web/src/components/organisms/Shopping.tsx
+@@ -371,7 +371,7 @@ function useHeldPriceSummary(buy: ShopRowCard[]): PriceSummary {
+   const held = useRef<{ rows: string; summary: PriceSummary } | null>(null);
+   const rows = buy.map((c) => `${c.name}\u00d7${c.qty}`).join('\n');
+   const waiting = buy.some((c) => cardCache.pricePending(c.name));
+-  if (waiting && held.current?.rows === rows) return held.current.summary;
++  if (waiting && held.current) return held.current.summary;
+   const summary = summarizePrice(buy);
+   held.current = { rows, summary };
+   return summary;

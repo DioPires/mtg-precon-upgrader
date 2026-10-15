@@ -1,0 +1,35 @@
+# H13 (conditional) web/src/lib/cardNoun.ts
+# old: "return count === 1 ? 'card' : 'cards';"
+# new: "return false ? 'card' : 'cards';"
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/lib/cardNoun.test.ts (7 tests | 1 failed) 3ms
+   × cardNoun > gives `card` for a count of 1 2ms
+     → expected 'cards' to be 'card' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  17:03:38
+   Duration  319ms (transform 16ms, setup 19ms, collect 5ms, tests 3ms, environment 114ms, prepare 36ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/lib/cardNoun.test.ts > cardNoun > gives `card` for a count of 1
+AssertionError: expected 'cards' to be 'card' // Object.is equality
+
+Expected: "card"
+Received: "cards"
+
+ ❯ src/__tests__/lib/cardNoun.test.ts:8:25
+      6| describe('cardNoun', () => {
+      7|   it('gives `card` for a count of 1', () => {
+      8|     expect(cardNoun(1)).toBe('card');
+       |                         ^
+      9|   });
+     10| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

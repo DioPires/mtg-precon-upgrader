@@ -1,0 +1,13 @@
+diff --git a/web/src/data/cardCache.ts b/web/src/data/cardCache.ts
+index 9f54ff1..2720f10 100644
+--- a/web/src/data/cardCache.ts
++++ b/web/src/data/cardCache.ts
+@@ -525,7 +525,7 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
+   }
+ 
+   function settlePrice(wanted: Wanted, card: ScryfallCard | null, t: number): void {
+-    const overlay: Overlay = { ...picturePart(overlays.get(wanted.key)), fetchedAt: t, priceCheckedAt: t };
++    const overlay: Overlay = { fetchedAt: t, priceCheckedAt: t };
+     const price = formatUsd(card?.prices?.usd);
+     // No price keeps the price shown: the file's, as the old refresh is past 24 h.
+     if (price) {

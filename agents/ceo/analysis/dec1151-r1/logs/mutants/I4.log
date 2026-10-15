@@ -1,0 +1,77 @@
+# I4 (import removed) web/src/lib/spellbookReport.ts
+# old: "import { cardNoun } from './cardNoun';\n"
+# new: ''
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/lib/spellbookReport.test.ts (11 tests | 4 failed) 4ms
+   × the count of cards analyzed in a paste report (DEC-1142) > reads `of 1 card` in the plain-text export for a total of 1 2ms
+     → cardNoun is not defined
+   × the count of cards analyzed in a paste report (DEC-1142) > reads `of 2 cards` in the plain-text export for a total of 2 0ms
+     → cardNoun is not defined
+   × the count of cards analyzed in a paste report (DEC-1142) > reads `of 1 card` in the Markdown export for a total of 1 0ms
+     → cardNoun is not defined
+   × the count of cards analyzed in a paste report (DEC-1142) > reads `of 2 cards` in the Markdown export for a total of 2 0ms
+     → cardNoun is not defined
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 7 passed (11)
+   Start at  17:04:32
+   Duration  322ms (transform 23ms, setup 19ms, collect 16ms, tests 4ms, environment 117ms, prepare 39ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/lib/spellbookReport.test.ts > the count of cards analyzed in a paste report (DEC-1142) > reads `of 1 card` in the plain-text export for a total of 1
+ReferenceError: cardNoun is not defined
+ ❯ Module.buildPlainTextExport src/lib/spellbookReport.ts:152:62
+    150|   if (report.commander.length) lines.push(`Commander: ${report.command…
+    151|   if (report.mode === 'paste' && report.cardsAnalyzed < report.cardsTo…
+    152|     lines.push(`Analyzed ${report.cardsAnalyzed} of ${report.cardsTota…
+       |                                                              ^
+    153|   }
+    154|   lines.push('');
+ ❯ src/__tests__/lib/spellbookReport.test.ts:219:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/__tests__/lib/spellbookReport.test.ts > the count of cards analyzed in a paste report (DEC-1142) > reads `of 2 cards` in the plain-text export for a total of 2
+ReferenceError: cardNoun is not defined
+ ❯ Module.buildPlainTextExport src/lib/spellbookReport.ts:152:62
+    150|   if (report.commander.length) lines.push(`Commander: ${report.command…
+    151|   if (report.mode === 'paste' && report.cardsAnalyzed < report.cardsTo…
+    152|     lines.push(`Analyzed ${report.cardsAnalyzed} of ${report.cardsTota…
+       |                                                              ^
+    153|   }
+    154|   lines.push('');
+ ❯ src/__tests__/lib/spellbookReport.test.ts:223:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/__tests__/lib/spellbookReport.test.ts > the count of cards analyzed in a paste report (DEC-1142) > reads `of 1 card` in the Markdown export for a total of 1
+ReferenceError: cardNoun is not defined
+ ❯ Module.buildMarkdownExport src/lib/spellbookReport.ts:308:61
+    306|   if (report.commander.length) out.push(`**Commander:** ${report.comma…
+    307|   if (report.mode === 'paste' && report.cardsAnalyzed < report.cardsTo…
+    308|     out.push(`_Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal…
+       |                                                             ^
+    309|   }
+    310|   out.push('');
+ ❯ src/__tests__/lib/spellbookReport.test.ts:227:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/__tests__/lib/spellbookReport.test.ts > the count of cards analyzed in a paste report (DEC-1142) > reads `of 2 cards` in the Markdown export for a total of 2
+ReferenceError: cardNoun is not defined
+ ❯ Module.buildMarkdownExport src/lib/spellbookReport.ts:308:61
+    306|   if (report.commander.length) out.push(`**Commander:** ${report.comma…
+    307|   if (report.mode === 'paste' && report.cardsAnalyzed < report.cardsTo…
+    308|     out.push(`_Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal…
+       |                                                             ^
+    309|   }
+    310|   out.push('');
+ ❯ src/__tests__/lib/spellbookReport.test.ts:231:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

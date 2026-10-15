@@ -1,0 +1,89 @@
+# E8 (space dropped) web/src/components/organisms/Engine.tsx
+# old: '{cur.count} {cardNoun(cur.count)} · hover for full frame</div>'
+# new: '{cur.count}{cardNoun(cur.count)} · hover for full frame</div>'
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/components/Engine.test.tsx (3 tests | 3 failed) 43ms
+   × Engine > reads `1 card` for the active role of one card 31ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  1 card · hover for full frame
+Received:
+  ROLE · 01 / 02Commander Engine1card · hover for full frameSol Ring
+   × Engine > reads `2 cards` for the active role of two cards 10ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  2 cards · hover for full frame
+Received:
+  ROLE · 02 / 02Ramp2cards · hover for full frameArcane SignetMind Stone
+   × Engine > reads `1 card` for a role of count 1 that lists two tiles 2ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  1 card · hover for full frame
+Received:
+  ROLE · 01 / 01Ramp1card · hover for full frameSol RingArcane Signet
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  17:04:10
+   Duration  417ms (transform 23ms, setup 21ms, collect 34ms, tests 43ms, environment 122ms, prepare 51ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Engine.test.tsx > Engine > reads `1 card` for the active role of one card
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  1 card · hover for full frame
+Received:
+  ROLE · 01 / 02Commander Engine1card · hover for full frameSol Ring
+ ❯ src/__tests__/components/Engine.test.tsx:29:42
+     27|   it('reads `1 card` for the active role of one card', () => {
+     28|     render(<Engine engine={ENGINE} />);
+     29|     expect(screen.getByRole('tabpanel')).toHaveTextContent('1 card · h…
+       |                                          ^
+     30|   });
+     31| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/__tests__/components/Engine.test.tsx > Engine > reads `2 cards` for the active role of two cards
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  2 cards · hover for full frame
+Received:
+  ROLE · 02 / 02Ramp2cards · hover for full frameArcane SignetMind Stone
+ ❯ src/__tests__/components/Engine.test.tsx:35:42
+     33|     render(<Engine engine={ENGINE} />);
+     34|     fireEvent.click(screen.getByRole('tab', { name: /Ramp/ }));
+     35|     expect(screen.getByRole('tabpanel')).toHaveTextContent('2 cards · …
+       |                                          ^
+     36|   });
+     37| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/__tests__/components/Engine.test.tsx > Engine > reads `1 card` for a role of count 1 that lists two tiles
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  1 card · hover for full frame
+Received:
+  ROLE · 01 / 01Ramp1card · hover for full frameSol RingArcane Signet
+ ❯ src/__tests__/components/Engine.test.tsx:42:42
+     40|   it('reads `1 card` for a role of count 1 that lists two tiles', () =…
+     41|     render(<Engine engine={[{ ...role('Ramp', ['Sol Ring', 'Arcane Sig…
+     42|     expect(screen.getByRole('tabpanel')).toHaveTextContent('1 card · h…
+       |                                          ^
+     43|   });
+     44| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
