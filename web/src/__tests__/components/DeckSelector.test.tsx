@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render } from '@testing-library/react';
+import { useState } from 'react';
 import { DeckSelector } from '../../components/organisms/DeckSelector';
 import type { DeckStub } from '../../data/types';
 
@@ -411,5 +412,162 @@ describe('DeckSelector brewing pill (DEC-1021)', () => {
     expect(brewing).not.toHaveClass('gv1-active');
     expect(brewing.querySelector('.gv1-brewing-pill')).toHaveTextContent('BREWING');
     expect(brewing.querySelector('.gv1-sel-pill-flag')).toBeNull();
+  });
+});
+
+// The parent owns the open deck, as the routes do through the URL. `route`
+// changes it with no key, as browser Back does.
+let route: (idx: number) => void = () => {};
+function Harness({ decks, start }: { decks: DeckStub[]; start: number }) {
+  const [active, setActive] = useState(start);
+  route = setActive;
+  return <DeckSelector decks={decks} activeIdx={active} onSelect={setActive} />;
+}
+
+describe('DeckSelector focus after a key switch (DEC-1135)', () => {
+  // Each focus records the pill as it was at that moment. A focus that ran
+  // before the pill rendered as active would record `aria-selected` false.
+  type Seen = { name: string | null | undefined; selected: string | null; tabIndex: number };
+  let seen: Seen[];
+  const record = (e: FocusEvent) => {
+    const el = e.target as HTMLElement;
+    seen.push({
+      name: el.querySelector('.gv1-sel-pill-name')?.textContent,
+      selected: el.getAttribute('aria-selected'),
+      tabIndex: el.tabIndex,
+    });
+  };
+  beforeEach(() => {
+    seen = [];
+    document.addEventListener('focusin', record);
+  });
+  afterEach(() => document.removeEventListener('focusin', record));
+
+  const startOn = (tab: HTMLElement) => {
+    act(() => tab.focus());
+    seen = [];
+  };
+
+  it.each([
+    ['ArrowRight', 4],
+    ['ArrowLeft', 2],
+    ['Home', 1],
+    ['End', 5],
+  ])('%s moves focus to the pill that becomes active', (key, idx) => {
+    const { getAllByRole } = render(<Harness decks={makeDecks(5)} start={3} />);
+    const tabs = getAllByRole('tab');
+    startOn(tabs[2]);
+
+    fireEvent.keyDown(tabs[2], { key });
+    const el = document.activeElement as HTMLElement;
+    expect(el).toBe(tabs[idx - 1]);
+    expect(el).toHaveAttribute('aria-selected', 'true');
+    expect(el.tabIndex).toBe(0);
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'false');
+    expect(seen).toEqual([{ name: `Deck ${idx}`, selected: 'true', tabIndex: 0 }]);
+  });
+
+  it('moves focus to the open deck\'s pill when the key picks that deck', () => {
+    const decks = makeDecks(5);
+    decks[4].hasDetail = false;
+    const { getAllByRole } = render(<Harness decks={decks} start={1} />);
+    const tabs = getAllByRole('tab');
+    // A press on the unscribed pill focuses it and opens nothing.
+    startOn(tabs[4]);
+
+    fireEvent.keyDown(tabs[4], { key: 'Home' });
+    expect(document.activeElement).toBe(tabs[0]);
+    expect(seen).toEqual([{ name: 'Deck 1', selected: 'true', tabIndex: 0 }]);
+  });
+
+  it('leaves focus on a clicked pill and makes no focus call', () => {
+    const { getAllByRole } = render(<Harness decks={makeDecks(5)} start={3} />);
+    const tabs = getAllByRole('tab');
+    // A browser focuses the button on the press, before the click.
+    startOn(tabs[3]);
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+
+    fireEvent.click(tabs[3]);
+    expect(tabs[3]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(tabs[3]);
+    expect(focus).not.toHaveBeenCalled();
+    focus.mockRestore();
+  });
+
+  it('moves no focus at a deck change that no key started, before or after a key switch', () => {
+    const { getAllByRole } = render(<Harness decks={makeDecks(5)} start={3} />);
+    const tabs = getAllByRole('tab');
+
+    act(() => route(1));
+    expect(document.activeElement).toBe(document.body);
+
+    startOn(tabs[0]);
+    fireEvent.keyDown(tabs[0], { key: 'End' });
+    expect(document.activeElement).toBe(tabs[4]);
+
+    // Back to the deck that the key left: focus stays on the pill it has.
+    act(() => route(1));
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(tabs[4]);
+    expect(seen).toHaveLength(1);
+  });
+});
+
+// The review's cases (DEC-1148 B1 to B4). Each one fails on one mutant that the
+// cases above let pass.
+describe('DeckSelector focus after a key switch: review cases (DEC-1148)', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('moves no focus when a route returns to the deck that an earlier key picked', () => {
+    const { getAllByRole } = render(<Harness decks={makeDecks(5)} start={3} />);
+    const tabs = getAllByRole('tab');
+    act(() => tabs[2].focus());
+    fireEvent.keyDown(tabs[2], { key: 'End' });
+    expect(document.activeElement).toBe(tabs[4]);
+    // A click on deck 1. A browser focuses the pill on the press.
+    act(() => tabs[0].focus());
+    fireEvent.click(tabs[0]);
+    // Browser Back to deck 5: no key started this change.
+    act(() => route(5));
+    expect(tabs[4]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(tabs[0]);
+  });
+
+  it('focuses with preventScroll, so the focus does not cut the centring short', () => {
+    const { getAllByRole } = render(<Harness decks={makeDecks(5)} start={3} />);
+    const tabs = getAllByRole('tab');
+    act(() => tabs[2].focus());
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    fireEvent.keyDown(tabs[2], { key: 'ArrowRight' });
+    expect(focus).toHaveBeenCalledTimes(1);
+    expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+  });
+
+  it('focuses the pill, not an active element earlier in the page', () => {
+    // The topbar's nav item for the open page carries `gv1-active` too.
+    const { getAllByRole } = render(
+      <>
+        <a className="gv1-nav-item gv1-active" href="/deck/deck-3">
+          Guide
+        </a>
+        <Harness decks={makeDecks(5)} start={3} />
+      </>,
+    );
+    const tabs = getAllByRole('tab');
+    act(() => tabs[2].focus());
+    fireEvent.keyDown(tabs[2], { key: 'End' });
+    expect(document.activeElement).toBe(tabs[4]);
+  });
+
+  it("reports the key's pick to onSelect when the key picks the open deck", () => {
+    const onSelect = vi.fn();
+    const { getAllByRole } = render(
+      <DeckSelector decks={makeDecks(5)} activeIdx={1} onSelect={onSelect} />,
+    );
+    const tabs = getAllByRole('tab');
+    act(() => tabs[0].focus());
+    fireEvent.keyDown(tabs[0], { key: 'Home' });
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledWith(1);
   });
 });

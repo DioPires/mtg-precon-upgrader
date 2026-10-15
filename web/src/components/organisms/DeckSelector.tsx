@@ -98,6 +98,22 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
     };
   }, [updateAtEnd, centreActive, ordered.length]);
 
+  // DEC-1135: a key switch moves focus to the pill that it picks, as the
+  // WAI-ARIA tabs pattern does. The key handler names the deck; the focus
+  // waits until that pill renders as active (tabIndex 0). A click leaves
+  // focus on the clicked pill, and a route change that no key started
+  // clears the name and moves no focus. `preventScroll`: the centring above
+  // scrolls the track, and a focus scroll would also move `.gv1-root`
+  // (DEC-1008).
+  const focusActive = useCallback(() => {
+    trackRef.current?.querySelector<HTMLElement>('.gv1-active')?.focus({ preventScroll: true });
+  }, []);
+  const keyTarget = useRef<number | null>(null);
+  useEffect(() => {
+    if (keyTarget.current === activeIdx) focusActive();
+    keyTarget.current = null;
+  }, [activeIdx, focusActive]);
+
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
     e.preventDefault();
@@ -109,7 +125,11 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
     else if (e.key === 'ArrowLeft') nextIx = (curIx - 1 + scribed.length) % scribed.length;
     else if (e.key === 'Home') nextIx = 0;
     else nextIx = scribed.length - 1;
-    onSelect(scribed[nextIx].idx);
+    const next = scribed[nextIx].idx;
+    // The key picked the deck already open: its pill renders as active now.
+    if (next === activeIdx) focusActive();
+    else keyTarget.current = next;
+    onSelect(next);
   };
 
   return (
