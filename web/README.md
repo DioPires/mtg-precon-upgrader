@@ -24,20 +24,33 @@ Scryfall host from repository data, so a card gives the same answer on every run
 
 - The app takes every deck card from `data/card-metadata.json` (see "Scryfall requests"
   below): the facts, the picture addresses on `cards.scryfall.io` and the USD price. A deck
-  page and /shopping therefore send no lookup, and /shopping shows its priced count at first
-  paint.
-- A card lookup reads the mana cost, mana value, type line, picture path and USD price from
-  the same file, so a lookup gives the entry that the app's own seed holds. A name that
-  `card-metadata.json` lacks gets a 404. `data/spellbook/price-index.json` stays the Combo
-  Lab's price source; the stub does not read it.
-- A card with two halves on one side (adventure, split, room, prepare) comes with
-  `card_faces`, as Scryfall sends it, so the app shows the mana cost of the first half.
+  page and /shopping therefore show every deck card at first paint, and /shopping shows its
+  priced count then.
+- /shopping and the deck guide tiles that show the cache's price ask again for a price older
+  than 24 h, in batches. On any day after `prices_as_of` of `card-metadata.meta.json` every
+  price of the file is that old, so these pages send batches. A case that proves "no request"
+  sets `page.clock` to less than 24 h after `prices_as_of`; a case that proves the refresh sets
+  it to more than 24 h after. Write no date into a spec: read it from the meta file.
+- The app sends its card lookups as batches: `POST /cards/collection` with up to 75 names.
+  The stub answers as Scryfall does: `{"object": "list", "not_found": [...], "data": [...]}`,
+  with `data` in the order asked. A plain name, or the front face of a `//` card, matches
+  without regard to case and accents; a full `//` name goes to `not_found`, as does a name
+  that `card-metadata.json` lacks. More than 75 names get a 422 (the shape of that answer is a
+  guess). The stub reads the mana cost, mana value, type line, picture path and USD price from
+  the file, so an answer gives the entry that the app's own seed holds.
+  `data/spellbook/price-index.json` stays the Combo Lab's price source; the stub does not read
+  it. The stub still answers `/cards/named` (a 404 for a name outside the file) and
+  `/cards/autocomplete`.
+- Every `//` card of a batch answer has `card_faces`. A card with two halves on one side
+  (adventure, split, room, prepare) keeps the joined cost and its pictures on the whole card,
+  so the app shows the mana cost of the first half. A transform or modal_dfc card has
+  `image_uris` only in its faces, as Scryfall sends it.
 - A name whose `usd` is null in `card-metadata.json` has no price, in the app and in the stub.
   Do not write a priced count into a spec: read it from the file, because the prices change.
 - Every card image is one flat rectangle of the size that the page asked for.
-- A name outside the file gets one lookup through the limiter, 600 ms or more after the last.
-  The first deck of /combos shows 20 cards; 16 of them are outside the file, and their 16
-  lookups take about 10 s.
+- The names outside the file go in one batch at the turn of bucket 1, 1,200 ms or more after
+  the last. The first deck of /combos shows 20 cards; 16 of them are outside the file, and
+  they go in one batch.
 
 A spec picks another state with `test.use`:
 
@@ -49,7 +62,11 @@ test.use({ cards: 'none' });       // every lookup and card image fails; card-me
 test.use({ fonts: 'blocked' });    // the Google Fonts hosts fail, so the fallback fonts show
 test.use({ scryfall429From: 3 });  // /cards/named and /cards/collection answer 429 from their 3rd request on
 test.use({ rateClock: 'page' });   // the rate check reads the page's clock: a spec that moves page.clock
+test.use({ scryfallUsdBump: 1 });  // each usd of a /cards/collection answer is $1.00 more than the file's
 ```
+
+`scryfallUsdBump` (0 by default) lets a case tell a refreshed price from the file's price. A
+null `usd` stays null.
 
 The seed of `cards: 'seeded'` writes 1,602 entries, about 992,000 characters, into
 `localStorage`: one for each name of `card-metadata.json` and one for each face of a `//` name
@@ -63,16 +80,20 @@ the page shows its layout with no prices.
 
 **The rate check.** A test fails when one browser context sent more than 2 requests to
 `/cards/named` and `/cards/collection` in any 1 s. Scryfall allows 2 a second on those
-methods. The stub counts the requests at its route, in real time. A case proves the app's
-limit only when it queues more lookups than the limit allows in 1 s. A case that sends one or
+methods. The check stamps each request when the browser sends it (the context's `request`
+event), in real time. Playwright answers Chromium's CORS preflight of a batch itself: neither
+a route nor the `request` event sees an `OPTIONS` request, so the check counts the POST only.
+The app counts each POST as two starts and spaces them 1,200 ms apart. A case proves the
+app's limit only when it queues more lookups than the limit allows in 1 s. A case that sends one or
 two lookups, or paces its own hovers, reads a low peak whatever the app does. The
 `scryfall-stub` attachment of each test that sent a Scryfall request gives the count, the peak
 in 1 s and the number of 429 answers (`bucketOne`).
 
 - A spec that moves `page.clock` can start several requests in one real second, because the
   page's timers run ahead of real time. Such a spec sets `rateClock: 'page'`. The check then
-  reads the page's own clock each time the app calls `fetch` for those methods, and the limit
-  of 2 in 1 s holds in the time that the app sees. Every other spec keeps `'real'`.
+  reads the page's own clock each time the app calls `fetch` for those methods, a GET or a
+  POST, and the limit of 2 in 1 s holds in the time that the app sees. Every other spec keeps
+  `'real'`.
 - `scryfall429From: n` makes the stub answer 429 from the n-th request to those methods on,
   counted over the test. Scryfall's own 429 has no CORS header, so the browser blocks it and
   the app's `fetch` rejects. Playwright adds that header to an answer without one, so the stub
@@ -96,10 +117,8 @@ Three checks keep a spec off the live API. Each has limits, and they are listed 
      from, and `route.fetch()` calls the live API from Node. To change the timing of an answer,
      wait in the route and then call `route.fallback()`; the stub answers.
    - With `rateClock: 'real'`, the rate check stamps a request to `/cards/named` or
-     `/cards/collection` when the stub's route answers it. A request that a spec's route holds
-     and then passes on with `route.fallback()` counts at its release, not at its send, so a
-     held request can read as a burst. Pull request 3 of design D (DEC-1072) moves the stamp to
-     the request event.
+     `/cards/collection` when the browser sends it, before any route. A request that a spec's
+     route holds and then passes on with `route.fallback()` counts at its send (DEC-1131 N2).
    - A request that the page cancelled (`net::ERR_ABORTED`) does not fail the test. It did not
      leave the browser. A spec's own `route.abort('aborted')` reads the same.
    - A context that a spec opens in `beforeAll` or `afterAll` has no stub and no check. Its
@@ -143,17 +162,48 @@ starts its own server.
 
 ## Scryfall requests
 
-`src/data/scryfallLimiter.ts` sends every request to `api.scryfall.com`; no other file names
-that host. Bucket 1 holds `/cards/named` and `/cards/collection`: a request starts 600 ms or
-more after the last start, and only after the last answer has arrived. The tabs of one origin
-share it through `navigator.locks` and `localStorage`. Bucket 2 holds `/cards/autocomplete`,
-120 ms apart. A 429, or a `fetch` to that host that rejects, stops both buckets for 30 s; the
-request that met it goes first when the stop ends. If that one fails too, the stop doubles, up
-to 300 s, and a success resets it. The stop's end lives in `localStorage`, so a reload and a
-second tab obey it. The card cache takes every deck card from `data/card-metadata.json`
-before a page can show it: facts, USD price, and Scryfall's picture addresses on
-`cards.scryfall.io`. It looks up only a name that the file lacks, and once a card whose picture
-from the file failed to load.
+`src/data/scryfallLimiter.ts` sends every request to `api.scryfall.com`; no other file in
+`src/` outside the tests names that host.
+
+- **Bucket 1** holds `/cards/collection`. Every card lookup is one POST of up to 75 names. A
+  JSON POST goes after a CORS preflight, and nobody knows whether Scryfall counts it, so each
+  POST counts as two starts: a request starts 1,200 ms or more after the last start, and only
+  after the last answer has arrived. Inside a tab the spacing runs on `performance.now()`, so
+  a step of the wall clock does not shorten it. The tabs of one origin share the bucket
+  through `navigator.locks` and the last start (wall time) in `localStorage`.
+- **Bucket 2** holds `/cards/autocomplete`, 120 ms apart. While a stop holds, the Atlas sends
+  no autocomplete and keeps its own suggestions.
+- **The timeout.** A request with no answer after 20 s is aborted, and it counts as a rejected
+  `fetch`. An abort by the caller is no failure.
+- **The stop.** A 429, a rejected `fetch` or the timeout stops both buckets for 30 s; the
+  request that met it goes first when the stop ends. If that one fails too, the stop doubles,
+  up to 300 s, and a success resets it. The stop record holds its end, its length and a
+  number: a request can double or end only the stop whose number it noted when it started. A
+  record that ended more than 300 s ago counts as none. A clock that went back cannot stretch
+  a stop past now plus its length, also when the stop lives in memory. The record lives in
+  `localStorage`, so a reload and a second tab obey it.
+
+The card cache (`src/data/cardCache.ts`) takes every deck card from `data/card-metadata.json`
+before a page can show it: facts, USD price dated `prices_as_of`, and Scryfall's picture
+addresses on `cards.scryfall.io`.
+
+- A name that the file lacks goes in the next batch. Names asked `first` (the hover, the
+  commander art) go before the other lookups, and lookups go before refreshes. A `//` name
+  goes out as its front face, two names with one front face go out once, and the answer is
+  matched by name, never by position. A name in `not_found` gets no other request for 24 h,
+  also after a reload. An answer with another status (a 400 or a 422) fails the batch's names
+  for 30 s and starts no stop.
+- /shopping and the deck guide tiles that show the cache's price (a tile shows the deck
+  file's highlight price first) ask again for a price older than 24 h. A refresh changes only
+  the price and its date, and lives 24 h under `gv1-card:` next to the file's entry; the
+  file's price wins when the file is newer. A refresh that gets no price keeps the price shown
+  and is not asked again inside 24 h.
+- A picture from the file that fails to load sends the card in a batch once; the answer's
+  addresses replace the file's for 24 h.
+- /shopping shows the file's prices at first paint. Its estimate changes once, when the
+  answers for its rows have arrived. The footer gives the oldest date among the priced rows.
+  While a stop holds and a row waits for a refresh, a line with `role="status"` says that the
+  refresh is paused, the date of the prices shown and the clock time of the next try.
 
 ## Layout
 
