@@ -19,6 +19,10 @@ interface PricePausedLineProps {
  * the tab that caps a stop after its clock went back, the listener's value is
  * the end from before the cap. A timer renders it again at the end of the stop,
  * so the line goes then, also when no request waits to end the stop.
+ *
+ * The status region stays in the page and is empty while no stop holds: many
+ * screen readers do not read a region that enters the page with its text
+ * (DEC-1154).
  */
 export function PricePausedLine({ waiting, pricesDate, limiter = scryfallLimiter }: PricePausedLineProps) {
   const [, rerender] = useState(0);
@@ -29,12 +33,15 @@ export function PricePausedLine({ waiting, pricesDate, limiter = scryfallLimiter
     const id = window.setTimeout(() => rerender((n) => n + 1), Math.max(0, until - Date.now()) + 1);
     return () => window.clearTimeout(id);
   }, [until]);
-  if (until === null || !waiting) return null;
   return (
-    <p className="gv1-mono-xs gv1-shop-paused" role="status">
-      Price refresh paused.
-      {pricesDate ? ` Prices shown are from ${pricesDate}.` : ''}
-      {` Next try at ${clockTime(until)}.`}
-    </p>
+    <div role="status">
+      {until !== null && waiting && (
+        <p className="gv1-mono-xs gv1-shop-paused">
+          Price refresh paused.
+          {pricesDate ? ` Prices shown are from ${pricesDate}.` : ''}
+          {` Next try at ${clockTime(until)}.`}
+        </p>
+      )}
+    </div>
   );
 }
