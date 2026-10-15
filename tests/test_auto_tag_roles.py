@@ -40,6 +40,24 @@ class NamedSearchTests(unittest.TestCase):
         )
         self.assertEqual(atr.classify(card), (None, 0.0))
 
+    def test_search_for_up_to_three_copies_is_not_tutor(self):
+        card = _card(
+            "Brindle Skyhawk",
+            "Creature — Bird",
+            "Flying\nWhen this creature enters, you may search your library for up to three cards named "
+            "Brindle Skyhawk, reveal them, put them into your hand, then shuffle.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
+
+    def test_named_search_that_ends_in_and_put_is_not_tutor(self):
+        card = _card(
+            "Mossgate Sentinel",
+            "Creature — Elf",
+            "When this creature enters, you may pay {1}{G}. If you do, search your library for a card "
+            "named Mossgate Sentinel and put that card onto the battlefield. Then shuffle.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
+
     def test_search_for_a_creature_card_stays_tutor(self):
         # "named" elsewhere in the text does not make the search a named search.
         card = _card(
@@ -84,6 +102,22 @@ class GraveyardExileTests(unittest.TestCase):
             with self.subTest(oracle_text=oracle_text):
                 card = _card("Ashen Curator", "Artifact", oracle_text)
                 self.assertEqual(atr.classify(card), (None, 0.0))
+
+    def test_exile_of_a_card_that_is_in_a_graveyard_is_not_removal_spot(self):
+        card = _card(
+            "Echo of the Fallen Hour",
+            "Instant",
+            "Exile target nonland card in a graveyard that was put there from the battlefield this turn.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
+
+    def test_exile_from_target_players_graveyard_is_not_removal_spot(self):
+        card = _card(
+            "Cinderveil Archivist",
+            "Artifact",
+            "{1}, {T}: Exile target creature card from target player's graveyard.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
 
     def test_exile_of_target_creature_stays_removal_spot(self):
         card = _card(
