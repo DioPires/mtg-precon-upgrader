@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1077-rev-head/web
+
+ ❯ src/__tests__/components/Apothecary.dec1125-kill.test.tsx (5 tests | 1 failed) 55ms
+   × DEC-1125 kill cases > a role key that the shared map does not hold reads raw > in the empty state 7ms
+     → expected 'No remedies match .' to be 'No remedies match lifegain.' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  08:49:46
+   Duration  434ms (transform 43ms, setup 20ms, collect 63ms, tests 55ms, environment 121ms, prepare 35ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.dec1125-kill.test.tsx > DEC-1125 kill cases > a role key that the shared map does not hold reads raw > in the empty state
+AssertionError: expected 'No remedies match .' to be 'No remedies match lifegain.' // Object.is equality
+
+Expected: "No remedies match lifegain."
+Received: "No remedies match ."
+
+ ❯ src/__tests__/components/Apothecary.dec1125-kill.test.tsx:82:66
+     80|       );
+     81|       fireEvent.click(screen.getByRole('button', { name: /lifegain/, p…
+     82|       expect(container.querySelector('.gv1-empty')?.textContent).toBe(…
+       |                                                                  ^
+     83|     });
+     84|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -16,6 +16,8 @@ import {
   computeBuyOwnSplit,
 } from '../../data/builtDecks';
 import { frontFace } from '../../data/cardName';
+import { deckLoader } from '../../data/loader';
+import { formatPricesDate } from '../../lib/pricesDate';
 import { OWNED_KEY, saveOwned } from '../../data/ownedCards';
 import { useBuiltDecks } from '../../hooks/useBuiltDecks';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
@@ -31,6 +33,21 @@ const BASIC_LANDS = new Set([
 // partner is present and `'Commander'` otherwise. Both must be skipped here —
 // the commanders are added explicitly via `d.commander`/`d.partner`.
 const COMMANDER_GROUPS = new Set(['Commander', 'Commanders']);
+
+/** The date of the prices in card-metadata.json (`prices_as_of` of its meta file). */
+function usePricesDate(): string | null {
+  const [date, setDate] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    deckLoader.loadCardMetadataMeta().then((meta) => {
+      if (!cancelled) setDate(formatPricesDate(meta?.prices_as_of));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return date;
+}
 
 // CSV parser that respects quoted fields.
 export function parseCsvRows(text: string): string[][] {
@@ -356,6 +373,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
   const [copyState, setCopyState] = useState<'ok' | 'err' | null>(null);
   const [, bump] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
+  const pricesDate = usePricesDate();
 
   // Slow re-render so price summary refreshes as Scryfall data arrives.
   useEffect(() => {
@@ -807,7 +825,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
       <p className="gv1-mono-xs gv1-dim gv1-shop-foot">
         Basic lands (Plains, Island, Swamp, Mountain, Forest, Wastes, snow-covered) are excluded.
         Cards needed by multiple decks count once per deck — three decks each wanting Sol Ring shows 3 in the buy list.
-        Prices are USD from Scryfall and load lazily; the est. cost updates as more arrive.
+        {pricesDate ? `Prices are USD from Scryfall, as of ${pricesDate}.` : 'Prices are USD from Scryfall.'}
       </p>
     </>
   );

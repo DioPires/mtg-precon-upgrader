@@ -15,9 +15,11 @@
 // `/data/...` is the same origin. In dev the vite middleware in vite.config.ts
 // proxies /data/* to ../data/*.
 
+import { cardCache, type CardCache } from './cardCache';
 import type {
   RawCandidates,
   RawCardMetadata,
+  RawCardMetadataMeta,
   RawDeck,
   RawDeckBundle,
   RawDeckIndex,
@@ -229,7 +231,14 @@ import type { DeckTierBLoops } from './tierB';
 // v148 -> v149 (DEC-945 2026-10-07): eternal-harvest +Avacyn, Angel of Horror / -Harvester of Souls.
 // v153 -> v154 (DEC-1000 2026-10-12): anvil-chorus deck.json gained `candidate_pins`
 // (DEC-992, 649c1b2); deck.json is persisted, so a pre-pin envelope would hide the Pinned strip.
-const STORAGE_PREFIX = 'gv1-deck-data-v154:';
+// v154 -> v155 (DEC-1102 2026-10-14): the app takes deck cards' pictures and prices from
+// card-metadata.json, whose entries gained `image`, `usd` and `eur` (DEC-1075, PR #24). A
+// persisted copy from before PR #24 has none of the three.
+// v155 -> v156 (DEC-1085 2026-10-15): eternal-agony's simulation.json regenerated. PR #24
+// filled the `oracle_text` of Blightstep Pathway // Searstep Pathway (+1 black source),
+// Unholy Annex // Ritual Chamber (+1 draw) and Spiked Corridor // Torture Pit
+// (+1 interaction), so reliabilityMetrics, goldfish and deckHealthScore move.
+const STORAGE_PREFIX = 'gv1-deck-data-v156:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
@@ -260,6 +269,8 @@ interface LoaderDeps {
   fetchImpl?: typeof fetch;
   storage?: Storage | null;
   now?: () => number;
+  /** The card cache that card-metadata.json seeds (DEC-1102). */
+  cardCache?: Pick<CardCache, 'seed'>;
 }
 
 function defaultStorage(): Storage | null {
@@ -270,6 +281,8 @@ function defaultStorage(): Storage | null {
 export interface DeckLoader {
   loadIndex(): Promise<RawDeckIndex>;
   loadCardMetadata(): Promise<RawCardMetadata>;
+  /** data/card-metadata.meta.json, or null when it is missing. Not persisted. */
+  loadCardMetadataMeta(): Promise<RawCardMetadataMeta | null>;
   loadDeck(id: string): Promise<RawDeckBundle | null>;
   loadAll(): Promise<RawDeckBundle[]>;
   /** Test-only: drop in-memory state. */
@@ -282,12 +295,14 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   const resolveStorage = (): Storage | null =>
     explicitStorage === undefined ? defaultStorage() : explicitStorage;
   const now = deps.now ?? (() => Date.now());
+  const seedCards = (metadata: RawCardMetadata) => deps.cardCache?.seed(metadata);
 
   const indexInflight = new Map<string, Promise<RawDeckIndex>>();
   const metadataInflight = new Map<string, Promise<RawCardMetadata>>();
   const deckInflight = new Map<string, Promise<RawDeckBundle | null>>();
   let memIndex: RawDeckIndex | null = null;
   let memCardMetadata: RawCardMetadata | null = null;
+  let metaPromise: Promise<RawCardMetadataMeta | null> | null = null;
   const memDecks = new Map<string, RawDeckBundle>();
 
   /**
@@ -372,11 +387,15 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
     return promise;
   }
 
+  // Every deck bundle waits for this, and it seeds the card cache before it
+  // resolves. A page takes its card names from a bundle, so no page can ask the
+  // cache for a name of the file before the seed is in (DEC-1102).
   async function loadCardMetadata(): Promise<RawCardMetadata> {
     if (memCardMetadata) return memCardMetadata;
     const cached = readPersisted<RawCardMetadata>('card-metadata');
     if (cached) {
       memCardMetadata = cached;
+      seedCards(cached);
       return cached;
     }
     const existing = metadataInflight.get('card-metadata');
@@ -385,11 +404,20 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
       const data = await fetchJson<RawCardMetadata>('/data/card-metadata.json');
       const metadata = data ?? {};
       memCardMetadata = metadata;
+      seedCards(metadata);
       writePersisted('card-metadata', metadata);
       return metadata;
     })().finally(() => metadataInflight.delete('card-metadata'));
     metadataInflight.set('card-metadata', promise);
     return promise;
+  }
+
+  function loadCardMetadataMeta(): Promise<RawCardMetadataMeta | null> {
+    metaPromise ??= fetchJson<RawCardMetadataMeta>('/data/card-metadata.meta.json').catch(() => {
+      metaPromise = null;
+      return null;
+    });
+    return metaPromise;
   }
 
   /**
@@ -485,13 +513,14 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
     purged = false;
     memIndex = null;
     memCardMetadata = null;
+    metaPromise = null;
     memDecks.clear();
     indexInflight.clear();
     metadataInflight.clear();
     deckInflight.clear();
   }
 
-  return { loadIndex, loadCardMetadata, loadDeck, loadAll, _reset };
+  return { loadIndex, loadCardMetadata, loadCardMetadataMeta, loadDeck, loadAll, _reset };
 }
 
-export const deckLoader: DeckLoader = createDeckLoader();
+export const deckLoader: DeckLoader = createDeckLoader({ cardCache });
