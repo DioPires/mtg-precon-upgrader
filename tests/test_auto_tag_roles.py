@@ -110,6 +110,17 @@ class GraveyardExileTests(unittest.TestCase):
         )
         self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
+    def test_graveyard_card_after_controls_is_another_clause(self):
+        # "an opponent controls" ends the target; the graveyard card belongs to the next clause.
+        for oracle_text in (
+            "When this creature enters, exile target creature an opponent controls, then you may "
+            "return a creature card from your graveyard to your hand.",
+            "When this creature enters, exile target creature an opponent controls and return a "
+            "creature card from your graveyard to your hand.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Thornmere Exarch", "Creature — Elf Cleric", oracle_text)
+                self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
 
 class ProtectionPatternTests(unittest.TestCase):

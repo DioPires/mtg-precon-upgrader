@@ -197,8 +197,10 @@ _SPOT_TARGET = re.compile(
 
 # Read just after a _SPOT_TARGET match: "exile target creature card from your
 # graveyard" targets a card in a graveyard, not a permanent (DEC-1143).
+# "controls" ends the target's own noun phrase ("an opponent controls"), so a
+# later "return a creature card from your graveyard" is another clause (DEC-1161).
 _GRAVEYARD_CARD = re.compile(
-    r"(?:(?!target\b)[a-z\-/, ])*?\bcards? (?:with [^.;\n]*? )?(?:from|in) "
+    r"(?:(?!target\b|controls?\b)[a-z\-/, ])*?\bcards? (?:with [^.;\n]*? )?(?:from|in) "
     r"(?:a|your|an opponent's|target player's|that player's|their) graveyard"
 )
 
