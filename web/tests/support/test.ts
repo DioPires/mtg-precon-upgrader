@@ -7,12 +7,15 @@
 // answered fails the test in the same way (DEC-1071). playwright.config.ts
 // rejects a spec that imports '@playwright/test' directly (./guard).
 //
-// The rate check (DEC-1102): a test fails when one browser context sent more
+// The rate check (DEC-1102): a test fails when one browser context started more
 // than 2 requests to /cards/named and /cards/collection (bucket 1 of
-// src/data/scryfallLimiter.ts) in any 1 s. The check stamps each one when the
-// browser sends it (the context's `request` event), in real time, so every case
-// proves the app's limit, also a case whose own route holds an answer
-// (DEC-1131 N2).
+// src/data/scryfallLimiter.ts) in any 1 s. A GET counts once. A POST counts
+// twice: the browser sends a CORS preflight (OPTIONS) before it, nobody knows
+// whether Scryfall counts the preflight, and neither a route nor the `request`
+// event shows it (DEC-1131 ruling 5, DEC-1149 N3). The check stamps each request
+// when the browser sends it (the context's `request` event), in real time, so
+// every case proves the app's limit, also a case whose own route holds an
+// answer (DEC-1131 N2).
 //
 //   test.use({ cards: 'seeded' })        as 'repo', plus a `gv1-card:` entry for each name before first paint
 //   test.use({ cards: 'none' })          every lookup and picture fails, and card-metadata.json has no price
@@ -56,8 +59,9 @@ export interface StubOptions {
    * browser sends it, in real time. A spec that moves page.clock sets 'page':
    * its fake time can start several requests in one real second. The check then
    * reads the page's own clock at each bucket 1 fetch that the app makes, a GET
-   * or a POST, so the limit holds in the time that the app sees. Every other
-   * case keeps 'real'.
+   * or a POST, so the limit holds in the time that the app sees. It reads the
+   * fetch's method too, so a POST counts twice in this clock as well. Every
+   * other case keeps 'real'.
    */
   rateClock: 'real' | 'page';
   /**
@@ -82,6 +86,12 @@ const RATE_LIMIT = 2;
 const RATE_WINDOW_MS = 1000;
 const PAGE_CLOCK_BINDING = '__grimoireBucketOneSent';
 
+/** One bucket 1 request as the rate check stamps it: its method in capitals, and its time. */
+export interface BucketOneSend {
+  method: string;
+  time: number;
+}
+
 /** The most requests that any window of RATE_WINDOW_MS holds. */
 export function peakPerWindow(times: number[], windowMs = RATE_WINDOW_MS): number {
   const sorted = [...times].sort((a, b) => a - b);
@@ -93,17 +103,37 @@ export function peakPerWindow(times: number[], windowMs = RATE_WINDOW_MS): numbe
   return peak;
 }
 
+/** The time of each request that the sends started: a POST counts twice, at its time, for its preflight. */
+export function startTimes(sends: BucketOneSend[]): number[] {
+  return sends.flatMap((send) => (send.method === 'POST' ? [send.time, send.time] : [send.time]));
+}
+
+/** The rate check's error for one context's sends, which started `peak` requests in 1 s. */
+export function rateCheckFailure(sends: BucketOneSend[], peak: number, clock: StubOptions['rateClock']): string {
+  const first = Math.min(...sends.map((send) => send.time));
+  return (
+    `One browser context started ${peak} requests to /cards/named and /cards/collection in 1 s; Scryfall allows ${RATE_LIMIT}.\n` +
+    `  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n` +
+    `  Sends (method, ms after the first, ${clock === 'page' ? "the page's clock" : 'real time'}): ` +
+    sends.map((send) => `${send.method} ${send.time - first}`).join(', ') +
+    `\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, "Scryfall requests").`
+  );
+}
+
 // Runs in the page for `rateClock: 'page'`. It reads the page's clock when the
-// app calls fetch for a bucket 1 address, and passes that time to the fixture.
+// app calls fetch for a bucket 1 address, and passes that time and the method
+// to the fixture.
 function reportBucketOneSends(binding: string): void {
   const send = window.fetch;
   window.fetch = function (input: RequestInfo | URL, init?: RequestInit) {
     try {
       const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
       if (/^https:\/\/api\.scryfall\.com\/cards\/(named|collection)(\?|$)/.test(url)) {
-        const report = (window as unknown as Record<string, ((t: number) => Promise<void>) | undefined>)[binding];
+        // The method that fetch sends: the one of init, else the Request's, else GET.
+        const method = init?.method ?? (input instanceof Request ? input.method : 'GET');
+        const report = (window as unknown as Record<string, ((t: number, m: string) => Promise<void>) | undefined>)[binding];
         // A page that closes drops the report; that is no failure of the app.
-        report?.(Date.now())?.catch(() => undefined);
+        report?.(Date.now(), method)?.catch(() => undefined);
       }
     } catch {
       // The report never stands in the app's way.
@@ -168,14 +198,14 @@ export const test = base.extend<StubOptions & StubFixtures>({
       const unanswered: string[] = [];
       const counts: Partial<Record<AnswerKind, number>> = {};
       const notFound = new Set<string>();
-      // The rate check: the times of each context's bucket 1 requests.
-      const bucketOne = new Map<BrowserContext, number[]>();
+      // The rate check: each context's bucket 1 requests, with their methods and times.
+      const bucketOne = new Map<BrowserContext, BucketOneSend[]>();
       let bucketOneCount = 0;
       let limited = 0;
-      const stamp = (context: BrowserContext, time: number) => {
-        const times = bucketOne.get(context) ?? [];
-        times.push(time);
-        bucketOne.set(context, times);
+      const stamp = (context: BrowserContext, time: number, method: string) => {
+        const sends = bucketOne.get(context) ?? [];
+        sends.push({ method: method.toUpperCase(), time });
+        bucketOne.set(context, sends);
       };
 
       // A spec can take a request away from the stub: its own route, or unroute().
@@ -284,17 +314,22 @@ export const test = base.extend<StubOptions & StubFixtures>({
           );
         }
         if (rateClock === 'page') {
-          await context.exposeBinding(PAGE_CLOCK_BINDING, (_source, time: number) => stamp(context, time));
+          await context.exposeBinding(PAGE_CLOCK_BINDING, (_source, time: number, method: string) =>
+            stamp(context, time, method),
+          );
           await context.addInitScript(reportBucketOneSends, PAGE_CLOCK_BINDING);
         }
         if (cards === 'seeded') await context.addInitScript(seedCardCache, cardCacheSeed());
         // The real clock stamps a bucket 1 request when the browser sends it,
         // before any route: a spec's route that holds the answer does not move
-        // the stamp. A CORS preflight that Playwright reports here counts too.
+        // the stamp. Playwright reports no CORS preflight here, so startTimes()
+        // counts a POST twice in its place.
         if (rateClock === 'real') {
           context.on('request', (request) => {
             const url = new URL(request.url());
-            if (url.hostname === 'api.scryfall.com' && BUCKET_ONE.test(url.pathname)) stamp(context, Date.now());
+            if (url.hostname === 'api.scryfall.com' && BUCKET_ONE.test(url.pathname)) {
+              stamp(context, Date.now(), request.method());
+            }
           });
         }
         context.on('response', (response) => judge(response.request()));
@@ -311,7 +346,7 @@ export const test = base.extend<StubOptions & StubFixtures>({
       await runTest(stub);
       browser.newContext = newContext;
 
-      const peaks = [...bucketOne.values()].map((times) => peakPerWindow(times));
+      const peaks = [...bucketOne.values()].map((sends) => peakPerWindow(startTimes(sends)));
       const peak = Math.max(0, ...peaks);
       if (Object.keys(counts).length > 0) {
         await testInfo.attach('scryfall-stub', {
@@ -348,14 +383,7 @@ export const test = base.extend<StubOptions & StubFixtures>({
         );
       }
       if (peak > RATE_LIMIT) {
-        const worst = [...bucketOne.values()][peaks.indexOf(peak)];
-        const start = Math.min(...worst);
-        failures.push(
-          `One browser context sent ${peak} requests to /cards/named and /cards/collection in 1 s; Scryfall allows ${RATE_LIMIT}.\n` +
-            `  Send times (ms after the first, ${rateClock === 'page' ? "the page's clock" : 'real time'}): ` +
-            worst.map((t) => t - start).join(', ') +
-            `\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, "Scryfall requests").`,
-        );
+        failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));
       }
       if (failures.length > 0) throw new Error(failures.join('\n'));
     },

@@ -82,22 +82,25 @@ the quota before a deck page starts from about 19 % of the 5 MB quota, not from 
 `cards: 'none'` also answers `/data/card-metadata.json` with `usd` and `eur` set to null, so
 the page shows its layout with no prices.
 
-**The rate check.** A test fails when one browser context sent more than 2 requests to
+**The rate check.** A test fails when one browser context started more than 2 requests to
 `/cards/named` and `/cards/collection` in any 1 s. Scryfall allows 2 a second on those
-methods. The check stamps each request when the browser sends it (the context's `request`
-event), in real time. Playwright answers Chromium's CORS preflight of a batch itself: neither
-a route nor the `request` event sees an `OPTIONS` request, so the check counts the POST only.
-The app counts each POST as two starts and spaces them 1,200 ms apart. A case proves the
-app's limit only when it queues more lookups than the limit allows in 1 s. A case that sends one or
-two lookups, or paces its own hovers, reads a low peak whatever the app does. The
-`scryfall-stub` attachment of each test that sent a Scryfall request gives the count, the peak
-in 1 s and the number of 429 answers (`bucketOne`).
+methods. A GET counts once. A POST counts twice: the browser sends a CORS preflight
+(`OPTIONS`) before it, nobody knows whether Scryfall counts the preflight, and neither a route
+nor the `request` event shows it (DEC-1131 ruling 5, DEC-1149 N3). Playwright answers
+Chromium's preflight itself, so the double count is the only way the check sees it. The check
+stamps each request when the browser sends it (the context's `request` event), in real time.
+The app also counts each POST as two starts, and spaces its POSTs 1,200 ms apart, so two
+batches in 1 s fail the test. A case proves the app's limit only when the app has lookups for
+two batches or more. A case that sends one batch, or paces its own hovers, reads a low peak
+whatever the app does. The `scryfall-stub` attachment of each test that sent a Scryfall request
+gives the count of requests, the peak in 1 s (a POST counts twice) and the number of 429
+answers (`bucketOne`). The error lists each send of the context with its method.
 
 - A spec that moves `page.clock` can start several requests in one real second, because the
   page's timers run ahead of real time. Such a spec sets `rateClock: 'page'`. The check then
   reads the page's own clock each time the app calls `fetch` for those methods, a GET or a
-  POST, and the limit of 2 in 1 s holds in the time that the app sees. Every other spec keeps
-  `'real'`.
+  POST, and the limit of 2 in 1 s holds in the time that the app sees. It reads the method of
+  the call too, so a POST counts twice in this clock as well. Every other spec keeps `'real'`.
 - `scryfall429From: n` makes the stub answer 429 from the n-th request to those methods on,
   counted over the test. Scryfall's own 429 has no CORS header, so the browser blocks it and
   the app's `fetch` rejects. Playwright adds that header to an answer without one, so the stub
