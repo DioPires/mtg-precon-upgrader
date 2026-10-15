@@ -109,6 +109,15 @@ class CardMetadataCoverageTests(unittest.TestCase):
         metadata = json.loads(METADATA_FILE.read_text())
         meta = json.loads(META_FILE.read_text())
 
-        self.assertEqual(sorted(meta), ["count", "prices_as_of", "source"])
+        self.assertEqual(
+            sorted(meta), ["count", "prices_as_of", "prices_from_other_printing", "source"])
         self.assertEqual(meta["count"], len(metadata))
+        # DEC-1079: for each currency, the names whose price came from another printing.
+        other = meta["prices_from_other_printing"]
+        self.assertEqual(sorted(other), ["eur", "usd"])
+        for currency, count in other.items():
+            with self.subTest(currency=currency):
+                self.assertIs(type(count), int)
+                self.assertLessEqual(
+                    count, sum(entry[currency] is not None for entry in metadata.values()))
         self.assertEqual(datetime.fromisoformat(meta["prices_as_of"]).utcoffset(), timedelta(0))
