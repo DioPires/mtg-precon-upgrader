@@ -1,0 +1,11 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -121,7 +121,7 @@
+     try:
+         meta = json.loads(path.with_name(MIRROR_META_NAME).read_text(encoding="utf-8"))
+         return f"mirror {meta['scryfall_updated_at']}"
+-    except (OSError, ValueError, KeyError, TypeError):
++    except (OSError, KeyError):
+         return "mirror unknown"
+ 
+ 
