@@ -61,6 +61,9 @@ class WriteMetricsClockFieldTests(unittest.TestCase):
         self.assertTrue(m.write_metrics(DECK_ID, payload))
         return self.path.read_bytes()
 
+    def _seed_raw(self, doc: dict) -> None:
+        self.path.write_text(json.dumps(doc, indent=2) + "\n")
+
     def test_payload_that_differs_only_in_the_clock_fields_writes_nothing(self):
         before = self._seed(_payload(age=1.0))
         new = _payload(age=2.1, generated_at="2026-10-15T12:00:00+00:00")
@@ -102,6 +105,24 @@ class WriteMetricsClockFieldTests(unittest.TestCase):
         stored = json.loads(self.path.read_text())
         self.assertFalse(stored["confidence_inputs"]["bonus_floor_eligible"])
         self.assertEqual(stored["confidence_inputs"]["penalties"]["candidates_age_days"], 30.1)
+
+    def test_file_whose_penalties_is_not_a_dict_raises_nothing(self):
+        """Kills C6 (`if penalties is not None:` in place of `isinstance(penalties, dict)`)."""
+        old = _payload()
+        old["confidence_inputs"]["penalties"] = []
+        self._seed_raw(old)
+        self.assertTrue(m.write_metrics(DECK_ID, _payload()))
+        stored = json.loads(self.path.read_text())
+        self.assertEqual(stored["confidence_inputs"]["penalties"]["candidates_age_days"], 1.0)
+
+    def test_file_whose_confidence_inputs_is_not_a_dict_raises_nothing(self):
+        """Kills C7 (`if inputs is not None` in place of `isinstance(inputs, dict)`)."""
+        old = _payload()
+        old["confidence_inputs"] = []
+        self._seed_raw(old)
+        self.assertTrue(m.write_metrics(DECK_ID, _payload()))
+        stored = json.loads(self.path.read_text())
+        self.assertIsInstance(stored["confidence_inputs"], dict)
 
 
 if __name__ == "__main__":
