@@ -1,0 +1,387 @@
+
+ RUN  v2.1.9 /private/tmp/dec1148-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (28 tests | 8 failed) 122ms
+   × DeckSelector focus after a key switch (DEC-1135) > ArrowRight moves focus to the pill that becomes active 8ms
+     → expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+   × DeckSelector focus after a key switch (DEC-1135) > ArrowLeft moves focus to the pill that becomes active 4ms
+     → expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+   × DeckSelector focus after a key switch (DEC-1135) > Home moves focus to the pill that becomes active 3ms
+     → expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+   × DeckSelector focus after a key switch (DEC-1135) > End moves focus to the pill that becomes active 3ms
+     → expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+   × DeckSelector focus after a key switch (DEC-1135) > moves no focus at a deck change that no key started, before or after a key switch 4ms
+     → expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+   × DeckSelector focus after a key switch: review cases (DEC-1148) > moves no focus when a route returns to the deck that an earlier key picked 3ms
+     → expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+   × DeckSelector focus after a key switch: review cases (DEC-1148) > focuses with preventScroll, so the focus does not cut the centring short 2ms
+     → expected "focus" to be called 1 times, but got 0 times
+   × DeckSelector focus after a key switch: review cases (DEC-1148) > focuses the pill, not an active element earlier in the page 3ms
+     → expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 20 passed (28)
+   Start at  16:40:00
+   Duration  475ms (transform 32ms, setup 20ms, collect 44ms, tests 122ms, environment 117ms, prepare 33ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > ArrowRight moves focus to the pill that becomes active
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > ArrowLeft moves focus to the pill that becomes active
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > Home moves focus to the pill that becomes active
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > End moves focus to the pill that becomes active
+AssertionError: expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+    aria-disabled="false"
+-   aria-selected="true"
+-   class="gv1-sel-pill gv1-active"
++   aria-selected="false"
++   class="gv1-sel-pill"
+    role="tab"
+-   tabindex="0"
+-   title="Open Deck 4"
++   tabindex="-1"
++   title="Open Deck 3"
+    type="button"
+  >
+    <div
+      class="gv1-sel-pill-top"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        № 
+-       04
++       03
+      </span>
+      <span
+        aria-label="Color identity: 1 colors"
+        class="gv1-pips"
+        role="img"
+      >
+        <span
+          aria-hidden="true"
+          class="gv1-pip"
+          style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+        >
+          R
+        </span>
+      </span>
+    </div>
+    <div
+      class="gv1-sel-pill-name"
+    >
+-     Deck 4
++     Deck 3
+    </div>
+    <div
+      class="gv1-mono-xs gv1-sel-pill-cmd"
+    >
+-     Commander 4
++     Commander 3
+    </div>
+    <div
+      class="gv1-sel-pill-foot"
+    >
+      <span
+        class="gv1-mono-xs gv1-sel-pill-bracket"
+      >
+        BRACKET 
+        4
+      </span>
+    </div>
+-   <span
+-     class="gv1-sel-pill-flag"
+-   >
+-     <span
+-       class="gv1-mono-xs"
+-     >
+-       NOW SCRYING
+-     </span>
+-   </span>
+  </button>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:463:16
+    461|     fireEvent.keyDown(tabs[2], { key });
+    462|     const el = document.activeElement as HTMLElement;
+    463|     expect(el).toBe(tabs[idx - 1]);
+       |                ^
+    464|     expect(el).toHaveAttribute('aria-selected', 'true');
+    465|     expect(el.tabIndex).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > moves no focus at a deck change that no key started, before or after a key switch
+AssertionError: expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+    aria-disabled="false"
+-   aria-selected="true"
+-   class="gv1-sel-pill gv1-active"
++   aria-selected="false"
++   class="gv1-sel-pill"
+    role="tab"
+-   tabindex="0"
+-   title="Open Deck 5"
++   tabindex="-1"
++   title="Open Deck 1"
+    type="button"
+  >
+    <div
+      class="gv1-sel-pill-top"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        № 
+-       05
++       01
+      </span>
+      <span
+        aria-label="Color identity: 1 colors"
+        class="gv1-pips"
+        role="img"
+      >
+        <span
+          aria-hidden="true"
+          class="gv1-pip"
+          style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+        >
+          R
+        </span>
+      </span>
+    </div>
+    <div
+      class="gv1-sel-pill-name"
+    >
+-     Deck 5
++     Deck 1
+    </div>
+    <div
+      class="gv1-mono-xs gv1-sel-pill-cmd"
+    >
+-     Commander 5
++     Commander 1
+    </div>
+    <div
+      class="gv1-sel-pill-foot"
+    >
+      <span
+        class="gv1-mono-xs gv1-sel-pill-bracket"
+      >
+        BRACKET 
+        4
+      </span>
+    </div>
+-   <span
+-     class="gv1-sel-pill-flag"
+-   >
+-     <span
+-       class="gv1-mono-xs"
+-     >
+-       NOW SCRYING
+-     </span>
+-   </span>
+  </button>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:506:36
+    504|     startOn(tabs[0]);
+    505|     fireEvent.keyDown(tabs[0], { key: 'End' });
+    506|     expect(document.activeElement).toBe(tabs[4]);
+       |                                    ^
+    507| 
+    508|     // Back to the deck that the key left: focus stays on the pill it …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch: review cases (DEC-1148) > moves no focus when a route returns to the deck that an earlier key picked
+AssertionError: expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+    aria-disabled="false"
+-   aria-selected="true"
+-   class="gv1-sel-pill gv1-active"
++   aria-selected="false"
++   class="gv1-sel-pill"
+    role="tab"
+-   tabindex="0"
+-   title="Open Deck 5"
++   tabindex="-1"
++   title="Open Deck 3"
+    type="button"
+  >
+    <div
+      class="gv1-sel-pill-top"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        № 
+-       05
++       03
+      </span>
+      <span
+        aria-label="Color identity: 1 colors"
+        class="gv1-pips"
+        role="img"
+      >
+        <span
+          aria-hidden="true"
+          class="gv1-pip"
+          style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+        >
+          R
+        </span>
+      </span>
+    </div>
+    <div
+      class="gv1-sel-pill-name"
+    >
+-     Deck 5
++     Deck 3
+    </div>
+    <div
+      class="gv1-mono-xs gv1-sel-pill-cmd"
+    >
+-     Commander 5
++     Commander 3
+    </div>
+    <div
+      class="gv1-sel-pill-foot"
+    >
+      <span
+        class="gv1-mono-xs gv1-sel-pill-bracket"
+      >
+        BRACKET 
+        4
+      </span>
+    </div>
+-   <span
+-     class="gv1-sel-pill-flag"
+-   >
+-     <span
+-       class="gv1-mono-xs"
+-     >
+-       NOW SCRYING
+-     </span>
+-   </span>
+  </button>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:526:36
+    524|     act(() => tabs[2].focus());
+    525|     fireEvent.keyDown(tabs[2], { key: 'End' });
+    526|     expect(document.activeElement).toBe(tabs[4]);
+       |                                    ^
+    527|     // A click on deck 1. A browser focuses the pill on the press.
+    528|     act(() => tabs[0].focus());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch: review cases (DEC-1148) > focuses with preventScroll, so the focus does not cut the centring short
+AssertionError: expected "focus" to be called 1 times, but got 0 times
+ ❯ src/__tests__/components/DeckSelector.test.tsx:542:19
+    540|     const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    541|     fireEvent.keyDown(tabs[2], { key: 'ArrowRight' });
+    542|     expect(focus).toHaveBeenCalledTimes(1);
+       |                   ^
+    543|     expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+    544|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch: review cases (DEC-1148) > focuses the pill, not an active element earlier in the page
+AssertionError: expected <button role="tab" …(6)>…(4)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+    aria-disabled="false"
+-   aria-selected="true"
+-   class="gv1-sel-pill gv1-active"
++   aria-selected="false"
++   class="gv1-sel-pill"
+    role="tab"
+-   tabindex="0"
+-   title="Open Deck 5"
++   tabindex="-1"
++   title="Open Deck 3"
+    type="button"
+  >
+    <div
+      class="gv1-sel-pill-top"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        № 
+-       05
++       03
+      </span>
+      <span
+        aria-label="Color identity: 1 colors"
+        class="gv1-pips"
+        role="img"
+      >
+        <span
+          aria-hidden="true"
+          class="gv1-pip"
+          style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+        >
+          R
+        </span>
+      </span>
+    </div>
+    <div
+      class="gv1-sel-pill-name"
+    >
+-     Deck 5
++     Deck 3
+    </div>
+    <div
+      class="gv1-mono-xs gv1-sel-pill-cmd"
+    >
+-     Commander 5
++     Commander 3
+    </div>
+    <div
+      class="gv1-sel-pill-foot"
+    >
+      <span
+        class="gv1-mono-xs gv1-sel-pill-bracket"
+      >
+        BRACKET 
+        4
+      </span>
+    </div>
+-   <span
+-     class="gv1-sel-pill-flag"
+-   >
+-     <span
+-       class="gv1-mono-xs"
+-     >
+-       NOW SCRYING
+-     </span>
+-   </span>
+  </button>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:559:36
+    557|     act(() => tabs[2].focus());
+    558|     fireEvent.keyDown(tabs[2], { key: 'End' });
+    559|     expect(document.activeElement).toBe(tabs[4]);
+       |                                    ^
+    560|   });
+    561| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+

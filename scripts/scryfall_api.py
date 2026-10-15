@@ -8,7 +8,8 @@ and a caller that keeps overloading the API can be banned. So:
 - a request starts 600 ms (scryfall_limit.SLOW_INTERVAL) or more after the
   last answer arrived;
 - a 429 raises ScryfallRateLimited, and from then on this process sends no
-  further request: every later call raises again without sending;
+  further request: every later call raises again without sending. Its text
+  names the end of the stop (DEC-1114 N5);
 - a 3xx raises urllib.error.HTTPError: the helper follows no redirect, so
   every request goes to API_HOST and waits the 600 ms (DEC-1076).
 
@@ -31,7 +32,8 @@ COLLECTION_URL = f"https://{API_HOST}/cards/collection"
 TIMEOUT = 30  # seconds
 USER_AGENT = "MTGPreconUpgrader/1.0"
 
-_rate_limited = False
+# The Stopped of the 429 or of the stop that ended this process's requests.
+_stopped: scryfall_limit.Stopped | None = None
 
 
 def _build_opener() -> urllib.request.OpenerDirector:
@@ -50,13 +52,16 @@ _OPENER = _build_opener()
 
 
 class ScryfallRateLimited(Exception):
-    """Scryfall answered HTTP 429. The run must end."""
+    """Scryfall answered HTTP 429. The run must end.
 
-    def __init__(self) -> None:
-        super().__init__(
-            "Scryfall answered HTTP 429 (too many requests): "
-            "wait 30 seconds or more before the next run."
-        )
+    ``stopped`` is the limiter's Stopped, whose text names the end of the stop.
+    Without it (a 429 of cards.scryfall.io, which the limiter does not see) the
+    text asks for a wait of 30 seconds.
+    """
+
+    def __init__(self, stopped: scryfall_limit.Stopped | None = None) -> None:
+        wait = "wait 30 seconds or more before the next run." if stopped is None else str(stopped)
+        super().__init__(f"Scryfall answered HTTP 429 (too many requests): {wait}")
 
 
 def request(url: str, body: dict | None = None) -> bytes:
@@ -67,13 +72,13 @@ def request(url: str, body: dict | None = None) -> bytes:
     (urllib.error.URLError and its subclasses, a 3xx among them, a timeout)
     passes through to the caller.
     """
-    global _rate_limited
+    global _stopped
 
     parts = urllib.parse.urlsplit(url)
     if parts.scheme != "https" or parts.hostname != API_HOST:
         raise ValueError(f"Not an https://{API_HOST} address: {url}")
-    if _rate_limited:
-        raise ScryfallRateLimited()
+    if _stopped is not None:
+        raise ScryfallRateLimited(_stopped)
 
     headers = {"Accept": "application/json", "User-Agent": USER_AGENT}
     data = None
@@ -91,5 +96,5 @@ def request(url: str, body: dict | None = None) -> bytes:
         # 2-a-second class does, also /sets and /cards/:id (DEC-1075).
         return scryfall_limit.send(url, transmit, slow=True)
     except scryfall_limit.Stopped as e:
-        _rate_limited = True
-        raise ScryfallRateLimited() from e
+        _stopped = e
+        raise ScryfallRateLimited(e) from e

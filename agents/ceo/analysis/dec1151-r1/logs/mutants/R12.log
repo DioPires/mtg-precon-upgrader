@@ -1,0 +1,91 @@
+# R12 (counts swapped) web/src/lib/spellbookReport.ts
+# old: 'out.push(`_Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal} ${cardNoun(report.cardsTotal)}._`);'
+# new: 'out.push(`_Analyzed ${report.cardsTotal} of ${report.cardsAnalyzed} ${cardNoun(report.cardsTotal)}._`);'
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/lib/spellbookReport.test.ts (11 tests | 2 failed) 5ms
+   × the count of cards analyzed in a paste report (DEC-1142) > reads `of 1 card` in the Markdown export for a total of 1 3ms
+     → expected '# Combo Lab — Pasted decklist\n_Analy…' to contain '\n_Analyzed 0 of 1 card._\n'
+   × the count of cards analyzed in a paste report (DEC-1142) > reads `of 2 cards` in the Markdown export for a total of 2 0ms
+     → expected '# Combo Lab — Pasted decklist\n_Analy…' to contain '\n_Analyzed 1 of 2 cards._\n'
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 9 passed (11)
+   Start at  17:04:26
+   Duration  371ms (transform 25ms, setup 20ms, collect 17ms, tests 5ms, environment 112ms, prepare 37ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/lib/spellbookReport.test.ts > the count of cards analyzed in a paste report (DEC-1142) > reads `of 1 card` in the Markdown export for a total of 1
+AssertionError: expected '# Combo Lab — Pasted decklist\n_Analy…' to contain '\n_Analyzed 0 of 1 card._\n'
+
+- Expected
++ Received
+
++ # Combo Lab — Pasted decklist
++ _Analyzed 1 of 0 card._
+
+- _Analyzed 0 of 1 card._
++ > Findings carry an **epistemic tier**. Tier A = curated (human-verified, Commander Spellbook). Tier B = computed (verified under the model, not a rules proof). Tier C = speculative. Analysis assumes a goldfish. Not exhaustive.
++
++ _Corpus version: 2026-08-15T13:18:26+00:00_
++
++ ## Bracket / Rule-0 disclosure
++ - **0** curated combos · **0** two-card infinites · **0** win-the-game
+
++ ## Tier A · Combos present (0)
++ _None within corpus coverage._
++
++ ## Tier A · Near-misses (0)
++
++ ---
++ Combo data © Commander Spellbook (CC-BY-SA). Card + price data © Scryfall (Cardmarket EUR / TCGplayer USD). Not affiliated with or endorsed by Wizards of the Coast.
+
+ ❯ src/__tests__/lib/spellbookReport.test.ts:227:46
+    225| 
+    226|   it('reads `of 1 card` in the Markdown export for a total of 1', () =…
+    227|     expect(buildMarkdownExport(paste(0, 1))).toContain('\n_Analyzed 0 …
+       |                                              ^
+    228|   });
+    229| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/lib/spellbookReport.test.ts > the count of cards analyzed in a paste report (DEC-1142) > reads `of 2 cards` in the Markdown export for a total of 2
+AssertionError: expected '# Combo Lab — Pasted decklist\n_Analy…' to contain '\n_Analyzed 1 of 2 cards._\n'
+
+- Expected
++ Received
+
++ # Combo Lab — Pasted decklist
++ _Analyzed 2 of 1 cards._
+
+- _Analyzed 1 of 2 cards._
++ > Findings carry an **epistemic tier**. Tier A = curated (human-verified, Commander Spellbook). Tier B = computed (verified under the model, not a rules proof). Tier C = speculative. Analysis assumes a goldfish. Not exhaustive.
++
++ _Corpus version: 2026-08-15T13:18:26+00:00_
++
++ ## Bracket / Rule-0 disclosure
++ - **0** curated combos · **0** two-card infinites · **0** win-the-game
+
++ ## Tier A · Combos present (0)
++ _None within corpus coverage._
++
++ ## Tier A · Near-misses (0)
++
++ ---
++ Combo data © Commander Spellbook (CC-BY-SA). Card + price data © Scryfall (Cardmarket EUR / TCGplayer USD). Not affiliated with or endorsed by Wizards of the Coast.
+
+ ❯ src/__tests__/lib/spellbookReport.test.ts:231:46
+    229| 
+    230|   it('reads `of 2 cards` in the Markdown export for a total of 2', () …
+    231|     expect(buildMarkdownExport(paste(1, 2))).toContain('\n_Analyzed 1 …
+       |                                              ^
+    232|   });
+    233| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

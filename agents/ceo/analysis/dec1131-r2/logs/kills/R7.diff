@@ -1,0 +1,13 @@
+diff --git a/web/src/data/cardCache.ts b/web/src/data/cardCache.ts
+index 9f54ff1..016717f 100644
+--- a/web/src/data/cardCache.ts
++++ b/web/src/data/cardCache.ts
+@@ -488,7 +488,7 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
+       const identifier = identifierOf(wanted.name);
+       const id = normalizeName(identifier);
+       if (!identifiers.has(id)) {
+-        if (identifiers.size >= BATCH_MAX) continue;
++        if (identifiers.size >= BATCH_MAX) break;
+         identifiers.set(id, identifier);
+       }
+       batch.push(wanted);

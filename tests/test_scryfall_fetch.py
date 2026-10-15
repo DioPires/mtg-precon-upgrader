@@ -38,6 +38,12 @@ SCRIPTS = Path(fetch_metadata.__file__).resolve().parent
 
 Sent = namedtuple("Sent", "started answered url body headers")
 
+# The helper's text for a 429 without Retry-After: its first words, then the limiter's text,
+# which names the end of the 30 s stop (DEC-1114 N5).
+STOP_TEXT = (r"Scryfall answered HTTP 429 \(too many requests\): Scryfall answered HTTP 429 at "
+             r"\d\d:\d\d:\d\dZ\. No request until \d\d:\d\d:\d\dZ \(in 30 s\)\. "
+             r"Call again after that time\.")
+
 
 def image_uris(path: str) -> dict:
     """Scryfall's ``image_uris`` for one image path."""
@@ -92,7 +98,7 @@ def reset_helper_state() -> None:
     Since DEC-1092 the helper holds no time: the shared limiter keeps its times in
     state.json under SCRYFALL_LIMIT_DIR, and FakeScryfall.clock() gives each block its own.
     """
-    scryfall_api._rate_limited = False
+    scryfall_api._stopped = None
 
 
 class FakeResponse:
@@ -323,7 +329,7 @@ class ScryfallApiTests(unittest.TestCase):
                 scryfall_api.request(COLLECTION_URL, {"identifiers": []})
         self.assertEqual(len(fake.sent), 1)
         self.assertIn("429", str(raised.exception))
-        self.assertIn("wait 30 seconds or more", str(raised.exception))
+        self.assertRegex(str(raised.exception), STOP_TEXT)
 
     def test_request_refuses_another_host(self):
         fake = FakeScryfall()
@@ -364,7 +370,7 @@ class FetchCardMetadataRunTests(DeckDirCase):
 
         self.assertNotEqual(code, 0)
         self.assertIn("429", out)
-        self.assertIn("wait 30 seconds or more", out)
+        self.assertRegex(out, STOP_TEXT)
         self.assertEqual(len(fake.sent), 2)
         self.assert_no_file_written()
 
@@ -717,7 +723,7 @@ class FetchCardImagesRunTests(DeckDirCase):
 
         self.assertNotEqual(code, 0)
         self.assertIn("429", out)
-        self.assertIn("wait 30 seconds or more", out)
+        self.assertRegex(out, STOP_TEXT)
         self.assertEqual(len(fake.sent), 2)
         # The one wait before batch 2, and no backoff after the 429.
         self.assertAlmostEqual(sum(fake.sleeps), 0.6, places=9)
@@ -972,7 +978,7 @@ class ScriptExitCodeKillCases(DeckDirCase):
         """O5: fetch_card_metadata.py does not pass main()'s code to sys.exit."""
         code, out, fake = self.run_script("fetch_card_metadata.py", "--output-file", str(self.output))
         self.assertEqual(code, 1)
-        self.assertIn("wait 30 seconds or more", out)
+        self.assertRegex(out, STOP_TEXT)
         self.assertEqual(len(fake.sent), 1)
         self.assert_no_file_written()
 
@@ -980,7 +986,7 @@ class ScriptExitCodeKillCases(DeckDirCase):
         """O6: fetch_card_images.py does not pass main()'s code to sys.exit."""
         code, out, fake = self.run_script("fetch_card_images.py")
         self.assertEqual(code, 1)
-        self.assertIn("wait 30 seconds or more", out)
+        self.assertRegex(out, STOP_TEXT)
         self.assertEqual(len(fake.sent), 1)
 
 
@@ -1032,7 +1038,9 @@ class ImagesKillCases(DeckDirCase):
 
         self.assertNotEqual(code, 0)
         self.assertIn("429", out)
-        self.assertIn("wait 30 seconds or more", out)
+        # cards.scryfall.io is outside the limiter: no stop, so the text keeps the 30 s wait.
+        self.assertIn("Scryfall answered HTTP 429 (too many requests): "
+                      "wait 30 seconds or more before the next run.", out)
         self.assertEqual(len(fake.sent), 2)
 
 
@@ -1236,7 +1244,7 @@ class ImagesDec1076Cases(DeckDirCase):
 
 
 # DEC-1098 item 3 (N3 of the DEC-1093 review): the helper's state is reset when a fake ends.
-# Since DEC-1092 the helper holds _rate_limited only. The shared limiter keeps its times in
+# Since DEC-1092 the helper holds _stopped only. The shared limiter keeps its times in
 # state.json under SCRYFALL_LIMIT_DIR, and FakeScryfall.clock() gives each block its own folder.
 
 
@@ -1265,32 +1273,32 @@ class HelperStateResetCases(unittest.TestCase):
                     scryfall_api.request(COLLECTION_URL, {"identifiers": []})
                     with self.assertRaises(scryfall_api.ScryfallRateLimited):
                         scryfall_api.request(COLLECTION_URL, {"identifiers": []})
-                    self.assertTrue(scryfall_api._rate_limited)
+                    self.assertIsNotNone(scryfall_api._stopped)
                     state = json.loads((block_dir / "state.json").read_text())
                     self.assertGreater(state["last_answer"], 50_000)
                     self.assertGreater(state["blocked_until"], 50_000)
                     if ends_by_error:
                         raise KeyError("the block ends by an exception")
-                self.assertFalse(scryfall_api._rate_limited)
+                self.assertIsNone(scryfall_api._stopped)
                 self.assertFalse(block_dir.exists())
                 self.assertEqual(os.environ.get("SCRYFALL_LIMIT_DIR"), limit_dir_before)
                 # A later call without a reset of its own sends: it inherits no 429.
                 self.assertEqual(len(self.later_call().sent), 1)
 
     def test_installed_resets_the_helper_state_when_it_opens(self):
-        scryfall_api._rate_limited = True
+        scryfall_api._stopped = scryfall_api.scryfall_limit.Stopped(0.0, 30.0, 0.0)
         with FakeScryfall().installed():
-            self.assertFalse(scryfall_api._rate_limited)
+            self.assertIsNone(scryfall_api._stopped)
             # The block's limiter starts empty: no time of an earlier block.
             self.assertEqual(os.listdir(os.environ["SCRYFALL_LIMIT_DIR"]), [])
 
     def test_redirect_case_resets_the_helper_state_when_it_starts(self):
         """test_3xx_raises_and_no_second_request_goes_out sends outside installed()."""
-        scryfall_api._rate_limited = True
+        scryfall_api._stopped = scryfall_api.scryfall_limit.Stopped(0.0, 30.0, 0.0)
         result = unittest.TestResult()
         RedirectCases("test_3xx_raises_and_no_second_request_goes_out").run(result)
         self.assertTrue(result.wasSuccessful(), result.failures + result.errors)
-        self.assertFalse(scryfall_api._rate_limited)
+        self.assertIsNone(scryfall_api._stopped)
 
     def test_redirect_case_resets_the_helper_state_when_it_ends(self):
         """A RedirectCases case that ends on a 429 leaves no 429 to the next case."""
@@ -1302,10 +1310,10 @@ class HelperStateResetCases(unittest.TestCase):
                         scryfall_api, "_OPENER", types.SimpleNamespace(open=self.fake.urlopen)):
                     with self.assertRaises(scryfall_api.ScryfallRateLimited):
                         scryfall_api.request(COLLECTION_URL, {"identifiers": []})
-                self.assertTrue(scryfall_api._rate_limited)
+                self.assertIsNotNone(scryfall_api._stopped)
 
         result = unittest.TestResult()
         EndsOnA429().run(result)
         self.assertTrue(result.wasSuccessful(), result.failures + result.errors)
         self.assertEqual(result.testsRun, 1)
-        self.assertFalse(scryfall_api._rate_limited)
+        self.assertIsNone(scryfall_api._stopped)

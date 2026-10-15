@@ -1,0 +1,57 @@
+# R3 (noun reads total - analyzed) web/src/lib/spellbookReport.ts
+# old: 'lines.push(`Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal} ${cardNoun(report.cardsTotal)}.`);'
+# new: 'lines.push(`Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal} ${cardNoun(report.cardsTotal - report.cardsAnalyzed)}.`);'
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/lib/spellbookReport.test.ts (11 tests | 1 failed) 5ms
+   × the count of cards analyzed in a paste report (DEC-1142) > reads `of 2 cards` in the plain-text export for a total of 2 3ms
+     → expected 'COMBO LAB — combo report\nDeck: Paste…' to contain '\nAnalyzed 1 of 2 cards.\n'
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  17:04:19
+   Duration  344ms (transform 25ms, setup 20ms, collect 17ms, tests 5ms, environment 119ms, prepare 33ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/lib/spellbookReport.test.ts > the count of cards analyzed in a paste report (DEC-1142) > reads `of 2 cards` in the plain-text export for a total of 2
+AssertionError: expected 'COMBO LAB — combo report\nDeck: Paste…' to contain '\nAnalyzed 1 of 2 cards.\n'
+
+- Expected
++ Received
+
++ COMBO LAB — combo report
++ Deck: Pasted decklist
++ Analyzed 1 of 2 card.
+
+- Analyzed 1 of 2 cards.
++ All findings below are TIER A — CURATED (source: Commander Spellbook,
++ human-verified). Analysis assumes a goldfish (no interaction). This is
++ not an exhaustiveness claim — only combos in the curated corpus are shown.
++ Corpus version: 2026-08-15T13:18:26+00:00
++
++ — BRACKET / RULE-0 DISCLOSURE —
++ 0 curated combo(s) present · 0 two-card infinite(s) · 0 win-the-game
++
++ — TIER A · COMBOS PRESENT (0) —
++ No curated combos found (at any tier), within corpus coverage.
++
++ — TIER A · NEAR-MISSES / ONE-TO-TWO CARDS AWAY (0) —
+
++ Combo data © Commander Spellbook (CC-BY-SA). Card data © Scryfall.
++ Price data © Scryfall (Cardmarket EUR / TCGplayer USD).
++ Not affiliated with or endorsed by Wizards of the Coast.
+
+ ❯ src/__tests__/lib/spellbookReport.test.ts:223:47
+    221| 
+    222|   it('reads `of 2 cards` in the plain-text export for a total of 2', (…
+    223|     expect(buildPlainTextExport(paste(1, 2))).toContain('\nAnalyzed 1 …
+       |                                               ^
+    224|   });
+    225| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
