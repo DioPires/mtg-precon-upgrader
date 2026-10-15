@@ -126,6 +126,14 @@ _UNRESTRICTED_LAND_TUTOR = re.compile(
 
 _SEARCH_LIBRARY = re.compile(r"search your library for", re.DOTALL)
 
+# A search for "a card named …" or "cards named …" finds one fixed card, often
+# a copy of the card itself, so it is not a tutor (DEC-1143). A clause that
+# also offers "or an Equipment card" stays a tutor.
+_NAMED_SEARCH = re.compile(
+    r"search your library for (?:a|any number of|up to \w+) cards? named "
+    r"(?:(?! or an? (?!card named))[^.\n])*?(?:,| and) (?:reveal|put)"
+)
+
 
 def _detect_ramp(oracle: str, type_line: str) -> tuple[str, float] | None:
     if _LAND_SEARCH.search(oracle):
@@ -146,6 +154,8 @@ def _detect_tutor(oracle: str, type_line: str) -> tuple[str, float] | None:
         return None
     if _LAND_SEARCH.search(oracle):
         return None  # land searches are ramp
+    if len(_NAMED_SEARCH.findall(oracle)) == len(_SEARCH_LIBRARY.findall(oracle)):
+        return None  # each search names its card
     return ("tutor", 0.85)
 
 
@@ -179,12 +189,24 @@ def _detect_removal_board(oracle: str, type_line: str) -> tuple[str, float] | No
     return None
 
 
+_SPOT_TARGET = re.compile(
+    r"(?:destroy|exile) target (?:creature|artifact|enchantment|planeswalker|"
+    r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
+    r"attacking creature|blocking creature|land)"
+)
+
+# Read just after a _SPOT_TARGET match: "exile target creature card from your
+# graveyard" targets a card in a graveyard, not a permanent (DEC-1143).
+_GRAVEYARD_CARD = re.compile(
+    r"(?:(?!target\b)[a-z\-/, ])*?\bcards? (?:with [^.;\n]*? )?(?:from|in) "
+    r"(?:a|your|an opponent's|target player's|that player's|their) graveyard"
+)
+
+
 def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | None:
-    m = re.search(
-        r"(?:destroy|exile) target (?:creature|artifact|enchantment|planeswalker|"
-        r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
-        r"attacking creature|blocking creature|land)",
-        oracle,
+    m = next(
+        (t for t in _SPOT_TARGET.finditer(oracle) if not _GRAVEYARD_CARD.match(oracle, t.end())),
+        None,
     )
     if m:
         # "destroy target creature you control" — that's a sac outlet, not removal.
