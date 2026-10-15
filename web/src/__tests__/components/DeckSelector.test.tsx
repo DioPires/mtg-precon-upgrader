@@ -512,3 +512,62 @@ describe('DeckSelector focus after a key switch (DEC-1135)', () => {
     expect(seen).toHaveLength(1);
   });
 });
+
+// The review's cases (DEC-1148 B1 to B4). Each one fails on one mutant that the
+// cases above let pass.
+describe('DeckSelector focus after a key switch: review cases (DEC-1148)', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('moves no focus when a route returns to the deck that an earlier key picked', () => {
+    const { getAllByRole } = render(<Harness decks={makeDecks(5)} start={3} />);
+    const tabs = getAllByRole('tab');
+    act(() => tabs[2].focus());
+    fireEvent.keyDown(tabs[2], { key: 'End' });
+    expect(document.activeElement).toBe(tabs[4]);
+    // A click on deck 1. A browser focuses the pill on the press.
+    act(() => tabs[0].focus());
+    fireEvent.click(tabs[0]);
+    // Browser Back to deck 5: no key started this change.
+    act(() => route(5));
+    expect(tabs[4]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(tabs[0]);
+  });
+
+  it('focuses with preventScroll, so the focus does not cut the centring short', () => {
+    const { getAllByRole } = render(<Harness decks={makeDecks(5)} start={3} />);
+    const tabs = getAllByRole('tab');
+    act(() => tabs[2].focus());
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    fireEvent.keyDown(tabs[2], { key: 'ArrowRight' });
+    expect(focus).toHaveBeenCalledTimes(1);
+    expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+  });
+
+  it('focuses the pill, not an active element earlier in the page', () => {
+    // The topbar's nav item for the open page carries `gv1-active` too.
+    const { getAllByRole } = render(
+      <>
+        <a className="gv1-nav-item gv1-active" href="/deck/deck-3">
+          Guide
+        </a>
+        <Harness decks={makeDecks(5)} start={3} />
+      </>,
+    );
+    const tabs = getAllByRole('tab');
+    act(() => tabs[2].focus());
+    fireEvent.keyDown(tabs[2], { key: 'End' });
+    expect(document.activeElement).toBe(tabs[4]);
+  });
+
+  it("reports the key's pick to onSelect when the key picks the open deck", () => {
+    const onSelect = vi.fn();
+    const { getAllByRole } = render(
+      <DeckSelector decks={makeDecks(5)} activeIdx={1} onSelect={onSelect} />,
+    );
+    const tabs = getAllByRole('tab');
+    act(() => tabs[0].focus());
+    fireEvent.keyDown(tabs[0], { key: 'Home' });
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledWith(1);
+  });
+});
