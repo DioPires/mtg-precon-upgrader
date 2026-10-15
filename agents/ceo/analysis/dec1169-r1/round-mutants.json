@@ -1,0 +1,192 @@
+[
+ {
+  "name": "R1",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const left = !before.isConnected && (!now || now === document.body);",
+    "const left = !before.isConnected;"
+   ]
+  ]
+ },
+ {
+  "name": "M2",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const renderedIdx = useRef(activeIdx);",
+    "const renderedIdx = useRef(-1);"
+   ]
+  ]
+ },
+ {
+  "name": "M3",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "  return left || onOldPill;",
+    "  return left;"
+   ]
+  ]
+ },
+ {
+  "name": "M4",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "  return left || onOldPill;",
+    "  return onOldPill;"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M4",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    keyTarget.current = null;\n  }, [activeIdx, focusActive]);",
+    "  }, [activeIdx, focusActive]);"
+   ]
+  ]
+ },
+ {
+  "name": "R2",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const left = !before.isConnected && (!now || now === document.body);",
+    "const left = !!before && (!now || now === document.body);"
+   ]
+  ]
+ },
+ {
+  "name": "R3",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const onOldPill = !!now && !!track?.contains(now) && !now.classList.contains('gv1-active');",
+    "const onOldPill = !!now && !!track?.contains(now);"
+   ]
+  ]
+ },
+ {
+  "name": "R4",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "!!track?.contains(now) &&",
+    "!!track && true &&"
+   ]
+  ]
+ },
+ {
+  "name": "R5",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    focusBefore.current = null;\n",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "R6",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    renderedIdx.current = activeIdx;\n",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "R7",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    else if (before && strayed(",
+    "    if (before && strayed("
+   ]
+  ]
+ },
+ {
+  "name": "R11",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "if (renderedIdx.current !== activeIdx) {",
+    "if (renderedIdx.current !== activeIdx || true) {"
+   ]
+  ]
+ },
+ {
+  "name": "R12",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "focusBefore.current = document.activeElement;",
+    "focusBefore.current = document.body;"
+   ]
+  ]
+ },
+ {
+  "name": "R13",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "(!now || now === document.body)",
+    "now === document.body"
+   ]
+  ]
+ },
+ {
+  "name": "R14",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "else if (before && strayed(before, trackRef.current)) focusActive();",
+    "else if (before && strayed(before, trackRef.current)) trackRef.current?.querySelector<HTMLElement>('.gv1-active')?.focus();"
+   ]
+  ]
+ },
+ {
+  "name": "R16",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "  const now = document.activeElement;\n",
+    "  const now = before as Element | null;\n"
+   ]
+  ]
+ },
+ {
+  "name": "R19",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const focusBefore = useRef<Element | null>(null);",
+    "const focusBefore = useRef<Element | null>(document.activeElement);"
+   ]
+  ]
+ },
+ {
+  "name": "R20",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "  return left || onOldPill;",
+    "  return left && onOldPill;"
+   ]
+  ]
+ },
+ {
+  "name": "R21",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const left = !before.isConnected &&",
+    "const left = before.isConnected &&"
+   ]
+  ]
+ }
+]

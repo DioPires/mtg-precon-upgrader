@@ -1,0 +1,24 @@
+diff --git a/web/src/data/cardAtlas.ts b/web/src/data/cardAtlas.ts
+index 87155ad..cfccb57 100644
+--- a/web/src/data/cardAtlas.ts
++++ b/web/src/data/cardAtlas.ts
+@@ -169,7 +169,7 @@ export function loadOwnedMap(): Map<string, number> {
+   try {
+     if (typeof window === 'undefined') return new Map();
+     const out = new Map<string, number>();
+-    readOwnedEntries(window.localStorage).forEach(([n, q]) => {
++    readOwnedEntries().forEach(([n, q]) => {
+       const key = frontFace(n).toLowerCase();
+       out.set(key, (out.get(key) || 0) + q);
+     });
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ✓ src/__tests__/data/cardAtlas.test.ts (23 tests) 10ms
+
+ Test Files  1 passed (1)
+      Tests  23 passed (23)
+   Start at  23:51:07
+   Duration  345ms (transform 30ms, setup 20ms, collect 23ms, tests 10ms, environment 121ms, prepare 35ms)
+

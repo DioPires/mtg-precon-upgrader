@@ -1,0 +1,32 @@
+# R1 on a2379a00d8080d7aef72029e9c8b1f7df40854e2, test file blob 7523883af1d9d0d506b83ac323c3a2d2c2feff41
+diff --git a/scripts/generate_candidate_pool.py b/scripts/generate_candidate_pool.py
+index 5d1565d..27b41a6 100644
+--- a/scripts/generate_candidate_pool.py
++++ b/scripts/generate_candidate_pool.py
+@@ -941,7 +941,7 @@ def write_candidates(out_path: Path, out: dict) -> bool:
+             if old == new:
+                 return False
+         except json.JSONDecodeError:
+-            pass
++            return False
+     out_path.write_text(new_text)
+     return True
+ 
+# pytest
+.........................................................F....       [100%]
+=================================== FAILURES ===================================
+_______ GapSeatWriteTests.test_file_that_is_not_valid_json_is_rewritten ________
+
+self = <tests.test_generate_candidate_pool.GapSeatWriteTests testMethod=test_file_that_is_not_valid_json_is_rewritten>
+
+    def test_file_that_is_not_valid_json_is_rewritten(self):
+        """K1: a pool cut short in a write is written again, not kept and not a crash."""
+        self._run()
+        self.out_path.write_text('{"candidates": [\n')
+>       self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+E       AssertionError: '[dec1078-test-deck] wrote 8 candidates' not found in 'Loading mirror...\nMirror: 11 cards | Owned: 0 | GC: 0\n  [dec1078-test-deck] gap-seat: removal-spot 0 -> 5 (5 below the cut, 0 from the EDHREC page).\n  [dec1078-test-deck] no change (8 candidates).\n'
+
+tests/test_generate_candidate_pool.py:1278: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_that_is_not_valid_json_is_rewritten - AssertionError: '[dec1078-test-deck] wrote 8 candidates' not found in 'Loading mirror...\nMirror: 11 cards | Owned: 0 | GC: 0\n  [dec1078-test-deck] gap-seat: removal-spot 0 -> 5 (5 below the cut, 0 from the EDHREC page).\n  [dec1078-test-deck] no change (8 candidates).\n'
+1 failed, 61 passed, 4 subtests passed in 0.08s

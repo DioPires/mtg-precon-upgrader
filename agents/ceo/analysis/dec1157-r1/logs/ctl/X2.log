@@ -1,0 +1,34 @@
+# X2 on a2379a00d8080d7aef72029e9c8b1f7df40854e2, test file blob 7523883af1d9d0d506b83ac323c3a2d2c2feff41
+diff --git a/scripts/generate_candidate_pool.py b/scripts/generate_candidate_pool.py
+index 5d1565d..b6811ab 100644
+--- a/scripts/generate_candidate_pool.py
++++ b/scripts/generate_candidate_pool.py
+@@ -996,7 +996,6 @@ def main(argv: list[str]) -> int:
+         out_path = COMMANDERS_DIR / deck_id / "candidates.json"
+         if not write_candidates(out_path, out):
+             print(f"  [{deck_id}] no change ({len(out['candidates'])} candidates).", file=sys.stderr)
+-            continue
+         top = out["candidates"][:1]
+         top_summary = f", top score {top[0]['score']:.1f}" if top else ""
+         print(f"  [{deck_id}] wrote {len(out['candidates'])} candidates{top_summary}.", file=sys.stderr)
+# pytest
+...........................................................F..       [100%]
+=================================== FAILURES ===================================
+_____ GapSeatWriteTests.test_run_that_writes_nothing_prints_no_wrote_line ______
+
+self = <tests.test_generate_candidate_pool.GapSeatWriteTests testMethod=test_run_that_writes_nothing_prints_no_wrote_line>
+
+    def test_run_that_writes_nothing_prints_no_wrote_line(self):
+        """K2: a skip prints the `no change` line and no `wrote` line."""
+        def edit(pool):
+            pool["generated_at"] = "2000-01-01T00:00:00+00:00"
+        self._edit_pool(edit)
+        second = self._run()
+        self.assertIn(f"[{self.DECK_ID}] no change (8 candidates)", second)
+>       self.assertNotIn(f"[{self.DECK_ID}] wrote", second)
+E       AssertionError: '[dec1078-test-deck] wrote' unexpectedly found in 'Loading mirror...\nMirror: 11 cards | Owned: 0 | GC: 0\n  [dec1078-test-deck] gap-seat: removal-spot 0 -> 5 (5 below the cut, 0 from the EDHREC page).\n  [dec1078-test-deck] no change (8 candidates).\n  [dec1078-test-deck] wrote 8 candidates, top score 75.0.\n'
+
+tests/test_generate_candidate_pool.py:1289: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_run_that_writes_nothing_prints_no_wrote_line - AssertionError: '[dec1078-test-deck] wrote' unexpectedly found in 'Loading mirror...\nMirror: 11 cards | Owned: 0 | GC: 0\n  [dec1078-test-deck] gap-seat: removal-spot 0 -> 5 (5 below the cut, 0 from the EDHREC page).\n  [dec1078-test-deck] no change (8 candidates).\n  [dec1078-test-deck] wrote 8 candidates, top score 75.0.\n'
+1 failed, 61 passed, 4 subtests passed in 0.10s

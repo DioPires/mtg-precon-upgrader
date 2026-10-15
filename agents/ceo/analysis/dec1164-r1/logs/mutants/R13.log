@@ -1,0 +1,42 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..57061e9 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -33,7 +33,7 @@ export function readOwnedEntries(storage: Storage = localStorage): Array<[string
+   } catch {
+     return [];
+   }
+-  if (!Array.isArray(stored)) return [];
++  if (typeof stored !== 'object' || stored === null) return [];
+   const out: Array<[string, number]> = [];
+   for (const entry of stored) {
+     if (!Array.isArray(entry) || entry.length !== 2) continue;
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/data/ownedCards.test.ts (30 tests | 1 failed) 4ms
+   × readOwnedEntries (DEC-1150) > gives [] for an empty store and for a store that is not a JSON array 2ms
+     → stored is not iterable
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 29 passed (30)
+   Start at  23:51:12
+   Duration  350ms (transform 19ms, setup 21ms, collect 9ms, tests 4ms, environment 132ms, prepare 33ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > gives [] for an empty store and for a store that is not a JSON array
+TypeError: stored is not iterable
+ ❯ Module.readOwnedEntries src/data/ownedCards.ts:38:23
+     36|   if (typeof stored !== 'object' || stored === null) return [];
+     37|   const out: Array<[string, number]> = [];
+     38|   for (const entry of stored) {
+       |                       ^
+     39|     if (!Array.isArray(entry) || entry.length !== 2) continue;
+     40|     const [n, q]: unknown[] = entry;
+ ❯ read src/__tests__/data/ownedCards.test.ts:89:5
+ ❯ src/__tests__/data/ownedCards.test.ts:95:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

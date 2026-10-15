@@ -3263,7 +3263,6 @@ em { font-style: italic; color: var(--gv1-gold); }
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px 14px;
   }
-  .gv1-shop-summary-stat .gv1-serif-xl { font-size: 28px; }
   .gv1-shop-summary-actions {
     grid-column: 1 / -1;
     flex-wrap: wrap;
@@ -3371,6 +3370,23 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-apo-remedy { padding: 14px; }
   .gv1-apo-pins { gap: 12px; }
   .gv1-apo-pin { padding: 14px; }
+}
+
+/* Shopping summary on a phone (DEC-1154, DEC-1149 N7). <main> keeps its 64px
+   side padding here, so the box holds 126px of content at 320px and 236px at
+   430px. Three columns of 42px figures need up to 287px (every deck and the
+   brewing decks selected, in the fallback faces), and the third stat ran past
+   the box. Here the stats wrap: a line takes as many stats as their narrowest
+   widths allow, and they share the rest of it. The figures are 28px. The
+   768px rule for them named `.gv1-shop-summary-stat`, which no element has.
+   The action row now takes the box's width, not the width of three columns:
+   its buttons keep each label on one line, as they do on the 3-column grid. */
+@media (max-width: 480px) {
+  .gv1-shop-summary { display: flex; flex-wrap: wrap; }
+  .gv1-shop-stat { flex: 1 1 0; }
+  .gv1-shop-stat .gv1-serif-xl { font-size: 28px; }
+  .gv1-shop-summary-actions { flex: 1 1 100%; }
+  .gv1-shop-summary-actions button { white-space: nowrap; }
 }
 
 /* Scrying mobile banner — phones below 480px nudge to desktop for the

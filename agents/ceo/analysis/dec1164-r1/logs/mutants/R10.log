@@ -1,0 +1,55 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..9ecb78c 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -38,7 +38,7 @@ export function readOwnedEntries(storage: Storage = localStorage): Array<[string
+   for (const entry of stored) {
+     if (!Array.isArray(entry) || entry.length !== 2) continue;
+     const [n, q]: unknown[] = entry;
+-    if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) continue;
++    if (typeof n !== 'string' || !n || !isOwnedQuantity(q)) continue;
+     out.push([n, q]);
+   }
+   return out;
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/data/ownedCards.test.ts (30 tests | 1 failed) 5ms
+   × readOwnedEntries (DEC-1150) > drops the entry ["  ",2] and keeps the entry beside it 3ms
+     → expected [ [ '  ', 2 ], [ 'Arcane Signet', 1 ] ] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 29 passed (30)
+   Start at  23:51:10
+   Duration  331ms (transform 21ms, setup 25ms, collect 10ms, tests 5ms, environment 113ms, prepare 40ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["  ",2] and keeps the entry beside it
+AssertionError: expected [ [ '  ', 2 ], [ 'Arcane Signet', 1 ] ] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+
+- Expected
++ Received
+
+  Array [
+    Array [
++     "  ",
++     2,
++   ],
++   Array [
+      "Arcane Signet",
+      1,
+    ],
+  ]
+
+ ❯ src/__tests__/data/ownedCards.test.ts:138:65
+    136|     [null],
+    137|   ])('drops the entry %j and keeps the entry beside it', (entry) => {
+    138|     expect(read(JSON.stringify([entry, ['Arcane Signet', 1]]))).toEqua…
+       |                                                                 ^
+    139|   });
+    140| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

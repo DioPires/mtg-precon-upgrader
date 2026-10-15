@@ -1,0 +1,54 @@
+
+ RUN  v2.1.9 /private/tmp/dec1169-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (34 tests | 1 failed) 268ms
+   × DeckSelector focus after a key switch (DEC-1135) > leaves focus on a clicked pill and makes no focus call 8ms
+     → expected "focus" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st focus call:
+
+    Array [
+      Object {
+        "preventScroll": true,
+      },
+    ]
+
+
+Number of calls: 1
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 33 passed (34)
+   Start at  00:00:19
+   Duration  791ms (transform 53ms, setup 32ms, collect 75ms, tests 268ms, environment 183ms, prepare 44ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > leaves focus on a clicked pill and makes no focus call
+AssertionError: expected "focus" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st focus call:
+
+    Array [
+      Object {
+        "preventScroll": true,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:527:23
+    525|     expect(tabs[3]).toHaveAttribute('aria-selected', 'true');
+    526|     expect(document.activeElement).toBe(tabs[3]);
+    527|     expect(focus).not.toHaveBeenCalled();
+       |                       ^
+    528|     focus.mockRestore();
+    529|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
