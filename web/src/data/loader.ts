@@ -260,6 +260,8 @@ const TTL_MS = 60 * 60 * 1000;
 interface PersistedEnvelope<T> {
   fetchedAt: number;
   payload: T;
+  /** card-metadata only: `prices_as_of` of the meta file fetched with the file (DEC-1153). */
+  pricesAsOf?: string;
 }
 
 /** The four per-deck artifacts that are fetched but never persisted (DEC-942). */
@@ -287,7 +289,10 @@ function defaultStorage(): Storage | null {
 export interface DeckLoader {
   loadIndex(): Promise<RawDeckIndex>;
   loadCardMetadata(): Promise<RawCardMetadata>;
-  /** data/card-metadata.meta.json, or null when it is missing. Not persisted. */
+  /**
+   * The meta of the card-metadata.json that the loader holds: the date stored
+   * with the file, or the meta file fetched with it. Null without a file or a meta.
+   */
   loadCardMetadataMeta(): Promise<RawCardMetadataMeta | null>;
   loadDeck(id: string): Promise<RawDeckBundle | null>;
   loadAll(): Promise<RawDeckBundle[]>;
@@ -309,7 +314,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   const deckInflight = new Map<string, Promise<RawDeckBundle | null>>();
   let memIndex: RawDeckIndex | null = null;
   let memCardMetadata: RawCardMetadata | null = null;
-  let metaPromise: Promise<RawCardMetadataMeta | null> | null = null;
+  let memCardMetadataMeta: RawCardMetadataMeta | null = null;
   const memDecks = new Map<string, RawDeckBundle>();
 
   /**
@@ -334,7 +339,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   }
   let purged = false;
 
-  function readPersisted<T>(key: string): T | null {
+  function readEnvelope<T>(key: string): PersistedEnvelope<T> | null {
     const storage = resolveStorage();
     if (!storage) return null;
     try {
@@ -345,13 +350,17 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
         storage.removeItem(STORAGE_PREFIX + key);
         return null;
       }
-      return env.payload;
+      return env;
     } catch {
       return null;
     }
   }
 
-  function writePersisted<T>(key: string, payload: T): void {
+  function readPersisted<T>(key: string): T | null {
+    return readEnvelope<T>(key)?.payload ?? null;
+  }
+
+  function writePersisted<T>(key: string, payload: T, pricesAsOf?: string): void {
     const storage = resolveStorage();
     if (!storage) return;
     if (!purged) {
@@ -360,6 +369,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
     }
     try {
       const env: PersistedEnvelope<T> = { fetchedAt: now(), payload };
+      if (pricesAsOf !== undefined) env.pricesAsOf = pricesAsOf;
       storage.setItem(STORAGE_PREFIX + key, JSON.stringify(env));
     } catch {
       // Quota exceeded — skip persistence; in-memory cache still works.
@@ -397,38 +407,49 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   // Every deck bundle waits for this, and it seeds the card cache before it
   // resolves. A page takes its card names from a bundle, so no page can ask the
   // cache for a name of the file before the seed is in (DEC-1102). The seed
-  // carries the date of the file's prices from the meta file, so the cache can
-  // tell a price older than 24 h (DEC-1131); the meta file is not persisted.
-  // A failed or empty file is neither kept nor persisted: the next load asks
-  // again (DEC-1131 N6).
+  // carries the date of the file's prices, so the cache can tell a price older
+  // than 24 h (DEC-1131). The loader fetches the meta file only with the file,
+  // and stores the file with that date in one envelope: a stored file keeps its
+  // own date, also after a deploy that changes the meta file (DEC-1153).
+  // A failed or empty file is neither kept nor persisted, and a file without a
+  // date (no meta file, or one that failed) is kept in memory but not
+  // persisted: the next load asks again (DEC-1131 N6).
   async function loadCardMetadata(): Promise<RawCardMetadata> {
     if (memCardMetadata) return memCardMetadata;
     const existing = metadataInflight.get('card-metadata');
     if (existing) return existing;
     const promise = (async () => {
-      const stored = readPersisted<RawCardMetadata>('card-metadata');
-      // An empty file that an earlier version kept counts as none.
-      const cached = stored && Object.keys(stored).length > 0 ? stored : null;
+      const stored = readEnvelope<RawCardMetadata>('card-metadata');
+      // An envelope from before DEC-1153 has no date, and an empty file that an
+      // earlier version kept has no card: each counts as none.
+      if (typeof stored?.pricesAsOf === 'string' && stored.payload && Object.keys(stored.payload).length > 0) {
+        memCardMetadata = stored.payload;
+        memCardMetadataMeta = { prices_as_of: stored.pricesAsOf };
+        seedCards(stored.payload, stored.pricesAsOf);
+        return stored.payload;
+      }
       const [data, meta] = await Promise.all([
-        cached ?? fetchJson<RawCardMetadata>('/data/card-metadata.json'),
-        loadCardMetadataMeta(),
+        fetchJson<RawCardMetadata>('/data/card-metadata.json'),
+        fetchJson<RawCardMetadataMeta>('/data/card-metadata.meta.json').catch(() => null),
       ]);
       if (!data || Object.keys(data).length === 0) return {};
       memCardMetadata = data;
+      memCardMetadataMeta = meta;
       seedCards(data, meta?.prices_as_of);
-      if (!cached) writePersisted('card-metadata', data);
+      if (typeof meta?.prices_as_of === 'string') writePersisted('card-metadata', data, meta.prices_as_of);
       return data;
     })().finally(() => metadataInflight.delete('card-metadata'));
     metadataInflight.set('card-metadata', promise);
     return promise;
   }
 
-  function loadCardMetadataMeta(): Promise<RawCardMetadataMeta | null> {
-    metaPromise ??= fetchJson<RawCardMetadataMeta>('/data/card-metadata.meta.json').catch(() => {
-      metaPromise = null;
+  async function loadCardMetadataMeta(): Promise<RawCardMetadataMeta | null> {
+    try {
+      await loadCardMetadata();
+    } catch {
       return null;
-    });
-    return metaPromise;
+    }
+    return memCardMetadataMeta;
   }
 
   /**
@@ -524,7 +545,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
     purged = false;
     memIndex = null;
     memCardMetadata = null;
-    metaPromise = null;
+    memCardMetadataMeta = null;
     memDecks.clear();
     indexInflight.clear();
     metadataInflight.clear();

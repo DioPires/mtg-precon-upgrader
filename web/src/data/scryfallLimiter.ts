@@ -16,6 +16,9 @@
 // spacing runs on performance.now(), so a step of the wall clock does not
 // shorten it. The tabs of one origin share bucket 1: navigator.locks lets one
 // tab send at a time, and localStorage holds the last start in wall time.
+// A caller that stores the answer (next() with `settle`) keeps the lock until
+// it has stored it, so the next tab's turn finds those names in storage; the
+// lock frees 20 s after the start at the latest (DEC-1153).
 // Without navigator.locks (jsdom) the bucket holds in the one tab.
 // Bucket 2 ('autocomplete': /cards/autocomplete). 120 ms between starts.
 //
@@ -98,6 +101,13 @@ export interface SendOptions {
   method?: ApiRequest['method'];
   headers?: ApiRequest['headers'];
   body?: ApiRequest['body'];
+  /**
+   * next() only: runs with the answer, and the call resolves after it. Bucket 1
+   * holds its lock while it runs, so the caller stores the answer before another
+   * tab takes its turn (DEC-1153). The lock frees when it settles, or
+   * REQUEST_TIMEOUT_MS after the request started, whichever comes first.
+   */
+  settle?: (sent: Sent) => Promise<void> | void;
 }
 
 export interface Sent {
@@ -136,6 +146,7 @@ interface Job {
   pick: () => string | ApiRequest | null;
   request: ApiRequest | null;
   signal?: AbortSignal;
+  settle?: SendOptions['settle'];
   done: boolean;
   resolve: (sent: Sent | null) => void;
   reject: (reason: unknown) => void;
@@ -364,6 +375,15 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  /** Resolves when `work` settles or after `ms`, whichever comes first. */
+  function settledOrAfter(work: Promise<unknown>, ms: number): Promise<void> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    return new Promise<void>((resolve) => {
+      timer = setTimeout(resolve, ms);
+      work.then(() => resolve(), () => resolve());
+    }).finally(() => clearTimeout(timer));
+  }
+
   function idle(): Promise<void> {
     if (inFlight === 0) return Promise.resolve();
     return new Promise((resolve) => idleWaiters.push(resolve));
@@ -453,6 +473,7 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
     const run = generation;
     const noted = stopNumber();
     markStart(bucket);
+    const deadline = monotonic() + REQUEST_TIMEOUT_MS;
     inFlight += 1;
     const { response, error, timedOut } = await fetchWithTimeout(fetchImpl, request, job.signal);
     if (run !== generation) return;
@@ -472,7 +493,12 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
       return;
     }
     succeed(noted);
-    finish(job, { sent: { url: request.url, response } });
+    const sent = { url: request.url, response };
+    if (!job.settle) return finish(job, { sent });
+    // The caller's work holds the bucket, but no longer than the request's own 20 s.
+    const settling = (async () => job.settle!(sent))();
+    settling.then(() => finish(job, { sent }), (error) => finish(job, { error }));
+    await settledOrAfter(settling, deadline - monotonic());
   }
 
   async function drain(bucket: BucketState): Promise<void> {
@@ -510,7 +536,15 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
   ): Promise<Sent | null> {
     const bucket = buckets[bucketName];
     return new Promise<Sent | null>((resolve, reject) => {
-      const job: Job = { pick, request: null, signal: options.signal, done: false, resolve, reject };
+      const job: Job = {
+        pick,
+        request: null,
+        signal: options.signal,
+        settle: options.settle,
+        done: false,
+        resolve,
+        reject,
+      };
       const { signal } = options;
       if (signal?.aborted) return finish(job, { error: abortReason(signal) });
       signal?.addEventListener(
