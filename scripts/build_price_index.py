@@ -342,7 +342,7 @@ def main(argv: list[str]) -> int:
     try:
         raw = scryfall_api.request(BULK_DATA_URL)
     except scryfall_api.ScryfallRateLimited as e:
-        print(f"{e}\nNo file written.", file=sys.stderr)
+        print(f"\n{e}\nNo file written.", file=sys.stderr)
         return 1
     oracle, default = exports(json.loads(raw))
     if not args.force and is_current(oracle, default):
