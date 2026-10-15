@@ -57,6 +57,7 @@ const PINNED = [
   { width: 1440, height: 900, fonts: 'live' },
   { width: 1920, height: 1080, fonts: 'live' },
   { width: 1280, height: 800, fonts: 'blocked' },
+  { width: 1280, height: 700, fonts: 'live' },
 ] as const;
 
 for (const { width, height, fonts } of PINNED) {
@@ -90,11 +91,11 @@ for (const { width, height, fonts } of PINNED) {
   });
 }
 
-// One column (the container query at 1080px), or a screen shorter than the
-// part with 20px above and below it: the whole rail stays in the flow.
+// One column (the container query at 1080px), or a screen less than 700px
+// tall (the media query): the whole rail stays in the flow.
 const IN_FLOW = [
   { width: 1080, height: 800 },
-  { width: 1280, height: 690 },
+  { width: 1280, height: 699 },
 ];
 
 for (const { width, height } of IN_FLOW) {
