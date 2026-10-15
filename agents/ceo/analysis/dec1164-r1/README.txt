@@ -39,4 +39,4 @@ logs/main-43844f7/  PR #65 (DEC-1154) merged to main as 904c74d during the CEO r
     ctl-r1-r2-r9.txt and mutants/: R1 and R2 each `1 failed | 7 passed (8)`, R9 `1 failed | 29 passed (30)`;
     each fails the new case only. Per file: ComboLab 8, ownedCards 30, Shopping 52.
     CI basis after PR #65: its pull_request run 38818813698 on f1eae45 read 10 warnings, 51 files, 612 tests,
-    `205 passed (8.9m)`. main's push run 38820146768 on 904c74d was in progress at 23:0xZ.
+    `205 passed (8.9m)`. main's push run 38820146768 on 904c74d was in progress at 22:55Z.
