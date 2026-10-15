@@ -10,6 +10,7 @@ import {
   type ChangeEvent,
 } from 'react';
 import { GV1ManaPips } from '../atoms/GV1ManaPips';
+import { PricePausedLine } from '../molecules/PricePausedLine';
 import { cardCache } from '../../data/cardCache';
 import {
   aggregateBuiltClaims,
@@ -47,6 +48,16 @@ function usePricesDate(): string | null {
     };
   }, []);
   return date;
+}
+
+/** Renders the page again when the card entry of any of `names` changes. */
+function useCardUpdates(names: string[]): void {
+  const [, bump] = useState(0);
+  const key = names.join('\n');
+  useEffect(() => {
+    const unsubs = key ? key.split('\n').map((name) => cardCache.subscribe(name, () => bump((n) => n + 1))) : [];
+    return () => unsubs.forEach((unsub) => unsub());
+  }, [key]);
 }
 
 // CSV parser that respects quoted fields.
@@ -254,6 +265,9 @@ function ShopRow({ name, qty, decks, multiDeck, allDecks, fallbackType, reserved
     if (!name) return;
     const unsub = cardCache.subscribe(name, () => bump((n) => n + 1));
     cardCache.enqueue(name);
+    // At first paint the row shows the file's price; then it asks for a price
+    // older than 24 h again (DEC-1131).
+    cardCache.refreshPrice(name);
     return unsub;
   }, [name]);
   const entry = cardCache.get(name);
@@ -317,9 +331,18 @@ function groupRows(cards: ShopRowCard[], mode: 'type' | 'az'): RowGroup[] {
   }));
 }
 
-function summarizePrice(cards: ShopRowCard[]): { sum: number; priced: number; total: number } {
+interface PriceSummary {
+  sum: number;
+  priced: number;
+  total: number;
+  /** The oldest date (epoch ms) among the priced rows; null when none has one. */
+  oldest: number | null;
+}
+
+function summarizePrice(cards: ShopRowCard[]): PriceSummary {
   let sum = 0;
   let priced = 0;
+  let oldest: number | null = null;
   cards.forEach((c) => {
     const e = cardCache.get(c.name);
     if (e?.price) {
@@ -327,10 +350,26 @@ function summarizePrice(cards: ShopRowCard[]): { sum: number; priced: number; to
       if (!Number.isNaN(n)) {
         sum += n * c.qty;
         priced++;
+        if (e.priceAsOf !== undefined && (oldest === null || e.priceAsOf < oldest)) oldest = e.priceAsOf;
       }
     }
   });
-  return { sum, priced, total: cards.length };
+  return { sum, priced, total: cards.length, oldest };
+}
+
+/**
+ * The summary of the buy list. While a price refresh of a buy row waits or is
+ * out, the summary of the same rows stays as it was, so the estimate changes
+ * once, when the answers have arrived (DEC-1131).
+ */
+function useHeldPriceSummary(buy: ShopRowCard[]): PriceSummary {
+  const held = useRef<{ rows: string; summary: PriceSummary } | null>(null);
+  const rows = buy.map((c) => `${c.name}\u00d7${c.qty}`).join('\n');
+  const waiting = buy.some((c) => cardCache.pricePending(c.name));
+  if (waiting && held.current?.rows === rows) return held.current.summary;
+  const summary = summarizePrice(buy);
+  held.current = { rows, summary };
+  return summary;
 }
 
 export interface ShoppingProps {
@@ -402,7 +441,13 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
 
   const buyTotal = buy.reduce((s, c) => s + c.qty, 0);
   const ownTotal = own.reduce((s, c) => s + c.qty, 0);
-  const priceSummary = summarizePrice(buy);
+  useCardUpdates(useMemo(() => [...buy, ...own].map((c) => c.name), [buy, own]));
+  const priceSummary = useHeldPriceSummary(buy);
+  // The footer and the stop line give the oldest date among the priced rows
+  // (DEC-1131): the file's date, or the time of a refresh's answer.
+  const shownPricesDate =
+    priceSummary.oldest !== null ? formatPricesDate(new Date(priceSummary.oldest).toISOString()) : pricesDate;
+  const waitingForPrice = [...buy, ...own].some((c) => cardCache.pricePending(c.name));
 
   const toggleDeck = (slug: string) => {
     setSelected((prev) => {
@@ -728,6 +773,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
               </button>
             </div>
           </div>
+          <PricePausedLine waiting={waitingForPrice} pricesDate={shownPricesDate} />
         </section>
       )}
 
@@ -825,7 +871,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
       <p className="gv1-mono-xs gv1-dim gv1-shop-foot">
         Basic lands (Plains, Island, Swamp, Mountain, Forest, Wastes, snow-covered) are excluded.
         Cards needed by multiple decks count once per deck — three decks each wanting Sol Ring shows 3 in the buy list.
-        {pricesDate ? `Prices are USD from Scryfall, as of ${pricesDate}.` : 'Prices are USD from Scryfall.'}
+        {shownPricesDate ? `Prices are USD from Scryfall, as of ${shownPricesDate}.` : 'Prices are USD from Scryfall.'}
       </p>
     </>
   );

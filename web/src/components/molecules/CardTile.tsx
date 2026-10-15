@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCard } from '../../hooks/useCard';
 import { cardCache } from '../../data/cardCache';
 import { ManaCost } from '../atoms/ManaCost';
@@ -88,7 +88,13 @@ export function CardTile({ card, size = 'md' }: CardTileProps) {
   const mvLive = live?.status === 'loaded' && live.mana_cost ? live.mana_cost : null;
   const mv = (card.mv && card.mv !== '—') ? card.mv : (mvLive || card.mv || '—');
   const priceLive = live?.status === 'loaded' && live.price ? live.price : null;
-  const price = (card.price && card.price !== '—') ? card.price : (priceLive || card.price || '—');
+  // The deck file's highlight price comes first; only a tile that shows the
+  // cache's price asks for it again when it is older than 24 h (DEC-1131 R1).
+  const highlightPrice = !!card.price && card.price !== '—';
+  const price = highlightPrice ? card.price! : (priceLive || card.price || '—');
+  useEffect(() => {
+    if (!highlightPrice) cardCache.refreshPrice(card.n);
+  }, [card.n, highlightPrice]);
   const typeLine = card.type || live?.type_line || '—';
   const className = ['gv1-card-tile', `gv1-card-${size}`, card.gc ? 'gv1-card-gc' : '']
     .filter(Boolean)

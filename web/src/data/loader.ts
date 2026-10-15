@@ -295,7 +295,8 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   const resolveStorage = (): Storage | null =>
     explicitStorage === undefined ? defaultStorage() : explicitStorage;
   const now = deps.now ?? (() => Date.now());
-  const seedCards = (metadata: RawCardMetadata) => deps.cardCache?.seed(metadata);
+  const seedCards = (metadata: RawCardMetadata, pricesAsOf: string | undefined) =>
+    deps.cardCache?.seed(metadata, pricesAsOf);
 
   const indexInflight = new Map<string, Promise<RawDeckIndex>>();
   const metadataInflight = new Map<string, Promise<RawCardMetadata>>();
@@ -389,24 +390,28 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
 
   // Every deck bundle waits for this, and it seeds the card cache before it
   // resolves. A page takes its card names from a bundle, so no page can ask the
-  // cache for a name of the file before the seed is in (DEC-1102).
+  // cache for a name of the file before the seed is in (DEC-1102). The seed
+  // carries the date of the file's prices from the meta file, so the cache can
+  // tell a price older than 24 h (DEC-1131); the meta file is not persisted.
+  // A failed or empty file is neither kept nor persisted: the next load asks
+  // again (DEC-1131 N6).
   async function loadCardMetadata(): Promise<RawCardMetadata> {
     if (memCardMetadata) return memCardMetadata;
-    const cached = readPersisted<RawCardMetadata>('card-metadata');
-    if (cached) {
-      memCardMetadata = cached;
-      seedCards(cached);
-      return cached;
-    }
     const existing = metadataInflight.get('card-metadata');
     if (existing) return existing;
     const promise = (async () => {
-      const data = await fetchJson<RawCardMetadata>('/data/card-metadata.json');
-      const metadata = data ?? {};
-      memCardMetadata = metadata;
-      seedCards(metadata);
-      writePersisted('card-metadata', metadata);
-      return metadata;
+      const stored = readPersisted<RawCardMetadata>('card-metadata');
+      // An empty file that an earlier version kept counts as none.
+      const cached = stored && Object.keys(stored).length > 0 ? stored : null;
+      const [data, meta] = await Promise.all([
+        cached ?? fetchJson<RawCardMetadata>('/data/card-metadata.json'),
+        loadCardMetadataMeta(),
+      ]);
+      if (!data || Object.keys(data).length === 0) return {};
+      memCardMetadata = data;
+      seedCards(data, meta?.prices_as_of);
+      if (!cached) writePersisted('card-metadata', data);
+      return data;
     })().finally(() => metadataInflight.delete('card-metadata'));
     metadataInflight.set('card-metadata', promise);
     return promise;

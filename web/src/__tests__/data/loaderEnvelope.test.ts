@@ -7,10 +7,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createDeckLoader } from '../../data/loader';
 
 const INDEX = { commanders: [{ id: 'alpha', name: 'Alpha', theme: 'T', colors: ['G'] }] };
+const PRICES_AS_OF = '2026-10-13T21:56:40+00:00';
 
 function payloadFor(url: string): unknown {
   if (url.endsWith('/index.json')) return INDEX;
   if (url.endsWith('/card-metadata.json')) return { 'Sol Ring': { mana_cost: '{1}' } };
+  if (url.endsWith('/card-metadata.meta.json')) return { prices_as_of: PRICES_AS_OF };
   if (url.endsWith('/deck.json')) return { id: 'alpha', name: 'Alpha', decklist: [] };
   if (url.endsWith('/simulation.json')) return { deck_id: 'alpha' };
   if (url.endsWith('/metrics.json')) return { deck_id: 'alpha' };
@@ -132,8 +134,9 @@ describe('deck loader seeds the card cache (DEC-1102)', () => {
   it('seeds before the first bundle resolves, from the network and from storage', async () => {
     for (const round of ['network', 'storage']) {
       let resolved = false;
-      const seeds: Array<{ metadata: unknown; beforeBundle: boolean }> = [];
-      const seed = (metadata: unknown) => seeds.push({ metadata, beforeBundle: !resolved });
+      const seeds: Array<{ metadata: unknown; beforeBundle: boolean; pricesAsOf?: string | null }> = [];
+      const seed = (metadata: unknown, pricesAsOf?: string | null) =>
+        seeds.push({ metadata, beforeBundle: !resolved, pricesAsOf });
       const deckLoader = createDeckLoader({
         fetchImpl: fetchImpl as unknown as typeof fetch,
         storage,
@@ -143,7 +146,10 @@ describe('deck loader seeds the card cache (DEC-1102)', () => {
         resolved = true;
         return b;
       });
-      expect(seeds, round).toEqual([{ metadata: { 'Sol Ring': { mana_cost: '{1}' } }, beforeBundle: true }]);
+      // DEC-1131: the seed carries the date of the file's prices from the meta file.
+      expect(seeds, round).toEqual([
+        { metadata: { 'Sol Ring': { mana_cost: '{1}' } }, beforeBundle: true, pricesAsOf: PRICES_AS_OF },
+      ]);
       expect(bundle?.cardMetadata).toBe(seeds[0].metadata);
       await deckLoader.loadAll();
       expect(seeds, `${round}: one seed per loader`).toHaveLength(1);
@@ -151,6 +157,39 @@ describe('deck loader seeds the card cache (DEC-1102)', () => {
     // The second round read the persisted copy, not the network.
     const metadataFetches = fetchImpl.mock.calls.filter(([url]) => String(url).endsWith('/card-metadata.json'));
     expect(metadataFetches).toHaveLength(1);
+  });
+
+  // DEC-1131 N6: a failed or empty file is not kept, and the next load asks again.
+  for (const [label, answer] of [
+    ['a 404', { ok: false, status: 404, json: async () => ({}) }],
+    ['an empty file', { ok: true, status: 200, json: async () => ({}) }],
+  ] as const) {
+    it(`persists no card-metadata.json after ${label}, and the next load asks again`, async () => {
+      fetchImpl.mockImplementation(async (url: string) =>
+        url.endsWith('/card-metadata.json') ? answer : { ok: true, status: 200, json: async () => payloadFor(url) },
+      );
+      const seed = vi.fn();
+      const deckLoader = createDeckLoader({ fetchImpl: fetchImpl as unknown as typeof fetch, storage, cardCache: { seed } });
+      expect(await deckLoader.loadCardMetadata()).toEqual({});
+      const keys = [...Array(storage.length).keys()].map((i) => storage.key(i)!);
+      expect(keys.filter((k) => k.endsWith(':card-metadata'))).toEqual([]);
+      expect(seed).not.toHaveBeenCalled();
+
+      fetchImpl.mockImplementation(async (url: string) => ({ ok: true, status: 200, json: async () => payloadFor(url) }));
+      expect(await deckLoader.loadCardMetadata()).toEqual({ 'Sol Ring': { mana_cost: '{1}' } });
+      const fetches = fetchImpl.mock.calls.filter(([url]) => String(url).endsWith('/card-metadata.json'));
+      expect(fetches).toHaveLength(2);
+      expect(seed).toHaveBeenCalledTimes(1);
+    });
+  }
+
+  it('takes an empty card-metadata.json that an earlier version stored for no file', async () => {
+    // The loader writes its own envelope; the case empties it, as PR #38 left it after a 404.
+    await loader().loadCardMetadata();
+    const key = [...Array(storage.length).keys()].map((i) => storage.key(i)!).find((k) => k.endsWith(':card-metadata'))!;
+    storage.setItem(key, JSON.stringify({ fetchedAt: Date.now(), payload: {} }));
+    expect(await loader().loadCardMetadata()).toEqual({ 'Sol Ring': { mana_cost: '{1}' } });
+    expect(fetchImpl.mock.calls.filter(([url]) => String(url).endsWith('/card-metadata.json'))).toHaveLength(2);
   });
 
   it('writes its envelopes under v156', async () => {
