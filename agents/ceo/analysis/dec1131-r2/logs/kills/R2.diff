@@ -1,0 +1,13 @@
+diff --git a/web/src/data/cardCache.ts b/web/src/data/cardCache.ts
+index 9f54ff1..00448ef 100644
+--- a/web/src/data/cardCache.ts
++++ b/web/src/data/cardCache.ts
+@@ -468,7 +468,7 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
+         overlays.set(wanted.key, stored);
+         recompose(wanted.key);
+       }
+-      if (isLive(overlays.get(wanted.key)?.priceCheckedAt)) wanted.price = false;
++      void 0;
+     }
+     return wanted.lookup || wanted.pictures || wanted.price;
+   }

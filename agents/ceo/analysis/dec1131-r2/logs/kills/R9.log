@@ -1,0 +1,46 @@
+
+ RUN  v2.1.9 /private/tmp/dec1149-ceo/wt/web
+
+ ✓ src/__tests__/dec1149/dec1149-kills.test.ts (14 tests) 17ms
+stderr | src/__tests__/components/dec1149/dec1149-tile-kill.test.tsx > R22 (reviewer kill) > asks for the refresh of the new card when the tile gets another card
+Warning: An update to CardTile inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CardTile (/private/tmp/dec1149-ceo/wt/web/src/components/molecules/CardTile.tsx:150:21)
+
+ ✓ src/__tests__/components/dec1149/dec1149-tile-kill.test.tsx (1 test) 12ms
+ ❯ src/__tests__/components/dec1149/dec1149-shopping-kills.test.tsx (2 tests | 1 failed) 1568ms
+   × R9 (reviewer kill) > a new selection recomputes the estimate at once, also while a refresh of the buy rows is out 56ms
+     → expected '$4' to be '$41' // Object.is equality
+   ✓ R12 (reviewer kill) > the stop line shows when only the rows of "Already own" wait for a refresh 1511ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/dec1149/dec1149-shopping-kills.test.tsx > R9 (reviewer kill) > a new selection recomputes the estimate at once, also while a refresh of the buy rows is out
+AssertionError: expected '$4' to be '$41' // Object.is equality
+
+Expected: "$41"
+Received: "$4"
+
+ ❯ src/__tests__/components/dec1149/dec1149-shopping-kills.test.tsx:77:24
+     75|     fireEvent.click(screen.getByRole('button', { name: /Add Beta/i }));
+     76|     // $4 + Beta Commander $5 + Sol Ring again $1.50 + Rhystic Study $…
+     77|     expect(estimate()).toBe('$41');
+       |                        ^
+     78|   });
+     79| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 16 passed (17)
+   Start at  17:05:06
+   Duration  1.99s (transform 93ms, setup 48ms, collect 169ms, tests 1.60s, environment 370ms, prepare 90ms)
+

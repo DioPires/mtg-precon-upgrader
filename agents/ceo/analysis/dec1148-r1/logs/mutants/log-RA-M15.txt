@@ -1,0 +1,98 @@
+
+ RUN  v2.1.9 /private/tmp/dec1148-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (28 tests | 1 failed) 132ms
+   × DeckSelector focus after a key switch: review cases (DEC-1148) > focuses the pill, not an active element earlier in the page 7ms
+     → expected <a …(2)></a> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 27 passed (28)
+   Start at  16:40:02
+   Duration  517ms (transform 36ms, setup 21ms, collect 46ms, tests 132ms, environment 122ms, prepare 37ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch: review cases (DEC-1148) > focuses the pill, not an active element earlier in the page
+AssertionError: expected <a …(2)></a> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+- Expected
++ Received
+
+- <button
+-   aria-disabled="false"
+-   aria-selected="true"
+-   class="gv1-sel-pill gv1-active"
+-   role="tab"
+-   tabindex="0"
+-   title="Open Deck 5"
+-   type="button"
+- >
+-   <div
+-     class="gv1-sel-pill-top"
+-   >
+-     <span
+-       class="gv1-mono-xs gv1-dim"
+-     >
+-       № 
+-       05
+-     </span>
+-     <span
+-       aria-label="Color identity: 1 colors"
+-       class="gv1-pips"
+-       role="img"
+-     >
+-       <span
+-         aria-hidden="true"
+-         class="gv1-pip"
+-         style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
++ <a
++   class="gv1-nav-item gv1-active"
++   href="/deck/deck-3"
+  >
+-         R
+-       </span>
+-     </span>
+-   </div>
+-   <div
+-     class="gv1-sel-pill-name"
+-   >
+-     Deck 5
+-   </div>
+-   <div
+-     class="gv1-mono-xs gv1-sel-pill-cmd"
+-   >
+-     Commander 5
+-   </div>
+-   <div
+-     class="gv1-sel-pill-foot"
+-   >
+-     <span
+-       class="gv1-mono-xs gv1-sel-pill-bracket"
+-     >
+-       BRACKET 
+-       4
+-     </span>
+-   </div>
+-   <span
+-     class="gv1-sel-pill-flag"
+-   >
+-     <span
+-       class="gv1-mono-xs"
+-     >
+-       NOW SCRYING
+-     </span>
+-   </span>
+- </button>
++   Guide
++ </a>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:559:36
+    557|     act(() => tabs[2].focus());
+    558|     fireEvent.keyDown(tabs[2], { key: 'End' });
+    559|     expect(document.activeElement).toBe(tabs[4]);
+       |                                    ^
+    560|   });
+    561| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,13 @@
+diff --git a/web/src/components/organisms/Shopping.tsx b/web/src/components/organisms/Shopping.tsx
+index e0617bd..7d7138d 100644
+--- a/web/src/components/organisms/Shopping.tsx
++++ b/web/src/components/organisms/Shopping.tsx
+@@ -452,7 +452,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
+   // (DEC-1131): the file's date, or the time of a refresh's answer.
+   const shownPricesDate =
+     priceSummary.oldest !== null ? formatPricesDate(new Date(priceSummary.oldest).toISOString()) : pricesDate;
+-  const waitingForPrice = [...buy, ...own].some((c) => cardCache.pricePending(c.name));
++  const waitingForPrice = buy.some((c) => cardCache.pricePending(c.name));
+ 
+   const toggleDeck = (slug: string) => {
+     setSelected((prev) => {
