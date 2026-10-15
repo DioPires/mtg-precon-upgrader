@@ -1,0 +1,9 @@
+@@ -116,7 +116,7 @@
+         if (!outcome) return;
+         const line = `${request.method()} ${request.url()} (${outcome})`;
+         if (scryfall) unanswered.push(line);
+-        else if (outcome === NETWORK_ANSWERED || outcome === 'net::ERR_NAME_NOT_RESOLVED') moxfield.push(line);
++        else if (outcome === NETWORK_ANSWERED || outcome.startsWith('net::')) moxfield.push(line);
+       };
+ 
+       const stub = async (context: BrowserContext) => {

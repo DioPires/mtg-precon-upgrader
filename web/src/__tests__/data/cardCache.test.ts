@@ -1,168 +1,258 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCardCache, type CardEntry } from '../../data/cardCache';
+import { createScryfallLimiter } from '../../data/scryfallLimiter';
+import type { RawCardMetadata } from '../../data/types';
+import { cardJson, fakeScryfall, MemoryStorage, type Outcome } from './scryfallFakes';
 
-class MemoryStorage implements Storage {
-  private store: Map<string, string> = new Map();
-  get length(): number { return this.store.size; }
-  clear(): void { this.store.clear(); }
-  getItem(k: string): string | null { return this.store.get(k) ?? null; }
-  setItem(k: string, v: string): void { this.store.set(k, v); }
-  removeItem(k: string): void { this.store.delete(k); }
-  key(i: number): string | null { return Array.from(this.store.keys())[i] ?? null; }
+const T0 = Date.UTC(2026, 9, 14, 12, 0, 0);
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Three entries as data/card-metadata.json holds them.
+const FILE: RawCardMetadata = {
+  'Sol Ring': {
+    cmc: 1,
+    colors: [],
+    image: 'front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446',
+    mana_cost: '{1}',
+    type_line: 'Artifact',
+    usd: 1.42,
+    eur: 1.06,
+  },
+  'Bonecrusher Giant': {
+    cmc: 3,
+    colors: ['R'],
+    image: 'front/0/9/09ebe6b5-2a6b-4f0b-9d8b-0e5a2b2a7b11.jpg?1700000000',
+    layout: 'adventure',
+    mana_cost: '{2}{R} // {1}{R}',
+    type_line: 'Creature — Giant // Instant — Adventure',
+    usd: 0.5,
+    eur: 0.4,
+  },
+  'Nameless Relic': {
+    cmc: 2,
+    colors: [],
+    image: 'front/a/b/ab000000-0000-0000-0000-000000000000.jpg?1',
+    mana_cost: '{2}',
+    type_line: 'Artifact',
+    usd: null,
+    eur: null,
+  },
+};
+
+let storage: MemoryStorage;
+
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.setSystemTime(T0);
+  storage = new MemoryStorage();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+function setup(outcome?: (n: number, url: string) => Outcome, delayMs = 0) {
+  const scry = fakeScryfall({ delayMs, outcome });
+  const cache = createCardCache({
+    storage,
+    limiter: createScryfallLimiter({ fetchImpl: scry.fetch, storage, locks: null }),
+  });
+  return { scry, cache };
 }
 
-function scryfallResponse(name: string, overrides: Partial<Record<string, unknown>> = {}) {
-  return {
-    ok: true,
-    json: async () => ({
-      name,
-      mana_cost: '{1}',
-      cmc: 1,
-      type_line: 'Artifact',
-      image_uris: { small: `s-${name}`, normal: `n-${name}`, large: `l-${name}`, art_crop: `a-${name}` },
-      prices: { usd: '0.42' },
-      ...overrides,
-    }),
-  };
-}
+const advance = (ms: number) => vi.advanceTimersByTimeAsync(ms);
 
-describe('cardCache', () => {
-  let storage: MemoryStorage;
-  beforeEach(() => { storage = new MemoryStorage(); });
-
-  it('fetches a card and notifies subscribers with the loaded entry', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(scryfallResponse('Sol Ring'));
-    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 0 });
+describe('cardCache lookups', () => {
+  it('looks a card up and notifies subscribers with the loaded entry', async () => {
+    const { scry, cache } = setup();
     const listener = vi.fn();
-    cache.subscribe('Sol Ring', listener);
-    const entry = await cache.fetch('Sol Ring');
-    expect(entry.status).toBe('loaded');
-    expect(entry.name).toBe('Sol Ring');
-    expect(entry.image_small).toBe('s-Sol Ring');
-    expect(entry.image_normal).toBe('n-Sol Ring');
-    expect(entry.image_large).toBe('l-Sol Ring');
-    expect(entry.price).toBe('$0.42');
-    // Listener should fire at least twice: loading → loaded.
-    expect(listener).toHaveBeenCalled();
-    const last = listener.mock.calls.at(-1)?.[0] as CardEntry;
-    expect(last.status).toBe('loaded');
-  });
-
-  it('dedupes concurrent fetches into a single network call', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(scryfallResponse('Sol Ring'));
-    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 0 });
-    const [a, b, c] = await Promise.all([
-      cache.fetch('Sol Ring'),
-      cache.fetch('Sol Ring'),
-      cache.fetch('Sol Ring'),
-    ]);
-    expect(fetchImpl).toHaveBeenCalledTimes(1);
-    expect(a.status).toBe('loaded');
-    expect(b).toBe(a);
-    expect(c).toBe(a);
-  });
-
-  it('persists loaded entries to localStorage and rehydrates on get()', () => {
-    const fetchImpl = vi.fn();
-    const seed: CardEntry = {
+    cache.subscribe('Mana Crypt', listener);
+    cache.enqueue('Mana Crypt');
+    await advance(0);
+    expect(scry.names()).toEqual(['Mana Crypt']);
+    const entry = cache.get('Mana Crypt')!;
+    expect(entry).toMatchObject({
       status: 'loaded',
-      name: 'Sol Ring',
-      image_small: 'cached-small',
-      fetchedAt: Date.now(),
-    };
-    storage.setItem('gv1-card:sol ring', JSON.stringify(seed));
-    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 0 });
-    const got = cache.get('Sol Ring');
-    expect(got?.status).toBe('loaded');
-    expect(got?.image_small).toBe('cached-small');
-    expect(fetchImpl).not.toHaveBeenCalled();
+      name: 'Mana Crypt',
+      image_small: cardJson('Mana Crypt').image_uris.small,
+      image_large: cardJson('Mana Crypt').image_uris.large,
+      price: '$0.42',
+    });
+    expect(listener.mock.calls.map(([e]) => (e as CardEntry).status)).toEqual(['loading', 'loaded']);
+  });
+
+  it('dedupes a name that is queued, out or loaded', async () => {
+    const { scry, cache } = setup(undefined, 150);
+    cache.enqueue('Mana Crypt');
+    cache.enqueue('Mana Crypt');
+    await advance(50);
+    cache.enqueue('Mana Crypt');
+    await advance(5_000);
+    cache.enqueue('Mana Crypt');
+    await advance(5_000);
+    expect(scry.sends).toHaveLength(1);
+  });
+
+  it('persists a loaded lookup and rehydrates it on get()', async () => {
+    const { cache } = setup();
+    cache.enqueue('Mana Crypt');
+    await advance(0);
+    const parsed = JSON.parse(storage.getItem('gv1-card:mana crypt')!) as CardEntry;
+    expect(parsed).toMatchObject({ status: 'loaded', fetchedAt: T0 });
+
+    const { scry: second, cache: reloaded } = setup();
+    expect(reloaded.get('Mana Crypt')?.image_small).toBe(cardJson('Mana Crypt').image_uris.small);
+    reloaded.enqueue('Mana Crypt');
+    await advance(1_000);
+    expect(second.sends).toHaveLength(0);
   });
 
   it('discards persisted entries older than 24h', () => {
-    const stale: CardEntry = {
-      status: 'loaded',
-      name: 'Sol Ring',
-      fetchedAt: 0, // long ago
-    };
-    storage.setItem('gv1-card:sol ring', JSON.stringify(stale));
-    const now = () => 25 * 60 * 60 * 1000;
-    const cache = createCardCache({ storage, now, fetchImpl: undefined, throttleMs: 0 });
-    expect(cache.get('Sol Ring')).toBeNull();
-    expect(storage.getItem('gv1-card:sol ring')).toBeNull();
+    storage.setItem('gv1-card:mana crypt', JSON.stringify({ status: 'loaded', name: 'Mana Crypt', fetchedAt: T0 - DAY_MS - 1 }));
+    const { cache } = setup();
+    expect(cache.get('Mana Crypt')).toBeNull();
+    expect(storage.getItem('gv1-card:mana crypt')).toBeNull();
   });
 
-  it('writes loaded entries through to localStorage on fetch', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(scryfallResponse('Sol Ring'));
-    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 0 });
-    await cache.fetch('Sol Ring');
-    const persisted = storage.getItem('gv1-card:sol ring');
-    expect(persisted).not.toBeNull();
-    const parsed = JSON.parse(persisted!) as CardEntry;
-    expect(parsed.status).toBe('loaded');
-    expect(parsed.fetchedAt).toBeTypeOf('number');
-  });
-
-  it('records errors without persisting them', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue({ ok: false, status: 404, json: async () => ({}) });
-    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 0 });
-    const entry = await cache.fetch('Nonesuch');
-    expect(entry.status).toBe('error');
+  it('records a failed lookup without persisting it', async () => {
+    const { cache } = setup(() => 404);
+    cache.enqueue('Nonesuch');
+    await advance(0);
+    expect(cache.get('Nonesuch')).toMatchObject({ status: 'error', errorStatus: 404 });
     expect(storage.getItem('gv1-card:nonesuch')).toBeNull();
   });
 
-  it('retries transient Scryfall failures before surfacing an error', async () => {
-    vi.useFakeTimers();
-    const fetchImpl = vi.fn()
-      .mockResolvedValueOnce({ ok: false, status: 429, headers: { get: () => null }, json: async () => ({}) })
-      .mockResolvedValueOnce(scryfallResponse('Sol Ring'));
-    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 0 });
-
-    const promise = cache.fetch('Sol Ring');
-    await vi.advanceTimersByTimeAsync(0);
-    expect(fetchImpl).toHaveBeenCalledTimes(1);
-    await vi.advanceTimersByTimeAsync(750);
-    const entry = await promise;
-
-    expect(fetchImpl).toHaveBeenCalledTimes(2);
-    expect(entry.status).toBe('loaded');
-    vi.useRealTimers();
-  });
-
-  it('enqueue throttles successive fetches by the configured interval', async () => {
-    vi.useFakeTimers();
-    const fetchImpl = vi.fn().mockResolvedValue(scryfallResponse('Sol Ring'));
-    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 80 });
-    cache.enqueue('Sol Ring');
-    cache.enqueue('Mana Crypt');
-    cache.enqueue('Mana Vault');
-    // Run microtasks; first fetch resolves immediately.
-    await vi.advanceTimersByTimeAsync(0);
-    expect(fetchImpl).toHaveBeenCalledTimes(1);
-    // Less than 80ms — second fetch should still be waiting.
-    await vi.advanceTimersByTimeAsync(40);
-    expect(fetchImpl).toHaveBeenCalledTimes(1);
-    // Cross the throttle boundary; second fetch fires.
-    await vi.advanceTimersByTimeAsync(80);
-    expect(fetchImpl).toHaveBeenCalledTimes(2);
-    await vi.advanceTimersByTimeAsync(80);
-    expect(fetchImpl).toHaveBeenCalledTimes(3);
-    vi.useRealTimers();
-  });
-
-  it('enqueue is idempotent for names already in the queue or cache', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(scryfallResponse('Sol Ring'));
-    const cache = createCardCache({ storage, fetchImpl: fetchImpl as never, throttleMs: 0 });
-    cache.enqueue('Sol Ring');
-    cache.enqueue('Sol Ring');
-    cache.enqueue('Sol Ring');
-    // Drain the queue.
-    await new Promise((r) => setTimeout(r, 10));
-    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  it('asks for a card once per failure: no in-place retry', async () => {
+    const { scry, cache } = setup(() => 500);
+    cache.enqueue('Nonesuch');
+    await advance(10_000);
+    expect(scry.names()).toEqual(['Nonesuch']);
   });
 
   it('survives malformed localStorage payloads gracefully', () => {
     storage.setItem('gv1-card:sol ring', '{not json');
-    const cache = createCardCache({ storage, fetchImpl: undefined, throttleMs: 0 });
+    const { cache } = setup();
     expect(cache.get('Sol Ring')).toBeNull();
+  });
+});
+
+describe('cardCache.seed (card-metadata.json)', () => {
+  it('holds a name of the file as loaded at once, and enqueue sends nothing for it', async () => {
+    const { scry, cache } = setup();
+    cache.seed(FILE);
+    expect(cache.get('Sol Ring')?.status).toBe('loaded');
+    expect(cache.get('sol ring')?.price).toBe('$1.42');
+    cache.enqueue('Sol Ring');
+    cache.enqueue('Bonecrusher Giant', { first: true });
+    await advance(5_000);
+    expect(scry.sends).toHaveLength(0);
+  });
+
+  it("builds Scryfall's four picture addresses from the file's path", () => {
+    const { cache } = setup();
+    cache.seed(FILE);
+    const path = FILE['Sol Ring'].image;
+    expect(cache.get('Sol Ring')).toMatchObject({
+      image_small: `https://cards.scryfall.io/small/${path}`,
+      image_normal: `https://cards.scryfall.io/normal/${path}`,
+      image_large: `https://cards.scryfall.io/large/${path}`,
+      art_crop: `https://cards.scryfall.io/art_crop/${path}`,
+    });
+  });
+
+  it("shows the front half's cost of a two-part card, and the file's type line and mana value", () => {
+    const { cache } = setup();
+    cache.seed(FILE);
+    expect(cache.get('Bonecrusher Giant')).toMatchObject({
+      mana_cost: '{2}{R}',
+      cmc: 3,
+      type_line: 'Creature — Giant // Instant — Adventure',
+    });
+  });
+
+  it('gives a card without a USD price a null price', () => {
+    const { cache } = setup();
+    cache.seed(FILE);
+    expect(cache.get('Nameless Relic')?.status).toBe('loaded');
+    expect(cache.get('Nameless Relic')?.price).toBeNull();
+  });
+
+  it("removes the gv1-card: entries of the names it seeds and writes none, so storage holds each card once", () => {
+    const lookup = { status: 'loaded', name: 'Sol Ring', image_small: 'old', fetchedAt: T0 - 1_000 };
+    storage.setItem('gv1-card:sol ring', JSON.stringify(lookup));
+    storage.setItem('gv1-card:bonecrusher giant', JSON.stringify({ ...lookup, name: 'Bonecrusher Giant' }));
+    storage.setItem('gv1-card:mana crypt', JSON.stringify({ ...lookup, name: 'Mana Crypt' }));
+    const { cache } = setup();
+    cache.seed(FILE);
+    expect(storage.getItem('gv1-card:sol ring')).toBeNull();
+    expect(storage.getItem('gv1-card:bonecrusher giant')).toBeNull();
+    expect(storage.getItem('gv1-card:nameless relic')).toBeNull();
+    // A name outside the file keeps its lookup.
+    expect(storage.getItem('gv1-card:mana crypt')).not.toBeNull();
+    expect(cache.get('Sol Ring')?.image_small).toContain('cards.scryfall.io/small/front/8/e/');
+  });
+
+  it('notifies a subscriber of a seeded name', () => {
+    const { cache } = setup();
+    const listener = vi.fn();
+    cache.subscribe('Sol Ring', listener);
+    cache.seed(FILE);
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ status: 'loaded', name: 'Sol Ring' }));
+  });
+});
+
+describe('cardCache.imageFailed', () => {
+  it("looks a seeded card up once when its picture fails, and the answer's addresses replace the file's for 24 h", async () => {
+    const { scry, cache } = setup();
+    cache.seed(FILE);
+    cache.imageFailed('Sol Ring');
+    await advance(0);
+    expect(scry.names()).toEqual(['Sol Ring']);
+    const refreshed = cache.get('Sol Ring')!;
+    expect(refreshed).toMatchObject({
+      status: 'loaded',
+      image_normal: cardJson('Sol Ring').image_uris.normal,
+      art_crop: cardJson('Sol Ring').image_uris.art_crop,
+      // The file's facts stay.
+      price: '$1.42',
+      refreshedAt: T0,
+    });
+    expect(JSON.parse(storage.getItem('gv1-card:sol ring')!)).toMatchObject({ refreshedAt: T0, fetchedAt: T0 });
+
+    // A second failure inside 24 h sends nothing, also after a reload.
+    await advance(60_000);
+    cache.imageFailed('Sol Ring');
+    const { scry: afterReload, cache: reloaded } = setup();
+    reloaded.seed(FILE);
+    expect(reloaded.get('Sol Ring')?.image_normal).toBe(cardJson('Sol Ring').image_uris.normal);
+    reloaded.imageFailed('Sol Ring');
+    await advance(10_000);
+    expect(scry.sends).toHaveLength(1);
+    expect(afterReload.sends).toHaveLength(0);
+  });
+
+  it('sends nothing more inside 24 h when the lookup after a failed picture fails too', async () => {
+    const { scry, cache } = setup(() => 404);
+    cache.seed(FILE);
+    cache.imageFailed('Sol Ring');
+    await advance(0);
+    expect(cache.get('Sol Ring')).toMatchObject({ status: 'loaded', price: '$1.42' });
+    cache.imageFailed('Sol Ring');
+    await advance(DAY_MS - 1_000);
+    cache.imageFailed('Sol Ring');
+    await advance(1_000);
+    expect(scry.sends).toHaveLength(1);
+    // After 24 h one more try.
+    await advance(1);
+    cache.imageFailed('Sol Ring');
+    await advance(0);
+    expect(scry.sends).toHaveLength(2);
+  });
+
+  it('sends nothing for a name outside the file', async () => {
+    const { scry, cache } = setup();
+    cache.imageFailed('Mana Crypt');
+    await advance(1_000);
+    expect(scry.sends).toHaveLength(0);
   });
 });

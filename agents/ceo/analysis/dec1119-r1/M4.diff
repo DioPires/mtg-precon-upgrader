@@ -1,0 +1,13 @@
+diff --git a/scripts/export_simulation_results.py b/scripts/export_simulation_results.py
+index ecb5d06..aff9a92 100644
+--- a/scripts/export_simulation_results.py
++++ b/scripts/export_simulation_results.py
+@@ -4180,7 +4180,7 @@ def run_parallel(run_chunk_fn, merge_fn, decklist, metadata, num_games):
+     base, remainder = divmod(num_games, MANA_SIM_CHUNKS)
+     chunk_sizes = [base + (1 if i < remainder else 0) for i in range(MANA_SIM_CHUNKS)]
+     chunk_args = [
+-        (run_chunk_fn, MANA_SIM_SEED + i, decklist, metadata, games)
++        (run_chunk_fn, MANA_SIM_SEED, decklist, metadata, games)
+         for i, games in enumerate(chunk_sizes) if games > 0
+     ]
+     n_workers = min(MANA_SIM_CHUNKS, os.cpu_count() or 4)

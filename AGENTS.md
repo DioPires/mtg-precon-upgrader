@@ -66,32 +66,46 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
   "name": "Titan Convergence",
   "subtitle": "Cascading Inevitability",
   "commander": "Zhulodok, Void Gorger",
-  "cost": "$200-350",
-  "bracket": "4",
+  "bracket": "4-",
   "gameChangers": 2,
-  "asymmetric_only": false,
+  "lastUpdatedSet": "Tarkir: Dragonstorm",
+  "archetypes": ["eldrazi-colorless", "ramp-big-mana"],
+  "commanderRoles": { "primary": "engine", "secondary": "threat" },
+  "wincon_style": "discrete-threats",
   "sources": [...],
-  "guideContent": {
-    "strategyOverview": "...",
-    "deckCategories": [{ "name": "Eldrazi Threats", "description": "...", "cards": [...] }]
-  },
-  "addCategories": [...],
-  "adds": [...],
-  "synergies": [...],
-  "decklist": [{ "name": "Card Name", "type": "Creature" }, ...]
+  "guideContent": { "strategyOverview": "..." },
+  "categories": [{ "name": "Eldrazi Titans", "cards": [...] }, ...],
+  "highlights": [{ "name": "Card Name", "reason": "...", "sources": [...] }, ...],
+  "winConditions": [{ "title": "...", "description": "...", "cards": [...] }, ...],
+  "synergies": [{ "title": "...", "description": "...", "cards": [...], "sources": [...] }, ...],
+  "decklist": [{ "name": "Card Name", "type": "Creature", "primary_role": "ramp" }, ...],
+  "tokens": [...]
 }
 ```
 
-**Key fields:**
-- `type: "commander"` (required)
-- `bracket` — display field indicating deck power level
-- `gameChangers` — count of Game Changer cards in the deck
-- `asymmetric_only` — optional deck-side discovery modifier; set `true` only when symmetric punisher/resource-denial effects are strategic traps and the deck should prefer opponent-only templates
-- `guideContent.deckCategories` — deck theme groupings
-- `decklist` — full 99-card list as `{name, type}` objects with optional `quantity` field
-- `adds` — notable/highlighted cards
-- `synergies` — card synergy pairs/groups
-- `sources` — attribution for the deck build
+**Key fields** (each field names the file that reads it; `normalize.ts` is `web/src/data/normalize.ts`, and a bare `.py` name is a file in `scripts/`):
+- `id` — the deck folder name under `data/commanders/` (`validate_deck_json.py:124`)
+- `type: "commander"` (required; `compute_deck_metrics.py:1062`)
+- `name`, `commander` — deck display name and commander card name (`normalize.ts:385-386`; `validate_deck_json.py:22` checks `commander`)
+- `subtitle` — read only by the Archidekt export (`mcp-servers/archidekt/src/archidekt_mcp/services/deck_builder.py:160`)
+- `bracket` — display field indicating deck power level (`normalize.ts:391`)
+- `gameChangers` — count of Game Changer cards in the deck (`normalize.ts:421`; `check_game_changers.py:96` recounts it)
+- `lastUpdatedSet` — no code reads it from `deck.json`; the UI shows the `data/index.json` copy (`normalize.ts:399`)
+- `status` — optional; `"brewing"` for a deck that is not built yet, omitted for a built deck (`normalize.ts:392`)
+- `cost` — optional price band text; no code reads it
+- `asymmetric_only` — optional deck-side discovery modifier; set `true` only when symmetric punisher/resource-denial effects are strategic traps and the deck should prefer opponent-only templates (`generate_candidate_pool.py:295`)
+- `archetypes` — discovery playbook IDs (`generate_candidate_pool.py:710`)
+- `commanderRoles` — the commander's `{primary, secondary}` roles (`compute_deck_metrics.py:502`)
+- `wincon_style` — the deck's dominant win plan, defined in [`docs/role-taxonomy.md`](docs/role-taxonomy.md) (`compute_deck_metrics.py:517`)
+- `guideContent.strategyOverview` — the strategy text (`normalize.ts:379`)
+- `categories`, `guideContent.deckCategories` — optional deck theme groupings as `{name, cards}`; every deck has one or both, and `normalize.ts:196-199` reads `categories` first (`validate_deck_json.py:26`, `:29`)
+- `decklist` — full 99-card list as `{name, type, primary_role}` objects with optional `secondary_role` and `quantity` fields (`normalize.ts:116`; `validate_deck_json.py:23`)
+- `highlights` — optional; notable cards as `{name}` objects with optional `reason`, `price`, `isGameChanger` and `sources` (`normalize.ts:120`; `validate_deck_json.py:24`)
+- `winConditions` — `{title, description, cards}` objects with optional `kind`, `pieces` and `sources` (`normalize.ts:184`; `validate_deck_json.py:27`)
+- `synergies` — card synergy pairs/groups (`normalize.ts:211`; `validate_deck_json.py:28`)
+- `tokens` — written by `compute_tokens.py` (DEC-403); read at `normalize.ts:298`
+- `candidate_pins` — optional; board picks that the pool generator seats below the cut, DEC-992 (`generate_candidate_pool.py:614`; `normalize.ts:237`)
+- `sources` — attribution for the deck build (`normalize.ts:372`)
 
 ## Deck Rules
 
@@ -134,8 +148,9 @@ Every card add, synergy, and deck must have a `sources` array for traceability.
 
 **Where sources arrays go:**
 - Per-deck: `sources` (root level)
-- Per-card: `adds[].sources`
+- Per-card: `highlights[].sources`
 - Per-synergy: `synergies[].sources`
+- Per-win-condition: `winConditions[].sources`
 
 **When to use `ai-inferred`:** For synergy identification, strategic analysis, or card recommendations that came from Claude's analysis rather than a specific external source.
 

@@ -60,7 +60,9 @@ for (const fonts of ['live', 'blocked'] as const) {
         expect(await chooser.element().getAttribute('id')).toBe('gv1-shop-owned-file');
         await chooser.setFiles(OWNED_TXT);
 
-        await expect(page.locator('.gv1-shop-import-ok')).toHaveText(/Imported 2 unique cards \(3 total\)\./);
+        await expect(page.locator('.gv1-shop-import-ok')).toHaveText(
+          /Added 2 unique cards \(3 total\)\. 3 cards loaded\. To replace the list, use Clear owned first\./,
+        );
         await expect(page.locator('.gv1-shop-owned-bar')).toContainText('3 cards loaded — saved locally');
         const raw = await page.evaluate((k) => localStorage.getItem(k), OWNED_KEY);
         expect(JSON.parse(raw ?? '[]')).toEqual([['Sol Ring', 1], ['Arcane Signet', 2]]);

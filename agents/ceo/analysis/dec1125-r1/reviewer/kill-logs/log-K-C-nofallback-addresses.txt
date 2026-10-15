@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1077-rev-head/web
+
+ ❯ src/__tests__/components/Apothecary.dec1125-kill.test.tsx (5 tests | 1 failed) 46ms
+   × DEC-1125 kill cases > a role key that the shared map does not hold reads raw > on the chip, in the status line, in "filtered:" and in both tags 28ms
+     → expected 'addresses · ' to be 'addresses · lifegain' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  08:49:47
+   Duration  426ms (transform 34ms, setup 19ms, collect 43ms, tests 46ms, environment 113ms, prepare 55ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.dec1125-kill.test.tsx > DEC-1125 kill cases > a role key that the shared map does not hold reads raw > on the chip, in the status line, in "filtered:" and in both tags
+AssertionError: expected 'addresses · ' to be 'addresses · lifegain' // Object.is equality
+
+Expected: "addresses · lifegain"
+Received: "addresses · "
+
+ ❯ src/__tests__/components/Apothecary.dec1125-kill.test.tsx:73:78
+     71|       expect(status.textContent).toBe('Filtered by lifegain: 1 remedy.…
+     72|       expect(screen.getByText(/ · filtered: lifegain$/)).toBeInTheDocu…
+     73|       expect(container.querySelector('.gv1-apo-tag-addresses')?.textCo…
+       |                                                                              ^
+     74|       expect(container.querySelector('.gv1-apo-remedies .gv1-apo-tag-r…
+     75|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
