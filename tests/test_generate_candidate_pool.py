@@ -1,7 +1,11 @@
 import contextlib
 import importlib
 import io
+import json
+import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
 
 candidate_pool = importlib.import_module("scripts.generate_candidate_pool")
@@ -844,6 +848,372 @@ class CandidatePinTests(unittest.TestCase):
         self.assertEqual(out["candidate_count"], 2)
         self.assertFalse(any("pinned" in c for c in out["candidates"]))
         self.assertNotIn("candidate-pin", stderr)
+
+
+class GapSeatTests(unittest.TestCase):
+    """DEC-1078: a gap role with fewer than 5 pool cards gets cards of that role
+    seated after the top N, flagged `seeded_for_gap`."""
+
+    DECK_ID = "dec1078-test-deck"
+    ROLE = "removal-spot"
+    BLINK = (
+        "When this creature enters, exile another target creature you control, "
+        "then return it to the battlefield."
+    )
+
+    def _playbook(self):
+        return CandidatePinTests._playbook(self)
+
+    def _card(self, name, oracle_text, cmc=3, type_line="Creature — Dog"):
+        return {
+            "name": name,
+            "cmc": cmc,
+            "mana_cost": "",
+            "type_line": type_line,
+            "oracle_text": oracle_text,
+            "color_identity": ["W"],
+        }
+
+    def _removal(self, name, cmc):
+        """A removal-spot card that matches the archetype: scores 35 + cmc fit."""
+        return self._card(name, "When this creature enters, exile target creature an opponent controls.", cmc=cmc)
+
+    def _off_archetype(self, name, cmc=1):
+        """A removal-spot card that matches no archetype: scores 0 behind the gate."""
+        return self._card(name, "Exile target creature.", cmc=cmc, type_line="Instant")
+
+    def _cards(self, head=3, head_removal=0, below_removal=7, off_archetype=()):
+        cards = [self._card("Test Commander", "Vigilance")]
+        cards += [self._card(f"Blinker {i}", self.BLINK) for i in range(head)]
+        cards += [
+            self._card(f"Head Removal {i}", self.BLINK + " Exile target creature an opponent controls.")
+            for i in range(head_removal)
+        ]
+        # cmc 4..10: scores fall in index order, all below the blinkers' 75.
+        cards += [self._removal(f"Removal {i}", 4 + i) for i in range(below_removal)]
+        cards.append(self._card("Weak Blinker", "When this creature enters, you gain 1 life.", cmc=9))
+        cards += [self._off_archetype(n) for n in off_archetype]
+        return cards
+
+    def _generate(self, cards, limit, gaps=(ROLE,), rates=None, decklist=()):
+        deck = {
+            "commander": "Test Commander",
+            "archetypes": ["etb-flicker"],
+            "decklist": [{"name": n, "quantity": 1} for n in decklist],
+        }
+        stderr = io.StringIO()
+        with (
+            mock.patch.object(candidate_pool, "load_gap_roles", return_value=list(gaps)),
+            mock.patch.object(candidate_pool, "load_edhrec_rates", return_value=(dict(rates or {}), None)),
+            contextlib.redirect_stderr(stderr),
+        ):
+            out = candidate_pool.generate_for_deck(
+                self.DECK_ID, deck, cards, {c["name"]: c for c in cards}, self._playbook(),
+                owned=set(), game_changers=set(), mirror_updated_at="test", limit=limit,
+            )
+        return out, stderr.getvalue()
+
+    def _names(self, out):
+        return [c["name"] for c in out["candidates"]]
+
+    def _seats(self, out):
+        return [c["name"] for c in out["candidates"] if "seeded_for_gap" in c]
+
+    def _role_count(self, out, role=ROLE):
+        return sum(1 for c in out["candidates"] if c["deck_role"] == role)
+
+    def test_floor_is_reached_from_below_the_cut(self):
+        out, stderr = self._generate(self._cards(), limit=3)
+        self.assertEqual(self._seats(out), [f"Removal {i}" for i in range(5)])
+        self.assertEqual(self._role_count(out), 5)
+        self.assertEqual(out["candidate_count"], 8)
+        self.assertNotIn("Removal 5", self._names(out))
+        scores = [c["score"] for c in out["candidates"][3:]]
+        self.assertEqual(scores, sorted(scores, reverse=True))
+        self.assertIn("gap-seat: removal-spot 0 -> 5 (5 below the cut, 0 from the EDHREC page)", stderr)
+
+    def test_first_limit_cards_are_equal_with_and_without_seeding(self):
+        cards = self._cards(below_removal=2, off_archetype=["Listed Removal"])
+        rates = {"Listed Removal": 40.0}
+        seeded, _ = self._generate(cards, limit=4, rates=rates)
+        # A floor of 0 seats nothing; the gap list stays, so `mitigates_gap` matches.
+        with mock.patch.object(candidate_pool, "GAP_SEAT_FLOOR", 0):
+            plain, _ = self._generate(cards, limit=4, rates=rates)
+        self.assertEqual(seeded["candidates"][:4], plain["candidates"][:4])
+        self.assertEqual(self._names(plain), ["Blinker 0", "Blinker 1", "Blinker 2", "Removal 0"])
+        # Step 1 seats Removal 1 (50.0), step 2 seats Listed Removal (46.0).
+        self.assertEqual(self._names(seeded)[4:], ["Removal 1", "Listed Removal"])
+
+    def test_first_limit_cards_stay_when_a_step_2_seat_outscores_the_cut(self):
+        # The cut is Weak Blinker (40.0); Listed Removal scores 46.0 without the density term.
+        cards = self._cards(below_removal=0, off_archetype=["Listed Removal"])
+        out, _ = self._generate(cards, limit=4, rates={"Listed Removal": 40.0})
+        self.assertEqual(
+            self._names(out), ["Blinker 0", "Blinker 1", "Blinker 2", "Weak Blinker", "Listed Removal"],
+        )
+        self.assertEqual(out["candidates"][3]["score"], 40.0)
+        self.assertEqual(out["candidates"][4]["score"], 46.0)
+
+    def test_pair_with_five_or_more_gets_no_seat(self):
+        cards = self._cards(head=0, head_removal=5, below_removal=3)
+        out, stderr = self._generate(cards, limit=5)
+        self.assertEqual(self._names(out), [f"Head Removal {i}" for i in range(5)])
+        self.assertEqual(self._seats(out), [])
+        self.assertNotIn("gap-seat", stderr)
+
+    def test_pair_with_four_gets_one_seat(self):
+        cards = self._cards(head=0, head_removal=4, below_removal=3)
+        out, _ = self._generate(cards, limit=4)
+        self.assertEqual(self._seats(out), ["Removal 0"])
+        self.assertEqual(self._role_count(out), 5)
+
+    def test_pair_with_too_few_cards_gets_what_there_is(self):
+        cards = self._cards(below_removal=2, off_archetype=["Listed Removal", "Unlisted Removal"])
+        out, stderr = self._generate(cards, limit=3, rates={"Listed Removal": 10.0})
+        self.assertEqual(self._seats(out), ["Removal 0", "Removal 1", "Listed Removal"])
+        self.assertEqual(self._role_count(out), 3)
+        self.assertIn("gap-seat: removal-spot 0 -> 3 (2 below the cut, 1 from the EDHREC page)", stderr)
+
+    def test_step_2_runs_only_when_step_1_leaves_the_pair_under_the_floor(self):
+        cards = self._cards(below_removal=5, off_archetype=["Listed Removal"])
+        out, _ = self._generate(cards, limit=3, rates={"Listed Removal": 40.0})
+        self.assertEqual(self._seats(out), [f"Removal {i}" for i in range(5)])
+        self.assertNotIn("Listed Removal", self._names(out))
+
+        cards = self._cards(below_removal=4, off_archetype=["Listed Removal"])
+        out, _ = self._generate(cards, limit=3, rates={"Listed Removal": 40.0})
+        self.assertIn("Listed Removal", self._seats(out))
+        self.assertEqual(self._role_count(out), 5)
+
+    def test_step_2_card_must_be_on_the_edhrec_page(self):
+        cards = self._cards(below_removal=0, off_archetype=["Unlisted Removal", "Listed Removal"])
+        out, _ = self._generate(cards, limit=3, rates={"Listed Removal": 10.0})
+        self.assertEqual(self._seats(out), ["Listed Removal"])
+        listed = out["candidates"][-1]
+        self.assertEqual(listed["edhrec_rate"], 10.0)
+        self.assertEqual(listed["matched_archetypes"], [])
+        self.assertEqual(listed["score_breakdown"]["density"], 0.0)
+
+    def test_step_2_seats_by_edhrec_rate_then_name(self):
+        names = ["Rate Low", "Rate High B", "Rate High A", "Rate Mid", "Rate Lower", "Rate Lowest"]
+        rates = {"Rate Low": 5.0, "Rate High B": 30.0, "Rate High A": 30.0, "Rate Mid": 20.0,
+                 "Rate Lower": 4.0, "Rate Lowest": 3.0}
+        cards = self._cards(below_removal=0, off_archetype=names)
+        out, _ = self._generate(cards, limit=3, rates=rates)
+        self.assertEqual(
+            sorted(self._seats(out)),
+            sorted(["Rate High A", "Rate High B", "Rate Mid", "Rate Low", "Rate Lower"]),
+        )
+
+    def test_step_2_takes_the_highest_rate_before_the_highest_score(self):
+        cards = self._cards(below_removal=4)
+        cards.append(self._off_archetype("High Rate", cmc=9))  # cmc fit 5 + 15 + EDHREC 12 = 32.0
+        cards.append(self._off_archetype("High Score", cmc=3))  # cmc fit 20 + 15 + EDHREC 8 = 43.0
+        out, _ = self._generate(cards, limit=3, rates={"High Rate": 30.0, "High Score": 20.0})
+        self.assertEqual(self._seats(out), [f"Removal {i}" for i in range(4)] + ["High Rate"])
+
+    def test_step_2_breaks_a_rate_tie_by_name(self):
+        cards = self._cards(below_removal=4, off_archetype=["Tie B", "Tie A"])
+        out, _ = self._generate(cards, limit=3, rates={"Tie A": 10.0, "Tie B": 10.0})
+        self.assertEqual(self._seats(out)[4:], ["Tie A"])
+        self.assertNotIn("Tie B", self._names(out))
+
+    def test_card_in_the_decklist_is_not_seated(self):
+        cards = self._cards(below_removal=2, off_archetype=["Listed Removal"])
+        out, _ = self._generate(
+            cards, limit=3, rates={"Listed Removal": 10.0}, decklist=["Removal 0", "Listed Removal"],
+        )
+        self.assertEqual(self._seats(out), ["Removal 1"])
+
+    def test_flag_names_the_role(self):
+        cards = self._cards(below_removal=1, off_archetype=["Listed Removal"])
+        out, _ = self._generate(cards, limit=3, rates={"Listed Removal": 10.0})
+        seated = [c for c in out["candidates"] if "seeded_for_gap" in c]
+        self.assertEqual([c["name"] for c in seated], ["Removal 0", "Listed Removal"])
+        for entry in seated:
+            self.assertEqual(entry["seeded_for_gap"], self.ROLE)
+            self.assertEqual(entry["deck_role"], self.ROLE)
+            self.assertEqual(entry["mitigates_gap"], self.ROLE)
+        self.assertFalse(any("seeded_for_gap" in c for c in out["candidates"][:3]))
+
+    def test_pinned_card_counts_and_is_not_seeded(self):
+        cards = self._cards(below_removal=6)
+        deck_pins = ["Removal 3"]
+        stderr = io.StringIO()
+        deck = {
+            "commander": "Test Commander", "archetypes": ["etb-flicker"], "decklist": [],
+            "candidate_pins": [{"name": n, "reason": "Test pin."} for n in deck_pins],
+        }
+        with (
+            mock.patch.object(candidate_pool, "load_gap_roles", return_value=[self.ROLE]),
+            contextlib.redirect_stderr(stderr),
+        ):
+            out = candidate_pool.generate_for_deck(
+                self.DECK_ID, deck, cards, {c["name"]: c for c in cards}, self._playbook(),
+                owned=set(), game_changers=set(), mirror_updated_at="test", limit=3,
+            )
+        self.assertEqual(self._names(out)[3:], [f"Removal {i}" for i in range(5)])
+        self.assertEqual(self._seats(out), ["Removal 0", "Removal 1", "Removal 2", "Removal 4"])
+        self.assertIs(out["candidates"][6]["pinned"], True)
+        self.assertNotIn("seeded_for_gap", out["candidates"][6])
+
+    def test_step_2_skips_a_listed_card_that_scores_0(self):
+        """Kills A5 (step 2 appends every listed card, with no `score > 0` check).
+
+        A Game Changer at bracket 4 gets 0 of 15 on the bracket term; cmc 11 is
+        8 from the deck's 3.0, so its cmc fit is 0; an EDHREC rate of 0.0 lists it
+        and adds 0. It scores 0 without the gate, so it is no seat.
+        """
+        cards = self._cards(below_removal=4)
+        cards.append(self._off_archetype("Zero Removal", cmc=11))
+        deck = {"commander": "Test Commander", "archetypes": ["etb-flicker"], "decklist": []}
+        with (
+            mock.patch.object(candidate_pool, "load_gap_roles", return_value=[self.ROLE]),
+            mock.patch.object(candidate_pool, "load_edhrec_rates", return_value=({"Zero Removal": 0.0}, None)),
+            contextlib.redirect_stderr(io.StringIO()),
+        ):
+            out = candidate_pool.generate_for_deck(
+                self.DECK_ID, deck, cards, {c["name"]: c for c in cards}, self._playbook(),
+                owned=set(), game_changers={"Zero Removal"}, mirror_updated_at="test", limit=3,
+            )
+        self.assertEqual(self._seats(out), [f"Removal {i}" for i in range(4)])
+        self.assertNotIn("Zero Removal", self._names(out))
+
+    def test_step_1_skips_a_decklist_card_by_its_front_face(self):
+        """Kills A7 (step 1 checks `name`, not `front_face(name)`, against the decklist).
+
+        The mirror names a double-faced card "Front // Back"; the decklist holds
+        the front face. The deck's own card scores 5 (decklist demotion) below the cut.
+        """
+        cards = self._cards(below_removal=2)
+        cards.append(self._card(
+            "Split Removal // Other Half",
+            "When this creature enters, exile target creature an opponent controls.", cmc=4,
+        ))
+        out, _ = self._generate(cards, limit=3, decklist=["Split Removal"])
+        self.assertEqual(self._seats(out), ["Removal 0", "Removal 1"])
+        self.assertNotIn("Split Removal // Other Half", self._names(out))
+
+    def test_tail_breaks_a_score_tie_by_name(self):
+        """Kills A8 (the tail sorts by score only).
+
+        Both step-2 cards cost 1 and saturate the EDHREC term (rates 60 and 55
+        both give 20), so both score 50.0, as Removal 1 does. Step 2 lists them by
+        rate (Tie Z first); the tail must order the tie by name.
+        """
+        cards = self._cards(below_removal=3, off_archetype=["Tie Z", "Tie A"])
+        out, _ = self._generate(cards, limit=3, rates={"Tie Z": 60.0, "Tie A": 55.0})
+        tail = out["candidates"][3:]
+        self.assertEqual(
+            [(c["name"], c["score"]) for c in tail],
+            [("Removal 0", 52.5), ("Removal 1", 50.0), ("Tie A", 50.0), ("Tie Z", 50.0), ("Removal 2", 47.5)],
+        )
+
+    def test_step_2_seats_only_cards_of_the_gap_role(self):
+        """Kills A14 (step 2 takes a gated card of any role).
+
+        Listed Rock matches no archetype, is on the EDHREC file and reads as
+        `ramp`; the gap is `removal-spot`.
+        """
+        cards = self._cards(below_removal=4)
+        cards.append(self._card("Listed Rock", "{T}: Add {C}.", cmc=1, type_line="Artifact"))
+        out, stderr = self._generate(cards, limit=3, rates={"Listed Rock": 40.0})
+        self.assertEqual(self._seats(out), [f"Removal {i}" for i in range(4)])
+        self.assertNotIn("Listed Rock", self._names(out))
+        self.assertIn("gap-seat: removal-spot 0 -> 4 (4 below the cut, 0 from the EDHREC page)", stderr)
+
+    def test_log_counts_only_the_cards_that_step_1_seats(self):
+        """Kills A16 (`from_step1 = count`: the log counts the pool's own cards as step-1 seats)."""
+        cards = self._cards(head=0, head_removal=4, below_removal=3)
+        _, stderr = self._generate(cards, limit=4)
+        self.assertIn("gap-seat: removal-spot 4 -> 5 (1 below the cut, 0 from the EDHREC page)", stderr)
+
+
+class GapSeatWriteTests(unittest.TestCase):
+    """DEC-1078: main() writes a pool once, and a change of a seat writes."""
+
+    DECK_ID = GapSeatTests.DECK_ID
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="dec1078-"))
+        helper = GapSeatTests()
+        cards = helper._cards(below_removal=6)
+        (self.tmp / "mirror.json").write_text(json.dumps(cards))
+        (self.tmp / "playbook.json").write_text(json.dumps(helper._playbook()))
+        deck_dir = self.tmp / "commanders" / self.DECK_ID
+        deck_dir.mkdir(parents=True)
+        (deck_dir / "deck.json").write_text(json.dumps({
+            "commander": "Test Commander", "archetypes": ["etb-flicker"], "decklist": [],
+        }))
+        (deck_dir / "metrics.json").write_text(json.dumps({"gaps": [
+            {"role": "removal-spot", "actual": 2, "target": 8, "score": 25},
+            {"resilience_component": "protection", "score_pct": 50, "max": 25},
+        ]}))
+        self.out_path = deck_dir / "candidates.json"
+        self.patches = [
+            mock.patch.object(candidate_pool, name, self.tmp / rel)
+            for name, rel in (
+                ("MIRROR_FILE", "mirror.json"),
+                ("MIRROR_META", "no-meta.json"),
+                ("PLAYBOOK_FILE", "playbook.json"),
+                ("OWNED_FILE", "no-owned.csv"),
+                ("GAME_CHANGERS_FILE", "no-gc.json"),
+                ("EDHREC_RATES_DIR", "no-edhrec"),
+                ("COMMANDERS_DIR", "commanders"),
+            )
+        ]
+        for patch in self.patches:
+            patch.start()
+
+    def tearDown(self):
+        for patch in self.patches:
+            patch.stop()
+
+    def _run(self):
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            code = candidate_pool.main(["--deck", self.DECK_ID, "--limit", "3"])
+        self.assertEqual(code, 0)
+        return stderr.getvalue()
+
+    def test_second_run_writes_no_file(self):
+        first = self._run()
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", first)
+        written = self.out_path.read_bytes()
+        pool = json.loads(written)
+        self.assertEqual(pool["deck_gaps"], ["removal-spot"])
+        self.assertEqual(sum(1 for c in pool["candidates"] if c.get("seeded_for_gap")), 5)
+        second = self._run()
+        self.assertIn(f"[{self.DECK_ID}] no change (8 candidates)", second)
+        self.assertEqual(self.out_path.read_bytes(), written)
+
+    def test_file_that_differs_only_in_the_flag_is_rewritten(self):
+        self._run()
+        pool = json.loads(self.out_path.read_text())
+        for entry in pool["candidates"]:
+            entry.pop("seeded_for_gap", None)
+        self.out_path.write_text(json.dumps(pool))
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(sum(1 for c in pool["candidates"] if c.get("seeded_for_gap")), 5)
+
+    def test_file_whose_flag_names_another_role_is_rewritten(self):
+        """Kills A23 (the write guard compares `bool(seeded_for_gap)`, not the role).
+
+        Same names, same pins, and a flag on the same five cards, but the flag
+        names another role (a pool written before a classifier change, or edited).
+        """
+        self._run()
+        pool = json.loads(self.out_path.read_text())
+        for entry in pool["candidates"]:
+            if "seeded_for_gap" in entry:
+                entry["seeded_for_gap"] = "removal-board"
+        self.out_path.write_text(json.dumps(pool))
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(
+            [c["seeded_for_gap"] for c in pool["candidates"] if "seeded_for_gap" in c], ["removal-spot"] * 5,
+        )
 
 
 if __name__ == "__main__":
