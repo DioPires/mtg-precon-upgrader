@@ -545,6 +545,22 @@ describe('Shopping organism', () => {
       ));
       expect(screen.getByText('4 cards loaded — saved locally')).toBeInTheDocument();
     });
+
+    it('reads `1 unique card` for a one-name file when the list already holds another name (DEC-1139 B1)', async () => {
+      const { container } = renderShopping([ALPHA]);
+      const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+      pick(input, 'Sol Ring\n');
+      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+        `Added 1 unique card (1 total). 1 card loaded. ${hint}`,
+      ));
+
+      // The file holds 1 unique card; the list then holds 2 unique cards and 2 cards.
+      pick(input, 'Arcane Signet\n');
+      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+        `Added 1 unique card (1 total). 2 cards loaded. ${hint}`,
+      ));
+      expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
+    });
   });
 });
 
