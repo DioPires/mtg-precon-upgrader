@@ -6,9 +6,12 @@ import { expect, test } from './support/test';
 test('A1: on /combos, a small picture from the file that fails sends one lookup for that card', async ({ page, context }) => {
   test.setTimeout(90_000);
   const lookups: string[] = [];
+  // DEC-1131: the lookup after a failed picture goes in a batch (POST /cards/collection).
   context.on('request', (req) => {
     const u = new URL(req.url());
-    if (u.hostname === 'api.scryfall.com' && u.pathname === '/cards/named') lookups.push(u.searchParams.get('fuzzy') ?? '');
+    if (u.hostname !== 'api.scryfall.com' || u.pathname !== '/cards/collection') return;
+    const body = JSON.parse(req.postData() ?? '{}') as { identifiers?: Array<{ name: string }> };
+    lookups.push(...(body.identifiers ?? []).map((id) => id.name));
   });
   await context.route('https://cards.scryfall.io/small/**', (route) => route.abort('aborted'));
   await page.goto('/combos');

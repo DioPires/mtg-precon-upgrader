@@ -5,6 +5,7 @@
 // is Tier A — Curated (Commander Spellbook, human-verified). Tier B/C are later
 // phases; nothing in Phase 0 is labeled beyond Tier A.
 
+import { cardNoun } from './cardNoun';
 import { BRACKET_TAG_LABELS, type SpellbookCombo } from '../data/spellbook';
 import type { SynergyCandidate, SynergyCounts } from '../data/synergy';
 import type { TierBFinding, TierBCounts } from '../data/tierB';
@@ -149,7 +150,7 @@ export function buildPlainTextExport(report: ComboReport, completions?: Completi
   lines.push(`Deck: ${report.deckLabel}`);
   if (report.commander.length) lines.push(`Commander: ${report.commander.join(' + ')}`);
   if (report.mode === 'paste' && report.cardsAnalyzed < report.cardsTotal) {
-    lines.push(`Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal} cards.`);
+    lines.push(`Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal} ${cardNoun(report.cardsTotal)}.`);
   }
   lines.push('');
   lines.push('All findings below are TIER A — CURATED (source: Commander Spellbook,');
@@ -305,7 +306,7 @@ export function buildMarkdownExport(report: ComboReport, completions?: Completio
   out.push(`# Combo Lab — ${report.deckLabel}`);
   if (report.commander.length) out.push(`**Commander:** ${report.commander.join(' + ')}`);
   if (report.mode === 'paste' && report.cardsAnalyzed < report.cardsTotal) {
-    out.push(`_Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal} cards._`);
+    out.push(`_Analyzed ${report.cardsAnalyzed} of ${report.cardsTotal} ${cardNoun(report.cardsTotal)}._`);
   }
   out.push('');
   out.push(

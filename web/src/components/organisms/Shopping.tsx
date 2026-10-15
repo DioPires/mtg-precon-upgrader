@@ -10,6 +10,7 @@ import {
   type ChangeEvent,
 } from 'react';
 import { GV1ManaPips } from '../atoms/GV1ManaPips';
+import { PricePausedLine } from '../molecules/PricePausedLine';
 import { cardCache } from '../../data/cardCache';
 import {
   aggregateBuiltClaims,
@@ -18,6 +19,7 @@ import {
 import { frontFace } from '../../data/cardName';
 import { deckLoader } from '../../data/loader';
 import { formatPricesDate } from '../../lib/pricesDate';
+import { cardNoun } from '../../lib/cardNoun';
 import { OWNED_KEY, saveOwned } from '../../data/ownedCards';
 import { useBuiltDecks } from '../../hooks/useBuiltDecks';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
@@ -49,9 +51,14 @@ function usePricesDate(): string | null {
   return date;
 }
 
-/** The noun for a count of cards: `card` for one, `cards` for any other count (DEC-1123). */
-function cardNoun(count: number): string {
-  return count === 1 ? 'card' : 'cards';
+/** Renders the page again when the card entry of any of `names` changes. */
+function useCardUpdates(names: string[]): void {
+  const [, bump] = useState(0);
+  const key = names.join('\n');
+  useEffect(() => {
+    const unsubs = key ? key.split('\n').map((name) => cardCache.subscribe(name, () => bump((n) => n + 1))) : [];
+    return () => unsubs.forEach((unsub) => unsub());
+  }, [key]);
 }
 
 // CSV parser that respects quoted fields.
@@ -100,7 +107,10 @@ export function parseOwnedFile(text: string): Map<string, number> {
       rows.slice(1).forEach((r) => {
         const name = (r[ni] || '').trim();
         if (!name) return;
-        const q = parseInt((r[qi] || '1').trim(), 10) || 1;
+        // An owned quantity is a whole number of 1 or more. A cell that reads
+        // as less (0, a negative number, empty, text) counts as 1 (DEC-1141).
+        const read = parseInt((r[qi] || '1').trim(), 10);
+        const q = read >= 1 ? read : 1;
         const key = frontFace(name);
         out.set(key, (out.get(key) || 0) + q);
       });
@@ -130,8 +140,16 @@ function loadOwned(): Map<string, number> {
     if (raw) {
       // Re-key to front-face on load so legacy/full-DFC entries reconcile
       // with deck.json names. Idempotent for non-DFC cards.
+      // The app writes only [name, quantity] pairs, but a hand edit or a
+      // damaged store can hold other entries. The load drops each entry that
+      // is not a pair of a name with text and a whole number of 1 or more,
+      // keeps the rest and writes nothing back (DEC-1141).
       const out = new Map<string, number>();
-      (JSON.parse(raw) as Array<[string, number]>).forEach(([n, q]) => {
+      (JSON.parse(raw) as unknown[]).forEach((entry) => {
+        if (!Array.isArray(entry) || entry.length !== 2) return;
+        const [n, q] = entry;
+        if (typeof n !== 'string' || !n.trim()) return;
+        if (!Number.isInteger(q) || q < 1) return;
         const key = frontFace(n);
         out.set(key, (out.get(key) || 0) + q);
       });
@@ -259,6 +277,9 @@ function ShopRow({ name, qty, decks, multiDeck, allDecks, fallbackType, reserved
     if (!name) return;
     const unsub = cardCache.subscribe(name, () => bump((n) => n + 1));
     cardCache.enqueue(name);
+    // At first paint the row shows the file's price; then it asks for a price
+    // older than 24 h again (DEC-1131).
+    cardCache.refreshPrice(name);
     return unsub;
   }, [name]);
   const entry = cardCache.get(name);
@@ -322,9 +343,18 @@ function groupRows(cards: ShopRowCard[], mode: 'type' | 'az'): RowGroup[] {
   }));
 }
 
-function summarizePrice(cards: ShopRowCard[]): { sum: number; priced: number; total: number } {
+interface PriceSummary {
+  sum: number;
+  priced: number;
+  total: number;
+  /** The oldest date (epoch ms) among the priced rows; null when none has one. */
+  oldest: number | null;
+}
+
+function summarizePrice(cards: ShopRowCard[]): PriceSummary {
   let sum = 0;
   let priced = 0;
+  let oldest: number | null = null;
   cards.forEach((c) => {
     const e = cardCache.get(c.name);
     if (e?.price) {
@@ -332,10 +362,26 @@ function summarizePrice(cards: ShopRowCard[]): { sum: number; priced: number; to
       if (!Number.isNaN(n)) {
         sum += n * c.qty;
         priced++;
+        if (e.priceAsOf !== undefined && (oldest === null || e.priceAsOf < oldest)) oldest = e.priceAsOf;
       }
     }
   });
-  return { sum, priced, total: cards.length };
+  return { sum, priced, total: cards.length, oldest };
+}
+
+/**
+ * The summary of the buy list. While a price refresh of a buy row waits or is
+ * out, the summary of the same rows stays as it was, so the estimate changes
+ * once, when the answers have arrived (DEC-1131).
+ */
+function useHeldPriceSummary(buy: ShopRowCard[]): PriceSummary {
+  const held = useRef<{ rows: string; summary: PriceSummary } | null>(null);
+  const rows = buy.map((c) => `${c.name}\u00d7${c.qty}`).join('\n');
+  const waiting = buy.some((c) => cardCache.pricePending(c.name));
+  if (waiting && held.current?.rows === rows) return held.current.summary;
+  const summary = summarizePrice(buy);
+  held.current = { rows, summary };
+  return summary;
 }
 
 export interface ShoppingProps {
@@ -407,7 +453,13 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
 
   const buyTotal = buy.reduce((s, c) => s + c.qty, 0);
   const ownTotal = own.reduce((s, c) => s + c.qty, 0);
-  const priceSummary = summarizePrice(buy);
+  useCardUpdates(useMemo(() => [...buy, ...own].map((c) => c.name), [buy, own]));
+  const priceSummary = useHeldPriceSummary(buy);
+  // The footer and the stop line give the oldest date among the priced rows
+  // (DEC-1131): the file's date, or the time of a refresh's answer.
+  const shownPricesDate =
+    priceSummary.oldest !== null ? formatPricesDate(new Date(priceSummary.oldest).toISOString()) : pricesDate;
+  const waitingForPrice = [...buy, ...own].some((c) => cardCache.pricePending(c.name));
 
   const toggleDeck = (slug: string) => {
     setSelected((prev) => {
@@ -736,6 +788,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
               </button>
             </div>
           </div>
+          <PricePausedLine waiting={waitingForPrice} pricesDate={shownPricesDate} />
         </section>
       )}
 
@@ -744,7 +797,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           <div className="gv1-section-head">
             <span className="gv1-mono-xs gv1-rune" aria-hidden="true">▾</span>
             <h3 className="gv1-serif-xl">Need to buy</h3>
-            <span className="gv1-mono-xs gv1-dim">· {buy.length} unique · {buyTotal} cards</span>
+            <span className="gv1-mono-xs gv1-dim">· {buy.length} unique · {buyTotal} {cardNoun(buyTotal)}</span>
           </div>
           {buy.length === 0 ? (
             <div className="gv1-empty">
@@ -790,7 +843,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           >
             <span className="gv1-mono-xs gv1-dim" aria-hidden="true">{ownedCollapsed ? '▸' : '▾'}</span>
             <span className="gv1-serif-xl">Already own</span>
-            <span className="gv1-mono-xs gv1-dim">· {own.length} unique · {ownTotal} cards</span>
+            <span className="gv1-mono-xs gv1-dim">· {own.length} unique · {ownTotal} {cardNoun(ownTotal)}</span>
           </button>
           {!ownedCollapsed && (
             <div className="gv1-shop-list">
@@ -833,7 +886,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
       <p className="gv1-mono-xs gv1-dim gv1-shop-foot">
         Basic lands (Plains, Island, Swamp, Mountain, Forest, Wastes, snow-covered) are excluded.
         Cards needed by multiple decks count once per deck — three decks each wanting Sol Ring shows 3 in the buy list.
-        {pricesDate ? `Prices are USD from Scryfall, as of ${pricesDate}.` : 'Prices are USD from Scryfall.'}
+        {shownPricesDate ? `Prices are USD from Scryfall, as of ${shownPricesDate}.` : 'Prices are USD from Scryfall.'}
       </p>
     </>
   );

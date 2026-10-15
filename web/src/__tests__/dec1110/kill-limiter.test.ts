@@ -1,15 +1,18 @@
 // DEC-1110 reviewer's kill cases for scryfallLimiter.ts and cardCache.ts.
 // Each case passes on 58ca0b3 and fails on the mutant named in its title.
+// DEC-1131 moved them to batches (POST /cards/collection) and to the stop
+// record's number; each case keeps the mutant that it kills.
 import { createCardCache } from '../../data/cardCache';
 import {
   autocompleteUrl,
+  collectionRequest,
+  COLLECTION_URL,
   createScryfallLimiter,
-  lookupUrl,
   STOP_KEY,
 } from '../../data/scryfallLimiter';
 import type { RawCardMetadata } from '../../data/types';
 import {
-  cardJson,
+  collectionJson,
   fakeScryfall,
   MemoryStorage,
 } from '../data/scryfallFakes';
@@ -52,9 +55,14 @@ function manualFetch() {
     })) as typeof fetch;
   return { sends, fetchImpl };
 }
-const ok = (name: string) => new Response(JSON.stringify(cardJson(name)), { status: 200 });
+const ok = (name: string) => new Response(JSON.stringify(collectionJson([name])), { status: 200 });
+/** limiter.fetch() of one batch. */
+const batch = (names: string[]) => {
+  const { method, headers, body } = collectionRequest(names);
+  return [COLLECTION_URL, { method, headers, body }] as const;
+};
 const status = (code: number) => new Response('{"object":"error"}', { status: code });
-const stored = () => JSON.parse(storage.getItem(STOP_KEY) ?? 'null') as { until: number; ms: number } | null;
+const stored = () => JSON.parse(storage.getItem(STOP_KEY) ?? 'null') as { until: number; ms: number; n: number } | null;
 
 describe('K1 fail(): a request that was out when the stop started', () => {
   it('K1: a second 429 from a request that was already out does not double the stop', async () => {
@@ -66,10 +74,11 @@ describe('K1 fail(): a request that was out when the stop started', () => {
     expect(sends).toHaveLength(2);
     sends[0].answer(status(429));
     await advance(0);
-    expect(stored()).toEqual({ until: T0 + 120 + 30_000, ms: 30_000 });
+    expect(stored()).toEqual({ until: T0 + 120 + 30_000, ms: 30_000, n: expect.any(Number) });
+    const first = stored();
     sends[1].answer(status(429));
     await advance(0);
-    expect(stored()).toEqual({ until: T0 + 120 + 30_000, ms: 30_000 });
+    expect(stored()).toEqual(first);
   });
 });
 
@@ -77,17 +86,17 @@ describe('K2 succeed(): a request that was out when the stop started', () => {
   it('K2: its success does not end the stop', async () => {
     const { sends, fetchImpl } = manualFetch();
     const limiter = createScryfallLimiter({ fetchImpl, storage, locks: null });
-    void limiter.fetch(lookupUrl('Sol Ring'));
+    void limiter.fetch(...batch(['Sol Ring']));
     const suggest = limiter.fetch(autocompleteUrl('sol'));
     await advance(0);
     const sent = (path: string) => sends.find((s) => new URL(s.url).pathname === path)!;
-    expect(sends.map((s) => new URL(s.url).pathname).sort()).toEqual(['/cards/autocomplete', '/cards/named']);
-    sent('/cards/named').answer(status(429));
+    expect(sends.map((s) => new URL(s.url).pathname).sort()).toEqual(['/cards/autocomplete', '/cards/collection']);
+    sent('/cards/collection').answer(status(429));
     await advance(0);
     sent('/cards/autocomplete').answer(new Response('{"object":"catalog","data":[]}', { status: 200 }));
     await suggest;
     expect(limiter.stoppedUntil()).toBe(T0 + 30_000);
-    expect(stored()).toEqual({ until: T0 + 30_000, ms: 30_000 });
+    expect(stored()).toEqual({ until: T0 + 30_000, ms: 30_000, n: expect.any(Number) });
     // Nothing goes before the end of the stop.
     await advance(30_000 - 1);
     expect(sends).toHaveLength(2);
@@ -103,14 +112,14 @@ describe('K4 readStop(): a clock that went back', () => {
 });
 
 describe('K10 enqueue(): a queued name asked for first', () => {
-  it('K10: moves to the front of the queue', async () => {
+  it('K10: moves to the front of the queue, into the next batch', async () => {
     const scry = fakeScryfall();
     const cache = createCardCache({ storage, limiter: createScryfallLimiter({ fetchImpl: scry.fetch, storage, locks: null }) });
-    ['Q1', 'Q2', 'Q3', 'Q4'].forEach((name) => cache.enqueue(name));
-    await advance(0);
-    cache.enqueue('Q4', { first: true });
+    const names = Array.from({ length: 80 }, (_, i) => `Q${i + 1}`);
+    names.forEach((name) => cache.enqueue(name));
+    cache.enqueue('Q80', { first: true });
     await advance(5_000);
-    expect(scry.names()).toEqual(['Q1', 'Q4', 'Q2', 'Q3']);
+    expect(scry.batches()).toEqual([['Q80', ...names.slice(0, 74)], names.slice(74, 79)]);
   });
 });
 
@@ -152,7 +161,7 @@ describe('A2 subscribe(): another tab', () => {
     const limiter = createScryfallLimiter({ fetchImpl: fakeScryfall().fetch, storage, locks: null });
     const heard: Array<number | null> = [];
     const unsubscribe = limiter.subscribe((until) => heard.push(until));
-    storage.setItem(STOP_KEY, JSON.stringify({ until: T0 + 30_000, ms: 30_000 }));
+    storage.setItem(STOP_KEY, JSON.stringify({ until: T0 + 30_000, ms: 30_000, n: 1 }));
     window.dispatchEvent(new StorageEvent('storage', { key: STOP_KEY }));
     expect(heard).toEqual([T0 + 30_000]);
     unsubscribe();
@@ -209,7 +218,7 @@ describe('A11 writeStop(): storage that refuses the write', () => {
     const full = new FullStorage();
     const scry = fakeScryfall({ outcome: (n) => (n === 1 ? 429 : 200) });
     const limiter = createScryfallLimiter({ fetchImpl: scry.fetch, storage: full, locks: null });
-    const out = limiter.fetch(lookupUrl('Sol Ring'));
+    const out = limiter.fetch(...batch(['Sol Ring']));
     await advance(0);
     expect(limiter.stoppedUntil()).toBe(T0 + 30_000);
     await advance(30_000 - 1);

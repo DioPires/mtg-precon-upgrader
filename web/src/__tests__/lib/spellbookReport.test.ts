@@ -198,3 +198,36 @@ describe('buildMarkdownExport (RT-4 shareable rendering)', () => {
     expect(md).toContain('Wizards of the Coast');
   });
 });
+
+describe('the count of cards analyzed in a paste report (DEC-1142)', () => {
+  const paste = (cardsAnalyzed: number, cardsTotal: number): ComboReport => ({
+    mode: 'paste',
+    deckLabel: 'Pasted decklist',
+    commander: [],
+    corpusVersion: '2026-08-15T13:18:26+00:00',
+    included: [],
+    nearMisses: [],
+    nearMissesTotal: 0,
+    cardsAnalyzed,
+    cardsTotal,
+    unresolved: [],
+  });
+
+  // A paste of one name that the index does not resolve gives 0 of 1. The noun
+  // follows the total.
+  it('reads `of 1 card` in the plain-text export for a total of 1', () => {
+    expect(buildPlainTextExport(paste(0, 1))).toContain('\nAnalyzed 0 of 1 card.\n');
+  });
+
+  it('reads `of 2 cards` in the plain-text export for a total of 2', () => {
+    expect(buildPlainTextExport(paste(1, 2))).toContain('\nAnalyzed 1 of 2 cards.\n');
+  });
+
+  it('reads `of 1 card` in the Markdown export for a total of 1', () => {
+    expect(buildMarkdownExport(paste(0, 1))).toContain('\n_Analyzed 0 of 1 card._\n');
+  });
+
+  it('reads `of 2 cards` in the Markdown export for a total of 2', () => {
+    expect(buildMarkdownExport(paste(1, 2))).toContain('\n_Analyzed 1 of 2 cards._\n');
+  });
+});

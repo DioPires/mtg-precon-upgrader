@@ -1,6 +1,6 @@
-// The two ways a card entry comes about (DEC-1102): from an entry of
-// data/card-metadata.json, and from a /cards/named answer. The e2e stub builds
-// its seed with cardEntryFromFile too (tests/support/scryfall.ts).
+// The two ways a card entry comes about (DEC-1102, DEC-1131): from an entry of
+// data/card-metadata.json, and from a card of a /cards/collection answer. The e2e
+// stub builds its seed with cardEntryFromFile too (tests/support/scryfall.ts).
 
 import type { CardEntry } from './cardCache';
 import type { RawCardMetadataEntry } from './types';
@@ -56,7 +56,7 @@ interface ScryfallFace {
   image_uris?: ScryfallImageUris;
 }
 
-/** The part of a /cards/named answer that the app reads. */
+/** The part of a card object that the app reads. */
 export interface ScryfallCard extends ScryfallFace {
   name: string;
   cmc?: number;
@@ -64,7 +64,18 @@ export interface ScryfallCard extends ScryfallFace {
   prices?: { usd?: string | null };
 }
 
-/** The entry for a /cards/named answer. A card with faces shows its first face's cost. */
+/** The answer to a POST to /cards/collection. `data` holds the cards found, `not_found` the identifiers that matched none. */
+export interface ScryfallCollection {
+  object?: 'list';
+  data?: ScryfallCard[];
+  not_found?: Array<{ name?: string }>;
+}
+
+/**
+ * The entry for a card of a /cards/collection answer. A card with faces shows
+ * its first face's cost. A transform or modal_dfc card has `image_uris` only in
+ * `card_faces`, so the pictures come from the first face then.
+ */
 export function cardEntryFromScryfall(data: ScryfallCard, fetchedAt: number): CardEntry {
   const face = data.card_faces?.[0] ?? data;
   const images = data.image_uris ?? face.image_uris ?? {};
