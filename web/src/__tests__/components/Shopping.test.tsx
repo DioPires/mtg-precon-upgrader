@@ -644,6 +644,25 @@ describe('Shopping organism', () => {
       loadStore(JSON.stringify([null, ['Sol Ring', 2, 'foil'], ['Arcane Signet', 1]]));
       expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
     });
+
+    // Two decks each want Brazen Borrower. The store holds one copy under the
+    // double-faced name and one under the front face; the load adds them into
+    // one owned card of quantity 2 (DEC-1150).
+    it('adds a stored double-faced name and its front face into one card', () => {
+      const dfcDeck = (slug: string, idx: number) =>
+        makeDeck({
+          idx,
+          slug,
+          deckName: slug,
+          commander: `${slug} Commander`,
+          list: [group('Commander', [`${slug} Commander`]), group('Tempo (1)', ['Brazen Borrower // Petty Theft'])],
+        });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Brazen Borrower // Petty Theft', 1], ['Brazen Borrower', 1]]));
+      renderShopping([dfcDeck('dfc-a', 1), dfcDeck('dfc-b', 2)]);
+      fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
+      const ownHead = screen.getByRole('button', { name: /Already own/ });
+      expect(within(ownHead).getByText('· 1 unique · 2 cards')).toBeInTheDocument();
+    });
   });
 
   describe('the count of cards in the Need to buy and Already own headers (DEC-1142)', () => {

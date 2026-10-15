@@ -103,6 +103,15 @@ describe('readOwnedEntries (DEC-1150)', () => {
     expect(storage.getItem(OWNED_KEY)).toBe(stored);
   });
 
+  it('reads localStorage when no storage is given', () => {
+    localStorage.setItem(OWNED_KEY, JSON.stringify([['Sol Ring', 1]]));
+    try {
+      expect(readOwnedEntries()).toEqual([['Sol Ring', 1]]);
+    } finally {
+      localStorage.removeItem(OWNED_KEY);
+    }
+  });
+
   it.each([
     [[null, 2]],
     [[{ n: 'Sol Ring' }, 2]],
