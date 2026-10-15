@@ -79,5 +79,10 @@ export default defineConfig({
     setupFiles: ['./src/setupTests.ts'],
     css: false,
     exclude: ['node_modules', 'dist', 'tests/**'],
+    // performance.now() too: the Scryfall limiter spaces bucket 1 on it inside a
+    // tab (DEC-1131), and a case that fakes the clock must move it.
+    fakeTimers: {
+      toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'setImmediate', 'clearImmediate', 'Date', 'performance'],
+    },
   },
 });
