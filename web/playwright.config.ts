@@ -36,6 +36,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
+  // Two workers on CI's 2-core runner: run 38764099679 read 450 passed at 2 workers (DEC-1144).
+  workers: process.env.CI ? 2 : undefined,
   // In CI the HTML report goes to playwright-report/, which web-ci uploads when
   // the e2e job fails. The `github` reporter alone writes no file (DEC-1071).
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
