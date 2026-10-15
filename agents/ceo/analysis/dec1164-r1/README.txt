@@ -30,3 +30,13 @@ logs/              the CEO's runs on a detached scratch tree (commit f382f26, ne
     core-controls.log: A ff7ead8 NOT EQUAL; B (comments added, the B2 expect wrapped with a trailing comma)
     ALL EQUAL; C ('2 owned cards on file' in the row) NOT EQUAL; D ('Sol Ring' for ' Sol Ring ') NOT EQUAL;
     E (one more line in Shopping.tsx) CHANGED, NOT EQUAL; F (PR #65 f1eae45 merged into main first) ALL EQUAL.
+
+logs/main-43844f7/  PR #65 (DEC-1154) merged to main as 904c74d during the CEO run (tree b9526fbc, the same tree as
+    control F's simulated main). The CEO built the round on main 43844f7 (the kit's own commit on 904c74d): ff7ead8
+    plus the expected files, then main merged in (clean, tree 7b51fa00, scratch commit a363f33, never pushed).
+    core-on-round.txt: ALL EQUAL. typecheck.txt: exit 0.
+    vitest-all.txt: `Test Files  51 passed (51)`, `Tests  651 passed (651)` (main 612 + 37 + 2).
+    ctl-r1-r2-r9.txt and mutants/: R1 and R2 each `1 failed | 7 passed (8)`, R9 `1 failed | 29 passed (30)`;
+    each fails the new case only. Per file: ComboLab 8, ownedCards 30, Shopping 52.
+    CI basis after PR #65: its pull_request run 38818813698 on f1eae45 read 10 warnings, 51 files, 612 tests,
+    `205 passed (8.9m)`. main's push run 38820146768 on 904c74d was in progress at 23:0xZ.
