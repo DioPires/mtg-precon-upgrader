@@ -1,0 +1,24 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..45de539 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -14,7 +14,7 @@ export const OWNED_KEY = 'grimoire-owned-cards';
+ 
+ /** An owned quantity is a whole number of 1 or more (DEC-1141). `Infinity` is not one (DEC-1150 N2). */
+ export function isOwnedQuantity(q: unknown): q is number {
+-  return Number.isInteger(q) && (q as number) >= 1;
++  return Number.isSafeInteger(q) && (q as number) >= 1;
+ }
+ 
+ /**
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ✓ src/__tests__/data/ownedCards.test.ts (30 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  30 passed (30)
+   Start at  23:51:24
+   Duration  321ms (transform 20ms, setup 21ms, collect 9ms, tests 2ms, environment 121ms, prepare 36ms)
+

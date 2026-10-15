@@ -1,0 +1,24 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..5776074 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -39,7 +39,7 @@ export function readOwnedEntries(storage: Storage = localStorage): Array<[string
+     if (!Array.isArray(entry) || entry.length !== 2) continue;
+     const [n, q]: unknown[] = entry;
+     if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) continue;
+-    out.push([n, q]);
++    out.push([n.trim(), q]);
+   }
+   return out;
+ }
+
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1155-review/web
+
+ ✓ src/__tests__/data/ownedCards.test.ts (29 tests) 5ms
+
+ Test Files  1 passed (1)
+      Tests  29 passed (29)
+   Start at  23:11:41
+   Duration  396ms (transform 22ms, setup 29ms, collect 15ms, tests 5ms, environment 125ms, prepare 48ms)
+
