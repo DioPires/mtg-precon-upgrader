@@ -151,16 +151,19 @@ class TestClient:
             with pytest.raises(CardNotFoundError, match="Lightning Bolt"):
                 client.card_by_name("Lihgtning Bolt", exact=True)
 
-    def test_429_retries_then_raises(self):
+    def test_429_raises_without_retry(self):
+        """DEC-1092: nothing retries a 429; the error names the end of the stop."""
         client = ScryfallClient()
         error_body = json.dumps({}).encode()
         http_error = urllib.error.HTTPError(
             "url", 429, "Too Many Requests", {}, MagicMock(read=MagicMock(return_value=error_body))
         )
-        with patch("urllib.request.urlopen", side_effect=http_error):
-            with patch("time.sleep"):  # Don't actually sleep
-                with pytest.raises(ScryfallRateLimitError):
+        with patch("urllib.request.urlopen", side_effect=http_error) as urlopen:
+            with patch("time.sleep") as sleep:
+                with pytest.raises(ScryfallRateLimitError, match=r"No request until .* \(in 30 s\)"):
                     client.card_by_name("Sol Ring")
+        assert urlopen.call_count == 1
+        sleep.assert_not_called()
 
     def test_503_raises_maintenance(self):
         client = ScryfallClient()

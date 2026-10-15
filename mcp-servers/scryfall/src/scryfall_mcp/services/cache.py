@@ -1,5 +1,6 @@
 """SQLite response cache with TTL expiry."""
 
+import contextlib
 import hashlib
 import json
 import os
@@ -9,6 +10,9 @@ from pathlib import Path
 from typing import Any
 
 
+BUSY_TIMEOUT = 30  # seconds that a write waits for another process's write
+
+
 def _cache_dir() -> Path:
     xdg = os.environ.get("XDG_CACHE_HOME", "")
     base = Path(xdg) if xdg else Path.home() / ".cache"
@@ -16,12 +20,23 @@ def _cache_dir() -> Path:
 
 
 class Cache:
-    """SQLite-backed cache with per-entry TTL."""
+    """SQLite-backed cache with per-entry TTL.
+
+    Every agent session's server reads and writes one file (.mcp.json sets XDG_CACHE_HOME,
+    DEC-1092), so the connection waits for another process's lock (busy timeout) and the
+    file uses WAL: readers do not block the writer.
+    """
 
     def __init__(self, db_path: Path | None = None):
         self._db_path = db_path or (_cache_dir() / "cards.db")
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
-        self._conn = sqlite3.connect(str(self._db_path))
+        self._conn = sqlite3.connect(str(self._db_path), timeout=BUSY_TIMEOUT)
+        # The switch to WAL answers "database is locked" at once, without the busy timeout,
+        # while another process holds a write lock: two servers that open a new file at once.
+        # WAL mode is stored in the file, so the other process's switch holds for this
+        # connection too.
+        with contextlib.suppress(sqlite3.OperationalError):
+            self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.execute(
             "CREATE TABLE IF NOT EXISTS cache ("
             "  key TEXT PRIMARY KEY,"
