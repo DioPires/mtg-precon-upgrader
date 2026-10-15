@@ -3287,7 +3287,11 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-commander { padding: 28px 16px 32px; }
   .gv1-cmd-grid { grid-template-columns: 1fr; gap: 24px; }
   .gv1-cmd-art { max-width: 320px; }
-  .gv1-cmd-deckname { font-size: 56px; max-width: none; }
+  /* DEC-1116: in a face wider than the web fonts, one word of the name can
+     be wider than the phone ("Convergence" in Georgia). `break-word` still
+     lets that word size the grid's one track, so the art and body ran past
+     the viewport; `anywhere` breaks the word inside the track instead. */
+  .gv1-cmd-deckname { font-size: 56px; max-width: none; overflow-wrap: anywhere; }
   .gv1-cmd-stats { grid-template-columns: 1fr 1fr; }
 
   /* Engine: tabs above panel instead of beside */
@@ -3310,6 +3314,10 @@ em { font-style: italic; color: var(--gv1-gold); }
   }
   .gv1-engine-panel { padding: 18px 16px; }
   .gv1-engine-cards { grid-template-columns: repeat(2, 1fr); }
+  /* DEC-1116: a note's longest word widened its column, and the panel and
+     tabs with it, past the phone. The name keeps `break-word`, so a card name
+     stays whole with the web fonts. */
+  .gv1-engine-cards .gv1-card-tile-note { overflow-wrap: anywhere; }
 
   /* Wincons / Combos / Performance — 2-col → 1-col */
   .gv1-wincons-grid,
@@ -3317,6 +3325,9 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-perf-grid { gap: 18px; }
   .gv1-wincon, .gv1-combo, .gv1-perf-block { padding: 18px; }
   .gv1-wincon-title, .gv1-combo-title { font-size: 24px; }
+  /* DEC-1116: Chrome does not break a Commander Spellbook URL in these texts,
+     and in Georgia it is wider than the column. */
+  .gv1-wincon-desc, .gv1-combo-desc { overflow-wrap: anywhere; }
   /* DEC-1008: the KPI tiles stay edge to edge (the 18px above is for the
      other blocks), and their values scale down so two fit across a phone. */
   .gv1-perf-kpis { padding: 0; }
