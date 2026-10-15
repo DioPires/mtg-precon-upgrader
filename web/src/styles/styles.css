@@ -3086,11 +3086,11 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-engine-shell { grid-template-columns: 260px minmax(0, 1fr); }
   .gv1-engine-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-/* Beside the rail the panel can be as narrow as 301px, so the card count
-   drops under a role title too long to share its row ("Counteroffensive"
-   needs 329px). Bounded below because the 768px block has no rule for the
-   panel head to fall back on. */
-@media (min-width: 769px) and (max-width: 990px) {
+/* The card count drops under a role title too long to share its row.
+   Beside the rail the panel can be as narrow as 301px ("Counteroffensive"
+   needs 329px); on a phone, under the tabs, it is the screen less 66px
+   (254px at 320px). The 768px block also makes the title smaller there. */
+@media (max-width: 990px) {
   .gv1-engine-panel-head { flex-wrap: wrap; gap: 8px 16px; }
 }
 /* Shopping summary: four stats and the actions on one row, with the copy
@@ -3302,6 +3302,8 @@ em { font-style: italic; color: var(--gv1-gold); }
     box-shadow: inset 0 -2px 0 var(--gv1-rune);
   }
   .gv1-engine-panel { padding: 18px 16px; }
+  /* DEC-1156: at 42px "Counteroffensive" is wider than a 320px phone's panel. */
+  .gv1-engine-panel-head h3 { font-size: clamp(30px, 10vw, 42px); }
   .gv1-engine-cards { grid-template-columns: repeat(2, 1fr); }
   /* DEC-1116: a note's longest word widened its column, and the panel and
      tabs with it, past the phone. The name keeps `break-word`, so a card name
