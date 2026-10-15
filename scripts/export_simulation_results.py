@@ -50,6 +50,12 @@ METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
 
 NUM_GAMES = 100_000
 NUM_TURNS = 10
+# The mana sims take the goldfish's scheme (DEC-363): run_parallel splits the
+# games into MANA_SIM_CHUNKS fixed chunks whatever the CPU count, and each chunk
+# seeds `random` with MANA_SIM_SEED + its index inside the worker. Two runs on
+# one tree and one input then write equal files on any machine. (DEC-1115)
+MANA_SIM_CHUNKS = 16
+MANA_SIM_SEED = 0xDEC1115
 GOLDFISH_GAMES = 10_000
 GOLDFISH_MEANINGFUL_PRESSURE_FLOOR = 6
 GOLDFISH_LETHAL_DAMAGE_PROXY = 40
@@ -4154,16 +4160,32 @@ def derive_assessment(result: dict) -> dict:
     }
 
 
+def _run_seeded_chunk(args):
+    """Worker chunk for run_parallel: seed `random`, then run one mana-sim chunk."""
+    run_chunk_fn, seed, decklist, metadata, num_games = args
+    # Seed at the start of each chunk, inside the worker, so a chunk's games
+    # depend only on its seed and size, not on which worker runs it or what that
+    # worker ran before. Every mana sim draws from the module-level `random`
+    # (library shuffle; Titan's Gemstone Caverns coin flip). (DEC-1115)
+    random.seed(seed)
+    return run_chunk_fn((decklist, metadata, num_games))
+
+
 def run_parallel(run_chunk_fn, merge_fn, decklist, metadata, num_games):
     """Run simulation with multiprocessing, return merged stats."""
     import multiprocessing
-    n_workers = os.cpu_count() or 4
-    chunk_size = num_games // n_workers
-    remainder = num_games % n_workers
-    chunks = [chunk_size + (1 if i < remainder else 0) for i in range(n_workers)]
-
+    # Fixed chunk count and one seed for each chunk (DEC-1115); only the worker
+    # count follows the CPU count. pool.map keeps chunk order, so merge_fn sees
+    # the chunks in index order on every machine.
+    base, remainder = divmod(num_games, MANA_SIM_CHUNKS)
+    chunk_sizes = [base + (1 if i < remainder else 0) for i in range(MANA_SIM_CHUNKS)]
+    chunk_args = [
+        (run_chunk_fn, MANA_SIM_SEED + i, decklist, metadata, games)
+        for i, games in enumerate(chunk_sizes) if games > 0
+    ]
+    n_workers = min(MANA_SIM_CHUNKS, os.cpu_count() or 4)
     with multiprocessing.Pool(n_workers) as pool:
-        results = pool.map(run_chunk_fn, [(decklist, metadata, n) for n in chunks])
+        results = pool.map(_run_seeded_chunk, chunk_args)
     return merge_fn(results)
 
 

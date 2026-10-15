@@ -1,0 +1,11 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -199,7 +199,7 @@
+ def error_text(error: OSError) -> str:
+     """The error, with Scryfall's ``details`` when the answer carries them (a bad query)."""
+     text = str(error)
+-    if isinstance(error, urllib.error.HTTPError):
++    if False:
+         with contextlib.suppress(Exception):
+             details = json.loads(error.read()).get("details")
+             if details:

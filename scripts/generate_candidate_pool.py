@@ -5,7 +5,9 @@ Reads the local Scryfall mirror, applies archetype filters from the discovery
 playbook, scores cards against deck criteria, and writes top-N candidates to
 data/commanders/{id}/candidates.json. Cards named in the deck's optional
 `candidate_pins` list are seated too, at their score-order position, with
-`"pinned": true` (DEC-992).
+`"pinned": true` (DEC-992). A gap role of metrics.json with fewer than
+GAP_SEAT_FLOOR pool cards gets cards of that role seated after the top N, with
+`"seeded_for_gap": "<role>"` (DEC-1078).
 
 DEC-90 phase 3.
 
@@ -51,6 +53,9 @@ EDHREC_RATE_SATURATION = 50.0
 # DEC-477 (DEC-474 L1): tiebreaker for opponent-scaled triggers — must stay below
 # owned (15) and EDHREC (20), and at 1/8 of the density ceiling (40).
 MULTIPLAYER_SCALED_BOOST = 5.0
+# DEC-1078: each role gap of metrics.json gets pool cards of that role up to this
+# count, seated after the top N. A seat changes no score.
+GAP_SEAT_FLOOR = 5
 
 TOKEN_ENTRY_MISMATCH = re.compile(
     r"tokens? you control (?:that )?entered this turn|whenever [^.]*tokens? enters?",
@@ -364,8 +369,13 @@ def score_card(
     position_weights: dict[str, float] | None = None,
     role_pool: dict[str, dict] | None = None,
     edhrec_rates: dict[str, float] | None = None,
+    archetype_gate: bool = True,
 ) -> tuple[float, dict, list[str]]:
-    """Return (score, breakdown, matched_archetypes)."""
+    """Return (score, breakdown, matched_archetypes).
+
+    With `archetype_gate=False` a card that matches no archetype scores without
+    the density term instead of scoring 0 (DEC-1078 step 2 only).
+    """
     oracle = card_oracle_blob(card).lower()
     type_blob = card_type_blob(card)
     name = card.get("name", "")
@@ -403,7 +413,7 @@ def score_card(
             if pos_mult < 1.0:
                 position_weights_applied[arch["name"]] = round(pos_mult, 2)
 
-    if not archetype_hits:
+    if not archetype_hits and archetype_gate:
         return 0.0, {"disqualified": "no archetype match"}, []
     # Sort matched archetypes by per-archetype strength desc, preserving order for ties
     archetype_hits.sort(key=lambda t: -t[1])
@@ -666,6 +676,74 @@ def resolve_candidate_pins(
     return seated
 
 
+def seat_gap_cards(
+    deck_id: str,
+    gap_roles: list[str],
+    candidates: list[tuple[float, dict, dict, list[str]]],
+    limit: int,
+    pinned: set[str],
+    decklist_names: set[str],
+    gated: list[dict],
+    score_without_gate,
+    edhrec_rates: dict[str, float],
+) -> tuple[dict[str, str], list[tuple[float, dict, dict, list[str]]]]:
+    """Seat cards of each gap role until the pool holds GAP_SEAT_FLOOR of that role.
+
+    Step 1 takes cards of the role below the cut, best score first. Step 2 runs
+    only for a role that step 1 leaves under the floor: a card of the role in
+    `gated` (no archetype match, listed on the deck's EDHREC page) scores without
+    the density term, and the highest EDHREC rate goes first, then the name. A
+    card in the decklist is not seated, as for a pin. Returns the seated names
+    with their role, and the step-2 entries, which `candidates` does not hold.
+    """
+    role_of: dict[str, str | None] = {}
+
+    def role(card: dict) -> str | None:
+        name = card.get("name", "")
+        if name not in role_of:
+            role_of[name] = classify_role(card)[0]
+        return role_of[name]
+
+    below = candidates[limit:]
+    pool = [c for _s, c, _b, _m in candidates[:limit]]
+    pool += [c for _s, c, _b, _m in below if c.get("name") in pinned]
+    seated: dict[str, str] = {}
+    step2: list[tuple[float, dict, dict, list[str]]] = []
+    for gap in gap_roles:
+        before = sum(1 for c in pool if role(c) == gap)
+        if before >= GAP_SEAT_FLOOR:
+            continue
+        count = before
+        for _s, c, _b, _m in below:
+            if count >= GAP_SEAT_FLOOR:
+                break
+            name = c.get("name", "")
+            if name in pinned or front_face(name) in decklist_names or role(c) != gap:
+                continue
+            seated[name] = gap
+            count += 1
+        from_step1 = count - before
+        if count < GAP_SEAT_FLOOR:
+            listed = []
+            for c in gated:
+                if role(c) != gap or front_face(c.get("name", "")) in decklist_names:
+                    continue
+                score, breakdown, matched = score_without_gate(c)
+                if score > 0:
+                    listed.append((score, c, breakdown, matched))
+            listed.sort(key=lambda t: (-edhrec_rate_for(t[1].get("name", ""), edhrec_rates), t[1].get("name", "")))
+            for entry in listed[:GAP_SEAT_FLOOR - count]:
+                seated[entry[1]["name"]] = gap
+                step2.append(entry)
+                count += 1
+        print(
+            f"  [{deck_id}] gap-seat: {gap} {before} -> {count} "
+            f"({from_step1} below the cut, {count - before - from_step1} from the EDHREC page).",
+            file=sys.stderr,
+        )
+    return seated, step2
+
+
 def trim_card(
     card: dict,
     score: float,
@@ -733,6 +811,8 @@ def generate_for_deck(
     )
 
     candidates = []
+    # DEC-1078 step 2: cards that only the archetype gate keeps out, on the EDHREC page.
+    gated = []
     commander_name = deck.get("commander", "")
 
     for card in cards:
@@ -750,6 +830,11 @@ def generate_for_deck(
             edhrec_rates=edhrec_rates,
         )
         if score <= 0:
+            if (
+                breakdown.get("disqualified") == "no archetype match"
+                and edhrec_rate_for(card.get("name", ""), edhrec_rates) is not None
+            ):
+                gated.append(card)
             continue
 
         candidates.append((score, card, breakdown, matched))
@@ -760,10 +845,22 @@ def generate_for_deck(
         deck_id, candidate_pin_names(deck_id, deck), candidates,
         mirror_index, deck_ci, decklist_names, commander_name,
     )
-    top = [t for i, t in enumerate(candidates) if i < limit or t[1].get("name") in pinned]
 
     gap_roles = load_gap_roles(deck_id)
     gap_role_set = set(gap_roles)
+    seated, step2 = seat_gap_cards(
+        deck_id, gap_roles, candidates, limit, pinned, decklist_names, gated,
+        lambda card: score_card(
+            card, archetypes, avg_cmc, decklist_names, owned, game_changers, bracket,
+            context, position_weights=position_weights, role_pool=role_pool,
+            edhrec_rates=edhrec_rates, archetype_gate=False,
+        ),
+        edhrec_rates,
+    )
+    # The top N never move: pins and gap seats follow them in score order.
+    tail = [t for t in candidates[limit:] if t[1].get("name") in pinned or t[1].get("name") in seated]
+    tail = sorted(tail + step2, key=lambda t: (-t[0], t[1].get("name", "")))
+    top = candidates[:limit] + tail
 
     enriched = []
     for s, c, b, m in top:
@@ -781,6 +878,8 @@ def generate_for_deck(
         )
         if c.get("name") in pinned:
             entry["pinned"] = True
+        if c.get("name") in seated:
+            entry["seeded_for_gap"] = seated[c.get("name")]
         enriched.append(entry)
 
     output = {
@@ -880,9 +979,15 @@ def main(argv: list[str]) -> int:
             and existing.get("deck_gaps") == out.get("deck_gaps")
             and existing.get("asymmetric_only") == out.get("asymmetric_only")
         ):
-            # the pinned flag is compared too, so pinning a card already in the top N writes
-            existing_names = [(c.get("name"), bool(c.get("pinned"))) for c in existing.get("candidates", [])]
-            new_names = [(c.get("name"), bool(c.get("pinned"))) for c in out["candidates"]]
+            # the pinned and seeded_for_gap flags are compared too, so a change of a seat writes
+            existing_names = [
+                (c.get("name"), bool(c.get("pinned")), c.get("seeded_for_gap"))
+                for c in existing.get("candidates", [])
+            ]
+            new_names = [
+                (c.get("name"), bool(c.get("pinned")), c.get("seeded_for_gap"))
+                for c in out["candidates"]
+            ]
             if existing_names == new_names:
                 print(f"  [{deck_id}] no change ({len(new_names)} candidates).", file=sys.stderr)
                 continue

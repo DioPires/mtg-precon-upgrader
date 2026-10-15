@@ -1,0 +1,151 @@
+HEAD	SURVIVED	54 passed, 4 subtests passed in 0.04s	restore_clean=True	no mutation
+A1	KILLED	3 failed, 51 passed, 4 subtests passed in 0.09s	restore_clean=True	implementer's M3: step 2 for every gap role, filled from the count before step 1
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_breaks_a_rate_tie_by_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_runs_only_when_step_1_leaves_the_pair_under_the_floor
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+A2	KILLED	17 failed, 37 passed, 4 subtests passed in 0.16s	restore_clean=True	implementer's M4: a seat replaces the last card above the cut
+		tests/test_generate_candidate_pool.py::CandidatePinTests::test_pinned_card_below_cut_is_seated_with_flag
+		tests/test_generate_candidate_pool.py::CandidatePinTests::test_pinned_card_keeps_score_order_position
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_first_limit_cards_are_equal_with_and_without_seeding
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_first_limit_cards_stay_when_a_step_2_seat_outscores_the_cut
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_flag_names_the_role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_floor_is_reached_from_below_the_cut
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_four_gets_one_seat
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pinned_card_counts_and_is_not_seeded
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_breaks_a_rate_tie_by_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_runs_only_when_step_1_leaves_the_pair_under_the_floor
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_seats_only_cards_of_the_gap_role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_skips_a_listed_card_that_scores_0
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_tail_breaks_a_score_tie_by_name
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_that_differs_only_in_the_flag_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_whose_flag_names_another_role_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_second_run_writes_no_file
+A3	KILLED	2 failed, 52 passed, 4 subtests passed in 0.08s	restore_clean=True	implementer's M6: the write guard ignores seeded_for_gap
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_that_differs_only_in_the_flag_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_whose_flag_names_another_role_is_rewritten
+A4	KILLED	1 failed, 53 passed, 4 subtests passed in 0.06s	restore_clean=True	pins below the cut no longer count toward the floor
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pinned_card_counts_and_is_not_seeded
+A5	KILLED	1 failed, 53 passed, 4 subtests passed in 0.06s	restore_clean=True	step 2 appends every listed card, with no score > 0 check
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_skips_a_listed_card_that_scores_0
+A6	KILLED	1 failed, 53 passed, 4 subtests passed in 0.05s	restore_clean=True	step 2 skips no decklist card
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_card_in_the_decklist_is_not_seated
+A7	KILLED	1 failed, 53 passed, 4 subtests passed in 0.05s	restore_clean=True	step 1 checks name, not front_face(name), against the decklist
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_1_skips_a_decklist_card_by_its_front_face
+A8	KILLED	1 failed, 53 passed, 4 subtests passed in 0.07s	restore_clean=True	the tail sorts by score only
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_tail_breaks_a_score_tie_by_name
+A9	KILLED	2 failed, 52 passed, 4 subtests passed in 0.06s	restore_clean=True	the step-2 slice is listed[:GAP_SEAT_FLOOR - before]
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_breaks_a_rate_tie_by_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+A10	SURVIVED	54 passed, 4 subtests passed in 0.04s	restore_clean=True	gated takes every card that scores 0 or less and is on the EDHREC file (no check of the reason)
+A10b	KILLED	2 failed, 52 passed, 4 subtests passed in 0.09s	restore_clean=True	gated takes every card that scores 0 or less (no reason check, no EDHREC check)
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_too_few_cards_gets_what_there_is
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_card_must_be_on_the_edhrec_page
+A11	KILLED	1 failed, 53 passed, 4 subtests passed in 0.06s	restore_clean=True	no skip for a pair that already holds the floor
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_five_or_more_gets_no_seat
+A12	KILLED	7 failed, 47 passed, 4 subtests passed in 0.10s	restore_clean=True	step 1 stops at 6 (> in place of >=)
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_floor_is_reached_from_below_the_cut
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_log_counts_only_the_cards_that_step_1_seats
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_four_gets_one_seat
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pinned_card_counts_and_is_not_seeded
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_that_differs_only_in_the_flag_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_whose_flag_names_another_role_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_second_run_writes_no_file
+A13	KILLED	1 failed, 53 passed, 4 subtests passed in 0.05s	restore_clean=True	step 1 does not skip pins
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pinned_card_counts_and_is_not_seeded
+A14	KILLED	1 failed, 53 passed, 4 subtests passed in 0.07s	restore_clean=True	step 2 takes a gated card of any role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_seats_only_cards_of_the_gap_role
+A15	KILLED	13 failed, 41 passed, 4 subtests passed in 0.12s	restore_clean=True	step 1 takes a card of any role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_card_in_the_decklist_is_not_seated
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_first_limit_cards_are_equal_with_and_without_seeding
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_flag_names_the_role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_too_few_cards_gets_what_there_is
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_1_skips_a_decklist_card_by_its_front_face
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_breaks_a_rate_tie_by_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_card_must_be_on_the_edhrec_page
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_runs_only_when_step_1_leaves_the_pair_under_the_floor
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_seats_by_edhrec_rate_then_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_seats_only_cards_of_the_gap_role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_skips_a_listed_card_that_scores_0
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_tail_breaks_a_score_tie_by_name
+A16	KILLED	1 failed, 53 passed, 4 subtests passed in 0.07s	restore_clean=True	the log counts the pool's own cards as step-1 seats
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_log_counts_only_the_cards_that_step_1_seats
+A17	KILLED	1 failed, 53 passed, 4 subtests passed in 0.05s	restore_clean=True	step 2 does not count its seats (log only)
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_too_few_cards_gets_what_there_is
+A18	KILLED	17 failed, 37 passed, 4 subtests passed in 0.18s	restore_clean=True	step-1 seats left out of the tail
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_card_in_the_decklist_is_not_seated
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_first_limit_cards_are_equal_with_and_without_seeding
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_flag_names_the_role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_floor_is_reached_from_below_the_cut
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_four_gets_one_seat
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_too_few_cards_gets_what_there_is
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pinned_card_counts_and_is_not_seeded
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_1_skips_a_decklist_card_by_its_front_face
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_breaks_a_rate_tie_by_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_runs_only_when_step_1_leaves_the_pair_under_the_floor
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_seats_only_cards_of_the_gap_role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_skips_a_listed_card_that_scores_0
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_tail_breaks_a_score_tie_by_name
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_that_differs_only_in_the_flag_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_whose_flag_names_another_role_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_second_run_writes_no_file
+A19	KILLED	7 failed, 48 passed, 3 subtests passed in 0.09s	restore_clean=True	score_card's default opens the archetype gate
+		tests/test_generate_candidate_pool.py::PerArchetypeTypeConstraintTests::test_off_type_card_gets_no_constrained_archetype_hit
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_first_limit_cards_stay_when_a_step_2_seat_outscores_the_cut
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_too_few_cards_gets_what_there_is
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_card_must_be_on_the_edhrec_page
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_runs_only_when_step_1_leaves_the_pair_under_the_floor
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+A20	KILLED	2 failed, 52 passed, 4 subtests passed in 0.07s	restore_clean=True	step 2 takes the lowest rate first
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_seats_by_edhrec_rate_then_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+A21	KILLED	1 failed, 53 passed, 4 subtests passed in 0.05s	restore_clean=True	step 2 sorts by score (implementer's M8)
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+A22	KILLED	1 failed, 53 passed, 4 subtests passed in 0.05s	restore_clean=True	step 2 breaks a rate tie by file order (implementer's M11)
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_breaks_a_rate_tie_by_name
+A23	KILLED	1 failed, 53 passed, 4 subtests passed in 0.06s	restore_clean=True	the write guard compares bool(seeded_for_gap), not the role
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_whose_flag_names_another_role_is_rewritten
+A24	KILLED	17 failed, 37 passed, 4 subtests passed in 0.15s	restore_clean=True	the flag is gone (implementer's M5)
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_card_in_the_decklist_is_not_seated
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_flag_names_the_role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_floor_is_reached_from_below_the_cut
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_four_gets_one_seat
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_too_few_cards_gets_what_there_is
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pinned_card_counts_and_is_not_seeded
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_1_skips_a_decklist_card_by_its_front_face
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_breaks_a_rate_tie_by_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_card_must_be_on_the_edhrec_page
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_runs_only_when_step_1_leaves_the_pair_under_the_floor
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_seats_by_edhrec_rate_then_name
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_seats_only_cards_of_the_gap_role
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_skips_a_listed_card_that_scores_0
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_takes_the_highest_rate_before_the_highest_score
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_that_differs_only_in_the_flag_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_file_whose_flag_names_another_role_is_rewritten
+		tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_second_run_writes_no_file
+A25	KILLED	2 failed, 52 passed, 4 subtests passed in 0.09s	restore_clean=True	gated without the EDHREC check (implementer's M7)
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_pair_with_too_few_cards_gets_what_there_is
+		tests/test_generate_candidate_pool.py::GapSeatTests::test_step_2_card_must_be_on_the_edhrec_page
+C1	KILLED	2 failed, 5 passed in 0.02s	restore_clean=True	implementer's M1: the new exclusion is gone
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_file_without_confidence_inputs_or_with_no_age_raises_nothing
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_payload_that_differs_only_in_the_clock_fields_writes_nothing
+C2	KILLED	1 failed, 6 passed in 0.02s	restore_clean=True	implementer's M2: the exclusion drops the whole penalties block
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_payload_that_differs_in_another_penalties_key_is_written
+C3	KILLED	2 failed, 5 passed in 0.02s	restore_clean=True	the age is dropped from new only
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_file_without_confidence_inputs_or_with_no_age_raises_nothing
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_payload_that_differs_only_in_the_clock_fields_writes_nothing
+C4	KILLED	2 failed, 5 passed in 0.04s	restore_clean=True	inputs.get with no isinstance(inputs, dict) check
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_file_whose_confidence_inputs_is_not_a_dict_raises_nothing
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_file_without_confidence_inputs_or_with_no_age_raises_nothing
+C5	KILLED	1 failed, 6 passed in 0.02s	restore_clean=True	generated_at stays in the comparison
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_payload_that_differs_only_in_the_clock_fields_writes_nothing
+C6	KILLED	1 failed, 6 passed in 0.03s	restore_clean=True	penalties checked for None, not for dict
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_file_whose_penalties_is_not_a_dict_raises_nothing
+C7	KILLED	1 failed, 6 passed in 0.03s	restore_clean=True	inputs checked for None, not for dict
+		tests/test_write_metrics.py::WriteMetricsClockFieldTests::test_file_whose_confidence_inputs_is_not_a_dict_raises_nothing
+O5	KILLED	1 failed, 14 passed, 4 subtests passed in 0.02s	restore_clean=True	merge_gaps filters resilience_gaps in place
+		tests/test_metrics_gaps.py::MergeGapsTests::test_leaves_both_arguments_unchanged_when_an_entry_is_skipped
+E1	KILLED	1 failed, 14 passed, 4 subtests passed in 0.02s	restore_clean=True	merge_gaps returns resilience_gaps itself when role_gaps is empty
+		tests/test_metrics_gaps.py::MergeGapsTests::test_returns_a_new_list_when_there_is_no_role_gap

@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1077-rev-head/web
+
+ ❯ src/__tests__/components/Apothecary.dec1125-kill.test.tsx (5 tests | 1 failed) 46ms
+   × DEC-1125 kill cases > writes a resilience figure with at most one decimal (0) 4ms
+     → expected '2.3 / 3.67 lines' to be '2.3 / 3.7 lines' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  08:49:40
+   Duration  424ms (transform 34ms, setup 20ms, collect 43ms, tests 46ms, environment 131ms, prepare 49ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.dec1125-kill.test.tsx > DEC-1125 kill cases > writes a resilience figure with at most one decimal (0)
+AssertionError: expected '2.3 / 3.67 lines' to be '2.3 / 3.7 lines' // Object.is equality
+
+Expected: "2.3 / 3.7 lines"
+Received: "2.3 / 3.67 lines"
+
+ ❯ src/__tests__/components/Apothecary.dec1125-kill.test.tsx:47:28
+     45|   ])('writes a resilience figure with at most one decimal (%#)', (entr…
+     46|     const { container } = render(<Apothecary apothecary={makeApothecar…
+     47|     expect(fig(container)).toBe(text);
+       |                            ^
+     48|   });
+     49| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

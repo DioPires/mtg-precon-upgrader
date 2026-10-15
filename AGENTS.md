@@ -66,32 +66,46 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
   "name": "Titan Convergence",
   "subtitle": "Cascading Inevitability",
   "commander": "Zhulodok, Void Gorger",
-  "cost": "$200-350",
-  "bracket": "4",
+  "bracket": "4-",
   "gameChangers": 2,
-  "asymmetric_only": false,
+  "lastUpdatedSet": "Tarkir: Dragonstorm",
+  "archetypes": ["eldrazi-colorless", "ramp-big-mana"],
+  "commanderRoles": { "primary": "engine", "secondary": "threat" },
+  "wincon_style": "discrete-threats",
   "sources": [...],
-  "guideContent": {
-    "strategyOverview": "...",
-    "deckCategories": [{ "name": "Eldrazi Threats", "description": "...", "cards": [...] }]
-  },
-  "addCategories": [...],
-  "adds": [...],
-  "synergies": [...],
-  "decklist": [{ "name": "Card Name", "type": "Creature" }, ...]
+  "guideContent": { "strategyOverview": "..." },
+  "categories": [{ "name": "Eldrazi Titans", "cards": [...] }, ...],
+  "highlights": [{ "name": "Card Name", "reason": "...", "sources": [...] }, ...],
+  "winConditions": [{ "title": "...", "description": "...", "cards": [...] }, ...],
+  "synergies": [{ "title": "...", "description": "...", "cards": [...], "sources": [...] }, ...],
+  "decklist": [{ "name": "Card Name", "type": "Creature", "primary_role": "ramp" }, ...],
+  "tokens": [...]
 }
 ```
 
-**Key fields:**
-- `type: "commander"` (required)
-- `bracket` — display field indicating deck power level
-- `gameChangers` — count of Game Changer cards in the deck
-- `asymmetric_only` — optional deck-side discovery modifier; set `true` only when symmetric punisher/resource-denial effects are strategic traps and the deck should prefer opponent-only templates
-- `guideContent.deckCategories` — deck theme groupings
-- `decklist` — full 99-card list as `{name, type}` objects with optional `quantity` field
-- `adds` — notable/highlighted cards
-- `synergies` — card synergy pairs/groups
-- `sources` — attribution for the deck build
+**Key fields** (each field names the file that reads it; `normalize.ts` is `web/src/data/normalize.ts`, and a bare `.py` name is a file in `scripts/`):
+- `id` — the deck folder name under `data/commanders/` (`validate_deck_json.py:124`)
+- `type: "commander"` (required; `compute_deck_metrics.py:1062`)
+- `name`, `commander` — deck display name and commander card name (`normalize.ts:385-386`; `validate_deck_json.py:22` checks `commander`)
+- `subtitle` — read only by the Archidekt export (`mcp-servers/archidekt/src/archidekt_mcp/services/deck_builder.py:160`)
+- `bracket` — display field indicating deck power level (`normalize.ts:391`)
+- `gameChangers` — count of Game Changer cards in the deck (`normalize.ts:421`; `check_game_changers.py:96` recounts it)
+- `lastUpdatedSet` — no code reads it from `deck.json`; the UI shows the `data/index.json` copy (`normalize.ts:399`)
+- `status` — optional; `"brewing"` for a deck that is not built yet, omitted for a built deck (`normalize.ts:392`)
+- `cost` — optional price band text; no code reads it
+- `asymmetric_only` — optional deck-side discovery modifier; set `true` only when symmetric punisher/resource-denial effects are strategic traps and the deck should prefer opponent-only templates (`generate_candidate_pool.py:300`)
+- `archetypes` — discovery playbook IDs (`generate_candidate_pool.py:788`)
+- `commanderRoles` — the commander's `{primary, secondary}` roles (`compute_deck_metrics.py:502`)
+- `wincon_style` — the deck's dominant win plan, defined in [`docs/role-taxonomy.md`](docs/role-taxonomy.md) (`compute_deck_metrics.py:517`)
+- `guideContent.strategyOverview` — the strategy text (`normalize.ts:379`)
+- `categories`, `guideContent.deckCategories` — optional deck theme groupings as `{name, cards}`; every deck has one or both, and `normalize.ts:196-199` reads `categories` first (`validate_deck_json.py:26`, `:29`)
+- `decklist` — full 99-card list as `{name, type, primary_role}` objects with optional `secondary_role` and `quantity` fields (`normalize.ts:116`; `validate_deck_json.py:23`)
+- `highlights` — optional; notable cards as `{name}` objects with optional `reason`, `price`, `isGameChanger` and `sources` (`normalize.ts:120`; `validate_deck_json.py:24`)
+- `winConditions` — `{title, description, cards}` objects with optional `kind`, `pieces` and `sources` (`normalize.ts:184`; `validate_deck_json.py:27`)
+- `synergies` — card synergy pairs/groups (`normalize.ts:211`; `validate_deck_json.py:28`)
+- `tokens` — written by `compute_tokens.py` (DEC-403); read at `normalize.ts:298`
+- `candidate_pins` — optional; board picks that the pool generator seats below the cut, DEC-992 (`generate_candidate_pool.py:624`; `normalize.ts:237`)
+- `sources` — attribution for the deck build (`normalize.ts:372`)
 
 ## Deck Rules
 
@@ -134,8 +148,9 @@ Every card add, synergy, and deck must have a `sources` array for traceability.
 
 **Where sources arrays go:**
 - Per-deck: `sources` (root level)
-- Per-card: `adds[].sources`
+- Per-card: `highlights[].sources`
 - Per-synergy: `synergies[].sources`
+- Per-win-condition: `winConditions[].sources`
 
 **When to use `ai-inferred`:** For synergy identification, strategic analysis, or card recommendations that came from Claude's analysis rather than a specific external source.
 
@@ -143,8 +158,8 @@ Every card add, synergy, and deck must have a `sources` array for traceability.
 
 When building or updating deck guides, use all available sources and cross-reference findings:
 
-1. **Candidate Pool (mandatory first step — DEC-90)** — Run `uv run python scripts/refresh_card_pool.py --deck {id}` before any review. This refreshes the local Scryfall mirror and regenerates `data/commanders/{id}/candidates.json`: the top-200 commander-legal cards scored against the deck's archetype tags + color identity + curve + ownership. Diff the `decklist` against the top of `candidates.json`. Any high-scoring candidate that is *not* in the decklist must be explicitly considered. Cuts require a reason captured in deck `sources` or review notes. See [`docs/discovery-playbook.md`](docs/discovery-playbook.md) for the archetype tagging contract.
-   - **Re-run whenever it keeps `candidates.json` in sync**, not only before a review: **after any change to a deck's `decklist`** (scoring is decklist-dependent — keeps candidates + `gaps[]` current), when the **Scryfall mirror was just refreshed**, or when a deck's `candidates.json` is **stale** (≳7 days per `candidates_age_days`). Regenerating `candidates.json` *after* a committed/approved deck change is expected hygiene, not a pre-approval edit. (`metrics.json` is regenerated by its own metrics step, separate from card-pool.)
+1. **Candidate Pool (mandatory first step — DEC-90)** — Run `uv run python scripts/refresh_card_pool.py --deck {id}` before any review. This refreshes the local Scryfall mirror and regenerates `data/commanders/{id}/candidates.json`: the top-200 commander-legal cards scored against the deck's archetype tags + color identity + curve + ownership. Diff the `decklist` against the top of `candidates.json`. Any high-scoring candidate that is *not* in the decklist must be explicitly considered. Read every entry flagged `seeded_for_gap` too: the gap seats sit after the top 200, and a step-2 seat can outscore the cut. Cuts require a reason captured in deck `sources` or review notes. See [`docs/discovery-playbook.md`](docs/discovery-playbook.md) for the archetype tagging contract.
+   - **Re-run whenever it keeps `candidates.json` in sync**, not only before a review: **after any change to a deck's `decklist`** (scoring is decklist-dependent — keeps candidates + `gaps[]` current), when the **Scryfall mirror was just refreshed**, or when a deck's `candidates.json` is **stale** (≳7 days after its `generated_at`). Regenerating `candidates.json` *after* a committed/approved deck change is expected hygiene, not a pre-approval edit. (`metrics.json` is regenerated by its own metrics step, separate from card-pool.)
 1b. **Archetype recipes (DEC-238)** — For each `archetypes` tag on the deck that has an approved recipe in `data/archetype-recipes/{id}.json` (status `live`), run the recipe's sub-recipe queries. Splice the deck's color identity (`id<=<colors>`) into each query at runtime; order by `edhrec`; cap at top-50 per sub-recipe. Post-filter results against `decklist` + `candidates.json` top-50 to surface only genuine deltas. For each delta, triage: include (with `sources: [{type: scryfall, detail: "archetype-recipe:<archetype>/<sub_recipe>"}]`), defer (with note), or reject (with reason). If the deck has no archetype tag with a `live` recipe, record a comment in `sources` and skip — do not block on missing recipes. See [`docs/archetype-recipes.md`](docs/archetype-recipes.md) for the methodology.
 2. **YouTube** — Search for commander deck tech videos, fetch transcripts, extract card recommendations
 3. **EDHREC** — Check commander pages for top cards, new additions from recent sets
@@ -184,8 +199,8 @@ Before recommending changes to any deck:
 When tagging cards, building decks, or reading metrics output:
 
 - **Roles**: every `decklist[]` card has `primary_role` (required) and optional `secondary_role` from the closed 15-role set in [`docs/role-taxonomy.md`](docs/role-taxonomy.md). Commander has `commanderRoles` at deck root. `wincon` cards carry `wincon_style`; MDFCs are flagged `is_mdfc_land: true`.
-- **Metrics**: `data/commanders/{id}/metrics.json` carries 5 deterministic scores (manabase health, role coverage, curve, interaction density, gameplan cohesion) + `global_health` + `gaps[]`. Formulas in [`docs/deck-metrics.md`](docs/deck-metrics.md).
-- **Use gaps[] to drive review** — top-50 candidate review (step 3 above) should explicitly check whether each candidate addresses a `gaps[]` entry. The candidate-pool generator (P7.7) boosts gap-addressing cards in the score.
+- **Metrics**: `data/commanders/{id}/metrics.json` carries 6 deterministic scores (manabase health, role coverage, curve, interaction density, gameplan cohesion, resilience health) + `global_health` + `gaps[]`. Formulas in [`docs/deck-metrics.md`](docs/deck-metrics.md).
+- **Use gaps[] to drive review** — top-50 candidate review (step 3 above) should explicitly check whether each candidate addresses a `gaps[]` entry. The candidate-pool generator (P7.7) reads only the `role` entries of `gaps[]` and adds no score for them: it labels pool cards of a gap role (`mitigates_gap`) and seats cards of a gap role with fewer than 5 pool cards after the top N (`seeded_for_gap`, DEC-1078).
 
 ## Fleet Re-Audit Policy (DEC-396)
 

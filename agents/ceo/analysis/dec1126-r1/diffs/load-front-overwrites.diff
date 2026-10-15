@@ -1,0 +1,11 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -112,7 +112,7 @@
+     for card in cards:
+         if " // " in card["name"]:
+             # A full name answers before a front face of the same spelling.
+-            index.setdefault(fold(front_face(card["name"])), card)
++            index[fold(front_face(card["name"]))] = card
+     return index
+ 
+ 

@@ -1,10 +1,10 @@
 // Combo Lab — DEC-534 redesign (render layer only; pipeline unchanged).
 //
-// Lab-bench surface: sticky control rail (mode · deck · contents · tier legend ·
-// export) beside a report column that opens with the bracket/Rule-0 Disclosure,
-// then § XII·a Combos Present (Tier A) → § XII·b Verified Loops (Tier B) →
-// § XII·c near-miss ledger → § XII·d Synergy Candidates (Tier C) → § XII·e
-// Complete a Near-Miss → attribution.
+// Lab-bench surface: control rail (mode · deck · contents · tier legend · export;
+// it pins from contents down on wide, tall screens) beside a report column that
+// opens with the bracket/Rule-0 Disclosure, then § XII·a Combos Present (Tier A)
+// → § XII·b Verified Loops (Tier B) → § XII·c near-miss ledger → § XII·d Synergy
+// Candidates (Tier C) → § XII·e Complete a Near-Miss → attribution.
 //
 // Two modes: Fleet (precomputed spellbook-combos.json per deck) and Paste (the
 // full client-side pipeline: matcher index, Tier-B verifier, Tier-C synergy
@@ -13,6 +13,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { cardCache } from '../data/cardCache';
 import { deckLoader } from '../data/loader';
 import { colorsToGlyphs } from '../data/normalize';
 import { GV1ManaPips } from '../components/atoms/GV1ManaPips';
@@ -513,8 +514,9 @@ export function ComboLab() {
     },
   ];
 
-  // Smooth-scroll the page scroll container to the section (the rail is sticky,
-  // so window scrolling is the page scroll — scrollIntoView drives it).
+  // Smooth-scroll the window to the section. The window is the page's scroll
+  // container (`.gv1-root` clips and does not scroll), and scrollIntoView
+  // drives it; where the rail pins, its Contents stay in view.
   const onToc = (key: string) => {
     document
       .getElementById(`gv1-lab-sec-${key}`)
@@ -840,90 +842,93 @@ function Rail({
         </div>
       )}
 
-      <div className="gv1-lab-block">
-        <div className="gv1-lab-block-head">
-          <span className="gv1-mono-xs gv1-dim">Contents</span>
-          <span className="gv1-mono-xs gv1-dim">§ XII</span>
+      {/* From Contents down the rail pins on wide, tall screens (combo-lab.css). */}
+      <div className="gv1-lab-rail-pin">
+        <div className="gv1-lab-block">
+          <div className="gv1-lab-block-head">
+            <span className="gv1-mono-xs gv1-dim">Contents</span>
+            <span className="gv1-mono-xs gv1-dim">§ XII</span>
+          </div>
+          <nav className="gv1-lab-toc" aria-label="Report contents">
+            {toc.map((t) => (
+              <button key={t.key} type="button" className="gv1-lab-toc-row" onClick={() => onToc(t.key)}>
+                <span className="gv1-lab-toc-folio">{t.folio}</span>
+                <span className="gv1-lab-toc-label">{t.label}</span>
+                <span className="gv1-lab-toc-n">{t.n}</span>
+              </button>
+            ))}
+          </nav>
         </div>
-        <nav className="gv1-lab-toc" aria-label="Report contents">
-          {toc.map((t) => (
-            <button key={t.key} type="button" className="gv1-lab-toc-row" onClick={() => onToc(t.key)}>
-              <span className="gv1-lab-toc-folio">{t.folio}</span>
-              <span className="gv1-lab-toc-label">{t.label}</span>
-              <span className="gv1-lab-toc-n">{t.n}</span>
+
+        <div className="gv1-lab-block">
+          <div className="gv1-lab-block-head">
+            <span className="gv1-mono-xs gv1-dim">The three tiers</span>
+          </div>
+          <dl className="gv1-lab-kv">
+            <dt>
+              <TierChip t="a" label="A" />
+            </dt>
+            <dd>curated · human-verified (Spellbook)</dd>
+            <dt>
+              <TierChip t="b" label="B" />
+            </dt>
+            <dd>computed · verified under the model</dd>
+            <dt>
+              <TierChip t="c" label="C" />
+            </dt>
+            <dd>heuristic · speculative couplings</dd>
+          </dl>
+        </div>
+
+        <div className="gv1-lab-block">
+          <div className="gv1-lab-block-head">
+            <span className="gv1-mono-xs gv1-dim">Scribe the findings</span>
+            <span className="gv1-mono-xs gv1-dim">
+              {corpusVersion ? corpusVersion.slice(0, 10) : '—'}
+            </span>
+          </div>
+          <div className="gv1-lab-export">
+            <button
+              type="button"
+              className="gv1-lab-export-btn"
+              disabled={!canExport}
+              onClick={() => onExport('txt')}
+            >
+              {copied === 'txt' ? 'Copied ◆' : 'Copy text'}
             </button>
-          ))}
-        </nav>
-      </div>
-
-      <div className="gv1-lab-block">
-        <div className="gv1-lab-block-head">
-          <span className="gv1-mono-xs gv1-dim">The three tiers</span>
+            <button
+              type="button"
+              className="gv1-lab-export-btn"
+              disabled={!canExport}
+              onClick={() => onExport('md')}
+            >
+              {copied === 'md' ? 'Copied ◆' : 'Copy markdown'}
+            </button>
+            <button
+              type="button"
+              className="gv1-lab-export-btn"
+              disabled={!canExport}
+              onClick={() => onExport('dl-txt')}
+            >
+              ⇣ .txt
+            </button>
+            <button
+              type="button"
+              className="gv1-lab-export-btn"
+              disabled={!canExport}
+              onClick={() => onExport('dl-md')}
+            >
+              ⇣ .md
+            </button>
+          </div>
         </div>
-        <dl className="gv1-lab-kv">
-          <dt>
-            <TierChip t="a" label="A" />
-          </dt>
-          <dd>curated · human-verified (Spellbook)</dd>
-          <dt>
-            <TierChip t="b" label="B" />
-          </dt>
-          <dd>computed · verified under the model</dd>
-          <dt>
-            <TierChip t="c" label="C" />
-          </dt>
-          <dd>heuristic · speculative couplings</dd>
-        </dl>
-      </div>
 
-      <div className="gv1-lab-block">
-        <div className="gv1-lab-block-head">
-          <span className="gv1-mono-xs gv1-dim">Scribe the findings</span>
-          <span className="gv1-mono-xs gv1-dim">
-            {corpusVersion ? corpusVersion.slice(0, 10) : '—'}
-          </span>
-        </div>
-        <div className="gv1-lab-export">
-          <button
-            type="button"
-            className="gv1-lab-export-btn"
-            disabled={!canExport}
-            onClick={() => onExport('txt')}
-          >
-            {copied === 'txt' ? 'Copied ◆' : 'Copy text'}
-          </button>
-          <button
-            type="button"
-            className="gv1-lab-export-btn"
-            disabled={!canExport}
-            onClick={() => onExport('md')}
-          >
-            {copied === 'md' ? 'Copied ◆' : 'Copy markdown'}
-          </button>
-          <button
-            type="button"
-            className="gv1-lab-export-btn"
-            disabled={!canExport}
-            onClick={() => onExport('dl-txt')}
-          >
-            ⇣ .txt
-          </button>
-          <button
-            type="button"
-            className="gv1-lab-export-btn"
-            disabled={!canExport}
-            onClick={() => onExport('dl-md')}
-          >
-            ⇣ .md
-          </button>
-        </div>
+        <p className="gv1-lab-smallprint">
+          Combo data © Commander Spellbook (CC-BY-SA) · card data © Scryfall · not affiliated with or
+          endorsed by Wizards of the Coast. Ownership flags read the collection imported in § IX
+          Shopping — nothing leaves the page.
+        </p>
       </div>
-
-      <p className="gv1-lab-smallprint">
-        Combo data © Commander Spellbook (CC-BY-SA) · card data © Scryfall · not affiliated with or
-        endorsed by Wizards of the Coast. Ownership flags read the collection imported in § IX
-        Shopping — nothing leaves the page.
-      </p>
     </aside>
   );
 }
@@ -1986,7 +1991,7 @@ function Art({ name }: { name: string }) {
   return (
     <span className="gv1-lab-art" data-card-name={name} title={name}>
       {e && e.status === 'loaded' && e.image_small ? (
-        <img src={e.image_small} alt={name} loading="lazy" />
+        <img src={e.image_small} alt={name} loading="lazy" onError={() => cardCache.imageFailed(name)} />
       ) : e && e.status === 'error' ? (
         <span className="gv1-lab-art-fallback" aria-hidden="true">
           ◇
