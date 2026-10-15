@@ -478,8 +478,15 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
         return;
       }
       setSavedLocally(true);
-      const totalCards = [...parsed.values()].reduce((s, q) => s + q, 0);
-      setImportMsg({ ok: true, text: `Imported ${parsed.size} unique cards (${totalCards} total).` });
+      // An import adds to the cards already loaded, so a second pick of one
+      // file doubles its counts. The message says so (DEC-1094).
+      const fileCards = [...parsed.values()].reduce((s, q) => s + q, 0);
+      const loadedCards = [...merged.values()].reduce((s, q) => s + q, 0);
+      setImportMsg({
+        ok: true,
+        text: `Added ${parsed.size} unique cards (${fileCards} total). ${loadedCards} cards loaded. `
+          + 'To replace the list, use Clear owned first.',
+      });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       setImportMsg({ ok: false, text: 'Could not read file: ' + msg });

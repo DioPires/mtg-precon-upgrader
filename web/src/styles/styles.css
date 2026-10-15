@@ -176,7 +176,10 @@ em { font-style: italic; color: var(--gv1-gold); }
 }
 .gv1-cmd-grid {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  /* DEC-1043: the dossier takes no width from its content. In a fallback
+     face one word of the deck name can be wider than the column ("Witherbloom"
+     is 496px against 393px at 1021px), and it breaks (.gv1-cmd-deckname). */
+  grid-template-columns: 420px minmax(0, 1fr);
   gap: 64px;
   align-items: start;
 }
@@ -262,6 +265,7 @@ em { font-style: italic; color: var(--gv1-gold); }
   color: var(--gv1-ink);
   margin: 4px 0 0;
   text-wrap: balance;
+  overflow-wrap: break-word;
   max-width: 10ch;
 }
 .gv1-cmd-commander-row {
@@ -3110,6 +3114,30 @@ em { font-style: italic; color: var(--gv1-gold); }
    need 940px. At 951px the two halves are 11.6px apart. */
 @media (max-width: 950px) {
   .gv1-codex-toolbar { flex-wrap: wrap; gap: 8px 16px; }
+}
+/* DEC-1043: three more blocks kept tracks that their content sets and sat in
+   the right gutter up to 824px (55.5, 45.9 and 12.3px past the edge at
+   769px). From 825px they fit on those tracks, so these rules stop there.
+   Each rule holds with any face: the fallback faces are wider than the web
+   fonts, and Linux sets the 11px mono wider than macOS. Bounded below
+   because the 768px block sets the phone layout. */
+@media (min-width: 769px) and (max-width: 824px) {
+  /* Codex cards: two even tracks. Three would leave a 126px card body at
+     769px, narrower than one word of a deck name ("Witherbloom", 145px). */
+  .gv1-codex-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Codex stats: the phone's 16px side padding, and the bracket counts wrap.
+     Five even cells on one row; a cell never shrinks below its value ("3.16"
+     is 73px in the web font, 97px in Georgia), and a cell that does not fit
+     moves to a second row. */
+  .gv1-codex-stats { display: flex; flex-wrap: wrap; }
+  .gv1-codex-stat { flex: 1 1 0; padding-inline: 16px; }
+  .gv1-codex-stat-brackets { flex-wrap: wrap; row-gap: 8px; }
+  /* Performance: the note keeps its narrowest width, and the title wraps
+     only where it cannot sit beside it. Known limit: in the fallback faces
+     the note passes the viewport from 825 to 859px (option A, ruling
+     8288eed2 on DEC-1043). */
+  .gv1-perf .gv1-section-head { grid-template-columns: 48px 1fr min-content; }
+  .gv1-perf .gv1-section-title { white-space: normal; text-wrap: balance; }
 }
 
 @media (max-width: 768px) {
