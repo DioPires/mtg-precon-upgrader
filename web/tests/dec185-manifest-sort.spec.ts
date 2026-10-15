@@ -1,23 +1,18 @@
 import { expect, test } from './support/test';
 
 // DEC-185 — The Manifest sorts each subsection by mana value ascending,
-// alphabetical tiebreak. Verifies the cmc map populated via cardCache (Scryfall).
+// alphabetical tiebreak. The cmc map comes from cardCache, which holds every
+// deck card from data/card-metadata.json at first paint (DEC-1102).
 test('Manifest subsections render in cmc-ascending order', async ({ page }) => {
   await page.goto('/deck/titan-convergence');
   // Wait for the Manifest section to render.
   await expect(page.locator('.gv1-decklist')).toBeVisible();
 
-  // Allow time for Scryfall fetches to hydrate cmc on cards.
-  // cardCache throttles ≥80ms between calls; 99 cards ≈ 8s worst case.
-  // Many cards will be cached by other surfaces, but give a generous wait.
-  await page.waitForTimeout(10_000);
-
   const groups = page.locator('.gv1-dl-group');
   const groupCount = await groups.count();
   expect(groupCount).toBeGreaterThan(2);
 
-  // For each non-Commander group, read card names in render order, then read
-  // cmc by inspecting the cardCache via window.localStorage.
+  // For each non-Commander group, read card names in render order.
   const groupData = await page.evaluate(() => {
     const groups = Array.from(document.querySelectorAll('.gv1-dl-group'));
     return groups.map((g) => ({
@@ -28,24 +23,17 @@ test('Manifest subsections render in cmc-ascending order', async ({ page }) => {
     }));
   });
 
-  // Pull cmc from localStorage (cardCache writes loaded entries there).
-  const cmcByName = await page.evaluate(() => {
+  // The cmc of each card, from the file that the app's card cache holds.
+  const cmcByName = await page.evaluate(async () => {
+    const file = (await (await fetch('/data/card-metadata.json')).json()) as Record<string, { cmc?: number }>;
     const map: Record<string, number | undefined> = {};
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)!;
-      if (!key.startsWith('gv1-card:')) continue;
-      try {
-        const entry = JSON.parse(localStorage.getItem(key)!);
-        if (entry?.status === 'loaded' && typeof entry.cmc === 'number') {
-          map[entry.name] = entry.cmc;
-        }
-      } catch { /* ignore */ }
-    }
+    for (const [name, entry] of Object.entries(file)) map[name] = entry.cmc;
     return map;
   });
 
   // For each non-Commander group with ≥ 2 cards that have known cmc, assert
   // cmc-then-name ordering across consecutive pairs.
+  let pairs = 0;
   for (const grp of groupData) {
     if (grp.header.toLowerCase().startsWith('commander')) continue;
     if (grp.cards.length < 2) continue;
@@ -54,8 +42,9 @@ test('Manifest subsections render in cmc-ascending order', async ({ page }) => {
       const b = grp.cards[i + 1];
       const ca = cmcByName[a];
       const cb = cmcByName[b];
-      // Skip pairs where either side hasn't been hydrated yet.
+      // Skip pairs where either side is not in the file.
       if (ca == null || cb == null) continue;
+      pairs += 1;
       if (ca !== cb) {
         expect(ca, `[${grp.header}] ${a} (${ca}) before ${b} (${cb})`).toBeLessThanOrEqual(cb);
       } else {
@@ -66,4 +55,6 @@ test('Manifest subsections render in cmc-ascending order', async ({ page }) => {
       }
     }
   }
+  // Every card of the deck is in the file, so the check is not empty.
+  expect(pairs).toBeGreaterThan(50);
 });

@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /private/tmp/dec1125-ceo/wt-merged/web
+
+ ❯ src/__tests__/components/Apothecary.test.tsx (49 tests | 1 failed) 267ms
+   × Apothecary > role labels from the shared map (DEC-1077) > a role key that the shared map does not hold reads raw > in the empty state 5ms
+     → expected 'No remedies match .' to be 'No remedies match lifegain.' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 48 passed (49)
+   Start at  09:11:46
+   Duration  692ms (transform 57ms, setup 28ms, collect 78ms, tests 267ms, environment 124ms, prepare 35ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.test.tsx > Apothecary > role labels from the shared map (DEC-1077) > a role key that the shared map does not hold reads raw > in the empty state
+AssertionError: expected 'No remedies match .' to be 'No remedies match lifegain.' // Object.is equality
+
+Expected: "No remedies match lifegain."
+Received: "No remedies match ."
+
+ ❯ src/__tests__/components/Apothecary.test.tsx:890:68
+    888|         );
+    889|         fireEvent.click(screen.getByRole('button', { name: /lifegain/,…
+    890|         expect(container.querySelector('.gv1-empty')?.textContent).toB…
+       |                                                                    ^
+    891|       });
+    892|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

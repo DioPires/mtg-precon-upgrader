@@ -11,6 +11,7 @@
 import type { DeckFull } from './types';
 import { frontFace } from './cardName';
 import { ROLE_LABEL } from './roleLabels';
+import { autocompleteUrl, scryfallLimiter, type ScryfallLimiter } from './scryfallLimiter';
 
 export interface CardUsage {
   deckSlug: string;
@@ -136,17 +137,17 @@ export function localSuggest(
 /**
  * Scryfall autocomplete fallback. ~250ms typical latency. Caller should
  * debounce calls and deduplicate against local suggestions before showing.
+ * The request goes through bucket 2 of the limiter (DEC-1102), so a stop holds it.
  */
 export async function scryfallSuggest(
   query: string,
-  fetchImpl: typeof fetch = fetch,
   signal?: AbortSignal,
+  limiter: ScryfallLimiter = scryfallLimiter,
 ): Promise<string[]> {
   const q = query.trim();
   if (q.length < 2) return [];
-  const url = `https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(q)}`;
   try {
-    const r = await fetchImpl(url, { signal });
+    const r = await limiter.fetch(autocompleteUrl(q), { signal });
     if (!r.ok) return [];
     const data = (await r.json()) as { data?: string[] };
     return data.data || [];

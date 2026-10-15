@@ -1,0 +1,48 @@
+
+ RUN  v2.1.9 /private/tmp/dec1125-ceo/wt-merged/web
+
+ ❯ src/__tests__/components/Apothecary.test.tsx (49 tests | 2 failed) 432ms
+   × Apothecary > resilience maladies (DEC-1007) > the redundancy chip reads the target from the entry, not floor + 2 5ms
+     → expected '2 / 3 lines' to be '2 / 4 lines' // Object.is equality
+   × Apothecary > resilience maladies (DEC-1007) > writes a resilience figure with at most one decimal (0) 2ms
+     → expected '2.3 / 3 lines' to be '2.3 / 3.7 lines' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 47 passed (49)
+   Start at  09:11:50
+   Duration  994ms (transform 57ms, setup 27ms, collect 78ms, tests 432ms, environment 166ms, prepare 41ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.test.tsx > Apothecary > resilience maladies (DEC-1007) > the redundancy chip reads the target from the entry, not floor + 2
+AssertionError: expected '2 / 3 lines' to be '2 / 4 lines' // Object.is equality
+
+Expected: "2 / 4 lines"
+Received: "2 / 3 lines"
+
+ ❯ src/__tests__/components/Apothecary.test.tsx:491:64
+    489|         />,
+    490|       );
+    491|       expect(part(chips(container)[0], '.gv1-apo-malady-fig')).toBe(fi…
+       |                                                                ^
+    492|     });
+    493| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/components/Apothecary.test.tsx > Apothecary > resilience maladies (DEC-1007) > writes a resilience figure with at most one decimal (0)
+AssertionError: expected '2.3 / 3 lines' to be '2.3 / 3.7 lines' // Object.is equality
+
+Expected: "2.3 / 3.7 lines"
+Received: "2.3 / 3 lines"
+
+ ❯ src/__tests__/components/Apothecary.test.tsx:513:64
+    511|     ])('writes a resilience figure with at most one decimal (%#)', (en…
+    512|       const { container } = render(<Apothecary apothecary={makeApothec…
+    513|       expect(part(chips(container)[0], '.gv1-apo-malady-fig')).toBe(te…
+       |                                                                ^
+    514|     });
+    515| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

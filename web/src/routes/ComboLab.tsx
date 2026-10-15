@@ -13,6 +13,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { cardCache } from '../data/cardCache';
 import { deckLoader } from '../data/loader';
 import { colorsToGlyphs } from '../data/normalize';
 import { GV1ManaPips } from '../components/atoms/GV1ManaPips';
@@ -1986,7 +1987,7 @@ function Art({ name }: { name: string }) {
   return (
     <span className="gv1-lab-art" data-card-name={name} title={name}>
       {e && e.status === 'loaded' && e.image_small ? (
-        <img src={e.image_small} alt={name} loading="lazy" />
+        <img src={e.image_small} alt={name} loading="lazy" onError={() => cardCache.imageFailed(name)} />
       ) : e && e.status === 'error' ? (
         <span className="gv1-lab-art-fallback" aria-hidden="true">
           ◇

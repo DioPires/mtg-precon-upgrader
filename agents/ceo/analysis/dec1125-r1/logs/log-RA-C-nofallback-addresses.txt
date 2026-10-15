@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /private/tmp/dec1125-ceo/wt-merged/web
+
+ ❯ src/__tests__/components/Apothecary.test.tsx (49 tests | 1 failed) 327ms
+   × Apothecary > role labels from the shared map (DEC-1077) > a role key that the shared map does not hold reads raw > on the chip, in the status line, in "filtered:" and in both tags 6ms
+     → expected 'addresses · ' to be 'addresses · lifegain' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 48 passed (49)
+   Start at  09:11:47
+   Duration  803ms (transform 58ms, setup 22ms, collect 88ms, tests 327ms, environment 127ms, prepare 46ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.test.tsx > Apothecary > role labels from the shared map (DEC-1077) > a role key that the shared map does not hold reads raw > on the chip, in the status line, in "filtered:" and in both tags
+AssertionError: expected 'addresses · ' to be 'addresses · lifegain' // Object.is equality
+
+Expected: "addresses · lifegain"
+Received: "addresses · "
+
+ ❯ src/__tests__/components/Apothecary.test.tsx:881:80
+    879|         expect(status.textContent).toBe('Filtered by lifegain: 1 remed…
+    880|         expect(screen.getByText(/ · filtered: lifegain$/)).toBeInTheDo…
+    881|         expect(container.querySelector('.gv1-apo-tag-addresses')?.text…
+       |                                                                                ^
+    882|         expect(container.querySelector('.gv1-apo-remedies .gv1-apo-tag…
+    883|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCard } from '../../hooks/useCard';
-import { localCardImageUrl } from '../../data/cardImages';
+import { cardCache } from '../../data/cardCache';
 import { ManaCost } from '../atoms/ManaCost';
 
 export interface CardTileCard {
@@ -8,11 +8,11 @@ export interface CardTileCard {
   n: string;
   /** Mana value, e.g. "{2}{R}" or "—"/"LAND". */
   mv?: string;
-  /** Type line; falls back to live Scryfall type. */
+  /** Type line; falls back to the card entry's type. */
   type?: string;
   /** Editor's note shown below type. */
   note?: string;
-  /** Price string, e.g. "$0.42"; falls back to live price. */
+  /** Price string, e.g. "$0.42"; falls back to the card entry's price. */
   price?: string;
   /** Game-changer flag — adds star + gold border. */
   gc?: boolean;
@@ -72,26 +72,19 @@ function FallbackGlyph({ seed, variant }: { seed: number; variant: number }) {
 }
 
 export function CardTile({ card, size = 'md' }: CardTileProps) {
-  const [localImageFailed, setLocalImageFailed] = useState(false);
-  const [remoteImageFailed, setRemoteImageFailed] = useState(false);
-
-  useEffect(() => {
-    setLocalImageFailed(false);
-    setRemoteImageFailed(false);
-  }, [card.n]);
+  // The picture is Scryfall's address from the card entry: card-metadata.json
+  // for a deck card (DEC-1102), a lookup for a name that the file lacks.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   // Deterministic glyph variant per card name so it looks curated, not random.
   const seed = (card.n || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   const variant = seed % 4;
-  const needsLiveMeta = !card.mv || card.mv === '—' || !card.type || card.type === '—';
-  const needsLiveImage = localImageFailed && !remoteImageFailed;
-  const live = useCard(needsLiveMeta || needsLiveImage ? card.n : undefined);
-  const remoteImgSrc = live?.status === 'loaded'
+  const live = useCard(card.n);
+  const imgSrc = live?.status === 'loaded'
     ? (live.image_normal || live.image_small || live.image_large || null)
     : null;
-  const localImgSrc = localCardImageUrl(card.n);
-  const imgSrc = !localImageFailed ? localImgSrc : remoteImgSrc;
-  const hasImg = !!imgSrc;
+  // A new address (after a failed picture, the cache looks the card up again) gets its own try.
+  const hasImg = !!imgSrc && imgSrc !== failedSrc;
   const mvLive = live?.status === 'loaded' && live.mana_cost ? live.mana_cost : null;
   const mv = (card.mv && card.mv !== '—') ? card.mv : (mvLive || card.mv || '—');
   const priceLive = live?.status === 'loaded' && live.price ? live.price : null;
@@ -111,8 +104,8 @@ export function CardTile({ card, size = 'md' }: CardTileProps) {
             loading="lazy"
             draggable={false}
             onError={() => {
-              if (!localImageFailed) setLocalImageFailed(true);
-              else setRemoteImageFailed(true);
+              setFailedSrc(imgSrc);
+              cardCache.imageFailed(card.n);
             }}
           />
         )}

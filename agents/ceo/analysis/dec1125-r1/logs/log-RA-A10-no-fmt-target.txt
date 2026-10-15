@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /private/tmp/dec1125-ceo/wt-merged/web
+
+ ❯ src/__tests__/components/Apothecary.test.tsx (49 tests | 1 failed) 265ms
+   × Apothecary > resilience maladies (DEC-1007) > writes a resilience figure with at most one decimal (0) 4ms
+     → expected '2.3 / 3.67 lines' to be '2.3 / 3.7 lines' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 48 passed (49)
+   Start at  09:11:37
+   Duration  688ms (transform 50ms, setup 21ms, collect 58ms, tests 265ms, environment 143ms, prepare 47ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.test.tsx > Apothecary > resilience maladies (DEC-1007) > writes a resilience figure with at most one decimal (0)
+AssertionError: expected '2.3 / 3.67 lines' to be '2.3 / 3.7 lines' // Object.is equality
+
+Expected: "2.3 / 3.7 lines"
+Received: "2.3 / 3.67 lines"
+
+ ❯ src/__tests__/components/Apothecary.test.tsx:513:64
+    511|     ])('writes a resilience figure with at most one decimal (%#)', (en…
+    512|       const { container } = render(<Apothecary apothecary={makeApothec…
+    513|       expect(part(chips(container)[0], '.gv1-apo-malady-fig')).toBe(te…
+       |                                                                ^
+    514|     });
+    515| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,14 +1,17 @@
 // Scryfall answers for the e2e suite, built from repository data (DEC-1045).
 //
-// Two committed files hold everything a page asks Scryfall for:
-//   data/card-metadata.json           card name → mana cost, mana value, type line
-//   data/spellbook/price-index.json   folded name → [eur, usd] (scripts/build_price_index.py)
-// The same card therefore gets the same answer on every run and every machine.
-// A name that card-metadata.json lacks gets a 404, as Scryfall gives.
+// One committed file holds everything a page asks Scryfall for:
+//   data/card-metadata.json   card name → mana cost, mana value, type line,
+//                             picture path, USD and EUR price (DEC-1075)
+// The app reads the same file (DEC-1102), so a lookup gives the picture
+// addresses and the price that the app's own seed holds. The same card gets the
+// same answer on every run and every machine. A name that card-metadata.json
+// lacks gets a 404, as Scryfall gives.
 
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { cardEntryFromFile, cardImageUrl } from '../../src/data/cardEntry';
 import { normalizeName } from '../../src/lib/spellbookMatch';
 
 const DATA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'data');
@@ -22,13 +25,13 @@ interface CardMeta {
   toughness: string | null;
   type_line: string;
   layout?: string;
+  image: string;
+  usd: number | null;
+  eur: number | null;
 }
-
-type PriceRow = [eur: number | null, usd: number | null];
 
 interface Repo {
   meta: Record<string, CardMeta>;
-  prices: Record<string, PriceRow>;
   /** Folded full name, and each folded face of a `//` name → name in card-metadata.json. */
   byKey: Map<string, string>;
   /** Front face of a `//` name → that `//` name. */
@@ -45,7 +48,6 @@ function loadRepo(): Repo {
   if (repo) return repo;
   const read = (file: string) => JSON.parse(readFileSync(resolve(DATA_DIR, file), 'utf8'));
   const meta = read('card-metadata.json') as Record<string, CardMeta>;
-  const prices = read('spellbook/price-index.json') as Record<string, PriceRow>;
   const byKey = new Map<string, string>();
   const names = Object.keys(meta).sort();
   for (const name of names) byKey.set(normalizeName(name), name);
@@ -57,7 +59,7 @@ function loadRepo(): Repo {
     }
   }
   const byFront = new Map(names.filter((name) => name.includes('//')).map((name) => [faces(name)[0], name]));
-  repo = { meta, prices, byKey, byFront };
+  repo = { meta, byKey, byFront };
   return repo;
 }
 
@@ -81,18 +83,14 @@ function placeholderImage(version: string | null): string {
   );
 }
 
-function imageUris(name: string) {
-  const file = `${normalizeName(name).replace(/ /g, '-')}.jpg`;
-  const uri = (version: string) => `https://cards.scryfall.io/${version}/front/e/2/${file}`;
-  return { small: uri('small'), normal: uri('normal'), large: uri('large'), art_crop: uri('art_crop') };
-}
-
-function priceRow(name: string): PriceRow {
-  const { prices } = loadRepo();
-  for (const key of [name, ...faces(name)].map(normalizeName)) {
-    if (prices[key]) return prices[key];
-  }
-  return [null, null];
+/** Scryfall's addresses for the card's picture, from the path in card-metadata.json, as the app builds them. */
+function imageUris(card: CardMeta) {
+  return {
+    small: cardImageUrl('small', card.image),
+    normal: cardImageUrl('normal', card.image),
+    large: cardImageUrl('large', card.image),
+    art_crop: cardImageUrl('art_crop', card.image),
+  };
 }
 
 const money = (amount: number | null) => (amount == null ? null : amount.toFixed(2));
@@ -124,7 +122,6 @@ function cardObject(query: string) {
   const name = byKey.get(normalizeName(query));
   if (!name) return null;
   const card = meta[name];
-  const [eur, usd] = priceRow(name);
   const card_faces = cardFaces(name, card);
   return {
     object: 'card',
@@ -137,8 +134,8 @@ function cardObject(query: string) {
     colors: card.colors,
     ...(card.power == null ? {} : { power: card.power, toughness: card.toughness }),
     ...(card_faces ? { card_faces } : {}),
-    image_uris: imageUris(name),
-    prices: { usd: money(usd), eur: money(eur) },
+    image_uris: imageUris(card),
+    prices: { usd: money(card.usd), eur: money(card.eur) },
   };
 }
 
@@ -213,31 +210,29 @@ export function answerFor(url: URL): Answer | null {
 }
 
 /**
- * The `gv1-card:` entries the app holds after it has looked up every card:
- * key (the lower-case name the app asks for) → entry, without `fetchedAt`.
- * Mirrors the mapping in src/data/cardCache.ts (fetchOne).
+ * The entries of `cards: 'seeded'`: key (the lower-case name the app asks for)
+ * → entry, without `fetchedAt`. Every name of card-metadata.json gets the
+ * entry that the app's own seed makes (cardEntryFromFile). Each face of a `//`
+ * name that the file does not hold as a name gets the entry of its whole card,
+ * under the whole card's name, as a lookup of that face gives it.
  */
 export function cardCacheSeed(): Record<string, object> {
-  const { meta } = loadRepo();
+  const { meta, byKey } = loadRepo();
   const seed: Record<string, object> = {};
-  const entryFor = (name: string) => {
-    const card = cardObject(name)!;
-    return {
-      status: 'loaded',
-      name: card.name,
-      mana_cost: card.card_faces?.[0].mana_cost || card.mana_cost,
-      cmc: card.cmc,
-      type_line: card.type_line,
-      image_small: card.image_uris.small,
-      image_normal: card.image_uris.normal,
-      image_large: card.image_uris.large,
-      art_crop: card.image_uris.art_crop,
-      price: card.prices.usd ? `$${card.prices.usd}` : null,
-    };
-  };
-  for (const name of Object.keys(meta)) seed[name.toLowerCase()] = entryFor(name);
+  for (const name of Object.keys(meta)) seed[name.toLowerCase()] = cardEntryFromFile(name, meta[name]);
   for (const name of Object.keys(meta)) {
-    for (const face of faces(name)) seed[face.toLowerCase()] ??= entryFor(face);
+    for (const face of faces(name)) {
+      const whole = byKey.get(normalizeName(face))!;
+      seed[face.toLowerCase()] ??= cardEntryFromFile(whole, meta[whole]);
+    }
   }
   return seed;
+}
+
+/** card-metadata.json with no price, for `cards: 'none'`: the layout with no prices. */
+export function cardMetadataWithoutPrices(): string {
+  const { meta } = loadRepo();
+  const bare: Record<string, CardMeta> = {};
+  for (const [name, card] of Object.entries(meta)) bare[name] = { ...card, usd: null, eur: null };
+  return JSON.stringify(bare);
 }

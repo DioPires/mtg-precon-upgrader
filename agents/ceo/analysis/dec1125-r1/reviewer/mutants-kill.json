@@ -1,0 +1,134 @@
+[
+ {
+  "name": "K-A8-strict-undefined",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "if (g.lines != null && g.target != null)",
+    "if (g.lines !== undefined && g.target !== undefined)"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-A9-no-fmt-count",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{fmtFigure(g.lines)}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)} lines",
+    "{g.lines}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)} lines"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-A10-no-fmt-target",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "/ {fmtFigure(g.target)} lines",
+    "/ {g.target} lines"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-A13-actual-or",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "if (g.actual != null && g.target != null)",
+    "if (g.actual != null || g.target != null)"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-A16-no-fmt-actual",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{fmtFigure(g.actual)}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)}</span>",
+    "{g.actual}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)}</span>"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-A17-no-fmt-actual-target",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{fmtFigure(g.actual)}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)}</span>",
+    "{fmtFigure(g.actual)}\n        <span className=\"gv1-dim\"> / {g.target}</span>"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-C-nofallback-status",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "(ROLE_LABEL[effectiveFilter] || effectiveFilter);",
+    "(ROLE_LABEL[effectiveFilter]);"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-C-nofallback-chip",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{ROLE_LABEL[g.role] || g.role}</span>",
+    "{ROLE_LABEL[g.role]}</span>"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-C-nofallback-filtered",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "` \u00b7 filtered: ${ROLE_LABEL[effectiveFilter] || effectiveFilter}`",
+    "` \u00b7 filtered: ${ROLE_LABEL[effectiveFilter]}`"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-C-nofallback-empty",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "<em>{ROLE_LABEL[effectiveFilter] || effectiveFilter}</em>",
+    "<em>{ROLE_LABEL[effectiveFilter]}</em>"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-C-nofallback-addresses",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "addresses \u00b7 {ROLE_LABEL[c.mitigates_gap as string] || c.mitigates_gap}",
+    "addresses \u00b7 {ROLE_LABEL[c.mitigates_gap as string]}"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ },
+ {
+  "name": "K-C-nofallback-tag",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{ROLE_LABEL[c.deck_role] || c.deck_role}\n",
+    "{ROLE_LABEL[c.deck_role]}\n"
+   ]
+  ],
+  "cmd": "npx vitest run src/__tests__/components/Apothecary.dec1125-kill.test.tsx"
+ }
+]
