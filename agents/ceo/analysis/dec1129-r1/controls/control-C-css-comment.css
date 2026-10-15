@@ -1,0 +1,270 @@
+/* Combo Lab — DEC-534 redesign (gv1-lab-*).
+ * Lab-bench layout: control rail (mode, deck, contents, export; it pins from
+ * contents down on wide, tall screens, see the production additions)
+ * + report column (disclosure → tier A → tier B → near-misses → tier C
+ * → completions). Ported verbatim from design_handoff_combo_lab/design/
+ * gv1-combolab.css (pixel source of truth); production additions are at
+ * the bottom, clearly marked. Reads tokens from tokens.css only. */
+
+/* ── hero ─────────────────────────────────────────────────────── */
+.gv1-lab-hero{padding:44px 72px 30px;border-bottom:1px solid var(--gv1-line);display:grid;grid-template-columns:1fr minmax(280px,420px);gap:48px;align-items:end}
+.gv1-lab-hero-eyebrow{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+.gv1-lab-hero-eyebrow .gv1-rune{font-family:var(--gv1-mono);font-size:12px;letter-spacing:0.08em}
+.gv1-lab-title{font-family:var(--gv1-serif);font-size:54px;font-weight:400;line-height:1;letter-spacing:-0.01em;margin:0;color:var(--gv1-ink-bright)}
+.gv1-lab-lede{font-family:var(--gv1-serif);font-style:italic;font-size:15px;line-height:1.55;color:var(--gv1-ink-dim);margin:0;text-wrap:pretty}
+.gv1-lab-lede strong{color:var(--gv1-ink);font-weight:500}
+
+/* ── layout ───────────────────────────────────────────────────── */
+.gv1-lab-layout{display:grid;grid-template-columns:336px minmax(0,1fr);gap:44px;padding:36px 72px 96px;align-items:start}
+.gv1-lab-rail{position:sticky;top:20px;display:flex;flex-direction:column;gap:20px}
+.gv1-lab-report{display:flex;flex-direction:column;gap:52px;min-width:0}
+.gv1-lab-report a{color:var(--gv1-rune);text-decoration:none}
+.gv1-lab-report a:hover{color:var(--gv1-rune-bright);text-decoration:underline}
+
+/* ── rail blocks ──────────────────────────────────────────────── */
+.gv1-lab-block{border:1px solid var(--gv1-line);background:var(--gv1-bg-2)}
+.gv1-lab-block-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px dashed var(--gv1-line)}
+.gv1-lab-modes{display:grid;grid-template-columns:1fr 1fr}
+.gv1-lab-mode{display:flex;flex-direction:column;gap:4px;padding:14px;border:none;background:transparent;cursor:pointer;text-align:left;border-bottom:2px solid transparent;transition:var(--gv1-transition-quick)}
+.gv1-lab-mode+.gv1-lab-mode{border-left:1px solid var(--gv1-line)}
+.gv1-lab-mode:hover{background:var(--gv1-bg-3)}
+.gv1-lab-mode .gv1-lab-mode-name{font-family:var(--gv1-serif);font-size:18px;color:var(--gv1-ink-dim)}
+.gv1-lab-mode[aria-pressed="true"]{border-bottom-color:var(--gv1-rune);background:var(--gv1-focus-bg)}
+.gv1-lab-mode[aria-pressed="true"] .gv1-lab-mode-name{color:var(--gv1-ink-bright)}
+.gv1-lab-mode[aria-pressed="true"] .gv1-lab-mode-tag{color:var(--gv1-rune)}
+
+/* deck picker */
+.gv1-lab-decks{display:flex;flex-direction:column;max-height:520px;overflow-y:auto}
+.gv1-lab-deck{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 14px 9px 12px;border:none;border-left:2px solid transparent;border-bottom:1px solid var(--gv1-line);background:transparent;cursor:pointer;text-align:left;transition:var(--gv1-transition-quick)}
+.gv1-lab-deck:last-child{border-bottom:none}
+.gv1-lab-deck:hover{background:var(--gv1-bg-3)}
+.gv1-lab-deck.gv1-active{border-left-color:var(--gv1-rune);background:var(--gv1-focus-bg)}
+.gv1-lab-deck-idx{font-family:var(--gv1-mono);font-size:10px;color:var(--gv1-ink-dimmer)}
+.gv1-lab-deck-name{font-family:var(--gv1-serif);font-size:16px;color:var(--gv1-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gv1-lab-deck.gv1-active .gv1-lab-deck-name{color:var(--gv1-ink-bright)}
+.gv1-lab-deck-meta{display:flex;align-items:center;gap:8px}
+.gv1-lab-deck-n{font-family:var(--gv1-mono);font-size:11px;color:var(--gv1-rune);font-variant-numeric:tabular-nums}
+.gv1-lab-deck-unscribed{opacity:0.5}
+.gv1-lab-deck-unscribed .gv1-lab-deck-n{color:var(--gv1-ink-dimmer)}
+
+/* paste form */
+.gv1-lab-form{display:flex;flex-direction:column;gap:12px;padding:14px}
+.gv1-lab-field{display:flex;flex-direction:column;gap:5px}
+.gv1-lab-input,.gv1-lab-textarea{font-family:var(--gv1-mono);font-size:12px;color:var(--gv1-ink);background:var(--gv1-bg-3);border:1px solid var(--gv1-line);padding:8px 10px;letter-spacing:0.01em}
+.gv1-lab-input::placeholder,.gv1-lab-textarea::placeholder{color:var(--gv1-ink-dimmer)}
+.gv1-lab-input:focus,.gv1-lab-textarea:focus{outline:none;border-color:var(--gv1-rune-dim)}
+.gv1-lab-textarea{resize:vertical;line-height:1.6;min-height:150px}
+.gv1-lab-form-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gv1-lab-analyze{font-family:var(--gv1-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:9px 18px;border:1px solid var(--gv1-rune-dim);background:var(--gv1-focus-bg);color:var(--gv1-rune);cursor:pointer;transition:var(--gv1-transition-quick)}
+.gv1-lab-analyze:hover{border-color:var(--gv1-rune);color:var(--gv1-rune-bright)}
+.gv1-lab-analyze:disabled{opacity:0.4;cursor:not-allowed}
+
+/* contents (toc) */
+.gv1-lab-toc{display:flex;flex-direction:column}
+.gv1-lab-toc-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:8px 14px;border:none;border-bottom:1px solid var(--gv1-line);background:transparent;cursor:pointer;text-align:left;transition:var(--gv1-transition-quick)}
+.gv1-lab-toc-row:last-child{border-bottom:none}
+.gv1-lab-toc-row:hover{background:var(--gv1-bg-3)}
+.gv1-lab-toc-row:hover .gv1-lab-toc-label{color:var(--gv1-ink-bright)}
+.gv1-lab-toc-folio{font-family:var(--gv1-mono);font-size:10px;color:var(--gv1-rune);letter-spacing:0.06em}
+.gv1-lab-toc-label{font-family:var(--gv1-serif);font-size:15px;color:var(--gv1-ink)}
+.gv1-lab-toc-n{font-family:var(--gv1-mono);font-size:11px;color:var(--gv1-ink-dim);font-variant-numeric:tabular-nums}
+
+/* corpus + export */
+.gv1-lab-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;padding:12px 14px;margin:0}
+.gv1-lab-kv dt{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--gv1-ink-dimmer);margin:0}
+.gv1-lab-kv dd{font-family:var(--gv1-mono);font-size:11px;color:var(--gv1-ink-dim);margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gv1-lab-export{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px}
+.gv1-lab-export-btn{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.05em;text-transform:uppercase;padding:7px 8px;border:1px solid var(--gv1-line);background:transparent;color:var(--gv1-ink-dim);cursor:pointer;transition:var(--gv1-transition-quick);white-space:nowrap}
+.gv1-lab-export-btn:hover{color:var(--gv1-rune);border-color:var(--gv1-rune-dim)}
+.gv1-lab-export-btn:disabled{opacity:0.4;cursor:not-allowed}
+.gv1-lab-smallprint{font-family:var(--gv1-mono);font-size:10px;line-height:1.7;color:var(--gv1-ink-dimmer);padding:0 4px;text-wrap:pretty}
+.gv1-lab-smallprint a{color:var(--gv1-ink-dim)}
+.gv1-lab-smallprint a:hover{color:var(--gv1-rune)}
+
+/* ── the disclosure (summary band) ────────────────────────────── */
+.gv1-lab-summary{border:1px solid var(--gv1-line-strong);background:var(--gv1-bg-2);scroll-margin-top:24px}
+.gv1-lab-summary-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:18px 22px 14px;border-bottom:1px solid var(--gv1-line)}
+.gv1-lab-summary-deck{font-family:var(--gv1-serif);font-size:32px;line-height:1;color:var(--gv1-ink-bright);margin:0;font-weight:400}
+.gv1-lab-summary-spacer{flex:1}
+.gv1-lab-stats{display:grid;grid-template-columns:repeat(5,1fr)}
+.gv1-lab-stat{display:flex;flex-direction:column;gap:6px;padding:16px 22px;border-right:1px solid var(--gv1-line)}
+.gv1-lab-stat:last-child{border-right:none}
+.gv1-lab-stat-n{font-family:var(--gv1-serif);font-size:44px;line-height:0.9;color:var(--gv1-ink-bright);font-variant-numeric:tabular-nums}
+.gv1-lab-stat-hot .gv1-lab-stat-n{color:var(--gv1-gold)}
+.gv1-lab-stat-sub{font-family:var(--gv1-mono);font-size:10px;color:var(--gv1-ink-dimmer);letter-spacing:0.04em;text-transform:uppercase}
+.gv1-lab-summary-foot{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;padding:12px 22px;border-top:1px solid var(--gv1-line)}
+
+/* ── report sections ──────────────────────────────────────────── */
+.gv1-lab-sec{display:flex;flex-direction:column;gap:18px;scroll-margin-top:24px}
+.gv1-lab-sec-head{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:12px;align-items:baseline;border-bottom:1px solid var(--gv1-line);padding-bottom:10px;scroll-margin-top:24px}
+.gv1-lab-sec-folio{font-family:var(--gv1-mono);font-size:12px;color:var(--gv1-rune);letter-spacing:0.08em;white-space:nowrap}
+.gv1-lab-sec-title{font-family:var(--gv1-serif);font-size:30px;font-weight:400;line-height:1.05;margin:0;color:var(--gv1-ink-bright)}
+.gv1-lab-sec-note{font-family:var(--gv1-mono);font-size:11px;letter-spacing:0.04em;text-transform:uppercase;color:var(--gv1-ink-dim);text-align:right}
+@keyframes gv1-lab-pulse{0%{outline-color:var(--gv1-focus-ring);outline-offset:6px}100%{outline-color:transparent;outline-offset:12px}}
+.gv1-lab-pulsing{outline:2px solid transparent;animation:gv1-lab-pulse 1s var(--gv1-ease-out) 2}
+
+/* framing (epistemic margin note) */
+.gv1-lab-framing{display:flex;gap:14px;align-items:baseline;border:1px solid var(--gv1-line);border-left:2px solid var(--gv1-rune-dim);background:var(--gv1-bg-2);padding:12px 16px}
+.gv1-lab-framing-b{border-left-color:var(--gv1-mana-r-stroke)}
+.gv1-lab-framing-c{border-left-color:var(--gv1-mana-u-stroke)}
+.gv1-lab-framing p{font-family:var(--gv1-serif);font-style:italic;font-size:14px;line-height:1.55;color:var(--gv1-ink-dim);margin:0;text-wrap:pretty}
+.gv1-lab-framing p strong{color:var(--gv1-ink);font-weight:500}
+
+/* tier + flag chips */
+.gv1-lab-tier{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;white-space:nowrap;flex-shrink:0}
+.gv1-lab-tier-a{color:var(--gv1-rune-bright);border:1px solid var(--gv1-rune-dim);background:rgba(124,200,146,0.08)}
+.gv1-lab-tier-b{color:var(--gv1-mana-r);border:1px solid var(--gv1-mana-r-stroke);background:rgba(232,168,152,0.08)}
+.gv1-lab-tier-c{color:var(--gv1-mana-u);border:1px solid var(--gv1-mana-u-stroke);background:rgba(168,200,232,0.08)}
+.gv1-lab-flag{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.05em;text-transform:uppercase;color:var(--gv1-ink-dim);border:1px solid var(--gv1-line-strong);padding:1px 6px;white-space:nowrap}
+.gv1-lab-flag-win{color:var(--gv1-gold-300);border-color:var(--gv1-gold-700);background:rgba(200,166,84,0.08)}
+.gv1-lab-band-strong{color:var(--gv1-gold-300);border-color:var(--gv1-gold-700)}
+
+/* ── finding cards (tier A + B) ───────────────────────────────── */
+.gv1-lab-grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.gv1-lab-combo{background:var(--gv1-bg-2);border:1px solid var(--gv1-line);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.gv1-lab-combo-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gv1-lab-pop{font-family:var(--gv1-mono);font-size:10px;color:var(--gv1-ink-dimmer);letter-spacing:0.04em;text-transform:uppercase;margin-left:auto;font-variant-numeric:tabular-nums}
+.gv1-lab-chain{font-family:var(--gv1-serif);font-size:20px;line-height:1.35;color:var(--gv1-ink-bright);margin:0}
+.gv1-lab-chain [data-card-name]{cursor:help;border-bottom:1px dotted var(--gv1-line-strong)}
+.gv1-lab-chain [data-card-name]:hover{border-bottom-color:var(--gv1-rune)}
+.gv1-lab-chain-sep{color:var(--gv1-ink-dimmer);font-size:15px;padding:0 4px}
+.gv1-lab-cmdr{font-family:var(--gv1-mono);font-size:9px;letter-spacing:0.06em;color:var(--gv1-gold);text-transform:uppercase;vertical-align:super}
+.gv1-lab-tpl{font-family:var(--gv1-mono);font-size:12px;color:var(--gv1-ink-dim);border:1px dashed var(--gv1-line-strong);padding:1px 7px;white-space:nowrap}
+.gv1-lab-arts{display:flex;gap:8px;flex-wrap:wrap}
+.gv1-lab-art{width:76px;aspect-ratio:146/204;background:var(--gv1-bg-3);border:1px solid var(--gv1-line);overflow:hidden;position:relative;cursor:help;transition:var(--gv1-transition-quick)}
+.gv1-lab-art:hover{border-color:var(--gv1-rune-dim)}
+.gv1-lab-art img{width:100%;height:100%;object-fit:cover;display:block}
+.gv1-lab-art-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gv1-rune-dim);font-size:16px}
+.gv1-lab-results{display:flex;gap:6px;flex-wrap:wrap}
+.gv1-lab-result{font-family:var(--gv1-mono);font-size:10.5px;color:var(--gv1-ink-dim);background:var(--gv1-bg-3);padding:2px 8px;letter-spacing:0.02em}
+.gv1-lab-result-inf{color:var(--gv1-rune)}
+.gv1-lab-steps{border-top:1px dashed var(--gv1-line);padding-top:10px}
+.gv1-lab-steps summary{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--gv1-ink-dim);cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+.gv1-lab-steps summary::before{content:'▸';color:var(--gv1-rune-dim);transition:var(--gv1-transition-quick)}
+.gv1-lab-steps[open] summary::before{transform:rotate(90deg)}
+.gv1-lab-steps summary:hover{color:var(--gv1-ink)}
+.gv1-lab-steps-body{display:flex;flex-direction:column;gap:10px;padding:10px 0 2px}
+.gv1-lab-steps-label{font-family:var(--gv1-mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gv1-ink-dimmer)}
+.gv1-lab-step{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:baseline}
+.gv1-lab-step-n{font-family:var(--gv1-mono);font-size:10px;color:var(--gv1-rune);font-variant-numeric:tabular-nums}
+.gv1-lab-step p,.gv1-lab-prose{font-family:var(--gv1-serif);font-size:14px;line-height:1.5;color:var(--gv1-ink);margin:0}
+.gv1-lab-combo-foot{display:flex;align-items:baseline;gap:12px;border-top:1px dashed var(--gv1-line);padding-top:10px;margin-top:auto}
+.gv1-lab-link{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.05em;text-transform:uppercase}
+.gv1-lab-leak{font-family:var(--gv1-mono);font-size:11px;color:var(--gv1-mana-r);letter-spacing:0.02em}
+.gv1-lab-leak-note{font-family:var(--gv1-serif);font-style:italic;font-size:13px;color:var(--gv1-ink-dim)}
+
+/* ── near-miss ledger ─────────────────────────────────────────── */
+.gv1-lab-near{display:flex;flex-direction:column;gap:10px}
+.gv1-lab-near-row{display:grid;grid-template-columns:40px minmax(200px,0.85fr) minmax(0,1.15fr) auto;gap:16px;align-items:baseline;background:var(--gv1-bg-2);border:1px solid var(--gv1-line);padding:12px 16px}
+.gv1-lab-dist{font-family:var(--gv1-mono);font-size:11px;color:var(--gv1-gold);font-variant-numeric:tabular-nums}
+.gv1-lab-dist-2{color:var(--gv1-ink-dimmer)}
+.gv1-lab-needs{font-family:var(--gv1-serif);font-size:17px;color:var(--gv1-gold-300);line-height:1.35}
+.gv1-lab-needs [data-card-name]{cursor:help;border-bottom:1px dotted var(--gv1-gold-700)}
+.gv1-lab-near-with{font-family:var(--gv1-serif);font-size:14px;color:var(--gv1-ink-dim);line-height:1.5}
+.gv1-lab-near-with [data-card-name]{cursor:help;border-bottom:1px dotted var(--gv1-line-strong)}
+.gv1-lab-near-with .gv1-lab-near-produce{font-family:var(--gv1-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.04em;color:var(--gv1-ink-dimmer);display:block;margin-top:3px}
+.gv1-lab-near-end{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.gv1-lab-more{align-self:flex-start;font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;padding:7px 14px;border:1px solid var(--gv1-line);background:transparent;color:var(--gv1-ink-dim);cursor:pointer;transition:var(--gv1-transition-quick)}
+.gv1-lab-more:hover{color:var(--gv1-rune);border-color:var(--gv1-rune-dim)}
+.gv1-lab-more:disabled{opacity:0.4;cursor:not-allowed}
+
+/* ── synergies ────────────────────────────────────────────────── */
+.gv1-lab-syn-list{display:flex;flex-direction:column;gap:10px}
+.gv1-lab-syn{background:var(--gv1-bg-2);border:1px solid var(--gv1-line);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.gv1-lab-syn-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.gv1-lab-syn-cards{font-family:var(--gv1-serif);font-size:17px;color:var(--gv1-ink-bright)}
+.gv1-lab-syn-cards [data-card-name]{cursor:help;border-bottom:1px dotted var(--gv1-line-strong)}
+.gv1-lab-econ{margin-left:auto;display:flex;gap:6px}
+.gv1-lab-edges{display:flex;flex-direction:column;gap:3px;margin:0;padding:0;list-style:none}
+.gv1-lab-edge{font-family:var(--gv1-mono);font-size:11px;color:var(--gv1-ink-dim);letter-spacing:0.01em;line-height:1.5}
+.gv1-lab-edge .gv1-arrow{padding:0 4px}
+.gv1-lab-edge-label{color:var(--gv1-ink-dimmer)}
+.gv1-lab-syn-groups{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.gv1-lab-h3{font-family:var(--gv1-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--gv1-ink-dim);margin:0 0 10px;display:flex;gap:8px;align-items:baseline}
+
+/* ── completions ──────────────────────────────────────────────── */
+.gv1-lab-filters{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.gv1-lab-filters .gv1-lab-input{width:80px;padding:5px 8px}
+.gv1-lab-filter-chip{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.05em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--gv1-line);background:transparent;color:var(--gv1-ink-dim);cursor:pointer;transition:var(--gv1-transition-quick)}
+.gv1-lab-filter-chip:hover{border-color:var(--gv1-line-strong);color:var(--gv1-ink)}
+.gv1-lab-filter-chip.gv1-active{color:var(--gv1-rune);border-color:var(--gv1-rune-dim);background:var(--gv1-focus-bg)}
+.gv1-lab-filter-chip:disabled{opacity:0.4;cursor:not-allowed}
+.gv1-lab-comp-list{display:flex;flex-direction:column;gap:10px}
+.gv1-lab-comp{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:16px;background:var(--gv1-bg-2);border:1px solid var(--gv1-line);padding:12px 16px 12px 12px;align-items:center}
+.gv1-lab-comp .gv1-lab-art{width:58px}
+.gv1-lab-comp-name{font-family:var(--gv1-serif);font-size:19px;color:var(--gv1-ink-bright);line-height:1.2}
+.gv1-lab-comp-name [data-card-name]{cursor:help;border-bottom:1px dotted var(--gv1-line-strong)}
+.gv1-lab-comp-sample{font-family:var(--gv1-serif);font-size:13px;font-style:italic;color:var(--gv1-ink-dim);line-height:1.5;margin-top:4px}
+.gv1-lab-comp-end{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.gv1-lab-comp-unlocks{font-family:var(--gv1-serif);font-size:28px;line-height:1;color:var(--gv1-rune);font-variant-numeric:tabular-nums}
+.gv1-lab-owned-tag{color:var(--gv1-rune)}
+
+/* ── shared notes / warnings / footer ─────────────────────────── */
+.gv1-lab-note{font-family:var(--gv1-mono);font-size:11px;line-height:1.7;letter-spacing:0.02em;color:var(--gv1-ink-dim);text-transform:none;margin:0}
+.gv1-lab-note .gv1-rune{color:var(--gv1-rune)}
+.gv1-lab-warn{font-family:var(--gv1-mono);font-size:11px;line-height:1.7;color:var(--gv1-ink);background:var(--gv1-bg-2);border:1px solid var(--gv1-status-warn);padding:10px 14px;margin:0}
+.gv1-lab-attrib{font-family:var(--gv1-mono);font-size:10px;line-height:1.8;color:var(--gv1-ink-dimmer);border-top:1px solid var(--gv1-line);padding-top:16px}
+.gv1-lab-attrib a{color:var(--gv1-ink-dim)}
+.gv1-lab-unscribed{min-height:420px}
+
+/* ── narrow reflow — container query so wide screens stay desktop while
+   phones/preview panes reflow; same pattern as the Scrying screen ──── */
+[data-gv1-screen="combolab"]{container-type:inline-size;container-name:gv1lab}
+@container gv1lab (max-width:1080px){
+  .gv1-lab-layout{grid-template-columns:1fr;padding:24px 24px 64px}
+  .gv1-lab-rail{position:static}
+  .gv1-lab-hero{grid-template-columns:1fr;padding:32px 24px 20px;gap:16px}
+  .gv1-lab-grid2,.gv1-lab-syn-groups{grid-template-columns:1fr}
+  .gv1-lab-stats{grid-template-columns:repeat(2,1fr)}
+  .gv1-lab-stat{border-bottom:1px solid var(--gv1-line)}
+  .gv1-lab-near-row{grid-template-columns:32px 1fr;grid-auto-rows:auto}
+}
+
+/* ════ production additions (not in the prototype stylesheet) ════ */
+
+/* The lab owns its gutters (hero/layout carry the 72px padding + full-bleed
+   hairline), so zero the app shell's main padding for this screen only —
+   same opt-out pattern app.css uses for the deck guide. */
+.gv1-app > main:has([data-gv1-screen="combolab"]){padding:0}
+
+/* DEC-1019, DEC-1032: the prototype pins the whole control rail
+   (`position:sticky;top:20px` above). It never pinned in production while
+   `.gv1-root` was `overflow:hidden` (the root was its scroll container), and
+   it cannot pin whole under `overflow:clip`: it is 1329px tall with the
+   fleet's decks. So the rail stays in the flow, the mode switch and the deck
+   picker scroll with the page, and the rail from Contents down (Contents, the
+   tier legend, the exports and the small print) pins as one part. */
+.gv1-lab-rail{position:static}
+.gv1-lab-rail-pin{display:flex;flex-direction:column;gap:20px}
+/* The part is 659px tall at its tallest (1280–1920px wide, fonts live; 639px
+   with them blocked), so it pins only where it fits whole, 20px from the top
+   and the bottom: 699px, so the query starts at 700px. The rail stretches to the report's height to give it
+   room to stay pinned. Nothing in the rail follows the part, and the deck
+   picker has left the screen before the part pins, so no control sits under
+   it and keyboard focus needs no scroll margin. */
+@container gv1lab (width > 1080px){
+  @media (min-height:700px){
+    .gv1-lab-rail{align-self:stretch}
+    .gv1-lab-rail-pin{position:sticky;top:20px}
+  }
+}
+
+/* Empty states — ported from the prototype's gv1-states.css (production
+   styles.css has a different .gv1-empty), scoped to this screen. */
+[data-gv1-screen="combolab"] .gv1-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:48px 32px;border:1px dashed var(--gv1-line);background:linear-gradient(180deg,rgba(124,200,146,0.02),transparent 60%);font-family:var(--gv1-serif);font-style:italic;font-size:15px;color:var(--gv1-ink-dim);text-align:center;text-wrap:balance}
+[data-gv1-screen="combolab"] .gv1-empty::before{content:'◇';font-style:normal;font-size:24px;color:var(--gv1-rune-dim);letter-spacing:0.4em}
+[data-gv1-screen="combolab"] .gv1-empty-title{font-size:18px;color:var(--gv1-ink);font-style:normal}
+[data-gv1-screen="combolab"] .gv1-empty-hint{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;font-style:normal;color:var(--gv1-ink-dimmer)}
+
+/* Art-thumb loading shimmer (prototype used the global gv1-skeleton). */
+@keyframes gv1-lab-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.gv1-lab-skeleton{position:absolute;inset:0;background:linear-gradient(90deg,var(--gv1-bg-2) 0%,var(--gv1-bg-3) 50%,var(--gv1-bg-2) 100%);background-size:200% 100%;animation:gv1-lab-shimmer 1.4s linear infinite}
+@media (prefers-reduced-motion:reduce){.gv1-lab-skeleton{animation:none}}
+
+/* IN-2 deck-URL resolver row (production keeps it; the prototype cut it). */
+.gv1-lab-url-row{display:flex;gap:8px}
+.gv1-lab-url-row .gv1-lab-input{flex:1;min-width:0}
+
+/* Currency select shares the input skin. */
+select.gv1-lab-input{cursor:pointer}
+.gv1-lab-filters select.gv1-lab-input{width:auto}
