@@ -2,6 +2,11 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useCard } from '../../hooks/useCard';
 import { cardCache } from '../../data/cardCache';
+import { identifiersOf } from '../data/scryfallFakes';
+
+/** The answer to one batch: the given cards. */
+const batch = (...data: object[]) =>
+  new Response(JSON.stringify({ object: 'list', not_found: [], data }), { status: 200 });
 
 function clearStorage() {
   for (let i = window.localStorage.length - 1; i >= 0; i--) {
@@ -18,14 +23,14 @@ beforeEach(() => {
 describe('useCard', () => {
   it('transitions to loaded once the underlying fetch resolves', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify({
+      batch({
         name: 'Sol Ring',
         mana_cost: '{1}',
         cmc: 1,
         type_line: 'Artifact',
         image_uris: { small: 's', normal: 'n', art_crop: 'a' },
         prices: { usd: '0.42' },
-      }), { status: 200 }),
+      }),
     );
     const { result } = renderHook(() => useCard('Sol Ring'));
     // Before the fetch resolves, status is null or loading — never loaded.
@@ -50,23 +55,23 @@ describe('useCard', () => {
   });
 
   it('updates when the requested name changes', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
-      const u = String(url);
-      const name = u.includes('Sol') ? 'Sol Ring' : 'Mana Crypt';
-      return new Response(JSON.stringify({
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (_url, init) => {
+      const [name] = identifiersOf(init?.body);
+      return batch({
         name,
         mana_cost: '{0}',
         type_line: 'Artifact',
         image_uris: { small: `s-${name}`, normal: '', art_crop: '' },
         prices: { usd: '1.00' },
-      }), { status: 200 });
+      });
     });
     const { result, rerender } = renderHook(({ name }: { name: string }) => useCard(name), {
       initialProps: { name: 'Sol Ring' },
     });
     await waitFor(() => expect(result.current?.name).toBe('Sol Ring'));
     act(() => { rerender({ name: 'Mana Crypt' }); });
-    await waitFor(() => expect(result.current?.name).toBe('Mana Crypt'));
+    // The second batch goes 1,200 ms after the first (DEC-1131).
+    await waitFor(() => expect(result.current?.name).toBe('Mana Crypt'), { timeout: 3_000 });
     fetchSpy.mockRestore();
   });
 });

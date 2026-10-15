@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import {
   Shopping,
   aggregateCards,
@@ -7,8 +7,12 @@ import {
   parseOwnedFile,
   splitOwnership,
 } from '../../components/organisms/Shopping';
-import type { DeckFull, DeckListGroup } from '../../data/types';
+import { cardCache } from '../../data/cardCache';
+import { deckLoader } from '../../data/loader';
+import { COLLECTION_URL } from '../../data/scryfallLimiter';
+import type { DeckFull, DeckListGroup, RawCardMetadata } from '../../data/types';
 import { formatPricesDate } from '../../lib/pricesDate';
+import { identifiersOf } from '../data/scryfallFakes';
 
 function makeDeck(over: Partial<DeckFull>): DeckFull {
   return {
@@ -119,6 +123,13 @@ describe('parseOwnedFile', () => {
     const map = parseOwnedFile('Name,Quantity\nBrazen Borrower // Petty Theft,1\n');
     expect(map.get('Brazen Borrower')).toBe(1);
     expect(map.has('Brazen Borrower // Petty Theft')).toBe(false);
+  });
+
+  it('counts a CSV quantity below 1 as 1 and keeps a quantity of 1 or more (DEC-1141)', () => {
+    expect(parseOwnedFile('Name,Quantity\nSol Ring,-1\n').get('Sol Ring')).toBe(1);
+    expect(parseOwnedFile('Name,Quantity\nSol Ring,0\n').get('Sol Ring')).toBe(1);
+    expect(parseOwnedFile('Name,Quantity\nSol Ring,3\n').get('Sol Ring')).toBe(3);
+    expect(parseOwnedFile('Name,Quantity\nSol Ring,2.5\n').get('Sol Ring')).toBe(2);
   });
 });
 
@@ -562,6 +573,131 @@ describe('Shopping organism', () => {
       expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
     });
   });
+
+  describe('an owned quantity is a whole number of 1 or more (DEC-1141)', () => {
+    const loadStore = (raw: string) => {
+      localStorage.setItem(STORAGE_KEY, raw);
+      renderShopping([ALPHA]);
+    };
+
+    it('counts a CSV quantity of -1 as 1 in the import message and the owned bar', async () => {
+      const { container } = renderShopping([ALPHA]);
+      const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+      // jsdom's File has no text(), so the test gives it one.
+      const body = 'Name,Quantity\nSol Ring,-1\nArcane Signet,1\n';
+      const file = new File([body], 'owned.csv', { type: 'text/csv' });
+      Object.defineProperty(file, 'text', { value: () => Promise.resolve(body) });
+      fireEvent.change(input, { target: { files: [file] } });
+      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+        'Added 2 unique cards (2 total). 2 cards loaded. To replace the list, use Clear owned first.',
+      ));
+      expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
+      expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toEqual([['Sol Ring', 1], ['Arcane Signet', 1]]);
+    });
+
+    it('drops a stored quantity that is not a whole number, and writes nothing back', () => {
+      const raw = JSON.stringify([['Sol Ring', 0.5], ['Arcane Signet', 2]]);
+      loadStore(raw);
+      expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
+      expect(localStorage.getItem(STORAGE_KEY)).toBe(raw);
+    });
+
+    it('drops a stored quantity of 1 or more that is not a whole number', () => {
+      loadStore(JSON.stringify([['Sol Ring', 1.5], ['Swords to Plowshares', '2'], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('drops a stored quantity below 1', () => {
+      loadStore(JSON.stringify([['Sol Ring', -1], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('shows the empty list for a store whose one entry has no quantity', () => {
+      const raw = JSON.stringify([['Sol Ring']]);
+      loadStore(raw);
+      expect(screen.getByText('// .csv (Name,Quantity) or .txt (one card per line)')).toBeInTheDocument();
+      expect(screen.queryByText(/loaded —/)).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Clear owned' })).not.toBeInTheDocument();
+      expect(localStorage.getItem(STORAGE_KEY)).toBe(raw);
+    });
+
+    it('drops a stored entry whose name is not a string', () => {
+      loadStore(JSON.stringify([[7, 2], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('drops a stored entry whose name has no text', () => {
+      loadStore(JSON.stringify([['  ', 2], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('drops a stored entry that is not a two-item array', () => {
+      loadStore(JSON.stringify([null, ['Sol Ring', 2, 'foil'], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+  });
+
+  describe('the count of cards in the Need to buy and Already own headers (DEC-1142)', () => {
+    // Each deck holds its commander and one other card, Sol Ring. With both decks
+    // selected, a header holds 1 unique card and 2 cards, so the noun follows the
+    // card count.
+    const SOLO_A = makeDeck({
+      slug: 'solo-a',
+      deckName: 'Solo A',
+      commander: 'Solo A Commander',
+      list: [group('Commander', ['Solo A Commander']), group('Ramp (1)', ['Sol Ring'])],
+    });
+    const SOLO_B = makeDeck({
+      idx: 2,
+      slug: 'solo-b',
+      deckName: 'Solo B',
+      commander: 'Solo B Commander',
+      list: [group('Commander', ['Solo B Commander']), group('Ramp (1)', ['Sol Ring'])],
+    });
+    const buyHead = () => screen.getByRole('heading', { name: 'Need to buy' }).parentElement!;
+    const ownHead = () => screen.getByRole('button', { name: /Already own/ });
+
+    // The user owns both commanders, so Need to buy holds Sol Ring alone.
+    const ownCommanders = () =>
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Solo A Commander', 1], ['Solo B Commander', 1]]));
+
+    it('reads `1 unique · 1 card` to buy for one deck that wants one Sol Ring', () => {
+      ownCommanders();
+      renderShopping([SOLO_A, SOLO_B]);
+      expect(within(buyHead()).getByText('· 1 unique · 1 card')).toBeInTheDocument();
+    });
+
+    it('reads `1 unique · 2 cards` to buy for two decks that each want one Sol Ring', () => {
+      ownCommanders();
+      renderShopping([SOLO_A, SOLO_B]);
+      fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
+      expect(within(buyHead()).getByText('· 1 unique · 2 cards')).toBeInTheDocument();
+    });
+
+    it('reads `1 unique · 1 card` owned for an import of one Sol Ring and a deck that holds it', () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Sol Ring', 1]]));
+      renderShopping([SOLO_A]);
+      expect(within(ownHead()).getByText('· 1 unique · 1 card')).toBeInTheDocument();
+    });
+
+    it('reads `1 unique · 2 cards` owned for an import of two Sol Rings and two decks that hold it', () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Sol Ring', 2]]));
+      renderShopping([SOLO_A, SOLO_B]);
+      fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
+      expect(within(ownHead()).getByText('· 1 unique · 2 cards')).toBeInTheDocument();
+    });
+
+    // The user owns Solo A Commander alone. With both decks selected, Need to buy holds
+    // Solo B Commander and two Sol Rings (2 unique, 3 cards) and Already own holds one
+    // card, so each header must read the counts of its own section.
+    it('reads `2 unique · 3 cards` to buy and `1 unique · 1 card` owned when the sections hold different counts', () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Solo A Commander', 1]]));
+      renderShopping([SOLO_A, SOLO_B]);
+      fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
+      expect(within(buyHead()).getByText('· 2 unique · 3 cards')).toBeInTheDocument();
+      expect(within(ownHead()).getByText('· 1 unique · 1 card')).toBeInTheDocument();
+    });
+  });
 });
 
 describe('the date of the prices in the footer (DEC-1102)', () => {
@@ -571,5 +707,87 @@ describe('the date of the prices in the footer (DEC-1102)', () => {
     expect(formatPricesDate('2026-09-05T00:00:00Z')).toBe('5 Sep 2026');
     expect(formatPricesDate(undefined)).toBeNull();
     expect(formatPricesDate('not a date')).toBeNull();
+  });
+});
+
+// DEC-1131 rulings 3 and 7: the rows show the file's prices at first paint, then
+// ask for the prices older than 24 h. The footer gives the oldest date among the
+// priced rows.
+describe('the price refresh of /shopping (DEC-1131)', () => {
+  const OLD = '2026-10-10T08:00:00+00:00';
+  const meta = (usd: number | null) => ({ cmc: 1, image: 'front/a/b/x.jpg', mana_cost: '{1}', type_line: 'Artifact', usd, eur: null });
+  const FILE: RawCardMetadata = {
+    'Alpha Commander': meta(null),
+    'Sol Ring': meta(1.5),
+    'Arcane Signet': meta(0.5),
+    'Swords to Plowshares': meta(2),
+  };
+  let fetchSpy: MockInstance<typeof fetch>;
+  let batches: string[][];
+
+  beforeEach(() => {
+    cardCache._reset();
+    deckLoader._reset();
+    localStorage.clear();
+    cardCache.seed(FILE, OLD);
+    batches = [];
+    // Each usd of a batch's answer is $1.00 more than the file's.
+    fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+      const url = String(input);
+      if (url.endsWith('/card-metadata.meta.json')) {
+        return new Response(JSON.stringify({ prices_as_of: OLD }), { status: 200 });
+      }
+      if (url === COLLECTION_URL) {
+        const names = identifiersOf(init?.body);
+        batches.push(names);
+        const data = names.map((name) => ({
+          name,
+          prices: { usd: FILE[name].usd == null ? null : (FILE[name].usd! + 1).toFixed(2) },
+        }));
+        return new Response(JSON.stringify({ object: 'list', not_found: [], data }), { status: 200 });
+      }
+      throw new TypeError(`unexpected fetch ${url}`);
+    });
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+    cardCache._reset();
+  });
+
+  const estimate = () => screen.getByText('EST. COST').parentElement!.querySelector('.gv1-serif-xl')!.textContent;
+  const foot = () => document.querySelector('.gv1-shop-foot')!.textContent;
+
+  it("shows the file's prices first, then the refreshed ones, and the footer moves to the date of the refresh", async () => {
+    render(<Shopping decks={[ALPHA]} />);
+    expect(estimate()).toBe('$4');
+    await waitFor(() => expect(foot()).toContain('Prices are USD from Scryfall, as of 10 Oct 2026.'));
+
+    await waitFor(() => expect(estimate()).toBe('$7'));
+    expect(batches).toHaveLength(1);
+    expect([...batches[0]].sort()).toEqual(['Alpha Commander', 'Arcane Signet', 'Sol Ring', 'Swords to Plowshares']);
+    expect(screen.getByText('$2.50')).toBeInTheDocument();
+    expect(foot()).toContain(`Prices are USD from Scryfall, as of ${formatPricesDate(new Date().toISOString())}.`);
+  });
+
+  it("keeps the file's date while one priced row keeps the file's price", async () => {
+    fetchSpy.mockImplementation(async (input, init) => {
+      const url = String(input);
+      if (url.endsWith('/card-metadata.meta.json')) return new Response(JSON.stringify({ prices_as_of: OLD }), { status: 200 });
+      const names = identifiersOf(init?.body);
+      batches.push(names);
+      // Scryfall has no usd for Sol Ring today: the row keeps the file's price.
+      // The commander has none in the file either, and stays unpriced.
+      const data = names.map((name) => ({
+        name,
+        prices: { usd: name === 'Sol Ring' || name === 'Alpha Commander' ? null : '9.00' },
+      }));
+      return new Response(JSON.stringify({ object: 'list', not_found: [], data }), { status: 200 });
+    });
+    render(<Shopping decks={[ALPHA]} />);
+    // $1.50 + $9.00 + $9.00
+    await waitFor(() => expect(estimate()).toBe('$20'));
+    expect(screen.getByText('$1.50')).toBeInTheDocument();
+    expect(foot()).toContain('as of 10 Oct 2026.');
   });
 });
