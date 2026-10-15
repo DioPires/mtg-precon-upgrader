@@ -53,11 +53,18 @@ def _get_json(url: str) -> dict:
 
 
 def verify_set(code: str) -> dict:
-    """Ask Scryfall about the set code and return its record."""
+    """Ask Scryfall about the set code and return its record.
+
+    A 404 means Scryfall does not know the code. Any other HTTP status, a 3xx
+    among them, is printed with its reason (DEC-1098). Both exit with 1.
+    """
     try:
         info = _get_json(f"{API}/sets/{urllib.parse.quote(code)}")
     except urllib.error.HTTPError as exc:
-        raise SystemExit(f"Scryfall does not know set code {code!r} ({exc.code})") from exc
+        if exc.code == 404:
+            raise SystemExit(f"Scryfall does not know set code {code!r} ({exc.code})") from exc
+        raise SystemExit(
+            f"Scryfall answered HTTP {exc.code} {exc.reason} for set code {code!r}") from exc
     print(f"set {info['code']}: {info['name']}")
     print(f"  released: {info.get('released_at')}")
     print(f"  card_count (Scryfall): {info.get('card_count')}")

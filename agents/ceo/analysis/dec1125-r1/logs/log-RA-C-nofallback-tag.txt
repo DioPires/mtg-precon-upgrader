@@ -1,0 +1,32 @@
+
+ RUN  v2.1.9 /private/tmp/dec1125-ceo/wt-merged/web
+
+ ❯ src/__tests__/components/Apothecary.test.tsx (49 tests | 1 failed) 365ms
+   × Apothecary > role labels from the shared map (DEC-1077) > a role key that the shared map does not hold reads raw > on the chip, in the status line, in "filtered:" and in both tags 6ms
+     → expected '' to be 'storm' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 48 passed (49)
+   Start at  09:11:48
+   Duration  968ms (transform 49ms, setup 25ms, collect 65ms, tests 365ms, environment 149ms, prepare 35ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.test.tsx > Apothecary > role labels from the shared map (DEC-1077) > a role key that the shared map does not hold reads raw > on the chip, in the status line, in "filtered:" and in both tags
+AssertionError: expected '' to be 'storm' // Object.is equality
+
+- Expected
++ Received
+
+- storm
+
+ ❯ src/__tests__/components/Apothecary.test.tsx:882:93
+    880|         expect(screen.getByText(/ · filtered: lifegain$/)).toBeInTheDo…
+    881|         expect(container.querySelector('.gv1-apo-tag-addresses')?.text…
+    882|         expect(container.querySelector('.gv1-apo-remedies .gv1-apo-tag…
+       |                                                                                             ^
+    883|       });
+    884| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
