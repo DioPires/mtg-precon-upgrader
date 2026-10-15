@@ -5,7 +5,9 @@
 //
 // At 769px the dossier is 345px wide. On one row, the two commander names and
 // the deck type need more than that (27px past the content edge with the web
-// fonts, 76px with them blocked), so the row wraps.
+// fonts, 76px with them blocked), so the row wraps. It wraps at every width:
+// without the wrap the row also passed the content edge at 390px (14px with the
+// web fonts, 63px with them blocked) and at 1021px with the fonts blocked (28px).
 
 import { expect, test, type Page } from './support/test';
 
@@ -50,20 +52,22 @@ type Block = {
   bodyLeft: number;
   nameTop: number;
   past: string[];
+  rootScroll: number;
+  rootClient: number;
 };
 
-// The art stack, the dossier and the deck name, and every box or text in the
-// block that passes the section's content edge.
+// The art stack, the dossier and the deck name, every box or text in the block
+// that passes the section's content edge, and the root's widths.
 async function readBlock(page: Page): Promise<Block> {
   return page.evaluate(() => {
     const section = document.querySelector('.gv1-commander')!;
-    const grid = section.querySelector('.gv1-cmd-grid')!;
+    const root = document.querySelector('.gv1-root')!;
     const edge = section.getBoundingClientRect().right - parseFloat(getComputedStyle(section).paddingRight);
     const label = (el: Element) => `${el.tagName.toLowerCase()}.${(el.getAttribute('class') ?? '').trim().split(/\s+/).join('.')}`;
     const past: string[] = [];
-    for (const el of [grid, ...grid.querySelectorAll('*')]) {
+    for (const el of [section, ...section.querySelectorAll('*')]) {
       const r = el.getBoundingClientRect();
-      if (r.width > 0 && r.height > 0 && r.right > edge + 0.5) past.push(`${label(el)} box ${(r.right - edge).toFixed(1)}px`);
+      if (el !== section && r.width > 0 && r.height > 0 && r.right > edge + 0.5) past.push(`${label(el)} box ${(r.right - edge).toFixed(1)}px`);
       for (const n of el.childNodes) {
         if (n.nodeType !== Node.TEXT_NODE || !(n.textContent ?? '').trim()) continue;
         const range = document.createRange();
@@ -80,6 +84,8 @@ async function readBlock(page: Page): Promise<Block> {
       bodyLeft: section.querySelector('.gv1-cmd-body')!.getBoundingClientRect().left,
       nameTop: section.querySelector('.gv1-cmd-deckname')!.getBoundingClientRect().top,
       past,
+      rootScroll: root.scrollWidth,
+      rootClient: root.clientWidth,
     };
   });
 }
@@ -102,3 +108,60 @@ for (const fonts of ['live', 'blocked'] as const) {
     });
   });
 }
+
+// The partner row wraps outside the band too (the base rules).
+const OUTSIDE_THE_BAND = [
+  { width: 390, fonts: 'live', root: false },
+  { width: 390, fonts: 'blocked', root: true },
+  { width: 1021, fonts: 'blocked', root: false },
+] as const;
+
+for (const { width, fonts, root } of OUTSIDE_THE_BAND) {
+  test.describe(`DEC-1046 @ ${width}px, web fonts ${fonts}`, () => {
+    test.use({ cards: 'seeded', fonts, viewport: { width, height: 900 } });
+
+    test(`a deck with a partner: the block inside its content edge${root ? ', and the root inside the viewport' : ''}`, async ({ page }) => {
+      await withPartner(page);
+      await page.goto(`/deck/${DECK}`);
+      await page.locator('.gv1-perf-grid').first().waitFor();
+      await settle(page);
+
+      const block = await readBlock(page);
+      expect(block.arts, 'commander arts').toBe(2);
+      expect(block.past, 'boxes and text past the content edge').toEqual([]);
+      if (root) expect(block.rootScroll, '.gv1-root scrollWidth against its clientWidth').toBe(block.rootClient);
+    });
+  });
+}
+
+// Between 768 and 769px (browser zoom) a band rule from 769px and the 768px
+// block both miss, and the Commander got the desktop tracks. The harness sets
+// whole-pixel viewports only, and an iframe 768.5px wide gives its page a 769px
+// viewport. So this case reads the built stylesheet: the band rule has no lower
+// bound.
+test('DEC-1046: the band rule of the deck name has no lower bound', async ({ page }) => {
+  await page.goto(`/deck/${DECK}`);
+  await page.locator('.gv1-cmd-deckname').waitFor();
+
+  const media = await page.evaluate(() => {
+    const found: string[] = [];
+    const walk = (rules: CSSRuleList, within: string) => {
+      for (const rule of rules) {
+        if (rule instanceof CSSMediaRule) walk(rule.cssRules, rule.media.mediaText);
+        else if (rule instanceof CSSStyleRule && rule.selectorText === '.gv1-cmd-deckname' && rule.style.fontSize.includes('clamp(')) found.push(within);
+      }
+    };
+    for (const sheet of document.styleSheets) {
+      // The web fonts' sheet comes from another origin, and its rules cannot be read.
+      let rules: CSSRuleList;
+      try {
+        rules = sheet.cssRules;
+      } catch {
+        continue;
+      }
+      walk(rules, '(no media rule)');
+    }
+    return found;
+  });
+  expect(media, 'the media rules that scale the deck name').toEqual(['(max-width: 1020px)']);
+});
