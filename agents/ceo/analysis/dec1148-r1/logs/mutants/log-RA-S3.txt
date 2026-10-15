@@ -1,0 +1,124 @@
+
+ RUN  v2.1.9 /private/tmp/dec1148-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (28 tests | 4 failed) 123ms
+   × DeckSelector focus after a key switch (DEC-1135) > ArrowRight moves focus to the pill that becomes active 7ms
+     → expected [ { name: 'Deck 4', …(2) } ] to deeply equal [ { name: 'Deck 4', …(2) } ]
+   × DeckSelector focus after a key switch (DEC-1135) > ArrowLeft moves focus to the pill that becomes active 3ms
+     → expected [ { name: 'Deck 2', …(2) } ] to deeply equal [ { name: 'Deck 2', …(2) } ]
+   × DeckSelector focus after a key switch (DEC-1135) > Home moves focus to the pill that becomes active 3ms
+     → expected [ { name: 'Deck 1', …(2) } ] to deeply equal [ { name: 'Deck 1', …(2) } ]
+   × DeckSelector focus after a key switch (DEC-1135) > End moves focus to the pill that becomes active 3ms
+     → expected [ { name: 'Deck 5', …(2) } ] to deeply equal [ { name: 'Deck 5', …(2) } ]
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 24 passed (28)
+   Start at  16:39:52
+   Duration  489ms (transform 33ms, setup 21ms, collect 46ms, tests 123ms, environment 121ms, prepare 37ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > ArrowRight moves focus to the pill that becomes active
+AssertionError: expected [ { name: 'Deck 4', …(2) } ] to deeply equal [ { name: 'Deck 4', …(2) } ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+      "name": "Deck 4",
+-     "selected": "true",
+-     "tabIndex": 0,
++     "selected": "false",
++     "tabIndex": -1,
+    },
+  ]
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:467:18
+    465|     expect(el.tabIndex).toBe(0);
+    466|     expect(tabs[2]).toHaveAttribute('aria-selected', 'false');
+    467|     expect(seen).toEqual([{ name: `Deck ${idx}`, selected: 'true', tab…
+       |                  ^
+    468|   });
+    469| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > ArrowLeft moves focus to the pill that becomes active
+AssertionError: expected [ { name: 'Deck 2', …(2) } ] to deeply equal [ { name: 'Deck 2', …(2) } ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+      "name": "Deck 2",
+-     "selected": "true",
+-     "tabIndex": 0,
++     "selected": "false",
++     "tabIndex": -1,
+    },
+  ]
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:467:18
+    465|     expect(el.tabIndex).toBe(0);
+    466|     expect(tabs[2]).toHaveAttribute('aria-selected', 'false');
+    467|     expect(seen).toEqual([{ name: `Deck ${idx}`, selected: 'true', tab…
+       |                  ^
+    468|   });
+    469| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > Home moves focus to the pill that becomes active
+AssertionError: expected [ { name: 'Deck 1', …(2) } ] to deeply equal [ { name: 'Deck 1', …(2) } ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+      "name": "Deck 1",
+-     "selected": "true",
+-     "tabIndex": 0,
++     "selected": "false",
++     "tabIndex": -1,
+    },
+  ]
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:467:18
+    465|     expect(el.tabIndex).toBe(0);
+    466|     expect(tabs[2]).toHaveAttribute('aria-selected', 'false');
+    467|     expect(seen).toEqual([{ name: `Deck ${idx}`, selected: 'true', tab…
+       |                  ^
+    468|   });
+    469| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > End moves focus to the pill that becomes active
+AssertionError: expected [ { name: 'Deck 5', …(2) } ] to deeply equal [ { name: 'Deck 5', …(2) } ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+      "name": "Deck 5",
+-     "selected": "true",
+-     "tabIndex": 0,
++     "selected": "false",
++     "tabIndex": -1,
+    },
+  ]
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:467:18
+    465|     expect(el.tabIndex).toBe(0);
+    466|     expect(tabs[2]).toHaveAttribute('aria-selected', 'false');
+    467|     expect(seen).toEqual([{ name: `Deck ${idx}`, selected: 'true', tab…
+       |                  ^
+    468|   });
+    469| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

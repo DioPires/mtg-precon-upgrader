@@ -1,0 +1,154 @@
+diff --git a/tests/test_build_price_index.py b/tests/test_build_price_index.py
+index f447ca0..4b77617 100644
+--- a/tests/test_build_price_index.py
++++ b/tests/test_build_price_index.py
+@@ -29,7 +29,7 @@ import urllib.parse
+ from pathlib import Path
+ from unittest import mock
+ 
+-from tests.test_scryfall_fetch import FakeScryfall, Sent, scryfall_api
++from tests.test_scryfall_fetch import STOP_TEXT, FakeScryfall, Sent, scryfall_api
+ 
+ bpi = importlib.import_module("scripts.build_price_index")
+ 
+@@ -635,7 +635,7 @@ class LiveRunTests(IndexCase):
+         code, err = self.run_live(fake, "--force", "--download-dir", str(folder))
+         self.assertEqual(code, 1)
+         self.assertIn("429", err)
+-        self.assertIn("wait 30 seconds or more", err)
++        self.assertRegex(err, STOP_TEXT)
+         self.assertIn("No file written.", err)
+         self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL])
+         self.assertFalse(folder.exists())
+diff --git a/tests/test_scryfall_callers.py b/tests/test_scryfall_callers.py
+index b95b82b..9ee911f 100644
+--- a/tests/test_scryfall_callers.py
++++ b/tests/test_scryfall_callers.py
+@@ -710,18 +710,31 @@ class FormatOwnedListTests(CallerCase):
+ BULK_DATA_URL = f"{API}/bulk-data"
+ EXPORT_URL = "https://data.scryfall.io/oracle-cards/oracle-cards-20261015090000.jsonl.gz"
+ UPDATED_AT = "2026-10-15T09:00:00.000+00:00"
++DEFAULT_EXPORT_URL = "https://data.scryfall.io/default-cards/default-cards-20261015092000.jsonl.gz"
++DEFAULT_UPDATED_AT = "2026-10-15T09:20:00.000+00:00"
+ SOL_RING = {"sol ring": [1.2, 1.5]}
+ 
+ 
++class BulkFake(FakeScryfall):
++    """FakeScryfall whose answers also read a part at a time, as shutil.copyfileobj reads
++    them: build_price_index.py copies each download that way (DEC-1086)."""
++
++    def urlopen(self, req, timeout=None):
++        return io.BytesIO(super().urlopen(req, timeout).read())
++
++
+ def bulk_fake() -> FakeScryfall:
+-    """/bulk-data names one oracle_cards export, and the export holds one card."""
+-    fake = FakeScryfall()
++    """/bulk-data names the oracle_cards and default_cards exports, and each export holds one
++    card. refresh_scryfall_mirror.py downloads the oracle_cards export only."""
++    fake = BulkFake()
+     fake.pages = {BULK_DATA_URL: {"object": "list", "data": [
+         {"type": "oracle_cards", "updated_at": UPDATED_AT,
+-         "jsonl_download_uri": EXPORT_URL}]}}
++         "jsonl_download_uri": EXPORT_URL},
++        {"type": "default_cards", "updated_at": DEFAULT_UPDATED_AT,
++         "jsonl_download_uri": DEFAULT_EXPORT_URL}]}}
+     card = make_card("Sol Ring", legalities={"commander": "legal"})
+-    # The body of the second request, the download.
+-    fake.failures[1] = gzip.compress(json.dumps(card).encode() + b"\n")
++    # The bodies of the second and third requests, the downloads.
++    fake.failures[1] = fake.failures[2] = gzip.compress(json.dumps(card).encode() + b"\n")
+     return fake
+ 
+ 
+@@ -731,6 +744,7 @@ class BulkDataCase(CallerCase):
+     module = None
+     folder = ""  # the module's name of the folder that holds its files
+     files = ()  # the module's names of its files
++    downloads = (EXPORT_URL,)  # the exports that the script downloads, in order
+ 
+     def setUp(self):
+         super().setUp()
+@@ -753,18 +767,19 @@ class BulkDataCase(CallerCase):
+         return sorted(p.name for p in self.root.rglob("*") if p.is_file())
+ 
+     def check_bulk_data_goes_through_the_helper(self):
+-        """GET /bulk-data waits as the helper's requests do; the download does not wait."""
++        """GET /bulk-data waits as the helper's requests do; no download waits."""
+         fake = bulk_fake()
+         fake.state = {"last_answer": fake.now - 0.2, "last_slow_answer": fake.now - 0.2}
+ 
+         code, _ = self.run_main(fake)
+ 
+         self.assertEqual(code, 0)
+-        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL, EXPORT_URL])
+-        bulk, export = fake.sent
++        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL, *self.downloads])
++        bulk, *exports = fake.sent
+         self.assertEqual(bulk.headers["user-agent"], "MTGPreconUpgrader/1.0")
+         self.assertEqual(bulk.headers["accept"], "application/json")
+-        self.assertEqual(export.headers["user-agent"], self.module.USER_AGENT)
++        for export in exports:
++            self.assertEqual(export.headers["user-agent"], self.module.USER_AGENT)
+         self.assertEqual(len(fake.sleeps), 1)
+         self.assertAlmostEqual(fake.sleeps[0], 0.4, places=9)
+         self.assertEqual(self.written(), sorted(getattr(self.module, n).name for n in self.files))
+@@ -796,6 +811,7 @@ class BuildPriceIndexTests(BulkDataCase):
+     module = build_price_index
+     folder = "OUT_DIR"
+     files = ("INDEX_FILE", "META_FILE")
++    downloads = (EXPORT_URL, DEFAULT_EXPORT_URL)
+ 
+     def test_bulk_data_goes_through_the_helper(self):
+         self.check_bulk_data_goes_through_the_helper()
+@@ -817,6 +833,7 @@ class BuildPriceIndexLine190Tests(BulkDataCase):
+     module = build_price_index
+     folder = "OUT_DIR"
+     files = ("INDEX_FILE", "META_FILE")
++    downloads = (EXPORT_URL, DEFAULT_EXPORT_URL)
+ 
+     def meta(self) -> dict:
+         return json.loads((self.folder_path / "price-index.meta.json").read_text())
+@@ -836,29 +853,34 @@ class BuildPriceIndexLine190Tests(BulkDataCase):
+         fake = bulk_fake()
+         code, out = self.run_main(fake)
+         self.assertEqual(code, 0)
+-        self.assertIn(f"Price index is current ({UPDATED_AT}).", out)
++        self.assertIn(f"Price index is current ({UPDATED_AT}, {DEFAULT_UPDATED_AT}).", out)
+         self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL])
+         self.assertEqual({p: p.read_bytes() for p in self.folder_path.iterdir()}, before)
+ 
+     def test_force_downloads_a_current_index(self):
+-        """--force downloads the export again."""
++        """--force downloads both exports again."""
+         self.assertEqual(self.run_main(bulk_fake())[0], 0)
+         fake = bulk_fake()
+         code, _ = self.run_main(fake, "--force")
+         self.assertEqual(code, 0)
+-        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL, EXPORT_URL])
++        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL, *self.downloads])
+ 
+     def test_source_file_sends_nothing(self):
+-        """--source reads a local export and sends no request."""
++        """--bulk-data, --oracle-source and --default-source read saved files and send no
++        request (DEC-1086: they replace --source). The meta file names the saved exports."""
++        fake = bulk_fake()
++        bulk = self.root / "bulk-data.json"
++        bulk.write_text(json.dumps(fake.pages[BULK_DATA_URL]))
++        # Sol Ring has both prices, so the default_cards file adds nothing.
+         source = self.root / "oracle-cards.jsonl"
+         source.write_text(json.dumps(make_card("Sol Ring", legalities={"commander": "legal"})) + "\n")
+-        fake = bulk_fake()
+-        code, _ = self.run_main(fake, "--source", str(source))
++        code, _ = self.run_main(fake, "--bulk-data", str(bulk), "--oracle-source", str(source),
++                                "--default-source", str(source))
+         self.assertEqual(code, 0)
+         self.assertEqual(fake.sent, [])
+         self.assertEqual(json.loads((self.folder_path / "price-index.json").read_text()), SOL_RING)
+-        self.assertEqual(self.meta()["sourceUrl"], str(source))
+-        self.assertEqual(self.meta()["scryfall_updated_at"], "local")
++        self.assertEqual(self.meta()["sourceUrl"], EXPORT_URL)
++        self.assertEqual(self.meta()["scryfall_updated_at"], UPDATED_AT)
+ 
+ 
+ class BuildPriceIndexLayoutTests(BulkDataCase):

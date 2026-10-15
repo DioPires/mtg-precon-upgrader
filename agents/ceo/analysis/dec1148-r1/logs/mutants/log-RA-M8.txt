@@ -1,0 +1,108 @@
+
+ RUN  v2.1.9 /private/tmp/dec1148-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (28 tests | 1 failed) 127ms
+   × DeckSelector focus after a key switch (DEC-1135) > moves focus to the open deck's pill when the key picks that deck 7ms
+     → expected <button role="tab" …(6)>…(5)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 27 passed (28)
+   Start at  16:39:56
+   Duration  497ms (transform 33ms, setup 20ms, collect 45ms, tests 127ms, environment 122ms, prepare 43ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > moves focus to the open deck's pill when the key picks that deck
+AssertionError: expected <button role="tab" …(6)>…(5)</button> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+-   aria-disabled="false"
+-   aria-selected="true"
+-   class="gv1-sel-pill gv1-active"
++   aria-disabled="true"
++   aria-selected="false"
++   class="gv1-sel-pill gv1-stub"
+    role="tab"
+-   tabindex="0"
+-   title="Open Deck 1"
++   tabindex="-1"
++   title="Not yet scribed — coming soon"
+    type="button"
+  >
+    <div
+      class="gv1-sel-pill-top"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        № 
+-       01
++       05
+      </span>
+      <span
+        aria-label="Color identity: 1 colors"
+        class="gv1-pips"
+        role="img"
+      >
+        <span
+          aria-hidden="true"
+          class="gv1-pip"
+          style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+        >
+          R
+        </span>
+      </span>
+    </div>
+    <div
+      class="gv1-sel-pill-name"
+    >
+-     Deck 1
++     Deck 5
+    </div>
+    <div
+      class="gv1-mono-xs gv1-sel-pill-cmd"
+    >
+-     Commander 1
++     Commander 5
+    </div>
+    <div
+      class="gv1-sel-pill-foot"
+    >
+      <span
+        class="gv1-mono-xs gv1-sel-pill-bracket"
+      >
+        BRACKET 
+        4
+      </span>
+    </div>
+    <span
+-     class="gv1-sel-pill-flag"
++     class="gv1-sel-pill-stub"
+    >
+      <span
+        class="gv1-mono-xs"
+      >
+-       NOW SCRYING
++       <span
++         aria-hidden="true"
++       >
++         ⬡ 
++       </span>
++       unscribed
+      </span>
+    </span>
+  </button>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:479:36
+    477| 
+    478|     fireEvent.keyDown(tabs[4], { key: 'Home' });
+    479|     expect(document.activeElement).toBe(tabs[0]);
+       |                                    ^
+    480|     expect(seen).toEqual([{ name: 'Deck 1', selected: 'true', tabIndex…
+    481|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
