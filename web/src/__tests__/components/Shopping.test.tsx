@@ -124,6 +124,13 @@ describe('parseOwnedFile', () => {
     expect(map.get('Brazen Borrower')).toBe(1);
     expect(map.has('Brazen Borrower // Petty Theft')).toBe(false);
   });
+
+  it('counts a CSV quantity below 1 as 1 and keeps a quantity of 1 or more (DEC-1141)', () => {
+    expect(parseOwnedFile('Name,Quantity\nSol Ring,-1\n').get('Sol Ring')).toBe(1);
+    expect(parseOwnedFile('Name,Quantity\nSol Ring,0\n').get('Sol Ring')).toBe(1);
+    expect(parseOwnedFile('Name,Quantity\nSol Ring,3\n').get('Sol Ring')).toBe(3);
+    expect(parseOwnedFile('Name,Quantity\nSol Ring,2.5\n').get('Sol Ring')).toBe(2);
+  });
 });
 
 describe('aggregateCards', () => {
@@ -606,6 +613,69 @@ describe('Shopping organism', () => {
     // The regions that hold the messages are the nodes of the first paint.
     expect(importStatus()).toBe(status);
     expect(importAlert()).toBe(alert);
+  });
+
+  describe('an owned quantity is a whole number of 1 or more (DEC-1141)', () => {
+    const loadStore = (raw: string) => {
+      localStorage.setItem(STORAGE_KEY, raw);
+      renderShopping([ALPHA]);
+    };
+
+    it('counts a CSV quantity of -1 as 1 in the import message and the owned bar', async () => {
+      const { container } = renderShopping([ALPHA]);
+      const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+      // jsdom's File has no text(), so the test gives it one.
+      const body = 'Name,Quantity\nSol Ring,-1\nArcane Signet,1\n';
+      const file = new File([body], 'owned.csv', { type: 'text/csv' });
+      Object.defineProperty(file, 'text', { value: () => Promise.resolve(body) });
+      fireEvent.change(input, { target: { files: [file] } });
+      await waitFor(() => expect(importStatus()).toHaveTextContent(
+        'Added 2 unique cards (2 total). 2 cards loaded. To replace the list, use Clear owned first.',
+      ));
+      expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
+      expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toEqual([['Sol Ring', 1], ['Arcane Signet', 1]]);
+    });
+
+    it('drops a stored quantity that is not a whole number, and writes nothing back', () => {
+      const raw = JSON.stringify([['Sol Ring', 0.5], ['Arcane Signet', 2]]);
+      loadStore(raw);
+      expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
+      expect(localStorage.getItem(STORAGE_KEY)).toBe(raw);
+    });
+
+    it('drops a stored quantity of 1 or more that is not a whole number', () => {
+      loadStore(JSON.stringify([['Sol Ring', 1.5], ['Swords to Plowshares', '2'], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('drops a stored quantity below 1', () => {
+      loadStore(JSON.stringify([['Sol Ring', -1], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('shows the empty list for a store whose one entry has no quantity', () => {
+      const raw = JSON.stringify([['Sol Ring']]);
+      loadStore(raw);
+      expect(screen.getByText('// .csv (Name,Quantity) or .txt (one card per line)')).toBeInTheDocument();
+      expect(screen.queryByText(/loaded —/)).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Clear owned' })).not.toBeInTheDocument();
+      expect(localStorage.getItem(STORAGE_KEY)).toBe(raw);
+    });
+
+    it('drops a stored entry whose name is not a string', () => {
+      loadStore(JSON.stringify([[7, 2], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('drops a stored entry whose name has no text', () => {
+      loadStore(JSON.stringify([['  ', 2], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
+
+    it('drops a stored entry that is not a two-item array', () => {
+      loadStore(JSON.stringify([null, ['Sol Ring', 2, 'foil'], ['Arcane Signet', 1]]));
+      expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
+    });
   });
 
   describe('the count of cards in the Need to buy and Already own headers (DEC-1142)', () => {
