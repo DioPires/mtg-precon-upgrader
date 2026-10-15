@@ -69,5 +69,15 @@ for (const fonts of ['live', 'blocked'] as const) {
       await page.evaluate(() => fetch('https://api2.moxfield.com/v3/decks/all/dec1071').catch(() => undefined));
       test.fail(true, 'the check names the request that the DNS block stopped');
     });
+
+    test('the check passes a Moxfield request that a route of the spec aborts', async ({ page, baseURL }) => {
+      await page.route('https://api2.moxfield.com/**', (route) => route.abort());
+      await page.goto(`${baseURL}/data/index.json`);
+      const failed = page.waitForEvent('requestfailed', (request) => request.url().startsWith('https://api2.moxfield.com/'));
+      await page.evaluate(() => fetch('https://api2.moxfield.com/v3/decks/all/dec1071').catch(() => undefined));
+      // The route failed the request in the browser, so it never left it. The
+      // check names a failure that the DNS block gives, not this one.
+      expect((await failed).failure()?.errorText).toBe('net::ERR_FAILED');
+    });
   });
 }

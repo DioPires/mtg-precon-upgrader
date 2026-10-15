@@ -109,7 +109,7 @@ Three checks keep a spec off the live API. Each has limits, and they are listed 
    - A context that a spec opens in `beforeAll` or `afterAll` has no stub and no check. Its
      card lookups fail at the DNS block.
    - `page.request`, `context.request` and `route.fetch()` send from Node. No route, no check
-     and no DNS block applies to them. Do not give them a Scryfall URL.
+     and no DNS block applies to them. Do not give them a Scryfall or a Moxfield URL.
    - A host name that ends in the root dot (`api.scryfall.com.`) is the same host. The stub's
      route takes the request, but the stub has no answer for that name. The test fails, and
      the error says "(the stub has no answer for it)".
