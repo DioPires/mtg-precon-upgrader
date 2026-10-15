@@ -491,6 +491,28 @@ describe('Apothecary', () => {
       expect(part(chips(container)[0], '.gv1-apo-malady-fig')).toBe(fig);
     });
 
+    // DEC-1125 B1 — mutant A13: `g.actual != null || g.target != null` in the actual branch.
+    it('reads the percentage for a resilience entry with a target and no count', () => {
+      const { container } = render(
+        <Apothecary
+          apothecary={makeApothecary({
+            maladies: [{ resilience_component: 'protection', score_pct: 40, max: 25, target: 4 }],
+          })}
+        />,
+      );
+      expect(part(chips(container)[0], '.gv1-apo-malady-fig')).toBe('40%');
+    });
+
+    // DEC-1125 B2 — mutants A9 and A10 (redundancy row) and A16 and A17 (actual row):
+    // a figure written without fmtFigure.
+    it.each([
+      [{ resilience_component: 'redundancy', score_pct: 50, max: 25, lines: 2.34, floor: 1, target: 3.67 }, '2.3 / 3.7 lines'],
+      [{ resilience_component: 'protection', score_pct: 40, max: 25, actual: 1.26, target: 2.71 }, '1.3 / 2.7'],
+    ])('writes a resilience figure with at most one decimal (%#)', (entry, text) => {
+      const { container } = render(<Apothecary apothecary={makeApothecary({ maladies: [entry] })} />);
+      expect(part(chips(container)[0], '.gv1-apo-malady-fig')).toBe(text);
+    });
+
     it('falls back to the percentage and the raw name for a component it has no counts or label for', () => {
       const { container } = render(
         <Apothecary
@@ -834,6 +856,39 @@ describe('Apothecary', () => {
       expect(screen.getByText(/ · filtered: Win-Cons$/)).toBeInTheDocument();
       expect(container.querySelector('.gv1-apo-tag-addresses')?.textContent).toBe('addresses · Win-Cons');
       expect(roleTags(container)).toEqual(['Threats']);
+    });
+
+    // DEC-1125 B3 — the six mutants that drop `|| key` from a ROLE_LABEL use.
+    describe('a role key that the shared map does not hold reads raw', () => {
+      const LIFEGAIN = { role: 'lifegain', actual: 1, target: 3, score: 33 };
+
+      it('on the chip, in the status line, in "filtered:" and in both tags', () => {
+        const { container } = render(
+          <Apothecary
+            apothecary={makeApothecary({
+              maladies: [LIFEGAIN],
+              remedies: [remedy('Soul Warden', 'storm', 'lifegain'), remedy('Filler', 'ramp')],
+            })}
+          />,
+        );
+        const chip = screen.getByRole('button', { name: /lifegain/, pressed: false });
+        expect(chip.querySelector('.gv1-apo-malady-label')?.textContent).toBe('lifegain');
+
+        fireEvent.click(chip);
+        const status = within(container.querySelector('.gv1-apothecary') as HTMLElement).getByRole('status');
+        expect(status.textContent).toBe('Filtered by lifegain: 1 remedy.');
+        expect(screen.getByText(/ · filtered: lifegain$/)).toBeInTheDocument();
+        expect(container.querySelector('.gv1-apo-tag-addresses')?.textContent).toBe('addresses · lifegain');
+        expect(container.querySelector('.gv1-apo-remedies .gv1-apo-tag-role')?.textContent).toBe('storm');
+      });
+
+      it('in the empty state', () => {
+        const { container } = render(
+          <Apothecary apothecary={makeApothecary({ maladies: [LIFEGAIN], remedies: [remedy('Filler', 'ramp')] })} />,
+        );
+        fireEvent.click(screen.getByRole('button', { name: /lifegain/, pressed: false }));
+        expect(container.querySelector('.gv1-empty')?.textContent).toBe('No remedies match lifegain.');
+      });
     });
   });
 });
