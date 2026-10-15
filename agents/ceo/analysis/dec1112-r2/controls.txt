@@ -1,0 +1,74 @@
+=== control good (52cc4c2e50d6fa6c2282bc54f36bee5908776634)
+base ded55c6, merge-tree of base and f1a0c73: b510f2a2
+paths other than the two that differ from it: none
+web/src/data/loader.ts: prefix v156 -> v157: EQUAL; 2 added comment lines, bump named with DEC-1079: True
+web/src/__tests__/data/loaderEnvelope.test.ts: base holds v156 2 times (2 expected): EQUAL
+ALL EQUAL
+exit 0
+=== control v158 (2438a5ce7bcd0bc13710374303dbe142aa5dd5f1)
+base ded55c6, merge-tree of base and f1a0c73: b510f2a2
+paths other than the two that differ from it: none
+web/src/data/loader.ts: prefix v156 -> v157: DIFFERENT; 2 added comment lines, bump named with DEC-1079: False
+web/src/__tests__/data/loaderEnvelope.test.ts: base holds v156 2 times (2 expected): EQUAL
+  first difference in web/src/data/loader.ts:
+    head:     const STORAGE_PREFIX = 'gv1-deck-data-v158:';
+    expected: const STORAGE_PREFIX = 'gv1-deck-data-v157:';
+NOT EQUAL
+exit 1
+=== control nocomment (cec52bc1de0b9b04515079f545fcfb018c0ccc73)
+base ded55c6, merge-tree of base and f1a0c73: b510f2a2
+paths other than the two that differ from it: none
+web/src/data/loader.ts: prefix v156 -> v157: EQUAL; 0 added comment lines, bump named with DEC-1079: False
+web/src/__tests__/data/loaderEnvelope.test.ts: base holds v156 2 times (2 expected): EQUAL
+NOT EQUAL
+exit 1
+=== control extra (5db7058544d2220098c362e59a32ede8ec60b58d)
+base ded55c6, merge-tree of base and f1a0c73: b510f2a2
+paths other than the two that differ from it: none
+web/src/data/loader.ts: prefix v156 -> v157: DIFFERENT; 2 added comment lines, bump named with DEC-1079: True
+web/src/__tests__/data/loaderEnvelope.test.ts: base holds v156 2 times (2 expected): EQUAL
+  first difference in web/src/data/loader.ts:
+    head:     const TTL_MS = 2 * 60 * 60 * 1000;
+    expected: const TTL_MS = 60 * 60 * 1000;
+NOT EQUAL
+exit 1
+=== control testhalf (d8ff24b54d7a73db1f36a22205aa25bc65912d85)
+base ded55c6, merge-tree of base and f1a0c73: b510f2a2
+paths other than the two that differ from it: none
+web/src/data/loader.ts: prefix v156 -> v157: EQUAL; 2 added comment lines, bump named with DEC-1079: True
+web/src/__tests__/data/loaderEnvelope.test.ts: base holds v156 2 times (2 expected): DIFFERENT
+  first difference in web/src/__tests__/data/loaderEnvelope.test.ts:
+    head:         expect(keys.filter((k) => k.startsWith('gv1-deck-data-')).every((k) => k.startsWith('gv1-deck-data-v156:'))).toBe(true);
+    expected:     expect(keys.filter((k) => k.startsWith('gv1-deck-data-')).every((k) => k.startsWith('gv1-deck-data-v157:'))).toBe(true);
+NOT EQUAL
+exit 1
+=== control otherpath (4760ae90e3c9da6cab9e1dd0edf4fb3d1fee99fa)
+base ded55c6, merge-tree of base and f1a0c73: b510f2a2
+paths other than the two that differ from it: ['data/card-metadata.meta.json']
+web/src/data/loader.ts: prefix v156 -> v157: EQUAL; 2 added comment lines, bump named with DEC-1079: True
+web/src/__tests__/data/loaderEnvelope.test.ts: base holds v156 2 times (2 expected): EQUAL
+NOT EQUAL
+exit 1
+=== control merge only (f254230fd78811097d56ad692881f4ce5fe4ccf3)
+base ded55c6, merge-tree of base and f1a0c73: b510f2a2
+paths other than the two that differ from it: none
+web/src/data/loader.ts: prefix v156 -> v157: DIFFERENT; 0 added comment lines, bump named with DEC-1079: False
+web/src/__tests__/data/loaderEnvelope.test.ts: base holds v156 2 times (2 expected): DIFFERENT
+  first difference in web/src/data/loader.ts:
+    head:     const STORAGE_PREFIX = 'gv1-deck-data-v156:';
+    expected: const STORAGE_PREFIX = 'gv1-deck-data-v157:';
+  first difference in web/src/__tests__/data/loaderEnvelope.test.ts:
+    head:       it('writes its envelopes under v156', async () => {
+    expected:   it('writes its envelopes under v157', async () => {
+NOT EQUAL
+exit 1
+=== control head f1a0c73
+base 8ebe808, merge-tree of base and f1a0c73: d4e42d08
+paths other than the two that differ from it: none
+web/src/data/loader.ts: prefix v154 -> v155: DIFFERENT; 0 added comment lines, bump named with DEC-1079: False
+web/src/__tests__/data/loaderEnvelope.test.ts: base holds v154 0 times (2 expected): DIFFERENT
+  first difference in web/src/data/loader.ts:
+    head:     const STORAGE_PREFIX = 'gv1-deck-data-v154:';
+    expected: const STORAGE_PREFIX = 'gv1-deck-data-v155:';
+NOT EQUAL
+exit 1
