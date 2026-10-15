@@ -100,7 +100,10 @@ export function parseOwnedFile(text: string): Map<string, number> {
       rows.slice(1).forEach((r) => {
         const name = (r[ni] || '').trim();
         if (!name) return;
-        const q = parseInt((r[qi] || '1').trim(), 10) || 1;
+        // An owned quantity is a whole number of 1 or more. A cell that reads
+        // as less (0, a negative number, empty, text) counts as 1 (DEC-1141).
+        const read = parseInt((r[qi] || '1').trim(), 10);
+        const q = read >= 1 ? read : 1;
         const key = frontFace(name);
         out.set(key, (out.get(key) || 0) + q);
       });
@@ -130,8 +133,16 @@ function loadOwned(): Map<string, number> {
     if (raw) {
       // Re-key to front-face on load so legacy/full-DFC entries reconcile
       // with deck.json names. Idempotent for non-DFC cards.
+      // The app writes only [name, quantity] pairs, but a hand edit or a
+      // damaged store can hold other entries. The load drops each entry that
+      // is not a pair of a name with text and a whole number of 1 or more,
+      // keeps the rest and writes nothing back (DEC-1141).
       const out = new Map<string, number>();
-      (JSON.parse(raw) as Array<[string, number]>).forEach(([n, q]) => {
+      (JSON.parse(raw) as unknown[]).forEach((entry) => {
+        if (!Array.isArray(entry) || entry.length !== 2) return;
+        const [n, q] = entry;
+        if (typeof n !== 'string' || !n.trim()) return;
+        if (!Number.isInteger(q) || q < 1) return;
         const key = frontFace(n);
         out.set(key, (out.get(key) || 0) + q);
       });
