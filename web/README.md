@@ -51,6 +51,10 @@ test.use({ scryfall429From: 3 });  // /cards/named and /cards/collection answer 
 test.use({ rateClock: 'page' });   // the rate check reads the page's clock: a spec that moves page.clock
 ```
 
+A read that measures a page with every price in uses `cards: 'seeded'`. The /shopping summary
+then shows its final priced count at first paint, so the read needs no wait. The overflow read
+of `dec181-qa` and the shots and audits of `dec184-visual-qa` do this.
+
 The seed of `cards: 'seeded'` writes 1,602 entries, about 992,000 characters, into
 `localStorage`: one for each name of `card-metadata.json` and one for each face of a `//` name
 that the file does not hold as a name. The app's own seed drops the entries of the file's
@@ -105,11 +109,29 @@ Three checks keep a spec off the live API. Each has limits, and they are listed 
    - A context that a spec opens in `beforeAll` or `afterAll` has no stub and no check. Its
      card lookups fail at the DNS block.
    - `page.request`, `context.request` and `route.fetch()` send from Node. No route, no check
-     and no DNS block applies to them. Do not give them a Scryfall URL.
+     and no DNS block applies to them. Do not give them a Scryfall or a Moxfield URL.
+   - A host name that ends in the root dot (`api.scryfall.com.`) is the same host. The stub's
+     route takes the request, but the stub has no answer for that name. The test fails, and
+     the error says "(the stub has no answer for it)".
+   - A request to a Moxfield host (`moxfield.com` and every name under it) needs an answer from
+     a route of the spec. Unlike for Scryfall, a spec's own route answer passes. The IN-2 case
+     of `combo-lab.spec.ts` answers `api2.moxfield.com` with HTTP 403, the refusal that the
+     live host gives a headless browser. The check names a Moxfield request that passes every
+     route of the spec. The stub stops such a request when no route of the spec took it. A
+     spec's `route.continue()` sends it on, and the DNS block then fails it with
+     `net::ERR_NAME_NOT_RESOLVED`. The check names both, and also one that the network
+     answered.
+   - Behind an HTTP proxy the DNS block does nothing. A Moxfield request that a spec's route
+     sends on and that the proxy refuses is not named.
+   - A spec's own `route.abort('namenotresolved')` on a Moxfield URL is named, although it
+     never left the browser. `request.timing()` cannot tell it from a request that the DNS
+     block stopped: every field reads -1 in both.
 3. **The DNS block.** Chromium gets `--host-resolver-rules`, so it cannot resolve a Scryfall
-   host name. A request that passes the stub fails on this machine with
-   `net::ERR_NAME_NOT_RESOLVED` and does not reach Scryfall. The flag stays when a spec sets
-   its own `launchOptions`.
+   host name or a Moxfield host name. A request that passes the stub or a spec's route fails
+   on this machine with `net::ERR_NAME_NOT_RESOLVED`, and it does not reach Scryfall or
+   Moxfield. The flag stays when a spec sets its own `launchOptions`. Each name has a rule
+   without and a rule with the root dot: a rule without the dot does not match
+   `api.scryfall.com.`.
    - Behind an HTTP proxy (the `proxy` option, or `--proxy-server`) the proxy resolves the
      names, and the block does nothing. The stub and the per-test check still apply.
    - A browser that a spec launches itself has the flag only if the spec passes it:
@@ -139,7 +161,8 @@ its own `vite preview` prints after it holds the port.
 
 Without the variable nothing is checked: a local run reuses a server that already listens on
 4173, which can be the build of another checkout. CI runs without the variable and always
-starts its own server.
+starts its own server. In CI the run also writes the HTML report to `playwright-report/`, and
+web-ci uploads it when the `e2e` job fails.
 
 ## Scryfall requests
 
