@@ -36,9 +36,7 @@ describe('useCard', () => {
   });
 
   it('returns the cached entry synchronously when already loaded', async () => {
-    await cardCache.fetch('Sol Ring').catch(() => undefined);
     // Seed cache directly (no network).
-    cardCache._reset();
     const seed = {
       status: 'loaded' as const,
       name: 'Sol Ring',

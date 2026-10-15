@@ -8,6 +8,7 @@ import {
   splitOwnership,
 } from '../../components/organisms/Shopping';
 import type { DeckFull, DeckListGroup } from '../../data/types';
+import { formatPricesDate } from '../../lib/pricesDate';
 
 function makeDeck(over: Partial<DeckFull>): DeckFull {
   return {
@@ -507,5 +508,15 @@ describe('Shopping organism', () => {
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toEqual(
       [['Sol Ring', 1], ['Arcane Signet', 3], ['Swords to Plowshares', 1]],
     );
+  });
+});
+
+describe('the date of the prices in the footer (DEC-1102)', () => {
+  it("shows card-metadata.meta.json's prices_as_of as a UTC date", () => {
+    expect(formatPricesDate('2026-10-13T21:56:40+00:00')).toBe('13 Oct 2026');
+    expect(formatPricesDate('2026-10-13T23:30:00-05:00')).toBe('14 Oct 2026');
+    expect(formatPricesDate('2026-09-05T00:00:00Z')).toBe('5 Sep 2026');
+    expect(formatPricesDate(undefined)).toBeNull();
+    expect(formatPricesDate('not a date')).toBeNull();
   });
 });

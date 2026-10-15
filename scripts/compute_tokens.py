@@ -18,12 +18,19 @@ Sources:
 
 Every request goes through scryfall_api, which keeps Scryfall's rate limit. A
 429 ends the run: the script writes no deck file and exits with 1 (DEC-1076).
+Every other failed request ends the run in the same way (DEC-1098). An answer
+that says Scryfall found no card does not: a ``not_found`` entry of a batch, and
+a 404 from /cards/named or /cards/search.
+
+A batch holds the front face of a ``//`` name: Scryfall does not find the full
+name (DEC-1098).
 """
 
 import argparse
 import json
 import re
 import sys
+import urllib.error
 import urllib.parse
 from pathlib import Path
 
@@ -52,34 +59,56 @@ ORACLE_MARKER_FALLBACKS: list[tuple[re.Pattern, str]] = [
 NEGATION_PATTERN = re.compile(r"can[’']t\s+become\s+the\s+monarch", re.I)
 
 
-def _request(url: str, body: dict | None = None) -> dict:
-    return json.loads(scryfall_api.request(url, body))
+class RequestFailed(Exception):
+    """A request failed: a 3xx, a 4xx, a 5xx, a network error, a timeout or an
+    answer that is not JSON. The run must end, as on a 429 (DEC-1098)."""
+
+    def __init__(self, url: str, body: dict | None, cause: Exception) -> None:
+        method = "GET" if body is None else "POST"
+        super().__init__(
+            f"Scryfall request failed: {method} {url}: {type(cause).__name__}: {cause}")
+
+
+def _request(url: str, body: dict | None = None, *, pass_404: bool = False) -> dict:
+    """Send one request through scryfall_api and return its answer as JSON.
+
+    A 429 raises ScryfallRateLimited. With ``pass_404``, a 404 raises its
+    urllib.error.HTTPError: /cards/named and /cards/search answer 404 when no
+    card matches. Every other failure raises RequestFailed.
+    """
+    try:
+        return json.loads(scryfall_api.request(url, body))
+    except scryfall_api.ScryfallRateLimited:
+        raise
+    except urllib.error.HTTPError as e:
+        if pass_404 and e.code == 404:
+            raise
+        raise RequestFailed(url, body, e) from e
+    except Exception as e:
+        raise RequestFailed(url, body, e) from e
 
 
 def fetch_collection(names: list[str]) -> list[dict]:
     """Batch-fetch full card objects via Scryfall Collection API.
 
-    DFC composite names (e.g. "Hagra Mauling // Hagra Broodpit") often miss
-    the collection API; retry those individually via fuzzy named lookup.
+    A ``//`` name (e.g. "Hagra Mauling // Hagra Broodpit") goes into the batch
+    as its front face, once. A name that the batch does not find is retried
+    via fuzzy named lookup.
     """
     cards = []
     not_found_names: list[str] = []
+    names = sorted({name.split(" // ")[0] for name in names})
     batches = [names[i:i + BATCH_SIZE] for i in range(0, len(names), BATCH_SIZE)]
 
     for i, batch in enumerate(batches):
         print(f"  Batch {i + 1}/{len(batches)} ({len(batch)} cards)...")
         body = {"identifiers": [{"name": n} for n in batch]}
 
-        try:
-            data = _request(SCRYFALL_COLLECTION_URL, body)
-            cards.extend(data.get("data", []))
-            not_found_names.extend(
-                nf.get("name", "") for nf in data.get("not_found", []) if nf.get("name")
-            )
-        except scryfall_api.ScryfallRateLimited:
-            raise
-        except Exception as e:
-            print(f"    Batch {i + 1} failed: {e}")
+        data = _request(SCRYFALL_COLLECTION_URL, body)
+        cards.extend(data.get("data", []))
+        not_found_names.extend(
+            nf.get("name", "") for nf in data.get("not_found", []) if nf.get("name")
+        )
 
     if not_found_names:
         print(f"    Retrying {len(not_found_names)} via fuzzy named lookup...")
@@ -87,28 +116,20 @@ def fetch_collection(names: list[str]) -> list[dict]:
             front = name.split("//")[0].strip()
             url = f"{SCRYFALL_NAMED_URL}?fuzzy={urllib.parse.quote(front)}"
             try:
-                c = _request(url)
+                c = _request(url, pass_404=True)
                 if c.get("object") == "error":
                     print(f"      Still not found: {name}")
                     continue
                 cards.append(c)
-            except scryfall_api.ScryfallRateLimited:
-                raise
-            except Exception as e:
+            except urllib.error.HTTPError as e:  # a 404: Scryfall found no card
                 print(f"      Lookup failed for {name}: {e}")
 
     return cards
 
 
-def fetch_token(uri: str) -> dict | None:
+def fetch_token(uri: str) -> dict:
     """Fetch a single token/marker card by URI."""
-    try:
-        return _request(uri)
-    except scryfall_api.ScryfallRateLimited:
-        raise
-    except Exception as e:
-        print(f"    Failed to fetch token {uri}: {e}")
-        return None
+    return _request(uri)
 
 
 def fetch_named_exact(name: str, _cache: dict[str, dict | None] = {}) -> dict | None:
@@ -117,16 +138,14 @@ def fetch_named_exact(name: str, _cache: dict[str, dict | None] = {}) -> dict | 
         return _cache[name]
     url = f"{SCRYFALL_NAMED_URL}?exact={urllib.parse.quote(name)}"
     try:
-        c = _request(url)
+        c = _request(url, pass_404=True)
         if c.get("object") == "error":
             print(f"    Marker lookup failed for '{name}': {c.get('details', '')[:80]}")
             _cache[name] = None
             return None
         _cache[name] = c
         return c
-    except scryfall_api.ScryfallRateLimited:
-        raise
-    except Exception as e:
+    except urllib.error.HTTPError as e:  # a 404: Scryfall found no card
         print(f"    Marker lookup failed for '{name}': {e}")
         _cache[name] = None
         return None
@@ -136,12 +155,10 @@ def search_token(query: str) -> dict | None:
     """Search Scryfall for a token card."""
     url = f"https://api.scryfall.com/cards/search?q={urllib.parse.quote(query)}"
     try:
-        data = _request(url)
+        data = _request(url, pass_404=True)
         results = data.get("data", [])
         return results[0] if results else None
-    except scryfall_api.ScryfallRateLimited:
-        raise
-    except Exception as e:
+    except urllib.error.HTTPError as e:  # a 404: no card matches the query
         print(f"    Token search failed for '{query}': {e}")
         return None
 
@@ -405,7 +422,8 @@ def main() -> int:
 
     print(f"Found {len(deck_paths)} decks.\n")
 
-    # Every deck first, then every write: a 429 leaves every deck file as it was.
+    # Every deck first, then every write: a 429 or another failed request leaves
+    # every deck file as it was.
     decks = []
     for path in deck_paths:
         with open(path) as f:
@@ -416,7 +434,7 @@ def main() -> int:
 
         try:
             deck["tokens"] = compute_tokens_for_deck(deck)
-        except scryfall_api.ScryfallRateLimited as e:
+        except (scryfall_api.ScryfallRateLimited, RequestFailed) as e:
             print(f"\n{e}\nNo file written.")
             return 1
         decks.append((path, deck))
