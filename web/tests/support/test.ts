@@ -9,14 +9,17 @@
 //
 // The rate check (DEC-1102): a test fails when one browser context sent more
 // than 2 requests to /cards/named and /cards/collection (bucket 1 of
-// src/data/scryfallLimiter.ts) in any 1 s. The stub counts them at its route,
-// in real time, so every case proves the app's limit.
+// src/data/scryfallLimiter.ts) in any 1 s. The check stamps each one when the
+// browser sends it (the context's `request` event), in real time, so every case
+// proves the app's limit, also a case whose own route holds an answer
+// (DEC-1131 N2).
 //
 //   test.use({ cards: 'seeded' })        as 'repo', plus a `gv1-card:` entry for each name before first paint
 //   test.use({ cards: 'none' })          every lookup and picture fails, and card-metadata.json has no price
 //   test.use({ fonts: 'blocked' })       the web fonts do not load
 //   test.use({ scryfall429From: 3 })     bucket 1 answers 429 from its 3rd request on
 //   test.use({ rateClock: 'page' })      the rate check reads the page's clock (a spec that moves page.clock)
+//   test.use({ scryfallUsdBump: 1 })     each `usd` of a /cards/collection answer is $1.00 more than the file's
 
 import { test as base, type BrowserContext, type Request } from '@playwright/test';
 import { isMoxfieldHost, isScryfallHost, withScryfallDnsBlock } from './guard';
@@ -49,13 +52,20 @@ export interface StubOptions {
    */
   scryfall429From: number;
   /**
-   * The clock of the rate check. 'real' counts at the stub's route in real time.
-   * A spec that moves page.clock sets 'page': its fake time can start several
-   * requests in one real second. The check then reads the page's own clock at
-   * each bucket 1 fetch that the app makes, so the limit holds in the time that
-   * the app sees. Every other case keeps 'real'.
+   * The clock of the rate check. 'real' stamps each bucket 1 request when the
+   * browser sends it, in real time. A spec that moves page.clock sets 'page':
+   * its fake time can start several requests in one real second. The check then
+   * reads the page's own clock at each bucket 1 fetch that the app makes, a GET
+   * or a POST, so the limit holds in the time that the app sees. Every other
+   * case keeps 'real'.
    */
   rateClock: 'real' | 'page';
+  /**
+   * Dollars added to each `usd` of a /cards/collection answer (DEC-1131). With
+   * 1, a refreshed price is $1.00 more than the file's, so a case can tell the
+   * two apart. 0 (the default) answers the file's price.
+   */
+  scryfallUsdBump: number;
 }
 
 interface StubFixtures {
@@ -90,7 +100,7 @@ function reportBucketOneSends(binding: string): void {
   window.fetch = function (input: RequestInfo | URL, init?: RequestInit) {
     try {
       const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-      if (/^https:\/\/api\.scryfall\.com\/cards\/(named|collection)\?/.test(url)) {
+      if (/^https:\/\/api\.scryfall\.com\/cards\/(named|collection)(\?|$)/.test(url)) {
         const report = (window as unknown as Record<string, ((t: number) => Promise<void>) | undefined>)[binding];
         // A page that closes drops the report; that is no failure of the app.
         report?.(Date.now())?.catch(() => undefined);
@@ -134,6 +144,7 @@ export const test = base.extend<StubOptions & StubFixtures>({
   fonts: ['live', { option: true }],
   scryfall429From: [0, { option: true }],
   rateClock: ['real', { option: true }],
+  scryfallUsdBump: [0, { option: true }],
 
   // Playwright's own `browser`, with one change: the DNS block is in the
   // arguments also when a spec sets `launchOptions`, which replaces the
@@ -151,7 +162,7 @@ export const test = base.extend<StubOptions & StubFixtures>({
   ],
 
   scryfallStub: [
-    async ({ browser, cards, fonts, scryfall429From, rateClock }, runTest, testInfo) => {
+    async ({ browser, cards, fonts, scryfall429From, rateClock, scryfallUsdBump }, runTest, testInfo) => {
       const stubbed = new WeakSet<BrowserContext>();
       const answered = new WeakSet<Request>();
       const unanswered: string[] = [];
@@ -205,7 +216,11 @@ export const test = base.extend<StubOptions & StubFixtures>({
             const request = route.request();
             answered.add(request);
             const url = new URL(request.url());
-            const answer = answerFor(url);
+            const answer = answerFor(
+              url,
+              { method: request.method(), body: request.postData() },
+              { usdBump: scryfallUsdBump },
+            );
             if (!answer) {
               unanswered.push(`${request.method()} ${request.url()} (the stub has no answer for it)`);
             } else {
@@ -213,7 +228,6 @@ export const test = base.extend<StubOptions & StubFixtures>({
             }
             if (url.hostname === 'api.scryfall.com' && BUCKET_ONE.test(url.pathname)) {
               bucketOneCount += 1;
-              if (rateClock === 'real') stamp(context, Date.now());
               if (scryfall429From > 0 && bucketOneCount >= scryfall429From) {
                 limited += 1;
                 // Scryfall's own 429 has no CORS header, so the browser blocks it and
@@ -231,7 +245,7 @@ export const test = base.extend<StubOptions & StubFixtures>({
               }
             }
             if (!answer || cards === 'none') return route.abort().catch(pageGone);
-            if (answer.notFound) notFound.add(answer.notFound);
+            answer.notFound?.forEach((name) => notFound.add(name));
             return route
               .fulfill({
                 status: answer.status,
@@ -274,6 +288,15 @@ export const test = base.extend<StubOptions & StubFixtures>({
           await context.addInitScript(reportBucketOneSends, PAGE_CLOCK_BINDING);
         }
         if (cards === 'seeded') await context.addInitScript(seedCardCache, cardCacheSeed());
+        // The real clock stamps a bucket 1 request when the browser sends it,
+        // before any route: a spec's route that holds the answer does not move
+        // the stamp. A CORS preflight that Playwright reports here counts too.
+        if (rateClock === 'real') {
+          context.on('request', (request) => {
+            const url = new URL(request.url());
+            if (url.hostname === 'api.scryfall.com' && BUCKET_ONE.test(url.pathname)) stamp(context, Date.now());
+          });
+        }
         context.on('response', (response) => judge(response.request()));
         context.on('requestfailed', judge);
       };
