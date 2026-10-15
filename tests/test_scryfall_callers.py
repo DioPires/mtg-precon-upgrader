@@ -837,6 +837,28 @@ class HelperImportTests(unittest.TestCase):
                 self.assertEqual(
                     Path(result.stdout.strip()).resolve(), ROOT / "scripts" / "scryfall_api.py")
 
+    def test_new_process_sends_its_first_request(self):
+        """DEC-1114 N5: a fresh interpreter's helper holds no stop. Its opener is a fake, and
+        its limiter folder is a temporary one."""
+        send = (
+            "import os, sys, tempfile, types\n"
+            "sys.path.insert(0, sys.argv[1])\n"
+            "import scryfall_api\n"
+            "class Answer:\n"
+            "    def __enter__(self): return self\n"
+            "    def __exit__(self, *exc): return False\n"
+            "    def read(self): return b'{}'\n"
+            "scryfall_api._OPENER = types.SimpleNamespace(open=lambda req, timeout: Answer())\n"
+            "with tempfile.TemporaryDirectory() as folder:\n"
+            "    os.environ['SCRYFALL_LIMIT_DIR'] = folder\n"
+            "    print(scryfall_api.request('https://api.scryfall.com/sets/fra'))\n"
+        )
+        result = subprocess.run(
+            [sys.executable, "-I", "-B", "-c", send, str(ROOT / "scripts")],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "b'{}'\n")
+
 
 if __name__ == "__main__":
     unittest.main()
