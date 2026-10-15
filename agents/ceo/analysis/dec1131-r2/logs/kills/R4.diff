@@ -1,0 +1,13 @@
+diff --git a/web/src/data/cardCache.ts b/web/src/data/cardCache.ts
+index 9f54ff1..1fc43d4 100644
+--- a/web/src/data/cardCache.ts
++++ b/web/src/data/cardCache.ts
+@@ -424,7 +424,7 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
+     if (isLive(entry.refreshedAt)) return;
+     // Mark the card before the batch goes, so that a reload inside 24 h does not ask again.
+     const t = now();
+-    writeOverlay(key, { ...pricePart(overlays.get(key)), fetchedAt: t, refreshedAt: t });
++    writeOverlay(key, { fetchedAt: t, refreshedAt: t });
+     recompose(key);
+     want(key, name, 'pictures');
+   }
