@@ -1,0 +1,90 @@
+...............................                                        [100%]
+=================================== FAILURES ===================================
+_ ReviewCases.test_meta_file_that_is_not_an_object_prints_mirror_unknown (meta='not json') _
+
+self = <tests.test_card_lookup.ReviewCases testMethod=test_meta_file_that_is_not_an_object_prints_mirror_unknown>
+
+    def test_meta_file_that_is_not_an_object_prints_mirror_unknown(self):
+        meta = self.root / "priv_data" / "scryfall-oracle.meta.json"
+        for text in ("not json", "[]"):
+            with self.subTest(meta=text):
+                meta.write_text(text)
+                fake = FakeScryfall()
+>               code, out, _ = self.run_lookup(fake, "Sol Ring")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_card_lookup.py:480: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_card_lookup.py:100: in run_lookup
+    code = card_lookup.main(list(argv))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/card_lookup.py:230: in main
+    index, source = load_mirror(path), mirror_source(path)
+                                       ^^^^^^^^^^^^^^^^^^^
+scripts/card_lookup.py:122: in mirror_source
+    meta = json.loads(path.with_name(MIRROR_META_NAME).read_text(encoding="utf-8"))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/dpires/.local/share/uv/python/cpython-3.14.5-macos-aarch64-none/lib/python3.14/json/__init__.py:352: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/dpires/.local/share/uv/python/cpython-3.14.5-macos-aarch64-none/lib/python3.14/json/decoder.py:345: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.decoder.JSONDecoder object at 0x106f3c2f0>, s = 'not json', idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+            obj, end = self.scan_once(s, idx)
+        except StopIteration as err:
+>           raise JSONDecodeError("Expecting value", s, err.value) from None
+E           json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+/Users/dpires/.local/share/uv/python/cpython-3.14.5-macos-aarch64-none/lib/python3.14/json/decoder.py:363: JSONDecodeError
+_ ReviewCases.test_meta_file_that_is_not_an_object_prints_mirror_unknown (meta='[]') _
+
+self = <tests.test_card_lookup.ReviewCases testMethod=test_meta_file_that_is_not_an_object_prints_mirror_unknown>
+
+    def test_meta_file_that_is_not_an_object_prints_mirror_unknown(self):
+        meta = self.root / "priv_data" / "scryfall-oracle.meta.json"
+        for text in ("not json", "[]"):
+            with self.subTest(meta=text):
+                meta.write_text(text)
+                fake = FakeScryfall()
+>               code, out, _ = self.run_lookup(fake, "Sol Ring")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_card_lookup.py:480: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_card_lookup.py:100: in run_lookup
+    code = card_lookup.main(list(argv))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/card_lookup.py:230: in main
+    index, source = load_mirror(path), mirror_source(path)
+                                       ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/var/folders/k7/hjqn2msd4_jg2v2qmf0_pym80000gn/T/paperclip-run-dec-1126-c2780f3f-2f9-5nPVMl/tmpfmrs89_j/repo/priv_data/scryfall-oracle.json')
+
+    def mirror_source(path: Path) -> str:
+        """The source text "mirror <scryfall_updated_at>", from the meta file beside the mirror."""
+        try:
+            meta = json.loads(path.with_name(MIRROR_META_NAME).read_text(encoding="utf-8"))
+>           return f"mirror {meta['scryfall_updated_at']}"
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: list indices must be integers or slices, not str
+
+scripts/card_lookup.py:123: TypeError
+=========================== short test summary info ============================
+SUBFAILED(meta='not json') tests/test_card_lookup.py::ReviewCases::test_meta_file_that_is_not_an_object_prints_mirror_unknown
+SUBFAILED(meta='[]') tests/test_card_lookup.py::ReviewCases::test_meta_file_that_is_not_an_object_prints_mirror_unknown
+2 failed, 31 passed in 0.46s
