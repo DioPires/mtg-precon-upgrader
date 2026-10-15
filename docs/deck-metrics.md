@@ -303,48 +303,52 @@ The normalized pass emits no gaps — `gaps[]` stays scored against the deck's o
 
 ## Output schema (`data/commanders/{id}/metrics.json`)
 
+The example is grave-dividends' `metrics.json` as the script wrote it on 2026-10-13, trimmed to the keys below.
+
 ```json
 {
-  "deck_id": "gathering-shadow",
+  "deck_id": "grave-dividends",
   "methodology": "deck-metrics-v2",
-  "generated_at": "2026-05-29T12:00:00Z",
-  "bracket": "4+",
+  "generated_at": "2026-10-13T17:01:21+00:00",
+  "bracket": "4",
   "bracket_effective": 4,
   "weight_option": "A",
-  "weights": { "manabase": 0.25, "role": 0.25, "curve": 0.15, "interaction": 0.15, "cohesion": 0.10, "resilience": 0.10 },
+  "weights": { "manabase": 0.25, "role": 0.25, "curve": 0.15, "interaction": 0.15, "cohesion": 0.1, "resilience": 0.1 },
   "metrics": {
-    "manabase_health":      { "score": 82, "components": { "karsten": 40.0, "untapped": 29.2, "fetch": 5.0, "land_count": 7.5 } },
-    "role_coverage_health": { "score": 86, "by_role": { "ramp": 100, "card-draw": 70, "removal-spot": 90, "removal-board": 67, "protection": 50, "tutor": 100, "wincon": 100, "counterspell": 83 } },
-    "curve_health":         { "score": 95, "actual_avg_cmc": 2.58, "target_avg_cmc": 2.8 },
+    "manabase_health":      { "score": 87, "components": { "karsten": 40.0, "untapped": 29.2, "fetch": 10.0, "land_count": 7.5 } },
+    "role_coverage_health": { "score": 76, "by_role": { "ramp": 55, "card-draw": 50, "removal-spot": 112, "removal-board": 83, "protection": 62, "tutor": 120, "wincon": 50 } },
+    "curve_health":         { "score": 98, "actual_avg_cmc": 2.81, "target_avg_cmc": 2.9 },
     "interaction_density":  { "score": 118, "weighted": 16.5, "target": 14 },
-    "gameplan_cohesion":    { "score": 24, "in_set_pct": 0.24, "archetype_extensions": ["recursion"] },
+    "gameplan_cohesion":    { "score": 57, "in_set_pct": 0.57, "archetype_extensions": ["recursion", "tutor"] },
     "resilience_health":    {
-      "score": 88,
+      "score": 97,
       "components": {
-        "recursion":      { "score": 30.0, "actual": 4.5, "target": 2, "max": 30 },
-        "redundancy":     { "score": 25.0, "lines": 9, "floor": 1, "target": 3, "max": 25 },
-        "protection":     { "score": 12.5, "actual": 2.0, "target": 4, "max": 25 },
-        "gy_second_hand": { "score": 20.0, "actual": 13.0, "target": 6, "max": 20 }
+        "recursion":      { "score": 36.0, "actual": 24.0, "target": 2, "max": 30 },
+        "redundancy":     { "score": 25.0, "lines": 3, "floor": 1, "target": 3, "max": 25 },
+        "protection":     { "score": 15.6, "actual": 2.5, "target": 4, "max": 25 },
+        "gy_second_hand": { "score": 20.0, "actual": 32.0, "target": 6, "max": 20 }
       },
-      "inputs": { "wincon_style": "value-incremental", "bracket_effective": 4 }
+      "inputs": { "wincon_style": "combo", "bracket_effective": 4 }
     }
   },
-  "global_health": 85,
-  "global_health_normalized": 93,
+  "global_health": 89,
+  "global_health_normalized": 94,
   "normalized": {
     "reference_bracket": 3,
-    "components": { "manabase": 82, "role": 98, "curve": 95, "interaction": 120, "cohesion": 24, "resilience": 96 }
+    "components": { "manabase": 87, "role": 92, "curve": 98, "interaction": 120, "cohesion": 57, "resilience": 106 }
   },
   "confidence_margin": 5,
-  "win_turn": { "best": 6, "typical": 7, "contested": 8, "source": "max", "bracket_drag": 1, "thresholds": { "best": 15.0, "typical": 50.0 }, "window_last_turn": 10 },
+  "win_turn": { "best": 9, "typical": null, "contested": null, "source": "comboLethal", "bracket_drag": 1, "thresholds": { "best": 15.0, "typical": 50.0 }, "window_last_turn": 10 },
   "gaps": [
-    { "role": "removal-board", "actual": 2.0, "target": 3, "score": 67 },
-    { "role": "protection", "actual": 2.0, "target": 4, "score": 50 }
+    { "role": "ramp", "actual": 5.5, "target": 10, "score": 55 },
+    { "role": "card-draw", "actual": 5.0, "target": 10, "score": 50 },
+    { "role": "protection", "actual": 2.5, "target": 4, "score": 62 },
+    { "role": "wincon", "actual": 0.5, "target": 1, "score": 50, "wincon_style": "combo" }
   ]
 }
 ```
 
-The resilience `protection` component (`2.0` of `4`, 50% of its max) is under 70% too. The join leaves it out because the `protection` role gap holds the same `actual` and `target`.
+The resilience `protection` component (`2.5` of `4`, 62% of its max) is under 70% too. The join leaves it out because the `protection` role gap holds the same `actual` and `target`.
 
 The pool generator (P7.7) reads only the `role` entries of `gaps[]`. A pool card whose role (`deck_role`, read from its oracle text) is a gap role carries `mitigates_gap: <role>`. When a gap role has fewer than 5 pool cards, the generator seats more cards of that role after the top N, flagged `seeded_for_gap: <role>` (DEC-1078, [`discovery-playbook.md`](discovery-playbook.md)). It adds no score, and the top N do not move.
 

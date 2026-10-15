@@ -42,6 +42,10 @@ for (const fonts of ['live', 'blocked'] as const) {
       test(`one Tab from the last rail chip reaches the button, and ${key} imports a list`, async ({ page }) => {
         await page.goto('/shopping');
         await page.locator('.gv1-shop-chip').last().waitFor();
+        // The wait turns file-chooser interception on without waiting for the
+        // answer, and Enter clicks on key-down, so the wait starts some round
+        // trips before the press (DEC-1136, run 38733118028).
+        const chooserOpens = page.waitForEvent('filechooser');
 
         await tabFromLastChip(page);
         await expect(importButton(page)).toBeFocused();
@@ -54,7 +58,6 @@ for (const fonts of ['live', 'blocked'] as const) {
         });
         expect(ring).toEqual({ style: 'solid', width: '2px', offset: '2px' });
 
-        const chooserOpens = page.waitForEvent('filechooser');
         await page.keyboard.press(key);
         const chooser = await chooserOpens;
         expect(await chooser.element().getAttribute('id')).toBe('gv1-shop-owned-file');

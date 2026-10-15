@@ -1128,6 +1128,16 @@ class GapSeatTests(unittest.TestCase):
         _, stderr = self._generate(cards, limit=4)
         self.assertIn("gap-seat: removal-spot 4 -> 5 (1 below the cut, 0 from the EDHREC page)", stderr)
 
+    def test_role_listed_twice_gives_each_card_one_seat(self):
+        """DEC-1121 N3: a `gaps[]` that lists a role twice seats each card once."""
+        cards = self._cards(below_removal=2, off_archetype=["Listed Removal"])
+        rates = {"Listed Removal": 40.0}
+        once, _ = self._generate(cards, limit=3, rates=rates)
+        twice, stderr = self._generate(cards, limit=3, gaps=(self.ROLE, self.ROLE), rates=rates)
+        self.assertEqual(self._names(twice), self._names(once))
+        self.assertEqual(self._seats(twice), ["Removal 0", "Removal 1", "Listed Removal"])
+        self.assertEqual(stderr.count("gap-seat: removal-spot"), 1)
+
 
 class GapSeatWriteTests(unittest.TestCase):
     """DEC-1078: main() writes a pool once, and a change of a seat writes."""

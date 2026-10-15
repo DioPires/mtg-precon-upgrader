@@ -2,12 +2,12 @@
 """DEC-90 P7.3 heuristic role auto-tagger.
 
 Reads decklist + the local Scryfall mirror and emits `primary_role` per card
-based on oracle-text and type-line heuristics. Targets seven roles:
-land, ramp, card-draw, tutor, removal-spot, removal-board, counterspell.
+based on oracle-text and type-line heuristics. Targets eight roles:
+land, ramp, card-draw, tutor, removal-spot, removal-board, counterspell, and
+(narrowly, last, DEC-1143) protection.
 
 Other roles in the 15-role taxonomy (engine, payoff, wincon, threat, utility,
-protection, recursion, mana-fixing) require human judgment and are left
-untagged.
+recursion, mana-fixing) require human judgment and are left untagged.
 
 Confidence bands (per `docs/role-taxonomy.md` and DEC-117):
     >= 0.75   auto-apply primary_role
@@ -126,6 +126,14 @@ _UNRESTRICTED_LAND_TUTOR = re.compile(
 
 _SEARCH_LIBRARY = re.compile(r"search your library for", re.DOTALL)
 
+# A search for "a card named …" or "cards named …" finds one fixed card, often
+# a copy of the card itself, so it is not a tutor (DEC-1143). A clause that
+# also offers "or an Equipment card" stays a tutor.
+_NAMED_SEARCH = re.compile(
+    r"search your library for (?:a|any number of|up to \w+) cards? named "
+    r"(?:(?! or an? (?!card named))[^.\n])*?(?:,| and) (?:reveal|put)"
+)
+
 
 def _detect_ramp(oracle: str, type_line: str) -> tuple[str, float] | None:
     if _LAND_SEARCH.search(oracle):
@@ -146,6 +154,8 @@ def _detect_tutor(oracle: str, type_line: str) -> tuple[str, float] | None:
         return None
     if _LAND_SEARCH.search(oracle):
         return None  # land searches are ramp
+    if len(_NAMED_SEARCH.findall(oracle)) == len(_SEARCH_LIBRARY.findall(oracle)):
+        return None  # each search names its card
     return ("tutor", 0.85)
 
 
@@ -179,12 +189,24 @@ def _detect_removal_board(oracle: str, type_line: str) -> tuple[str, float] | No
     return None
 
 
+_SPOT_TARGET = re.compile(
+    r"(?:destroy|exile) target (?:creature|artifact|enchantment|planeswalker|"
+    r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
+    r"attacking creature|blocking creature|land)"
+)
+
+# Read just after a _SPOT_TARGET match: "exile target creature card from your
+# graveyard" targets a card in a graveyard, not a permanent (DEC-1143).
+_GRAVEYARD_CARD = re.compile(
+    r"(?:(?!target\b)[a-z\-/, ])*?\bcards? (?:with [^.;\n]*? )?(?:from|in) "
+    r"(?:a|your|an opponent's|target player's|that player's|their) graveyard"
+)
+
+
 def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | None:
-    m = re.search(
-        r"(?:destroy|exile) target (?:creature|artifact|enchantment|planeswalker|"
-        r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
-        r"attacking creature|blocking creature|land)",
-        oracle,
+    m = next(
+        (t for t in _SPOT_TARGET.finditer(oracle) if not _GRAVEYARD_CARD.match(oracle, t.end())),
+        None,
     )
     if m:
         # "destroy target creature you control" — that's a sac outlet, not removal.
@@ -218,6 +240,93 @@ def _detect_card_draw(oracle: str, type_line: str) -> tuple[str, float] | None:
     return ("card-draw", 0.85)
 
 
+# `protection` protects your own permanents (docs/role-taxonomy.md). The
+# patterns are narrow on purpose (DEC-1143): a false tag offers a wrong remedy,
+# and a missed card keeps its other role. A grant to the player only ("you have
+# hexproof"), a grant to the card itself and a fog are not protection; nor is a
+# grant that holds only on your turn.
+_PROTECTION_KEYWORD = r"(?<!with )(?:hexproof|indestructible|shroud|protection from|\bward\b)"
+_PROTECTION_PATTERNS = (
+    # "Permanents you control gain hexproof and indestructible until end of turn."
+    re.compile(
+        r"\b(?!spells\b|abilities\b|sources\b)(?:creatures|permanents|artifacts|enchantments|"
+        r"planeswalkers|[a-z\-]+s) you control[^.]*? (?<!\byou )(?:gain|have|get [^.]*? and gain) "
+        r"[^.]*?" + _PROTECTION_KEYWORD
+    ),
+    # "All Slivers have shroud."
+    re.compile(r"\ball [a-z\-]+(?: creatures)? (?:gain|have) [^.]*?" + _PROTECTION_KEYWORD),
+    # "Target creature you control gains indestructible until end of turn."
+    re.compile(
+        r"\btarget (?:[a-z\-]+ )*?(?:creature|permanent|artifact|enchantment|planeswalker)s?"
+        r"(?: you control)? (?:gains?|has|gets? [^.]*? and gains?) [^.]*?" + _PROTECTION_KEYWORD
+    ),
+    # "Equipped creature has hexproof and haste."
+    re.compile(
+        r"\b(?:equipped|enchanted) (?:creature|permanent|artifact)[^.]*? (?:gains?|has) [^.]*?"
+        + _PROTECTION_KEYWORD
+    ),
+    # "Any number of target nonland permanents you control phase out."
+    re.compile(
+        r"\b(?:permanents?|creatures?|planeswalkers?|artifacts?|enchantments?) you control phases? out\b"
+    ),
+    # "Regenerate target creature."
+    re.compile(r"\bregenerate (?:target|each|all|another)\b"),
+    re.compile(r"\b(?:totem|umbra) armor\b"),
+    # "When enchanted creature dies, return that card to the battlefield."
+    re.compile(
+        r"(?:\bwhen(?:ever)? (?:enchanted|equipped) (?:creature|permanent) dies|"
+        r"gains? \"when this creature dies)[^.]*?return (?:it|that card) to the battlefield"
+    ),
+    # "Change the target of target spell or ability with a single target."
+    re.compile(r"(?:change the target of|choose new targets for) target (?:[a-z ]*?)spell"),
+    # "Exile up to one target creature you control, then return it to the battlefield."
+    re.compile(
+        r"\bexile (?:any number of |up to \w+ )?(?:other |another )?target (?:[a-z\-/ ]*?)"
+        r"(?:creatures?|permanents?)(?: and/or planeswalkers)? you control[^.]*?\.? (?:then )?return"
+    ),
+    # "Prevent all damage that would be dealt to creatures you control this turn."
+    re.compile(
+        r"damage (?:that )?would be dealt to (?:another |a )?(?:creature|permanent)s? you control"
+        r"[^.]*?prevent|prevent all (?:combat )?damage that would be dealt (?:this turn )?to "
+        r"(?:creatures|permanents) you control"
+    ),
+)
+_YOUR_TURN_ONLY = re.compile(
+    r"during your turn|as long as it's your turn|\bon your turn\b|\byour (?:upkeep|end step)\b|"
+    r"\bwhenever you attack\b|\bwhenever [^.]*?\battacks?\b(?! or blocks?)|\battacking creatures?\b|"
+    r"deals combat damage to a player"
+)
+_NOT_A_SAVE = re.compile(
+    r"loses all (?:other )?abilities|is goaded|targets only (?:a player|this creature)|if that target is you"
+)
+# A sorcery, or the "enters" trigger of a card without flash, acts on your turn:
+# a grant until end of turn or a blink then saves nothing on another turn.
+_ENTERS_TRIGGER = re.compile(r"\bwhen(?:ever)? [^.]*?\benters\b")
+_HAS_FLASH = re.compile(r"(?:^|\n|, )flash\b")
+_SHORT_EFFECT = re.compile(r"until end of turn|\bthis turn\b|\breturn (?:it|that card|those cards|them)\b")
+
+
+def _detect_protection(oracle: str, type_line: str) -> tuple[str, float] | None:
+    if "you control enchanted creature" in oracle:
+        return None  # an Aura that steals the creature
+    for pattern in _PROTECTION_PATTERNS:
+        for m in pattern.finditer(oracle):
+            # The sentence around the match, read by the exclusions below.
+            start = max(oracle.rfind(".", 0, m.start()), oracle.rfind("\n", 0, m.start())) + 1
+            end = min(i for i in (oracle.find(".", m.end()), oracle.find("\n", m.end()), len(oracle)) if i >= 0)
+            if _YOUR_TURN_ONLY.search(oracle, start, end) or _NOT_A_SAVE.search(oracle, start, end):
+                continue
+            sorcery_speed = all("sorcery" in face for face in type_line.split(" // ")) or (
+                _ENTERS_TRIGGER.search(oracle, start, m.start())
+                and "turned face up" not in oracle[start:end]
+                and not _HAS_FLASH.search(oracle)
+            )
+            if sorcery_speed and _SHORT_EFFECT.search(oracle, start, end):
+                continue
+            return ("protection", 0.8)
+    return None
+
+
 DETECTORS = (
     _detect_land,
     _detect_counterspell,
@@ -226,6 +335,7 @@ DETECTORS = (
     _detect_tutor,
     _detect_removal_spot,
     _detect_card_draw,
+    _detect_protection,
 )
 
 
