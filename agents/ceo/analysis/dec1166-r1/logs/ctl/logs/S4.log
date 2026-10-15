@@ -1,0 +1,47 @@
+(node:63579) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 9 tests using 3 workers
+
+(node:65040) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:65042) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:65041) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  3 [chromium] › tests/dec1152-rate-check-post.spec.ts:46:3 › the rate check, real clock: only /cards/named and /cards/collection count › three autocompletes at once pass (91ms)
+(node:65512) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/dec1152-rate-check-post.spec.ts:66:5 › the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(url, init) (1.1s)
+  ✘  4 [chromium] › tests/dec1152-rate-check-post.spec.ts:66:5 › the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(request) (1.1s)
+  ✘  2 [chromium] › tests/dec1152-rate-check-post.spec.ts:24:3 › the rate check, real clock: a POST counts twice › two batches 600 ms apart fail the test (1.7s)
+  ✓  7 [chromium] › tests/dec1152-rate-check-post.spec.ts:96:1 › the error says that a POST counts twice, and lists each send with its method (1ms)
+  ✘  5 [chromium] › tests/dec1152-rate-check-post.spec.ts:66:5 › the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(request, init) (1.1s)
+  ✘  6 [chromium] › tests/dec1152-rate-check-post.spec.ts:66:5 › the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(url, init), method 'post' (1.1s)
+  ✘  8 [chromium] › tests/dec1152-rate-check-post.spec.ts:158:3 › the rate check's error, as the fixture throws it › names the page's clock (1.1s)
+  ✘  9 [chromium] › tests/dec1152-rate-check-post.spec.ts:162:3 › the rate check's error, as the fixture throws it › lists the sends of the context with the highest peak, not of the first one (1.1s)
+
+
+  1) [chromium] › tests/dec1152-rate-check-post.spec.ts:46:3 › the rate check, real clock: only /cards/named and /cards/collection count › three autocompletes at once pass 
+
+    Error: One browser context started 3 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.
+      A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.
+      Sends (method, ms after the first, real time): GET 0, GET 8, GET 12
+    Every request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, "Scryfall requests").
+
+       at support/test.ts:389
+
+      387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));
+      388 |       }
+    > 389 |       if (failures.length > 0) throw new Error(failures.join('\n'));
+          |                                      ^
+      390 |     },
+      391 |     { auto: true },
+      392 |   ],
+        at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)
+
+    Error Context: test-results/dec1152-rate-check-post-th-fc20b--autocompletes-at-once-pass-chromium/error-context.md
+
+  1 failed
+    [chromium] › tests/dec1152-rate-check-post.spec.ts:46:3 › the rate check, real clock: only /cards/named and /cards/collection count › three autocompletes at once pass 
+  8 passed (6.7s)

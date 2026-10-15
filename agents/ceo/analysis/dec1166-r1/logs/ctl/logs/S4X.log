@@ -1,0 +1,74 @@
+(node:66881) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 35 tests using 3 workers
+
+(node:67019) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:67020) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:67018) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓   3 [chromium] › tests/dec1102-card-data.spec.ts:125:1 › /shopping shows the front half's cost of a two-part card from the file (442ms)
+  ✓   2 [chromium] › tests/dec1102-card-data.spec.ts:89:1 › /shopping shows its priced count at first paint, and with prices younger than 24 h sends nothing to api.scryfall.com (1.9s)
+  ✓   1 [chromium] › tests/dec1102-card-data.spec.ts:69:1 › a scroll to the end of a deck guide sends nothing to api.scryfall.com or /data/images/cards/ (3.5s)
+  ✓   4 [chromium] › tests/dec1102-card-data.spec.ts:152:1 › a hover over ten commanders on /codex sends nothing, and the frame comes from the file (8.4s)
+  ✓   6 [chromium] › tests/dec1102-card-data.spec.ts:211:3 › the 429 stop › /combos sends nothing for 30 s after a rejected batch, then the same batch; a reload inside the stop sends nothing (7.7s)
+  ✓   7 [chromium] › tests/dec1102-card-data.spec.ts:250:1 › two tabs of one context open /combos at once: they share bucket 1, and the rate check holds (2.3s)
+  ✘   9 [chromium] › tests/dec1110-harness.spec.ts:11:3 › the rate check, real clock › three lookups at once fail the test (48ms)
+  ✓  10 [chromium] › tests/dec1110-harness.spec.ts:17:3 › the rate check, real clock › two lookups at once pass (41ms)
+  ✓   8 [chromium] › tests/dec1102-card-data.spec.ts:277:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once (449ms)
+  ✘  11 [chromium] › tests/dec1110-harness.spec.ts:26:3 › the rate check, the page's clock › three lookups in one second of the page's clock fail the test (1.1s)
+  ✓  13 [chromium] › tests/dec1110-harness.spec.ts:55:3 › cards: 'none' › /shopping shows its rows with no price (849ms)
+  ✓  12 [chromium] › tests/dec1110-harness.spec.ts:38:3 › the rate check, the page's clock › three lookups 500 ms apart of the page's clock pass: the window is half-open (2.3s)
+  ✓  15 [chromium] › tests/dec1131-card-batches.spec.ts:165:3 › /shopping refreshes a `//` card › through its front face: the row of a `//` name shows the refreshed price (2.2s)
+  ✓  14 [chromium] › tests/dec1131-card-batches.spec.ts:98:3 › /shopping refreshes the prices older than 24 h › first paint shows the file's prices with no request; then the batches bring the new prices once; a reload inside 24 h sends nothing (5.3s)
+  ✓  16 [chromium] › tests/dec1131-card-batches.spec.ts:192:3 › /shopping while a stop holds the refresh › the stop line gives the date of the prices and the time of the next try; 0 requests in 30 s, then 1, and the line goes (3.5s)
+  ✓  18 [chromium] › tests/dec1131-card-batches.spec.ts:298:3 › a batch with no answer › is aborted after 20 s; the stop starts, and after it the same batch goes (N3) (634ms)
+  ✓  19 [chromium] › tests/dec1131-card-batches.spec.ts:342:3 › an old stop record › a record that ended 400 s ago counts as none: the next failure stops for 30 s (N4) (358ms)
+  ✓  20 [chromium] › tests/dec1131-card-batches.spec.ts:361:3 › a stop that lives in memory › when storage refuses the stop and the clock goes back 10 h, the next batch goes about one stop later (delta N1) (623ms)
+  ✓   5 [chromium] › tests/dec1102-card-data.spec.ts:176:1 › a hover over names outside the file looks them up through the limiter, with no format=image address (19.6s)
+  ✓  21 [chromium] › tests/dec1131-card-batches.spec.ts:394:1 › a card-metadata.json that fails is not kept: the next load asks for it again (N6) (526ms)
+  ✓  17 [chromium] › tests/dec1131-card-batches.spec.ts:256:1 › /combos at load sends one batch, and each art settles: the picture of a file name, the glyph of a name Scryfall lacks (4.7s)
+  ✘  24 [chromium] › tests/dec1131-card-batches.spec.ts:475:3 › the rate check, the page's clock, with batches (H7) › three batches in one second of the page's clock fail the test (1.1s)
+  ✓  23 [chromium] › tests/dec1131-card-batches.spec.ts:447:1 › the Atlas sends no autocomplete while a stop holds, and keeps its own suggestions (N5) (3.2s)
+preflight reading: request events ["POST"], route ["POST"]
+  ✓  26 [chromium] › tests/dec1131-card-batches.spec.ts:523:1 › reading: the preflight of a batch, as Playwright's route and request event see it (57ms)
+  ✘  27 [chromium] › tests/dec1152-rate-check-post.spec.ts:24:3 › the rate check, real clock: a POST counts twice › two batches 600 ms apart fail the test (1.6s)
+  ✘  28 [chromium] › tests/dec1152-rate-check-post.spec.ts:46:3 › the rate check, real clock: only /cards/named and /cards/collection count › three autocompletes at once pass (43ms)
+  ✘  25 [chromium] › tests/dec1131-card-batches.spec.ts:497:3 › the rate check, real clock, with a held answer (N2) › three batches sent at once fail the test, also when the spec releases them 1.2 s apart (2.4s)
+(node:69360) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  29 [chromium] › tests/dec1152-rate-check-post.spec.ts:66:5 › the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(request) (1.0s)
+  ✘  30 [chromium] › tests/dec1152-rate-check-post.spec.ts:66:5 › the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(url, init) (1.1s)
+  ✓  22 [chromium] › tests/dec1131-card-batches.spec.ts:416:1 › a deck guide: only the tiles with no highlight price ask for a refresh, and a reload inside 24 h sends nothing (6.6s)
+  ✓  33 [chromium] › tests/dec1152-rate-check-post.spec.ts:96:1 › the error says that a POST counts twice, and lists each send with its method (0ms)
+  ✘  31 [chromium] › tests/dec1152-rate-check-post.spec.ts:66:5 › the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(request, init) (1.0s)
+  ✘  32 [chromium] › tests/dec1152-rate-check-post.spec.ts:66:5 › the rate check, the page's clock: a POST counts twice › two batches 600 ms apart of the page's clock fail the test: fetch(url, init), method 'post' (1.1s)
+  ✘  34 [chromium] › tests/dec1152-rate-check-post.spec.ts:158:3 › the rate check's error, as the fixture throws it › names the page's clock (1.0s)
+  ✘  35 [chromium] › tests/dec1152-rate-check-post.spec.ts:162:3 › the rate check's error, as the fixture throws it › lists the sends of the context with the highest peak, not of the first one (1.1s)
+
+
+  1) [chromium] › tests/dec1152-rate-check-post.spec.ts:46:3 › the rate check, real clock: only /cards/named and /cards/collection count › three autocompletes at once pass 
+
+    Error: One browser context started 3 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.
+      A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.
+      Sends (method, ms after the first, real time): GET 0, GET 2, GET 3
+    Every request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, "Scryfall requests").
+
+       at support/test.ts:389
+
+      387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));
+      388 |       }
+    > 389 |       if (failures.length > 0) throw new Error(failures.join('\n'));
+          |                                      ^
+      390 |     },
+      391 |     { auto: true },
+      392 |   ],
+        at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)
+
+    Error Context: test-results/dec1152-rate-check-post-th-fc20b--autocompletes-at-once-pass-chromium/error-context.md
+
+  1 failed
+    [chromium] › tests/dec1152-rate-check-post.spec.ts:46:3 › the rate check, real clock: only /cards/named and /cards/collection count › three autocompletes at once pass 
+  34 passed (33.0s)
