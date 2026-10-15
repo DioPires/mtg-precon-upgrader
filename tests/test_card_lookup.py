@@ -33,7 +33,9 @@ SCRIPT = Path(card_lookup.__file__).resolve()
 NAMED_URL = "https://api.scryfall.com/cards/named"
 SEARCH_URL = "https://api.scryfall.com/cards/search"
 UPDATED_AT = "2026-10-08T09:01:59.811+00:00"
-WAIT = "wait 30 seconds or more"
+# The helper's first words, then the limiter's text, which names the end of the stop
+# (DEC-1114 N5). The times and the seconds left differ from case to case.
+WAIT = "Scryfall answered HTTP 429 (too many requests): Scryfall answered HTTP 429 at "
 KEYS = ["name", "mana_cost", "cmc", "type_line", "oracle_text", "power", "toughness",
         "loyalty", "defense", "color_identity", "legalities", "card_faces", "source"]
 
