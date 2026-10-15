@@ -193,7 +193,9 @@ web-ci uploads it when the `e2e` job fails.
   POST counts as two starts: a request starts 1,200 ms or more after the last start, and only
   after the last answer has arrived. Inside a tab the spacing runs on `performance.now()`, so
   a step of the wall clock does not shorten it. The tabs of one origin share the bucket
-  through `navigator.locks` and the last start (wall time) in `localStorage`.
+  through `navigator.locks` and the last start (wall time) in `localStorage`. A tab keeps the
+  lock until the card cache has stored the answer, and 20 s after the start at most, so the
+  next tab's batch finds those names in storage.
 - **Bucket 2** holds `/cards/autocomplete`, 120 ms apart. While a stop holds, the Atlas sends
   no autocomplete and keeps its own suggestions.
 - **The timeout.** A request with no answer after 20 s is aborted, and it counts as a rejected
@@ -208,13 +210,16 @@ web-ci uploads it when the `e2e` job fails.
 
 The card cache (`src/data/cardCache.ts`) takes every deck card from `data/card-metadata.json`
 before a page can show it: facts, USD price dated `prices_as_of`, and Scryfall's picture
-addresses on `cards.scryfall.io`.
+addresses on `cards.scryfall.io`. The loader fetches `card-metadata.meta.json` only with the
+file, and keeps the file 1 h in `localStorage` with that date, so a stored file keeps its own
+date after a deploy.
 
 - A name that the file lacks goes in the next batch. Names asked `first` (the hover, the
   commander art) go before the other lookups, and lookups go before refreshes. A `//` name
   goes out as its front face, two names with one front face go out once, and the answer is
-  matched by name, never by position. A name in `not_found` gets no other request for 24 h,
-  also after a reload. An answer with another status (a 400 or a 422) fails the batch's names
+  matched by name, never by position. A name whose front face is blank goes in no batch,
+  because one blank identifier fails the whole batch: it reads not found. A name in
+  `not_found` gets no other request for 24 h, also after a reload. An answer with another status (a 400 or a 422) fails the batch's names
   for 30 s and starts no stop.
 - /shopping and the deck guide tiles that show the cache's price (a tile shows the deck
   file's highlight price first) ask again for a price older than 24 h. A refresh changes only
