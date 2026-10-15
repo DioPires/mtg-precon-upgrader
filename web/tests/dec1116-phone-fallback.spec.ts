@@ -16,8 +16,9 @@
 // the decks where each rule acts in it. Two guides stay wider than 320px in
 // that face, and the second case leaves them out: the-white-forge 337 (the
 // tile name "Archaeomancer's") and witherbloom-the-balancer 324. The other
-// cases pin where the rules act, and that the engine tiles keep each word
-// whole with the web fonts.
+// cases pin where the rules act, that the engine tiles keep each word whole
+// with the web fonts, and that the eternal-agony note that this issue
+// reworded breaks only between words in the fallback faces.
 
 import { expect, test, type Page } from './support/test';
 
@@ -126,11 +127,17 @@ test.describe('DEC-1116 @ 320px, web fonts blocked', () => {
 
 // Each run of non-space characters in an engine tile's name or note that the
 // browser splits over two lines, with "|" where the line ends. A line end
-// after a hyphen or a dash is an ordinary break, and does not count.
-async function wordsBroken(page: Page): Promise<string[]> {
-  return page.evaluate(() => {
+// after a hyphen or a dash, or before the "{" of a mana symbol, is an
+// ordinary break, and does not count. With `tile`, only the tile of that card
+// name is read.
+async function wordsBroken(page: Page, tile?: string): Promise<string[]> {
+  return page.evaluate((tile) => {
     const out: string[] = [];
-    for (const el of document.querySelectorAll('.gv1-engine-cards :is(.gv1-card-tile-name, .gv1-card-tile-note)')) {
+    const tiles = [...document.querySelectorAll('.gv1-engine-cards .gv1-card-tile')].filter(
+      (t) => !tile || t.querySelector('.gv1-card-tile-name')?.textContent?.trim() === tile,
+    );
+    if (tile && tiles.length === 0) return [`no engine tile named ${tile}`];
+    for (const el of tiles.flatMap((t) => [...t.querySelectorAll('.gv1-card-tile-name, .gv1-card-tile-note')])) {
       const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
       for (let n = walker.nextNode(); n; n = walker.nextNode()) {
         const text = n.textContent ?? '';
@@ -144,10 +151,10 @@ async function wordsBroken(page: Page): Promise<string[]> {
             range.setStart(n, m.index + i);
             range.setEnd(n, m.index + i + 1);
             const box = [...range.getClientRects()].find((r) => r.width > 0);
-            const top = box ? Math.round(box.top) : last;
+            const top: number | null = box ? Math.round(box.top) : last;
             if (last !== null && top !== last) {
               marked += '|';
-              if (!/[-‐–—]/.test(m[0][i - 1])) inside = true;
+              if (!/[-‐–—]/.test(m[0][i - 1]) && m[0][i] !== '{') inside = true;
             }
             marked += m[0][i];
             last = top;
@@ -157,7 +164,7 @@ async function wordsBroken(page: Page): Promise<string[]> {
       }
     }
     return out;
-  });
+  }, tile);
 }
 
 test.describe('DEC-1116 @ phone widths, web fonts', () => {
@@ -181,6 +188,26 @@ test.describe('DEC-1116 @ phone widths, web fonts', () => {
       }
     }
     expect(out, 'Engine tile words that break inside with the web fonts').toEqual([]);
+  });
+});
+
+test.describe('DEC-1116 @ 320px, web fonts blocked: the eternal-agony note', () => {
+  test.use({ cards: 'seeded', fonts: 'blocked', viewport: { width: 320, height: 900 } });
+
+  // The note of Beseech the Mirror names its three kinds with spaces, so it
+  // breaks only between words. Written with a slash ("enchantment/token)"),
+  // the note rule breaks that word inside in both faces at 320px.
+  test('the note of Beseech the Mirror breaks only between words', async ({ page }) => {
+    test.setTimeout(60_000);
+    const out: string[] = [];
+    for (const [face, css] of [
+      ['fallback serif', undefined],
+      ['Verdana and Menlo', WIDE_FACES],
+    ] as const) {
+      await openSettled(page, 'eternal-agony', css);
+      for (const word of await wordsBroken(page, 'Beseech the Mirror')) out.push(`${face}: ${word}`);
+    }
+    expect(out, 'Words of the Beseech the Mirror tile that break inside in a fallback face').toEqual([]);
   });
 });
 
