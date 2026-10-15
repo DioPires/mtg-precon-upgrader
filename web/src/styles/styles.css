@@ -273,6 +273,11 @@ em { font-style: italic; color: var(--gv1-gold); }
   padding-bottom: 20px;
   border-bottom: 1px solid var(--gv1-line);
 }
+/* DEC-1046: with a partner, two names and the type do not fit one row of a
+   narrow dossier (345px at 769px), so the row wraps. Without the wrap the row
+   also passes the content edge on a phone, and at 1021px with the web fonts
+   blocked. */
+.gv1-cmd-grid-partner .gv1-cmd-commander-row { flex-wrap: wrap; }
 .gv1-cmd-commander-name {
   font-family: var(--gv1-serif);
   font-size: 22px;
@@ -3079,10 +3084,16 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-combo-grid { grid-template-columns: minmax(0, 1fr); }
 }
 /* Commander: beside the 420px art, the 88px deck name needs 1017px
-   (witherbloom-the-balancer). The art moves above the dossier. */
+   (witherbloom-the-balancer). DEC-1046: the art stays beside the dossier on a
+   narrower track (240px at 769px, 319px at 1020px), and the name scales from
+   60px at 769px to 88px from 1000px. At each size the longest word of every
+   deck name ("Witherbloom") fits the dossier whole in Georgia, which is wider
+   than the web font. No lower bound: the 768px block, later in the file, sets
+   the grid's tracks, its gap and the name's size again. A lower bound at 769px
+   left the widths between 768 and 769px (browser zoom) to the desktop tracks. */
 @media (max-width: 1020px) {
-  .gv1-cmd-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
-  .gv1-cmd-art { max-width: 320px; }
+  .gv1-cmd-grid { grid-template-columns: clamp(240px, 31.25vw, 320px) minmax(0, 1fr); gap: 40px; }
+  .gv1-cmd-deckname { font-size: clamp(56px, calc(12vw - 32px), 88px); }
 }
 /* Decklist: three columns need 1001px (witherbloom-the-balancer). */
 @media (max-width: 1010px) {
