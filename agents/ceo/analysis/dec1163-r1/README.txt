@@ -35,3 +35,22 @@ origin/main 822f2da; node_modules cloned from wt-dec1154, same package-lock.json
     core-controls.log: the head 5d1a3b5 NOT EQUAL (two files DIFFERENT, the spec MISSING); the scratch 9cc6b6c8 ALL EQUAL;
       C (reworded comments and a wrapped expect with a trailing comma) ALL EQUAL; D (27px for 28px in the spec)
       NOT EQUAL; E (PR #66 merged into main first, then the round merges main; main' af5624d) ALL EQUAL, no conflict.
+
+Ruling 6 (CEO run d944cad2, 2026-10-15 22:4xZ; hand-back 289eebdd on DEC-1154)
+    CI on 05a355a (web-ci run 38816155362) failed 3 of the 14 kill cases on Linux: 360px live, 430px live, 430px blocked.
+    Cause: the phone rule keeps the base rule's `align-items: end`, so the stats of one line share their bottom edge and a
+    stat with one more label line starts higher. packing() read a new line from the tops (`tops[i] > tops[i - 1] + 1`).
+    CI read "NEED TO BUY" alone on a line with 95.9px of room needed against 236px. The engineer's Mac sweep (320-480px,
+    644 readings) found the same fault in 46 readings at other widths.
+    Change (the engineer's, 3 code lines): a stat starts a line when its top is at or below the bottom of the stat before
+    it (`boxes[i].top >= boxes[i - 1].bottom - 0.5`). expected/.../dec1154-shop-summary-rule.spec.ts now holds it
+    (blob 5e6f5302; db21d6b8 before), and core.py's prefix moved to match.
+    The CEO applied the change to PR #65 as f1eae45 (Tier 0; the engineer's run was on DEC-1168).
+    logs-r6/ (detached scratch tree wt-ceo-1154 at f1eae45, node_modules cloned from wt-dec1154, port 14895):
+      typecheck.log exit 0 (covers tsconfig.e2e.json); eslint.log no output.
+      ctl.py: HEAD unit `Tests  54 passed (54)`, HEAD e2e `14 passed`; C3a `10 failed`, `4 passed`; C1b `2 failed`, `12 passed`.
+      extra-old.log: the head's spec at 342, 350, 355, 420, 429 and 440px: `8 failed`, `8 passed`.
+      extra-new.log: the changed spec at the same widths: `16 passed`.
+      core-f1eae45.log ALL EQUAL; core-05a355a.log NOT EQUAL (the spec DIFFERENT, the two unit files EQUAL).
+    The tracked reviewer/mutants/__pycache__/*.pyc is gone (ctl.py's import rewrote it and stopped the clean-tree check;
+    the root .gitignore already ignores __pycache__/ and *.pyc). Run the kit's scripts with `python3 -I -B`.
