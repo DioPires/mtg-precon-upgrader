@@ -1,0 +1,58 @@
+diff --git a/web/src/styles/combo-lab.css b/web/src/styles/combo-lab.css
+index bf20f2a..a7ad984 100644
+--- a/web/src/styles/combo-lab.css
++++ b/web/src/styles/combo-lab.css
+@@ -246 +246 @@
+-  @media (min-height:700px){
++  @media (min-height:760px){
+
+(node:42501) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 11 tests using 3 workers
+
+(node:42612) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:42611) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:42613) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓   3 [chromium] › tests/dec1129-variant.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1280×800, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll (470ms)
+  ✓   1 [chromium] › tests/dec1129-variant.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1440×900, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll (483ms)
+  ✓   2 [chromium] › tests/dec1129-variant.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1920×1080, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll (498ms)
+  ✓   4 [chromium] › tests/dec1129-variant.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1280×800, fonts blocked › the rail pins from Contents down; the mode switch and the deck picker scroll (252ms)
+  ✓   6 [chromium] › tests/dec1129-variant.spec.ts:105:5 › DEC-1032 Combo Lab rail @ 1080×800 › the whole rail scrolls with the page (421ms)
+  ✘   5 [chromium] › tests/dec1129-variant.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1280×700, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll (453ms)
+  ✓   7 [chromium] › tests/dec1129-variant.spec.ts:105:5 › DEC-1032 Combo Lab rail @ 1280×699 › the whole rail scrolls with the page (418ms)
+(node:42652) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓   8 [chromium] › tests/dec1129-variant.spec.ts:124:5 › DEC-1032 Combo Lab rail, keyboard @ 1280×800, fonts live › no control of the rail sits on screen under the pinned part (439ms)
+  ✓   9 [chromium] › tests/dec1129-variant.spec.ts:124:5 › DEC-1032 Combo Lab rail, keyboard @ 1280×800, fonts blocked › no control of the rail sits on screen under the pinned part (235ms)
+  ✓  11 [chromium] › tests/dec1129-variant.spec.ts:166:5 › DEC-1032 Combo Lab rail, keyboard @ 1280×800, fonts blocked › Shift+Tab from the pinned Contents brings the last deck into view above the part (246ms)
+  ✓  10 [chromium] › tests/dec1129-variant.spec.ts:166:5 › DEC-1032 Combo Lab rail, keyboard @ 1280×800, fonts live › Shift+Tab from the pinned Contents brings the last deck into view above the part (476ms)
+
+
+  1) [chromium] › tests/dec1129-variant.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1280×700, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll 
+
+    Error: top of the pinned part, 600px past its place: expected 20, read -600
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: < [32m1[39m
+    Received:   [31m620[39m
+
+      14 | // The scroll target is a whole pixel and the blocks' positions are not.
+      15 | function expectWithin1px(received: number, expected: number, what: string): void {
+    > 16 |   expect(Math.abs(received - expected), `${what}: expected ${expected}, read ${received}`).toBeLessThan(1);
+         |                                                                                            ^
+      17 | }
+      18 |
+      19 | async function openLab(page: Page): Promise<void> {
+        at expectWithin1px (/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1032-review/web/tests/dec1129-variant.spec.ts:16:92)
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1032-review/web/tests/dec1129-variant.spec.ts:82:9
+
+    Error Context: test-results/dec1129-variant-DEC-1032-C-92d07--and-the-deck-picker-scroll-chromium/error-context.md
+
+  1 failed
+    [chromium] › tests/dec1129-variant.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1280×700, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll 
+  10 passed (4.6s)

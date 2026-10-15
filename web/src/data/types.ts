@@ -219,7 +219,9 @@ export interface RawRoleGap {
  * DEC-308 — a resilience component under 70% of its max (`resilience_health`
  * in `scripts/compute_deck_metrics.py`). `resilience_component` is one of
  * `recursion`, `redundancy`, `protection`, `gy_second_hand`. Redundancy
- * carries `lines`/`floor`; the other three carry `actual`/`target`.
+ * carries `lines`, `floor` and `target` (the line count for the full score);
+ * a `metrics.json` from before PR #21 has no `target` there. The other three
+ * carry `actual`/`target`.
  */
 export interface RawResilienceGap {
   resilience_component: string;
@@ -313,6 +315,18 @@ export interface RawCardMetadataEntry {
   colors?: string[];
   oracle_text?: string;
   layout?: string;
+  /** Scryfall's path for the front face's picture, the same for each size (DEC-1075). */
+  image?: string;
+  usd?: number | null;
+  eur?: number | null;
+}
+
+/** data/card-metadata.meta.json. */
+export interface RawCardMetadataMeta {
+  count?: number;
+  /** When the pipeline read the prices (ISO 8601). */
+  prices_as_of?: string;
+  source?: string;
 }
 
 export type RawCardMetadata = Record<string, RawCardMetadataEntry>;

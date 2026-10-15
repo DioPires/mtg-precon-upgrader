@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { cardCache } from '../../data/cardCache';
 
 // Mounts ONCE near the React root. Listens for mouseover/mouseout on any element
-// with [data-card-name] and pops a Scryfall full frame next to the cursor. Uses
-// the shared cardCache when available so repeat hovers are instant; otherwise
-// falls back to Scryfall's named-card image redirect.
+// with [data-card-name] and pops a Scryfall full frame next to the cursor. The
+// frame is `image_large` of the shared cardCache entry (DEC-1102): a deck card's
+// entry comes from card-metadata.json at once. For a name with no entry the
+// layer puts the name first in the lookup queue and shows the scrying frame
+// until the entry arrives.
 
-type ImgStatus = 'idle' | 'loading' | 'loaded' | 'error';
+type ImgStatus = 'loading' | 'loaded' | 'error';
 type HoverSide = 'left' | 'right';
 interface HoverState {
   name: string;
@@ -15,11 +17,8 @@ interface HoverState {
   side: HoverSide;
 }
 
-const cardFrameUrl = (name: string) =>
-  `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}&format=image&version=large`;
-
-// Module-level cache: success/failure per card name. Skips the loading flash
-// on repeat hovers — the popover is a derivative of view state, not source of truth.
+// Module-level cache: success/failure per picture address. Skips the loading
+// flash on repeat hovers — the popover is a derivative of view state, not source of truth.
 const imgCache: Record<string, 'loaded' | 'error'> = {};
 
 const HOVER_DELAY_MS = 140;
@@ -72,9 +71,19 @@ export function computeHoverPosition({
 
 export function GV1CardHoverLayer() {
   const [card, setCard] = useState<HoverState | null>(null);
-  const [imgStatus, setImgStatus] = useState<ImgStatus>('idle');
+  // Bumped when the hovered card's entry or picture changes.
+  const [, setVersion] = useState(0);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastNameRef = useRef<string | null>(null);
+  const hoveredName = card?.name ?? null;
+
+  useEffect(() => {
+    if (!hoveredName) return;
+    const unsub = cardCache.subscribe(hoveredName, () => setVersion((v) => v + 1));
+    const cur = cardCache.get(hoveredName);
+    if (!cur || cur.status === 'error') cardCache.enqueue(hoveredName, { first: true });
+    return unsub;
+  }, [hoveredName]);
 
   useEffect(() => {
     function onOver(e: MouseEvent) {
@@ -93,10 +102,6 @@ export function GV1CardHoverLayer() {
         });
         lastNameRef.current = name;
         setCard({ name, x, y, side });
-        const cached = imgCache[name.toLowerCase()];
-        if (cached === 'loaded') setImgStatus('loaded');
-        else if (cached === 'error') setImgStatus('error');
-        else setImgStatus('loading');
       }, HOVER_DELAY_MS);
     }
 
@@ -107,14 +112,14 @@ export function GV1CardHoverLayer() {
       if (!t) return;
       if (related && t.contains(related)) return;
       if (hoverTimer.current) clearTimeout(hoverTimer.current);
+      lastNameRef.current = null;
       setCard(null);
-      setImgStatus('idle');
     }
 
     function onScroll() {
       if (hoverTimer.current) clearTimeout(hoverTimer.current);
+      lastNameRef.current = null;
       setCard(null);
-      setImgStatus('idle');
     }
 
     document.addEventListener('mouseover', onOver, true);
@@ -129,11 +134,15 @@ export function GV1CardHoverLayer() {
   }, []);
 
   if (!card) return null;
-  const cacheKey = card.name.toLowerCase();
-  const cached = cardCache.get(card.name);
-  const imgSrc = (cached?.status === 'loaded' && (cached.image_large || cached.image_normal))
-    ? (cached.image_large || cached.image_normal)!
-    : cardFrameUrl(card.name);
+  const entry = cardCache.get(card.name);
+  const imgSrc = entry?.status === 'loaded' ? (entry.image_large || entry.image_normal || null) : null;
+  // No address yet: scrying while the lookup is out, unavailable once it failed.
+  const imgStatus: ImgStatus = imgSrc
+    ? (imgCache[imgSrc] ?? 'loading')
+    : entry?.status === 'loaded' || entry?.status === 'error'
+      ? 'error'
+      : 'loading';
+  const shownName = card.name;
 
   return (
     <div
@@ -162,20 +171,23 @@ export function GV1CardHoverLayer() {
             <div className="gv1-mono-xs gv1-dim">scryfall returned no match</div>
           </div>
         )}
-        <img
-          src={imgSrc}
-          alt={card.name}
-          className={`gv1-cardhover-img${imgStatus === 'loaded' ? ' gv1-loaded' : ''}`}
-          onLoad={() => {
-            imgCache[cacheKey] = 'loaded';
-            if (lastNameRef.current === card.name) setImgStatus('loaded');
-          }}
-          onError={() => {
-            imgCache[cacheKey] = 'error';
-            if (lastNameRef.current === card.name) setImgStatus('error');
-          }}
-          draggable={false}
-        />
+        {imgSrc && (
+          <img
+            src={imgSrc}
+            alt={card.name}
+            className={`gv1-cardhover-img${imgStatus === 'loaded' ? ' gv1-loaded' : ''}`}
+            onLoad={() => {
+              imgCache[imgSrc] = 'loaded';
+              if (lastNameRef.current === shownName) setVersion((v) => v + 1);
+            }}
+            onError={() => {
+              imgCache[imgSrc] = 'error';
+              cardCache.imageFailed(shownName);
+              if (lastNameRef.current === shownName) setVersion((v) => v + 1);
+            }}
+            draggable={false}
+          />
+        )}
       </div>
       <div className="gv1-cardhover-caption gv1-mono-xs gv1-dim">
         ◇ scryfall · large frame

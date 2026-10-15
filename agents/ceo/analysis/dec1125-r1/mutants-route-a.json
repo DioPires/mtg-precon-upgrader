@@ -1,0 +1,132 @@
+[
+ {
+  "name": "RA-A8-strict-undefined",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "if (g.lines != null && g.target != null)",
+    "if (g.lines !== undefined && g.target !== undefined)"
+   ]
+  ]
+ },
+ {
+  "name": "RA-A9-no-fmt-count",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{fmtFigure(g.lines)}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)} lines",
+    "{g.lines}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)} lines"
+   ]
+  ]
+ },
+ {
+  "name": "RA-A10-no-fmt-target",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "/ {fmtFigure(g.target)} lines",
+    "/ {g.target} lines"
+   ]
+  ]
+ },
+ {
+  "name": "RA-A13-actual-or",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "if (g.actual != null && g.target != null)",
+    "if (g.actual != null || g.target != null)"
+   ]
+  ]
+ },
+ {
+  "name": "RA-A16-no-fmt-actual",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{fmtFigure(g.actual)}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)}</span>",
+    "{g.actual}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)}</span>"
+   ]
+  ]
+ },
+ {
+  "name": "RA-A17-no-fmt-actual-target",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{fmtFigure(g.actual)}\n        <span className=\"gv1-dim\"> / {fmtFigure(g.target)}</span>",
+    "{fmtFigure(g.actual)}\n        <span className=\"gv1-dim\"> / {g.target}</span>"
+   ]
+  ]
+ },
+ {
+  "name": "RA-C-nofallback-status",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "(ROLE_LABEL[effectiveFilter] || effectiveFilter);",
+    "(ROLE_LABEL[effectiveFilter]);"
+   ]
+  ]
+ },
+ {
+  "name": "RA-C-nofallback-chip",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{ROLE_LABEL[g.role] || g.role}</span>",
+    "{ROLE_LABEL[g.role]}</span>"
+   ]
+  ]
+ },
+ {
+  "name": "RA-C-nofallback-filtered",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "` \u00b7 filtered: ${ROLE_LABEL[effectiveFilter] || effectiveFilter}`",
+    "` \u00b7 filtered: ${ROLE_LABEL[effectiveFilter]}`"
+   ]
+  ]
+ },
+ {
+  "name": "RA-C-nofallback-empty",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "<em>{ROLE_LABEL[effectiveFilter] || effectiveFilter}</em>",
+    "<em>{ROLE_LABEL[effectiveFilter]}</em>"
+   ]
+  ]
+ },
+ {
+  "name": "RA-C-nofallback-addresses",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "addresses \u00b7 {ROLE_LABEL[c.mitigates_gap as string] || c.mitigates_gap}",
+    "addresses \u00b7 {ROLE_LABEL[c.mitigates_gap as string]}"
+   ]
+  ]
+ },
+ {
+  "name": "RA-C-nofallback-tag",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "{ROLE_LABEL[c.deck_role] || c.deck_role}\n",
+    "{ROLE_LABEL[c.deck_role]}\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M1-floor-plus-2",
+  "file": "src/components/organisms/Apothecary.tsx",
+  "edits": [
+   [
+    "/ {fmtFigure(g.target)} lines",
+    "/ {fmtFigure((g.floor ?? 0) + 2)} lines"
+   ]
+  ]
+ }
+]

@@ -84,7 +84,7 @@ export function CardAtlas({ decks }: CardAtlasProps) {
     if (query.trim().length < 2) return;
     const ctrl = new AbortController();
     const t = window.setTimeout(async () => {
-      const remote = await scryfallSuggest(query, fetch, ctrl.signal);
+      const remote = await scryfallSuggest(query, ctrl.signal);
       if (ctrl.signal.aborted) return;
       const localSet = new Set(local.map((n) => n.toLowerCase()));
       const merged = [...local];

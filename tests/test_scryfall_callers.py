@@ -13,6 +13,7 @@ the helper's opener and for the clock.
 
 import contextlib
 import csv
+import http.client
 import importlib
 import io
 import json
@@ -22,6 +23,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import urllib.error
 import urllib.parse
 from pathlib import Path
 from unittest import mock
@@ -72,7 +74,9 @@ ARMY_QUERY = 't:token t:army "Orcs"'
 ARMY_URL = f"{API}/cards/search?q={urllib.parse.quote(ARMY_QUERY)}"
 MONARCH_URL = f"{API}/cards/named?exact=The%20Monarch"
 VALAKUT = "Valakut Awakening // Valakut Stoneforge"
-VALAKUT_URL = f"{API}/cards/named?fuzzy=Valakut%20Awakening"
+# A name that the batch does not find, so the script asks /cards/named?fuzzy= for it.
+MISSPELT = "Lim-Dul's Vault"
+MISSPELT_URL = f"{API}/cards/named?fuzzy=Lim-Dul%27s%20Vault"
 
 
 def token_card(name: str, type_line: str, **extra) -> dict:
@@ -94,7 +98,7 @@ def token_fake(cards=()) -> FakeScryfall:
         *cards,
     ])
     fake.pages = {
-        VALAKUT_URL: make_card(VALAKUT, layout="modal_dfc"),
+        MISSPELT_URL: make_card("Lim-Dûl's Vault"),
         GOBLIN_URL: token_card("Goblin", "Token Creature — Goblin", power="1", toughness="1"),
         ARMY_URL: {"object": "list", "data": [
             token_card("Orc Army", "Token Creature — Orc Army", power="0", toughness="0")]},
@@ -131,7 +135,7 @@ class ComputeTokensTests(CallerCase):
         """Rule 1 over each request kind: two batches, /cards/named, a token, /cards/search."""
         fillers = [f"Card {n:03d}" for n in range(75)]
         path = self.write_deck(
-            "one", "Goblin Maker", *fillers, "Orc Caller", "Crown Seeker", VALAKUT)
+            "one", "Goblin Maker", *fillers, "Orc Caller", "Crown Seeker", MISSPELT)
         fake = token_fake(make_card(name) for name in fillers)
 
         code, _ = self.run_main(fake)
@@ -139,7 +143,7 @@ class ComputeTokensTests(CallerCase):
         self.assertEqual(code, 0)
         self.assertEqual(
             [s.url for s in fake.sent],
-            [COLLECTION_URL, COLLECTION_URL, VALAKUT_URL, GOBLIN_URL, ARMY_URL, MONARCH_URL])
+            [COLLECTION_URL, COLLECTION_URL, MISSPELT_URL, GOBLIN_URL, ARMY_URL, MONARCH_URL])
         self.assertEqual([len(s.body["identifiers"]) for s in fake.sent[:2]], [75, 4])
         self.assert_600ms_gaps(fake, 5)
         for sent in fake.sent:
@@ -167,7 +171,7 @@ class ComputeTokensTests(CallerCase):
         """Rule 2. The 429 answers the last request of the run, so a swallowed 429 writes files."""
         kinds = {
             "a batch": ("Sol Ring", [COLLECTION_URL]),
-            "a fuzzy /cards/named": (VALAKUT, [COLLECTION_URL, VALAKUT_URL]),
+            "a fuzzy /cards/named": (MISSPELT, [COLLECTION_URL, MISSPELT_URL]),
             "a token": ("Goblin Maker", [COLLECTION_URL, GOBLIN_URL]),
             "a /cards/search": ("Orc Caller", [COLLECTION_URL, ARMY_URL]),
             "an exact /cards/named": ("Crown Seeker", [COLLECTION_URL, MONARCH_URL]),
@@ -187,6 +191,8 @@ class ComputeTokensTests(CallerCase):
                 self.assertEqual(code, 1)
                 self.assert_429_text(out)
                 self.assertIn("No file written.", out)
+                # DEC-1098: the helper's text alone, not wrapped as a failed request.
+                self.assertIn(f"\n{scryfall_api.ScryfallRateLimited()}\nNo file written.\n", out)
                 self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, *urls])
                 self.assertEqual({path: path.read_text() for path in before}, before)
 
@@ -205,6 +211,245 @@ class ComputeTokensTests(CallerCase):
         self.assert_429_text(out)
         self.assertEqual(len(fake.sent), 1)
         self.assertEqual(path.read_text(), before)
+
+    # DEC-1098 item 1: every failed request ends the run, as a 429 does. An answer that
+    # says Scryfall found no card does not.
+
+    def test_failed_request_ends_the_run_at_each_request_kind(self):
+        """The failure answers the first deck, so a run that goes on sends the second deck's
+        batch and writes both files."""
+        kinds = {
+            "the batch": ("Sol Ring", [COLLECTION_URL]),
+            "a fuzzy /cards/named": (MISSPELT, [COLLECTION_URL, MISSPELT_URL]),
+            "the token request": ("Goblin Maker", [COLLECTION_URL, GOBLIN_URL]),
+            "a /cards/search": ("Orc Caller", [COLLECTION_URL, ARMY_URL]),
+            "an exact /cards/named": ("Crown Seeker", [COLLECTION_URL, MONARCH_URL]),
+        }
+        failures = {
+            "HTTP 301": (301, "HTTPError: HTTP Error 301: status 301"),
+            "HTTP 503": (503, "HTTPError: HTTP Error 503: status 503"),
+            "network error": (urllib.error.URLError("connection refused"),
+                              "URLError: <urlopen error connection refused>"),
+            "not JSON": (b"<html>bad gateway</html>",
+                         "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"),
+            # urllib wraps a failure in a URLError only while it sends the request. A
+            # failure while it waits for or reads the answer reaches the script raw.
+            "read timeout": (TimeoutError("The read operation timed out"),
+                             "TimeoutError: The read operation timed out"),
+            "connection reset": (ConnectionResetError(54, "Connection reset by peer"),
+                                 "ConnectionResetError: [Errno 54] Connection reset by peer"),
+            "incomplete answer": (http.client.IncompleteRead(b"{"),
+                                  "IncompleteRead: IncompleteRead(1 bytes read)"),
+        }
+        # A 404 means "no card" only from /cards/named and /cards/search.
+        failures_404 = {"HTTP 404": (404, "HTTPError: HTTP Error 404: status 404")}
+        for kind, (card, urls) in kinds.items():
+            kind_failures = failures
+            if kind in ("the batch", "the token request"):
+                kind_failures = {**failures, **failures_404}
+            for label, (failure, text) in kind_failures.items():
+                with self.subTest(kind=kind, failure=label):
+                    shutil.rmtree(self.commanders, ignore_errors=True)
+                    compute_tokens.fetch_named_exact.__defaults__[0].clear()
+                    first = self.write_deck("a-first", card)
+                    second = self.write_deck("b-second", "Arcane Signet")
+                    before = {path: path.read_text() for path in (first, second)}
+                    fake = token_fake([make_card("Arcane Signet")])
+                    fake.failures[len(urls) - 1] = failure
+
+                    code, out = self.run_main(fake)
+
+                    method = "POST" if urls[-1] == COLLECTION_URL else "GET"
+                    self.assertEqual(code, 1)
+                    self.assertIn(
+                        f"\nScryfall request failed: {method} {urls[-1]}: {text}\nNo file written.\n",
+                        out)
+                    self.assertEqual([s.url for s in fake.sent], urls)
+                    self.assertEqual({path: path.read_text() for path in before}, before)
+
+    def test_script_exits_with_1_on_a_failed_request(self):
+        """The ``__main__`` block hands main()'s code to sys.exit."""
+        path = self.write_deck("one", "Sol Ring")
+        before = path.read_text()
+        fake = token_fake()
+        fake.failures[0] = 503
+
+        code, out = self.run_as_script(
+            fake, ROOT / "scripts" / "compute_tokens.py", "--deck", str(path.parent))
+
+        self.assertEqual(code, 1)
+        self.assertIn("Scryfall request failed: POST", out)
+        self.assertEqual(len(fake.sent), 1)
+        self.assertEqual(path.read_text(), before)
+
+    def test_deck_entry_without_a_name_is_not_reported_as_a_failed_request(self):
+        """main() prints "No file written." for a 429 or a failed request only. Any other
+        fault, here a deck entry without a name, leaves main() as its own exception."""
+        path = self.write_deck("one", "Sol Ring", "Arcane Signet")
+        deck = json.loads(path.read_text())
+        deck["decklist"].append({"quantity": 1})
+        path.write_text(json.dumps(deck))
+        before = path.read_text()
+        fake = token_fake()
+
+        with self.assertRaises(KeyError):
+            self.run_main(fake)
+
+        self.assertEqual(fake.sent, [])
+        self.assertEqual(path.read_text(), before)
+
+    def test_not_found_entry_of_a_batch_is_asked_by_fuzzy_lookup(self):
+        path = self.write_deck("one", "Sol Ring", MISSPELT)
+        fake = token_fake()
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.sent[0].body, {"identifiers": [{"name": MISSPELT}, {"name": "Sol Ring"}]})
+        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, MISSPELT_URL])
+        self.assertIn("Retrying 1 via fuzzy named lookup...", out)
+        self.assertEqual(json.loads(path.read_text())["tokens"], [])
+
+    # The batch reads ``data`` and ``not_found`` with defaults. Scryfall's documented answer
+    # holds both fields; these cases keep the reading of an answer that lacks one.
+
+    def run_batch_answer(self, answer: dict) -> tuple[int, str, FakeScryfall, list]:
+        """Answer the batch of a one-card deck with ``answer``; return the exit code, the
+        screen, the fake and the deck's tokens."""
+        path = self.write_deck("one", "Goblin Maker")
+        fake = token_fake()
+        fake.failures[0] = json.dumps(answer).encode()
+        code, out = self.run_main(fake)
+        return code, out, fake, json.loads(path.read_text())["tokens"]
+
+    def test_batch_answer_without_data_reads_as_no_card(self):
+        code, _, fake, tokens = self.run_batch_answer({"object": "list", "not_found": []})
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL])
+        self.assertEqual(tokens, [])
+
+    def test_batch_answer_without_not_found_reads_as_every_card_found(self):
+        goblin_maker = token_fake().by_name["Goblin Maker"]
+        code, _, fake, tokens = self.run_batch_answer({"object": "list", "data": [goblin_maker]})
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, GOBLIN_URL])
+        self.assertEqual([t["name"] for t in tokens], ["Goblin"])
+
+    def test_not_found_entry_without_a_name_costs_no_fuzzy_lookup(self):
+        code, out, fake, tokens = self.run_batch_answer(
+            {"object": "list", "data": [], "not_found": [{"set": "abc", "collector_number": "1"}]})
+        self.assertEqual(code, 0)
+        self.assertNotIn("Retrying", out)
+        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL])
+        self.assertEqual(tokens, [])
+
+    def test_404_from_fuzzy_named_skips_the_card_and_the_run_goes_on(self):
+        path = self.write_deck("one", "Goblin Maker", MISSPELT)
+        fake = token_fake()
+        fake.failures[1] = 404
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 0)
+        self.assertIn(f"      Lookup failed for {MISSPELT}: HTTP Error 404: status 404\n", out)
+        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, MISSPELT_URL, GOBLIN_URL])
+        self.assertEqual([t["name"] for t in json.loads(path.read_text())["tokens"]], ["Goblin"])
+
+    def test_404_from_exact_named_skips_the_marker_and_the_run_goes_on(self):
+        first = self.write_deck("a-first", "Crown Seeker")
+        second = self.write_deck("b-second", "Goblin Maker")
+        fake = token_fake()
+        fake.failures[1] = 404
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 0)
+        self.assertIn("    Marker lookup failed for 'The Monarch': HTTP Error 404: status 404\n", out)
+        self.assertEqual(
+            [s.url for s in fake.sent], [COLLECTION_URL, MONARCH_URL, COLLECTION_URL, GOBLIN_URL])
+        self.assertEqual(json.loads(first.read_text())["tokens"], [])
+        self.assertEqual([t["name"] for t in json.loads(second.read_text())["tokens"]], ["Goblin"])
+
+    def test_404_from_search_tries_the_next_query_and_the_run_goes_on(self):
+        second_url = f"{API}/cards/search?q={urllib.parse.quote('t:token \"Orc Army\"')}"
+        army = token_card("Orc Army", "Token Creature — Orc Army", power="0", toughness="0")
+        for found in (True, False):
+            with self.subTest(second_query_finds_the_army=found):
+                shutil.rmtree(self.commanders, ignore_errors=True)
+                compute_tokens.fetch_named_exact.__defaults__[0].clear()
+                path = self.write_deck("one", "Orc Caller", "Crown Seeker")
+                fake = token_fake()
+                fake.failures[1] = 404
+                if found:
+                    fake.pages[second_url] = {"object": "list", "data": [army]}
+
+                code, out = self.run_main(fake)
+
+                self.assertEqual(code, 0)
+                self.assertIn(
+                    f"    Token search failed for '{ARMY_QUERY}': HTTP Error 404: status 404\n", out)
+                self.assertEqual(
+                    [s.url for s in fake.sent], [COLLECTION_URL, ARMY_URL, second_url, MONARCH_URL])
+                names = [t["name"] for t in json.loads(path.read_text())["tokens"]]
+                if found:
+                    self.assertEqual(names, ["Orc Army", "The Monarch"])
+                else:
+                    self.assertIn("    Could not find Orc Army token on Scryfall\n", out)
+                    self.assertEqual(names, ["The Monarch"])
+
+    # DEC-1098 item 2: the batch holds the front face of a // name.
+
+    def test_slash_card_goes_out_as_its_front_face_and_gets_its_tokens(self):
+        westvale = "Westvale Abbey // Ormendahl, Profane Prince"
+        lovestruck = "Lovestruck Beast // Heart's Desire"
+        cleric_url = f"{API}/cards/human-cleric-token"
+        human_url = f"{API}/cards/human-token"
+        path = self.write_deck("one", "Sol Ring", westvale, lovestruck)
+        fake = token_fake([
+            make_card(westvale, layout="transform", all_parts=[
+                {"component": "token", "name": "Human Cleric", "uri": cleric_url}]),
+            make_card(lovestruck, layout="adventure", all_parts=[
+                {"component": "token", "name": "Human", "uri": human_url}]),
+        ])
+        fake.pages[cleric_url] = token_card(
+            "Human Cleric", "Token Creature — Human Cleric", power="1", toughness="1")
+        fake.pages[human_url] = token_card(
+            "Human", "Token Creature — Human", power="1", toughness="1")
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual(
+            fake.asked_names(), ["Lovestruck Beast", "Sol Ring", "Westvale Abbey"])
+        self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, human_url, cleric_url])
+        self.assertNotIn("fuzzy", out)
+        tokens = json.loads(path.read_text())["tokens"]
+        self.assertEqual(
+            [(t["name"], t["produced_by"]) for t in tokens],
+            [("Human", [lovestruck]), ("Human Cleric", [westvale])])
+
+    def test_batch_sorts_the_front_faces_by_code_point(self):
+        """The batch sorts the front faces, not the full names, and capitals come first.
+        "Fire & Ice" sorts before "Fire // Ice" but after "Fire"; "Lord Windgrace" sorts
+        before "Lord of the Void" only when case counts."""
+        decks = {
+            ("Fire // Ice", "Fire & Ice"): ["Fire", "Fire & Ice", "Sol Ring"],
+            ("Lord of the Void", "Lord Windgrace"):
+                ["Lord Windgrace", "Lord of the Void", "Sol Ring"],
+        }
+        for names, asked in decks.items():
+            with self.subTest(names=names):
+                shutil.rmtree(self.commanders, ignore_errors=True)
+                self.write_deck("one", "Sol Ring", *names)
+                fake = token_fake([
+                    make_card(name, layout="adventure" if " // " in name else "normal")
+                    for name in names])
+
+                code, _ = self.run_main(fake)
+
+                self.assertEqual(code, 0)
+                self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL])
+                self.assertEqual(fake.asked_names(), asked)
 
 
 # --------------------------------------------------------- check_game_changers.py
@@ -339,6 +584,36 @@ class DumpSetTests(CallerCase):
         self.assert_429_text(out)
         self.assertEqual(len(fake.sent), 1)
         self.assertFalse(self.out_dir.exists())
+
+    # DEC-1098 item 4: the text for a failed /sets/:code names the status.
+
+    def run_failed_set_code(self, failure) -> tuple[str, FakeScryfall]:
+        """Run main() with ``failure`` on /sets/:code; return the SystemExit text and the fake."""
+        fake = set_fake()
+        fake.failures[0] = failure
+        with self.assertRaises(SystemExit) as raised:
+            self.run_main(fake)
+        return raised.exception.code, fake
+
+    def test_404_on_the_set_code_says_scryfall_does_not_know_it(self):
+        text, fake = self.run_failed_set_code(404)
+
+        # A text as the exit code: Python prints it and exits with 1.
+        self.assertEqual(text, "Scryfall does not know set code 'fra' (404)")
+        self.assertEqual([s.url for s in fake.sent], [SET_URL])
+        self.assertFalse(self.out_dir.exists())
+
+    def test_other_status_on_the_set_code_is_printed_with_its_reason(self):
+        for status, reason in ((301, "Moved Permanently"), (500, "Internal Server Error"),
+                               (503, "Service Unavailable")):
+            with self.subTest(status=status):
+                failure = urllib.error.HTTPError(SET_URL, status, reason, {}, io.BytesIO())
+
+                text, fake = self.run_failed_set_code(failure)
+
+                self.assertEqual(text, f"Scryfall answered HTTP {status} {reason} for set code 'fra'")
+                self.assertEqual([s.url for s in fake.sent], [SET_URL])
+                self.assertFalse(self.out_dir.exists())
 
 
 # ------------------------------------------------------ priv_data/format_owned_list.py

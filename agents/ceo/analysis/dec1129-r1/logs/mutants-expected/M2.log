@@ -1,0 +1,70 @@
+M2: @media (min-height:700px){ -> @media (min-height:650px){
+
+
+Running 11 tests using 9 workers
+
+
+
+
+
+
+
+
+
+
+[1/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1280×800, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll
+[2/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1440×900, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll
+[3/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:105:5 › DEC-1032 Combo Lab rail @ 1280×699 › the whole rail scrolls with the page
+[4/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:105:5 › DEC-1032 Combo Lab rail @ 1080×800 › the whole rail scrolls with the page
+[5/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:124:5 › DEC-1032 Combo Lab rail, keyboard @ 1280×800, fonts live › no control of the rail sits on screen under the pinned part
+[6/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1280×800, fonts blocked › the rail pins from Contents down; the mode switch and the deck picker scroll
+[7/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1920×1080, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll
+[8/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:166:5 › DEC-1032 Combo Lab rail, keyboard @ 1280×800, fonts live › Shift+Tab from the pinned Contents brings the last deck into view above the part
+[9/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:67:5 › DEC-1032 Combo Lab rail @ 1280×700, fonts live › the rail pins from Contents down; the mode switch and the deck picker scroll
+[10/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:124:5 › DEC-1032 Combo Lab rail, keyboard @ 1280×800, fonts blocked › no control of the rail sits on screen under the pinned part
+[11/11] [chromium] › tests/dec1032-lab-rail-pin.spec.ts:166:5 › DEC-1032 Combo Lab rail, keyboard @ 1280×800, fonts blocked › Shift+Tab from the pinned Contents brings the last deck into view above the part
+  1) [chromium] › tests/dec1032-lab-rail-pin.spec.ts:105:5 › DEC-1032 Combo Lab rail @ 1280×699 › the whole rail scrolls with the page 
+
+    Error: top of the lower part, 600px past its place: expected -600, read 20
+
+    expect(received).toBeLessThan(expected)
+
+    Expected: < 1
+    Received:   620
+
+      14 | // The scroll target is a whole pixel and the blocks' positions are not.
+      15 | function expectWithin1px(received: number, expected: number, what: string): void {
+    > 16 |   expect(Math.abs(received - expected), `${what}: expected ${expected}, read ${received}`).toBeLessThan(1);
+         |                                                                                            ^
+      17 | }
+      18 |
+      19 | async function openLab(page: Page): Promise<void> {
+        at expectWithin1px (/private/tmp/dec1129-ceo-tree/web/tests/dec1032-lab-rail-pin.spec.ts:16:92)
+        at /private/tmp/dec1129-ceo-tree/web/tests/dec1032-lab-rail-pin.spec.ts:109:7
+
+    Error Context: test-results/dec1032-lab-rail-pin-DEC-1-6ae9e--rail-scrolls-with-the-page-chromium/error-context.md
+
+
+  1 failed
+    [chromium] › tests/dec1032-lab-rail-pin.spec.ts:105:5 › DEC-1032 Combo Lab rail @ 1280×699 › the whole rail scrolls with the page 
+  10 passed (3.9s)
+(node:60557) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60665) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60666) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60667) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60669) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60670) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60673) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60671) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60672) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60668) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
