@@ -258,7 +258,7 @@ describe('cardCache.imageFailed', () => {
 });
 
 // DEC-1131: every lookup is a batch of up to 75 names (POST /cards/collection).
-describe('cardCache batches', () => {
+describe.each([0, 150])('cardCache batches, answers after %i ms', (delay) => {
   // A card with two halves, as Scryfall answers it: the full name, and the faces.
   const GIANT = {
     ...cardJson('Bonecrusher Giant // Stomp'),
@@ -273,23 +273,23 @@ describe('cardCache batches', () => {
     name.toLowerCase() === 'bonecrusher giant' ? GIANT : name.includes('//') ? null : cardJson(name);
 
   it('sends a `//` name as its front face and stores the answer under the name asked', async () => {
-    const { scry, cache } = setup(undefined, 0, byFront);
+    const { scry, cache } = setup(undefined, delay, byFront);
     cache.enqueue('Bonecrusher Giant // Stomp');
-    await advance(0);
+    await advance(delay);
     expect(scry.batches()).toEqual([['Bonecrusher Giant']]);
     expect(cache.get('Bonecrusher Giant // Stomp')).toMatchObject({
       status: 'loaded',
       name: 'Bonecrusher Giant // Stomp',
       mana_cost: '{2}{R}',
     });
-    expect(JSON.parse(storage.getItem('gv1-card:bonecrusher giant // stomp')!)).toMatchObject({ status: 'loaded', fetchedAt: T0 });
+    expect(JSON.parse(storage.getItem('gv1-card:bonecrusher giant // stomp')!)).toMatchObject({ status: 'loaded', fetchedAt: T0 + delay });
   });
 
   it('sends two names with one front face once, and both get the answer', async () => {
-    const { scry, cache } = setup(undefined, 0, byFront);
+    const { scry, cache } = setup(undefined, delay, byFront);
     cache.enqueue('Bonecrusher Giant // Stomp');
     cache.enqueue('Bonecrusher Giant');
-    await advance(0);
+    await advance(delay);
     expect(scry.batches()).toEqual([['Bonecrusher Giant']]);
     expect(cache.get('Bonecrusher Giant // Stomp')?.name).toBe('Bonecrusher Giant // Stomp');
     expect(cache.get('Bonecrusher Giant')?.name).toBe('Bonecrusher Giant // Stomp');
@@ -297,27 +297,29 @@ describe('cardCache batches', () => {
 
   it('matches the answer to the names by the fold of their names, not by position', async () => {
     // The answer holds its cards in another order, and with the accent that the app's name lacks.
-    const fetchImpl = (async () =>
-      new Response(
+    const fetchImpl = (async () => {
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      return new Response(
         JSON.stringify({
           object: 'list',
           not_found: [],
           data: [cardJson('Zuran Orb'), cardJson("Lim-Dûl's Vault"), cardJson('Arcane Signet')],
         }),
         { status: 200 },
-      )) as typeof fetch;
+      );
+    }) as typeof fetch;
     const cache = createCardCache({ storage, limiter: createScryfallLimiter({ fetchImpl, storage, locks: null }) });
     ['Arcane Signet', "Lim-Dul's Vault", 'Zuran Orb'].forEach((name) => cache.enqueue(name));
-    await advance(0);
+    await advance(delay);
     expect(cache.get('Arcane Signet')?.image_small).toBe(cardJson('Arcane Signet').image_uris.small);
     expect(cache.get("Lim-Dul's Vault")?.name).toBe("Lim-Dûl's Vault");
     expect(cache.get('Zuran Orb')?.image_small).toBe(cardJson('Zuran Orb').image_uris.small);
   });
 
   it('a name in not_found is not asked again inside 24 h, also from a new cache on the same storage; after 24 h, once', async () => {
-    const { scry, cache } = setup(undefined, 0, () => null);
+    const { scry, cache } = setup(undefined, delay, () => null);
     cache.enqueue('Nonesuch');
-    await advance(0);
+    await advance(delay);
     expect(cache.get('Nonesuch')).toMatchObject({ status: 'error', errorStatus: 404 });
     await advance(60_000);
     cache.enqueue('Nonesuch');
@@ -325,9 +327,9 @@ describe('cardCache batches', () => {
     expect(scry.sends).toHaveLength(1);
 
     // A reload: a new cache on the same storage.
-    const { scry: second, cache: reloaded } = setup(undefined, 0, () => null);
+    const { scry: second, cache: reloaded } = setup(undefined, delay, () => null);
     expect(reloaded.get('Nonesuch')).toMatchObject({ status: 'error', errorStatus: 404 });
-    await advance(T0 + DAY_MS - 1 - Date.now());
+    await advance(T0 + delay + DAY_MS - 1 - Date.now());
     reloaded.enqueue('Nonesuch');
     await advance(0);
     expect(second.sends).toHaveLength(0);
@@ -340,7 +342,7 @@ describe('cardCache batches', () => {
 });
 
 // DEC-1131 rulings 1, 3, 7 and 8: a price older than 24 h is asked again.
-describe('cardCache.refreshPrice', () => {
+describe.each([0, 150])('cardCache.refreshPrice, answers after %i ms', (delay) => {
   const HOUR_MS = 3_600_000;
   const OLD = new Date(T0 - 25 * HOUR_MS).toISOString();
   const FRESH = new Date(T0 - HOUR_MS).toISOString();
@@ -353,24 +355,24 @@ describe('cardCache.refreshPrice', () => {
   });
 
   it('asks once for a file price older than 24 h; the refresh changes only the price and its date', async () => {
-    const { scry, cache } = setup(undefined, 0, priced('2.50'));
+    const { scry, cache } = setup(undefined, delay, priced('2.50'));
     cache.seed(FILE, OLD);
     const before = cache.get('Sol Ring')!;
     expect(before).toMatchObject({ price: '$1.42', priceAsOf: Date.parse(OLD) });
     cache.refreshPrice('Sol Ring');
     cache.refreshPrice('Sol Ring');
     expect(cache.pricePending('Sol Ring')).toBe(true);
-    await advance(0);
+    await advance(delay);
     expect(scry.batches()).toEqual([['Sol Ring']]);
     expect(cache.pricePending('Sol Ring')).toBe(false);
-    expect(cache.get('Sol Ring')).toEqual({ ...before, price: '$2.50', priceAsOf: T0, priceCheckedAt: T0 });
+    expect(cache.get('Sol Ring')).toEqual({ ...before, price: '$2.50', priceAsOf: T0 + delay, priceCheckedAt: T0 + delay });
     cache.refreshPrice('Sol Ring');
     await advance(10_000);
     expect(scry.sends).toHaveLength(1);
   });
 
   it('does not ask for a file price younger than 24 h', async () => {
-    const { scry, cache } = setup(undefined, 0, priced('2.50'));
+    const { scry, cache } = setup(undefined, delay, priced('2.50'));
     cache.seed(FILE, FRESH);
     cache.refreshPrice('Sol Ring');
     expect(cache.pricePending('Sol Ring')).toBe(false);
@@ -384,28 +386,29 @@ describe('cardCache.refreshPrice', () => {
   });
 
   it('seed() keeps a refreshed price, so a reload inside 24 h asks nothing; after 24 h, once', async () => {
-    const { cache } = setup(undefined, 0, priced('2.50'));
+    const { cache } = setup(undefined, delay, priced('2.50'));
     cache.seed(FILE, OLD);
     cache.refreshPrice('Sol Ring');
-    await advance(0);
+    await advance(delay);
+    const at = T0 + delay;
     expect(JSON.parse(storage.getItem('gv1-card:sol ring')!)).toEqual({
-      fetchedAt: T0,
-      priceCheckedAt: T0,
+      fetchedAt: at,
+      priceCheckedAt: at,
       price: '$2.50',
-      priceAsOf: T0,
+      priceAsOf: at,
     });
 
     await advance(23 * HOUR_MS);
-    const { scry: second, cache: reloaded } = setup(undefined, 0, priced('3.00'));
+    const { scry: second, cache: reloaded } = setup(undefined, delay, priced('3.00'));
     reloaded.seed(FILE, OLD);
-    expect(reloaded.get('Sol Ring')).toMatchObject({ price: '$2.50', priceAsOf: T0, mana_cost: '{1}' });
+    expect(reloaded.get('Sol Ring')).toMatchObject({ price: '$2.50', priceAsOf: at, mana_cost: '{1}' });
     reloaded.refreshPrice('Sol Ring');
     await advance(10_000);
     expect(second.sends).toHaveLength(0);
 
     await advance(HOUR_MS);
     reloaded.refreshPrice('Sol Ring');
-    await advance(0);
+    await advance(delay);
     expect(second.batches()).toEqual([['Sol Ring']]);
     expect(reloaded.get('Sol Ring')?.price).toBe('$3.00');
   });
@@ -432,20 +435,20 @@ describe('cardCache.refreshPrice', () => {
   ];
   for (const [label, outcome, card] of noPrice) {
     it(`a refresh that gets ${label} keeps the price shown, and nobody asks again inside 24 h`, async () => {
-      const { scry, cache } = setup(outcome, 0, card);
+      const { scry, cache } = setup(outcome, delay, card);
       cache.seed(FILE, OLD);
       cache.refreshPrice('Sol Ring');
-      await advance(0);
+      await advance(delay);
       expect(cache.get('Sol Ring')).toMatchObject({
         status: 'loaded',
         price: '$1.42',
         priceAsOf: Date.parse(OLD),
-        priceCheckedAt: T0,
+        priceCheckedAt: T0 + delay,
       });
       expect(cache.pricePending('Sol Ring')).toBe(false);
       await advance(DAY_MS - 1);
       cache.refreshPrice('Sol Ring');
-      const { scry: second, cache: reloaded } = setup(outcome, 0, card);
+      const { scry: second, cache: reloaded } = setup(outcome, delay, card);
       reloaded.seed(FILE, OLD);
       reloaded.refreshPrice('Sol Ring');
       await advance(0);
@@ -456,20 +459,20 @@ describe('cardCache.refreshPrice', () => {
   }
 
   it('a price refresh that meets a stop waits, first, for the batch after the stop', async () => {
-    const { scry, cache } = setup((n) => (n === 1 ? 429 : 200), 0, priced('2.50'));
+    const { scry, cache } = setup((n) => (n === 1 ? 429 : 200), delay, priced('2.50'));
     cache.seed(FILE, OLD);
     cache.refreshPrice('Sol Ring');
-    await advance(0);
+    await advance(delay);
     expect(cache.pricePending('Sol Ring')).toBe(true);
     expect(cache.get('Sol Ring')?.price).toBe('$1.42');
-    await advance(30_000);
+    await advance(30_000 + delay);
     expect(scry.batches()).toEqual([['Sol Ring'], ['Sol Ring']]);
     expect(cache.pricePending('Sol Ring')).toBe(false);
-    expect(cache.get('Sol Ring')).toMatchObject({ price: '$2.50', priceAsOf: T0 + 30_000 });
+    expect(cache.get('Sol Ring')).toMatchObject({ price: '$2.50', priceAsOf: T0 + delay + 30_000 + delay });
   });
 
   it('the names asked first go first, then the lookups, then the refreshes', async () => {
-    const { scry, cache } = setup(undefined, 0, priced('2.50'));
+    const { scry, cache } = setup(undefined, delay, priced('2.50'));
     cache.seed(FILE, OLD);
     cache.refreshPrice('Sol Ring');
     cache.enqueue('Mana Crypt');
@@ -480,7 +483,7 @@ describe('cardCache.refreshPrice', () => {
   });
 
   it('with more than 75 names waiting, the lookups take the batch and the refreshes go in the next', async () => {
-    const { scry, cache } = setup(undefined, 0, priced('2.50'));
+    const { scry, cache } = setup(undefined, delay, priced('2.50'));
     cache.seed(FILE, OLD);
     cache.refreshPrice('Sol Ring');
     const lookups = Array.from({ length: 75 }, (_, i) => `Look ${i + 1}`);
@@ -490,11 +493,11 @@ describe('cardCache.refreshPrice', () => {
   });
 
   it('a price and a picture refresh of one card go in one batch, and each keeps the other', async () => {
-    const { scry, cache } = setup(undefined, 0, priced('2.50'));
+    const { scry, cache } = setup(undefined, delay, priced('2.50'));
     cache.seed(FILE, OLD);
     cache.refreshPrice('Sol Ring');
     cache.imageFailed('Sol Ring');
-    await advance(0);
+    await advance(delay);
     expect(scry.batches()).toEqual([['Sol Ring']]);
     expect(cache.get('Sol Ring')).toMatchObject({
       price: '$2.50',
@@ -508,10 +511,10 @@ describe('cardCache.refreshPrice', () => {
   });
 
   it('does not refresh a name outside the file: its lookup dates its price', async () => {
-    const { scry, cache } = setup(undefined, 0, priced('2.50'));
+    const { scry, cache } = setup(undefined, delay, priced('2.50'));
     cache.enqueue('Mana Crypt');
-    await advance(0);
-    expect(cache.get('Mana Crypt')).toMatchObject({ price: '$2.50', priceAsOf: T0 });
+    await advance(delay);
+    expect(cache.get('Mana Crypt')).toMatchObject({ price: '$2.50', priceAsOf: T0 + delay });
     cache.refreshPrice('Mana Crypt');
     await advance(10_000);
     expect(scry.sends).toHaveLength(1);
