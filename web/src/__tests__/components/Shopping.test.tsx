@@ -612,6 +612,17 @@ describe('Shopping organism', () => {
       fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
       expect(within(ownHead()).getByText('· 1 unique · 2 cards')).toBeInTheDocument();
     });
+
+    // The user owns Solo A Commander alone. With both decks selected, Need to buy holds
+    // Solo B Commander and two Sol Rings (2 unique, 3 cards) and Already own holds one
+    // card, so each header must read the counts of its own section.
+    it('reads `2 unique · 3 cards` to buy and `1 unique · 1 card` owned when the sections hold different counts', () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Solo A Commander', 1]]));
+      renderShopping([SOLO_A, SOLO_B]);
+      fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
+      expect(within(buyHead()).getByText('· 2 unique · 3 cards')).toBeInTheDocument();
+      expect(within(ownHead()).getByText('· 1 unique · 1 card')).toBeInTheDocument();
+    });
   });
 });
 

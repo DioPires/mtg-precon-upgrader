@@ -34,4 +34,11 @@ describe('Engine', () => {
     fireEvent.click(screen.getByRole('tab', { name: /Ramp/ }));
     expect(screen.getByRole('tabpanel')).toHaveTextContent('2 cards · hover for full frame');
   });
+
+  // A role keeps `count` and `cards` apart, and the line reads `count`. normalize.ts
+  // builds no role whose two differ today; this case holds the line to its type.
+  it('reads `1 card` for a role of count 1 that lists two tiles', () => {
+    render(<Engine engine={[{ ...role('Ramp', ['Sol Ring', 'Arcane Signet']), count: 1 }]} />);
+    expect(screen.getByRole('tabpanel')).toHaveTextContent('1 card · hover for full frame');
+  });
 });
