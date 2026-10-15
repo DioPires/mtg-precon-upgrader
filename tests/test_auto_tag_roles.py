@@ -88,6 +88,19 @@ class NamedSearchTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("tutor", 0.85))
 
 
+class TutorRetagTests(unittest.TestCase):
+    """`--retag-tutors` reads a named search as `classify` does."""
+
+    def test_named_search_gets_no_tutor_retag(self):
+        card = _card(
+            "Harrowfield Lookout",
+            "Creature — Human Scout",
+            "When this creature enters, you may search your library for a card named Harrowfield "
+            "Lookout, reveal it, put it into your hand, then shuffle.",
+        )
+        self.assertIsNone(atr.classify_tutor_roles(card, "utility"))
+
+
 class GraveyardExileTests(unittest.TestCase):
     """A target that is a card in a graveyard is not removal-spot."""
 

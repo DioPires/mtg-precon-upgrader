@@ -381,6 +381,8 @@ def classify_tutor_roles(
     type_lc = type_line.lower()
     if not _SEARCH_LIBRARY.search(oracle_lc):
         return None
+    if len(_NAMED_SEARCH.findall(oracle_lc)) == len(_SEARCH_LIBRARY.findall(oracle_lc)):
+        return None  # each search names its card, as in _detect_tutor (DEC-1161)
 
     is_mana_land_search = bool(_MANA_DEVELOPMENT_LAND_SEARCH.search(oracle_lc))
     is_unrestricted_land_tutor = bool(_UNRESTRICTED_LAND_TUTOR.search(oracle_lc))
