@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /private/tmp/dec1125-ceo/wt-merged/web
+
+ ❯ src/__tests__/components/Apothecary.test.tsx (49 tests | 1 failed) 315ms
+   × Apothecary > resilience maladies (DEC-1007) > reads the percentage for a resilience entry with a target and no count 4ms
+     → expected '— / 4' to be '40%' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 48 passed (49)
+   Start at  09:11:38
+   Duration  702ms (transform 43ms, setup 20ms, collect 56ms, tests 315ms, environment 123ms, prepare 39ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Apothecary.test.tsx > Apothecary > resilience maladies (DEC-1007) > reads the percentage for a resilience entry with a target and no count
+AssertionError: expected '— / 4' to be '40%' // Object.is equality
+
+Expected: "40%"
+Received: "— / 4"
+
+ ❯ src/__tests__/components/Apothecary.test.tsx:503:64
+    501|         />,
+    502|       );
+    503|       expect(part(chips(container)[0], '.gv1-apo-malady-fig')).toBe('4…
+       |                                                                ^
+    504|     });
+    505| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
