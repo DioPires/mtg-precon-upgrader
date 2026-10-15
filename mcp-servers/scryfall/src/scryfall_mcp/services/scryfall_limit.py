@@ -25,6 +25,10 @@ send(), which keeps these rules across processes:
    not sleep. Nothing here retries.
 4. A clock that steps back (an NTP correction) costs nothing (DEC-1093 N6): a wait never
    exceeds its class interval, and the time left in a stop never exceeds the stop's length.
+   The first answer after a stop removes the stop from the state, so a later step back
+   cannot start it again (DEC-1114 N2).
+5. No stop lasts longer than MAX_STOP (DEC-1114 N4): a longer Retry-After counts as
+   MAX_STOP, and so does a longer stop in a hand-written state.json.
 """
 
 import contextlib
@@ -43,6 +47,7 @@ SLOW_PATHS = frozenset({"/cards/named", "/cards/search", "/cards/random", "/card
 SLOW_INTERVAL = 0.6  # seconds from the last answer of the 2-a-second class
 ANY_INTERVAL = 0.1  # seconds from the last answer of any request
 STOP = 30.0  # seconds of a stop when Retry-After asks for less
+MAX_STOP = 3600.0  # seconds of a stop when Retry-After or state.json asks for more
 KEYS = ("last_answer", "last_slow_answer", "blocked_at", "blocked_until")
 
 
@@ -91,9 +96,15 @@ def send(url: str, transmit, slow: bool | None = None):
         state = _read_state(directory)
         now = time.time()
         until = state.get("blocked_until", -math.inf)
-        if now < until:
+        if "blocked_at" in state:
+            at = state["blocked_at"]
+        else:
             # A stop without its start (a hand-written state) counts as STOP long.
-            at = state.get("blocked_at", until - STOP)
+            until = min(until, now + MAX_STOP)
+            at = until - STOP
+        # Rule 5, also for a stop that a hand-written state holds.
+        until = min(until, at + MAX_STOP)
+        if now < until:
             if now < at:
                 # The clock stepped back: the stop ends one stop length from now.
                 at, until = now, now + (until - at)
@@ -140,18 +151,26 @@ def _answered(directory: str, state: dict, slow: bool, error: BaseException | No
         state["blocked_until"] = answered + max(STOP, _retry_after(error, answered))
         _write_state(directory, state)
         raise Stopped(answered, state["blocked_until"], answered) from error
+    # send() sends only when no stop holds, so a stop in the state has ended. Remove it, so
+    # that a clock that steps back later cannot start it again (rule 4).
+    state.pop("blocked_at", None)
+    state.pop("blocked_until", None)
     _write_state(directory, state)
 
 
 def _retry_after(error: urllib.error.HTTPError, answered: float) -> float:
-    """Seconds that the answer's Retry-After asks for (delay-seconds or an HTTP-date), else 0."""
+    """Seconds that the answer's Retry-After asks for (delay-seconds or an HTTP-date), else 0.
+
+    Never more than MAX_STOP.
+    """
     value = error.headers.get("Retry-After")
     if value is None:
         return 0.0
     with contextlib.suppress(ValueError):
-        return float(int(value))
+        # Bound the integer before float(), which overflows past about 1.8e308 either way.
+        return float(min(max(int(value), 0), MAX_STOP))
     with contextlib.suppress(ValueError):
-        return email.utils.parsedate_to_datetime(value).timestamp() - answered
+        return min(email.utils.parsedate_to_datetime(value).timestamp() - answered, MAX_STOP)
     return 0.0
 
 

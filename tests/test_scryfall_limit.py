@@ -47,6 +47,8 @@ FAST_URLS = (CARD, f"{CARD}/rulings", f"{API}/sets/fra", f"{API}/cards/autocompl
 AT_10_41_07 = datetime(2026, 10, 14, 10, 41, 7, tzinfo=timezone.utc).timestamp()
 EXAMPLE = ("Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:37Z (in 23 s). "
            "Call again after that time.")
+# The first words of the helper's text; the limiter's text follows them (DEC-1114 N5).
+HELPER = "Scryfall answered HTTP 429 (too many requests): "
 
 
 def answering(urls) -> FakeScryfall:
@@ -519,6 +521,113 @@ class ClockStepTests(unittest.TestCase):
                 self.assertEqual(len(fake.sleeps), 1)
                 self.assertAlmostEqual(fake.sleeps[0], 0.6, places=6)
 
+    def test_step_back_after_the_stop_has_ended_starts_no_stop(self):
+        """DEC-1114 N2: a 429 at 10:41:07Z, a request 70 s after the stop's end, then the clock
+        steps back 1 h. The first answer after the stop removes the stop from the state, also a
+        failed answer, so the next request goes out."""
+        for after in (None, 500):
+            with self.subTest(answer_after_the_stop=after or "200"):
+                fake = answering([NAMED])
+                fake.now = AT_10_41_07 - fake.LATENCY
+                fake.failures[0] = http_429()
+                if after is not None:
+                    fake.failures[1] = after
+                with fake.clock():
+                    with self.assertRaises(limit.Stopped):
+                        send(fake, NAMED)
+                    fake.now = AT_10_41_07 + 100
+                    with contextlib.suppress(urllib.error.HTTPError):
+                        send(fake, NAMED)
+                    self.assertEqual(state(), {"last_answer": fake.now, "last_slow_answer": fake.now})
+                    fake.now -= self.STEP
+                    send(fake, NAMED)
+                self.assertEqual(len(fake.sent), 3)
+
+
+class LongStopTests(unittest.TestCase):
+    """DEC-1114 N4: no stop lasts longer than 3600 s. A longer Retry-After, or a longer stop in
+    a hand-written state.json, counts as 3600 s, and the text names the capped end."""
+
+    CAPPED = ("Scryfall answered HTTP 429 at 10:41:07Z. No request until 11:41:07Z (in {} s). "
+              "Call again after that time.")
+
+    def assert_stop_ends_at_11_41_07(self, fake: FakeScryfall):
+        """In the fake's clock block: a call at 10:41:14Z, one 0.5 s before 11:41:07Z, and one
+        at 11:41:07Z, which goes out."""
+        fake.now = AT_10_41_07 + 7
+        with self.assertRaises(limit.Stopped) as raised:
+            send(fake, NAMED)
+        self.assertEqual(str(raised.exception), self.CAPPED.format(3593))
+        fake.now = AT_10_41_07 + 3599.5
+        with self.assertRaises(limit.Stopped) as raised:
+            send(fake, NAMED)
+        self.assertIn("(in 1 s)", str(raised.exception))
+        fake.now = AT_10_41_07 + 3600
+        send(fake, NAMED)
+
+    def test_retry_after_longer_than_3600s_counts_as_3600s(self):
+        two_hours = email.utils.formatdate(AT_10_41_07 + 7200, usegmt=True)
+        for value in ("3601", "99999999999999999999", "9" * 400, two_hours):
+            with self.subTest(retry_after=value[:24]):
+                fake = answering([NAMED])
+                fake.now = AT_10_41_07 - fake.LATENCY
+                fake.failures[0] = http_429(retry_after=value)
+                with fake.clock():
+                    with self.assertRaises(limit.Stopped) as raised:
+                        send(fake, NAMED)
+                    self.assertEqual(state()["blocked_until"], AT_10_41_07 + 3600)
+                    self.assertEqual(str(raised.exception), self.CAPPED.format(3600))
+                    self.assert_stop_ends_at_11_41_07(fake)
+                self.assertEqual(len(fake.sent), 2)
+
+    def test_retry_after_up_to_3600s_is_kept(self):
+        for value, length in (("3599", 3599), ("3600", 3600), ("-" + "9" * 400, 30)):
+            with self.subTest(retry_after=value[:24]):
+                fake = answering([NAMED])
+                fake.now = AT_10_41_07 - fake.LATENCY
+                fake.failures[0] = http_429(retry_after=value)
+                with fake.clock():
+                    with self.assertRaises(limit.Stopped) as raised:
+                        send(fake, NAMED)
+                    self.assertEqual(state()["blocked_until"], AT_10_41_07 + length)
+                self.assertIn(f"(in {length} s)", str(raised.exception))
+
+    def test_hand_written_stop_longer_than_3600s_after_its_start(self):
+        for until in (AT_10_41_07 + 3601, AT_10_41_07 + 1e20):
+            with self.subTest(until=until):
+                fake = answering([NAMED])
+                fake.state = {"blocked_at": AT_10_41_07, "blocked_until": until}
+                with fake.clock():
+                    self.assert_stop_ends_at_11_41_07(fake)
+                self.assertEqual(len(fake.sent), 1)
+
+    def test_hand_written_stop_that_started_more_than_3600s_ago_has_ended(self):
+        fake = answering([NAMED])
+        fake.now = AT_10_41_07 + 7
+        fake.state = {"blocked_at": AT_10_41_07 - 3600, "blocked_until": AT_10_41_07 + 30}
+        with fake.clock():
+            send(fake, NAMED)
+        self.assertEqual(len(fake.sent), 1)
+
+    def test_hand_written_stop_without_its_start_more_than_3600s_ahead(self):
+        """Capped at now plus 3600 s, it counts as 30 s long and moves to start now (rule 4)."""
+        for until in (AT_10_41_07 + 7 + 3601, 1e20):
+            with self.subTest(until=until):
+                fake = answering([NAMED])
+                fake.now = AT_10_41_07 + 7
+                fake.state = {"blocked_until": until}
+                with fake.clock():
+                    with self.assertRaises(limit.Stopped) as raised:
+                        send(fake, NAMED)
+                    self.assertEqual(state(), {"blocked_at": AT_10_41_07 + 7,
+                                               "blocked_until": AT_10_41_07 + 37})
+                    fake.now = AT_10_41_07 + 37
+                    send(fake, NAMED)
+                self.assertEqual(str(raised.exception), (
+                    "Scryfall answered HTTP 429 at 10:41:14Z. No request until 10:41:44Z (in 30 s). "
+                    "Call again after that time."))
+                self.assertEqual(len(fake.sent), 1)
+
 
 class StateFileTests(unittest.TestCase):
     def test_missing_or_unreadable_state_counts_as_empty(self):
@@ -580,11 +689,14 @@ class HelperTests(unittest.TestCase):
         fake.now = AT_10_41_07 - fake.LATENCY
         fake.failures[0] = 429
         with fake.installed():
-            with self.assertRaises(scryfall_api.ScryfallRateLimited):
+            with self.assertRaises(scryfall_api.ScryfallRateLimited) as helper:
                 scryfall_api.request(NAMED)
             fake.now = AT_10_41_07 + 7
             with self.assertRaises(limit.Stopped) as raised:
                 send(fake, NAMED)
+        self.assertEqual(str(helper.exception), HELPER + (
+            "Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:41:37Z (in 30 s). "
+            "Call again after that time."))
         self.assertEqual(str(raised.exception), EXAMPLE)
         self.assertEqual(len(fake.sent), 1)
 
@@ -597,9 +709,11 @@ class HelperTests(unittest.TestCase):
                 scryfall_api.request(NAMED)
             # From then on this process sends nothing, also after the stop.
             fake.now = AT_10_41_07 + 60
-            with self.assertRaises(scryfall_api.ScryfallRateLimited):
+            with self.assertRaises(scryfall_api.ScryfallRateLimited) as later:
                 scryfall_api.request(NAMED)
-        self.assertIn("wait 30 seconds or more", str(raised.exception))
+        # DEC-1114 N5: the text names the end of the stop, also at the later call.
+        self.assertEqual(str(raised.exception), HELPER + EXAMPLE)
+        self.assertEqual(str(later.exception), HELPER + EXAMPLE)
         self.assertIsInstance(raised.exception.__cause__, limit.Stopped)
         self.assertEqual(fake.sent, [])
         self.assertEqual(fake.sleeps, [])
@@ -607,15 +721,23 @@ class HelperTests(unittest.TestCase):
 
 class ScriptStopTests(DeckDirCase):
     """Rule 8: a stop in the state ends each script as its own 429 does: exit code 1, the
-    text on screen, no file written, no request."""
+    text on screen, no file written, no request.
+
+    DEC-1114 N5: the text names the end of a 120 s stop. N3: the two bulk-data scripts too.
+    """
+
+    TEXT = HELPER + ("Scryfall answered HTTP 429 at 10:41:07Z. No request until 10:43:07Z "
+                     "(in 113 s). Call again after that time.")
 
     def stopped(self, fake: FakeScryfall) -> FakeScryfall:
-        fake.state = {"blocked_at": fake.now - 5, "blocked_until": fake.now + 25}
+        """A stop of 120 s that another process's 429 started at 10:41:07Z, 7 s ago."""
+        fake.now = AT_10_41_07 + 7
+        fake.state = {"blocked_at": AT_10_41_07, "blocked_until": AT_10_41_07 + 120}
         return fake
 
     def assert_stopped(self, code, out, fake):
         self.assertEqual(code, 1)
-        self.assertIn("wait 30 seconds or more", out)
+        self.assertIn(self.TEXT, out)
         self.assertEqual(fake.sent, [])
         self.assertEqual(fake.sleeps, [])
 
@@ -676,6 +798,24 @@ class ScriptStopTests(DeckDirCase):
         code, out = case.run_main(fake)
         self.assert_stopped(code, out, fake)
         self.assertFalse(case.formatted.exists())
+
+    def test_build_price_index(self):
+        case = callers.BuildPriceIndexTests("test_429_on_bulk_data_ends_the_run")
+        case.setUp()
+        self.addCleanup(case.doCleanups)
+        fake = self.stopped(callers.bulk_fake())
+        code, out = case.run_main(fake)
+        self.assert_stopped(code, out, fake)
+        self.assertEqual(case.written(), [])
+
+    def test_refresh_scryfall_mirror(self):
+        case = callers.RefreshScryfallMirrorTests("test_429_on_bulk_data_ends_the_run")
+        case.setUp()
+        self.addCleanup(case.doCleanups)
+        fake = self.stopped(callers.bulk_fake())
+        code, out = case.run_main(fake)
+        self.assert_stopped(code, out, fake)
+        self.assertEqual(case.written(), [])
 
 
 # ------------------------------------------------------------- across processes

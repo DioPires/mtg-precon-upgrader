@@ -4,7 +4,7 @@ scripts/compute_tokens.py, scripts/check_game_changers.py, scripts/prerelease/du
 priv_data/format_owned_list.py send every request through scripts/scryfall_api.py:
 
 1. a request starts 600 ms or more after the last answer arrived;
-2. a 429 ends the run: no file written, the status and "wait 30 seconds or more" on screen,
+2. a 429 ends the run: no file written, the status and the end of the stop on screen,
    exit code 1 and no later request.
 
 No test here sends a live request: FakeScryfall (tests/test_scryfall_fetch.py) stands in for
@@ -13,6 +13,7 @@ the helper's opener and for the clock.
 
 import contextlib
 import csv
+import gzip
 import http.client
 import importlib
 import io
@@ -28,17 +29,18 @@ import urllib.parse
 from pathlib import Path
 from unittest import mock
 
-from tests.test_scryfall_fetch import FakeScryfall, make_card, scryfall_api
+from tests.test_scryfall_fetch import STOP_TEXT, FakeScryfall, make_card, scryfall_api
 
 compute_tokens = importlib.import_module("scripts.compute_tokens")
 check_gc = importlib.import_module("scripts.check_game_changers")
 dump_set = importlib.import_module("scripts.prerelease.dump_set")
 format_owned = importlib.import_module("priv_data.format_owned_list")
+build_price_index = importlib.import_module("scripts.build_price_index")
+refresh_mirror = importlib.import_module("scripts.refresh_scryfall_mirror")
 
 ROOT = Path(__file__).resolve().parent.parent
 API = "https://api.scryfall.com"
 COLLECTION_URL = f"{API}/cards/collection"
-WAIT = "wait 30 seconds or more"
 
 
 class CallerCase(unittest.TestCase):
@@ -54,7 +56,7 @@ class CallerCase(unittest.TestCase):
 
     def assert_429_text(self, out: str):
         self.assertIn("429", out)
-        self.assertIn(WAIT, out)
+        self.assertRegex(out, STOP_TEXT)
 
     def run_as_script(self, fake: FakeScryfall, path: Path, *argv: str):
         """Run ``path`` as ``__main__``; return the exit code and the screen."""
@@ -192,7 +194,7 @@ class ComputeTokensTests(CallerCase):
                 self.assert_429_text(out)
                 self.assertIn("No file written.", out)
                 # DEC-1098: the helper's text alone, not wrapped as a failed request.
-                self.assertIn(f"\n{scryfall_api.ScryfallRateLimited()}\nNo file written.\n", out)
+                self.assertRegex(out, f"\n{STOP_TEXT}\nNo file written.\n")
                 self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, *urls])
                 self.assertEqual({path: path.read_text() for path in before}, before)
 
@@ -701,6 +703,117 @@ class FormatOwnedListTests(CallerCase):
         self.assertIs(format_owned.scryfall_api, scryfall_api)
 
 
+# ------------------------------------------- build_price_index.py, refresh_scryfall_mirror.py
+# DEC-1114 N3: each script sends its one GET /bulk-data through the helper. The download of the
+# export from data.scryfall.io stays outside it: that host has no limit.
+
+BULK_DATA_URL = f"{API}/bulk-data"
+EXPORT_URL = "https://data.scryfall.io/oracle-cards/oracle-cards-20261015090000.jsonl.gz"
+
+
+def bulk_fake() -> FakeScryfall:
+    """/bulk-data names one oracle_cards export, and the export holds one card."""
+    fake = FakeScryfall()
+    fake.pages = {BULK_DATA_URL: {"object": "list", "data": [
+        {"type": "oracle_cards", "updated_at": "2026-10-15T09:00:00.000+00:00",
+         "jsonl_download_uri": EXPORT_URL}]}}
+    card = make_card("Sol Ring", legalities={"commander": "legal"})
+    # The body of the second request, the download.
+    fake.failures[1] = gzip.compress(json.dumps(card).encode() + b"\n")
+    return fake
+
+
+class BulkDataCase(CallerCase):
+    """One bulk-data script, its files in a temporary folder. The script prints to stderr."""
+
+    module = None
+    folder = ""  # the module's name of the folder that holds its files
+    files = ()  # the module's names of its files
+
+    def setUp(self):
+        super().setUp()
+        self.folder_path = self.root / "out"
+
+    def run_main(self, fake: FakeScryfall, *argv: str) -> tuple[int, str]:
+        err = io.StringIO()
+        with fake.installed(), contextlib.ExitStack() as stack, contextlib.redirect_stderr(err):
+            # The script names its files relative to PROJECT_ROOT.
+            stack.enter_context(mock.patch.object(self.module, "PROJECT_ROOT", self.root))
+            stack.enter_context(mock.patch.object(self.module, self.folder, self.folder_path))
+            for name in self.files:
+                path = self.folder_path / getattr(self.module, name).name
+                stack.enter_context(mock.patch.object(self.module, name, path))
+            code = self.module.main(list(argv))
+        return code, err.getvalue()
+
+    def written(self) -> list[str]:
+        """The files under the temporary folder."""
+        return sorted(p.name for p in self.root.rglob("*") if p.is_file())
+
+    def check_bulk_data_goes_through_the_helper(self):
+        """GET /bulk-data waits as the helper's requests do; the download does not wait."""
+        fake = bulk_fake()
+        fake.state = {"last_answer": fake.now - 0.2, "last_slow_answer": fake.now - 0.2}
+
+        code, _ = self.run_main(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL, EXPORT_URL])
+        bulk, export = fake.sent
+        self.assertEqual(bulk.headers["user-agent"], "MTGPreconUpgrader/1.0")
+        self.assertEqual(bulk.headers["accept"], "application/json")
+        self.assertEqual(export.headers["user-agent"], self.module.USER_AGENT)
+        self.assertEqual(len(fake.sleeps), 1)
+        self.assertAlmostEqual(fake.sleeps[0], 0.4, places=9)
+        self.assertEqual(self.written(), sorted(getattr(self.module, n).name for n in self.files))
+
+    def check_429_on_bulk_data_ends_the_run(self):
+        fake = bulk_fake()
+        fake.failures[0] = 429
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 1)
+        self.assert_429_text(out)
+        self.assertIn("No file written.", out)
+        self.assertEqual(len(fake.sent), 1)
+        self.assertEqual(self.written(), [])
+
+
+class BuildPriceIndexTests(BulkDataCase):
+    module = build_price_index
+    folder = "OUT_DIR"
+    files = ("INDEX_FILE", "META_FILE")
+
+    def test_bulk_data_goes_through_the_helper(self):
+        self.check_bulk_data_goes_through_the_helper()
+        index = json.loads((self.folder_path / "price-index.json").read_text())
+        self.assertEqual(index, {"sol ring": [1.2, 1.5]})
+
+    def test_429_on_bulk_data_ends_the_run(self):
+        self.check_429_on_bulk_data_ends_the_run()
+
+    def test_helper_is_the_scripts_module(self):
+        self.assertIs(build_price_index.scryfall_api, scryfall_api)
+
+
+class RefreshScryfallMirrorTests(BulkDataCase):
+    module = refresh_mirror
+    folder = "PRIV_DIR"
+    files = ("MIRROR_FILE", "META_FILE")
+
+    def test_bulk_data_goes_through_the_helper(self):
+        self.check_bulk_data_goes_through_the_helper()
+        mirror = json.loads((self.folder_path / "scryfall-oracle.json").read_text())
+        self.assertEqual([card["name"] for card in mirror], ["Sol Ring"])
+
+    def test_429_on_bulk_data_ends_the_run(self):
+        self.check_429_on_bulk_data_ends_the_run()
+
+    def test_helper_is_the_scripts_module(self):
+        self.assertIs(refresh_mirror.scryfall_api, scryfall_api)
+
+
 class HelperImportTests(unittest.TestCase):
     def test_each_script_finds_the_helper_by_its_own_path(self):
         """A fresh interpreter in isolated mode loads each script by its path, without running
@@ -713,7 +826,8 @@ class HelperImportTests(unittest.TestCase):
             "print(module.scryfall_api.__file__)\n"
         )
         for script in ("scripts/compute_tokens.py", "scripts/check_game_changers.py",
-                       "scripts/prerelease/dump_set.py", "priv_data/format_owned_list.py"):
+                       "scripts/prerelease/dump_set.py", "priv_data/format_owned_list.py",
+                       "scripts/build_price_index.py", "scripts/refresh_scryfall_mirror.py"):
             with self.subTest(script=script):
                 # -B: -I ignores PYTHONDONTWRITEBYTECODE, and the case writes no .pyc file.
                 result = subprocess.run(
