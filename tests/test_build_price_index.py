@@ -29,7 +29,7 @@ import urllib.parse
 from pathlib import Path
 from unittest import mock
 
-from tests.test_scryfall_fetch import FakeScryfall, Sent, scryfall_api
+from tests.test_scryfall_fetch import STOP_TEXT, FakeScryfall, Sent, scryfall_api
 
 bpi = importlib.import_module("scripts.build_price_index")
 
@@ -635,7 +635,7 @@ class LiveRunTests(IndexCase):
         code, err = self.run_live(fake, "--force", "--download-dir", str(folder))
         self.assertEqual(code, 1)
         self.assertIn("429", err)
-        self.assertIn("wait 30 seconds or more", err)
+        self.assertRegex(err, STOP_TEXT)
         self.assertIn("No file written.", err)
         self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL])
         self.assertFalse(folder.exists())

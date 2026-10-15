@@ -6,7 +6,7 @@ Reusable workflows and decision patterns for the MTG Precon Upgrader project.
 
 ### Card Assessment Workflow
 Standard pattern for evaluating candidate card additions to a deck:
-1. Verify card text via Scryfall (`scryfall_card_by_name` MCP) — never trust memory
+1. Verify card text via Scryfall — never trust memory. A session with the card tools uses `scryfall_card_by_name`; an agent run uses `uv run python /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/scripts/card_lookup.py "NAME"` (mirror first, then the shared limiter; DEC-1124)
 2. Assess fit: color identity legality, role gap vs. redundancy, synergy with commander
 3. If fit confirmed: identify 2–3 cut candidates; post via `suggest_tasks` interaction for board pick
 4. Board picks cut → execute swap in `deck.json` + refresh card-metadata + bump localStorage prefix + run validator

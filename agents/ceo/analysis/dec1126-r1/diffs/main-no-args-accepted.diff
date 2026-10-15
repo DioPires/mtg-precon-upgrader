@@ -1,0 +1,11 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -217,7 +217,7 @@
+     parser.add_argument("--search", metavar="QUERY",
+                         help="send one /cards/search request and print its first page")
+     args = parser.parse_args(argv)
+-    if bool(args.names) == (args.search is not None):
++    if args.names and args.search is not None:
+         parser.error("give one or more names, or --search QUERY")
+ 
+     index, source = {}, None

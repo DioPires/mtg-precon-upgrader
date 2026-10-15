@@ -1,0 +1,56 @@
+
+ RUN  v2.1.9 /private/tmp/dec1148-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (28 tests | 1 failed) 137ms
+   × DeckSelector focus after a key switch: review cases (DEC-1148) > focuses with preventScroll, so the focus does not cut the centring short 6ms
+     → expected "focus" to be called with arguments: [ { preventScroll: true } ]
+
+Received: 
+
+  1st focus call:
+
+- Array [
+-   Object {
+-     "preventScroll": true,
+-   },
+- ]
++ Array []
+
+
+Number of calls: 1
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 27 passed (28)
+   Start at  16:39:54
+   Duration  505ms (transform 36ms, setup 23ms, collect 47ms, tests 137ms, environment 128ms, prepare 37ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch: review cases (DEC-1148) > focuses with preventScroll, so the focus does not cut the centring short
+AssertionError: expected "focus" to be called with arguments: [ { preventScroll: true } ]
+
+Received: 
+
+  1st focus call:
+
+- Array [
+-   Object {
+-     "preventScroll": true,
+-   },
+- ]
++ Array []
+
+
+Number of calls: 1
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:543:19
+    541|     fireEvent.keyDown(tabs[2], { key: 'ArrowRight' });
+    542|     expect(focus).toHaveBeenCalledTimes(1);
+    543|     expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+       |                   ^
+    544|   });
+    545| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

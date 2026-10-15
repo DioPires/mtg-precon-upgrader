@@ -18,6 +18,7 @@ from unittest import mock
 
 from tests.test_scryfall_fetch import (
     COLLECTION_URL,
+    STOP_TEXT,
     DeckDirCase,
     FakeScryfall,
     fetch_metadata,
@@ -28,6 +29,8 @@ from tests.test_scryfall_fetch import (
 
 SEARCH_URL = "https://api.scryfall.com/cards/search"
 NO_PRICES = {"usd": 0, "eur": 0}
+# Pages that Scryfall sent, cut by tests/fixtures/scryfall/trim_page.py (DEC-1138).
+SAVED_PAGES = Path(__file__).parent / "fixtures" / "scryfall"
 
 
 def search_url(name: str, currency: str) -> str:
@@ -339,8 +342,7 @@ class OtherPrintingFailureCases(DeckDirCase):
         code, out = self.run_metadata(fake)
 
         self.assertNotEqual(code, 0)
-        self.assertIn("\nScryfall answered HTTP 429 (too many requests): "
-                      "wait 30 seconds or more before the next run.\nNo file written.", out)
+        self.assertRegex(out, f"\n{STOP_TEXT}\nNo file written.")
         self.assertNotIn("The search for", out)
         self.assertEqual(len(fake.sent), 2)
         self.assert_no_file_written()
@@ -605,6 +607,26 @@ class FirstPageProofCases(DeckDirCase):
             printing("Mind Stone", "c", usd_foil="0.30", usd_etched="0.10")])
         self.assertEqual(price, 0.2)
         self.assertIn("    Mind Stone: usd 0.2 from another printing\n", out)
+
+    def test_saved_page_of_run_2_gives_the_lowest_price(self):
+        """``forest-usd-run2-trimmed.json``: ``data[97:106]`` of ``run2/answer-37.json``, the
+        Forest ``usd`` search of DEC-1079's run 2 (``dir=asc``), with ``has_more``. Three
+        memorabilia printings without a key, then four at 0.09 and two at 0.10."""
+        page = json.loads((SAVED_PAGES / "forest-usd-run2-trimmed.json").read_text(encoding="utf-8"))
+        price, out = self.run_pass("Forest", raw_page=page["data"], has_more=page["has_more"])
+        self.assertEqual(price, 0.09)
+        self.assertNotIn("does not prove", out)
+
+    def test_saved_page_of_run_1_proves_nothing_for_a_request_with_dir_asc(self):
+        """``forest-usd-run1-trimmed.json``: ``data[169:175]`` of ``run1/answer-37.json``, the
+        Forest ``usd`` search of DEC-1079's run 1 (no ``dir``), with ``has_more``. Its order
+        (1.82 down to 1.60, the most expensive first) answers here a request with ``dir=asc``.
+        Without the order check the pass would take 1.60 from ``zen``."""
+        page = json.loads((SAVED_PAGES / "forest-usd-run1-trimmed.json").read_text(encoding="utf-8"))
+        price, out = self.run_pass("Forest", raw_page=page["data"], has_more=page["has_more"])
+        self.assertIsNone(price)
+        self.assertIn(
+            "    Forest: the first page does not prove the lowest usd price: no price taken\n", out)
 
 
 class AtomicWriteCases(DeckDirCase):

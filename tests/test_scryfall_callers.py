@@ -4,7 +4,7 @@ scripts/compute_tokens.py, scripts/check_game_changers.py, scripts/prerelease/du
 priv_data/format_owned_list.py send every request through scripts/scryfall_api.py:
 
 1. a request starts 600 ms or more after the last answer arrived;
-2. a 429 ends the run: no file written, the status and "wait 30 seconds or more" on screen,
+2. a 429 ends the run: no file written, the status and the end of the stop on screen,
    exit code 1 and no later request.
 
 No test here sends a live request: FakeScryfall (tests/test_scryfall_fetch.py) stands in for
@@ -13,6 +13,7 @@ the helper's opener and for the clock.
 
 import contextlib
 import csv
+import gzip
 import http.client
 import importlib
 import io
@@ -28,17 +29,18 @@ import urllib.parse
 from pathlib import Path
 from unittest import mock
 
-from tests.test_scryfall_fetch import FakeScryfall, make_card, scryfall_api
+from tests.test_scryfall_fetch import STOP_TEXT, FakeScryfall, make_card, scryfall_api
 
 compute_tokens = importlib.import_module("scripts.compute_tokens")
 check_gc = importlib.import_module("scripts.check_game_changers")
 dump_set = importlib.import_module("scripts.prerelease.dump_set")
 format_owned = importlib.import_module("priv_data.format_owned_list")
+build_price_index = importlib.import_module("scripts.build_price_index")
+refresh_mirror = importlib.import_module("scripts.refresh_scryfall_mirror")
 
 ROOT = Path(__file__).resolve().parent.parent
 API = "https://api.scryfall.com"
 COLLECTION_URL = f"{API}/cards/collection"
-WAIT = "wait 30 seconds or more"
 
 
 class CallerCase(unittest.TestCase):
@@ -54,7 +56,7 @@ class CallerCase(unittest.TestCase):
 
     def assert_429_text(self, out: str):
         self.assertIn("429", out)
-        self.assertIn(WAIT, out)
+        self.assertRegex(out, STOP_TEXT)
 
     def run_as_script(self, fake: FakeScryfall, path: Path, *argv: str):
         """Run ``path`` as ``__main__``; return the exit code and the screen."""
@@ -192,7 +194,7 @@ class ComputeTokensTests(CallerCase):
                 self.assert_429_text(out)
                 self.assertIn("No file written.", out)
                 # DEC-1098: the helper's text alone, not wrapped as a failed request.
-                self.assertIn(f"\n{scryfall_api.ScryfallRateLimited()}\nNo file written.\n", out)
+                self.assertRegex(out, f"\n{STOP_TEXT}\nNo file written.\n")
                 self.assertEqual([s.url for s in fake.sent], [COLLECTION_URL, *urls])
                 self.assertEqual({path: path.read_text() for path in before}, before)
 
@@ -701,6 +703,221 @@ class FormatOwnedListTests(CallerCase):
         self.assertIs(format_owned.scryfall_api, scryfall_api)
 
 
+# ------------------------------------------- build_price_index.py, refresh_scryfall_mirror.py
+# DEC-1114 N3: each script sends its one GET /bulk-data through the helper. The download of the
+# export from data.scryfall.io stays outside it: that host has no limit.
+
+BULK_DATA_URL = f"{API}/bulk-data"
+EXPORT_URL = "https://data.scryfall.io/oracle-cards/oracle-cards-20261015090000.jsonl.gz"
+UPDATED_AT = "2026-10-15T09:00:00.000+00:00"
+DEFAULT_EXPORT_URL = "https://data.scryfall.io/default-cards/default-cards-20261015092000.jsonl.gz"
+DEFAULT_UPDATED_AT = "2026-10-15T09:20:00.000+00:00"
+SOL_RING = {"sol ring": [1.2, 1.5]}
+
+
+class BulkFake(FakeScryfall):
+    """FakeScryfall whose answers also read a part at a time, as shutil.copyfileobj reads
+    them: build_price_index.py copies each download that way (DEC-1086)."""
+
+    def urlopen(self, req, timeout=None):
+        return io.BytesIO(super().urlopen(req, timeout).read())
+
+
+def bulk_fake() -> FakeScryfall:
+    """/bulk-data names the oracle_cards and default_cards exports, and each export holds one
+    card. refresh_scryfall_mirror.py downloads the oracle_cards export only."""
+    fake = BulkFake()
+    fake.pages = {BULK_DATA_URL: {"object": "list", "data": [
+        {"type": "oracle_cards", "updated_at": UPDATED_AT,
+         "jsonl_download_uri": EXPORT_URL},
+        {"type": "default_cards", "updated_at": DEFAULT_UPDATED_AT,
+         "jsonl_download_uri": DEFAULT_EXPORT_URL}]}}
+    card = make_card("Sol Ring", legalities={"commander": "legal"})
+    # The bodies of the second and third requests, the downloads.
+    fake.failures[1] = fake.failures[2] = gzip.compress(json.dumps(card).encode() + b"\n")
+    return fake
+
+
+class BulkDataCase(CallerCase):
+    """One bulk-data script, its files in a temporary folder. The script prints to stderr."""
+
+    module = None
+    folder = ""  # the module's name of the folder that holds its files
+    files = ()  # the module's names of its files
+    downloads = (EXPORT_URL,)  # the exports that the script downloads, in order
+
+    def setUp(self):
+        super().setUp()
+        self.folder_path = self.root / "out"
+
+    def run_main(self, fake: FakeScryfall, *argv: str) -> tuple[int, str]:
+        err = io.StringIO()
+        with fake.installed(), contextlib.ExitStack() as stack, contextlib.redirect_stderr(err):
+            # The script names its files relative to PROJECT_ROOT.
+            stack.enter_context(mock.patch.object(self.module, "PROJECT_ROOT", self.root))
+            stack.enter_context(mock.patch.object(self.module, self.folder, self.folder_path))
+            for name in self.files:
+                path = self.folder_path / getattr(self.module, name).name
+                stack.enter_context(mock.patch.object(self.module, name, path))
+            code = self.module.main(list(argv))
+        return code, err.getvalue()
+
+    def written(self) -> list[str]:
+        """The files under the temporary folder."""
+        return sorted(p.name for p in self.root.rglob("*") if p.is_file())
+
+    def check_bulk_data_goes_through_the_helper(self):
+        """GET /bulk-data waits as the helper's requests do; no download waits."""
+        fake = bulk_fake()
+        fake.state = {"last_answer": fake.now - 0.2, "last_slow_answer": fake.now - 0.2}
+
+        code, _ = self.run_main(fake)
+
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL, *self.downloads])
+        bulk, *exports = fake.sent
+        self.assertEqual(bulk.headers["user-agent"], "MTGPreconUpgrader/1.0")
+        self.assertEqual(bulk.headers["accept"], "application/json")
+        for export in exports:
+            self.assertEqual(export.headers["user-agent"], self.module.USER_AGENT)
+        self.assertEqual(len(fake.sleeps), 1)
+        self.assertAlmostEqual(fake.sleeps[0], 0.4, places=9)
+        self.assertEqual(self.written(), sorted(getattr(self.module, n).name for n in self.files))
+
+    def check_429_on_bulk_data_ends_the_run(self):
+        fake = bulk_fake()
+        fake.failures[0] = 429
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 1)
+        self.assert_429_text(out)
+        self.assertIn("No file written.", out)
+        self.assertEqual(len(fake.sent), 1)
+        self.assertEqual(self.written(), [])
+
+    def check_stop_text_stands_on_its_own_line(self):
+        """DEC-1137 N2: a blank line, the stop text, then "No file written." on the next line."""
+        fake = bulk_fake()
+        fake.failures[0] = 429
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 1)
+        self.assertRegex(out, f"\n\n{STOP_TEXT}\nNo file written.\n")
+
+
+class BuildPriceIndexTests(BulkDataCase):
+    module = build_price_index
+    folder = "OUT_DIR"
+    files = ("INDEX_FILE", "META_FILE")
+    downloads = (EXPORT_URL, DEFAULT_EXPORT_URL)
+
+    def test_bulk_data_goes_through_the_helper(self):
+        self.check_bulk_data_goes_through_the_helper()
+        index = json.loads((self.folder_path / "price-index.json").read_text())
+        self.assertEqual(index, SOL_RING)
+
+    def test_429_on_bulk_data_ends_the_run(self):
+        self.check_429_on_bulk_data_ends_the_run()
+
+    def test_helper_is_the_scripts_module(self):
+        self.assertIs(build_price_index.scryfall_api, scryfall_api)
+
+
+class BuildPriceIndexLine190Tests(BulkDataCase):
+    """DEC-1137 B2: PR #51 moved the line
+    `cards, remote_updated_at, source_uri = load_source_cards(args.source, args.force)` into a
+    try. Each case reads one argument or one target of that line."""
+
+    module = build_price_index
+    folder = "OUT_DIR"
+    files = ("INDEX_FILE", "META_FILE")
+    downloads = (EXPORT_URL, DEFAULT_EXPORT_URL)
+
+    def meta(self) -> dict:
+        return json.loads((self.folder_path / "price-index.meta.json").read_text())
+
+    def test_meta_names_the_export_and_its_date(self):
+        """The two targets after cards: the date of the export, then its address."""
+        code, _ = self.run_main(bulk_fake())
+        self.assertEqual(code, 0)
+        self.assertEqual(self.meta()["sourceUrl"], EXPORT_URL)
+        self.assertEqual(self.meta()["scryfall_updated_at"], UPDATED_AT)
+
+    def test_current_index_downloads_nothing(self):
+        """Without --force, a second run on the same export sends /bulk-data only and writes
+        nothing."""
+        self.assertEqual(self.run_main(bulk_fake())[0], 0)
+        before = {p: p.read_bytes() for p in self.folder_path.iterdir()}
+        fake = bulk_fake()
+        code, out = self.run_main(fake)
+        self.assertEqual(code, 0)
+        self.assertIn(f"Price index is current ({UPDATED_AT}, {DEFAULT_UPDATED_AT}).", out)
+        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL])
+        self.assertEqual({p: p.read_bytes() for p in self.folder_path.iterdir()}, before)
+
+    def test_force_downloads_a_current_index(self):
+        """--force downloads both exports again."""
+        self.assertEqual(self.run_main(bulk_fake())[0], 0)
+        fake = bulk_fake()
+        code, _ = self.run_main(fake, "--force")
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL, *self.downloads])
+
+    def test_source_file_sends_nothing(self):
+        """--bulk-data, --oracle-source and --default-source read saved files and send no
+        request (DEC-1086: they replace --source). The meta file names the saved exports."""
+        fake = bulk_fake()
+        bulk = self.root / "bulk-data.json"
+        bulk.write_text(json.dumps(fake.pages[BULK_DATA_URL]))
+        # Sol Ring has both prices, so the default_cards file adds nothing.
+        source = self.root / "oracle-cards.jsonl"
+        source.write_text(json.dumps(make_card("Sol Ring", legalities={"commander": "legal"})) + "\n")
+        code, _ = self.run_main(fake, "--bulk-data", str(bulk), "--oracle-source", str(source),
+                                "--default-source", str(source))
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.sent, [])
+        self.assertEqual(json.loads((self.folder_path / "price-index.json").read_text()), SOL_RING)
+        self.assertEqual(self.meta()["sourceUrl"], EXPORT_URL)
+        self.assertEqual(self.meta()["scryfall_updated_at"], UPDATED_AT)
+
+
+class BuildPriceIndexLayoutTests(BulkDataCase):
+    module = build_price_index
+    folder = "OUT_DIR"
+    files = ("INDEX_FILE", "META_FILE")
+
+    def test_stop_text_stands_on_its_own_line(self):
+        self.check_stop_text_stands_on_its_own_line()
+
+
+class RefreshScryfallMirrorTests(BulkDataCase):
+    module = refresh_mirror
+    folder = "PRIV_DIR"
+    files = ("MIRROR_FILE", "META_FILE")
+
+    def test_bulk_data_goes_through_the_helper(self):
+        self.check_bulk_data_goes_through_the_helper()
+        mirror = json.loads((self.folder_path / "scryfall-oracle.json").read_text())
+        self.assertEqual([card["name"] for card in mirror], ["Sol Ring"])
+
+    def test_429_on_bulk_data_ends_the_run(self):
+        self.check_429_on_bulk_data_ends_the_run()
+
+    def test_helper_is_the_scripts_module(self):
+        self.assertIs(refresh_mirror.scryfall_api, scryfall_api)
+
+
+class RefreshScryfallMirrorLayoutTests(BulkDataCase):
+    module = refresh_mirror
+    folder = "PRIV_DIR"
+    files = ("MIRROR_FILE", "META_FILE")
+
+    def test_stop_text_stands_on_its_own_line(self):
+        self.check_stop_text_stands_on_its_own_line()
+
+
 class HelperImportTests(unittest.TestCase):
     def test_each_script_finds_the_helper_by_its_own_path(self):
         """A fresh interpreter in isolated mode loads each script by its path, without running
@@ -713,7 +930,8 @@ class HelperImportTests(unittest.TestCase):
             "print(module.scryfall_api.__file__)\n"
         )
         for script in ("scripts/compute_tokens.py", "scripts/check_game_changers.py",
-                       "scripts/prerelease/dump_set.py", "priv_data/format_owned_list.py"):
+                       "scripts/prerelease/dump_set.py", "priv_data/format_owned_list.py",
+                       "scripts/build_price_index.py", "scripts/refresh_scryfall_mirror.py"):
             with self.subTest(script=script):
                 # -B: -I ignores PYTHONDONTWRITEBYTECODE, and the case writes no .pyc file.
                 result = subprocess.run(
@@ -722,6 +940,28 @@ class HelperImportTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertEqual(
                     Path(result.stdout.strip()).resolve(), ROOT / "scripts" / "scryfall_api.py")
+
+    def test_new_process_sends_its_first_request(self):
+        """DEC-1114 N5: a fresh interpreter's helper holds no stop. Its opener is a fake, and
+        its limiter folder is a temporary one."""
+        send = (
+            "import os, sys, tempfile, types\n"
+            "sys.path.insert(0, sys.argv[1])\n"
+            "import scryfall_api\n"
+            "class Answer:\n"
+            "    def __enter__(self): return self\n"
+            "    def __exit__(self, *exc): return False\n"
+            "    def read(self): return b'{}'\n"
+            "scryfall_api._OPENER = types.SimpleNamespace(open=lambda req, timeout: Answer())\n"
+            "with tempfile.TemporaryDirectory() as folder:\n"
+            "    os.environ['SCRYFALL_LIMIT_DIR'] = folder\n"
+            "    print(scryfall_api.request('https://api.scryfall.com/sets/fra'))\n"
+        )
+        result = subprocess.run(
+            [sys.executable, "-I", "-B", "-c", send, str(ROOT / "scripts")],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "b'{}'\n")
 
 
 if __name__ == "__main__":

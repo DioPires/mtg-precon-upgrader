@@ -1,0 +1,11 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -68,7 +68,7 @@
+ 
+ def fold(name: str) -> str:
+     """The name without case or accents: "Lórien Revealed" and "lorien revealed" fold alike."""
+-    decomposed = unicodedata.normalize("NFKD", name.strip().casefold())
++    decomposed = unicodedata.normalize("NFKD", name.casefold())
+     return "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+ 
+ 

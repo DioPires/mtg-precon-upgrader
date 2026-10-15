@@ -1,0 +1,25 @@
+$ compare.py r1/expected/tests/test_dec1140_kill_cases.py ~/.paperclip/instances/default/workspaces/bc5c0753-6b0d-419c-9581-fa46ceb4a236/dec1086-review/kill_cases.py
+fda173149962b758  r1/expected/tests/test_dec1140_kill_cases.py
+fda173149962b758  ~/.paperclip/instances/default/workspaces/bc5c0753-6b0d-419c-9581-fa46ceb4a236/dec1086-review/kill_cases.py
+EQUAL
+exit 0
+$ compare.py r1/expected/tests/test_dec1140_kill_cases.py ctl/reworded.py
+fda173149962b758  r1/expected/tests/test_dec1140_kill_cases.py
+fda173149962b758  ctl/reworded.py
+EQUAL
+exit 0
+$ compare.py r1/expected/tests/test_dec1140_kill_cases.py ctl/value.py
+fda173149962b758  r1/expected/tests/test_dec1140_kill_cases.py
+64657162ad14b995  ctl/value.py
+DIFFERENT
+exit 1
+$ compare.py r1/expected/scripts/build_price_index.py ctl/head-script.py
+dcad9d4854e87849  r1/expected/scripts/build_price_index.py
+179acbdd660449d5  ctl/head-script.py
+DIFFERENT
+exit 1
+$ compare.py r1/expected/scripts/build_price_index.py wt/scripts/build_price_index.py
+dcad9d4854e87849  r1/expected/scripts/build_price_index.py
+dcad9d4854e87849  wt/scripts/build_price_index.py
+EQUAL
+exit 0
