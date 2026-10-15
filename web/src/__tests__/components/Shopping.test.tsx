@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
   Shopping,
@@ -7,8 +7,12 @@ import {
   parseOwnedFile,
   splitOwnership,
 } from '../../components/organisms/Shopping';
-import type { DeckFull, DeckListGroup } from '../../data/types';
+import { cardCache } from '../../data/cardCache';
+import { deckLoader } from '../../data/loader';
+import { COLLECTION_URL } from '../../data/scryfallLimiter';
+import type { DeckFull, DeckListGroup, RawCardMetadata } from '../../data/types';
 import { formatPricesDate } from '../../lib/pricesDate';
+import { identifiersOf } from '../data/scryfallFakes';
 
 function makeDeck(over: Partial<DeckFull>): DeckFull {
   return {
@@ -571,5 +575,87 @@ describe('the date of the prices in the footer (DEC-1102)', () => {
     expect(formatPricesDate('2026-09-05T00:00:00Z')).toBe('5 Sep 2026');
     expect(formatPricesDate(undefined)).toBeNull();
     expect(formatPricesDate('not a date')).toBeNull();
+  });
+});
+
+// DEC-1131 rulings 3 and 7: the rows show the file's prices at first paint, then
+// ask for the prices older than 24 h. The footer gives the oldest date among the
+// priced rows.
+describe('the price refresh of /shopping (DEC-1131)', () => {
+  const OLD = '2026-10-10T08:00:00+00:00';
+  const meta = (usd: number | null) => ({ cmc: 1, image: 'front/a/b/x.jpg', mana_cost: '{1}', type_line: 'Artifact', usd, eur: null });
+  const FILE: RawCardMetadata = {
+    'Alpha Commander': meta(null),
+    'Sol Ring': meta(1.5),
+    'Arcane Signet': meta(0.5),
+    'Swords to Plowshares': meta(2),
+  };
+  let fetchSpy: MockInstance<typeof fetch>;
+  let batches: string[][];
+
+  beforeEach(() => {
+    cardCache._reset();
+    deckLoader._reset();
+    localStorage.clear();
+    cardCache.seed(FILE, OLD);
+    batches = [];
+    // Each usd of a batch's answer is $1.00 more than the file's.
+    fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+      const url = String(input);
+      if (url.endsWith('/card-metadata.meta.json')) {
+        return new Response(JSON.stringify({ prices_as_of: OLD }), { status: 200 });
+      }
+      if (url === COLLECTION_URL) {
+        const names = identifiersOf(init?.body);
+        batches.push(names);
+        const data = names.map((name) => ({
+          name,
+          prices: { usd: FILE[name].usd == null ? null : (FILE[name].usd! + 1).toFixed(2) },
+        }));
+        return new Response(JSON.stringify({ object: 'list', not_found: [], data }), { status: 200 });
+      }
+      throw new TypeError(`unexpected fetch ${url}`);
+    });
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+    cardCache._reset();
+  });
+
+  const estimate = () => screen.getByText('EST. COST').parentElement!.querySelector('.gv1-serif-xl')!.textContent;
+  const foot = () => document.querySelector('.gv1-shop-foot')!.textContent;
+
+  it("shows the file's prices first, then the refreshed ones, and the footer moves to the date of the refresh", async () => {
+    render(<Shopping decks={[ALPHA]} />);
+    expect(estimate()).toBe('$4');
+    await waitFor(() => expect(foot()).toContain('Prices are USD from Scryfall, as of 10 Oct 2026.'));
+
+    await waitFor(() => expect(estimate()).toBe('$7'));
+    expect(batches).toHaveLength(1);
+    expect([...batches[0]].sort()).toEqual(['Alpha Commander', 'Arcane Signet', 'Sol Ring', 'Swords to Plowshares']);
+    expect(screen.getByText('$2.50')).toBeInTheDocument();
+    expect(foot()).toContain(`Prices are USD from Scryfall, as of ${formatPricesDate(new Date().toISOString())}.`);
+  });
+
+  it("keeps the file's date while one priced row keeps the file's price", async () => {
+    fetchSpy.mockImplementation(async (input, init) => {
+      const url = String(input);
+      if (url.endsWith('/card-metadata.meta.json')) return new Response(JSON.stringify({ prices_as_of: OLD }), { status: 200 });
+      const names = identifiersOf(init?.body);
+      batches.push(names);
+      // Scryfall has no usd for Sol Ring today: the row keeps the file's price.
+      // The commander has none in the file either, and stays unpriced.
+      const data = names.map((name) => ({
+        name,
+        prices: { usd: name === 'Sol Ring' || name === 'Alpha Commander' ? null : '9.00' },
+      }));
+      return new Response(JSON.stringify({ object: 'list', not_found: [], data }), { status: 200 });
+    });
+    render(<Shopping decks={[ALPHA]} />);
+    // $1.50 + $9.00 + $9.00
+    await waitFor(() => expect(estimate()).toBe('$20'));
+    expect(screen.getByText('$1.50')).toBeInTheDocument();
+    expect(foot()).toContain('as of 10 Oct 2026.');
   });
 });

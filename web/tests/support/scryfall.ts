@@ -5,8 +5,18 @@
 //                             picture path, USD and EUR price (DEC-1075)
 // The app reads the same file (DEC-1102), so a lookup gives the picture
 // addresses and the price that the app's own seed holds. The same card gets the
-// same answer on every run and every machine. A name that card-metadata.json
-// lacks gets a 404, as Scryfall gives.
+// same answer on every run and every machine.
+//
+// The app sends its lookups as batches: POST /cards/collection with up to 75
+// names (DEC-1131). The stub answers as Scryfall does (live reading 1 of the
+// proposal, DEC-1072): `{"object": "list", "not_found": [...], "data": [...]}`,
+// with `data` in the order asked. A plain name or the front face of a `//` card
+// matches without regard to case and accents; a full `//` name goes to
+// not_found, as does a name that card-metadata.json lacks. Every `//` card has
+// `card_faces`, and a transform or modal_dfc card has `image_uris` only there.
+// More than 75 names get a 422; the shape of that answer is a guess. The stub
+// still answers /cards/named (a 404 for a name that the file lacks) and
+// /cards/autocomplete.
 
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -36,6 +46,8 @@ interface Repo {
   byKey: Map<string, string>;
   /** Front face of a `//` name → that `//` name. */
   byFront: Map<string, string>;
+  /** What /cards/collection matches: a folded plain name, or the folded front face of a `//` name → the card's name. */
+  byIdentifier: Map<string, string>;
 }
 
 let repo: Repo | undefined;
@@ -59,7 +71,12 @@ function loadRepo(): Repo {
     }
   }
   const byFront = new Map(names.filter((name) => name.includes('//')).map((name) => [faces(name)[0], name]));
-  repo = { meta, byKey, byFront };
+  // The file holds a `//` card also under its front name; Scryfall answers
+  // that name with the whole card.
+  const byIdentifier = new Map<string, string>();
+  for (const name of names) if (!name.includes('//')) byIdentifier.set(normalizeName(name), name);
+  for (const [front, name] of byFront) byIdentifier.set(normalizeName(front), name);
+  repo = { meta, byKey, byFront, byIdentifier };
   return repo;
 }
 
@@ -139,6 +156,93 @@ function cardObject(query: string) {
   };
 }
 
+/** The layouts whose faces each have a picture: Scryfall gives `image_uris` only in `card_faces`. */
+const TWO_SIDED = new Set(['transform', 'modal_dfc']);
+
+/** A USD price with the stub's bump (`refreshedPrices`), as Scryfall writes it. */
+function usdOf(card: CardMeta, usdBump: number): string | null {
+  return card.usd == null ? null : (card.usd + usdBump).toFixed(2);
+}
+
+/**
+ * The card object of /cards/collection for one name of card-metadata.json.
+ * Every `//` card has `card_faces`. A transform or modal_dfc card has
+ * `image_uris` only in its faces (the back face's picture is the file's path
+ * under `back/`), and card-metadata.json holds only the cost of its front. A
+ * card with two halves on one side keeps the joined cost and the pictures on the
+ * whole card, as Scryfall sends it.
+ */
+function collectionCard(name: string, usdBump: number) {
+  const card = loadRepo().meta[name];
+  const layout = card.layout ?? 'normal';
+  const twoSided = TWO_SIDED.has(layout);
+  const names = faces(name);
+  const costs = card.mana_cost.split(' // ');
+  const types = card.type_line.split(' // ');
+  const back = card.image.replace(/^front\//, 'back/');
+  const card_faces = names.length === 2
+    ? names.map((face, i) => ({
+        object: 'card_face',
+        name: face,
+        mana_cost: costs[i] ?? '',
+        type_line: types[i] ?? '',
+        ...(twoSided ? { image_uris: imageUris({ ...card, image: i === 0 ? card.image : back }) } : {}),
+      }))
+    : undefined;
+  return {
+    object: 'card',
+    name,
+    layout,
+    ...(twoSided ? {} : { mana_cost: card.mana_cost }),
+    cmc: card.cmc,
+    type_line: card.type_line,
+    colors: card.colors,
+    ...(card_faces ? { card_faces } : {}),
+    ...(twoSided ? {} : { image_uris: imageUris(card) }),
+    prices: { usd: usdOf(card, usdBump), eur: money(card.eur) },
+  };
+}
+
+/** The names of a /cards/collection body; null when the body is not one. */
+function identifiersOf(body: string | null | undefined): string[] | null {
+  try {
+    const parsed = JSON.parse(body ?? '') as { identifiers?: Array<{ name?: unknown }> };
+    if (!Array.isArray(parsed.identifiers)) return null;
+    return parsed.identifiers.map((id) => (typeof id?.name === 'string' ? id.name : ''));
+  } catch {
+    return null;
+  }
+}
+
+/** Scryfall's limit of identifiers in one /cards/collection request. */
+export const COLLECTION_LIMIT = 75;
+
+/** The answer to a POST to /cards/collection. */
+function collection(body: string | null | undefined, usdBump: number): Answer {
+  const names = identifiersOf(body);
+  if (!names) {
+    return json('collection', 400, { object: 'error', code: 'bad_request', status: 400, details: 'The body holds no identifiers.' });
+  }
+  if (names.length > COLLECTION_LIMIT) {
+    // A guess at Scryfall's shape: its error object with a 422.
+    return json('collection', 422, {
+      object: 'error',
+      code: 'validation_error',
+      status: 422,
+      details: `Too many identifiers: ${names.length}; the limit is ${COLLECTION_LIMIT}.`,
+    });
+  }
+  const { byIdentifier } = loadRepo();
+  const data: object[] = [];
+  const not_found: Array<{ name: string }> = [];
+  for (const name of names) {
+    const match = name.includes('//') ? undefined : byIdentifier.get(normalizeName(name));
+    if (match) data.push(collectionCard(match, usdBump));
+    else not_found.push({ name });
+  }
+  return { ...json('collection', 200, { object: 'list', not_found, data }), notFound: not_found.map((n) => n.name) };
+}
+
 function autocomplete(query: string): string[] {
   const q = normalizeName(query);
   if (q.length < 2) return [];
@@ -148,15 +252,26 @@ function autocomplete(query: string): string[] {
   return [...starts, ...contains].slice(0, 20);
 }
 
-export type AnswerKind = 'card' | 'card-image' | 'autocomplete' | 'image';
+export type AnswerKind = 'card' | 'card-image' | 'collection' | 'autocomplete' | 'image';
 
 export interface Answer {
   kind: AnswerKind;
   status: number;
   contentType: string;
   body: string;
-  /** The card name asked for, when the answer is a 404. */
-  notFound?: string;
+  /** The card names asked for that no card matched: a 404, or the not_found of a batch. */
+  notFound?: string[];
+}
+
+/** The parts of a request that the stub reads besides its address. */
+export interface AskedWith {
+  method?: string;
+  body?: string | null;
+}
+
+export interface AnswerOptions {
+  /** Dollars added to each `usd` of a /cards/collection answer: a case tells a refreshed price from the file's. */
+  usdBump?: number;
 }
 
 const json = (kind: AnswerKind, status: number, body: unknown): Answer => ({
@@ -177,9 +292,14 @@ const image = (kind: AnswerKind, version: string | null): Answer => ({
  * The answer for one request to a Scryfall host. Null means the stub does not
  * know the request; the caller treats that as a failure of the test.
  */
-export function answerFor(url: URL): Answer | null {
+export function answerFor(url: URL, asked: AskedWith = {}, options: AnswerOptions = {}): Answer | null {
   if (url.hostname === 'cards.scryfall.io') return image('image', url.pathname.split('/')[1]);
   if (url.hostname !== 'api.scryfall.com') return null;
+
+  if (url.pathname === '/cards/collection') {
+    if ((asked.method ?? 'GET').toUpperCase() !== 'POST') return null;
+    return collection(asked.body, options.usdBump ?? 0);
+  }
 
   if (url.pathname === '/cards/autocomplete') {
     const data = autocomplete(url.searchParams.get('q') ?? '');
@@ -199,7 +319,7 @@ export function answerFor(url: URL): Answer | null {
           status: 404,
           details: `No cards found matching “${query}”`,
         }),
-        notFound: query,
+        notFound: [query],
       };
     }
     // Scryfall redirects an image lookup to cards.scryfall.io; the stub answers with the picture.
