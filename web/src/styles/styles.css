@@ -3303,10 +3303,10 @@ em { font-style: italic; color: var(--gv1-gold); }
   }
   .gv1-engine-panel { padding: 18px 16px; }
   .gv1-engine-cards { grid-template-columns: repeat(2, 1fr); }
-  /* DEC-1116: a tile's longest word ("artifact/enchantment/token)" in a note,
-     "Archaeomancer's" in a name) widened its column, and the panel and tabs
-     with it, past the phone. */
-  .gv1-engine-cards :is(.gv1-card-tile-name, .gv1-card-tile-note) { overflow-wrap: anywhere; }
+  /* DEC-1116: a note's longest word widened its column, and the panel and
+     tabs with it, past the phone. The name keeps `break-word`, so a card name
+     stays whole with the web fonts. */
+  .gv1-engine-cards .gv1-card-tile-note { overflow-wrap: anywhere; }
 
   /* Wincons / Combos / Performance — 2-col → 1-col */
   .gv1-wincons-grid,
