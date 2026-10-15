@@ -1,6 +1,10 @@
 // DEC-1102: deck cards come from data/card-metadata.json, and one limiter holds
 // every request to api.scryfall.com. The fixture's rate check (support/test.ts)
 // holds in every case here too.
+//
+// DEC-1131: /shopping and the deck guide tiles refresh a price older than 24 h,
+// so a case that proves "no request" runs on a page clock less than 24 h after
+// the file's `prices_as_of`. tests/dec1131-card-batches.spec.ts holds the refresh.
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,15 +20,20 @@ const USD = new Map(Object.entries(FILE).map(([name, entry]) => [name.toLowerCas
 const PRICES_AS_OF = (
   JSON.parse(readFileSync(resolve(DATA, 'card-metadata.meta.json'), 'utf8')) as { prices_as_of: string }
 ).prices_as_of;
+/** A page clock at which every price of the file is younger than 24 h: nothing asks for a refresh. */
+const PRICES_ARE_FRESH = Date.parse(PRICES_AS_OF) + 3_600_000;
 
-/** The requests of one context that matter here, by kind. */
+/** The requests of one context that matter here, by kind. A lookup is a batch: its names, joined. */
 function watch(context: BrowserContext) {
   const seen = { api: [] as string[], lookups: [] as string[], imageHost: [] as string[], localImages: [] as string[] };
   context.on('request', (request) => {
     const url = new URL(request.url());
     if (url.hostname === 'api.scryfall.com') {
-      seen.api.push(request.url());
-      if (/^\/cards\/(named|collection)$/.test(url.pathname)) seen.lookups.push(request.url());
+      seen.api.push(`${request.method()} ${request.url()}`);
+      if (/^\/cards\/(named|collection)$/.test(url.pathname)) {
+        const body = JSON.parse(request.postData() ?? '{}') as { identifiers?: Array<{ name: string }> };
+        seen.lookups.push((body.identifiers ?? []).map((id) => id.name).join(' | ') || request.url());
+      }
     } else if (url.hostname === 'cards.scryfall.io') {
       seen.imageHost.push(request.url());
     } else if (url.pathname.startsWith('/data/images/cards/')) {
@@ -62,6 +71,7 @@ test('a scroll to the end of a deck guide sends nothing to api.scryfall.com or /
   context,
 }) => {
   const seen = watch(context);
+  await page.clock.install({ time: PRICES_ARE_FRESH });
   await page.goto('/deck/creeping-corruption');
   await page.locator('.gv1-card-tile').first().waitFor();
   await scrollToEnd(page);
@@ -76,11 +86,12 @@ test('a scroll to the end of a deck guide sends nothing to api.scryfall.com or /
   expect(seen.localImages).toEqual([]);
 });
 
-test('/shopping shows its priced count at first paint, with no request to api.scryfall.com', async ({
+test('/shopping shows its priced count at first paint, and with prices younger than 24 h sends nothing to api.scryfall.com', async ({
   page,
   context,
 }) => {
   const seen = watch(context);
+  await page.clock.install({ time: PRICES_ARE_FRESH });
   await page.goto('/shopping');
   // The rows and the summary in one task: the first paint that holds rows.
   const first = await page
@@ -113,6 +124,7 @@ test('/shopping shows its priced count at first paint, with no request to api.sc
 
 test("/shopping shows the front half's cost of a two-part card from the file", async ({ page, context }) => {
   const seen = watch(context);
+  await page.clock.install({ time: PRICES_ARE_FRESH });
   const joined = new Map(
     Object.entries(FILE)
       .filter(([, entry]) => entry.mana_cost.includes(' // '))
@@ -142,6 +154,7 @@ test('a hover over ten commanders on /codex sends nothing, and the frame comes f
   context,
 }) => {
   const seen = watch(context);
+  await page.clock.install({ time: PRICES_ARE_FRESH });
   await page.goto('/codex');
   const names = page.locator('[data-card-name]');
   await names.first().waitFor();
@@ -165,6 +178,7 @@ test('a hover over names outside the file looks them up through the limiter, wit
   context,
 }) => {
   const seen = watch(context);
+  await page.clock.install({ time: PRICES_ARE_FRESH });
   await page.goto('/deck/creeping-corruption');
   const names = page.locator('.gv1-apo-pin[data-card-name], article[data-card-name]');
   await names.first().waitFor();
@@ -191,38 +205,37 @@ test('a hover over names outside the file looks them up through the limiter, wit
 });
 
 test.describe('the 429 stop', () => {
-  test.use({ scryfall429From: 3, rateClock: 'page' });
+  // DEC-1131: /combos sends its names in one batch, so the first batch meets the 429.
+  test.use({ scryfall429From: 1, rateClock: 'page' });
 
-  test('/combos sends nothing for 30 s after a rejected lookup, then one; a reload inside the stop sends nothing', async ({
+  test('/combos sends nothing for 30 s after a rejected batch, then the same batch; a reload inside the stop sends nothing', async ({
     page,
     context,
   }) => {
     const seen = watch(context);
     await page.clock.install();
     await page.goto('/combos');
-    // Lookup 3 meets the 429 with no CORS header: the app's fetch rejects and the stop starts.
+    // The batch meets the 429 with no CORS header: the app's fetch rejects and the stop starts.
     const stopKey = 'grimoire-scryfall-stop';
     await page.waitForFunction((key) => localStorage.getItem(key) !== null, stopKey, { timeout: 30_000 });
-    const { until, ms, now } = await page.evaluate((key) => {
-      const stop = JSON.parse(localStorage.getItem(key)!) as { until: number; ms: number };
-      return { ...stop, now: Date.now() };
-    }, stopKey);
+    const { until, ms } = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!) as { until: number; ms: number }, stopKey);
     expect(ms).toBe(30_000);
-    expect(seen.lookups).toHaveLength(3);
+    expect(seen.lookups).toHaveLength(1);
 
     // Hold the page's time, then move it to 1 ms before the end of the stop.
-    await page.clock.pauseAt(now + 1);
-    await page.clock.fastForward(until - (now + 1) - 1);
+    const pausedAt = (await page.evaluate(() => Date.now())) + 1_000;
+    await page.clock.pauseAt(pausedAt);
+    await page.clock.fastForward(until - pausedAt - 1);
     await page.waitForTimeout(2_000);
-    expect(seen.lookups).toHaveLength(3);
+    expect(seen.lookups).toHaveLength(1);
 
     // The stop ends: one request goes. It meets the 429 too, and the stop doubles.
     await page.clock.fastForward(2);
-    await expect.poll(() => seen.lookups.length, { timeout: 10_000 }).toBe(4);
+    await expect.poll(() => seen.lookups.length, { timeout: 10_000 }).toBe(2);
     await page.waitForTimeout(2_000);
-    expect(seen.lookups).toHaveLength(4);
-    // The card that met the first 429 went again.
-    expect(seen.lookups[3]).toBe(seen.lookups[2]);
+    expect(seen.lookups).toHaveLength(2);
+    // The batch that met the first 429 went again.
+    expect(seen.lookups[1]).toBe(seen.lookups[0]);
     const doubled = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!) as { ms: number }, stopKey);
     expect(doubled.ms).toBe(60_000);
 
@@ -230,7 +243,7 @@ test.describe('the 429 stop', () => {
     await page.reload();
     await page.locator('.gv1-lab-art').first().waitFor();
     await page.waitForTimeout(3_000);
-    expect(seen.lookups).toHaveLength(4);
+    expect(seen.lookups).toHaveLength(2);
   });
 });
 
@@ -245,16 +258,17 @@ test('two tabs of one context open /combos at once: they share bucket 1, and the
     await tab.locator('.gv1-lab-art').first().waitFor();
     await expect(tab.locator('.gv1-lab-skeleton')).toHaveCount(0, { timeout: 60_000 });
   }
-  // Each tab asks for each name at most once. A loaded answer lands in storage
-  // before the other tab's turn, so that tab does not ask; a 404 (the stub has
-  // most /combos names outside card-metadata.json) is not stored, so it does.
+  // DEC-1131: each tab sends its names in one batch at most. The stub has most
+  // /combos names outside card-metadata.json, and their not_found lands in
+  // storage too, so the second tab asks again only for what it did not find
+  // there at its turn. The fixture's rate check, 2 in any 1 s for the context,
+  // holds the two tabs together.
   const perName = new Map<string, number>();
-  seen.lookups.forEach((url) => perName.set(url, (perName.get(url) ?? 0) + 1));
+  seen.lookups.flatMap((batch) => batch.split(' | ')).forEach((name) => perName.set(name, (perName.get(name) ?? 0) + 1));
   expect(perName.size).toBeGreaterThan(5);
   expect(Math.max(...perName.values())).toBeLessThanOrEqual(2);
-  // Both tabs together sent more than one tab alone may send in the time: the
-  // fixture's rate check, 2 in any 1 s for the context, is what held them.
-  expect(seen.lookups.length).toBeGreaterThan(perName.size);
+  expect(seen.lookups.length).toBeGreaterThanOrEqual(1);
+  expect(seen.lookups.length).toBeLessThanOrEqual(2);
 });
 
 test.describe('the seed and storage', () => {
@@ -263,6 +277,8 @@ test.describe('the seed and storage', () => {
   test("a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once", async ({
     page,
   }) => {
+    // No tile asks for a price refresh, which would store one for its name.
+    await page.clock.install({ time: PRICES_ARE_FRESH });
     const cardKeys = () =>
       page.evaluate(() => Object.keys(localStorage).filter((key) => key.startsWith('gv1-card:')).map((key) => key.slice(9)));
     await page.goto('/data/index.json');
