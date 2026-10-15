@@ -5,6 +5,7 @@
    scripts/scryfall_api.py, so two requests keep the 600 ms wait.
 3. A 404 prints "not found" and the run goes on; a 429 ends the run with exit code 1.
 4. A worktree without a mirror reads the main worktree's copy.
+5. ReviewCases (DEC-1126): one case for each line that no case above checks.
 
 No test here sends a live request: FakeScryfall (tests/test_scryfall_fetch.py) stands in for
 the helper's opener and for the clock. Each case writes its own mirror in a temporary folder.
@@ -16,8 +17,10 @@ import io
 import json
 import runpy
 import subprocess
+import sys
 import tempfile
 import unittest
+import urllib.error
 import urllib.parse
 from pathlib import Path
 from unittest import mock
@@ -359,6 +362,147 @@ class WorktreeCases(LookupCase):
         self.assertEqual(code, 0)
         self.assertEqual(len(fake.sent), 1)
         self.assertIn("warning", err)
+
+
+class ReviewCases(LookupCase):
+    """DEC-1126: each case fails when one line of scripts/card_lookup.py is wrong."""
+
+    def test_full_name_answers_before_a_front_face_of_the_same_spelling(self):
+        """A card named "Fire" beside "Fire // Ice": "fire" finds "Fire" (load_mirror's setdefault)."""
+        fire = {"name": "Fire", "mana_cost": "{R}", "cmc": 1.0, "type_line": "Instant",
+                "oracle_text": "Fire deals 1 damage to any target.", "colors": ["R"],
+                "color_identity": ["R"], "legalities": {"commander": "legal"}}
+        root = self.tmp / "collision"
+        write_mirror(root, MIRROR_CARDS + [fire])
+        fake = FakeScryfall()
+        code, out, _ = self.run_lookup(fake, "fire", "Fire // Ice", root=root)
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.sent, [])
+        self.assertEqual([c["name"] for c in objects(out)], ["Fire", "Fire // Ice"])
+
+    def test_worktree_with_its_own_mirror_reads_its_own_copy(self):
+        """The repository's own mirror comes before the main worktree's copy."""
+        own_date = "2026-10-15T09:00:00.000+00:00"
+        worktree = self.make_worktree(with_main_mirror=True)
+        write_mirror(worktree)
+        (worktree / "priv_data" / "scryfall-oracle.meta.json").write_text(
+            json.dumps({"scryfall_updated_at": own_date}))
+        fake = FakeScryfall()
+        code, out, _ = self.run_lookup(fake, "Sol Ring", root=worktree)
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.sent, [])
+        self.assertEqual(objects(out)[0]["source"], f"mirror {own_date}")
+
+    def test_card_faces_keep_the_mirror_face_fields_for_both_sources(self):
+        """card_faces keeps every face field of the mirror (FACE_FIELDS) and no other, from the
+        mirror and from the API."""
+        faces = [
+            {"name": "Invasion of Testing", "mana_cost": "{2}{R}", "type_line": "Battle — Siege",
+             "oracle_text": "When this Siege enters, it deals 2 damage to any target.",
+             "colors": ["R"], "defense": "5"},
+            {"name": "Tester Ascendant", "mana_cost": "", "type_line": "Legendary Planeswalker — Tester",
+             "oracle_text": "+1: Draw a card.", "colors": ["R"], "loyalty": "4"},
+        ]
+        api_card = make_card("Invasion of Testing // Tester Ascendant", layout="transform",
+                             type_line="Battle — Siege // Legendary Planeswalker — Tester")
+        api_card["card_faces"] = [
+            dict(face, artist="A. Artist",
+                 image_uris={"normal": f"https://cards.scryfall.io/normal/front/{i}.jpg"})
+            for i, face in enumerate(faces)]
+        fake = FakeScryfall([api_card])
+        code, out, _ = self.run_lookup(fake, "Delver of Secrets", "Invasion of Testing")
+        self.assertEqual(code, 0)
+        delver, invasion = objects(out)
+        self.assertEqual(delver["card_faces"], MIRROR_CARDS[3]["card_faces"])
+        self.assertEqual(invasion["source"], "api")
+        self.assertEqual(invasion["card_faces"], faces)
+
+    def test_failed_request_prints_scryfall_details_when_the_answer_has_them(self):
+        """A bad query's answer carries Scryfall's details, and the line names them. An answer
+        without details adds nothing to the line."""
+        def http_error(status: int, answer: dict) -> urllib.error.HTTPError:
+            return urllib.error.HTTPError(SEARCH_URL, status, f"status {status}", {},
+                                          io.BytesIO(json.dumps(answer).encode()))
+
+        fake = FakeScryfall()
+        fake.failures[0] = http_error(400, {"object": "error", "code": "bad_request", "status": 400,
+                                            "details": "All of your terms were ignored."})
+        code, out, _ = self.run_lookup(fake, "--search", "xyzzy:1")
+        self.assertEqual(code, 1)
+        self.assertEqual(out.splitlines(), [
+            "Scryfall request failed: HTTP Error 400: status 400: All of your terms were ignored."])
+
+        fake = FakeScryfall()
+        fake.failures[0] = http_error(500, {"object": "error", "status": 500})
+        code, out, _ = self.run_lookup(fake, "--search", "xyzzy:1")
+        self.assertEqual(code, 1)
+        self.assertEqual(out.splitlines(), ["Scryfall request failed: HTTP Error 500: status 500"])
+
+    def test_spaces_around_a_name_do_not_count(self):
+        """" Sol Ring " is a mirror hit, and " Brand New Card " goes out as exact=Brand%20New%20Card."""
+        fake = FakeScryfall([make_card("Brand New Card")])
+        code, out, _ = self.run_lookup(fake, " Sol Ring ", " Brand New Card ")
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [f"{NAMED_URL}?exact=Brand%20New%20Card"])
+        self.assertEqual([c["source"] for c in objects(out)], [f"mirror {UPDATED_AT}", "api"])
+
+    def test_folder_outside_a_repository_does_not_read_the_mirror_of_its_parent(self):
+        """When git finds no repository, the script reads no other folder's mirror."""
+        write_mirror(self.tmp)
+        fake = FakeScryfall([make_card("Sol Ring")])
+        outside = self.tmp / "not-a-repo"
+        outside.mkdir()
+        with mock.patch.dict("os.environ", {"GIT_CEILING_DIRECTORIES": str(self.tmp)}):
+            code, out, err = self.run_lookup(fake, "Sol Ring", root=outside)
+        self.assertEqual(code, 0)
+        self.assertEqual(len(fake.sent), 1)
+        self.assertIn("warning", err)
+        self.assertEqual(objects(out)[0]["source"], "api")
+
+    def test_no_git_on_the_path_goes_to_scryfall(self):
+        """When git cannot start (OSError), the script warns and sends the name to Scryfall."""
+        fake = FakeScryfall([make_card("Sol Ring")])
+        outside = self.tmp / "no-git"
+        outside.mkdir()
+        no_git = FileNotFoundError(2, "No such file or directory", "git")
+        with mock.patch("subprocess.run", side_effect=no_git):
+            code, _, err = self.run_lookup(fake, "Sol Ring", root=outside)
+        self.assertEqual(code, 0)
+        self.assertEqual(len(fake.sent), 1)
+        self.assertIn("warning", err)
+
+    def test_meta_file_that_is_not_an_object_prints_mirror_unknown(self):
+        meta = self.root / "priv_data" / "scryfall-oracle.meta.json"
+        for text in ("not json", "[]"):
+            with self.subTest(meta=text):
+                meta.write_text(text)
+                fake = FakeScryfall()
+                code, out, _ = self.run_lookup(fake, "Sol Ring")
+                self.assertEqual(code, 0)
+                self.assertEqual(objects(out)[0]["source"], "mirror unknown")
+                self.assertEqual(fake.sent, [])
+
+    def test_no_name_and_no_search_are_refused(self):
+        """Exit code 2 and argparse's usage on stderr, as for names with --search."""
+        fake = FakeScryfall()
+        out, err = io.StringIO(), io.StringIO()
+        with fake.installed(), mock.patch.object(card_lookup, "PROJECT_ROOT", self.root), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(err), \
+                self.assertRaises(SystemExit) as raised:
+            card_lookup.main([])
+        self.assertEqual(raised.exception.code, 2)
+        self.assertIn("usage:", err.getvalue())
+        self.assertEqual(out.getvalue(), "")
+        self.assertEqual(fake.sent, [])
+
+    def test_script_runs_by_its_absolute_path_from_another_folder(self):
+        """An agent run calls the script by its absolute path from another repository. The
+        script puts its own folder on sys.path, so it imports the helper also when Python
+        leaves that folder out (-I). --help sends no request."""
+        proc = subprocess.run([sys.executable, "-I", "-B", str(SCRIPT), "--help"],
+                              cwd=self.tmp, capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("--search QUERY", proc.stdout)
 
 
 if __name__ == "__main__":
