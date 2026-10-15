@@ -18,6 +18,7 @@ from unittest import mock
 
 from tests.test_scryfall_fetch import (
     COLLECTION_URL,
+    STOP_TEXT,
     DeckDirCase,
     FakeScryfall,
     fetch_metadata,
@@ -339,8 +340,7 @@ class OtherPrintingFailureCases(DeckDirCase):
         code, out = self.run_metadata(fake)
 
         self.assertNotEqual(code, 0)
-        self.assertIn("\nScryfall answered HTTP 429 (too many requests): "
-                      "wait 30 seconds or more before the next run.\nNo file written.", out)
+        self.assertRegex(out, f"\n{STOP_TEXT}\nNo file written.")
         self.assertNotIn("The search for", out)
         self.assertEqual(len(fake.sent), 2)
         self.assert_no_file_written()

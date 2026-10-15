@@ -709,13 +709,15 @@ class FormatOwnedListTests(CallerCase):
 
 BULK_DATA_URL = f"{API}/bulk-data"
 EXPORT_URL = "https://data.scryfall.io/oracle-cards/oracle-cards-20261015090000.jsonl.gz"
+UPDATED_AT = "2026-10-15T09:00:00.000+00:00"
+SOL_RING = {"sol ring": [1.2, 1.5]}
 
 
 def bulk_fake() -> FakeScryfall:
     """/bulk-data names one oracle_cards export, and the export holds one card."""
     fake = FakeScryfall()
     fake.pages = {BULK_DATA_URL: {"object": "list", "data": [
-        {"type": "oracle_cards", "updated_at": "2026-10-15T09:00:00.000+00:00",
+        {"type": "oracle_cards", "updated_at": UPDATED_AT,
          "jsonl_download_uri": EXPORT_URL}]}}
     card = make_card("Sol Ring", legalities={"commander": "legal"})
     # The body of the second request, the download.
@@ -779,6 +781,16 @@ class BulkDataCase(CallerCase):
         self.assertEqual(len(fake.sent), 1)
         self.assertEqual(self.written(), [])
 
+    def check_stop_text_stands_on_its_own_line(self):
+        """DEC-1137 N2: a blank line, the stop text, then "No file written." on the next line."""
+        fake = bulk_fake()
+        fake.failures[0] = 429
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 1)
+        self.assertRegex(out, f"\n\n{STOP_TEXT}\nNo file written.\n")
+
 
 class BuildPriceIndexTests(BulkDataCase):
     module = build_price_index
@@ -788,13 +800,74 @@ class BuildPriceIndexTests(BulkDataCase):
     def test_bulk_data_goes_through_the_helper(self):
         self.check_bulk_data_goes_through_the_helper()
         index = json.loads((self.folder_path / "price-index.json").read_text())
-        self.assertEqual(index, {"sol ring": [1.2, 1.5]})
+        self.assertEqual(index, SOL_RING)
 
     def test_429_on_bulk_data_ends_the_run(self):
         self.check_429_on_bulk_data_ends_the_run()
 
     def test_helper_is_the_scripts_module(self):
         self.assertIs(build_price_index.scryfall_api, scryfall_api)
+
+
+class BuildPriceIndexLine190Tests(BulkDataCase):
+    """DEC-1137 B2: PR #51 moved the line
+    `cards, remote_updated_at, source_uri = load_source_cards(args.source, args.force)` into a
+    try. Each case reads one argument or one target of that line."""
+
+    module = build_price_index
+    folder = "OUT_DIR"
+    files = ("INDEX_FILE", "META_FILE")
+
+    def meta(self) -> dict:
+        return json.loads((self.folder_path / "price-index.meta.json").read_text())
+
+    def test_meta_names_the_export_and_its_date(self):
+        """The two targets after cards: the date of the export, then its address."""
+        code, _ = self.run_main(bulk_fake())
+        self.assertEqual(code, 0)
+        self.assertEqual(self.meta()["sourceUrl"], EXPORT_URL)
+        self.assertEqual(self.meta()["scryfall_updated_at"], UPDATED_AT)
+
+    def test_current_index_downloads_nothing(self):
+        """Without --force, a second run on the same export sends /bulk-data only and writes
+        nothing."""
+        self.assertEqual(self.run_main(bulk_fake())[0], 0)
+        before = {p: p.read_bytes() for p in self.folder_path.iterdir()}
+        fake = bulk_fake()
+        code, out = self.run_main(fake)
+        self.assertEqual(code, 0)
+        self.assertIn(f"Price index is current ({UPDATED_AT}).", out)
+        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL])
+        self.assertEqual({p: p.read_bytes() for p in self.folder_path.iterdir()}, before)
+
+    def test_force_downloads_a_current_index(self):
+        """--force downloads the export again."""
+        self.assertEqual(self.run_main(bulk_fake())[0], 0)
+        fake = bulk_fake()
+        code, _ = self.run_main(fake, "--force")
+        self.assertEqual(code, 0)
+        self.assertEqual([s.url for s in fake.sent], [BULK_DATA_URL, EXPORT_URL])
+
+    def test_source_file_sends_nothing(self):
+        """--source reads a local export and sends no request."""
+        source = self.root / "oracle-cards.jsonl"
+        source.write_text(json.dumps(make_card("Sol Ring", legalities={"commander": "legal"})) + "\n")
+        fake = bulk_fake()
+        code, _ = self.run_main(fake, "--source", str(source))
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.sent, [])
+        self.assertEqual(json.loads((self.folder_path / "price-index.json").read_text()), SOL_RING)
+        self.assertEqual(self.meta()["sourceUrl"], str(source))
+        self.assertEqual(self.meta()["scryfall_updated_at"], "local")
+
+
+class BuildPriceIndexLayoutTests(BulkDataCase):
+    module = build_price_index
+    folder = "OUT_DIR"
+    files = ("INDEX_FILE", "META_FILE")
+
+    def test_stop_text_stands_on_its_own_line(self):
+        self.check_stop_text_stands_on_its_own_line()
 
 
 class RefreshScryfallMirrorTests(BulkDataCase):
@@ -812,6 +885,15 @@ class RefreshScryfallMirrorTests(BulkDataCase):
 
     def test_helper_is_the_scripts_module(self):
         self.assertIs(refresh_mirror.scryfall_api, scryfall_api)
+
+
+class RefreshScryfallMirrorLayoutTests(BulkDataCase):
+    module = refresh_mirror
+    folder = "PRIV_DIR"
+    files = ("MIRROR_FILE", "META_FILE")
+
+    def test_stop_text_stands_on_its_own_line(self):
+        self.check_stop_text_stands_on_its_own_line()
 
 
 class HelperImportTests(unittest.TestCase):

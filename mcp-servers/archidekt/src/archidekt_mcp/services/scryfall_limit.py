@@ -169,7 +169,9 @@ def _retry_after(error: urllib.error.HTTPError, answered: float) -> float:
     with contextlib.suppress(ValueError):
         # Bound the integer before float(), which overflows past about 1.8e308 either way.
         return float(min(max(int(value), 0), MAX_STOP))
-    with contextlib.suppress(ValueError):
+    # A field too large for a C integer (a year, a day, an hour or a zone of 20 digits) raises
+    # OverflowError, not ValueError: such a date counts as unreadable.
+    with contextlib.suppress(ValueError, OverflowError):
         return min(email.utils.parsedate_to_datetime(value).timestamp() - answered, MAX_STOP)
     return 0.0
 

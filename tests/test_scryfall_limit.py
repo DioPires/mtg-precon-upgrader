@@ -629,6 +629,32 @@ class LongStopTests(unittest.TestCase):
                 self.assertEqual(len(fake.sent), 1)
 
 
+class HttpDateOverflowTests(unittest.TestCase):
+    """DEC-1137 B1: email.utils.parsedate_to_datetime raises OverflowError, not ValueError, when
+    the year, the day, the hour or the zone of an HTTP-date does not fit a C integer. Such a
+    Retry-After counts as unreadable: the 429 starts a stop of 30 s, and the next call waits."""
+
+    BIG = "99999999999999999999"
+
+    def test_http_date_with_a_20_digit_field_starts_a_30s_stop(self):
+        big = self.BIG
+        for value in (f"Fri, 01 Jan {big} 00:00:00 GMT", f"Wed, {big} Oct 2026 10:41:07 GMT",
+                      f"Wed, 14 Oct 2026 {big}:41:07 GMT", f"Wed, 14 Oct 2026 10:41:07 +{big}"):
+            with self.subTest(retry_after=value):
+                fake = answering([NAMED])
+                fake.now = AT_10_41_07 - fake.LATENCY
+                fake.failures[0] = http_429(retry_after=value)
+                with fake.clock():
+                    with self.assertRaises(limit.Stopped) as raised:
+                        send(fake, NAMED)
+                    self.assertEqual(state()["blocked_until"], AT_10_41_07 + 30)
+                    fake.now = AT_10_41_07 + 5
+                    with self.assertRaises(limit.Stopped):
+                        send(fake, NAMED)
+                self.assertIn("No request until 10:41:37Z (in 30 s)", str(raised.exception))
+                self.assertEqual(len(fake.sent), 1)
+
+
 class StateFileTests(unittest.TestCase):
     def test_missing_or_unreadable_state_counts_as_empty(self):
         for text in (None, "", "{not json", "[1, 2]", '"last_answer"', "7",
