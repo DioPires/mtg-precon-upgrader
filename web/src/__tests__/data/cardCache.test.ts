@@ -545,15 +545,24 @@ describe('cardCache: a name whose front face is blank', () => {
     expect(cache.get('  // ')).toMatchObject({ status: 'error', errorStatus: 404 });
   });
 
-  it('a price refresh of a blank name of the file sends nothing, keeps the price shown, and holds 24 h', async () => {
+  it('a price and a picture refresh of a blank name of the file send nothing, keep what is shown, and hold 24 h', async () => {
     const { scry, cache } = setup();
     cache.seed({ '   ': FILE['Sol Ring'] }, new Date(T0 - 2 * DAY_MS).toISOString());
+    const filePicture = cache.get('   ')?.image_normal;
     cache.refreshPrice('   ');
+    cache.imageFailed('   ');
     expect(cache.pricePending('   ')).toBe(true);
     await advance(0);
     expect(cache.pricePending('   ')).toBe(false);
-    expect(cache.get('   ')).toMatchObject({ status: 'loaded', price: '$1.42', priceCheckedAt: T0 });
+    expect(cache.get('   ')).toMatchObject({
+      status: 'loaded',
+      price: '$1.42',
+      priceCheckedAt: T0,
+      refreshedAt: T0,
+      image_normal: filePicture,
+    });
     cache.refreshPrice('   ');
+    cache.imageFailed('   ');
     await advance(5_000);
     expect(scry.sends).toHaveLength(0);
   });
