@@ -1,0 +1,55 @@
+..........................F....                                        [100%]
+=================================== FAILURES ===================================
+_____________ ReviewCases.test_no_git_on_the_path_goes_to_scryfall _____________
+
+self = <tests.test_card_lookup.ReviewCases testMethod=test_no_git_on_the_path_goes_to_scryfall>
+
+    def test_no_git_on_the_path_goes_to_scryfall(self):
+        """When git cannot start (OSError), the script warns and sends the name to Scryfall."""
+        fake = FakeScryfall([make_card("Sol Ring")])
+        outside = self.tmp / "no-git"
+        outside.mkdir()
+        no_git = FileNotFoundError(2, "No such file or directory", "git")
+        with mock.patch("subprocess.run", side_effect=no_git):
+>           code, _, err = self.run_lookup(fake, "Sol Ring", root=outside)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_card_lookup.py:469: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_card_lookup.py:100: in run_lookup
+    code = card_lookup.main(list(argv))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/card_lookup.py:225: in main
+    path = find_mirror()
+           ^^^^^^^^^^^^^
+scripts/card_lookup.py:102: in find_mirror
+    main = main_worktree()
+           ^^^^^^^^^^^^^^^
+scripts/card_lookup.py:87: in main_worktree
+    common = subprocess.run(
+/Users/dpires/.local/share/uv/python/cpython-3.14.5-macos-aarch64-none/lib/python3.14/unittest/mock.py:1176: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/dpires/.local/share/uv/python/cpython-3.14.5-macos-aarch64-none/lib/python3.14/unittest/mock.py:1180: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <MagicMock name='run' id='4412884032'>
+args = (['git', '-C', '/var/folders/k7/hjqn2msd4_jg2v2qmf0_pym80000gn/T/paperclip-run-dec-1126-c2780f3f-2f9-5nPVMl/tmpb_iiv69q/no-git', 'rev-parse', '--git-common-dir'],)
+kwargs = {'capture_output': True, 'text': True, 'check': True}
+
+    def _execute_mock_call(self, /, *args, **kwargs):
+        # separate from _increment_mock_call so that awaited functions are
+        # executed separately from their call, also AsyncMock overrides this method
+    
+        effect = self.side_effect
+        if effect is not None:
+            if _is_exception(effect):
+>               raise effect
+E               FileNotFoundError: [Errno 2] No such file or directory: 'git'
+
+/Users/dpires/.local/share/uv/python/cpython-3.14.5-macos-aarch64-none/lib/python3.14/unittest/mock.py:1241: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/test_card_lookup.py::ReviewCases::test_no_git_on_the_path_goes_to_scryfall
+1 failed, 30 passed, 2 subtests passed in 0.58s

@@ -43,8 +43,11 @@ async function pageOverflows(page: Page): Promise<boolean> {
 }
 
 for (const width of WIDTHS) {
+  // The overflow read measures each surface with every price in: the Shopping
+  // summary is at its widest then (DEC-1017). With the seed the summary shows
+  // its final priced count at first paint (DEC-1071).
   test.describe(`DEC-181 QA @ ${width}px`, () => {
-    test.use({ viewport: { width, height: HEIGHT } });
+    test.use({ viewport: { width, height: HEIGHT }, cards: 'seeded' });
 
     test('every surface renders without page-level overflow', async ({ page }) => {
       const overflows: string[] = [];
@@ -76,6 +79,12 @@ for (const width of WIDTHS) {
       await page.goto('/shopping');
       await page.locator('.gv1-shop-rail').waitFor();
       if (await pageOverflows(page)) overflows.push('shopping');
+      // The read above needs the final priced count. The seed gives it at first
+      // paint, so the count does not move when the lookups end (DEC-1071).
+      const priced = page.locator('.gv1-shop-summary .gv1-shop-stat', { hasText: 'EST. COST' }).locator('span').nth(2);
+      const atRead = await priced.textContent();
+      await page.waitForLoadState('networkidle');
+      expect(await priced.textContent(), 'the Shopping read saw the final priced count').toBe(atRead);
 
       await page.goto(`/scrying/${deck}`);
       await page.locator('[data-gv1-screen="scrying"]').waitFor();
@@ -89,6 +98,11 @@ for (const width of WIDTHS) {
 
       expect(overflows, `Pages with horizontal overflow at ${width}px`).toEqual([]);
     });
+  });
+
+  // The topbar reads no card data, so this block keeps the default lookups.
+  test.describe(`DEC-181 QA @ ${width}px`, () => {
+    test.use({ viewport: { width, height: HEIGHT } });
 
     test('topbar a11y + behavior', async ({ page }) => {
       await page.goto('/codex');

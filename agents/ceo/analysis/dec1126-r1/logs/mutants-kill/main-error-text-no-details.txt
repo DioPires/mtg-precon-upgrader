@@ -1,0 +1,38 @@
+......................F........                                        [100%]
+=================================== FAILURES ===================================
+_ ReviewCases.test_failed_request_prints_scryfall_details_when_the_answer_has_them _
+
+self = <tests.test_card_lookup.ReviewCases testMethod=test_failed_request_prints_scryfall_details_when_the_answer_has_them>
+
+    def test_failed_request_prints_scryfall_details_when_the_answer_has_them(self):
+        """A bad query's answer carries Scryfall's details, and the line names them. An answer
+        without details adds nothing to the line."""
+        def http_error(status: int, answer: dict) -> urllib.error.HTTPError:
+            return urllib.error.HTTPError(SEARCH_URL, status, f"status {status}", {},
+                                          io.BytesIO(json.dumps(answer).encode()))
+    
+        fake = FakeScryfall()
+        fake.failures[0] = http_error(400, {"object": "error", "code": "bad_request", "status": 400,
+                                            "details": "All of your terms were ignored."})
+        code, out, _ = self.run_lookup(fake, "--search", "xyzzy:1")
+        self.assertEqual(code, 1)
+>       self.assertEqual(out.splitlines(), [
+            "Scryfall request failed: HTTP Error 400: status 400: All of your terms were ignored."])
+E       AssertionError: Lists differ: ['Scr[20 chars]: HTTP Error 400: status 400'] != ['Scr[20 chars]: HTTP Error 400: status 400: All of your terms were ignored.']
+E       
+E       First differing element 0:
+E       'Scry[18 chars]d: HTTP Error 400: status 400'
+E       'Scry[18 chars]d: HTTP Error 400: status 400: All of your terms were ignored.'
+E       
+E       - ['Scryfall request failed: HTTP Error 400: status 400']
+E       ?                                                       -
+E       
+E       + ['Scryfall request failed: HTTP Error 400: status 400: All of your terms were '
+E       ?                                                      +++++++++++++++++++++++++
+E       
+E       +  'ignored.']
+
+tests/test_card_lookup.py:432: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_card_lookup.py::ReviewCases::test_failed_request_prints_scryfall_details_when_the_answer_has_them
+1 failed, 30 passed, 2 subtests passed in 0.44s

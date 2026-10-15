@@ -1,0 +1,11 @@
+--- a/scripts/card_lookup.py
++++ b/scripts/card_lookup.py
+@@ -202,7 +202,7 @@
+     if isinstance(error, urllib.error.HTTPError):
+         with contextlib.suppress(Exception):
+             details = json.loads(error.read()).get("details")
+-            if details:
++            if True:
+                 text = f"{text}: {details}"
+     return text
+ 
