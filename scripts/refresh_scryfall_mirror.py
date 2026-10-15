@@ -5,6 +5,11 @@ Downloads commander-legal cards from Scryfall's bulk-data API and stores a
 trimmed copy at priv_data/scryfall-oracle.json (gitignored). Idempotent:
 re-running with no remote change is a no-op.
 
+The one request to api.scryfall.com (GET /bulk-data) goes through
+scripts/scryfall_api.py, so it waits and stops as every other caller does; during
+a stop the run writes no file and exits with 1 (DEC-1114 N3). The download of the
+export from *.scryfall.io does not: that host has no limit.
+
 Usage:
     python scripts/refresh_scryfall_mirror.py [--force]
 
@@ -18,6 +23,10 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import scryfall_api  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PRIV_DIR = PROJECT_ROOT / "priv_data"
@@ -41,12 +50,9 @@ KEEP_FACE_FIELDS = (
 )
 
 
-def fetch_json(url: str, timeout: int = 60) -> dict:
-    req = urllib.request.Request(
-        url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"}
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read())
+def fetch_json(url: str) -> dict:
+    """GET one api.scryfall.com address through the helper; ScryfallRateLimited passes through."""
+    return json.loads(scryfall_api.request(url))
 
 
 def find_oracle_cards_entry(bulk_data: dict) -> dict:
@@ -74,7 +80,11 @@ def main(argv: list[str]) -> int:
     PRIV_DIR.mkdir(exist_ok=True)
 
     print("Querying Scryfall bulk-data API...", file=sys.stderr)
-    bulk = fetch_json(BULK_DATA_URL)
+    try:
+        bulk = fetch_json(BULK_DATA_URL)
+    except scryfall_api.ScryfallRateLimited as e:
+        print(f"\n{e}\nNo file written.", file=sys.stderr)
+        return 1
     oracle = find_oracle_cards_entry(bulk)
     remote_updated_at = oracle["updated_at"]
     # Scryfall dropped the plain-JSON `download_uri` (DEC-486, 2026-08-15). The

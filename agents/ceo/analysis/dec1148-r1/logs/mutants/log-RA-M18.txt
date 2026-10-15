@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /private/tmp/dec1148-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (28 tests | 1 failed) 122ms
+   × DeckSelector focus after a key switch: review cases (DEC-1148) > reports the key's pick to onSelect when the key picks the open deck 4ms
+     → expected "spy" to be called 1 times, but got 0 times
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 27 passed (28)
+   Start at  16:40:05
+   Duration  505ms (transform 37ms, setup 21ms, collect 46ms, tests 122ms, environment 124ms, prepare 46ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch: review cases (DEC-1148) > reports the key's pick to onSelect when the key picks the open deck
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ src/__tests__/components/DeckSelector.test.tsx:570:22
+    568|     act(() => tabs[0].focus());
+    569|     fireEvent.keyDown(tabs[0], { key: 'Home' });
+    570|     expect(onSelect).toHaveBeenCalledTimes(1);
+       |                      ^
+    571|     expect(onSelect).toHaveBeenCalledWith(1);
+    572|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

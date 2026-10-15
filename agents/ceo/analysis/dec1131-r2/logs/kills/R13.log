@@ -1,0 +1,53 @@
+
+ RUN  v2.1.9 /private/tmp/dec1149-ceo/wt/web
+
+ ❯ src/__tests__/dec1149/dec1149-kills.test.ts (14 tests | 1 failed) 18ms
+   × R13: a stop record that PR #38 stored (no number) > is stop 0: the request that goes after it and meets a 429 doubles it 3ms
+     → expected { until: 1791979210000, ms: 30000 } to match object { until: 1791979270000, ms: 60000 }
+stderr | src/__tests__/components/dec1149/dec1149-tile-kill.test.tsx > R22 (reviewer kill) > asks for the refresh of the new card when the tile gets another card
+Warning: An update to CardTile inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CardTile (/private/tmp/dec1149-ceo/wt/web/src/components/molecules/CardTile.tsx:150:21)
+
+ ✓ src/__tests__/components/dec1149/dec1149-tile-kill.test.tsx (1 test) 12ms
+ ✓ src/__tests__/components/dec1149/dec1149-shopping-kills.test.tsx (2 tests) 1572ms
+   ✓ R12 (reviewer kill) > the stop line shows when only the rows of "Already own" wait for a refresh 1518ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/dec1149/dec1149-kills.test.ts > R13: a stop record that PR #38 stored (no number) > is stop 0: the request that goes after it and meets a 429 doubles it
+AssertionError: expected { until: 1791979210000, ms: 30000 } to match object { until: 1791979270000, ms: 60000 }
+
+- Expected
++ Received
+
+  Object {
+-   "ms": 60000,
+-   "until": 1791979270000,
++   "ms": 30000,
++   "until": 1791979210000,
+  }
+
+ ❯ src/__tests__/dec1149/dec1149-kills.test.ts:154:52
+    152|     await advance(10_000);
+    153|     expect(scry.sends).toHaveLength(1);
+    154|     expect(JSON.parse(storage.getItem(STOP_KEY)!)).toMatchObject({ unt…
+       |                                                    ^
+    155|     // Nothing goes in the doubled stop.
+    156|     await advance(60_000 - 1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 16 passed (17)
+   Start at  17:05:12
+   Duration  1.97s (transform 88ms, setup 58ms, collect 159ms, tests 1.60s, environment 372ms, prepare 103ms)
+
