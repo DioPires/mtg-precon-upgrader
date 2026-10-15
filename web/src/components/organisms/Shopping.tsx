@@ -19,6 +19,7 @@ import {
 import { frontFace } from '../../data/cardName';
 import { deckLoader } from '../../data/loader';
 import { formatPricesDate } from '../../lib/pricesDate';
+import { cardNoun } from '../../lib/cardNoun';
 import { OWNED_KEY, saveOwned } from '../../data/ownedCards';
 import { useBuiltDecks } from '../../hooks/useBuiltDecks';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
@@ -58,11 +59,6 @@ function useCardUpdates(names: string[]): void {
     const unsubs = key ? key.split('\n').map((name) => cardCache.subscribe(name, () => bump((n) => n + 1))) : [];
     return () => unsubs.forEach((unsub) => unsub());
   }, [key]);
-}
-
-/** The noun for a count of cards: `card` for one, `cards` for any other count (DEC-1123). */
-function cardNoun(count: number): string {
-  return count === 1 ? 'card' : 'cards';
 }
 
 // CSV parser that respects quoted fields.
@@ -790,7 +786,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           <div className="gv1-section-head">
             <span className="gv1-mono-xs gv1-rune" aria-hidden="true">▾</span>
             <h3 className="gv1-serif-xl">Need to buy</h3>
-            <span className="gv1-mono-xs gv1-dim">· {buy.length} unique · {buyTotal} cards</span>
+            <span className="gv1-mono-xs gv1-dim">· {buy.length} unique · {buyTotal} {cardNoun(buyTotal)}</span>
           </div>
           {buy.length === 0 ? (
             <div className="gv1-empty">
@@ -836,7 +832,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           >
             <span className="gv1-mono-xs gv1-dim" aria-hidden="true">{ownedCollapsed ? '▸' : '▾'}</span>
             <span className="gv1-serif-xl">Already own</span>
-            <span className="gv1-mono-xs gv1-dim">· {own.length} unique · {ownTotal} cards</span>
+            <span className="gv1-mono-xs gv1-dim">· {own.length} unique · {ownTotal} {cardNoun(ownTotal)}</span>
           </button>
           {!ownedCollapsed && (
             <div className="gv1-shop-list">
