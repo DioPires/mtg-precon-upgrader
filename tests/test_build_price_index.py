@@ -448,6 +448,39 @@ class ArgumentTests(IndexCase):
         self.assertFalse(self.index_file.exists())
 
 
+class StreamOnly(io.BytesIO):
+    """A download that a reader must take in parts: a read of the whole body fails."""
+
+    def read(self, size=-1):
+        if size is None or size < 0:
+            raise AssertionError("the download was read whole")
+        return super().read(size)
+
+
+class LinesOnly(io.StringIO):
+    """An open export that a reader must take one line at a time."""
+
+    def read(self, *args):
+        raise AssertionError("the export was read whole")
+
+    def readlines(self, *args):
+        raise AssertionError("the export was read whole")
+
+
+class StreamTests(IndexCase):
+    def test_exports_are_read_one_line_at_a_time(self):
+        """iter_cards holds one line: it yields each card before it reads the next line."""
+        path = self.src / "lazy.jsonl.gz"
+        path.write_bytes(gzip.compress(b'{"name": "A"}\n{not json\n'))
+        cards = bpi.iter_cards(path)
+        self.assertEqual(next(cards), {"name": "A"})
+        with self.assertRaises(json.JSONDecodeError):
+            next(cards)
+        text = '{"name": "A"}\n\n{"name": "B"}\n'
+        with mock.patch.object(bpi.gzip, "open", lambda *args, **kwargs: LinesOnly(text)):
+            self.assertEqual(list(bpi.iter_cards(path)), [{"name": "A"}, {"name": "B"}])
+
+
 class BulkScryfall(FakeScryfall):
     """FakeScryfall that answers /bulk-data and serves the two exports from
     data.scryfall.io as a stream that a reader takes in parts."""
@@ -464,7 +497,7 @@ class BulkScryfall(FakeScryfall):
             return super().urlopen(req, timeout)
         headers = {key.lower(): value for key, value in req.header_items()}
         self.sent.append(Sent(self.now, self.now, req.full_url, None, headers))
-        return io.BytesIO(self.files[req.full_url])
+        return StreamOnly(self.files[req.full_url])
 
 
 class LiveRunTests(IndexCase):
@@ -495,6 +528,11 @@ class LiveRunTests(IndexCase):
         self.assertEqual(json.loads(index), {"blood crypt": [8.0, 10.0], "sol ring": [1.49, 1.56]})
         self.assertEqual((meta["scryfall_updated_at"], meta["default_cards_updated_at"]),
                          (ORACLE_AT, DEFAULT_AT))
+        for line in (f"Downloading {ORACLE_URI}...", f"Downloading {DEFAULT_URI}...",
+                     "2 commander-legal cards; 1 lack a price. Reading the printings "
+                     "released on or before 2026-10-15...",
+                     "(0.0 MB, 2 keys; eur 2 / usd 2; from another printing eur 1 / usd 1)."):
+            self.assertIn(line, err)
 
         # The saved files rebuild the same files with no request.
         self.index_file.unlink()
