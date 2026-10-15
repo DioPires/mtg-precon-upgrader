@@ -4,7 +4,7 @@
 // "saved locally", and /atlas read nothing (DEC-941).
 
 import { describe, expect, it } from 'vitest';
-import { saveOwned } from '../../data/ownedCards';
+import { isOwnedQuantity, readOwnedEntries, saveOwned } from '../../data/ownedCards';
 
 const OWNED_KEY = 'grimoire-owned-cards';
 
@@ -81,5 +81,53 @@ describe('saveOwned quota handling (DEC-942)', () => {
     const storage = makeStorage(99);
     expect(saveOwned(OWNED, storage)).toBe(false);
     expect(storage.setCalls).toBe(2);
+  });
+});
+
+describe('readOwnedEntries (DEC-1150)', () => {
+  const read = (stored: string | null) =>
+    readOwnedEntries(makeStorage(0, stored === null ? {} : { [OWNED_KEY]: stored }));
+
+  it('gives [] for an empty store and for a store that is not a JSON array', () => {
+    expect(read(null)).toEqual([]);
+    expect(read('')).toEqual([]);
+    expect(read('not json')).toEqual([]);
+    for (const value of [{}, 'x', 5, null]) expect(read(JSON.stringify(value))).toEqual([]);
+  });
+
+  it('keeps the entries in store order with their names as stored, and writes nothing back', () => {
+    const stored = JSON.stringify([['Brazen Borrower // Petty Theft', 2], ['Sol Ring', 1]]);
+    const storage = makeStorage(0, { [OWNED_KEY]: stored });
+    expect(readOwnedEntries(storage)).toEqual([['Brazen Borrower // Petty Theft', 2], ['Sol Ring', 1]]);
+    expect(storage.setCalls).toBe(0);
+    expect(storage.getItem(OWNED_KEY)).toBe(stored);
+  });
+
+  it.each([
+    [[null, 2]],
+    [[{ n: 'Sol Ring' }, 2]],
+    [[['Sol Ring'], 2]],
+    [['  ', 2]],
+    [['Sol Ring', 0]],
+    [['Sol Ring', -1]],
+    [['Sol Ring', 0.5]],
+    [['Sol Ring', 1.5]],
+    [['Sol Ring', '2']],
+    [['Sol Ring']],
+    [['Sol Ring', 2, 'foil']],
+    [null],
+  ])('drops the entry %j and keeps the entry beside it', (entry) => {
+    expect(read(JSON.stringify([entry, ['Arcane Signet', 1]]))).toEqual([['Arcane Signet', 1]]);
+  });
+});
+
+describe('isOwnedQuantity (DEC-1150)', () => {
+  it('is true for a whole number of 1 or more', () => {
+    expect(isOwnedQuantity(1)).toBe(true);
+    expect(isOwnedQuantity(2)).toBe(true);
+  });
+
+  it.each([0, -1, 0.5, 1.5, NaN, Infinity, '2', null, undefined])('is false for %o', (q) => {
+    expect(isOwnedQuantity(q)).toBe(false);
   });
 });

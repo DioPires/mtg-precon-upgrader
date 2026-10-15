@@ -10,6 +10,7 @@
 
 import type { DeckFull } from './types';
 import { frontFace } from './cardName';
+import { readOwnedEntries } from './ownedCards';
 import { ROLE_LABEL } from './roleLabels';
 import { autocompleteUrl, scryfallLimiter, type ScryfallLimiter } from './scryfallLimiter';
 
@@ -160,18 +161,15 @@ export async function scryfallSuggest(
 }
 
 /**
- * Owned-cards reader. Mirrors Shopping.tsx so the user's existing import is
- * reused — no separate ownership UI in the Atlas surface. Keys are front-face.
+ * Owned-cards reader. Reads Shopping's store through `readOwnedEntries`, so the
+ * user's existing import is reused — no separate ownership UI in the Atlas
+ * surface. Keys are lowercase front-face.
  */
-const OWNED_KEY = 'grimoire-owned-cards';
-
 export function loadOwnedMap(): Map<string, number> {
   try {
     if (typeof window === 'undefined') return new Map();
-    const raw = window.localStorage.getItem(OWNED_KEY);
-    if (!raw) return new Map();
     const out = new Map<string, number>();
-    (JSON.parse(raw) as Array<[string, number]>).forEach(([n, q]) => {
+    readOwnedEntries(window.localStorage).forEach(([n, q]) => {
       const key = frontFace(n).toLowerCase();
       out.set(key, (out.get(key) || 0) + q);
     });

@@ -131,6 +131,15 @@ describe('parseOwnedFile', () => {
     expect(parseOwnedFile('Name,Quantity\nSol Ring,3\n').get('Sol Ring')).toBe(3);
     expect(parseOwnedFile('Name,Quantity\nSol Ring,2.5\n').get('Sol Ring')).toBe(2);
   });
+
+  // 400 digits read as Infinity, which is not a whole number (DEC-1150 N2).
+  it('counts a CSV quantity cell of 400 digits as 1 (DEC-1150)', () => {
+    expect(parseOwnedFile(`Name,Quantity\nSol Ring,${'1'.repeat(400)}\n`).get('Sol Ring')).toBe(1);
+  });
+
+  it('counts a text line count of 400 digits as 1 (DEC-1150)', () => {
+    expect(parseOwnedFile(`${'1'.repeat(400)}x Sol Ring\n`).get('Sol Ring')).toBe(1);
+  });
 });
 
 describe('aggregateCards', () => {

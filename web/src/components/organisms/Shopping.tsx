@@ -20,7 +20,7 @@ import { frontFace } from '../../data/cardName';
 import { deckLoader } from '../../data/loader';
 import { formatPricesDate } from '../../lib/pricesDate';
 import { cardNoun } from '../../lib/cardNoun';
-import { OWNED_KEY, saveOwned } from '../../data/ownedCards';
+import { isOwnedQuantity, readOwnedEntries, saveOwned } from '../../data/ownedCards';
 import { useBuiltDecks } from '../../hooks/useBuiltDecks';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
 import type { DeckFull } from '../../data/types';
@@ -108,9 +108,11 @@ export function parseOwnedFile(text: string): Map<string, number> {
         const name = (r[ni] || '').trim();
         if (!name) return;
         // An owned quantity is a whole number of 1 or more. A cell that reads
-        // as less (0, a negative number, empty, text) counts as 1 (DEC-1141).
+        // as less (0, a negative number, empty, text) counts as 1 (DEC-1141),
+        // and so does a cell of 309 or more digits, which reads as Infinity
+        // (DEC-1150 N2).
         const read = parseInt((r[qi] || '1').trim(), 10);
-        const q = read >= 1 ? read : 1;
+        const q = isOwnedQuantity(read) ? read : 1;
         const key = frontFace(name);
         out.set(key, (out.get(key) || 0) + q);
       });
@@ -123,7 +125,9 @@ export function parseOwnedFile(text: string): Map<string, number> {
     if (!trimmed) return;
     const m = trimmed.match(/^(\d+)x?\s+(.+)$/i);
     if (m) {
-      const q = parseInt(m[1], 10) || 1;
+      // The CSV rule: a count of 0 or of 309 or more digits counts as 1.
+      const read = parseInt(m[1], 10);
+      const q = isOwnedQuantity(read) ? read : 1;
       const key = frontFace(m[2].trim());
       out.set(key, (out.get(key) || 0) + q);
     } else {
@@ -136,25 +140,16 @@ export function parseOwnedFile(text: string): Map<string, number> {
 
 function loadOwned(): Map<string, number> {
   try {
-    const raw = localStorage.getItem(OWNED_KEY);
-    if (raw) {
-      // Re-key to front-face on load so legacy/full-DFC entries reconcile
-      // with deck.json names. Idempotent for non-DFC cards.
-      // The app writes only [name, quantity] pairs, but a hand edit or a
-      // damaged store can hold other entries. The load drops each entry that
-      // is not a pair of a name with text and a whole number of 1 or more,
-      // keeps the rest and writes nothing back (DEC-1141).
-      const out = new Map<string, number>();
-      (JSON.parse(raw) as unknown[]).forEach((entry) => {
-        if (!Array.isArray(entry) || entry.length !== 2) return;
-        const [n, q] = entry;
-        if (typeof n !== 'string' || !n.trim()) return;
-        if (!Number.isInteger(q) || q < 1) return;
-        const key = frontFace(n);
-        out.set(key, (out.get(key) || 0) + q);
-      });
-      return out;
-    }
+    // Re-key to front-face on load so legacy/full-DFC entries reconcile
+    // with deck.json names. Idempotent for non-DFC cards.
+    // readOwnedEntries drops each entry that is not a pair of a name with
+    // text and an owned quantity (DEC-1141, DEC-1150).
+    const out = new Map<string, number>();
+    readOwnedEntries().forEach(([n, q]) => {
+      const key = frontFace(n);
+      out.set(key, (out.get(key) || 0) + q);
+    });
+    return out;
   } catch {
     // ignore
   }
