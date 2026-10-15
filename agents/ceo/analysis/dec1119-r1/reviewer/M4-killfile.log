@@ -1,0 +1,43 @@
+untracked pycache dirs left: 0
+M4 applied
+--- tests/test_mana_sim_seeding.py
+============================= test session starts ==============================
+platform darwin -- Python 3.14.5, pytest-9.1.1, pluggy-1.6.0 -- /var/folders/k7/hjqn2msd4_jg2v2qmf0_pym80000gn/T/paperclip-ai-a178baa8-538e-4172-88b9-c0b95e787e56-876a60b5-af6a-408e-b266-eb11c434072d-16CMZG/.cache/uv/builds-v0/.tmpVsFaNg/bin/python
+rootdir: /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1115-review
+configfile: pytest.ini
+collecting ... collected 3 items
+
+tests/test_mana_sim_seeding.py::ManaSimSeedingTests::test_cpu_count_does_not_change_the_export PASSED [ 33%]
+tests/test_mana_sim_seeding.py::ManaSimSeedingTests::test_two_runs_give_equal_exports PASSED [ 66%]
+tests/test_mana_sim_seeding.py::BloomTenderOrderTests::test_bloom_tender_sources_follow_wubrg_order PASSED [100%]
+
+============================== 3 passed in 2.94s ===============================
+--- kill case
+============================= test session starts ==============================
+platform darwin -- Python 3.14.5, pytest-9.1.1, pluggy-1.6.0 -- /var/folders/k7/hjqn2msd4_jg2v2qmf0_pym80000gn/T/paperclip-ai-a178baa8-538e-4172-88b9-c0b95e787e56-876a60b5-af6a-408e-b266-eb11c434072d-16CMZG/.cache/uv/builds-v0/.tmpb6FEKe/bin/python
+rootdir: /tmp/dec1115-review/kill
+collecting ... collected 1 item
+
+../../../../../../../tmp/dec1115-review/kill/test_kill_chunk_seeds.py::ChunkSeedTests::test_each_chunk_draws_from_its_own_seed FAILED [100%]
+
+=================================== FAILURES ===================================
+____________ ChunkSeedTests.test_each_chunk_draws_from_its_own_seed ____________
+
+self = <test_kill_chunk_seeds.ChunkSeedTests testMethod=test_each_chunk_draws_from_its_own_seed>
+
+    def test_each_chunk_draws_from_its_own_seed(self):
+        # 3 CPUs: 3 workers, so each worker runs several chunks in a row.
+        # 18 CPUs: 16 workers, one chunk each.
+        three, sixteen = run_stub(3), run_stub(18)
+        for chunks in (three, sixteen):
+            draws = [d for d, _ in chunks]
+            self.assertEqual(len(chunks), exporter.MANA_SIM_CHUNKS)
+            self.assertEqual(sum(n for _, n in chunks), GAMES)
+>           self.assertEqual(len(set(draws)), len(draws), "two chunks drew the same value")
+E           AssertionError: 1 != 16 : two chunks drew the same value
+
+/tmp/dec1115-review/kill/test_kill_chunk_seeds.py:49: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../../../../../tmp/dec1115-review/kill/test_kill_chunk_seeds.py::ChunkSeedTests::test_each_chunk_draws_from_its_own_seed
+============================== 1 failed in 0.37s ===============================
+restore: git diff --quiet exit 0
