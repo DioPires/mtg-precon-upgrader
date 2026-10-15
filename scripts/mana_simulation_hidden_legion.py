@@ -122,9 +122,12 @@ def dork_sources(name: str, board: dict) -> list[frozenset]:
     if name == "Wirewood Channeler":
         return [frozenset({"W", "U", "B", "R", "G"})] * elves
     if name == "Bloom Tender":
-        colors = colors_present & {"W", "U", "B", "R", "G"}
+        # WUBRG order, not set order: ManaPool spends generic mana from the
+        # front of its source list, and set order follows the string hash seed,
+        # which differs per process. Set order changed rare games. (DEC-1115)
+        colors = [c for c in "WUBRG" if c in colors_present]
         if not colors:
-            colors = {"G"}
+            colors = ["G"]
         return [frozenset({c}) for c in colors]
     if name == "Three Tree Mascot":
         return [frozenset({"W", "U", "B", "R", "G"})]

@@ -9,7 +9,7 @@ This file was revised on 2026-10-14 (DEC-1059). Until DEC-1059 your runs loaded 
 ## Your Codebase
 
 - **App**: `web/` — Vite + React 18 + TypeScript, react-router (`web/src/App.tsx` lists the routes). Static `web/dist/` output, deployed by Vercel from `vercel.json` at the repository root.
-- **Deck data**: `data/commanders/{id}/deck.json`, `simulation.json`, `metrics.json` and `candidates.json`. Production data; canonical. `web/src/data/normalize.ts` turns them into the `DeckFull` shape.
+- **Deck data**: seven files in `data/commanders/{id}/`: `deck.json`, `simulation.json`, `metrics.json`, `candidates.json`, `spellbook-combos.json`, `synergy-candidates.json` and `tier-b-loops.json`. Production data; canonical. `web/src/data/normalize.ts` turns the first four into the `DeckFull` shape; the Combo Lab reads the last three.
 - **Game Changers**: `data/game-changers.json` — the official Game Changers list for the swap analyzer.
 - **Tests**: Vitest (`npm run test`) and Playwright (`npm run test:e2e`). CI runs both in `web-ci` (`.github/workflows/web-ci.yml`). The e2e suite answers Scryfall from repository data (`web/tests/support/`).
 - **Legacy app**: archived in `legacy/` since the DEC-149 cutover (2026-05-05). Do not edit it.

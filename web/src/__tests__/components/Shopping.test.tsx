@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
   Shopping,
   aggregateCards,
@@ -8,6 +8,7 @@ import {
   splitOwnership,
 } from '../../components/organisms/Shopping';
 import type { DeckFull, DeckListGroup } from '../../data/types';
+import { formatPricesDate } from '../../lib/pricesDate';
 
 function makeDeck(over: Partial<DeckFull>): DeckFull {
   return {
@@ -455,5 +456,67 @@ describe('Shopping organism', () => {
     const click = vi.spyOn(input, 'click');
     fireEvent.click(button);
     expect(click).toHaveBeenCalledTimes(1);
+  });
+
+  it('says that an import adds to the cards loaded, when one file is imported twice (DEC-1094)', async () => {
+    const { container } = renderShopping([ALPHA]);
+    const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+    // Two lines, three cards. jsdom's File has no text(), so the test gives it one.
+    const body = 'Sol Ring\n2x Arcane Signet\n';
+    const file = new File([body], 'owned.txt', { type: 'text/plain' });
+    Object.defineProperty(file, 'text', { value: () => Promise.resolve(body) });
+    const hint = 'To replace the list, use Clear owned first.';
+
+    fireEvent.change(input, { target: { files: [file] } });
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      `Added 2 unique cards (3 total). 3 cards loaded. ${hint}`,
+    ));
+    expect(screen.getByText('3 cards loaded — saved locally')).toBeInTheDocument();
+
+    // The same file again: the counts add, and the new total is twice the first.
+    fireEvent.change(input, { target: { files: [file] } });
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      `Added 2 unique cards (3 total). 6 cards loaded. ${hint}`,
+    ));
+    expect(screen.getByText('6 cards loaded — saved locally')).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toEqual([['Sol Ring', 2], ['Arcane Signet', 4]]);
+  });
+
+  it('counts the file, not the list, when a second file shares one name with the first (DEC-1117 B1)', async () => {
+    const { container } = renderShopping([ALPHA]);
+    const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+    // jsdom's File has no text(), so the test gives it one.
+    const pick = (body: string) => {
+      const file = new File([body], 'owned.txt', { type: 'text/plain' });
+      Object.defineProperty(file, 'text', { value: () => Promise.resolve(body) });
+      fireEvent.change(input, { target: { files: [file] } });
+    };
+    const hint = 'To replace the list, use Clear owned first.';
+
+    pick('Sol Ring\n2x Arcane Signet\n');
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      `Added 2 unique cards (3 total). 3 cards loaded. ${hint}`,
+    ));
+
+    // Arcane Signet is loaded already; Swords to Plowshares is new. The file
+    // holds 2 unique cards; the list then holds 3 unique cards and 5 cards.
+    pick('Arcane Signet\nSwords to Plowshares\n');
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      `Added 2 unique cards (2 total). 5 cards loaded. ${hint}`,
+    ));
+    expect(screen.getByText('5 cards loaded — saved locally')).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toEqual(
+      [['Sol Ring', 1], ['Arcane Signet', 3], ['Swords to Plowshares', 1]],
+    );
+  });
+});
+
+describe('the date of the prices in the footer (DEC-1102)', () => {
+  it("shows card-metadata.meta.json's prices_as_of as a UTC date", () => {
+    expect(formatPricesDate('2026-10-13T21:56:40+00:00')).toBe('13 Oct 2026');
+    expect(formatPricesDate('2026-10-13T23:30:00-05:00')).toBe('14 Oct 2026');
+    expect(formatPricesDate('2026-09-05T00:00:00Z')).toBe('5 Sep 2026');
+    expect(formatPricesDate(undefined)).toBeNull();
+    expect(formatPricesDate('not a date')).toBeNull();
   });
 });

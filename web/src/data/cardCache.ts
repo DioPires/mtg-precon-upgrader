@@ -1,18 +1,32 @@
-// Shared Scryfall card cache.
+// Shared card cache (DEC-1102, design D of DEC-1072).
 //
-// Mirrors gv1-cards.js (legacy prototype) with two additions:
-//   1. localStorage persistence with 24h TTL (read on first access; write on every load).
-//   2. Strict TypeScript types for the entry shape.
+// An entry comes from one of three places:
+//   1. data/card-metadata.json. The loader gives the file to seed() before it
+//      gives any page a deck (loader.ts, loadCardMetadata), so get() answers at
+//      once for every name of the file and enqueue() sends nothing for it. The
+//      pictures are Scryfall's own addresses on cards.scryfall.io, and the price
+//      is the file's USD price.
+//   2. A /cards/named lookup, for a name that the file lacks. The lookups go one
+//      at a time through scryfallLimiter (bucket 1: 600 ms between starts, and the
+//      429 stop). A loaded lookup lives 24 h in localStorage under `gv1-card:`.
+//   3. A picture from the file that fails to load. The cache looks that card up
+//      once, and the answer's addresses replace the file's for 24 h. A second
+//      failure inside the 24 h sends nothing.
 //
 // Public API (singleton):
-//   cardCache.get(name)             → CardEntry | null  (synchronous lookup)
-//   cardCache.subscribe(name, fn)   → () => void        (notified on entry update)
-//   cardCache.fetch(name)           → Promise<CardEntry> (deduped)
-//   cardCache.enqueue(name)         → void              (throttled ≥120ms between Scryfall calls)
+//   cardCache.get(name)               → CardEntry | null (synchronous lookup)
+//   cardCache.subscribe(name, fn)     → () => void       (notified on entry update)
+//   cardCache.enqueue(name, options)  → void             (a lookup through the limiter; `first` goes before the queue)
+//   cardCache.seed(metadata)          → void             (entries from data/card-metadata.json)
+//   cardCache.imageFailed(name)       → void             (a picture of this card did not load)
 //
-// The throttled queue exists because Scryfall's docs request ≥50ms between calls;
-// we use 120ms for headroom. Dedupe both at the queue level (skip names already in
-// queue or cache) and at the inflight level (concurrent fetch() calls share one promise).
+// A lookup that answers 404 or another status fails that card only, and no one
+// asks for it again inside ERROR_RETRY_MS. A 429 or a rejected fetch is not the
+// card's failure: the limiter stops, and the card stays first in the queue.
+
+import { cardEntryFromFile, cardEntryFromScryfall, type ScryfallCard } from './cardEntry';
+import { createScryfallLimiter, lookupUrl, scryfallLimiter, type ScryfallLimiter } from './scryfallLimiter';
+import type { RawCardMetadata } from './types';
 
 export type CardStatus = 'loading' | 'loaded' | 'error';
 
@@ -31,32 +45,45 @@ export interface CardEntry {
   errorStatus?: number;
   /** Epoch ms when this entry was fetched; used for 24h TTL. */
   fetchedAt?: number;
+  /** Epoch ms when a picture of this card from the file failed and the cache looked the card up again. */
+  refreshedAt?: number;
 }
 
 type Listener = (entry: CardEntry | null) => void;
 
 const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const STORAGE_PREFIX = 'gv1-card:';
-const THROTTLE_MS = 120;
 const ERROR_RETRY_MS = 30 * 1000;
-const MAX_FETCH_ATTEMPTS = 3;
-const DEFAULT_RETRY_MS = 750;
+
+export interface EnqueueOptions {
+  /** Look this name up before the names that wait (the hover, the commander art). */
+  first?: boolean;
+}
 
 /** Visible for testing — production callers should use the exported singleton. */
 export interface CardCache {
   get(name: string): CardEntry | null;
   subscribe(name: string, fn: Listener): () => void;
-  fetch(name: string): Promise<CardEntry>;
-  enqueue(name: string): void;
+  enqueue(name: string, options?: EnqueueOptions): void;
+  seed(metadata: RawCardMetadata): void;
+  imageFailed(name: string): void;
   /** Test-only: clear in-memory state. Does not touch localStorage. */
   _reset(): void;
 }
 
 interface CacheDeps {
   storage?: Storage | null;
+  /** The fetch of the cache's own limiter, when `limiter` is not given. */
   fetchImpl?: typeof fetch;
   now?: () => number;
-  throttleMs?: number;
+  limiter?: ScryfallLimiter;
+}
+
+interface QueueItem {
+  name: string;
+  key: string;
+  /** A lookup for the pictures of a name of the file, after one of them failed. */
+  refresh: boolean;
 }
 
 function defaultStorage(): Storage | null {
@@ -74,17 +101,16 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
   const explicitStorage = deps.storage;
   const resolveStorage = (): Storage | null =>
     explicitStorage === undefined ? defaultStorage() : explicitStorage;
-  // Lazily resolve fetch each call so test spies on globalThis.fetch are honored.
-  const explicitFetch = deps.fetchImpl;
-  const resolveFetch = (): typeof fetch | undefined =>
-    explicitFetch ?? (typeof fetch !== 'undefined' ? fetch : undefined);
   const now = deps.now ?? (() => Date.now());
-  const throttleMs = deps.throttleMs ?? THROTTLE_MS;
+  const limiter =
+    deps.limiter ?? createScryfallLimiter({ fetchImpl: deps.fetchImpl, storage: deps.storage, now: deps.now });
 
   const cache = new Map<string, CardEntry>();
   const subs = new Map<string, Set<Listener>>();
-  const inflight = new Map<string, Promise<CardEntry>>();
-  const queue: string[] = [];
+  const queue: QueueItem[] = [];
+  /** Keys of the names that the file holds. */
+  const seeded = new Set<string>();
+  let seededFrom: RawCardMetadata | null = null;
   let pumping = false;
 
   function storageKey(key: string): string {
@@ -129,6 +155,12 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
     });
   }
 
+  function put(key: string, entry: CardEntry, persist: boolean): void {
+    cache.set(key, entry);
+    if (persist) writePersisted(key, entry);
+    notify(key);
+  }
+
   function get(name: string): CardEntry | null {
     if (!name) return null;
     const key = name.toLowerCase();
@@ -151,104 +183,129 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
     return () => { set!.delete(fn); };
   }
 
-  async function fetchOne(name: string): Promise<CardEntry> {
-    const key = name.toLowerCase();
-    const existing = cache.get(key) ?? readPersisted(key);
-    if (existing && existing.status === 'loaded') {
-      cache.set(key, existing);
-      return existing;
-    }
-    const inFlight = inflight.get(key);
-    if (inFlight) return inFlight;
-
-    const loading: CardEntry = { status: 'loading', name };
-    cache.set(key, loading);
-    notify(key);
-
-    const fetchImpl = resolveFetch();
-    if (!fetchImpl) {
-      const errEntry: CardEntry = { status: 'error', name, error: 'fetch unavailable', fetchedAt: now() };
-      cache.set(key, errEntry);
-      notify(key);
-      return errEntry;
-    }
-
-    const url = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}`;
-    const promise = (async (): Promise<CardEntry> => {
-      try {
-        let r: Response | null = null;
-        for (let attempt = 0; attempt < MAX_FETCH_ATTEMPTS; attempt += 1) {
-          r = await fetchImpl(url);
-          if (r.ok) break;
-          const retryable = r.status === 429 || r.status >= 500;
-          if (!retryable || attempt === MAX_FETCH_ATTEMPTS - 1) break;
-          const retryAfter = Number(r.headers?.get('retry-after') || '');
-          const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
-            ? retryAfter * 1000
-            : DEFAULT_RETRY_MS * (attempt + 1);
-          await new Promise((resolve) => setTimeout(resolve, waitMs));
-        }
-        if (!r) throw new Error('scryfall unavailable');
-        if (!r.ok) {
-          const error = new Error('scryfall ' + r.status) as Error & { status?: number };
-          error.status = r.status;
-          throw error;
-        }
-        const data = await r.json();
-        const face = (data.card_faces && data.card_faces[0]) || data;
-        const imgs = data.image_uris || face.image_uris || {};
-        const entry: CardEntry = {
-          status: 'loaded',
-          name: data.name,
-          mana_cost: face.mana_cost || data.mana_cost || '',
-          cmc: data.cmc,
-          type_line: data.type_line || face.type_line || '',
-          image_small: imgs.small || '',
-          image_normal: imgs.normal || '',
-          image_large: imgs.large || '',
-          art_crop: imgs.art_crop || '',
-          price: data.prices?.usd ? `$${parseFloat(data.prices.usd).toFixed(2)}` : null,
-          fetchedAt: now(),
-        };
-        cache.set(key, entry);
-        writePersisted(key, entry);
-        notify(key);
-        return entry;
-      } catch (err) {
-        const entry: CardEntry = {
-          status: 'error',
-          name,
-          error: err instanceof Error ? err.message : String(err),
-          errorStatus: err instanceof Error && 'status' in err
-            ? (err as Error & { status?: number }).status
-            : undefined,
-          fetchedAt: now(),
-        };
-        cache.set(key, entry);
-        notify(key);
-        return entry;
-      } finally {
-        inflight.delete(key);
+  /** The `gv1-card:` keys in storage, without the prefix. */
+  function persistedKeys(storage: Storage): Set<string> {
+    const keys = new Set<string>();
+    try {
+      for (let i = 0; i < storage.length; i += 1) {
+        const key = storage.key(i);
+        if (key?.startsWith(STORAGE_PREFIX)) keys.add(key.slice(STORAGE_PREFIX.length));
       }
-    })();
-    inflight.set(key, promise);
-    return promise;
+    } catch {
+      // Storage unavailable: nothing to drop.
+    }
+    return keys;
+  }
+
+  function seed(metadata: RawCardMetadata): void {
+    if (metadata === seededFrom) return;
+    seededFrom = metadata;
+    const storage = resolveStorage();
+    const stored = storage ? persistedKeys(storage) : new Set<string>();
+    for (const [name, meta] of Object.entries(metadata)) {
+      const key = name.toLowerCase();
+      let entry = cardEntryFromFile(name, meta);
+      if (stored.has(key)) {
+        // Storage holds each card once: the file's entry replaces a lookup's.
+        // A lookup made after one of the file's pictures failed keeps its
+        // addresses for 24 h.
+        const refreshed = readPersisted(key);
+        if (refreshed?.refreshedAt !== undefined && now() - refreshed.refreshedAt <= TTL_MS) {
+          entry = {
+            ...entry,
+            image_small: refreshed.image_small,
+            image_normal: refreshed.image_normal,
+            image_large: refreshed.image_large,
+            art_crop: refreshed.art_crop,
+            fetchedAt: refreshed.fetchedAt,
+            refreshedAt: refreshed.refreshedAt,
+          };
+        } else {
+          try { storage!.removeItem(storageKey(key)); } catch { /* nothing to free */ }
+        }
+      }
+      seeded.add(key);
+      put(key, entry, false);
+    }
+  }
+
+  /** The next name that still needs a lookup, marked as loading. */
+  function takeNext(): QueueItem | null {
+    while (queue.length > 0) {
+      const item = queue.shift()!;
+      if (item.refresh) return item;
+      const existing = cache.get(item.key) ?? readPersisted(item.key);
+      if (existing?.status === 'loaded') {
+        // The file's seed, or another tab, got there first.
+        if (existing !== cache.get(item.key)) put(item.key, existing, false);
+        continue;
+      }
+      put(item.key, { status: 'loading', name: item.name }, false);
+      return item;
+    }
+    return null;
+  }
+
+  function fail(item: QueueItem, error: string, errorStatus?: number): void {
+    // A failed refresh leaves the file's entry; its refreshedAt holds the next try off for 24 h.
+    if (item.refresh) return;
+    put(item.key, { status: 'error', name: item.name, error, errorStatus, fetchedAt: now() }, false);
+  }
+
+  async function settle(item: QueueItem, response: Response): Promise<void> {
+    if (!response.ok) {
+      fail(item, `scryfall ${response.status}`, response.status);
+      return;
+    }
+    let looked: CardEntry;
+    try {
+      looked = cardEntryFromScryfall((await response.json()) as ScryfallCard, now());
+    } catch (err) {
+      fail(item, err instanceof Error ? err.message : String(err));
+      return;
+    }
+    const current = cache.get(item.key);
+    if (item.refresh) {
+      if (current?.status !== 'loaded') return;
+      put(item.key, {
+        ...current,
+        image_small: looked.image_small,
+        image_normal: looked.image_normal,
+        image_large: looked.image_large,
+        art_crop: looked.art_crop,
+        fetchedAt: looked.fetchedAt,
+      }, true);
+      return;
+    }
+    // The seed arrived while the lookup was out: the file's entry stays.
+    if (seeded.has(item.key) && current?.status === 'loaded') return;
+    put(item.key, looked, true);
   }
 
   function pump(): void {
     if (pumping) return;
     pumping = true;
     (async () => {
-      while (queue.length) {
-        const name = queue.shift()!;
-        await fetchOne(name);
-        if (queue.length) await new Promise((r) => setTimeout(r, throttleMs));
+      try {
+        while (queue.length > 0) {
+          const picked: { item: QueueItem | null } = { item: null };
+          try {
+            const sent = await limiter.next('lookup', () => {
+              picked.item = takeNext();
+              return picked.item ? lookupUrl(picked.item.name) : null;
+            });
+            if (picked.item && sent) await settle(picked.item, sent.response);
+          } catch (err) {
+            if (picked.item) fail(picked.item, err instanceof Error ? err.message : String(err));
+          }
+        }
+      } finally {
+        pumping = false;
       }
-      pumping = false;
     })();
   }
 
-  function enqueue(name: string): void {
+  function enqueue(name: string, options: EnqueueOptions = {}): void {
     if (!name) return;
     const key = name.toLowerCase();
     const existing = cache.get(key) ?? readPersisted(key);
@@ -259,20 +316,45 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
     if (existing?.status === 'error' && existing.fetchedAt && now() - existing.fetchedAt < ERROR_RETRY_MS) {
       return;
     }
-    if (queue.some((queued) => queued.toLowerCase() === key)) return;
-    queue.push(name);
+    const at = queue.findIndex((queued) => queued.key === key && !queued.refresh);
+    if (at >= 0) {
+      if (!options.first) return;
+      queue.splice(at, 1);
+    }
+    const item: QueueItem = { name, key, refresh: false };
+    if (options.first) queue.unshift(item);
+    else queue.push(item);
+    pump();
+  }
+
+  function imageFailed(name: string): void {
+    if (!name) return;
+    const key = name.toLowerCase();
+    // Only a picture from the file has another address to find.
+    if (!seeded.has(key)) return;
+    const entry = cache.get(key);
+    if (entry?.status !== 'loaded') return;
+    if (entry.refreshedAt !== undefined && now() - entry.refreshedAt <= TTL_MS) return;
+    // Mark the card before the lookup goes, so that a reload inside 24 h does not ask again.
+    const t = now();
+    const marked: CardEntry = { ...entry, refreshedAt: t, fetchedAt: t };
+    cache.set(key, marked);
+    writePersisted(key, marked);
+    queue.push({ name, key, refresh: true });
     pump();
   }
 
   function _reset(): void {
     cache.clear();
     subs.clear();
-    inflight.clear();
     queue.length = 0;
+    seeded.clear();
+    seededFrom = null;
     pumping = false;
+    limiter._reset?.();
   }
 
-  return { get, subscribe, fetch: fetchOne, enqueue, _reset };
+  return { get, subscribe, enqueue, seed, imageFailed, _reset };
 }
 
-export const cardCache: CardCache = createCardCache();
+export const cardCache: CardCache = createCardCache({ limiter: scryfallLimiter });
