@@ -6,29 +6,41 @@ by price with currency selection including EUR (Cardmarket) and USD; DR-5 sets t
 data requirement (EUR + USD, freshness on the order of days).
 
 The Scryfall oracle mirror (`priv_data/scryfall-oracle.json`) deliberately DROPS
-prices, so this script fetches the Scryfall bulk `oracle_cards` export fresh —
-which DOES carry per-card `prices` — filters to Commander-legal, and emits a
-compact name-keyed derivative committed under `data/spellbook/`:
+prices, so this script reads two Scryfall bulk exports, which DO carry per-card
+`prices`, filters to Commander-legal, and emits a compact name-keyed derivative
+committed under `data/spellbook/`:
 
   - data/spellbook/price-index.json       { "<normalized name>": [eur, usd], ... }
   - data/spellbook/price-index.meta.json  provenance + freshness
 
 Prices are the non-foil Cardmarket EUR (`prices.eur`) and TCGplayer USD
-(`prices.usd`); a missing price is stored as null. Names are normalized with the
-same casefold+strip rules the Combo Lab matcher/synergy engines use, and every
-`//`-face is aliased (first-wins) so a completer card resolves whichever face the
-feature index names it by.
+(`prices.usd`); a missing price is stored as null. For each currency by itself
+(DEC-1086, the rule of data/card-metadata.json since DEC-1079):
+
+  1. the price of the card's printing in `oracle_cards` (one printing for each card);
+  2. when that printing has none, the lowest price among the card's printings in
+     `default_cards` (every printing) that count: "paper" in `games`, released on
+     or before the date of the `default_cards` export, and not memorabilia.
+
+A foil or etched price never counts. A card with no price in either currency has
+no row. Names are normalized with the same casefold+strip rules the Combo Lab
+matcher/synergy engines use, and every `//`-face is aliased (first-wins) so a
+completer card resolves whichever face the feature index names it by.
+
+The one request to api.scryfall.com (`/bulk-data`) goes through scripts/scryfall_api.py.
+The two exports download from data.scryfall.io, which has no rate limit, into
+--download-dir with the /bulk-data answer as bulk-data.json. The script reads each
+export one line at a time and keeps only what the index needs. --bulk-data with
+--oracle-source and --default-source reads saved files and sends no request; such a
+run always rebuilds, and it writes the same index as the run that saved them.
 
 All generation is LOCAL; the committed JSON deploys via the Vercel `cp -R ../data`
 step. The runtime never calls Scryfall (NF-1/NF-9). Idempotent on a stable corpus.
 
-The one request to api.scryfall.com (GET /bulk-data) goes through
-scripts/scryfall_api.py, so it waits and stops as every other caller does; during
-a stop the run writes no file and exits with 1 (DEC-1114 N3). The download of the
-export from *.scryfall.io does not: that host has no limit.
-
 Usage:
-    uv run python scripts/build_price_index.py [--force] [--source jsonl.gz|-]
+    uv run python scripts/build_price_index.py [--force] [--download-dir DIR]
+    uv run python scripts/build_price_index.py --bulk-data DIR/bulk-data.json \\
+        --oracle-source DIR/oracle-cards-*.jsonl.gz --default-source DIR/default-cards-*.jsonl.gz
 """
 
 from __future__ import annotations
@@ -36,7 +48,10 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import os
+import shutil
 import sys
+import tempfile
 import unicodedata
 import urllib.request
 from datetime import datetime, timezone
@@ -50,8 +65,14 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = PROJECT_ROOT / "data" / "spellbook"
 INDEX_FILE = OUT_DIR / "price-index.json"
 META_FILE = OUT_DIR / "price-index.meta.json"
-BULK_DATA_URL = "https://api.scryfall.com/bulk-data"
+BULK_DATA_URL = f"https://{scryfall_api.API_HOST}/bulk-data"
+BULK_DATA_FILE = "bulk-data.json"
 USER_AGENT = "mtg-precon-upgrader/1.0 (DEC-516 price index)"
+CURRENCIES = ("eur", "usd")  # the order of a row
+# Scryfall's set type of gold-bordered, oversized, trophy, 30th Anniversary
+# Edition and Collectors' Edition printings. No sanctioned game allows them, so
+# their prices do not count (DEC-1079 Q2, the rule of fetch_card_metadata.py).
+MEMORABILIA = "memorabilia"
 
 
 def normalize_name(name: str) -> str:
@@ -82,16 +103,25 @@ def name_keys(name: str) -> list[str]:
     return keys
 
 
-def fetch_json(url: str) -> dict:
-    """GET one api.scryfall.com address through the helper; ScryfallRateLimited passes through."""
-    return json.loads(scryfall_api.request(url))
-
-
-def find_oracle_cards_entry(bulk_data: dict) -> dict:
+def find_entry(bulk_data: dict, kind: str) -> dict:
     for item in bulk_data.get("data", []):
-        if item.get("type") == "oracle_cards":
+        if item.get("type") == kind:
             return item
-    raise RuntimeError("No oracle_cards entry in Scryfall bulk-data response")
+    raise RuntimeError(f"No {kind} entry in Scryfall bulk-data response")
+
+
+def jsonl_uri(entry: dict) -> str:
+    """The address of an export's JSON Lines file: the script reads one card a line."""
+    uri = entry.get("jsonl_download_uri")
+    if not uri:
+        raise RuntimeError(f"Scryfall's {entry['type']} entry exposes no JSON Lines download URI.")
+    return uri
+
+
+def oracle_id_of(card: dict) -> str | None:
+    """The card's oracle id. A reversible_card printing carries it on each face
+    only, so the front face gives it (DEC-1112 B1)."""
+    return card.get("oracle_id") or (card.get("card_faces") or [{}])[0].get("oracle_id")
 
 
 def _price(raw: dict, key: str) -> float | None:
@@ -106,8 +136,57 @@ def _price(raw: dict, key: str) -> float | None:
     return f if f > 0 else None
 
 
-def build_index(cards: list[dict]) -> dict[str, list]:
+def _counts(printing: dict, export_date: str) -> bool:
+    """Whether a printing's price counts: on paper, released on or before
+    ``export_date`` (``YYYY-MM-DD``) and not memorabilia."""
+    return ("paper" in printing["games"] and printing["released_at"] <= export_date
+            and printing["set_type"] != MEMORABILIA)
+
+
+def iter_cards(path: Path):
+    """Each card of a JSON Lines export (gzip when the name ends in .gz), one
+    line at a time, so no export is held in memory whole."""
+    opener = gzip.open if path.suffix == ".gz" else open
+    with opener(path, "rt", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                yield json.loads(line)
+
+
+def read_oracle_cards(path: Path) -> list[tuple]:
+    """The Commander-legal cards of an ``oracle_cards`` export, in its order, as
+    (name, oracle id, [eur, usd] of the card's printing)."""
+    cards = []
+    for c in iter_cards(path):
+        if c.get("legalities", {}).get("commander") == "legal":
+            prices = [_price(c.get("prices"), currency) for currency in CURRENCIES]
+            cards.append((c.get("name", ""), oracle_id_of(c), prices))
+    return cards
+
+
+def lowest_prices(path: Path, wanted: set[str], export_date: str) -> dict[str, list]:
+    """For each oracle id of ``wanted``, the lowest non-foil [eur, usd] among
+    its printings in a ``default_cards`` export that count (_counts)."""
+    lowest: dict[str, list] = {}
+    for printing in iter_cards(path):
+        oracle_id = oracle_id_of(printing)
+        if oracle_id not in wanted or not _counts(printing, export_date):
+            continue
+        row = lowest.setdefault(oracle_id, [None, None])
+        for i, currency in enumerate(CURRENCIES):
+            price = _price(printing.get("prices"), currency)
+            if price is not None and (row[i] is None or price < row[i]):
+                row[i] = price
+    return lowest
+
+
+def build_index(cards: list[tuple], lowest: dict[str, list]) -> tuple[dict[str, list], dict[str, int]]:
     """Name-key → [eur, usd]. Cards with neither price are skipped entirely.
+
+    ``cards`` comes from read_oracle_cards. A price that the card's printing
+    lacks comes from ``lowest`` (lowest_prices), currency by currency. Also
+    returns, for each currency, the number of keys whose price came from
+    another printing.
 
     Two passes, because a face alias must never outrank an exact full name: an
     MDFC back face can carry a standalone card's whole name (`Grave Researcher
@@ -117,130 +196,167 @@ def build_index(cards: list[dict]) -> dict[str, list]:
     Full names claim their key first; face aliases only fill what is left.
     Within each pass it stays first-wins."""
     index: dict[str, list] = {}
-    aliases: list[tuple[str, list]] = []
-    for c in cards:
-        eur = _price(c.get("prices"), "eur")
-        usd = _price(c.get("prices"), "usd")
-        if eur is None and usd is None:
+    other: dict[str, list[bool]] = {}  # key -> [eur, usd] from another printing
+    aliases: list[tuple[str, list, list[bool]]] = []
+    for name, oracle_id, own in cards:
+        fill = lowest.get(oracle_id, [None, None])
+        row = [p if p is not None else f for p, f in zip(own, fill)]
+        if row == [None, None]:
             continue
-        keys = [k for k in name_keys(c.get("name", "")) if k]
+        keys = [k for k in name_keys(name) if k]
         if not keys:
             continue
+        filled = [p is None and r is not None for p, r in zip(own, row)]
         if keys[0] not in index:
-            index[keys[0]] = [eur, usd]
-        aliases.extend((k, [eur, usd]) for k in keys[1:])
-    for k, price in aliases:
+            index[keys[0]] = row
+            other[keys[0]] = filled
+        aliases.extend((k, row, filled) for k in keys[1:])
+    for k, row, filled in aliases:
         if k not in index:
-            index[k] = price
-    return index
+            index[k] = row
+            other[k] = filled
+    counts = {c: sum(f[i] for f in other.values()) for i, c in enumerate(CURRENCIES)}
+    return index, counts
 
 
-def load_source_cards(source: str | None, force: bool) -> tuple[list[dict], str, str]:
-    """Return (cards, remote_updated_at, source_uri). ``source`` may be a local
-    path or "-" for stdin (jsonl / jsonl.gz / json), else Scryfall bulk is used."""
-    if source and source != "-":
-        p = Path(source)
-        raw = p.read_bytes()
-        if p.suffix == ".gz":
-            raw = gzip.decompress(raw)
-        cards = _parse_cards(raw, p.name.endswith((".jsonl", ".jsonl.gz")))
-        return cards, "local", str(p)
-
-    print("Querying Scryfall bulk-data API...", file=sys.stderr)
-    bulk = fetch_json(BULK_DATA_URL)
-    oracle = find_oracle_cards_entry(bulk)
-    remote_updated_at = oracle["updated_at"]
-    download_uri = oracle.get("jsonl_download_uri") or oracle.get("download_uri")
-    if not download_uri:
-        raise RuntimeError("Scryfall oracle_cards entry exposes no download URI.")
-
-    if not force and META_FILE.exists() and INDEX_FILE.exists():
-        try:
-            local = json.loads(META_FILE.read_text())
-            if local.get("scryfall_updated_at") == remote_updated_at:
-                print(f"Price index is current ({remote_updated_at}).", file=sys.stderr)
-                return [], remote_updated_at, download_uri
-        except (json.JSONDecodeError, OSError):
-            pass
-
-    print(f"Downloading {download_uri}...", file=sys.stderr)
-    req = urllib.request.Request(download_uri, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=300) as resp:
-        raw = resp.read()
-    if download_uri.endswith(".gz"):
-        raw = gzip.decompress(raw)
-    cards = _parse_cards(raw, download_uri.endswith((".jsonl", ".jsonl.gz")))
-    return cards, remote_updated_at, download_uri
+def download(uri: str, folder: Path) -> Path:
+    """Copy one export from data.scryfall.io into ``folder`` under its own name."""
+    path = folder / uri.rsplit("/", 1)[-1]
+    print(f"Downloading {uri}...", file=sys.stderr)
+    req = urllib.request.Request(uri, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=300) as resp, path.open("wb") as out:
+        shutil.copyfileobj(resp, out)
+    return path
 
 
-def _parse_cards(raw: bytes, is_jsonl: bool) -> list[dict]:
-    if is_jsonl:
-        return [json.loads(line) for line in raw.splitlines() if line.strip()]
-    return json.loads(raw)
+def is_current(oracle: dict, default: dict) -> bool:
+    """Whether the committed files come from these two exports."""
+    if not (META_FILE.exists() and INDEX_FILE.exists()):
+        return False
+    try:
+        local = json.loads(META_FILE.read_text())
+    except (json.JSONDecodeError, OSError):
+        return False
+    return (local.get("scryfall_updated_at") == oracle["updated_at"]
+            and local.get("default_cards_updated_at") == default["updated_at"])
+
+
+def exports(bulk_data: dict) -> tuple[dict, dict]:
+    """The oracle_cards and default_cards entries of a /bulk-data answer."""
+    return find_entry(bulk_data, "oracle_cards"), find_entry(bulk_data, "default_cards")
+
+
+def build(oracle: dict, default: dict, oracle_path: Path, default_path: Path) -> None:
+    """Read both exports, build the index and write both files. ``oracle`` and
+    ``default`` are the exports' entries of the /bulk-data answer."""
+    export_date = default["updated_at"][:10]
+    cards = read_oracle_cards(oracle_path)
+    wanted = {oid for _, oid, own in cards if oid and None in own}
+    print(
+        f"{len(cards):,} commander-legal cards; {len(wanted):,} lack a price. "
+        f"Reading the printings released on or before {export_date}...",
+        file=sys.stderr,
+    )
+    index, other = build_index(cards, lowest_prices(default_path, wanted, export_date))
+    write_outputs(index, other, oracle, default)
+
+
+def write_outputs(index: dict, other: dict[str, int], oracle: dict, default: dict) -> None:
+    """Write the index and its meta file.
+
+    Each file goes to ``<name>.tmp`` in its folder first, then os.replace moves
+    both into place, the meta file last (DEC-1080 N1, as in
+    fetch_card_metadata.py). A run that fails before the moves leaves both old
+    files as they were.
+    """
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    priced_eur = sum(1 for v in index.values() if v[0] is not None)
+    priced_usd = sum(1 for v in index.values() if v[1] is not None)
+    meta = {
+        "schema": "combo-lab-price-index",
+        "source": "scryfall-bulk-oracle-cards+default-cards",
+        "sourceUrl": jsonl_uri(oracle),
+        "scryfall_updated_at": oracle["updated_at"],
+        "defaultCardsUrl": jsonl_uri(default),
+        "default_cards_updated_at": default["updated_at"],
+        "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "currencies": list(CURRENCIES),
+        "keyCount": len(index),
+        "pricedEur": priced_eur,
+        "pricedUsd": priced_usd,
+        "pricedEurFromOtherPrinting": other["eur"],
+        "pricedUsdFromOtherPrinting": other["usd"],
+        "note": (
+            "Name-key → [eur, usd] (non-foil; eur=Cardmarket, usd=TCGplayer). "
+            "null = no price. Each price is the card's oracle_cards printing's; "
+            "when that has none, the lowest among the card's default_cards printings "
+            "on paper, released by the default_cards export's date and not memorabilia. "
+            "Never a foil or etched price. Keys are normalize_name()-folded with "
+            "//-faces aliased first-wins. Cards with no price are omitted."
+        ),
+    }
+    texts = {
+        # Compact + stable key order so the weekly git diff delta-compresses.
+        INDEX_FILE: json.dumps(index, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+        META_FILE: json.dumps(meta, indent=2, sort_keys=True) + "\n",
+    }
+    temps = {path: path.with_name(path.name + ".tmp") for path in texts}
+    try:
+        for path, text in texts.items():
+            temps[path].write_text(text)
+        for path in texts:
+            os.replace(temps[path], path)
+    finally:
+        for temp in temps.values():
+            temp.unlink(missing_ok=True)
+
+    size_mb = INDEX_FILE.stat().st_size / (1024 * 1024)
+    print(
+        f"Wrote {INDEX_FILE.relative_to(PROJECT_ROOT)} ({size_mb:.1f} MB, "
+        f"{len(index):,} keys; eur {priced_eur:,} / usd {priced_usd:,}; "
+        f"from another printing eur {other['eur']:,} / usd {other['usd']:,}).",
+        file=sys.stderr,
+    )
 
 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description="Build the Combo Lab card-price index")
     ap.add_argument("--force", action="store_true", help="Rebuild even if current")
-    ap.add_argument("--source", help="Local jsonl(.gz)/json file or '-' for stdin")
+    ap.add_argument("--download-dir", type=Path,
+                    help="Keep the /bulk-data answer and both exports in this folder "
+                         "(default: a temporary folder that the run removes)")
+    ap.add_argument("--bulk-data", type=Path, help="A saved /bulk-data answer")
+    ap.add_argument("--oracle-source", type=Path, help="A saved oracle_cards .jsonl(.gz)")
+    ap.add_argument("--default-source", type=Path, help="A saved default_cards .jsonl(.gz)")
     args = ap.parse_args(argv)
+    local = (args.bulk_data, args.oracle_source, args.default_source)
+    if any(local) and not all(local):
+        ap.error("--bulk-data, --oracle-source and --default-source go together")
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    if all(local):
+        oracle, default = exports(json.loads(args.bulk_data.read_bytes()))
+        build(oracle, default, args.oracle_source, args.default_source)
+        return 0
+
+    print("Querying Scryfall bulk-data API...", file=sys.stderr)
     try:
-        cards, remote_updated_at, source_uri = load_source_cards(args.source, args.force)
+        raw = scryfall_api.request(BULK_DATA_URL)
     except scryfall_api.ScryfallRateLimited as e:
         print(f"\n{e}\nNo file written.", file=sys.stderr)
         return 1
-    if not cards:
-        return 0  # already current
+    oracle, default = exports(json.loads(raw))
+    if not args.force and is_current(oracle, default):
+        print(f"Price index is current ({oracle['updated_at']}, {default['updated_at']}).",
+              file=sys.stderr)
+        return 0
 
-    print(f"Downloaded {len(cards):,} cards. Filtering to commander-legal...", file=sys.stderr)
-    legal = [c for c in cards if c.get("legalities", {}).get("commander") == "legal"]
-    index = build_index(legal)
-    print(
-        f"Filtered to {len(legal):,} commander-legal; {len(index):,} price keys.",
-        file=sys.stderr,
-    )
-
-    tmp = INDEX_FILE.with_suffix(".json.tmp")
-    # Compact + stable key order so the weekly git diff delta-compresses.
-    tmp.write_text(
-        json.dumps(index, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    )
-    tmp.replace(INDEX_FILE)
-
-    priced_eur = sum(1 for v in index.values() if v[0] is not None)
-    priced_usd = sum(1 for v in index.values() if v[1] is not None)
-    META_FILE.write_text(
-        json.dumps(
-            {
-                "schema": "combo-lab-price-index",
-                "source": "scryfall-bulk-oracle-cards",
-                "sourceUrl": source_uri,
-                "scryfall_updated_at": remote_updated_at,
-                "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                "currencies": ["eur", "usd"],
-                "keyCount": len(index),
-                "pricedEur": priced_eur,
-                "pricedUsd": priced_usd,
-                "note": (
-                    "Name-key → [eur, usd] (non-foil; eur=Cardmarket, usd=TCGplayer). "
-                    "null = no price. Keys are normalize_name()-folded with //-faces "
-                    "aliased first-wins. Cards with no price are omitted."
-                ),
-            },
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n"
-    )
-
-    size_mb = INDEX_FILE.stat().st_size / (1024 * 1024)
-    print(
-        f"Wrote {INDEX_FILE.relative_to(PROJECT_ROOT)} ({size_mb:.1f} MB, "
-        f"{len(index):,} keys; eur {priced_eur:,} / usd {priced_usd:,}).",
-        file=sys.stderr,
-    )
+    with tempfile.TemporaryDirectory() as tmp:
+        folder = args.download_dir or Path(tmp)
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / BULK_DATA_FILE).write_bytes(raw)
+        oracle_path = download(jsonl_uri(oracle), folder)
+        default_path = download(jsonl_uri(default), folder)
+        build(oracle, default, oracle_path, default_path)
     return 0
 
 

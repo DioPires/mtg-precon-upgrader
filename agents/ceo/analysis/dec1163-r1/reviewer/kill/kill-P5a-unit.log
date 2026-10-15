@@ -1,0 +1,31 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1163-review/web
+
+ ❯ src/__tests__/components/dec1163-kill-paused-line.test.tsx (2 tests | 1 failed) 36ms
+   × PricePausedLine (DEC-1163 kill cases) > leaves out the date of the prices when it is unknown 4ms
+     → expected 'Price refresh paused. Prices shown ar…' to be 'Price refresh paused. Next try at 13:…' // Object.is equality
+ ✓ src/__tests__/components/dec1163-kill-import-style.test.tsx (1 test) 47ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 2 passed (3)
+   Start at  20:35:26
+   Duration  461ms (transform 69ms, setup 46ms, collect 125ms, tests 83ms, environment 275ms, prepare 86ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/dec1163-kill-paused-line.test.tsx > PricePausedLine (DEC-1163 kill cases) > leaves out the date of the prices when it is unknown
+AssertionError: expected 'Price refresh paused. Prices shown ar…' to be 'Price refresh paused. Next try at 13:…' // Object.is equality
+
+Expected: "Price refresh paused. Next try at 13:00:30."
+Received: "Price refresh paused. Prices shown are from null. Next try at 13:00:30."
+
+ ❯ src/__tests__/components/dec1163-kill-paused-line.test.tsx:39:32
+     37|     const limiter = createScryfallLimiter({ fetchImpl: fakeScryfall().…
+     38|     render(<PricePausedLine waiting pricesDate={null} limiter={limiter…
+     39|     expect(line().textContent).toBe(`Price refresh paused. Next try at…
+       |                                ^
+     40|   });
+     41| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
