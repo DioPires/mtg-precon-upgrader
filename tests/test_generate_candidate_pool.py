@@ -1140,7 +1140,10 @@ class GapSeatTests(unittest.TestCase):
 
 
 class GapSeatWriteTests(unittest.TestCase):
-    """DEC-1078: main() writes a pool once, and a change of a seat writes."""
+    """DEC-1078: main() writes a pool once, and a change of a seat writes.
+
+    DEC-1157: a change of any field but generated_at writes.
+    """
 
     DECK_ID = GapSeatTests.DECK_ID
 
@@ -1224,6 +1227,49 @@ class GapSeatWriteTests(unittest.TestCase):
         self.assertEqual(
             [c["seeded_for_gap"] for c in pool["candidates"] if "seeded_for_gap" in c], ["removal-spot"] * 5,
         )
+
+    # DEC-1157: the guard compares the whole file apart from generated_at.
+
+    def _edit_pool(self, edit):
+        self._run()
+        pool = json.loads(self.out_path.read_text())
+        before = json.loads(json.dumps(pool))
+        edit(pool)
+        self.assertNotEqual(pool, before)
+        self.out_path.write_text(json.dumps(pool, indent=2, ensure_ascii=False) + "\n")
+        return before
+
+    def test_file_that_differs_only_in_generated_at_is_not_rewritten(self):
+        def edit(pool):
+            pool["generated_at"] = "2000-01-01T00:00:00+00:00"
+        self._edit_pool(edit)
+        edited = self.out_path.read_bytes()
+        self.assertIn(f"[{self.DECK_ID}] no change (8 candidates)", self._run())
+        self.assertEqual(self.out_path.read_bytes(), edited)
+
+    def test_file_that_differs_only_in_one_deck_role_is_rewritten(self):
+        def edit(pool):
+            pool["candidates"][0]["deck_role"] = "stale-role"
+        before = self._edit_pool(edit)
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(pool["candidates"][0]["deck_role"], before["candidates"][0]["deck_role"])
+
+    def test_file_that_differs_only_in_one_score_is_rewritten(self):
+        def edit(pool):
+            pool["candidates"][0]["score"] += 0.5  # the top card stays on top
+        before = self._edit_pool(edit)
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(pool["candidates"][0]["score"], before["candidates"][0]["score"])
+
+    def test_file_that_differs_only_in_role_pool_is_rewritten(self):
+        def edit(pool):
+            pool["role_pool"] = {"removal-spot": {"count": 1, "median": 10.0}}
+        before = self._edit_pool(edit)
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(pool["role_pool"], before["role_pool"])
 
 
 if __name__ == "__main__":
