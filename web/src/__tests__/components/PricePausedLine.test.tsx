@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 const advance = (ms: number) => act(() => vi.advanceTimersByTimeAsync(ms));
-const line = () => screen.queryByRole('status');
+const line = () => screen.getByRole('status');
 
 describe('PricePausedLine', () => {
   it('says that the refresh is paused, the date of the prices shown and the clock time of the next try', () => {
@@ -34,24 +34,27 @@ describe('PricePausedLine', () => {
     expect(line()).toHaveTextContent(
       `Price refresh paused. Prices shown are from 13 Oct 2026. Next try at ${clockTime(T0 + 30_000)}.`,
     );
-    expect(line()?.textContent).not.toMatch(/scryfall|429|limit/i);
+    expect(line().textContent).not.toMatch(/scryfall|429|limit/i);
+    expect(line().firstElementChild).toHaveClass('gv1-mono-xs', 'gv1-shop-paused');
   });
 
-  it('shows nothing when no row waits for a refresh, or when no stop holds', () => {
+  it('leaves its region empty when no row waits for a refresh, or when no stop holds', () => {
     storage.setItem(STOP_KEY, JSON.stringify({ until: T0 + 30_000, ms: 30_000, n: 1 }));
     const stopped = createScryfallLimiter({ fetchImpl: fakeScryfall().fetch, storage, locks: null });
     const { rerender } = render(<PricePausedLine waiting={false} pricesDate="13 Oct 2026" limiter={stopped} />);
-    expect(line()).toBeNull();
+    expect(line()).toBeEmptyDOMElement();
     const free = createScryfallLimiter({ fetchImpl: fakeScryfall().fetch, storage: new MemoryStorage(), locks: null });
     rerender(<PricePausedLine waiting pricesDate="13 Oct 2026" limiter={free} />);
-    expect(line()).toBeNull();
+    expect(line()).toBeEmptyDOMElement();
   });
 
   it('comes when a batch meets a stop, and goes at the end of the stop, also when no request waits', async () => {
     const scry = fakeScryfall({ outcome: () => 429 });
     const limiter = createScryfallLimiter({ fetchImpl: scry.fetch, storage, locks: null });
     render(<PricePausedLine waiting pricesDate="13 Oct 2026" limiter={limiter} />);
-    expect(line()).toBeNull();
+    // The status region is in the page before the line (DEC-1154), and the line comes into it.
+    const region = line();
+    expect(region).toBeEmptyDOMElement();
     // The caller leaves while its request is out: after the 429, nothing waits.
     const caller = new AbortController();
     const out = limiter.fetch(autocompleteAddress, { signal: caller.signal }).catch(() => 'gone');
@@ -59,10 +62,12 @@ describe('PricePausedLine', () => {
     caller.abort();
     await out;
     expect(line()).toHaveTextContent(`Next try at ${clockTime(T0 + 30_000)}.`);
+    expect(line()).toBe(region);
     await advance(30_000 - 1);
-    expect(line()).not.toBeNull();
+    expect(line()).not.toBeEmptyDOMElement();
     await advance(2);
-    expect(line()).toBeNull();
+    expect(line()).toBeEmptyDOMElement();
+    expect(line()).toBe(region);
     expect(scry.sends).toHaveLength(1);
   });
 

@@ -711,15 +711,27 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
             <button className="gv1-shop-mini-btn" onClick={clearOwned} type="button">Clear owned</button>
           )}
         </div>
-        {importMsg && (
-          <div
-            role={importMsg.ok ? 'status' : 'alert'}
-            className={'gv1-shop-import-msg ' + (importMsg.ok ? 'gv1-shop-import-ok' : 'gv1-shop-import-err')}
-          >
-            <span className="gv1-mono-xs">{importMsg.ok ? '◆' : '⚠'}</span>
-            <span className="gv1-mono-xs">{importMsg.text}</span>
-          </div>
-        )}
+        {/* Two live regions that stay in the page and are empty until a
+            message comes: many screen readers do not read a region that
+            enters the page with its text (DEC-1154). A region keeps one role,
+            so an error goes to the alert region and interrupts, and a count
+            goes to the status region and waits its turn. */}
+        <div role="status">
+          {importMsg?.ok && (
+            <div className="gv1-shop-import-msg gv1-shop-import-ok">
+              <span className="gv1-mono-xs">◆</span>
+              <span className="gv1-mono-xs">{importMsg.text}</span>
+            </div>
+          )}
+        </div>
+        <div role="alert">
+          {importMsg && !importMsg.ok && (
+            <div className="gv1-shop-import-msg gv1-shop-import-err">
+              <span className="gv1-mono-xs">⚠</span>
+              <span className="gv1-mono-xs">{importMsg.text}</span>
+            </div>
+          )}
+        </div>
       </section>
 
       {selected.size > 0 && (

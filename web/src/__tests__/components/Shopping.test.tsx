@@ -313,6 +313,12 @@ describe('Shopping organism', () => {
     return render(<Shopping decks={decks} />);
   }
 
+  // The import message's two regions, in the section of the import button.
+  // The stop line of the summary is a status region too (DEC-1154).
+  const importSection = () => screen.getByRole('button', { name: 'Import owned cards' }).closest('section')!;
+  const importStatus = () => within(importSection()).getByRole('status');
+  const importAlert = () => within(importSection()).getByRole('alert');
+
   it('preselects the first deck and renders its non-basic non-commander cards in the buy list', () => {
     renderShopping([ALPHA, BETA]);
     expect(screen.getByRole('heading', { name: /Shopping List/i })).toBeInTheDocument();
@@ -472,14 +478,14 @@ describe('Shopping organism', () => {
     const hint = 'To replace the list, use Clear owned first.';
 
     fireEvent.change(input, { target: { files: [file] } });
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+    await waitFor(() => expect(importStatus()).toHaveTextContent(
       `Added 2 unique cards (3 total). 3 cards loaded. ${hint}`,
     ));
     expect(screen.getByText('3 cards loaded — saved locally')).toBeInTheDocument();
 
     // The same file again: the counts add, and the new total is twice the first.
     fireEvent.change(input, { target: { files: [file] } });
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+    await waitFor(() => expect(importStatus()).toHaveTextContent(
       `Added 2 unique cards (3 total). 6 cards loaded. ${hint}`,
     ));
     expect(screen.getByText('6 cards loaded — saved locally')).toBeInTheDocument();
@@ -498,14 +504,14 @@ describe('Shopping organism', () => {
     const hint = 'To replace the list, use Clear owned first.';
 
     pick('Sol Ring\n2x Arcane Signet\n');
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+    await waitFor(() => expect(importStatus()).toHaveTextContent(
       `Added 2 unique cards (3 total). 3 cards loaded. ${hint}`,
     ));
 
     // Arcane Signet is loaded already; Swords to Plowshares is new. The file
     // holds 2 unique cards; the list then holds 3 unique cards and 5 cards.
     pick('Arcane Signet\nSwords to Plowshares\n');
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+    await waitFor(() => expect(importStatus()).toHaveTextContent(
       `Added 2 unique cards (2 total). 5 cards loaded. ${hint}`,
     ));
     expect(screen.getByText('5 cards loaded — saved locally')).toBeInTheDocument();
@@ -527,14 +533,14 @@ describe('Shopping organism', () => {
       const { container } = renderShopping([ALPHA]);
       const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
       pick(input, 'Sol Ring\n');
-      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      await waitFor(() => expect(importStatus()).toHaveTextContent(
         `Added 1 unique card (1 total). 1 card loaded. ${hint}`,
       ));
       expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
 
       // The same file again: the file still holds 1 card, and the list now holds 2.
       pick(input, 'Sol Ring\n');
-      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      await waitFor(() => expect(importStatus()).toHaveTextContent(
         `Added 1 unique card (1 total). 2 cards loaded. ${hint}`,
       ));
       expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
@@ -544,7 +550,7 @@ describe('Shopping organism', () => {
       const { container } = renderShopping([ALPHA]);
       pick(container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!, '4x Sol Ring\n');
       // One message holds both forms: the unique count is 1 and the card count is 4.
-      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      await waitFor(() => expect(importStatus()).toHaveTextContent(
         `Added 1 unique card (4 total). 4 cards loaded. ${hint}`,
       ));
       expect(screen.getByText('4 cards loaded — saved locally')).toBeInTheDocument();
@@ -554,17 +560,52 @@ describe('Shopping organism', () => {
       const { container } = renderShopping([ALPHA]);
       const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
       pick(input, 'Sol Ring\n');
-      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      await waitFor(() => expect(importStatus()).toHaveTextContent(
         `Added 1 unique card (1 total). 1 card loaded. ${hint}`,
       ));
 
       // The file holds 1 unique card; the list then holds 2 unique cards and 2 cards.
       pick(input, 'Arcane Signet\n');
-      await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      await waitFor(() => expect(importStatus()).toHaveTextContent(
         `Added 1 unique card (1 total). 2 cards loaded. ${hint}`,
       ));
       expect(screen.getByText('2 cards loaded — saved locally')).toBeInTheDocument();
     });
+  });
+
+  it('keeps the status and the alert region of the import in the page, empty until a message comes (DEC-1154)', async () => {
+    const { container } = renderShopping([ALPHA]);
+    const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+    // jsdom's File has no text(), so the test gives it one.
+    const pick = (body: string) => {
+      const file = new File([body], 'owned.txt', { type: 'text/plain' });
+      Object.defineProperty(file, 'text', { value: () => Promise.resolve(body) });
+      fireEvent.change(input, { target: { files: [file] } });
+    };
+
+    // Before any import, both regions are in the page, and both are empty.
+    const status = importStatus();
+    const alert = importAlert();
+    expect(status).toBeEmptyDOMElement();
+    expect(alert).toBeEmptyDOMElement();
+
+    // A file of cards: the status region holds the count, and the alert region stays empty.
+    pick('Sol Ring\n');
+    await waitFor(() => expect(status).toHaveTextContent('Added 1 unique card (1 total). 1 card loaded.'));
+    expect(status.textContent).toMatch(/^◆Added /);
+    expect(status.firstElementChild).toHaveClass('gv1-shop-import-msg', 'gv1-shop-import-ok');
+    expect(alert).toBeEmptyDOMElement();
+
+    // A file with no card: the alert region holds the error, and the status region is empty again.
+    pick('\n');
+    await waitFor(() => expect(alert).toHaveTextContent('No cards detected in that file.'));
+    expect(alert.textContent).toMatch(/^⚠No cards /);
+    expect(alert.firstElementChild).toHaveClass('gv1-shop-import-msg', 'gv1-shop-import-err');
+    expect(status).toBeEmptyDOMElement();
+
+    // The regions that hold the messages are the nodes of the first paint.
+    expect(importStatus()).toBe(status);
+    expect(importAlert()).toBe(alert);
   });
 
   describe('the count of cards in the Need to buy and Already own headers (DEC-1142)', () => {
