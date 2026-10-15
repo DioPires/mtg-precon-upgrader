@@ -170,6 +170,35 @@ class GraveyardExileTests(unittest.TestCase):
                 self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
 
+class BlinkTests(unittest.TestCase):
+    """A target that its own sentence returns to the battlefield is not removed."""
+
+    def test_instant_blink_of_your_creature_is_protection(self):
+        card = _card(
+            "Glimmerstep Rescue",
+            "Instant",
+            "Exile target creature you control, then return it to the battlefield under its owner's control.",
+        )
+        self.assertEqual(atr.classify(card), ("protection", 0.8))
+
+    def test_blink_of_any_nonland_permanent_is_not_removal_spot(self):
+        card = _card(
+            "Shimmer of the Mistgate",
+            "Instant",
+            "Exile target nonland permanent, then return it to the battlefield tapped under its owner's control.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_blink_beside_a_destroy_stays_removal_spot(self):
+        card = _card(
+            "Edict of Dusk and Dawn",
+            "Sorcery",
+            "Choose one or both —\n• Destroy target creature.\n• Exile target creature you control, then "
+            "return it to the battlefield under its owner's control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 

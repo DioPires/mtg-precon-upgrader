@@ -204,15 +204,30 @@ _GRAVEYARD_CARD = re.compile(
     r"(?:a|your|an opponent's|target player's|that player's|their) graveyard"
 )
 
+# Read in the target's own sentence: "exile target creature, then return it to
+# the battlefield" is a blink, and the target stays on the battlefield (DEC-1161).
+_BLINK_RETURN = re.compile(r"\breturn (?:it|that card|those cards) to the battlefield")
+_SAC_OUTLET = re.compile(r"(?:destroy|exile) target (?:creature|permanent) you control")
+
+
+def _is_blink(oracle: str, t: re.Match) -> bool:
+    end = min(i for i in (oracle.find(".", t.end()), oracle.find("\n", t.end()), len(oracle)) if i >= 0)
+    return bool(_BLINK_RETURN.search(oracle, t.end(), end))
+
 
 def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | None:
     m = next(
-        (t for t in _SPOT_TARGET.finditer(oracle) if not _GRAVEYARD_CARD.match(oracle, t.end())),
+        (
+            t
+            for t in _SPOT_TARGET.finditer(oracle)
+            if not _GRAVEYARD_CARD.match(oracle, t.end()) and not _is_blink(oracle, t)
+        ),
         None,
     )
     if m:
         # "destroy target creature you control" — that's a sac outlet, not removal.
-        if re.search(r"(?:destroy|exile) target (?:creature|permanent) you control", oracle):
+        # A blink of your creature is neither; the later detectors read it.
+        if any(not _is_blink(oracle, s) for s in _SAC_OUTLET.finditer(oracle)):
             return ("utility", 0.6)
         return ("removal-spot", 0.85)
     if re.search(
