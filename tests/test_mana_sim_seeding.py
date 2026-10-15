@@ -14,6 +14,7 @@ fixed WUBRG order.
 import copy
 import importlib
 import json
+import random
 import unittest
 from unittest.mock import patch
 
@@ -69,6 +70,37 @@ class BloomTenderOrderTests(unittest.TestCase):
         sources = exporter.sim_hidden_legion.dork_sources(
             "Bloom Tender", {"colors_present": set()})
         self.assertEqual(sources, [frozenset({"G"})])
+
+
+def draw_chunk(args):
+    """Stub mana-sim chunk for run_parallel: one draw from the module-level random."""
+    _decklist, _metadata, num_games = args
+    return random.random(), num_games
+
+
+def keep_chunks(results):
+    return results
+
+
+class ChunkSeedTests(unittest.TestCase):
+    # M4 of the DEC-1119 review gave all 16 chunks one seed: two runs were still
+    # equal, so the export tests above passed, but the export read 6,250 games
+    # 16 times. A stub chunk catches it in under a second, without a deck.
+    GAMES = 1_605  # not a multiple of 16: chunks 0 to 4 take one game more
+
+    def run_stub(self, cpus):
+        with patch("os.cpu_count", return_value=cpus):
+            return exporter.run_parallel(draw_chunk, keep_chunks, [], {}, self.GAMES)
+
+    def test_each_chunk_draws_from_its_own_seed(self):
+        # 3 CPUs: 3 workers, each runs several chunks in a row. 18 CPUs: 16 workers.
+        three, sixteen = self.run_stub(3), self.run_stub(18)
+        for chunks in (three, sixteen):
+            draws = [d for d, _ in chunks]
+            self.assertEqual(len(chunks), exporter.MANA_SIM_CHUNKS)
+            self.assertEqual(sum(n for _, n in chunks), self.GAMES)
+            self.assertEqual(len(set(draws)), len(draws), "two chunks drew the same value")
+        self.assertEqual(three, sixteen)
 
 
 if __name__ == "__main__":
