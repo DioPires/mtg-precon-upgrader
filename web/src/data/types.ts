@@ -119,7 +119,7 @@ export interface RawDeck {
   gameChangers?: number;
   lastUpdatedSet?: string;
   archetypes?: string[];
-  commanderRoles?: string[];
+  commanderRoles?: { primary: string; secondary: string };
   wincon_style?: string;
   asymmetric_only?: boolean;
   guideContent?: { strategyOverview?: string; deckCategories?: RawCategory[] };
@@ -219,7 +219,9 @@ export interface RawRoleGap {
  * DEC-308 — a resilience component under 70% of its max (`resilience_health`
  * in `scripts/compute_deck_metrics.py`). `resilience_component` is one of
  * `recursion`, `redundancy`, `protection`, `gy_second_hand`. Redundancy
- * carries `lines`/`floor`; the other three carry `actual`/`target`.
+ * carries `lines`, `floor` and `target` (the line count for the full score);
+ * a `metrics.json` from before PR #21 has no `target` there. The other three
+ * carry `actual`/`target`.
  */
 export interface RawResilienceGap {
   resilience_component: string;

@@ -3,6 +3,7 @@
 
 import { useRef, useState, type ReactNode } from 'react';
 import { ManaCost } from '../atoms/ManaCost';
+import { ROLE_LABEL } from '../../data/roleLabels';
 import type { DeckApothecary, RawCandidate, RawResilienceGap, RawRoleGap } from '../../data/types';
 
 const METRICS_KEYS = [
@@ -27,17 +28,6 @@ const METRICS_DESCRIPTIONS: Record<string, string> = {
   curve_health: 'Average CMC vs. target curve and topcurve penalty; archetype-aware.',
   interaction_density: 'Weighted count of removal, counterspells, protection vs. target.',
   gameplan_cohesion: 'How concentrated the deck is in its primary archetypes (in-set ratio).',
-};
-
-const ROLE_LABELS: Record<string, string> = {
-  ramp: 'Ramp',
-  'card-draw': 'Card Draw',
-  'removal-spot': 'Spot Removal',
-  'removal-board': 'Board Wipes',
-  protection: 'Protection',
-  tutor: 'Tutors',
-  wincon: 'Wincons',
-  counterspell: 'Counters',
 };
 
 // DEC-1007 — metrics.json gaps[] entries keyed by `resilience_component` (DEC-308).
@@ -76,14 +66,16 @@ function fmtFigure(v: number | null | undefined): string {
 }
 
 // DEC-1007 — `actual / target` like a role chip when the gap carries both.
-// Redundancy carries win lines and a floor instead: the floor is where the
-// score starts, not the count to reach, so it is not written as `lines / floor`.
+// Redundancy carries win lines, a floor and a target instead (DEC-1077). It
+// reads `lines / target lines`: the target is the line count for the full
+// score, and the script owns it. The floor is where the score starts, not the
+// count to reach. An entry from before PR #21 has no target: `lines · floor`.
 function resilienceFigure(g: RawResilienceGap): ReactNode {
-  if (g.actual != null && g.target != null) {
+  if (g.lines != null && g.target != null) {
     return (
       <>
-        {fmtFigure(g.actual)}
-        <span className="gv1-dim"> / {fmtFigure(g.target)}</span>
+        {fmtFigure(g.lines)}
+        <span className="gv1-dim"> / {fmtFigure(g.target)} lines</span>
       </>
     );
   }
@@ -92,6 +84,14 @@ function resilienceFigure(g: RawResilienceGap): ReactNode {
       <>
         {fmtFigure(g.lines)} {g.lines === 1 ? 'line' : 'lines'}
         <span className="gv1-dim"> · floor {fmtFigure(g.floor)}</span>
+      </>
+    );
+  }
+  if (g.actual != null && g.target != null) {
+    return (
+      <>
+        {fmtFigure(g.actual)}
+        <span className="gv1-dim"> / {fmtFigure(g.target)}</span>
       </>
     );
   }
@@ -211,7 +211,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
 
   // DEC-1068 — WCAG 4.1.3: the filter's result for a screen reader. The count
   // is the grid's, after the cut; the board picks sit outside the filter.
-  const filterLabel = effectiveFilter && (ROLE_LABELS[effectiveFilter] || effectiveFilter);
+  const filterLabel = effectiveFilter && (ROLE_LABEL[effectiveFilter] || effectiveFilter);
   const remedyCount = `${pool.length} ${pool.length === 1 ? 'remedy' : 'remedies'}`;
   let filterStatus = '';
   if (filteredDeck === apothecary) {
@@ -355,7 +355,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
                   onClick={() => filterBy(isActive ? null : g.role)}
                   aria-pressed={isActive}
                 >
-                  <span className="gv1-apo-malady-label">{ROLE_LABELS[g.role] || g.role}</span>
+                  <span className="gv1-apo-malady-label">{ROLE_LABEL[g.role] || g.role}</span>
                   <span className="gv1-mono-xs gv1-apo-malady-fig">
                     {fmtFigure(g.actual)}
                     <span className="gv1-dim"> / {fmtFigure(g.target)}</span>
@@ -379,7 +379,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
         <span className="gv1-mono-xs gv1-dim">
           top {REMEDIES_TOP_N} by archetype fit, cards we own and EDHREC play rate · not a quality order
           {effectiveFilter
-            ? ` · filtered: ${ROLE_LABELS[effectiveFilter] || effectiveFilter}`
+            ? ` · filtered: ${ROLE_LABEL[effectiveFilter] || effectiveFilter}`
             : ' · gap-addressers floated'}
         </span>
       </div>
@@ -423,7 +423,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
         <div className="gv1-empty">
           {effectiveFilter ? (
             <span>
-              No remedies match <em>{ROLE_LABELS[effectiveFilter] || effectiveFilter}</em>.
+              No remedies match <em>{ROLE_LABEL[effectiveFilter] || effectiveFilter}</em>.
             </span>
           ) : (
             'No remedies available.'
@@ -450,7 +450,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
                   <div className="gv1-apo-remedy-tags">
                     {isGapAddr && (
                       <span className="gv1-apo-tag gv1-apo-tag-addresses">
-                        addresses · {ROLE_LABELS[c.mitigates_gap as string] || c.mitigates_gap}
+                        addresses · {ROLE_LABEL[c.mitigates_gap as string] || c.mitigates_gap}
                       </span>
                     )}
                     {c.owned && <span className="gv1-apo-tag gv1-apo-tag-owned">owned</span>}
@@ -458,7 +458,7 @@ export function Apothecary({ apothecary }: ApothecaryProps) {
                     {c.pinned === true && <span className="gv1-apo-tag gv1-apo-tag-pinned">board pick</span>}
                     {c.deck_role && c.deck_role !== c.mitigates_gap && (
                       <span className="gv1-apo-tag gv1-apo-tag-role">
-                        {ROLE_LABELS[c.deck_role] || c.deck_role}
+                        {ROLE_LABEL[c.deck_role] || c.deck_role}
                       </span>
                     )}
                   </div>
