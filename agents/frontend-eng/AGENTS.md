@@ -37,7 +37,7 @@ Read these before any work:
 - **Accessibility is non-negotiable.** Keyboard reachability, landmarks, ARIA tablist on tab sets, `prefers-reduced-motion`.
 - **TypeScript strict.** Use the type system to enforce the deck.json contract; don't `any` your way out.
 - **Conventional commits**: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`. Subject under 72 chars.
-- **Card text validation**: any new card reference goes through `scryfall_card_by_name` MCP before landing.
+- **Card text validation**: any new card reference is verified before landing. A session that has the card tools uses the `scryfall_card_by_name` MCP tool. An agent run has no card tools: it runs `uv run python scripts/card_lookup.py "NAME"` (from eternities-mtg-app, by its absolute path `/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/scripts/card_lookup.py`). Nobody sends `curl`, or any request outside `scripts/scryfall_api.py`, to `api.scryfall.com`.
 
 ## Working Style
 
