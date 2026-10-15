@@ -15,7 +15,10 @@
 
 import { expect, test, type Page } from './support/test';
 
-const WIDTHS = [320, 360, 390, 430];
+// The widths of DEC-1154, and 480px, the widest that the rule holds. At 480px
+// the action row's buttons need less than the box, so the row shows that it
+// takes the box's width.
+const WIDTHS = [320, 360, 390, 430, 480];
 
 type Reading = {
   left: number;
