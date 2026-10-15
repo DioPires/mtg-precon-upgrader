@@ -1,0 +1,62 @@
+.....................F.........                                        [100%]
+=================================== FAILURES ===================================
+___ ReviewCases.test_card_faces_keep_the_mirror_face_fields_for_both_sources ___
+
+self = <tests.test_card_lookup.ReviewCases testMethod=test_card_faces_keep_the_mirror_face_fields_for_both_sources>
+
+    def test_card_faces_keep_the_mirror_face_fields_for_both_sources(self):
+        """card_faces keeps every face field of the mirror (FACE_FIELDS) and no other, from the
+        mirror and from the API."""
+        faces = [
+            {"name": "Invasion of Testing", "mana_cost": "{2}{R}", "type_line": "Battle — Siege",
+             "oracle_text": "When this Siege enters, it deals 2 damage to any target.",
+             "colors": ["R"], "defense": "5"},
+            {"name": "Tester Ascendant", "mana_cost": "", "type_line": "Legendary Planeswalker — Tester",
+             "oracle_text": "+1: Draw a card.", "colors": ["R"], "loyalty": "4"},
+        ]
+        api_card = make_card("Invasion of Testing // Tester Ascendant", layout="transform",
+                             type_line="Battle — Siege // Legendary Planeswalker — Tester")
+        api_card["card_faces"] = [
+            dict(face, artist="A. Artist",
+                 image_uris={"normal": f"https://cards.scryfall.io/normal/front/{i}.jpg"})
+            for i, face in enumerate(faces)]
+        fake = FakeScryfall([api_card])
+        code, out, _ = self.run_lookup(fake, "Delver of Secrets", "Invasion of Testing")
+        self.assertEqual(code, 0)
+        delver, invasion = objects(out)
+>       self.assertEqual(delver["card_faces"], MIRROR_CARDS[3]["card_faces"])
+E       AssertionError: Lists differ: [{'na[116 chars].', 'power': '1', 'toughness': '1'}, {'name': [133 chars]'2'}] != [{'na[116 chars].', 'colors': ['U'], 'power': '1', 'toughness'[167 chars]'2'}]
+E       
+E       First differing element 0:
+E       {'nam[104 chars]nsform text.', 'power': '1', 'toughness': '1'}
+E       {'nam[104 chars]nsform text.', 'colors': ['U'], 'power': '1', 'toughness': '1'}
+E       
+E       + [{'colors': ['U'],
+E       - [{'mana_cost': '{U}',
+E       ? ^^
+E       
+E       +   'mana_cost': '{U}',
+E       ? ^^
+E       
+E           'name': 'Delver of Secrets',
+E           'oracle_text': 'Transform text.',
+E           'power': '1',
+E           'toughness': '1',
+E           'type_line': 'Creature — Human Wizard'},
+E       +  {'colors': ['U'],
+E       -  {'mana_cost': '',
+E       ?  ^
+E       
+E       +   'mana_cost': '',
+E       ?  ^
+E       
+E           'name': 'Insectile Aberration',
+E           'oracle_text': 'Flying',
+E           'power': '3',
+E           'toughness': '2',
+E           'type_line': 'Creature — Human Insect'}]
+
+tests/test_card_lookup.py:416: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_card_lookup.py::ReviewCases::test_card_faces_keep_the_mirror_face_fields_for_both_sources
+1 failed, 30 passed, 2 subtests passed in 0.47s
