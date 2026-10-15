@@ -60,17 +60,18 @@ test.describe("the rate check, the page's clock: a POST counts twice", () => {
 });
 
 test('the error says that a POST counts twice, and lists each send with its method', () => {
+  // The sends keep the order of their stamps; a spec can move the page's clock back.
   const sends = [
-    { method: 'GET', time: 5_000 },
     { method: 'POST', time: 5_250 },
+    { method: 'GET', time: 5_000 },
     { method: 'POST', time: 5_850 },
   ];
   expect(peakPerWindow(startTimes(sends))).toBe(5);
   expect(rateCheckFailure(sends, 5, 'real')).toBe(
     'One browser context started 5 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n' +
       '  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n' +
-      '  Sends (method, ms after the first, real time): GET 0, POST 250, POST 850\n' +
+      '  Sends (method, ms after the first, real time): POST 250, GET 0, POST 850\n' +
       'Every request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, "Scryfall requests").',
   );
-  expect(rateCheckFailure(sends, 5, 'page')).toContain("Sends (method, ms after the first, the page's clock): GET 0,");
+  expect(rateCheckFailure(sends, 5, 'page')).toContain("Sends (method, ms after the first, the page's clock): POST 250,");
 });
