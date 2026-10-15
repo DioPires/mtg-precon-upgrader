@@ -6,7 +6,7 @@
 //   web/qa-screenshots/dec-184/{surface}-{width}.png
 //   web/qa-screenshots/dec-184/findings.json   (tap-target violations + overflow notes)
 
-import { test, type Page } from './support/test';
+import { expect, test, type Page } from './support/test';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -132,7 +132,10 @@ test.describe.configure({ mode: 'serial' });
 
 for (const vp of VIEWPORTS) {
   test.describe(`DEC-184 ${vp.label}px`, () => {
-    test.use({ viewport: { width: vp.width, height: vp.height } });
+    // The shots and the audits read each surface with every price in. With the
+    // seed the Shopping summary shows its final priced count at first paint;
+    // looked up one by one, it lags the rows by up to 1.5 s (DEC-1071).
+    test.use({ viewport: { width: vp.width, height: vp.height }, cards: 'seeded' });
 
     test(`capture + audit @ ${vp.label}px`, async ({ page }) => {
       const deck = await getFirstDeckId(page);
@@ -177,6 +180,16 @@ for (const vp of VIEWPORTS) {
       await page.locator('.gv1-shop-rail').waitFor();
       await page.waitForLoadState('networkidle');
       await checkOverflow(page, 'shopping', w);
+      // The shot and the audits need every price in: the summary counts each
+      // row that shows a price (DEC-1071).
+      const counts = await page.evaluate(() => {
+        const rows = document.querySelectorAll('.gv1-shop-row .gv1-shop-row-price .gv1-rune').length;
+        const stat = [...document.querySelectorAll('.gv1-shop-summary .gv1-shop-stat')].find((s) => s.textContent?.includes('EST. COST'));
+        const text = stat?.querySelectorAll('span')[2]?.textContent ?? '';
+        const m = /(\d+)\/\d+ priced/.exec(text);
+        return { rows, summary: m ? Number(m[1]) : /all priced/.test(text) ? rows : -1 };
+      });
+      expect(counts.summary, 'the Shopping summary counts every row that shows a price').toBe(counts.rows);
       await auditTapTargets(page, 'shopping', w);
       await shotFull(page, `shopping-${lbl}.png`);
 
