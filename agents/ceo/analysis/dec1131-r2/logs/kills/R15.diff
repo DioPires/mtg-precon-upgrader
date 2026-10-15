@@ -1,0 +1,13 @@
+diff --git a/web/src/data/loader.ts b/web/src/data/loader.ts
+index 1b77a40..5269fec 100644
+--- a/web/src/data/loader.ts
++++ b/web/src/data/loader.ts
+@@ -416,7 +416,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
+       if (!data || Object.keys(data).length === 0) return {};
+       memCardMetadata = data;
+       seedCards(data, meta?.prices_as_of);
+-      if (!cached) writePersisted('card-metadata', data);
++      writePersisted('card-metadata', data);
+       return data;
+     })().finally(() => metadataInflight.delete('card-metadata'));
+     metadataInflight.set('card-metadata', promise);

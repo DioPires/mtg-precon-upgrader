@@ -22,6 +22,11 @@ feature index names it by.
 All generation is LOCAL; the committed JSON deploys via the Vercel `cp -R ../data`
 step. The runtime never calls Scryfall (NF-1/NF-9). Idempotent on a stable corpus.
 
+The one request to api.scryfall.com (GET /bulk-data) goes through
+scripts/scryfall_api.py, so it waits and stops as every other caller does; during
+a stop the run writes no file and exits with 1 (DEC-1114 N3). The download of the
+export from *.scryfall.io does not: that host has no limit.
+
 Usage:
     uv run python scripts/build_price_index.py [--force] [--source jsonl.gz|-]
 """
@@ -36,6 +41,10 @@ import unicodedata
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import scryfall_api  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = PROJECT_ROOT / "data" / "spellbook"
@@ -73,12 +82,9 @@ def name_keys(name: str) -> list[str]:
     return keys
 
 
-def fetch_json(url: str, timeout: int = 60) -> dict:
-    req = urllib.request.Request(
-        url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"}
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read())
+def fetch_json(url: str) -> dict:
+    """GET one api.scryfall.com address through the helper; ScryfallRateLimited passes through."""
+    return json.loads(scryfall_api.request(url))
 
 
 def find_oracle_cards_entry(bulk_data: dict) -> dict:
@@ -180,7 +186,11 @@ def main(argv: list[str]) -> int:
     args = ap.parse_args(argv)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    cards, remote_updated_at, source_uri = load_source_cards(args.source, args.force)
+    try:
+        cards, remote_updated_at, source_uri = load_source_cards(args.source, args.force)
+    except scryfall_api.ScryfallRateLimited as e:
+        print(f"\n{e}\nNo file written.", file=sys.stderr)
+        return 1
     if not cards:
         return 0  # already current
 

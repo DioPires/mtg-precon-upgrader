@@ -1,0 +1,224 @@
+[
+ {
+  "name": "RA-S1",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "trackRef.current?.querySelector<HTMLElement>('.gv1-active')?.focus({ preventScroll: true });",
+    "trackRef.current?.querySelector<HTMLElement>('.gv1-active');"
+   ]
+  ]
+ },
+ {
+  "name": "RA-S2",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (next === activeIdx) focusActive();\n    else keyTarget.current = next;\n",
+    "    if (e.key === 'ArrowRight') {\n      if (next === activeIdx) focusActive();\n      else keyTarget.current = next;\n    }\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-S3",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (next === activeIdx) focusActive();\n    else keyTarget.current = next;\n",
+    "    trackRef.current\n      ?.querySelectorAll<HTMLElement>('.gv1-sel-pill')\n      [ordered.findIndex((d) => d.idx === next)]?.focus({ preventScroll: true });\n"
+   ],
+   [
+    "    if (keyTarget.current === activeIdx) focusActive();\n",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "RA-M4",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    keyTarget.current = null;\n  }, [activeIdx, focusActive]);",
+    "  }, [activeIdx, focusActive]);"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M5",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "trackRef.current?.querySelector<HTMLElement>('.gv1-active')?.focus({ preventScroll: true });",
+    "trackRef.current?.querySelector<HTMLElement>('.gv1-active')?.focus();"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M6",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "trackRef.current?.querySelector<HTMLElement>('.gv1-active')?.focus({ preventScroll: true });",
+    "trackRef.current?.querySelector<HTMLElement>('.gv1-sel-pill')?.focus({ preventScroll: true });"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M7",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (next === activeIdx) focusActive();\n",
+    "    if (next !== activeIdx) focusActive();\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M8",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (next === activeIdx) focusActive();\n    else keyTarget.current = next;\n",
+    "    keyTarget.current = next;\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M9",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (keyTarget.current === activeIdx) focusActive();\n",
+    "    if (keyTarget.current !== null) focusActive();\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M10",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (keyTarget.current === activeIdx) focusActive();\n",
+    "    focusActive();\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M11",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const keyTarget = useRef<number | null>(null);",
+    "const keyTarget = useRef<number | null>(activeIdx);"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M12",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    keyTarget.current = null;\n  }, [activeIdx, focusActive]);",
+    "    keyTarget.current = null;\n  }, [focusActive]);"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M13",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    else keyTarget.current = next;\n",
+    "    else keyTarget.current = activeIdx;\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M14",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (next === activeIdx) focusActive();\n",
+    "    if (next === activeIdx) {}\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M15",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "trackRef.current?.querySelector<HTMLElement>('.gv1-active')?.focus({ preventScroll: true });",
+    "document.querySelector<HTMLElement>('.gv1-active')?.focus({ preventScroll: true });"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M16",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (keyTarget.current === activeIdx) focusActive();\n    keyTarget.current = null;\n",
+    "    if (keyTarget.current === activeIdx) {\n      focusActive();\n      keyTarget.current = null;\n    }\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M17",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    onSelect(next);\n  };",
+    "  };"
+   ],
+   [
+    "    const next = scribed[nextIx].idx;\n",
+    "    const next = scribed[nextIx].idx;\n    onSelect(next);\n"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M18",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    onSelect(next);\n  };",
+    "    if (next !== activeIdx) onSelect(next);\n  };"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M19",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    onSelect(next);\n  };",
+    "    onSelect(scribed[curIx < 0 ? 0 : curIx].idx);\n  };"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M20",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    onSelect(next);\n  };",
+    "  };"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M21",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    if (next === activeIdx) focusActive();\n",
+    "    if (next === activeIdx) focusActive();\n    keyTarget.current = next;\n"
+   ],
+   [
+    "    else keyTarget.current = next;\n",
+    ""
+   ]
+  ]
+ }
+]
