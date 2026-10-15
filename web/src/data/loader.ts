@@ -238,7 +238,13 @@ import type { DeckTierBLoops } from './tierB';
 // filled the `oracle_text` of Blightstep Pathway // Searstep Pathway (+1 black source),
 // Unholy Annex // Ritual Chamber (+1 draw) and Spiked Corridor // Torture Pit
 // (+1 interaction), so reliabilityMetrics, goldfish and deckHealthScore move.
-const STORAGE_PREFIX = 'gv1-deck-data-v156:';
+// v156 -> v157 (DEC-1079 2026-10-15): card-metadata.json takes a missing price from
+// another printing (PR #32), so 49 names gain a USD price and 1,070 USD prices move.
+// A persisted copy from before PR #32 would show the old prices beside the new date.
+// v157 -> v158 (DEC-1127 2026-10-15): slivers and stampede-acres winConditions and
+// witherbloom-the-balancer synergies gained `title` (8 renamed from `name`, 2 new).
+// deck.json is persisted, so an older copy keeps the empty titles until its TTL ends.
+const STORAGE_PREFIX = 'gv1-deck-data-v158:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the

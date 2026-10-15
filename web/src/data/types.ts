@@ -119,7 +119,7 @@ export interface RawDeck {
   gameChangers?: number;
   lastUpdatedSet?: string;
   archetypes?: string[];
-  commanderRoles?: string[];
+  commanderRoles?: { primary: string; secondary: string };
   wincon_style?: string;
   asymmetric_only?: boolean;
   guideContent?: { strategyOverview?: string; deckCategories?: RawCategory[] };
