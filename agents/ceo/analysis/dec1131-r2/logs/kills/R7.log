@@ -1,0 +1,55 @@
+
+ RUN  v2.1.9 /private/tmp/dec1149-ceo/wt/web
+
+ ❯ src/__tests__/dec1149/dec1149-kills.test.ts (14 tests | 2 failed) 16ms
+   × reviewer kills, answers after 0 ms > R7: a name whose front face is already in a full batch goes in that batch 4ms
+     → expected null to match object { status: 'loaded', …(1) }
+   × reviewer kills, answers after 150 ms > R7: a name whose front face is already in a full batch goes in that batch 1ms
+     → expected null to match object { status: 'loaded', …(1) }
+stderr | src/__tests__/components/dec1149/dec1149-tile-kill.test.tsx > R22 (reviewer kill) > asks for the refresh of the new card when the tile gets another card
+Warning: An update to CardTile inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CardTile (/private/tmp/dec1149-ceo/wt/web/src/components/molecules/CardTile.tsx:150:21)
+
+ ✓ src/__tests__/components/dec1149/dec1149-tile-kill.test.tsx (1 test) 12ms
+ ✓ src/__tests__/components/dec1149/dec1149-shopping-kills.test.tsx (2 tests) 1573ms
+   ✓ R12 (reviewer kill) > the stop line shows when only the rows of "Already own" wait for a refresh 1518ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/dec1149/dec1149-kills.test.ts > reviewer kills, answers after 0 ms > R7: a name whose front face is already in a full batch goes in that batch
+ FAIL  src/__tests__/dec1149/dec1149-kills.test.ts > reviewer kills, answers after 150 ms > R7: a name whose front face is already in a full batch goes in that batch
+AssertionError: expected null to match object { status: 'loaded', …(1) }
+
+- Expected: 
+Object {
+  "name": "Bonecrusher Giant // Stomp",
+  "status": "loaded",
+}
+
++ Received: 
+null
+
+ ❯ src/__tests__/dec1149/dec1149-kills.test.ts:119:44
+    117|     await advance(delay);
+    118|     expect(scry.batches()[0]).toEqual(['Bonecrusher Giant', ...looks.s…
+    119|     expect(cache.get('Bonecrusher Giant')).toMatchObject({ status: 'lo…
+       |                                            ^
+    120|     await advance(1_200 + delay);
+    121|     expect(scry.batches()).toEqual([['Bonecrusher Giant', ...looks.sli…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 15 passed (17)
+   Start at  17:05:03
+   Duration  1.98s (transform 97ms, setup 59ms, collect 172ms, tests 1.60s, environment 369ms, prepare 106ms)
+

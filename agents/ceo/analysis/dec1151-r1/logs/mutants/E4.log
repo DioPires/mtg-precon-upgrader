@@ -1,0 +1,41 @@
+# E4 (noun reads engine.length) web/src/components/organisms/Engine.tsx
+# old: '{cur.count} {cardNoun(cur.count)} · hover for full frame</div>'
+# new: '{cur.count} {cardNoun(engine.length)} · hover for full frame</div>'
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/components/Engine.test.tsx (3 tests | 1 failed) 38ms
+   × Engine > reads `1 card` for the active role of one card 28ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  1 card · hover for full frame
+Received:
+  ROLE · 01 / 02Commander Engine1 cards · hover for full frameSol Ring
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  17:04:07
+   Duration  416ms (transform 24ms, setup 21ms, collect 36ms, tests 38ms, environment 132ms, prepare 33ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Engine.test.tsx > Engine > reads `1 card` for the active role of one card
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  1 card · hover for full frame
+Received:
+  ROLE · 01 / 02Commander Engine1 cards · hover for full frameSol Ring
+ ❯ src/__tests__/components/Engine.test.tsx:29:42
+     27|   it('reads `1 card` for the active role of one card', () => {
+     28|     render(<Engine engine={ENGINE} />);
+     29|     expect(screen.getByRole('tabpanel')).toHaveTextContent('1 card · h…
+       |                                          ^
+     30|   });
+     31| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

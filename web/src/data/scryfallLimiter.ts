@@ -1,40 +1,69 @@
-// The one module that sends requests to api.scryfall.com (DEC-1102, design D of DEC-1072).
+// The one module that sends requests to api.scryfall.com (DEC-1102 and DEC-1131,
+// design D of DEC-1072).
 //
-// Scryfall allows 2 requests a second on /cards/named and /cards/collection and
-// 10 a second on its other methods. A 429 limits the caller for 30 s, and a
-// caller that ignores 429s can be banned. Scryfall's 429 carries no CORS header,
-// so the browser shows it to the app as a fetch that rejects.
+// Scryfall allows 2 requests a second on /cards/named, /cards/search,
+// /cards/random and /cards/collection, and 10 a second on its other methods. A
+// 429 limits the caller for 30 s, and a caller that ignores 429s can be banned.
+// Scryfall's 429 carries no CORS header, so the browser shows it to the app as a
+// fetch that rejects.
 //
-// Bucket 1 ('lookup': /cards/named, /cards/collection). A request starts 600 ms
-// or more after the last start, and only after the last answer has arrived.
-// Three starts 500 ms apart can arrive inside one second at Scryfall; 600 ms
-// apart they cannot. The tabs of one origin share bucket 1: navigator.locks lets
-// one tab send at a time, and localStorage holds the last start. Without
-// navigator.locks (jsdom) the bucket holds in the one tab.
+// Bucket 1 ('lookup': /cards/collection). The card cache sends every card
+// lookup as one POST of up to 75 names (cardCache.ts). A JSON POST from the
+// browser goes after a CORS preflight (OPTIONS), and nobody knows whether
+// Scryfall counts the preflight, so each POST counts as two starts. A request
+// starts 1,200 ms or more after the last start, and only after the last answer
+// has arrived: no 1 s window then holds more than 2 starts. Inside a tab the
+// spacing runs on performance.now(), so a step of the wall clock does not
+// shorten it. The tabs of one origin share bucket 1: navigator.locks lets one
+// tab send at a time, and localStorage holds the last start in wall time.
+// Without navigator.locks (jsdom) the bucket holds in the one tab.
 // Bucket 2 ('autocomplete': /cards/autocomplete). 120 ms between starts.
 //
-// The stop. A 429, or a fetch to api.scryfall.com that rejects, stops both
-// buckets for 30 s. The request that met it stays first in its bucket, and
-// nothing goes. When the stop ends, one request goes. If that one fails too, the
-// stop doubles (60 s, 120 s, 240 s), up to 300 s. Any other answer to it ends the
-// stop and resets it to 30 s. A fetch that its caller aborts is no failure. The
-// stop's end lives in localStorage, so a reload and a second tab obey it; without
-// storage it lives in memory.
+// The stop. A 429, a fetch to api.scryfall.com that rejects, or a request with no
+// answer after 20 s (the limiter aborts it) stops both buckets for 30 s. The
+// request that met it stays first in its bucket, and nothing goes. When the stop
+// ends, one request goes. If that one fails too, the stop doubles (60 s, 120 s,
+// 240 s), up to 300 s. Any other answer to it ends the stop and resets it to
+// 30 s. A fetch that its caller aborts is no failure.
+//
+// The stop record: its end, its length and its number. The record stays after
+// the end until a request succeeds, so the next failure doubles the stop; a
+// record that ended more than 300 s ago counts as no record. A request notes the
+// record's number when it starts, and it can double or end only that stop: a
+// request that was out when another one started the stop changes nothing. A
+// clock that went back cannot stretch a stop past now plus its length. The
+// record lives in localStorage, so a reload and a second tab obey it; without
+// storage, or when storage refuses the write, it lives in memory.
 
 export const SCRYFALL_API = 'https://api.scryfall.com';
-export const LOOKUP_SPACING_MS = 600;
+export const COLLECTION_URL = `${SCRYFALL_API}/cards/collection`;
+export const LOOKUP_SPACING_MS = 1_200;
 export const AUTOCOMPLETE_SPACING_MS = 120;
 export const FIRST_STOP_MS = 30_000;
 export const MAX_STOP_MS = 300_000;
+export const REQUEST_TIMEOUT_MS = 20_000;
 export const STOP_KEY = 'grimoire-scryfall-stop';
 export const LAST_START_KEY = 'grimoire-scryfall-last-start';
 const LOCK_NAME = 'grimoire-scryfall-bucket-1';
 
 export type Bucket = 'lookup' | 'autocomplete';
 
-/** The JSON lookup of one card by name. */
-export function lookupUrl(name: string): string {
-  return `${SCRYFALL_API}/cards/named?fuzzy=${encodeURIComponent(name)}`;
+/** One request to api.scryfall.com: a GET by default. */
+export interface ApiRequest {
+  url: string;
+  method?: 'GET' | 'POST';
+  headers?: Record<string, string>;
+  body?: string;
+}
+
+/** The lookup of up to 75 cards by name: one POST to /cards/collection. */
+export function collectionRequest(names: string[]): ApiRequest {
+  return {
+    url: COLLECTION_URL,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ identifiers: names.map((name) => ({ name })) }),
+  };
 }
 
 export function autocompleteUrl(query: string): string {
@@ -53,10 +82,11 @@ export function bucketOf(url: string): Bucket {
   return new URL(url).pathname === '/cards/autocomplete' ? 'autocomplete' : 'lookup';
 }
 
-/** A stop: its end (epoch ms) and its length. The record stays after the end until a request succeeds. */
+/** A stop: its end (epoch ms), its length and its number. The record stays after the end until a request succeeds. */
 export interface Stop {
   until: number;
   ms: number;
+  n: number;
 }
 
 export interface SendOptions {
@@ -64,6 +94,10 @@ export interface SendOptions {
   signal?: AbortSignal;
   /** Puts the request before the others that wait in its bucket. */
   first?: boolean;
+  /** fetch() only: the method, the headers and the body of the request. */
+  method?: ApiRequest['method'];
+  headers?: ApiRequest['headers'];
+  body?: ApiRequest['body'];
 }
 
 export interface Sent {
@@ -76,10 +110,11 @@ export interface ScryfallLimiter {
   fetch(url: string, options?: SendOptions): Promise<Response>;
   /**
    * For a caller with a queue of its own. `pick` runs once, when the turn comes,
-   * and gives the URL to send. Null gives the turn back, and the call resolves null.
+   * and gives the request to send: a URL for a GET, or the URL with the method,
+   * the headers and the body. Null gives the turn back, and the call resolves null.
    */
-  next(bucket: Bucket, pick: () => string | null, options?: SendOptions): Promise<Sent | null>;
-  /** The end of the stop that holds now (epoch ms), or null. */
+  next(bucket: Bucket, pick: () => string | ApiRequest | null, options?: SendOptions): Promise<Sent | null>;
+  /** The end of the stop that holds now (epoch ms), or null. Read it at each render: it holds the cap. */
   stoppedUntil(): number | null;
   /** Calls `fn` with stoppedUntil() when a stop starts or ends, also when another tab starts or ends it. */
   subscribe(fn: (until: number | null) => void): () => void;
@@ -91,12 +126,15 @@ export interface LimiterDeps {
   fetchImpl?: typeof fetch;
   storage?: Storage | null;
   locks?: LockManager | null;
+  /** The wall clock (epoch ms): the stop and the last start that other tabs read. */
   now?: () => number;
+  /** The tab's own clock, which no step of the wall clock moves: the spacing inside the tab. */
+  monotonic?: () => number;
 }
 
 interface Job {
-  pick: () => string | null;
-  url: string | null;
+  pick: () => string | ApiRequest | null;
+  request: ApiRequest | null;
   signal?: AbortSignal;
   done: boolean;
   resolve: (sent: Sent | null) => void;
@@ -108,6 +146,7 @@ interface BucketState {
   spacingMs: number;
   jobs: Job[];
   running: boolean;
+  /** This tab's last start on the monotonic clock. */
   lastStart: number;
 }
 
@@ -124,8 +163,17 @@ function defaultLocks(): LockManager | null {
   return (typeof navigator !== 'undefined' && navigator.locks) || null;
 }
 
+function defaultMonotonic(): number {
+  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+}
+
 function abortReason(signal: AbortSignal): unknown {
   return signal.reason ?? new DOMException('The request was aborted.', 'AbortError');
+}
+
+/** A number that no other stop record holds. */
+function newStopNumber(): number {
+  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) + 1;
 }
 
 export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
@@ -137,6 +185,7 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
   const resolveFetch = (): typeof fetch | undefined =>
     deps.fetchImpl ?? (typeof fetch !== 'undefined' ? fetch : undefined);
   const now = deps.now ?? (() => Date.now());
+  const monotonic = deps.monotonic ?? defaultMonotonic;
 
   const buckets: Record<Bucket, BucketState> = {
     lookup: { name: 'lookup', spacingMs: LOOKUP_SPACING_MS, jobs: [], running: false, lastStart: -Infinity },
@@ -159,26 +208,42 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
 
   // ── The stop ─────────────────────────────────────────────────────────────
 
+  /** A record that ended more than MAX_STOP_MS ago counts as no record. */
+  function isOld(stop: Stop): boolean {
+    return now() - stop.until > MAX_STOP_MS;
+  }
+
+  // A clock that went back must not stretch a stop past its own length. An end
+  // past now + the length becomes now + the length, in memory and in storage, so
+  // the next read finds it and the stop ends one length after this read. No
+  // listener hears of it, so a read inside notifyListeners() cannot start
+  // another; a reader that shows the end reads stoppedUntil() again.
+
+  function readMemoryStop(): Stop | null {
+    if (!memoryStop || isOld(memoryStop)) return null;
+    const cap = now() + memoryStop.ms;
+    if (memoryStop.until > cap) memoryStop = { ...memoryStop, until: cap };
+    return memoryStop;
+  }
+
   function readStop(): Stop | null {
     const storage = resolveStorage();
-    if (!storage || stopInMemoryOnly) return memoryStop;
+    if (!storage || stopInMemoryOnly) return readMemoryStop();
     try {
       const raw = storage.getItem(STOP_KEY);
       if (!raw) return null;
-      const stop = JSON.parse(raw) as Stop;
-      if (typeof stop?.until !== 'number' || typeof stop?.ms !== 'number') return null;
-      // A clock that went back must not stretch a stop past its own length. An
-      // end past now + the length becomes now + the length, in memory and in
-      // storage, so the next read finds it and the stop ends one length after
-      // this read. No listener hears of it, so a read inside notifyListeners()
-      // cannot start another.
+      const parsed = JSON.parse(raw) as Partial<Stop> | null;
+      if (typeof parsed?.until !== 'number' || typeof parsed?.ms !== 'number') return null;
+      // A record from before the stop number (PR #38) is one stop, number 0.
+      const stop: Stop = { until: parsed.until, ms: parsed.ms, n: typeof parsed.n === 'number' ? parsed.n : 0 };
+      if (isOld(stop)) return null;
       const cap = now() + stop.ms;
-      if (stop.until <= cap) return { until: stop.until, ms: stop.ms };
-      const capped = { until: cap, ms: stop.ms };
+      if (stop.until <= cap) return stop;
+      const capped = { ...stop, until: cap };
       storeStop(capped);
       return capped;
     } catch {
-      return memoryStop;
+      return readMemoryStop();
     }
   }
 
@@ -219,18 +284,23 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
     });
   }
 
-  /** A 429 or a rejected fetch. Only a request that started after the last stop ended can start or double one. */
-  function fail(startedAt: number): void {
-    const prev = readStop();
-    if (prev && startedAt < prev.until) return;
-    const ms = prev ? Math.min(prev.ms * 2, MAX_STOP_MS) : FIRST_STOP_MS;
-    writeStop({ until: now() + ms, ms });
+  /** The number of the stop record that a request sees when it starts; null for no record. */
+  function stopNumber(): number | null {
+    return readStop()?.n ?? null;
   }
 
-  /** Any other answer. It ends a stop only when it is the request that went after the stop. */
-  function succeed(startedAt: number): void {
+  /** A 429, a rejected fetch or a timeout. Only the request that went after the stop it noted can double that stop. */
+  function fail(noted: number | null): void {
     const prev = readStop();
-    if (prev && startedAt >= prev.until) writeStop(null);
+    if (prev && prev.n !== noted) return;
+    const ms = prev ? Math.min(prev.ms * 2, MAX_STOP_MS) : FIRST_STOP_MS;
+    writeStop({ until: now() + ms, ms, n: newStopNumber() });
+  }
+
+  /** Any other answer. It ends a stop only when it is the request that went after that stop. */
+  function succeed(noted: number | null): void {
+    const prev = readStop();
+    if (prev && prev.n === noted) writeStop(null);
   }
 
   function subscribe(fn: (until: number | null) => void): () => void {
@@ -248,34 +318,35 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
 
   // ── Turns ────────────────────────────────────────────────────────────────
 
-  function lastStartOf(bucket: BucketState): number {
-    let last = bucket.lastStart;
-    if (bucket.name === 'lookup') {
-      const storage = resolveStorage();
-      try {
-        const stored = Number(storage?.getItem(LAST_START_KEY));
-        if (Number.isFinite(stored) && stored > last) last = stored;
-      } catch {
-        // Fall back to this tab's own last start.
-      }
+  /** The last bucket 1 start that the tabs share (wall time), or -Infinity. */
+  function sharedLastStart(): number {
+    let last = -Infinity;
+    try {
+      const raw = resolveStorage()?.getItem(LAST_START_KEY);
+      const stored = raw == null ? NaN : Number(raw);
+      if (Number.isFinite(stored)) last = stored;
+    } catch {
+      // This tab keeps its own last start.
     }
-    // A last start in the future (a clock that went back) becomes now, in this
-    // tab and, for bucket 1, in storage, so the bucket waits one spacing after
-    // this read at most.
+    // A last start in the future (a clock that went back) becomes now in
+    // storage, so the bucket waits one spacing after this read at most.
     const t = now();
     if (last <= t) return last;
-    markStart(bucket, t);
+    writeSharedLastStart(t);
     return t;
   }
 
-  function markStart(bucket: BucketState, at: number): void {
-    bucket.lastStart = at;
-    if (bucket.name !== 'lookup') return;
+  function writeSharedLastStart(at: number): void {
     try {
       resolveStorage()?.setItem(LAST_START_KEY, String(at));
     } catch {
       // This tab keeps its own last start.
     }
+  }
+
+  function markStart(bucket: BucketState): void {
+    bucket.lastStart = monotonic();
+    if (bucket.name === 'lookup') writeSharedLastStart(now());
   }
 
   /** Milliseconds until the bucket may start a request; 'busy' while the request after a stop is out. */
@@ -284,7 +355,9 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
     const stop = readStop();
     if (stop && stop.until > t) return stop.until - t;
     if (stop && inFlight > 0) return 'busy';
-    return Math.max(0, lastStartOf(bucket) + bucket.spacingMs - t);
+    const inTab = bucket.lastStart + bucket.spacingMs - monotonic();
+    const shared = bucket.name === 'lookup' ? sharedLastStart() + bucket.spacingMs - t : -Infinity;
+    return Math.max(0, inTab, shared);
   }
 
   function sleep(ms: number): Promise<void> {
@@ -320,30 +393,68 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
     else job.resolve(outcome.sent);
   }
 
+  /**
+   * One fetch with the timeout. Gives the answer; or `timedOut` when no answer
+   * came inside REQUEST_TIMEOUT_MS (the timer aborts the fetch, and a flag, not
+   * the order in which the promises settle, says so); or the error of a fetch
+   * that rejects. The caller's abort aborts the fetch.
+   */
+  async function fetchWithTimeout(
+    fetchImpl: typeof fetch,
+    request: ApiRequest,
+    signal: AbortSignal | undefined,
+  ): Promise<{ response: Response | null; error: unknown; timedOut: boolean }> {
+    const controller = new AbortController();
+    const forward = () => controller.abort(signal ? abortReason(signal) : undefined);
+    signal?.addEventListener('abort', forward, { once: true });
+    let timedOut = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<null>((resolve) => {
+      timer = setTimeout(() => {
+        timedOut = true;
+        controller.abort(new DOMException('No answer from api.scryfall.com in 20 s.', 'TimeoutError'));
+        resolve(null);
+      }, REQUEST_TIMEOUT_MS);
+    });
+    const init: RequestInit = { signal: controller.signal };
+    if (request.method) init.method = request.method;
+    if (request.headers) init.headers = request.headers;
+    if (request.body !== undefined) init.body = request.body;
+    try {
+      const fetching = fetchImpl(request.url, init);
+      // After a timeout the aborted fetch rejects, and nobody waits for it.
+      fetching.catch(() => undefined);
+      const response = await Promise.race([fetching, timeout]);
+      return { response: timedOut ? null : response, error: null, timedOut };
+    } catch (error) {
+      return { response: null, error, timedOut };
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', forward);
+    }
+  }
+
   async function send(bucket: BucketState, job: Job): Promise<void> {
     if (job.done) return;
     if (job.signal?.aborted) return finish(job, { error: abortReason(job.signal) });
-    if (job.url === null) {
-      const url = job.pick();
-      if (url === null) return finish(job, { sent: null });
-      if (!isApiUrl(url)) return finish(job, { error: new TypeError(`not an api.scryfall.com address: ${url}`) });
-      job.url = url;
+    if (job.request === null) {
+      const picked = job.pick();
+      if (picked === null) return finish(job, { sent: null });
+      const request = typeof picked === 'string' ? { url: picked } : picked;
+      if (!isApiUrl(request.url)) {
+        return finish(job, { error: new TypeError(`not an api.scryfall.com address: ${request.url}`) });
+      }
+      job.request = request;
     }
     const fetchImpl = resolveFetch();
     if (!fetchImpl) return finish(job, { error: new Error('fetch unavailable') });
 
-    const url = job.url;
+    const request = job.request;
     const run = generation;
-    const startedAt = now();
-    markStart(bucket, startedAt);
+    const noted = stopNumber();
+    markStart(bucket);
     inFlight += 1;
-    let response: Response | null = null;
-    let error: unknown = null;
-    try {
-      response = job.signal ? await fetchImpl(url, { signal: job.signal }) : await fetchImpl(url);
-    } catch (err) {
-      error = err;
-    }
+    const { response, error, timedOut } = await fetchWithTimeout(fetchImpl, request, job.signal);
     if (run !== generation) return;
     inFlight = Math.max(0, inFlight - 1);
     if (inFlight === 0) {
@@ -352,15 +463,16 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
       waiters.forEach((wake) => wake());
     }
 
-    if (job.signal?.aborted) return finish(job, { error: error ?? abortReason(job.signal) });
-    if (!response || response.status === 429) {
+    // A timeout is a failure; the caller's own abort is not.
+    if (!timedOut && job.signal?.aborted) return finish(job, { error: error ?? abortReason(job.signal) });
+    if (timedOut || !response || response.status === 429) {
       // The request that met the stop goes first when the stop ends.
       bucket.jobs.unshift(job);
-      fail(startedAt);
+      fail(noted);
       return;
     }
-    succeed(startedAt);
-    finish(job, { sent: { url, response } });
+    succeed(noted);
+    finish(job, { sent: { url: request.url, response } });
   }
 
   async function drain(bucket: BucketState): Promise<void> {
@@ -393,12 +505,12 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
 
   function next(
     bucketName: Bucket,
-    pick: () => string | null,
+    pick: () => string | ApiRequest | null,
     options: SendOptions = {},
   ): Promise<Sent | null> {
     const bucket = buckets[bucketName];
     return new Promise<Sent | null>((resolve, reject) => {
-      const job: Job = { pick, url: null, signal: options.signal, done: false, resolve, reject };
+      const job: Job = { pick, request: null, signal: options.signal, done: false, resolve, reject };
       const { signal } = options;
       if (signal?.aborted) return finish(job, { error: abortReason(signal) });
       signal?.addEventListener(
@@ -419,7 +531,8 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
 
   async function limitedFetch(url: string, options: SendOptions = {}): Promise<Response> {
     if (!isApiUrl(url)) throw new TypeError(`not an api.scryfall.com address: ${url}`);
-    const sent = await next(bucketOf(url), () => url, options);
+    const { method, headers, body } = options;
+    const sent = await next(bucketOf(url), () => ({ url, method, headers, body }), options);
     return sent!.response;
   }
 

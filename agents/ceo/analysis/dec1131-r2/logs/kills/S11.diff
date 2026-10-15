@@ -1,0 +1,13 @@
+diff --git a/web/src/data/scryfallLimiter.ts b/web/src/data/scryfallLimiter.ts
+index e9e8c9a..23d3a60 100644
+--- a/web/src/data/scryfallLimiter.ts
++++ b/web/src/data/scryfallLimiter.ts
+@@ -467,7 +467,7 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
+     if (!timedOut && job.signal?.aborted) return finish(job, { error: error ?? abortReason(job.signal) });
+     if (timedOut || !response || response.status === 429) {
+       // The request that met the stop goes first when the stop ends.
+-      bucket.jobs.unshift(job);
++      bucket.jobs.push(job);
+       fail(noted);
+       return;
+     }

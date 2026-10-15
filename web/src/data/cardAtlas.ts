@@ -137,7 +137,9 @@ export function localSuggest(
 /**
  * Scryfall autocomplete fallback. ~250ms typical latency. Caller should
  * debounce calls and deduplicate against local suggestions before showing.
- * The request goes through bucket 2 of the limiter (DEC-1102), so a stop holds it.
+ * The request goes through bucket 2 of the limiter (DEC-1102). While a stop
+ * holds, it sends nothing and gives [] at once, and the Atlas keeps its local
+ * suggestions (DEC-1131 N5).
  */
 export async function scryfallSuggest(
   query: string,
@@ -146,6 +148,7 @@ export async function scryfallSuggest(
 ): Promise<string[]> {
   const q = query.trim();
   if (q.length < 2) return [];
+  if (limiter.stoppedUntil() !== null) return [];
   try {
     const r = await limiter.fetch(autocompleteUrl(q), { signal });
     if (!r.ok) return [];

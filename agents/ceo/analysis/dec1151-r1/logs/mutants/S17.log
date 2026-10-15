@@ -1,0 +1,303 @@
+# S17 (count reads own.length) web/src/components/organisms/Shopping.tsx
+# old: '· {own.length} unique · {ownTotal} {cardNoun(ownTotal)}</span>'
+# new: '· {own.length} unique · {own.length} {cardNoun(ownTotal)}</span>'
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/components/Shopping.test.tsx (37 tests | 1 failed) 211ms
+   × Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` owned for an import of two Sol Rings and two decks that hold it 9ms
+     → Unable to find an element with the text: · 1 unique · 2 cards. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<button
+  aria-expanded="false"
+  class="gv1-shop-own-head"
+  type="button"
+>
+  <span
+    aria-hidden="true"
+    class="gv1-mono-xs gv1-dim"
+  >
+    ▸
+  </span>
+  <span
+    class="gv1-serif-xl"
+  >
+    Already own
+  </span>
+  <span
+    class="gv1-mono-xs gv1-dim"
+  >
+    · 
+    1
+     unique · 
+    1
+     
+    cards
+  </span>
+</button>
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 36 passed (37)
+   Start at  17:04:02
+   Duration  607ms (transform 56ms, setup 22ms, collect 73ms, tests 211ms, environment 122ms, prepare 43ms)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > preselects the first deck and renders its non-basic non-commander cards in the buy list
+Warning: An update to ShopRow inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ShopRow (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:223:20)
+    at div
+    at div
+    at section
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > toggles a deck chip selection via aria-pressed
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > selects all decks with the Select all action
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > Clear empties the selection and does not re-select the first deck (DEC-172)
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > excludes brewing decks from the picker by default but includes them via the toggle (DEC-338)
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > keeps brewing decks out of the Built rail even when opted into the picker (DEC-336 follow-up)
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > drops brewing decks from the selection when the toggle is turned back off (DEC-338)
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > hides the Include-brewing toggle when no brewing decks are present (DEC-338)
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > persists imported owned cards in localStorage on mount and removes them from the buy list
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > puts the import control in the tab order, and a click on it clicks the file input (DEC-1083)
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 1 card` to buy for one deck that wants one Sol Ring
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` to buy for two decks that each want one Sol Ring
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 1 card` owned for an import of one Sol Ring and a deck that holds it
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` owned for an import of two Sol Rings and two decks that hold it
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `2 unique · 3 cards` to buy and `1 unique · 1 card` owned when the sections hold different counts
+Warning: An update to Shopping inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:352:28)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` owned for an import of two Sol Rings and two decks that hold it
+TestingLibraryElementError: Unable to find an element with the text: · 1 unique · 2 cards. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<button
+  aria-expanded="false"
+  class="gv1-shop-own-head"
+  type="button"
+>
+  <span
+    aria-hidden="true"
+    class="gv1-mono-xs gv1-dim"
+  >
+    ▸
+  </span>
+  <span
+    class="gv1-serif-xl"
+  >
+    Already own
+  </span>
+  <span
+    class="gv1-mono-xs gv1-dim"
+  >
+    · 
+    1
+     unique · 
+    1
+     
+    cards
+  </span>
+</button>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/components/Shopping.test.tsx:613:32
+    611|       renderShopping([SOLO_A, SOLO_B]);
+    612|       fireEvent.click(screen.getByRole('button', { name: /Select all/i…
+    613|       expect(within(ownHead()).getByText('· 1 unique · 2 cards')).toBe…
+       |                                ^
+    614|     });
+    615| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

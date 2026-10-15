@@ -1,0 +1,14 @@
+diff --git a/web/src/data/cardCache.ts b/web/src/data/cardCache.ts
+index 9f54ff1..bc0e5bf 100644
+--- a/web/src/data/cardCache.ts
++++ b/web/src/data/cardCache.ts
+@@ -465,8 +465,7 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
+       // Another tab may have refreshed the price while this one waited.
+       const stored = readOverlay(wanted.key);
+       if (stored && isLive(stored.priceCheckedAt) && !isLive(overlays.get(wanted.key)?.priceCheckedAt)) {
+-        overlays.set(wanted.key, stored);
+-        recompose(wanted.key);
++        void stored;
+       }
+       if (isLive(overlays.get(wanted.key)?.priceCheckedAt)) wanted.price = false;
+     }
