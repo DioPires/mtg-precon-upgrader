@@ -1,0 +1,65 @@
+# E6 (count reads totalCards) web/src/components/organisms/Engine.tsx
+# old: '{cur.count} {cardNoun(cur.count)} · hover for full frame</div>'
+# new: '{totalCards} {cardNoun(cur.count)} · hover for full frame</div>'
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/components/Engine.test.tsx (3 tests | 2 failed) 39ms
+   × Engine > reads `1 card` for the active role of one card 28ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  1 card · hover for full frame
+Received:
+  ROLE · 01 / 02Commander Engine3 card · hover for full frameSol Ring
+   × Engine > reads `2 cards` for the active role of two cards 9ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  2 cards · hover for full frame
+Received:
+  ROLE · 02 / 02Ramp3 cards · hover for full frameArcane SignetMind Stone
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  17:04:09
+   Duration  421ms (transform 25ms, setup 21ms, collect 36ms, tests 39ms, environment 127ms, prepare 37ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Engine.test.tsx > Engine > reads `1 card` for the active role of one card
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  1 card · hover for full frame
+Received:
+  ROLE · 01 / 02Commander Engine3 card · hover for full frameSol Ring
+ ❯ src/__tests__/components/Engine.test.tsx:29:42
+     27|   it('reads `1 card` for the active role of one card', () => {
+     28|     render(<Engine engine={ENGINE} />);
+     29|     expect(screen.getByRole('tabpanel')).toHaveTextContent('1 card · h…
+       |                                          ^
+     30|   });
+     31| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/components/Engine.test.tsx > Engine > reads `2 cards` for the active role of two cards
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  2 cards · hover for full frame
+Received:
+  ROLE · 02 / 02Ramp3 cards · hover for full frameArcane SignetMind Stone
+ ❯ src/__tests__/components/Engine.test.tsx:35:42
+     33|     render(<Engine engine={ENGINE} />);
+     34|     fireEvent.click(screen.getByRole('tab', { name: /Ramp/ }));
+     35|     expect(screen.getByRole('tabpanel')).toHaveTextContent('2 cards · …
+       |                                          ^
+     36|   });
+     37| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

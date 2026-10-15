@@ -1,0 +1,50 @@
+# H12 (conditional) web/src/lib/cardNoun.ts
+# old: "return count === 1 ? 'card' : 'cards';"
+# new: "return true ? 'card' : 'cards';"
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/lib/cardNoun.test.ts (7 tests | 6 failed) 4ms
+   × cardNoun > gives `cards` for a count of 0 2ms
+     → expected 'card' to be 'cards' // Object.is equality
+   × cardNoun > gives `cards` for a count of 2 0ms
+     → expected 'card' to be 'cards' // Object.is equality
+   × cardNoun > gives `cards` for a count of -1 0ms
+     → expected 'card' to be 'cards' // Object.is equality
+   × cardNoun > gives `cards` for a count of 0.5 0ms
+     → expected 'card' to be 'cards' // Object.is equality
+   × cardNoun > gives `cards` for a count of 1.5 0ms
+     → expected 'card' to be 'cards' // Object.is equality
+   × cardNoun > gives `cards` for a count of NaN 0ms
+     → expected 'card' to be 'cards' // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  17:03:37
+   Duration  322ms (transform 18ms, setup 21ms, collect 9ms, tests 4ms, environment 123ms, prepare 35ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/lib/cardNoun.test.ts > cardNoun > gives `cards` for a count of 0
+ FAIL  src/__tests__/lib/cardNoun.test.ts > cardNoun > gives `cards` for a count of 2
+ FAIL  src/__tests__/lib/cardNoun.test.ts > cardNoun > gives `cards` for a count of -1
+ FAIL  src/__tests__/lib/cardNoun.test.ts > cardNoun > gives `cards` for a count of 0.5
+ FAIL  src/__tests__/lib/cardNoun.test.ts > cardNoun > gives `cards` for a count of 1.5
+ FAIL  src/__tests__/lib/cardNoun.test.ts > cardNoun > gives `cards` for a count of NaN
+AssertionError: expected 'card' to be 'cards' // Object.is equality
+
+Expected: "cards"
+Received: "card"
+
+ ❯ src/__tests__/lib/cardNoun.test.ts:16:29
+     14|   // 1.5 fails `Math.floor` and `Math.trunc`.
+     15|   it.each([0, 2, -1, 0.5, 1.5, NaN])('gives `cards` for a count of %s'…
+     16|     expect(cardNoun(count)).toBe('cards');
+       |                             ^
+     17|   });
+     18| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+

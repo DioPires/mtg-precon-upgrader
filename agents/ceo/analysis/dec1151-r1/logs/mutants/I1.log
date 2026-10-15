@@ -1,0 +1,1117 @@
+# I1 (import removed) web/src/components/organisms/Shopping.tsx
+# old: "import { cardNoun } from '../../lib/cardNoun';\n"
+# new: ''
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/components/Shopping.test.tsx (37 tests | 20 failed) 50ms
+   × Shopping organism > preselects the first deck and renders its non-basic non-commander cards in the buy list 20ms
+     → cardNoun is not defined
+   × Shopping organism > toggles a deck chip selection via aria-pressed 3ms
+     → cardNoun is not defined
+   × Shopping organism > selects all decks with the Select all action 2ms
+     → cardNoun is not defined
+   × Shopping organism > Clear empties the selection and does not re-select the first deck (DEC-172) 2ms
+     → cardNoun is not defined
+   × Shopping organism > excludes brewing decks from the picker by default but includes them via the toggle (DEC-338) 2ms
+     → cardNoun is not defined
+   × Shopping organism > keeps brewing decks out of the Built rail even when opted into the picker (DEC-336 follow-up) 1ms
+     → cardNoun is not defined
+   × Shopping organism > drops brewing decks from the selection when the toggle is turned back off (DEC-338) 1ms
+     → cardNoun is not defined
+   × Shopping organism > hides the Include-brewing toggle when no brewing decks are present (DEC-338) 1ms
+     → cardNoun is not defined
+   × Shopping organism > persists imported owned cards in localStorage on mount and removes them from the buy list 1ms
+     → cardNoun is not defined
+   × Shopping organism > puts the import control in the tab order, and a click on it clicks the file input (DEC-1083) 1ms
+     → cardNoun is not defined
+   × Shopping organism > says that an import adds to the cards loaded, when one file is imported twice (DEC-1094) 1ms
+     → cardNoun is not defined
+   × Shopping organism > counts the file, not the list, when a second file shares one name with the first (DEC-1117 B1) 1ms
+     → cardNoun is not defined
+   × Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` and `1 card loaded` for a one-line file of one copy 1ms
+     → cardNoun is not defined
+   × Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` and `4 cards loaded` for a one-line file of four copies 1ms
+     → cardNoun is not defined
+   × Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` for a one-name file when the list already holds another name (DEC-1139 B1) 1ms
+     → cardNoun is not defined
+   × Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 1 card` to buy for one deck that wants one Sol Ring 1ms
+     → cardNoun is not defined
+   × Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` to buy for two decks that each want one Sol Ring 1ms
+     → cardNoun is not defined
+   × Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 1 card` owned for an import of one Sol Ring and a deck that holds it 1ms
+     → cardNoun is not defined
+   × Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` owned for an import of two Sol Rings and two decks that hold it 3ms
+     → cardNoun is not defined
+   × Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `2 unique · 3 cards` to buy and `1 unique · 1 card` owned when the sections hold different counts 1ms
+     → cardNoun is not defined
+
+ Test Files  1 failed (1)
+      Tests  20 failed | 17 passed (37)
+   Start at  17:04:27
+   Duration  471ms (transform 69ms, setup 21ms, collect 90ms, tests 50ms, environment 132ms, prepare 38ms)
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > preselects the first deck and renders its non-basic non-commander cards in the buy list
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > toggles a deck chip selection via aria-pressed
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > selects all decks with the Select all action
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > Clear empties the selection and does not re-select the first deck (DEC-172)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > excludes brewing decks from the picker by default but includes them via the toggle (DEC-338)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > keeps brewing decks out of the Built rail even when opted into the picker (DEC-336 follow-up)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > drops brewing decks from the selection when the toggle is turned back off (DEC-338)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > hides the Include-brewing toggle when no brewing decks are present (DEC-338)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > persists imported owned cards in localStorage on mount and removes them from the buy list
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > puts the import control in the tab order, and a click on it clicks the file input (DEC-1083)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > says that an import adds to the cards loaded, when one file is imported twice (DEC-1094)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > counts the file, not the list, when a second file shares one name with the first (DEC-1117 B1)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` and `1 card loaded` for a one-line file of one copy
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` and `4 cards loaded` for a one-line file of four copies
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` for a one-name file when the list already holds another name (DEC-1139 B1)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:742:76)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 1 card` to buy for one deck that wants one Sol Ring
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` to buy for two decks that each want one Sol Ring
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 1 card` owned for an import of one Sol Ring and a deck that holds it
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` owned for an import of two Sol Rings and two decks that hold it
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `2 unique · 3 cards` to buy and `1 unique · 1 card` owned when the sections hold different counts
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: cardNoun is not defined]
+    at reportException (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:26599:12) ReferenceError: cardNoun is not defined
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:660:20)
+    at renderWithHooks (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/private/tmp/dec1151-ceo/wt/web/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/private/tmp/dec1151-ceo/wt/web/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+The above error occurred in the <Shopping> component:
+
+    at Shopping (/private/tmp/dec1151-ceo/wt/web/src/components/organisms/Shopping.tsx:350:28)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 20 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > preselects the first deck and renders its non-basic non-commander cards in the buy list
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > toggles a deck chip selection via aria-pressed
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > selects all decks with the Select all action
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > Clear empties the selection and does not re-select the first deck (DEC-172)
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > excludes brewing decks from the picker by default but includes them via the toggle (DEC-338)
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > keeps brewing decks out of the Built rail even when opted into the picker (DEC-336 follow-up)
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > drops brewing decks from the selection when the toggle is turned back off (DEC-338)
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > hides the Include-brewing toggle when no brewing decks are present (DEC-338)
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > puts the import control in the tab order, and a click on it clicks the file input (DEC-1083)
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > says that an import adds to the cards loaded, when one file is imported twice (DEC-1094)
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > counts the file, not the list, when a second file shares one name with the first (DEC-1117 B1)
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` and `1 card loaded` for a one-line file of one copy
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` and `4 cards loaded` for a one-line file of four copies
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the singular noun for a count of one (DEC-1123) > reads `1 unique card` for a one-name file when the list already holds another name (DEC-1139 B1)
+ReferenceError: cardNoun is not defined
+ ❯ Shopping src/components/organisms/Shopping.tsx:742:76
+    740|             <span className="gv1-mono-xs gv1-rune" aria-hidden="true">…
+    741|             <h3 className="gv1-serif-xl">Need to buy</h3>
+    742|             <span className="gv1-mono-xs gv1-dim">· {buy.length} uniqu…
+       |                                                                            ^
+    743|           </div>
+    744|           {buy.length === 0 ? (
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ mountIndeterminateComponent node_modules/react-dom/cjs/react-dom.development.js:20103:13
+ ❯ beginWork node_modules/react-dom/cjs/react-dom.development.js:21626:16
+ ❯ beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ❯ recoverFromConcurrentError node_modules/react-dom/cjs/react-dom.development.js:25889:20
+ ❯ performConcurrentWorkOnRoot node_modules/react-dom/cjs/react-dom.development.js:25789:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/20]⎯
+
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > persists imported owned cards in localStorage on mount and removes them from the buy list
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 1 card` to buy for one deck that wants one Sol Ring
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` to buy for two decks that each want one Sol Ring
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 1 card` owned for an import of one Sol Ring and a deck that holds it
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `1 unique · 2 cards` owned for an import of two Sol Rings and two decks that hold it
+ FAIL  src/__tests__/components/Shopping.test.tsx > Shopping organism > the count of cards in the Need to buy and Already own headers (DEC-1142) > reads `2 unique · 3 cards` to buy and `1 unique · 1 card` owned when the sections hold different counts
+ReferenceError: cardNoun is not defined
+ ❯ Shopping src/components/organisms/Shopping.tsx:660:20
+    658|           <span className="gv1-mono-xs gv1-dim">
+    659|             {owned.size > 0
+    660|               ? `${ownedCards} ${cardNoun(ownedCards)} loaded — `
+       |                    ^
+    661|                 + (savedLocally ? 'saved locally' : 'NOT saved (browse…
+    662|               : '// .csv (Name,Quantity) or .txt (one card per line)'}
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ mountIndeterminateComponent node_modules/react-dom/cjs/react-dom.development.js:20103:13
+ ❯ beginWork node_modules/react-dom/cjs/react-dom.development.js:21626:16
+ ❯ beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ❯ recoverFromConcurrentError node_modules/react-dom/cjs/react-dom.development.js:25889:20
+ ❯ performConcurrentWorkOnRoot node_modules/react-dom/cjs/react-dom.development.js:25789:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/20]⎯
+

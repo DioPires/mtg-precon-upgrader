@@ -1,0 +1,1917 @@
+# C7 (space dropped) web/src/routes/ComboLab.tsx
+# old: '`Loaded ${deck.cardNames.length} ${cardNoun(deck.cardNames.length)} from ${deck.site}${'
+# new: '`Loaded ${deck.cardNames.length} ${cardNoun(deck.cardNames.length)} from${deck.site}${'
+# exit 1
+
+
+ RUN  v2.1.9 /private/tmp/dec1151-ceo/wt/web
+
+ ❯ src/__tests__/routes/ComboLab.test.tsx (2 tests | 2 failed) 68ms
+   × the Combo Lab load message > reads `Loaded 1 card` for a deck of one card 53ms
+     → Unable to find an element with the text: Loaded 1 card from archidekt — “Test”. Review, then Analyze.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      data-gv1-screen="combolab"
+    >
+      <header
+        class="gv1-lab-hero"
+      >
+        <div>
+          <div
+            class="gv1-lab-hero-eyebrow"
+          >
+            <span
+              aria-hidden="true"
+              class="gv1-rune"
+            >
+              § XII
+            </span>
+            <span
+              class="gv1-mono-xs gv1-dim"
+            >
+              · curated combo detection · commander spellbook · three tiers of certainty
+            </span>
+          </div>
+          <h1
+            class="gv1-lab-title"
+          >
+            The 
+            <em>
+              Combo Lab
+            </em>
+          </h1>
+        </div>
+        <p
+          class="gv1-lab-lede"
+        >
+          Every chain the corpus knows about — what’s 
+          <strong>
+            present
+          </strong>
+          , what’s
+           
+          <strong>
+            one card away
+          </strong>
+          , and what would close it. Curated findings are cited; computed findings say which model verified them; heuristics never wear a verified badge.
+        </p>
+      </header>
+      <div
+        class="gv1-lab-layout"
+      >
+        <aside
+          aria-label="Combo Lab controls"
+          class="gv1-lab-rail"
+        >
+          <div
+            aria-label="Analysis mode"
+            class="gv1-lab-block gv1-lab-modes"
+            role="group"
+          >
+            <button
+              aria-pressed="false"
+              class="gv1-lab-mode"
+              type="button"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+              >
+                ◈ mode i
+              </span>
+              <span
+                class="gv1-lab-mode-name"
+              >
+                Fleet deck
+              </span>
+            </button>
+            <button
+              aria-pressed="true"
+              class="gv1-lab-mode"
+              type="button"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+              >
+                ◈ mode ii
+              </span>
+              <span
+                class="gv1-lab-mode-name"
+              >
+                Paste decklist
+              </span>
+            </button>
+          </div>
+          <div
+            class="gv1-lab-block"
+          >
+            <div
+              class="gv1-lab-block-head"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim"
+              >
+                Any decklist · stays in your browser
+              </span>
+            </div>
+            <div
+              class="gv1-lab-form"
+            >
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Deck URL — Moxfield or Archidekt (optional)
+                </span>
+                <div
+                  class="gv1-lab-url-row"
+                >
+                  <input
+                    class="gv1-lab-input"
+                    placeholder="https://moxfield.com/decks/… or https://archidekt.com/decks/…"
+                    value="https://archidekt.com/decks/1/test"
+                  />
+                  <button
+                    class="gv1-lab-more"
+                    type="button"
+                  >
+                    Load
+                  </button>
+                </div>
+                <span
+                  class="gv1-lab-note gv1-lab-url-msg"
+                >
+                  Loaded 1 card fromarchidekt — “Test”. Review, then Analyze.
+                </span>
+              </label>
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Commander(s) — optional
+                </span>
+                <input
+                  class="gv1-lab-input"
+                  placeholder="e.g. Meren of Clan Nel Toth"
+                  value="Kraum, Ludevic’s Opus
+Tymna the Weaver"
+                />
+              </label>
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Decklist — one card per line, quantities ok
+                </span>
+                <textarea
+                  class="gv1-lab-textarea"
+                  placeholder="1 Gravecrawler
+1 Phyrexian Altar
+1 Blood Artist
+…"
+                  rows="11"
+                >
+                  Sol Ring
+                </textarea>
+              </label>
+              <div
+                class="gv1-lab-form-foot"
+              >
+                <button
+                  aria-busy="false"
+                  class="gv1-lab-analyze"
+                  type="button"
+                >
+                  Analyze ⟶
+                </button>
+                <button
+                  class="gv1-lab-more"
+                  type="button"
+                >
+                  Load example
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="gv1-lab-rail-pin"
+          >
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Contents
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  § XII
+                </span>
+              </div>
+              <nav
+                aria-label="Report contents"
+                class="gv1-lab-toc"
+              >
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    ◈
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    The Disclosure
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  />
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·a
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Combos Present
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·b
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Verified Loops
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·c
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    One–Two Cards Away
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·d
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Synergy Candidates
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·e
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Complete a Near-Miss
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+              </nav>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  The three tiers
+                </span>
+              </div>
+              <dl
+                class="gv1-lab-kv"
+              >
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-a"
+                  >
+                    A
+                  </span>
+                </dt>
+                <dd>
+                  curated · human-verified (Spellbook)
+                </dd>
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-b"
+                  >
+                    B
+                  </span>
+                </dt>
+                <dd>
+                  computed · verified under the model
+                </dd>
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-c"
+                  >
+                    C
+                  </span>
+                </dt>
+                <dd>
+                  heuristic · speculative couplings
+                </dd>
+              </dl>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Scribe the findings
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  —
+                </span>
+              </div>
+              <div
+                class="gv1-lab-export"
+              >
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  Copy text
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  Copy markdown
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  ⇣ .txt
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  ⇣ .md
+                </button>
+              </div>
+            </div>
+            <p
+              class="gv1-lab-smallprint"
+            >
+              Combo data © Commander Spellbook (CC-BY-SA) · card data © Scryfall · not affiliated with or endorsed by Wizards of the Coast. Ownership flags read the collection imported in § IX Shopping — nothing leaves the page.
+            </p>
+          </div>
+        </aside>
+        <div
+          class="gv1-lab-report"
+        >
+          <div
+            class="gv1-empty gv1-lab-unscribed"
+          >
+            <span
+              class="gv1-empty-title"
+            >
+              Paste a decklist to consult the corpus
+            </span>
+            <span>
+              One card per line, quantities welcome. The match runs entirely in your browser.
+            </span>
+            <span
+              class="gv1-empty-hint"
+            >
+              or press “load example” for a classic combo pile
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+   × the Combo Lab load message > reads `Loaded 2 cards` for a deck of two cards 14ms
+     → Unable to find an element with the text: Loaded 2 cards from archidekt — “Test”. Review, then Analyze.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      data-gv1-screen="combolab"
+    >
+      <header
+        class="gv1-lab-hero"
+      >
+        <div>
+          <div
+            class="gv1-lab-hero-eyebrow"
+          >
+            <span
+              aria-hidden="true"
+              class="gv1-rune"
+            >
+              § XII
+            </span>
+            <span
+              class="gv1-mono-xs gv1-dim"
+            >
+              · curated combo detection · commander spellbook · three tiers of certainty
+            </span>
+          </div>
+          <h1
+            class="gv1-lab-title"
+          >
+            The 
+            <em>
+              Combo Lab
+            </em>
+          </h1>
+        </div>
+        <p
+          class="gv1-lab-lede"
+        >
+          Every chain the corpus knows about — what’s 
+          <strong>
+            present
+          </strong>
+          , what’s
+           
+          <strong>
+            one card away
+          </strong>
+          , and what would close it. Curated findings are cited; computed findings say which model verified them; heuristics never wear a verified badge.
+        </p>
+      </header>
+      <div
+        class="gv1-lab-layout"
+      >
+        <aside
+          aria-label="Combo Lab controls"
+          class="gv1-lab-rail"
+        >
+          <div
+            aria-label="Analysis mode"
+            class="gv1-lab-block gv1-lab-modes"
+            role="group"
+          >
+            <button
+              aria-pressed="false"
+              class="gv1-lab-mode"
+              type="button"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+              >
+                ◈ mode i
+              </span>
+              <span
+                class="gv1-lab-mode-name"
+              >
+                Fleet deck
+              </span>
+            </button>
+            <button
+              aria-pressed="true"
+              class="gv1-lab-mode"
+              type="button"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+              >
+                ◈ mode ii
+              </span>
+              <span
+                class="gv1-lab-mode-name"
+              >
+                Paste decklist
+              </span>
+            </button>
+          </div>
+          <div
+            class="gv1-lab-block"
+          >
+            <div
+              class="gv1-lab-block-head"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim"
+              >
+                Any decklist · stays in your browser
+              </span>
+            </div>
+            <div
+              class="gv1-lab-form"
+            >
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Deck URL — Moxfield or Archidekt (optional)
+                </span>
+                <div
+                  class="gv1-lab-url-row"
+                >
+                  <input
+                    class="gv1-lab-input"
+                    placeholder="https://moxfield.com/decks/… or https://archidekt.com/decks/…"
+                    value="https://archidekt.com/decks/1/test"
+                  />
+                  <button
+                    class="gv1-lab-more"
+                    type="button"
+                  >
+                    Load
+                  </button>
+                </div>
+                <span
+                  class="gv1-lab-note gv1-lab-url-msg"
+                >
+                  Loaded 2 cards fromarchidekt — “Test”. Review, then Analyze.
+                </span>
+              </label>
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Commander(s) — optional
+                </span>
+                <input
+                  class="gv1-lab-input"
+                  placeholder="e.g. Meren of Clan Nel Toth"
+                  value="Meren of Clan Nel Toth"
+                />
+              </label>
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Decklist — one card per line, quantities ok
+                </span>
+                <textarea
+                  class="gv1-lab-textarea"
+                  placeholder="1 Gravecrawler
+1 Phyrexian Altar
+1 Blood Artist
+…"
+                  rows="11"
+                >
+                  Sol Ring
+Arcane Signet
+                </textarea>
+              </label>
+              <div
+                class="gv1-lab-form-foot"
+              >
+                <button
+                  aria-busy="false"
+                  class="gv1-lab-analyze"
+                  type="button"
+                >
+                  Analyze ⟶
+                </button>
+                <button
+                  class="gv1-lab-more"
+                  type="button"
+                >
+                  Load example
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="gv1-lab-rail-pin"
+          >
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Contents
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  § XII
+                </span>
+              </div>
+              <nav
+                aria-label="Report contents"
+                class="gv1-lab-toc"
+              >
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    ◈
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    The Disclosure
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  />
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·a
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Combos Present
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·b
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Verified Loops
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·c
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    One–Two Cards Away
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·d
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Synergy Candidates
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·e
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Complete a Near-Miss
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+              </nav>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  The three tiers
+                </span>
+              </div>
+              <dl
+                class="gv1-lab-kv"
+              >
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-a"
+                  >
+                    A
+                  </span>
+                </dt>
+                <dd>
+                  curated · human-verified (Spellbook)
+                </dd>
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-b"
+                  >
+                    B
+                  </span>
+                </dt>
+                <dd>
+                  computed · verified under the model
+                </dd>
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-c"
+                  >
+                    C
+                  </span>
+                </dt>
+                <dd>
+                  heuristic · speculative couplings
+                </dd>
+              </dl>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Scribe the findings
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  —
+                </span>
+              </div>
+              <div
+                class="gv1-lab-export"
+              >
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  Copy text
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  Copy markdown
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  ⇣ .txt
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  ⇣ .md
+                </button>
+              </div>
+            </div>
+            <p
+              class="gv1-lab-smallprint"
+            >
+              Combo data © Commander Spellbook (CC-BY-SA) · card data © Scryfall · not affiliated with or endorsed by Wizards of the Coast. Ownership flags read the collection imported in § IX Shopping — nothing leaves the page.
+            </p>
+          </div>
+        </aside>
+        <div
+          class="gv1-lab-report"
+        >
+          <div
+            class="gv1-empty gv1-lab-unscribed"
+          >
+            <span
+              class="gv1-empty-title"
+            >
+              Paste a decklist to consult the corpus
+            </span>
+            <span>
+              One card per line, quantities welcome. The match runs entirely in your browser.
+            </span>
+            <span
+              class="gv1-empty-hint"
+            >
+              or press “load example” for a classic combo pile
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  17:04:17
+   Duration  531ms (transform 95ms, setup 20ms, collect 133ms, tests 68ms, environment 116ms, prepare 39ms)
+
+stderr | src/__tests__/routes/ComboLab.test.tsx > the Combo Lab load message > reads `Loaded 1 card` for a deck of one card
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the Combo Lab load message > reads `Loaded 1 card` for a deck of one card
+TestingLibraryElementError: Unable to find an element with the text: Loaded 1 card from archidekt — “Test”. Review, then Analyze.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      data-gv1-screen="combolab"
+    >
+      <header
+        class="gv1-lab-hero"
+      >
+        <div>
+          <div
+            class="gv1-lab-hero-eyebrow"
+          >
+            <span
+              aria-hidden="true"
+              class="gv1-rune"
+            >
+              § XII
+            </span>
+            <span
+              class="gv1-mono-xs gv1-dim"
+            >
+              · curated combo detection · commander spellbook · three tiers of certainty
+            </span>
+          </div>
+          <h1
+            class="gv1-lab-title"
+          >
+            The 
+            <em>
+              Combo Lab
+            </em>
+          </h1>
+        </div>
+        <p
+          class="gv1-lab-lede"
+        >
+          Every chain the corpus knows about — what’s 
+          <strong>
+            present
+          </strong>
+          , what’s
+           
+          <strong>
+            one card away
+          </strong>
+          , and what would close it. Curated findings are cited; computed findings say which model verified them; heuristics never wear a verified badge.
+        </p>
+      </header>
+      <div
+        class="gv1-lab-layout"
+      >
+        <aside
+          aria-label="Combo Lab controls"
+          class="gv1-lab-rail"
+        >
+          <div
+            aria-label="Analysis mode"
+            class="gv1-lab-block gv1-lab-modes"
+            role="group"
+          >
+            <button
+              aria-pressed="false"
+              class="gv1-lab-mode"
+              type="button"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+              >
+                ◈ mode i
+              </span>
+              <span
+                class="gv1-lab-mode-name"
+              >
+                Fleet deck
+              </span>
+            </button>
+            <button
+              aria-pressed="true"
+              class="gv1-lab-mode"
+              type="button"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+              >
+                ◈ mode ii
+              </span>
+              <span
+                class="gv1-lab-mode-name"
+              >
+                Paste decklist
+              </span>
+            </button>
+          </div>
+          <div
+            class="gv1-lab-block"
+          >
+            <div
+              class="gv1-lab-block-head"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim"
+              >
+                Any decklist · stays in your browser
+              </span>
+            </div>
+            <div
+              class="gv1-lab-form"
+            >
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Deck URL — Moxfield or Archidekt (optional)
+                </span>
+                <div
+                  class="gv1-lab-url-row"
+                >
+                  <input
+                    class="gv1-lab-input"
+                    placeholder="https://moxfield.com/decks/… or https://archidekt.com/decks/…"
+                    value="https://archidekt.com/decks/1/test"
+                  />
+                  <button
+                    class="gv1-lab-more"
+                    type="button"
+                  >
+                    Load
+                  </button>
+                </div>
+                <span
+                  class="gv1-lab-note gv1-lab-url-msg"
+                >
+                  Loaded 1 card fromarchidekt — “Test”. Review, then Analyze.
+                </span>
+              </label>
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Commander(s) — optional
+                </span>
+                <input
+                  class="gv1-lab-input"
+                  placeholder="e.g. Meren of Clan Nel Toth"
+                  value="Kraum, Ludevic’s Opus
+Tymna the Weaver"
+                />
+              </label>
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Decklist — one card per line, quantities ok
+                </span>
+                <textarea
+                  class="gv1-lab-textarea"
+                  placeholder="1 Gravecrawler
+1 Phyrexian Altar
+1 Blood Artist
+…"
+                  rows="11"
+                >
+                  Sol Ring
+                </textarea>
+              </label>
+              <div
+                class="gv1-lab-form-foot"
+              >
+                <button
+                  aria-busy="false"
+                  class="gv1-lab-analyze"
+                  type="button"
+                >
+                  Analyze ⟶
+                </button>
+                <button
+                  class="gv1-lab-more"
+                  type="button"
+                >
+                  Load example
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="gv1-lab-rail-pin"
+          >
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Contents
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  § XII
+                </span>
+              </div>
+              <nav
+                aria-label="Report contents"
+                class="gv1-lab-toc"
+              >
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    ◈
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    The Disclosure
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  />
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·a
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Combos Present
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·b
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Verified Loops
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·c
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    One–Two Cards Away
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·d
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Synergy Candidates
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·e
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Complete a Near-Miss
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+              </nav>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  The three tiers
+                </span>
+              </div>
+              <dl
+                class="gv1-lab-kv"
+              >
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-a"
+                  >
+                    A
+                  </span>
+                </dt>
+                <dd>
+                  curated · human-verified (Spellbook)
+                </dd>
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-b"
+                  >
+                    B
+                  </span>
+                </dt>
+                <dd>
+                  computed · verified under the model
+                </dd>
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-c"
+                  >
+                    C
+                  </span>
+                </dt>
+                <dd>
+                  heuristic · speculative couplings
+                </dd>
+              </dl>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Scribe the findings
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  —
+                </span>
+              </div>
+              <div
+                class="gv1-lab-export"
+              >
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  Copy text
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  Copy markdown
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  ⇣ .txt
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  ⇣ .md
+                </button>
+              </div>
+            </div>
+            <p
+              class="gv1-lab-smallprint"
+            >
+              Combo data © Commander Spellbook (CC-BY-SA) · card data © Scryfall · not affiliated with or endorsed by Wizards of the Coast. Ownership flags read the collection imported in § IX Shopping — nothing leaves the page.
+            </p>
+          </div>
+        </aside>
+        <div
+          class="gv1-lab-report"
+        >
+          <div
+            class="gv1-empty gv1-lab-unscribed"
+          >
+            <span
+              class="gv1-empty-title"
+            >
+              Paste a decklist to consult the corpus
+            </span>
+            <span>
+              One card per line, quantities welcome. The match runs entirely in your browser.
+            </span>
+            <span
+              class="gv1-empty-hint"
+            >
+              or press “load example” for a classic combo pile
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/routes/ComboLab.test.tsx:45:19
+     43|   it('reads `Loaded 1 card` for a deck of one card', async () => {
+     44|     await load(deck(['Sol Ring'], ['Kraum, Ludevic’s Opus', 'Tymna the…
+     45|     expect(screen.getByText('Loaded 1 card from archidekt — “Test”. Re…
+       |                   ^
+     46|   });
+     47| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the Combo Lab load message > reads `Loaded 2 cards` for a deck of two cards
+TestingLibraryElementError: Unable to find an element with the text: Loaded 2 cards from archidekt — “Test”. Review, then Analyze.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      data-gv1-screen="combolab"
+    >
+      <header
+        class="gv1-lab-hero"
+      >
+        <div>
+          <div
+            class="gv1-lab-hero-eyebrow"
+          >
+            <span
+              aria-hidden="true"
+              class="gv1-rune"
+            >
+              § XII
+            </span>
+            <span
+              class="gv1-mono-xs gv1-dim"
+            >
+              · curated combo detection · commander spellbook · three tiers of certainty
+            </span>
+          </div>
+          <h1
+            class="gv1-lab-title"
+          >
+            The 
+            <em>
+              Combo Lab
+            </em>
+          </h1>
+        </div>
+        <p
+          class="gv1-lab-lede"
+        >
+          Every chain the corpus knows about — what’s 
+          <strong>
+            present
+          </strong>
+          , what’s
+           
+          <strong>
+            one card away
+          </strong>
+          , and what would close it. Curated findings are cited; computed findings say which model verified them; heuristics never wear a verified badge.
+        </p>
+      </header>
+      <div
+        class="gv1-lab-layout"
+      >
+        <aside
+          aria-label="Combo Lab controls"
+          class="gv1-lab-rail"
+        >
+          <div
+            aria-label="Analysis mode"
+            class="gv1-lab-block gv1-lab-modes"
+            role="group"
+          >
+            <button
+              aria-pressed="false"
+              class="gv1-lab-mode"
+              type="button"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+              >
+                ◈ mode i
+              </span>
+              <span
+                class="gv1-lab-mode-name"
+              >
+                Fleet deck
+              </span>
+            </button>
+            <button
+              aria-pressed="true"
+              class="gv1-lab-mode"
+              type="button"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+              >
+                ◈ mode ii
+              </span>
+              <span
+                class="gv1-lab-mode-name"
+              >
+                Paste decklist
+              </span>
+            </button>
+          </div>
+          <div
+            class="gv1-lab-block"
+          >
+            <div
+              class="gv1-lab-block-head"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim"
+              >
+                Any decklist · stays in your browser
+              </span>
+            </div>
+            <div
+              class="gv1-lab-form"
+            >
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Deck URL — Moxfield or Archidekt (optional)
+                </span>
+                <div
+                  class="gv1-lab-url-row"
+                >
+                  <input
+                    class="gv1-lab-input"
+                    placeholder="https://moxfield.com/decks/… or https://archidekt.com/decks/…"
+                    value="https://archidekt.com/decks/1/test"
+                  />
+                  <button
+                    class="gv1-lab-more"
+                    type="button"
+                  >
+                    Load
+                  </button>
+                </div>
+                <span
+                  class="gv1-lab-note gv1-lab-url-msg"
+                >
+                  Loaded 2 cards fromarchidekt — “Test”. Review, then Analyze.
+                </span>
+              </label>
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Commander(s) — optional
+                </span>
+                <input
+                  class="gv1-lab-input"
+                  placeholder="e.g. Meren of Clan Nel Toth"
+                  value="Meren of Clan Nel Toth"
+                />
+              </label>
+              <label
+                class="gv1-lab-field"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Decklist — one card per line, quantities ok
+                </span>
+                <textarea
+                  class="gv1-lab-textarea"
+                  placeholder="1 Gravecrawler
+1 Phyrexian Altar
+1 Blood Artist
+…"
+                  rows="11"
+                >
+                  Sol Ring
+Arcane Signet
+                </textarea>
+              </label>
+              <div
+                class="gv1-lab-form-foot"
+              >
+                <button
+                  aria-busy="false"
+                  class="gv1-lab-analyze"
+                  type="button"
+                >
+                  Analyze ⟶
+                </button>
+                <button
+                  class="gv1-lab-more"
+                  type="button"
+                >
+                  Load example
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="gv1-lab-rail-pin"
+          >
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Contents
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  § XII
+                </span>
+              </div>
+              <nav
+                aria-label="Report contents"
+                class="gv1-lab-toc"
+              >
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    ◈
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    The Disclosure
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  />
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·a
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Combos Present
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·b
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Verified Loops
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·c
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    One–Two Cards Away
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·d
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Synergy Candidates
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+                <button
+                  class="gv1-lab-toc-row"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-toc-folio"
+                  >
+                    XII·e
+                  </span>
+                  <span
+                    class="gv1-lab-toc-label"
+                  >
+                    Complete a Near-Miss
+                  </span>
+                  <span
+                    class="gv1-lab-toc-n"
+                  >
+                    —
+                  </span>
+                </button>
+              </nav>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  The three tiers
+                </span>
+              </div>
+              <dl
+                class="gv1-lab-kv"
+              >
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-a"
+                  >
+                    A
+                  </span>
+                </dt>
+                <dd>
+                  curated · human-verified (Spellbook)
+                </dd>
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-b"
+                  >
+                    B
+                  </span>
+                </dt>
+                <dd>
+                  computed · verified under the model
+                </dd>
+                <dt>
+                  <span
+                    class="gv1-lab-tier gv1-lab-tier-c"
+                  >
+                    C
+                  </span>
+                </dt>
+                <dd>
+                  heuristic · speculative couplings
+                </dd>
+              </dl>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Scribe the findings
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  —
+                </span>
+              </div>
+              <div
+                class="gv1-lab-export"
+              >
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  Copy text
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  Copy markdown
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  ⇣ .txt
+                </button>
+                <button
+                  class="gv1-lab-export-btn"
+                  disabled=""
+                  type="button"
+                >
+                  ⇣ .md
+                </button>
+              </div>
+            </div>
+            <p
+              class="gv1-lab-smallprint"
+            >
+              Combo data © Commander Spellbook (CC-BY-SA) · card data © Scryfall · not affiliated with or endorsed by Wizards of the Coast. Ownership flags read the collection imported in § IX Shopping — nothing leaves the page.
+            </p>
+          </div>
+        </aside>
+        <div
+          class="gv1-lab-report"
+        >
+          <div
+            class="gv1-empty gv1-lab-unscribed"
+          >
+            <span
+              class="gv1-empty-title"
+            >
+              Paste a decklist to consult the corpus
+            </span>
+            <span>
+              One card per line, quantities welcome. The match runs entirely in your browser.
+            </span>
+            <span
+              class="gv1-empty-hint"
+            >
+              or press “load example” for a classic combo pile
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/routes/ComboLab.test.tsx:50:19
+     48|   it('reads `Loaded 2 cards` for a deck of two cards', async () => {
+     49|     await load(deck(['Sol Ring', 'Arcane Signet'], ['Meren of Clan Nel…
+     50|     expect(screen.getByText('Loaded 2 cards from archidekt — “Test”. R…
+       |                   ^
+     51|   });
+     52| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
