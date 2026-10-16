@@ -112,6 +112,15 @@ describe('readOwnedEntries (DEC-1150)', () => {
     }
   });
 
+  it('keeps a stored name with spaces around it as stored', () => {
+    localStorage.setItem(OWNED_KEY, JSON.stringify([[' Sol Ring ', 1]]));
+    try {
+      expect(readOwnedEntries()).toEqual([[' Sol Ring ', 1]]);
+    } finally {
+      localStorage.removeItem(OWNED_KEY);
+    }
+  });
+
   it.each([
     [[null, 2]],
     [[{ n: 'Sol Ring' }, 2]],

@@ -170,6 +170,7 @@ describe('the owned list in Complete a Near-Miss (DEC-1150)', () => {
     [[['Sol Ring', 2]], '2 owned cards on file'],
     [[['Sol Ring', 1]], '1 owned card on file'],
     [[['Sol Ring', -1], ['Arcane Signet', 1]], '1 owned card on file'],
+    [[['Sol Ring', 2], ['Arcane Signet', 1]], '3 owned cards on file'],
   ])('counts the cards of the store %j: %s', async (store, text) => {
     const panel = await openFleet(store);
     const chip = within(panel).getByRole('button', { name: 'Owned only' });
