@@ -100,6 +100,16 @@ class TutorRetagTests(unittest.TestCase):
         )
         self.assertIsNone(atr.classify_tutor_roles(card, "utility"))
 
+    def test_named_search_beside_an_open_search_gets_a_tutor_retag(self):
+        card = _card(
+            "Ilsa, Grove Warden",
+            "Legendary Planeswalker — Ilsa",
+            "+1: Search your library for a card named Ilsa's Chosen, put it onto the battlefield, "
+            "then shuffle.\n−7: Search your library for any number of Elf creature cards, put them "
+            "onto the battlefield, then shuffle.",
+        )
+        self.assertEqual(atr.classify_tutor_roles(card, None), ("engine", "tutor", 0.75))
+
 
 class GraveyardExileTests(unittest.TestCase):
     """A target that is a card in a graveyard is not removal-spot."""
@@ -181,6 +191,15 @@ class GraveyardExileTests(unittest.TestCase):
                 card = _card("Gravewake Exchange", "Sorcery", oracle_text)
                 self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
+    def test_graveyard_card_after_you_control_is_another_clause(self):
+        # "you control" ends the target too; the exile of your own creature is a sac outlet.
+        card = _card(
+            "Bonecall Offering",
+            "Instant",
+            "Exile target creature you control and return a creature card from your graveyard to your hand.",
+        )
+        self.assertEqual(atr.classify(card), ("utility", 0.6))
+
 
 class BlinkTests(unittest.TestCase):
     """A target that its own sentence returns to the battlefield is not removed."""
@@ -226,6 +245,33 @@ class BlinkTests(unittest.TestCase):
             "Exile target creature you control, then return it to the battlefield under your control.",
         )
         self.assertEqual(atr.classify(card), ("protection", 0.8))
+
+    def test_blink_that_returns_those_cards_is_protection(self):
+        card = _card(
+            "Twinfold Shelter",
+            "Instant",
+            "Exile target artifact you control and target creature you control, then return those "
+            "cards to the battlefield under their owners' control.",
+        )
+        self.assertEqual(atr.classify(card), ("protection", 0.8))
+
+    def test_exile_of_your_creature_with_a_later_return_is_utility(self):
+        # The return is in another sentence, so this is no blink, and the exile is a sac outlet.
+        card = _card(
+            "Stasis Reliquary",
+            "Artifact",
+            "{2}, {T}: Exile target creature you control.\nSacrifice this artifact: Return each card "
+            "exiled with it to the battlefield under its owner's control.",
+        )
+        self.assertEqual(atr.classify(card), ("utility", 0.6))
+
+    def test_return_to_its_owners_hand_is_not_a_blink(self):
+        card = _card(
+            "Banishing Rebuke",
+            "Instant",
+            "Exile target creature an opponent controls, then return it to its owner's hand.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
 
 class ProtectionPatternTests(unittest.TestCase):
