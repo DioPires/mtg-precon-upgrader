@@ -3062,8 +3062,10 @@ em { font-style: italic; color: var(--gv1-gold); }
 /* DEC-1008: the full topbar needs 1206px. Shed its two decorative ends before
    it can spill past the viewport — right meta first, then the prompt.
    DEC-1019: the two ends wrap to two lines below 1326px, so the right meta
-   goes first at 1330px. */
-@media (max-width: 1330px) {
+   goes first at 1330px.
+   DEC-1171: on Linux (CI's ubuntu-24.04 Chromium) with JetBrains Mono the two
+   ends wrap below 1373px, so the right meta goes first at 1380px. */
+@media (max-width: 1380px) {
   .gv1-topbar-right { display: none; }
 }
 @media (max-width: 1100px) {
