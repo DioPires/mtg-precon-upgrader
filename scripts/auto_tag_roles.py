@@ -212,7 +212,12 @@ _SAC_OUTLET = re.compile(r"(?:destroy|exile) target (?:creature|permanent) you c
 
 def _is_blink(oracle: str, t: re.Match) -> bool:
     end = min(i for i in (oracle.find(".", t.end()), oracle.find("\n", t.end()), len(oracle)) if i >= 0)
-    return bool(_BLINK_RETURN.search(oracle, t.end(), end))
+    r = _BLINK_RETURN.search(oracle, t.end(), end)
+    if r and re.match(r"(?: tapped)? under your control", oracle[r.end():end]):
+        # A return "under your control" is a blink only of a card that was yours;
+        # of another player's card it is a steal (DEC-1184).
+        return bool(re.match(r"[^,]*? you (?:control|own)\b", oracle[t.end():r.start()]))
+    return bool(r)
 
 
 def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | None:

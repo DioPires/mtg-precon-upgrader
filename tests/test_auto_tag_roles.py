@@ -198,6 +198,23 @@ class BlinkTests(unittest.TestCase):
         )
         self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
+    def test_return_under_your_control_of_an_opponents_creature_is_removal_spot(self):
+        # The card comes back under your control: a steal, not a blink.
+        card = _card(
+            "Rivenmark Usurpation",
+            "Instant",
+            "Exile target creature an opponent controls, then return it to the battlefield under your control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_return_under_your_control_of_your_creature_is_protection(self):
+        card = _card(
+            "Hollowlight Return",
+            "Instant",
+            "Exile target creature you control, then return it to the battlefield under your control.",
+        )
+        self.assertEqual(atr.classify(card), ("protection", 0.8))
+
 
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
