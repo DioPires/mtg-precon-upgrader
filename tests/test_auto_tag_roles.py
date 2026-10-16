@@ -169,6 +169,18 @@ class GraveyardExileTests(unittest.TestCase):
                 card = _card("Thornmere Exarch", "Creature — Elf Cleric", oracle_text)
                 self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
+    def test_graveyard_card_after_then_is_another_clause(self):
+        # ", then" ends the target; the graveyard card belongs to the next clause.
+        for oracle_text in (
+            "Exile target creature, then its controller returns a creature card from their "
+            "graveyard to the battlefield.",
+            "Exile target creature, then you may return a creature card from your graveyard to "
+            "your hand.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Gravewake Exchange", "Sorcery", oracle_text)
+                self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
 
 class BlinkTests(unittest.TestCase):
     """A target that its own sentence returns to the battlefield is not removed."""
