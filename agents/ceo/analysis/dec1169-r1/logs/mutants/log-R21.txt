@@ -1,0 +1,1124 @@
+
+ RUN  v2.1.9 /private/tmp/dec1169-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (34 tests | 3 failed) 217ms
+   × DeckSelector focus after a key switch (DEC-1135) > moves no focus at a deck change that no key started from nothing focused, and moves it off the old pill after a key switch 14ms
+     → expected <button role="tab" …(6)>…(5)</button> to be <body><div>…(1)</div></body> // Object.is equality
+   × DeckSelector focus after a deck change that no key started (DEC-1146) > moves focus to the active pill when the focused element left the page 7ms
+     → expected <body><div>…(3)</div></body> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+   × DeckSelector focus after a deck change that no key started (DEC-1146) > moves no focus when nothing had focus before the change 8ms
+     → expected <button role="tab" …(6)>…(5)</button> to be <body><div>…(3)</div></body> // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 31 passed (34)
+   Start at  00:00:34
+   Duration  729ms (transform 46ms, setup 29ms, collect 61ms, tests 217ms, environment 190ms, prepare 59ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a key switch (DEC-1135) > moves no focus at a deck change that no key started from nothing focused, and moves it off the old pill after a key switch
+AssertionError: expected <button role="tab" …(6)>…(5)</button> to be <body><div>…(1)</div></body> // Object.is equality
+
+- Expected
++ Received
+
+- <body>
+-   <div>
+-     <nav
+-       aria-label="Deck selector"
+-       class="gv1-selector"
+-       data-at-end="true"
+-       role="tablist"
+-     >
+-       <div
+-         class="gv1-selector-head"
+-       >
+-         <div
+-           class="gv1-selector-head-l"
+-         >
+-           <span
+-             class="gv1-mono-xs gv1-rune"
+-           >
+-             <span
+-               aria-hidden="true"
+-             >
+-               ◈ 
+-             </span>
+-             TOMOS
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-dim"
+-           >
+-             — 
+-             5
+-              indexed · 
+-             5
+-              scribed
+-           </span>
+-         </div>
+-         <div
+-           class="gv1-selector-head-r"
+-         >
+-           <span
+-             class="gv1-mono-xs gv1-dim"
+-           >
+-             filter:
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-chip gv1-chip-active"
+-           >
+-             all
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-chip"
+-           >
+-             mono
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-chip"
+-           >
+-             multicolor
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-chip"
+-           >
+-             bracket 4
+-           </span>
+-         </div>
+-       </div>
+-       <div
+-         class="gv1-selector-track"
+-       >
+  <button
+    aria-disabled="false"
+    aria-selected="true"
+    class="gv1-sel-pill gv1-active"
+    role="tab"
+    tabindex="0"
+    title="Open Deck 1"
+    type="button"
+  >
+    <div
+      class="gv1-sel-pill-top"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        № 
+        01
+      </span>
+      <span
+        aria-label="Color identity: 1 colors"
+        class="gv1-pips"
+        role="img"
+      >
+        <span
+          aria-hidden="true"
+          class="gv1-pip"
+          style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+        >
+          R
+        </span>
+      </span>
+    </div>
+    <div
+      class="gv1-sel-pill-name"
+    >
+      Deck 1
+    </div>
+    <div
+      class="gv1-mono-xs gv1-sel-pill-cmd"
+    >
+      Commander 1
+    </div>
+    <div
+      class="gv1-sel-pill-foot"
+    >
+      <span
+        class="gv1-mono-xs gv1-sel-pill-bracket"
+      >
+        BRACKET 
+        4
+      </span>
+    </div>
+    <span
+      class="gv1-sel-pill-flag"
+    >
+      <span
+        class="gv1-mono-xs"
+      >
+        NOW SCRYING
+      </span>
+    </span>
+  </button>
+-         <button
+-           aria-disabled="false"
+-           aria-selected="false"
+-           class="gv1-sel-pill"
+-           role="tab"
+-           tabindex="-1"
+-           title="Open Deck 2"
+-           type="button"
+-         >
+-           <div
+-             class="gv1-sel-pill-top"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-dim"
+-             >
+-               № 
+-               02
+-             </span>
+-             <span
+-               aria-label="Color identity: 1 colors"
+-               class="gv1-pips"
+-               role="img"
+-             >
+-               <span
+-                 aria-hidden="true"
+-                 class="gv1-pip"
+-                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+-               >
+-                 R
+-               </span>
+-             </span>
+-           </div>
+-           <div
+-             class="gv1-sel-pill-name"
+-           >
+-             Deck 2
+-           </div>
+-           <div
+-             class="gv1-mono-xs gv1-sel-pill-cmd"
+-           >
+-             Commander 2
+-           </div>
+-           <div
+-             class="gv1-sel-pill-foot"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-sel-pill-bracket"
+-             >
+-               BRACKET 
+-               4
+-             </span>
+-           </div>
+-         </button>
+-         <button
+-           aria-disabled="false"
+-           aria-selected="false"
+-           class="gv1-sel-pill"
+-           role="tab"
+-           tabindex="-1"
+-           title="Open Deck 3"
+-           type="button"
+-         >
+-           <div
+-             class="gv1-sel-pill-top"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-dim"
+-             >
+-               № 
+-               03
+-             </span>
+-             <span
+-               aria-label="Color identity: 1 colors"
+-               class="gv1-pips"
+-               role="img"
+-             >
+-               <span
+-                 aria-hidden="true"
+-                 class="gv1-pip"
+-                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+-               >
+-                 R
+-               </span>
+-             </span>
+-           </div>
+-           <div
+-             class="gv1-sel-pill-name"
+-           >
+-             Deck 3
+-           </div>
+-           <div
+-             class="gv1-mono-xs gv1-sel-pill-cmd"
+-           >
+-             Commander 3
+-           </div>
+-           <div
+-             class="gv1-sel-pill-foot"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-sel-pill-bracket"
+-             >
+-               BRACKET 
+-               4
+-             </span>
+-           </div>
+-         </button>
+-         <button
+-           aria-disabled="false"
+-           aria-selected="false"
+-           class="gv1-sel-pill"
+-           role="tab"
+-           tabindex="-1"
+-           title="Open Deck 4"
+-           type="button"
+-         >
+-           <div
+-             class="gv1-sel-pill-top"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-dim"
+-             >
+-               № 
+-               04
+-             </span>
+-             <span
+-               aria-label="Color identity: 1 colors"
+-               class="gv1-pips"
+-               role="img"
+-             >
+-               <span
+-                 aria-hidden="true"
+-                 class="gv1-pip"
+-                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+-               >
+-                 R
+-               </span>
+-             </span>
+-           </div>
+-           <div
+-             class="gv1-sel-pill-name"
+-           >
+-             Deck 4
+-           </div>
+-           <div
+-             class="gv1-mono-xs gv1-sel-pill-cmd"
+-           >
+-             Commander 4
+-           </div>
+-           <div
+-             class="gv1-sel-pill-foot"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-sel-pill-bracket"
+-             >
+-               BRACKET 
+-               4
+-             </span>
+-           </div>
+-         </button>
+-         <button
+-           aria-disabled="false"
+-           aria-selected="false"
+-           class="gv1-sel-pill"
+-           role="tab"
+-           tabindex="-1"
+-           title="Open Deck 5"
+-           type="button"
+-         >
+-           <div
+-             class="gv1-sel-pill-top"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-dim"
+-             >
+-               № 
+-               05
+-             </span>
+-             <span
+-               aria-label="Color identity: 1 colors"
+-               class="gv1-pips"
+-               role="img"
+-             >
+-               <span
+-                 aria-hidden="true"
+-                 class="gv1-pip"
+-                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+-               >
+-                 R
+-               </span>
+-             </span>
+-           </div>
+-           <div
+-             class="gv1-sel-pill-name"
+-           >
+-             Deck 5
+-           </div>
+-           <div
+-             class="gv1-mono-xs gv1-sel-pill-cmd"
+-           >
+-             Commander 5
+-           </div>
+-           <div
+-             class="gv1-sel-pill-foot"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-sel-pill-bracket"
+-             >
+-               BRACKET 
+-               4
+-             </span>
+-           </div>
+-         </button>
+-       </div>
+-     </nav>
+-   </div>
+- </body>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:536:36
+    534| 
+    535|     act(() => route(1));
+    536|     expect(document.activeElement).toBe(document.body);
+       |                                    ^
+    537| 
+    538|     startOn(tabs[0]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a deck change that no key started (DEC-1146) > moves focus to the active pill when the focused element left the page
+AssertionError: expected <body><div>…(3)</div></body> to be <button role="tab" …(6)>…(5)</button> // Object.is equality
+
+- Expected
++ Received
+
++ <body>
++   <div>
++     <nav
++       aria-label="Deck selector"
++       class="gv1-selector"
++       data-at-end="true"
++       role="tablist"
++     >
++       <div
++         class="gv1-selector-head"
++       >
++         <div
++           class="gv1-selector-head-l"
++         >
++           <span
++             class="gv1-mono-xs gv1-rune"
++           >
++             <span
++               aria-hidden="true"
++             >
++               ◈ 
++             </span>
++             TOMOS
++           </span>
++           <span
++             class="gv1-mono-xs gv1-dim"
++           >
++             — 
++             5
++              indexed · 
++             5
++              scribed
++           </span>
++         </div>
++         <div
++           class="gv1-selector-head-r"
++         >
++           <span
++             class="gv1-mono-xs gv1-dim"
++           >
++             filter:
++           </span>
++           <span
++             class="gv1-mono-xs gv1-chip gv1-chip-active"
++           >
++             all
++           </span>
++           <span
++             class="gv1-mono-xs gv1-chip"
++           >
++             mono
++           </span>
++           <span
++             class="gv1-mono-xs gv1-chip"
++           >
++             multicolor
++           </span>
++           <span
++             class="gv1-mono-xs gv1-chip"
++           >
++             bracket 4
++           </span>
++         </div>
++       </div>
++       <div
++         class="gv1-selector-track"
++       >
++         <button
++           aria-disabled="false"
++           aria-selected="false"
++           class="gv1-sel-pill"
++           role="tab"
++           tabindex="-1"
++           title="Open Deck 1"
++           type="button"
++         >
++           <div
++             class="gv1-sel-pill-top"
++           >
++             <span
++               class="gv1-mono-xs gv1-dim"
++             >
++               № 
++               01
++             </span>
++             <span
++               aria-label="Color identity: 1 colors"
++               class="gv1-pips"
++               role="img"
++             >
++               <span
++                 aria-hidden="true"
++                 class="gv1-pip"
++                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
++               >
++                 R
++               </span>
++             </span>
++           </div>
++           <div
++             class="gv1-sel-pill-name"
++           >
++             Deck 1
++           </div>
++           <div
++             class="gv1-mono-xs gv1-sel-pill-cmd"
++           >
++             Commander 1
++           </div>
++           <div
++             class="gv1-sel-pill-foot"
++           >
++             <span
++               class="gv1-mono-xs gv1-sel-pill-bracket"
++             >
++               BRACKET 
++               4
++             </span>
++           </div>
++         </button>
+          <button
+            aria-disabled="false"
++           aria-selected="false"
++           class="gv1-sel-pill"
++           role="tab"
++           tabindex="-1"
++           title="Open Deck 2"
++           type="button"
++         >
++           <div
++             class="gv1-sel-pill-top"
++           >
++             <span
++               class="gv1-mono-xs gv1-dim"
++             >
++               № 
++               02
++             </span>
++             <span
++               aria-label="Color identity: 1 colors"
++               class="gv1-pips"
++               role="img"
++             >
++               <span
++                 aria-hidden="true"
++                 class="gv1-pip"
++                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
++               >
++                 R
++               </span>
++             </span>
++           </div>
++           <div
++             class="gv1-sel-pill-name"
++           >
++             Deck 2
++           </div>
++           <div
++             class="gv1-mono-xs gv1-sel-pill-cmd"
++           >
++             Commander 2
++           </div>
++           <div
++             class="gv1-sel-pill-foot"
++           >
++             <span
++               class="gv1-mono-xs gv1-sel-pill-bracket"
++             >
++               BRACKET 
++               4
++             </span>
++           </div>
++         </button>
++         <button
++           aria-disabled="false"
++           aria-selected="false"
++           class="gv1-sel-pill"
++           role="tab"
++           tabindex="-1"
++           title="Open Deck 3"
++           type="button"
++         >
++           <div
++             class="gv1-sel-pill-top"
++           >
++             <span
++               class="gv1-mono-xs gv1-dim"
++             >
++               № 
++               03
++             </span>
++             <span
++               aria-label="Color identity: 1 colors"
++               class="gv1-pips"
++               role="img"
++             >
++               <span
++                 aria-hidden="true"
++                 class="gv1-pip"
++                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
++               >
++                 R
++               </span>
++             </span>
++           </div>
++           <div
++             class="gv1-sel-pill-name"
++           >
++             Deck 3
++           </div>
++           <div
++             class="gv1-mono-xs gv1-sel-pill-cmd"
++           >
++             Commander 3
++           </div>
++           <div
++             class="gv1-sel-pill-foot"
++           >
++             <span
++               class="gv1-mono-xs gv1-sel-pill-bracket"
++             >
++               BRACKET 
++               4
++             </span>
++           </div>
++         </button>
++         <button
++           aria-disabled="false"
++           aria-selected="false"
++           class="gv1-sel-pill"
++           role="tab"
++           tabindex="-1"
++           title="Open Deck 4"
++           type="button"
++         >
++           <div
++             class="gv1-sel-pill-top"
++           >
++             <span
++               class="gv1-mono-xs gv1-dim"
++             >
++               № 
++               04
++             </span>
++             <span
++               aria-label="Color identity: 1 colors"
++               class="gv1-pips"
++               role="img"
++             >
++               <span
++                 aria-hidden="true"
++                 class="gv1-pip"
++                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
++               >
++                 R
++               </span>
++             </span>
++           </div>
++           <div
++             class="gv1-sel-pill-name"
++           >
++             Deck 4
++           </div>
++           <div
++             class="gv1-mono-xs gv1-sel-pill-cmd"
++           >
++             Commander 4
++           </div>
++           <div
++             class="gv1-sel-pill-foot"
++           >
++             <span
++               class="gv1-mono-xs gv1-sel-pill-bracket"
++             >
++               BRACKET 
++               4
++             </span>
++           </div>
++         </button>
++         <button
++           aria-disabled="false"
+            aria-selected="true"
+            class="gv1-sel-pill gv1-active"
+            role="tab"
+            tabindex="0"
+            title="Open Deck 5"
+            type="button"
+          >
+            <div
+              class="gv1-sel-pill-top"
+            >
+              <span
+                class="gv1-mono-xs gv1-dim"
+              >
+                № 
+                05
+              </span>
+              <span
+                aria-label="Color identity: 1 colors"
+                class="gv1-pips"
+                role="img"
+              >
+                <span
+                  aria-hidden="true"
+                  class="gv1-pip"
+                  style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+                >
+                  R
+                </span>
+              </span>
+            </div>
+            <div
+              class="gv1-sel-pill-name"
+            >
+              Deck 5
+            </div>
+            <div
+              class="gv1-mono-xs gv1-sel-pill-cmd"
+            >
+              Commander 5
+            </div>
+            <div
+              class="gv1-sel-pill-foot"
+            >
+              <span
+                class="gv1-mono-xs gv1-sel-pill-bracket"
+              >
+                BRACKET 
+                4
+              </span>
+            </div>
+            <span
+              class="gv1-sel-pill-flag"
+            >
+              <span
+                class="gv1-mono-xs"
+              >
+                NOW SCRYING
+              </span>
+            </span>
+          </button>
++       </div>
++     </nav>
++     <button
++       type="button"
++     >
++       Board Wipes
++     </button>
++     <button
++       type="button"
++     >
++       Stays
++     </button>
++   </div>
++ </body>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:631:16
+    629|     expect(chip.isConnected).toBe(false);
+    630|     const el = document.activeElement as HTMLElement;
+    631|     expect(el).toBe(tabs[4]);
+       |                ^
+    632|     expect(el).toHaveAttribute('aria-selected', 'true');
+    633|     expect(el.tabIndex).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a deck change that no key started (DEC-1146) > moves no focus when nothing had focus before the change
+AssertionError: expected <button role="tab" …(6)>…(5)</button> to be <body><div>…(3)</div></body> // Object.is equality
+
+- Expected
++ Received
+
+- <body>
+-   <div>
+-     <nav
+-       aria-label="Deck selector"
+-       class="gv1-selector"
+-       data-at-end="true"
+-       role="tablist"
+-     >
+-       <div
+-         class="gv1-selector-head"
+-       >
+-         <div
+-           class="gv1-selector-head-l"
+-         >
+-           <span
+-             class="gv1-mono-xs gv1-rune"
+-           >
+-             <span
+-               aria-hidden="true"
+-             >
+-               ◈ 
+-             </span>
+-             TOMOS
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-dim"
+-           >
+-             — 
+-             5
+-              indexed · 
+-             5
+-              scribed
+-           </span>
+-         </div>
+-         <div
+-           class="gv1-selector-head-r"
+-         >
+-           <span
+-             class="gv1-mono-xs gv1-dim"
+-           >
+-             filter:
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-chip gv1-chip-active"
+-           >
+-             all
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-chip"
+-           >
+-             mono
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-chip"
+-           >
+-             multicolor
+-           </span>
+-           <span
+-             class="gv1-mono-xs gv1-chip"
+-           >
+-             bracket 4
+-           </span>
+-         </div>
+-       </div>
+-       <div
+-         class="gv1-selector-track"
+-       >
+-         <button
+-           aria-disabled="false"
+-           aria-selected="false"
+-           class="gv1-sel-pill"
+-           role="tab"
+-           tabindex="-1"
+-           title="Open Deck 1"
+-           type="button"
+-         >
+-           <div
+-             class="gv1-sel-pill-top"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-dim"
+-             >
+-               № 
+-               01
+-             </span>
+-             <span
+-               aria-label="Color identity: 1 colors"
+-               class="gv1-pips"
+-               role="img"
+-             >
+-               <span
+-                 aria-hidden="true"
+-                 class="gv1-pip"
+-                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+-               >
+-                 R
+-               </span>
+-             </span>
+-           </div>
+-           <div
+-             class="gv1-sel-pill-name"
+-           >
+-             Deck 1
+-           </div>
+-           <div
+-             class="gv1-mono-xs gv1-sel-pill-cmd"
+-           >
+-             Commander 1
+-           </div>
+-           <div
+-             class="gv1-sel-pill-foot"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-sel-pill-bracket"
+-             >
+-               BRACKET 
+-               4
+-             </span>
+-           </div>
+-         </button>
+  <button
+    aria-disabled="false"
+-           aria-selected="false"
+-           class="gv1-sel-pill"
+-           role="tab"
+-           tabindex="-1"
+-           title="Open Deck 2"
+-           type="button"
+-         >
+-           <div
+-             class="gv1-sel-pill-top"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-dim"
+-             >
+-               № 
+-               02
+-             </span>
+-             <span
+-               aria-label="Color identity: 1 colors"
+-               class="gv1-pips"
+-               role="img"
+-             >
+-               <span
+-                 aria-hidden="true"
+-                 class="gv1-pip"
+-                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+-               >
+-                 R
+-               </span>
+-             </span>
+-           </div>
+-           <div
+-             class="gv1-sel-pill-name"
+-           >
+-             Deck 2
+-           </div>
+-           <div
+-             class="gv1-mono-xs gv1-sel-pill-cmd"
+-           >
+-             Commander 2
+-           </div>
+-           <div
+-             class="gv1-sel-pill-foot"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-sel-pill-bracket"
+-             >
+-               BRACKET 
+-               4
+-             </span>
+-           </div>
+-         </button>
+-         <button
+-           aria-disabled="false"
+-           aria-selected="false"
+-           class="gv1-sel-pill"
+-           role="tab"
+-           tabindex="-1"
+-           title="Open Deck 3"
+-           type="button"
+-         >
+-           <div
+-             class="gv1-sel-pill-top"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-dim"
+-             >
+-               № 
+-               03
+-             </span>
+-             <span
+-               aria-label="Color identity: 1 colors"
+-               class="gv1-pips"
+-               role="img"
+-             >
+-               <span
+-                 aria-hidden="true"
+-                 class="gv1-pip"
+-                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+-               >
+-                 R
+-               </span>
+-             </span>
+-           </div>
+-           <div
+-             class="gv1-sel-pill-name"
+-           >
+-             Deck 3
+-           </div>
+-           <div
+-             class="gv1-mono-xs gv1-sel-pill-cmd"
+-           >
+-             Commander 3
+-           </div>
+-           <div
+-             class="gv1-sel-pill-foot"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-sel-pill-bracket"
+-             >
+-               BRACKET 
+-               4
+-             </span>
+-           </div>
+-         </button>
+-         <button
+-           aria-disabled="false"
+-           aria-selected="false"
+-           class="gv1-sel-pill"
+-           role="tab"
+-           tabindex="-1"
+-           title="Open Deck 4"
+-           type="button"
+-         >
+-           <div
+-             class="gv1-sel-pill-top"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-dim"
+-             >
+-               № 
+-               04
+-             </span>
+-             <span
+-               aria-label="Color identity: 1 colors"
+-               class="gv1-pips"
+-               role="img"
+-             >
+-               <span
+-                 aria-hidden="true"
+-                 class="gv1-pip"
+-                 style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+-               >
+-                 R
+-               </span>
+-             </span>
+-           </div>
+-           <div
+-             class="gv1-sel-pill-name"
+-           >
+-             Deck 4
+-           </div>
+-           <div
+-             class="gv1-mono-xs gv1-sel-pill-cmd"
+-           >
+-             Commander 4
+-           </div>
+-           <div
+-             class="gv1-sel-pill-foot"
+-           >
+-             <span
+-               class="gv1-mono-xs gv1-sel-pill-bracket"
+-             >
+-               BRACKET 
+-               4
+-             </span>
+-           </div>
+-         </button>
+-         <button
+-           aria-disabled="false"
+    aria-selected="true"
+    class="gv1-sel-pill gv1-active"
+    role="tab"
+    tabindex="0"
+    title="Open Deck 5"
+    type="button"
+  >
+    <div
+      class="gv1-sel-pill-top"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        № 
+        05
+      </span>
+      <span
+        aria-label="Color identity: 1 colors"
+        class="gv1-pips"
+        role="img"
+      >
+        <span
+          aria-hidden="true"
+          class="gv1-pip"
+          style="background: rgb(232, 168, 152); border-color: rgb(192, 104, 72); color: rgb(26, 20, 16);"
+        >
+          R
+        </span>
+      </span>
+    </div>
+    <div
+      class="gv1-sel-pill-name"
+    >
+      Deck 5
+    </div>
+    <div
+      class="gv1-mono-xs gv1-sel-pill-cmd"
+    >
+      Commander 5
+    </div>
+    <div
+      class="gv1-sel-pill-foot"
+    >
+      <span
+        class="gv1-mono-xs gv1-sel-pill-bracket"
+      >
+        BRACKET 
+        4
+      </span>
+    </div>
+    <span
+      class="gv1-sel-pill-flag"
+    >
+      <span
+        class="gv1-mono-xs"
+      >
+        NOW SCRYING
+      </span>
+    </span>
+  </button>
+-       </div>
+-     </nav>
+-     <button
+-       type="button"
+-     >
+-       Board Wipes
+-     </button>
+-     <button
+-       type="button"
+-     >
+-       Stays
+-     </button>
+-   </div>
+- </body>
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:693:36
+    691|     act(() => route(5));
+    692|     expect(tabs[4]).toHaveAttribute('aria-selected', 'true');
+    693|     expect(document.activeElement).toBe(document.body);
+       |                                    ^
+    694|     expect(focus).not.toHaveBeenCalled();
+    695|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

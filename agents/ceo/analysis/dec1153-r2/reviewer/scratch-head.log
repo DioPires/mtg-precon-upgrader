@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1170-mut/web
+
+ ✓ src/__tests__/dec1170/dec1170-loader-scratch.test.ts (5 tests) 3ms
+stdout | src/__tests__/dec1170/dec1170-limiter-scratch.test.ts > DEC-1170 8a: an answer whose body never ends > frees the other tab's turn (at 20 s on the head), but the tab's own pump never ends
+DEC-1170 8a observed {"tabA":[{"at":0,"names":["A1"]}],"tabB":[{"at":20000,"names":["B1"]}],"A1":"loading","A2":null,"B1":"loaded"}
+
+stdout | src/__tests__/dec1170/dec1170-limiter-scratch.test.ts > DEC-1170 8b: a subscriber of a blank name asks for a new name during takeBatch() > with another name in the batch: the new name goes in a later batch, once, and one pump runs
+DEC-1170 8b observed (with another name in the batch) {"batches":[["Arcane Signet"],["Fresh Name"]],"times":[0,1200],"heard":["not_found"],"fresh":"loaded","others":["loaded"],"blank":404,"nextCalls":2,"maxNextOut":1}
+
+stdout | src/__tests__/dec1170/dec1170-limiter-scratch.test.ts > DEC-1170 8b: a subscriber of a blank name asks for a new name during takeBatch() > alone in the queue: the new name goes in a later batch, once, and one pump runs
+DEC-1170 8b observed (alone in the queue) {"batches":[["Fresh Name"]],"times":[0],"heard":["not_found"],"fresh":"loaded","others":[],"blank":404,"nextCalls":2,"maxNextOut":1}
+
+stdout | src/__tests__/dec1170/dec1170-limiter-scratch.test.ts > DEC-1170 8b: a subscriber of a blank name asks for a new name during takeBatch() > alone in the queue, the new name asked `first`: the new name goes in a later batch, once, and one pump runs
+DEC-1170 8b observed (alone in the queue, the new name asked `first`) {"batches":[["Fresh Name"]],"times":[0],"heard":["not_found"],"fresh":"loaded","others":[],"blank":404,"nextCalls":2,"maxNextOut":1}
+
+ ✓ src/__tests__/dec1170/dec1170-limiter-scratch.test.ts (6 tests) 11ms
+
+ Test Files  2 passed (2)
+      Tests  11 passed (11)
+   Start at  23:43:15
+   Duration  575ms (transform 57ms, setup 96ms, collect 80ms, tests 14ms, environment 555ms, prepare 99ms)
+

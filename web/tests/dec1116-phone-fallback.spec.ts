@@ -13,12 +13,16 @@
 // `break-word`, so a card name stays whole with the web fonts.
 //
 // The first case blocks the web fonts. The second also sets a wider face on
-// the decks where each rule acts in it. Two guides stay wider than 320px in
-// that face, and the second case leaves them out: the-white-forge 337 (the
-// tile name "Archaeomancer's") and witherbloom-the-balancer 324. The other
-// cases pin where the rules act, that the engine tiles keep each word whole
-// with the web fonts, and that the eternal-agony note that this issue
-// reworded breaks only between words in the fallback faces.
+// the decks where each rule acts in it. In that face the DEC-1116 rules leave
+// two guides wider than 320px, each from an engine tile name, and the second
+// case leaves them out: the-white-forge 337 ("Archaeomancer's") and
+// witherbloom-the-balancer 324 ("Remembrance"). Three more ran past it on the
+// engine's role title: hidden-legion 336, tidal-legion 338 and
+// gandalf-party-guest 338. DEC-1156 makes the title smaller at 768px and
+// below, and the second case reads these three too. The other cases pin where
+// the rules act, that the engine tiles keep each word whole with the web
+// fonts, and that the eternal-agony note that this issue reworded breaks only
+// between words in the fallback faces.
 
 import { expect, test, type Page } from './support/test';
 
@@ -120,6 +124,9 @@ test.describe('DEC-1116 @ 320px, web fonts blocked', () => {
       'zada-hedron-grinder', // tile note
       'grave-dividends', // win-condition and combo URLs
       'broodfire-hatchery', // combo URLs
+      'hidden-legion', // engine role title (DEC-1156; 336 / 320 before it)
+      'tidal-legion', // engine role title (338)
+      'gandalf-party-guest', // engine role title (338)
     ];
     expect(await offenders(page, decks, WIDE_FACES), 'Guides wider than a 320px viewport in a wide face').toEqual([]);
   });

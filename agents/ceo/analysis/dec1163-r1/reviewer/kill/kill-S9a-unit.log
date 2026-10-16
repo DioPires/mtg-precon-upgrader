@@ -1,0 +1,45 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1163-review/web
+
+ ✓ src/__tests__/components/dec1163-kill-paused-line.test.tsx (2 tests) 37ms
+ ❯ src/__tests__/components/dec1163-kill-import-style.test.tsx (1 test | 1 failed) 54ms
+   × the import message keeps its style in its region (DEC-1163 kill case) > gives the sigil and the text of a count and of an error the mono class 53ms
+     → expected [ [ 'SPAN', '', '⚠' ], …(1) ] to deeply equal [ Array(2) ]
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 2 passed (3)
+   Start at  20:35:23
+   Duration  447ms (transform 76ms, setup 46ms, collect 127ms, tests 91ms, environment 255ms, prepare 80ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/dec1163-kill-import-style.test.tsx > the import message keeps its style in its region (DEC-1163 kill case) > gives the sigil and the text of a count and of an error the mono class
+AssertionError: expected [ [ 'SPAN', '', '⚠' ], …(1) ] to deeply equal [ Array(2) ]
+
+- Expected
++ Received
+
+  Array [
+    Array [
+      "SPAN",
+-     "gv1-mono-xs",
++     "",
+      "⚠",
+    ],
+    Array [
+      "SPAN",
+      "gv1-mono-xs",
+      "No cards detected in that file.",
+    ],
+  ]
+
+ ❯ src/__tests__/components/dec1163-kill-import-style.test.tsx:54:26
+     52|     pick('\n');
+     53|     await waitFor(() => expect(alert).toHaveTextContent('No cards dete…
+     54|     expect(parts(alert)).toEqual([
+       |                          ^
+     55|       ['SPAN', 'gv1-mono-xs', '⚠'],
+     56|       ['SPAN', 'gv1-mono-xs', 'No cards detected in that file.'],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

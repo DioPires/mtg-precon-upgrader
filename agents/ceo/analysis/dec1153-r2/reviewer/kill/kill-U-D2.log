@@ -1,0 +1,37 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1170-mut/web
+
+ ❯ src/__tests__/dec1170/dec1170-loader-scratch.test.ts (7 tests | 1 failed | 4 skipped) 5ms
+   × DEC-1170 K1: a meta file whose prices_as_of is an empty string > stores the file with "" as its date, and a load inside 1 h reads it and sends nothing 4ms
+     → expected [ 2, 2 ] to deeply equal [ 1, 1 ]
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed | 4 skipped (7)
+   Start at  23:47:45
+   Duration  369ms (transform 38ms, setup 22ms, collect 34ms, tests 5ms, environment 128ms, prepare 52ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/dec1170/dec1170-loader-scratch.test.ts > DEC-1170 K1: a meta file whose prices_as_of is an empty string > stores the file with "" as its date, and a load inside 1 h reads it and sends nothing
+AssertionError: expected [ 2, 2 ] to deeply equal [ 1, 1 ]
+
+- Expected
++ Received
+
+  Array [
+-   1,
+-   1,
++   2,
++   2,
+  ]
+
+ ❯ src/__tests__/dec1170/dec1170-loader-scratch.test.ts:106:22
+    104|     const second = visit();
+    105|     expect(await second.deckLoader.loadCardMetadataMeta()).toEqual({ p…
+    106|     expect(counts()).toEqual([1, 1]);
+       |                      ^
+    107|     expect(second.seed.mock.calls).toEqual([[FILE, '']]);
+    108|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

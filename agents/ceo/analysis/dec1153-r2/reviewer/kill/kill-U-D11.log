@@ -1,0 +1,36 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1170-mut/web
+
+ ❯ src/__tests__/dec1170/dec1170-loader-scratch.test.ts (7 tests | 2 failed | 4 skipped) 6ms
+   × DEC-1170 K2: a failed card-metadata.json > rejects loadCardMetadata() after a 500, seeds nothing and stores nothing; the next load asks again 3ms
+     → promise resolved "{}" instead of rejecting
+   × DEC-1170 K2: a failed card-metadata.json > rejects loadCardMetadata() after a fetch that rejects, seeds nothing and stores nothing; the next load asks again 0ms
+     → promise resolved "{}" instead of rejecting
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed | 4 skipped (7)
+   Start at  23:47:46
+   Duration  391ms (transform 43ms, setup 25ms, collect 43ms, tests 6ms, environment 127ms, prepare 40ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/dec1170/dec1170-loader-scratch.test.ts > DEC-1170 K2: a failed card-metadata.json > rejects loadCardMetadata() after a 500, seeds nothing and stores nothing; the next load asks again
+ FAIL  src/__tests__/dec1170/dec1170-loader-scratch.test.ts > DEC-1170 K2: a failed card-metadata.json > rejects loadCardMetadata() after a fetch that rejects, seeds nothing and stores nothing; the next load asks again
+AssertionError: promise resolved "{}" instead of rejecting
+
+- Expected
++ Received
+
+- [Error: rejected promise]
++ Object {}
+
+ ❯ src/__tests__/dec1170/dec1170-loader-scratch.test.ts:126:55
+    124|       );
+    125|       const first = visit();
+    126|       await expect(first.deckLoader.loadCardMetadata()).rejects.toThro…
+       |                                                       ^
+    127|       expect(first.seed).not.toHaveBeenCalled();
+    128|       expect(envelopeKey()).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+

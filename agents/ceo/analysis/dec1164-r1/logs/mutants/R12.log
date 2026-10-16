@@ -1,0 +1,42 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..917e754 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -36,7 +36,7 @@ export function readOwnedEntries(storage: Storage = localStorage): Array<[string
+   if (!Array.isArray(stored)) return [];
+   const out: Array<[string, number]> = [];
+   for (const entry of stored) {
+-    if (!Array.isArray(entry) || entry.length !== 2) continue;
++    if (entry.length !== 2) continue;
+     const [n, q]: unknown[] = entry;
+     if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) continue;
+     out.push([n, q]);
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/data/ownedCards.test.ts (30 tests | 1 failed) 4ms
+   × readOwnedEntries (DEC-1150) > drops the entry null and keeps the entry beside it 2ms
+     → Cannot read properties of null (reading 'length')
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 29 passed (30)
+   Start at  23:51:11
+   Duration  331ms (transform 19ms, setup 20ms, collect 9ms, tests 4ms, environment 121ms, prepare 39ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry null and keeps the entry beside it
+TypeError: Cannot read properties of null (reading 'length')
+ ❯ Module.readOwnedEntries src/data/ownedCards.ts:39:15
+     37|   const out: Array<[string, number]> = [];
+     38|   for (const entry of stored) {
+     39|     if (entry.length !== 2) continue;
+       |               ^
+     40|     const [n, q]: unknown[] = entry;
+     41|     if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) con…
+ ❯ read src/__tests__/data/ownedCards.test.ts:89:5
+ ❯ src/__tests__/data/ownedCards.test.ts:138:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

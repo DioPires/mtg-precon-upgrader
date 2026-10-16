@@ -1,0 +1,58 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..885b793 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -36,7 +36,7 @@ export function readOwnedEntries(storage: Storage = localStorage): Array<[string
+   if (!Array.isArray(stored)) return [];
+   const out: Array<[string, number]> = [];
+   for (const entry of stored) {
+-    if (!Array.isArray(entry) || entry.length !== 2) continue;
++    if (!Array.isArray(entry) || entry.length !== 2) break;
+     const [n, q]: unknown[] = entry;
+     if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) continue;
+     out.push([n, q]);
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/data/ownedCards.test.ts (30 tests | 3 failed) 5ms
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring"] and keeps the entry beside it 3ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",2,"foil"] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry null and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 27 passed (30)
+   Start at  23:51:04
+   Duration  326ms (transform 19ms, setup 21ms, collect 8ms, tests 5ms, environment 126ms, prepare 39ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring"] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",2,"foil"] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry null and keeps the entry beside it
+AssertionError: expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+
+- Expected
++ Received
+
+- Array [
+-   Array [
+-     "Arcane Signet",
+-     1,
+-   ],
+- ]
++ Array []
+
+ ❯ src/__tests__/data/ownedCards.test.ts:138:65
+    136|     [null],
+    137|   ])('drops the entry %j and keeps the entry beside it', (entry) => {
+    138|     expect(read(JSON.stringify([entry, ['Arcane Signet', 1]]))).toEqua…
+       |                                                                 ^
+    139|   });
+    140| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+

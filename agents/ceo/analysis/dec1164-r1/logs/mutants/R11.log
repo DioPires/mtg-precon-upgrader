@@ -1,0 +1,24 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..85edd9c 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -36,7 +36,7 @@ export function readOwnedEntries(storage: Storage = localStorage): Array<[string
+   if (!Array.isArray(stored)) return [];
+   const out: Array<[string, number]> = [];
+   for (const entry of stored) {
+-    if (!Array.isArray(entry) || entry.length !== 2) continue;
++    if (!Array.isArray(entry) || entry.length > 2) continue;
+     const [n, q]: unknown[] = entry;
+     if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) continue;
+     out.push([n, q]);
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ✓ src/__tests__/data/ownedCards.test.ts (30 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  30 passed (30)
+   Start at  23:51:11
+   Duration  329ms (transform 21ms, setup 20ms, collect 8ms, tests 2ms, environment 113ms, prepare 40ms)
+

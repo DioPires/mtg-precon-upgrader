@@ -1,0 +1,827 @@
+{
+  "config": {
+    "configFile": "/private/tmp/dec1166-ceo/wt/web/playwright.config.ts",
+    "rootDir": "/private/tmp/dec1166-ceo/wt/web/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 3
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/dec1166-ceo/wt/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/private/tmp/dec1166-ceo/wt/web/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 3,
+    "webServer": {
+      "command": "npm run build && npx vite preview --host 127.0.0.1 --port 14846 --strictPort",
+      "wait": {
+        "stdout": {}
+      },
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "dec1152-rate-check-post.spec.ts",
+      "file": "dec1152-rate-check-post.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "the error says that a POST counts twice, and lists each send with its method",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-15T22:34:54.199Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "883321249e63093965ce-213a621e3f06ac456b87",
+          "file": "dec1152-rate-check-post.spec.ts",
+          "line": 96,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "the rate check, real clock: a POST counts twice",
+          "file": "dec1152-rate-check-post.spec.ts",
+          "line": 23,
+          "column": 6,
+          "specs": [
+            {
+              "title": "two batches 600 ms apart fail the test",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "fail",
+                      "location": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                        "line": 25,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "expectedStatus": "failed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1683,
+                      "error": {
+                        "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, real time): POST 0, POST 605\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").",
+                        "stack": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, real time): POST 0, POST 605\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)",
+                        "location": {
+                          "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                          "column": 38,
+                          "line": 389
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39msupport/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                            "column": 38,
+                            "line": 389
+                          },
+                          "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, real time): POST 0, POST 605\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n\n   at support/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T22:34:52.437Z",
+                      "annotations": [
+                        {
+                          "type": "fail",
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                            "line": 25,
+                            "column": 10
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "scryfall-stub",
+                          "contentType": "application/json",
+                          "body": "ewogICJjYXJkcyI6ICJyZXBvIiwKICAicmVxdWVzdHMiOiB7CiAgICAiY29sbGVjdGlvbiI6IDIKICB9LAogICJub3RGb3VuZCI6IFtdLAogICJidWNrZXRPbmUiOiB7CiAgICAiY291bnQiOiAyLAogICAgInBlYWtQZXJTZWNvbmQiOiA0LAogICAgImNsb2NrIjogInJlYWwiLAogICAgImFuc3dlcmVkNDI5IjogMAogIH0KfQ=="
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/private/tmp/dec1166-ceo/wt/web/test-results/dec1152-rate-check-post-th-4d12a--600-ms-apart-fail-the-test-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                        "column": 38,
+                        "line": 389
+                      }
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "883321249e63093965ce-49c92a7c94625eceb375",
+              "file": "dec1152-rate-check-post.spec.ts",
+              "line": 24,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "the rate check, real clock: only /cards/named and /cards/collection count",
+          "file": "dec1152-rate-check-post.spec.ts",
+          "line": 43,
+          "column": 6,
+          "specs": [
+            {
+              "title": "three autocompletes at once pass",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 91,
+                      "error": {
+                        "message": "Error: One browser context started 3 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, real time): GET 0, GET 8, GET 12\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").",
+                        "stack": "Error: One browser context started 3 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, real time): GET 0, GET 8, GET 12\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)",
+                        "location": {
+                          "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                          "column": 38,
+                          "line": 389
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39msupport/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                            "column": 38,
+                            "line": 389
+                          },
+                          "message": "Error: One browser context started 3 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, real time): GET 0, GET 8, GET 12\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n\n   at support/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T22:34:52.445Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "scryfall-stub",
+                          "contentType": "application/json",
+                          "body": "ewogICJjYXJkcyI6ICJyZXBvIiwKICAicmVxdWVzdHMiOiB7CiAgICAiYXV0b2NvbXBsZXRlIjogMwogIH0sCiAgIm5vdEZvdW5kIjogW10sCiAgImJ1Y2tldE9uZSI6IHsKICAgICJjb3VudCI6IDAsCiAgICAicGVha1BlclNlY29uZCI6IDMsCiAgICAiY2xvY2siOiAicmVhbCIsCiAgICAiYW5zd2VyZWQ0MjkiOiAwCiAgfQp9"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/private/tmp/dec1166-ceo/wt/web/test-results/dec1152-rate-check-post-th-fc20b--autocompletes-at-once-pass-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                        "column": 38,
+                        "line": 389
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "883321249e63093965ce-45014b2cc386af0636c4",
+              "file": "dec1152-rate-check-post.spec.ts",
+              "line": 46,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "the rate check, the page's clock: a POST counts twice",
+          "file": "dec1152-rate-check-post.spec.ts",
+          "line": 55,
+          "column": 6,
+          "specs": [
+            {
+              "title": "two batches 600 ms apart of the page's clock fail the test: fetch(url, init)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "fail",
+                      "location": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                        "line": 67,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "failed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 1095,
+                      "error": {
+                        "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").",
+                        "stack": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)",
+                        "location": {
+                          "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                          "column": 38,
+                          "line": 389
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39msupport/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                            "column": 38,
+                            "line": 389
+                          },
+                          "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n\n   at support/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T22:34:52.437Z",
+                      "annotations": [
+                        {
+                          "type": "fail",
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                            "line": 67,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "scryfall-stub",
+                          "contentType": "application/json",
+                          "body": "ewogICJjYXJkcyI6ICJyZXBvIiwKICAicmVxdWVzdHMiOiB7CiAgICAiY29sbGVjdGlvbiI6IDIKICB9LAogICJub3RGb3VuZCI6IFtdLAogICJidWNrZXRPbmUiOiB7CiAgICAiY291bnQiOiAyLAogICAgInBlYWtQZXJTZWNvbmQiOiA0LAogICAgImNsb2NrIjogInBhZ2UiLAogICAgImFuc3dlcmVkNDI5IjogMAogIH0KfQ=="
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/private/tmp/dec1166-ceo/wt/web/test-results/dec1152-rate-check-post-th-646c4-il-the-test-fetch-url-init--chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                        "column": 38,
+                        "line": 389
+                      }
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "883321249e63093965ce-41fc6dfdb638ec975be3",
+              "file": "dec1152-rate-check-post.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "two batches 600 ms apart of the page's clock fail the test: fetch(request)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "fail",
+                      "location": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                        "line": 67,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "failed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 1084,
+                      "error": {
+                        "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").",
+                        "stack": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)",
+                        "location": {
+                          "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                          "column": 38,
+                          "line": 389
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39msupport/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                            "column": 38,
+                            "line": 389
+                          },
+                          "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n\n   at support/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T22:34:52.887Z",
+                      "annotations": [
+                        {
+                          "type": "fail",
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                            "line": 67,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "scryfall-stub",
+                          "contentType": "application/json",
+                          "body": "ewogICJjYXJkcyI6ICJyZXBvIiwKICAicmVxdWVzdHMiOiB7CiAgICAiY29sbGVjdGlvbiI6IDIKICB9LAogICJub3RGb3VuZCI6IFtdLAogICJidWNrZXRPbmUiOiB7CiAgICAiY291bnQiOiAyLAogICAgInBlYWtQZXJTZWNvbmQiOiA0LAogICAgImNsb2NrIjogInBhZ2UiLAogICAgImFuc3dlcmVkNDI5IjogMAogIH0KfQ=="
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/private/tmp/dec1166-ceo/wt/web/test-results/dec1152-rate-check-post-th-b3297-ail-the-test-fetch-request--chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                        "column": 38,
+                        "line": 389
+                      }
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "883321249e63093965ce-d0bd399465f37ac4dc5a",
+              "file": "dec1152-rate-check-post.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "two batches 600 ms apart of the page's clock fail the test: fetch(request, init)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "fail",
+                      "location": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                        "line": 67,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "failed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 1061,
+                      "error": {
+                        "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").",
+                        "stack": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)",
+                        "location": {
+                          "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                          "column": 38,
+                          "line": 389
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39msupport/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                            "column": 38,
+                            "line": 389
+                          },
+                          "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n\n   at support/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T22:34:53.612Z",
+                      "annotations": [
+                        {
+                          "type": "fail",
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                            "line": 67,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "scryfall-stub",
+                          "contentType": "application/json",
+                          "body": "ewogICJjYXJkcyI6ICJyZXBvIiwKICAicmVxdWVzdHMiOiB7CiAgICAiY29sbGVjdGlvbiI6IDIKICB9LAogICJub3RGb3VuZCI6IFtdLAogICJidWNrZXRPbmUiOiB7CiAgICAiY291bnQiOiAyLAogICAgInBlYWtQZXJTZWNvbmQiOiA0LAogICAgImNsb2NrIjogInBhZ2UiLAogICAgImFuc3dlcmVkNDI5IjogMAogIH0KfQ=="
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/private/tmp/dec1166-ceo/wt/web/test-results/dec1152-rate-check-post-th-20524-he-test-fetch-request-init--chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                        "column": 38,
+                        "line": 389
+                      }
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "883321249e63093965ce-3beb26d2328aa2d3e764",
+              "file": "dec1152-rate-check-post.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "two batches 600 ms apart of the page's clock fail the test: fetch(url, init), method 'post'",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "fail",
+                      "location": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                        "line": 67,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "failed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 1055,
+                      "error": {
+                        "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").",
+                        "stack": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)",
+                        "location": {
+                          "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                          "column": 38,
+                          "line": 389
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39msupport/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                            "column": 38,
+                            "line": 389
+                          },
+                          "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n\n   at support/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T22:34:54.042Z",
+                      "annotations": [
+                        {
+                          "type": "fail",
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                            "line": 67,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "scryfall-stub",
+                          "contentType": "application/json",
+                          "body": "ewogICJjYXJkcyI6ICJyZXBvIiwKICAicmVxdWVzdHMiOiB7CiAgICAiY29sbGVjdGlvbiI6IDIKICB9LAogICJub3RGb3VuZCI6IFtdLAogICJidWNrZXRPbmUiOiB7CiAgICAiY291bnQiOiAyLAogICAgInBlYWtQZXJTZWNvbmQiOiA0LAogICAgImNsb2NrIjogInBhZ2UiLAogICAgImFuc3dlcmVkNDI5IjogMAogIH0KfQ=="
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/private/tmp/dec1166-ceo/wt/web/test-results/dec1152-rate-check-post-th-5001a-fetch-url-init-method-post--chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                        "column": 38,
+                        "line": 389
+                      }
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "883321249e63093965ce-4716e1fba2680334f12d",
+              "file": "dec1152-rate-check-post.spec.ts",
+              "line": 66,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "the rate check's error, as the fixture throws it",
+          "file": "dec1152-rate-check-post.spec.ts",
+          "line": 151,
+          "column": 6,
+          "specs": [
+            {
+              "title": "names the page's clock",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "fail",
+                      "location": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                        "line": 128,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "failed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1062,
+                      "error": {
+                        "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").",
+                        "stack": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)",
+                        "location": {
+                          "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                          "column": 38,
+                          "line": 389
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39msupport/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                            "column": 38,
+                            "line": 389
+                          },
+                          "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n\n   at support/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T22:34:54.207Z",
+                      "annotations": [
+                        {
+                          "type": "fail",
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                            "line": 128,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "scryfall-stub",
+                          "contentType": "application/json",
+                          "body": "ewogICJjYXJkcyI6ICJyZXBvIiwKICAicmVxdWVzdHMiOiB7CiAgICAiY29sbGVjdGlvbiI6IDIKICB9LAogICJub3RGb3VuZCI6IFtdLAogICJidWNrZXRPbmUiOiB7CiAgICAiY291bnQiOiAyLAogICAgInBlYWtQZXJTZWNvbmQiOiA0LAogICAgImNsb2NrIjogInBhZ2UiLAogICAgImFuc3dlcmVkNDI5IjogMAogIH0KfQ=="
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/private/tmp/dec1166-ceo/wt/web/test-results/dec1152-rate-check-post-th-6af52-s-it-names-the-page-s-clock-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                        "column": 38,
+                        "line": 389
+                      }
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "883321249e63093965ce-3338d7092bc7d8b69205",
+              "file": "dec1152-rate-check-post.spec.ts",
+              "line": 158,
+              "column": 3
+            },
+            {
+              "title": "lists the sends of the context with the highest peak, not of the first one",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "fail",
+                      "location": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                        "line": 128,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "failed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 1102,
+                      "error": {
+                        "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").",
+                        "stack": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)",
+                        "location": {
+                          "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                          "column": 38,
+                          "line": 389
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39msupport/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                            "column": 38,
+                            "line": 389
+                          },
+                          "message": "Error: One browser context started 4 requests to /cards/named and /cards/collection in 1 s; Scryfall allows 2.\n  A POST counts twice: the browser sends a CORS preflight (OPTIONS) before it, and the check cannot see that one.\n  Sends (method, ms after the first, the page's clock): POST 0, POST 600\nEvery request to api.scryfall.com goes through src/data/scryfallLimiter.ts (web/README.md, \"Scryfall requests\").\n\n   at support/test.ts:389\n\n  387 |         failures.push(rateCheckFailure([...bucketOne.values()][peaks.indexOf(peak)], peak, rateClock));\n  388 |       }\n> 389 |       if (failures.length > 0) throw new Error(failures.join('\\n'));\n      |                                      ^\n  390 |     },\n  391 |     { auto: true },\n  392 |   ],\n    at Object.base.extend.scryfallStub.auto (/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts:389:38)"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T22:34:54.680Z",
+                      "annotations": [
+                        {
+                          "type": "fail",
+                          "location": {
+                            "file": "/private/tmp/dec1166-ceo/wt/web/tests/dec1152-rate-check-post.spec.ts",
+                            "line": 128,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "scryfall-stub",
+                          "contentType": "application/json",
+                          "body": "ewogICJjYXJkcyI6ICJyZXBvIiwKICAicmVxdWVzdHMiOiB7CiAgICAiY2FyZCI6IDEsCiAgICAiY29sbGVjdGlvbiI6IDIKICB9LAogICJub3RGb3VuZCI6IFtdLAogICJidWNrZXRPbmUiOiB7CiAgICAiY291bnQiOiAzLAogICAgInBlYWtQZXJTZWNvbmQiOiA0LAogICAgImNsb2NrIjogInBhZ2UiLAogICAgImFuc3dlcmVkNDI5IjogMAogIH0KfQ=="
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/private/tmp/dec1166-ceo/wt/web/test-results/dec1152-rate-check-post-th-cf90b-t-peak-not-of-the-first-one-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/private/tmp/dec1166-ceo/wt/web/tests/support/test.ts",
+                        "column": 38,
+                        "line": 389
+                      }
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "883321249e63093965ce-28c5e7f70aa1ff94597b",
+              "file": "dec1152-rate-check-post.spec.ts",
+              "line": 162,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-15T22:34:49.130Z",
+    "duration": 6690.6050000000005,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
