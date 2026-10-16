@@ -112,6 +112,22 @@ test.describe('DEC-1156 rules: where they act', () => {
     expect(got, 'The engine title font-size by viewport width').toEqual(want);
   });
 
+  // DEC-1168 B1: case 1's viewports are all 900px high, so 10vmin would read as
+  // 10vw there. On a phone on its side the title still follows the width.
+  test('on a viewport lower than it is wide, the role title follows the width', async ({ page }) => {
+    const want: Record<string, string> = { '740x360': '42px', '390x300': '39px', '320x280': '32px' };
+    const got: Record<string, string> = {};
+    await page.setViewportSize({ width: 740, height: 360 });
+    await page.goto('/deck/shield-doctrine');
+    await page.locator('.gv1-perf-grid').waitFor();
+    for (const size of Object.keys(want)) {
+      const [width, height] = size.split('x').map(Number);
+      await page.setViewportSize({ width, height });
+      got[size] = await page.evaluate(() => getComputedStyle(document.querySelector('.gv1-engine-panel-head h3')!).fontSize);
+    }
+    expect(got, 'The engine title font-size by viewport width x height').toEqual(want);
+  });
+
   test('the panel head wraps with an 8px 16px gap up to 990px, and not from 991px', async ({ page }) => {
     const want: Record<number, string> = {
       320: 'wrap 8px 16px',
