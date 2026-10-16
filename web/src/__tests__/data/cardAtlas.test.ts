@@ -311,4 +311,25 @@ describe('loadOwnedMap', () => {
     localStorage.setItem(OWNED_KEY, 'not json');
     expect(loadOwnedMap().size).toBe(0);
   });
+
+  // DEC-1150: Card Atlas keeps the entries that Shopping keeps.
+  it('drops a stored quantity that is not a whole number', () => {
+    localStorage.setItem(OWNED_KEY, JSON.stringify([['Sol Ring', 0.5], ['Arcane Signet', 2]]));
+    expect([...loadOwnedMap()]).toEqual([['arcane signet', 2]]);
+  });
+
+  it('drops a stored quantity below 1', () => {
+    localStorage.setItem(OWNED_KEY, JSON.stringify([['Sol Ring', -1], ['Arcane Signet', 1]]));
+    expect([...loadOwnedMap()]).toEqual([['arcane signet', 1]]);
+  });
+
+  it('gives an empty map for a store whose one entry has no quantity', () => {
+    localStorage.setItem(OWNED_KEY, JSON.stringify([['Sol Ring']]));
+    expect(loadOwnedMap().size).toBe(0);
+  });
+
+  it('drops a stored entry whose name is not a string, and keeps the rest', () => {
+    localStorage.setItem(OWNED_KEY, JSON.stringify([[7, 2], ['Sol Ring', 1]]));
+    expect([...loadOwnedMap()]).toEqual([['sol ring', 1]]);
+  });
 });

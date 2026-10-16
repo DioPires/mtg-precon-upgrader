@@ -6,8 +6,43 @@
 //
 // Keys are stored verbatim (front-face, original case) as Shopping writes them;
 // cardAtlas.ts lowercases on its own read.
+//
+// Shopping, Card Atlas and Combo Lab read the store through `readOwnedEntries`,
+// so all three keep the same entries (DEC-1150). Each folds them by its own key.
 
 export const OWNED_KEY = 'grimoire-owned-cards';
+
+/** An owned quantity is a whole number of 1 or more (DEC-1141). `Infinity` is not one (DEC-1150 N2). */
+export function isOwnedQuantity(q: unknown): q is number {
+  return Number.isInteger(q) && (q as number) >= 1;
+}
+
+/**
+ * The stored owned entries, in store order, with their names as stored.
+ *
+ * The app writes only [name, quantity] pairs, but a hand edit or a damaged
+ * store can hold other entries. The read drops each entry that is not a pair of
+ * a name with text and an owned quantity, keeps the rest and writes nothing
+ * back. An empty or missing store, a store that is not JSON and a store that is
+ * not an array give `[]` (DEC-1141, DEC-1150).
+ */
+export function readOwnedEntries(storage: Storage = localStorage): Array<[string, number]> {
+  let stored: unknown;
+  try {
+    stored = JSON.parse(storage.getItem(OWNED_KEY) ?? '');
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(stored)) return [];
+  const out: Array<[string, number]> = [];
+  for (const entry of stored) {
+    if (!Array.isArray(entry) || entry.length !== 2) continue;
+    const [n, q]: unknown[] = entry;
+    if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) continue;
+    out.push([n, q]);
+  }
+  return out;
+}
 
 /**
  * Prefixes of purely derivable caches — the deck-JSON envelope and the Scryfall
