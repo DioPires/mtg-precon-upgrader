@@ -1,6 +1,6 @@
 // DEC-1170 kill cases for PR #70 (DEC-1153): the card-metadata envelope of the loader.
 // 2b: a dated envelope older than 1 h: both files come, and the envelope is written again with the new date.
-// 2d: a stored pricesAsOf that is not a readable date (a number, null, "", "not a date") counts as none.
+// 2d: a stored pricesAsOf that is not a readable date (a number, the number 2026, null, "", "not a date") counts as none.
 // K1: a meta file whose prices_as_of is a string that Date.parse cannot read ("", "not a date"):
 //     the loader keeps the file in memory, stores nothing, and the next load asks again (B1).
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -75,6 +75,8 @@ describe('DEC-1170 2b: a dated envelope older than 1 h', () => {
 describe('DEC-1170 2d: a stored pricesAsOf that is not a readable date', () => {
   for (const [label, stored] of [
     ['a number', Date.parse(OLD_DATE)],
+    // Date.parse(2026) reads the year 2026 (DEC-1188, mutant H2 of DEC-1170).
+    ['the number 2026', 2026],
     ['null', null],
     ['an object', { prices_as_of: OLD_DATE }],
     ['an empty string', ''],

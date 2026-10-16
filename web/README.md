@@ -202,11 +202,13 @@ web-ci uploads it when the `e2e` job fails.
   through `navigator.locks` and the last start (wall time) in `localStorage`. A tab keeps the
   lock until the card cache has stored the answer, and 20 s after the start at most. After a
   200, the next tab's batch finds those names in storage. After a 400 or a 422, the card cache
-  keeps the error in that tab's memory only, so the other tab asks again.
+  keeps a lookup's error in that tab's memory only, so the other tab asks again. A refresh's
+  24 h mark goes to storage, so the other tab sends nothing for that name.
 - **Bucket 2** holds `/cards/autocomplete`, 120 ms apart. While a stop holds, the Atlas sends
   no autocomplete and keeps its own suggestions.
 - **The timeout.** A request with no answer after 20 s is aborted, and it counts as a rejected
-  `fetch`. An abort by the caller is no failure.
+  `fetch`. The card cache's batch has its answer only when the body has ended, so a body that
+  has not ended 20 s after the start counts the same. An abort by the caller is no failure.
 - **The stop.** A 429, a rejected `fetch` or the timeout stops both buckets for 30 s; the
   request that met it goes first when the stop ends. If that one fails too, the stop doubles,
   up to 300 s, and a success resets it. The stop record holds its end, its length and a
@@ -229,7 +231,8 @@ load asks again.
   matched by name, never by position. A name whose front face is blank goes in no batch,
   because one blank identifier fails the whole batch: it reads not found. A name in
   `not_found` gets no other request for 24 h, also after a reload. An answer with another
-  status (a 400 or a 422) fails the batch's names for 30 s and starts no stop.
+  status (a 400 or a 422) fails the batch's lookups for 30 s in that tab's memory, holds its
+  refreshes for 24 h in storage, and starts no stop.
 - /shopping alone asks again for a price older than 24 h. A deck page sends no price request
   for a deck card at any date: a tile shows the deck file's highlight price first, else the
   cache's price (the file's, or the price that /shopping refreshed in this browser inside

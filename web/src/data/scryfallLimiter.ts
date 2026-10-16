@@ -18,12 +18,14 @@
 // tab send at a time, and localStorage holds the last start in wall time.
 // A caller that stores the answer (next() with `settle`) keeps the lock until
 // it has stored it, so the next tab's turn finds those names in storage; the
-// lock frees 20 s after the start at the latest (DEC-1153).
+// lock frees 20 s after the start at the latest (DEC-1153). Such a caller gets
+// the answer whole: the limiter reads its body inside the request's 20 s.
 // Without navigator.locks (jsdom) the bucket holds in the one tab.
 // Bucket 2 ('autocomplete': /cards/autocomplete). 120 ms between starts.
 //
 // The stop. A 429, a fetch to api.scryfall.com that rejects, or a request with no
-// answer after 20 s (the limiter aborts it) stops both buckets for 30 s. The
+// answer after 20 s (the limiter aborts it) stops both buckets for 30 s; for a
+// caller with `settle`, a body that has not ended is no answer (DEC-1188). The
 // request that met it stays first in its bucket, and nothing goes. When the stop
 // ends, one request goes. If that one fails too, the stop doubles (60 s, 120 s,
 // 240 s), up to 300 s. Any other answer to it ends the stop and resets it to
@@ -105,7 +107,8 @@ export interface SendOptions {
    * next() only: runs with the answer, and the call resolves after it. Bucket 1
    * holds its lock while it runs, so the caller stores the answer before another
    * tab takes its turn (DEC-1153). The lock frees when it settles, or
-   * REQUEST_TIMEOUT_MS after the request started, whichever comes first.
+   * REQUEST_TIMEOUT_MS after the request started, whichever comes first. The
+   * body of the answer has ended when it runs (DEC-1188).
    */
   settle?: (sent: Sent) => Promise<void> | void;
 }
@@ -417,12 +420,15 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
    * One fetch with the timeout. Gives the answer; or `timedOut` when no answer
    * came inside REQUEST_TIMEOUT_MS (the timer aborts the fetch, and a flag, not
    * the order in which the promises settle, says so); or the error of a fetch
-   * that rejects. The caller's abort aborts the fetch.
+   * that rejects. With `wholeBody`, the answer comes when its body has ended: a
+   * copy of the body is read inside the same REQUEST_TIMEOUT_MS (DEC-1188). The
+   * caller's abort aborts the fetch.
    */
   async function fetchWithTimeout(
     fetchImpl: typeof fetch,
     request: ApiRequest,
     signal: AbortSignal | undefined,
+    wholeBody: boolean,
   ): Promise<{ response: Response | null; error: unknown; timedOut: boolean }> {
     const controller = new AbortController();
     const forward = () => controller.abort(signal ? abortReason(signal) : undefined);
@@ -445,6 +451,10 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
       // After a timeout the aborted fetch rejects, and nobody waits for it.
       fetching.catch(() => undefined);
       const response = await Promise.race([fetching, timeout]);
+      if (response && wholeBody) {
+        // A body that fails before the deadline fails the caller's own read in the same way.
+        await Promise.race([response.clone().arrayBuffer().catch(() => undefined), timeout]);
+      }
       return { response: timedOut ? null : response, error: null, timedOut };
     } catch (error) {
       return { response: null, error, timedOut };
@@ -475,7 +485,8 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
     markStart(bucket);
     const deadline = monotonic() + REQUEST_TIMEOUT_MS;
     inFlight += 1;
-    const { response, error, timedOut } = await fetchWithTimeout(fetchImpl, request, job.signal);
+    // A caller that stores the answer gets it whole, so its own read cannot hang (DEC-1188).
+    const { response, error, timedOut } = await fetchWithTimeout(fetchImpl, request, job.signal, job.settle !== undefined);
     if (run !== generation) return;
     inFlight = Math.max(0, inFlight - 1);
     if (inFlight === 0) {
