@@ -725,7 +725,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
         <div role="status">
           {importMsg?.ok && (
             <div className="gv1-shop-import-msg gv1-shop-import-ok">
-              <span className="gv1-mono-xs">◆</span>
+              <span className="gv1-mono-xs" aria-hidden="true">◆</span>
               <span className="gv1-mono-xs">{importMsg.text}</span>
             </div>
           )}
@@ -733,15 +733,15 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
         <div role="alert">
           {importMsg && !importMsg.ok && (
             <div className="gv1-shop-import-msg gv1-shop-import-err">
-              <span className="gv1-mono-xs">⚠</span>
+              <span className="gv1-mono-xs" aria-hidden="true">⚠</span>
               <span className="gv1-mono-xs">{importMsg.text}</span>
             </div>
           )}
         </div>
       </section>
 
-      {selected.size > 0 && (
-        <section className="gv1-section gv1-shop-section">
+      <section className={selected.size > 0 ? 'gv1-section gv1-shop-section' : undefined}>
+        {selected.size > 0 && (
           <div className="gv1-shop-summary">
             <div className="gv1-shop-stat">
               <span className="gv1-mono-xs gv1-dim">NEED TO BUY</span>
@@ -795,9 +795,9 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
               </button>
             </div>
           </div>
-          <PricePausedLine waiting={waitingForPrice} pricesDate={shownPricesDate} />
-        </section>
-      )}
+        )}
+        <PricePausedLine waiting={waitingForPrice} pricesDate={shownPricesDate} />
+      </section>
 
       {selected.size > 0 && (
         <section className="gv1-section gv1-shop-section">

@@ -626,6 +626,42 @@ describe('Shopping organism', () => {
     expect(importAlert()).toBe(alert);
   });
 
+  it('hides the sigil of each import message from screen readers, so each region reads the message alone (DEC-1167)', async () => {
+    const { container } = renderShopping([ALPHA]);
+    const input = container.querySelector<HTMLInputElement>('#gv1-shop-owned-file')!;
+    // jsdom's File has no text(), so the test gives it one.
+    const pick = (body: string) => {
+      const file = new File([body], 'owned.txt', { type: 'text/plain' });
+      Object.defineProperty(file, 'text', { value: () => Promise.resolve(body) });
+      fireEvent.change(input, { target: { files: [file] } });
+    };
+    // The region's text without the elements that aria-hidden takes out of the accessibility tree.
+    const spoken = (region: HTMLElement) => {
+      const copy = region.cloneNode(true) as HTMLElement;
+      copy.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
+      return copy.textContent;
+    };
+
+    // A file of cards: the ◆ is hidden, and the status region reads the count alone.
+    pick('Sol Ring\n');
+    const count = 'Added 1 unique card (1 total). 1 card loaded. To replace the list, use Clear owned first.';
+    await waitFor(() => expect(importStatus()).toHaveTextContent(count));
+    const [okSigil, okText] = importStatus().firstElementChild!.children;
+    expect(okSigil).toHaveAttribute('aria-hidden', 'true');
+    expect(okSigil.textContent).toBe('◆');
+    expect(okText).not.toHaveAttribute('aria-hidden');
+    expect(spoken(importStatus())).toBe(count);
+
+    // A file with no card: the ⚠ is hidden, and the alert region reads the error alone.
+    pick('\n');
+    await waitFor(() => expect(importAlert()).toHaveTextContent('No cards detected in that file.'));
+    const [errSigil, errText] = importAlert().firstElementChild!.children;
+    expect(errSigil).toHaveAttribute('aria-hidden', 'true');
+    expect(errSigil.textContent).toBe('⚠');
+    expect(errText).not.toHaveAttribute('aria-hidden');
+    expect(spoken(importAlert())).toBe('No cards detected in that file.');
+  });
+
   describe('an owned quantity is a whole number of 1 or more (DEC-1141)', () => {
     const loadStore = (raw: string) => {
       localStorage.setItem(STORAGE_KEY, raw);
