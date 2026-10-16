@@ -1,0 +1,83 @@
+(node:27745) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 8 tests using 3 workers
+
+(node:27856) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:27858) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:27857) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/dec1177-empty-sigils.spec.ts:77:1 › the Combo Lab empty state reads its text alone (DEC-1177) (298ms)
+  ✓  2 [chromium] › tests/dec1177-empty-sigils.spec.ts:98:1 › each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177) (390ms)
+  ✓  3 [chromium] › tests/dec1177-empty-sigils.spec.ts:61:1 › /shopping with no deck selected reads its message alone (DEC-1177) (466ms)
+(node:27871) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  5 [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:79:1 › the Combo Lab empty state reads its text alone (DEC-1177) (142ms)
+  ✓  4 [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:63:1 › /shopping with no deck selected reads its message alone (DEC-1177) (256ms)
+  ✓  7 [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:124:1 › Compare with no decks loaded reads its message alone (DEC-1177) (101ms)
+(node:27886) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓  6 [chromium] › tests/dec1177-empty-sigils.spec.ts:122:1 › Compare with no decks loaded reads its message alone (DEC-1177) (222ms)
+  ✓  8 [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:100:1 › each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177) (172ms)
+
+
+  1) [chromium] › tests/dec1177-empty-sigils.spec.ts:77:1 › the Combo Lab empty state reads its text alone (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Object {[22m
+    [2m    "color": "rgb(74, 122, 88)",[22m
+    [32m-   "fontSize": "24px",[39m
+    [31m+   "fontSize": "18px",[39m
+    [2m    "fontStyle": "normal",[22m
+    [32m-   "letterSpacing": "9.6px",[39m
+    [31m+   "letterSpacing": "7.2px",[39m
+    [2m  }[22m
+
+      89 |   // combo-lab.css rewrote the whole rule: its glyph keeps its size, style, spacing and colour.
+      90 |   const { runeDim, ...glyph } = await beforeStyle(page, title);
+    > 91 |   expect(glyph).toEqual({ fontSize: '24px', fontStyle: 'normal', letterSpacing: '9.6px', color: runeDim });
+         |                 ^
+      92 | });
+      93 |
+      94 | // A browser that cannot parse `content: '◇' / ''` drops that declaration and
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/dec1177-empty-sigils.spec.ts:91:17
+
+    Error Context: test-results/dec1177-empty-sigils-the-C-c3820-ds-its-text-alone-DEC-1177--chromium/error-context.md
+
+  2) [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:79:1 › the Combo Lab empty state reads its text alone (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Object {[22m
+    [2m    "color": "rgb(74, 122, 88)",[22m
+    [32m-   "fontSize": "24px",[39m
+    [31m+   "fontSize": "18px",[39m
+    [2m    "fontStyle": "normal",[22m
+    [32m-   "letterSpacing": "9.6px",[39m
+    [31m+   "letterSpacing": "7.2px",[39m
+    [2m  }[22m
+
+      91 |   // combo-lab.css rewrote the whole rule: its glyph keeps its size, style, spacing and colour.
+      92 |   const { runeDim, ...glyph } = await beforeStyle(page, title);
+    > 93 |   expect(glyph).toEqual({ fontSize: '24px', fontStyle: 'normal', letterSpacing: '9.6px', color: runeDim });
+         |                 ^
+      94 | });
+      95 |
+      96 | // A browser that cannot parse `content: '◇' / ''` drops that declaration and
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/zz-dec1185-kill-blocked.spec.ts:93:17
+
+    Error Context: test-results/zz-dec1185-kill-blocked-th-7e030-ds-its-text-alone-DEC-1177--chromium/error-context.md
+
+  2 failed
+    [chromium] › tests/dec1177-empty-sigils.spec.ts:77:1 › the Combo Lab empty state reads its text alone (DEC-1177) 
+    [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:79:1 › the Combo Lab empty state reads its text alone (DEC-1177) 
+  6 passed (3.9s)
