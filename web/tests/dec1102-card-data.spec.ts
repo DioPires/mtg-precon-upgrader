@@ -2,9 +2,11 @@
 // every request to api.scryfall.com. The fixture's rate check (support/test.ts)
 // holds in every case here too.
 //
-// DEC-1131: /shopping and the deck guide tiles refresh a price older than 24 h,
-// so a case that proves "no request" runs on a page clock less than 24 h after
-// the file's `prices_as_of`. tests/dec1131-card-batches.spec.ts holds the refresh.
+// DEC-1131 and DEC-1172: only /shopping refreshes a price older than 24 h, so a
+// /shopping case that proves "no request" runs on a page clock less than 24 h
+// after the file's `prices_as_of`. A deck page sends no request for a deck card
+// at any date, so its cases run on a clock at which every price is older than
+// 24 h. tests/dec1131-card-batches.spec.ts holds the refresh.
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,6 +24,8 @@ const PRICES_AS_OF = (
 ).prices_as_of;
 /** A page clock at which every price of the file is younger than 24 h: nothing asks for a refresh. */
 const PRICES_ARE_FRESH = Date.parse(PRICES_AS_OF) + 3_600_000;
+/** A page clock at which every price of the file is older than 24 h, also on the day the file was made. */
+const pricesAreOld = () => Math.max(Date.now(), Date.parse(PRICES_AS_OF) + 25 * 3_600_000);
 
 /** The requests of one context that matter here, by kind. A lookup is a batch: its names, joined. */
 function watch(context: BrowserContext) {
@@ -71,7 +75,7 @@ test('a scroll to the end of a deck guide sends nothing to api.scryfall.com or /
   context,
 }) => {
   const seen = watch(context);
-  await page.clock.install({ time: PRICES_ARE_FRESH });
+  await page.clock.install({ time: pricesAreOld() });
   await page.goto('/deck/creeping-corruption');
   await page.locator('.gv1-card-tile').first().waitFor();
   await scrollToEnd(page);
@@ -277,8 +281,8 @@ test.describe('the seed and storage', () => {
   test("a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once", async ({
     page,
   }) => {
-    // No tile asks for a price refresh, which would store one for its name.
-    await page.clock.install({ time: PRICES_ARE_FRESH });
+    // Prices older than 24 h: no tile asks for a refresh (DEC-1172), which would store one for its name.
+    await page.clock.install({ time: pricesAreOld() });
     const cardKeys = () =>
       page.evaluate(() => Object.keys(localStorage).filter((key) => key.startsWith('gv1-card:')).map((key) => key.slice(9)));
     await page.goto('/data/index.json');

@@ -16,10 +16,12 @@
 // its own fields, and lives 24 h under `gv1-card:` as an overlay (the changed
 // fields and the time of the try). seed() keeps a live overlay.
 //   - The price, when the price shown is older than 24 h (refreshPrice(): the
-//     /shopping rows and the deck guide tiles that show the cache's price). Only
-//     the price and its date change. When the file is newer than the refresh,
-//     the file's price wins. A refresh that gets no price (not found, a 400 or
-//     422, or `usd` null) keeps the price shown, and nobody asks again for 24 h.
+//     /shopping rows alone; a deck page sends no request for a deck card at any
+//     date, DEC-1172). Only the price and its date change. A deck guide tile
+//     that shows the cache's price shows a live refresh too. When the file is
+//     newer than the refresh, the file's price wins. A refresh that gets no
+//     price (not found, a 400 or 422, or `usd` null) keeps the price shown, and
+//     nobody asks again for 24 h.
 //   - The pictures, after a picture from the file failed to load (imageFailed()).
 //     The mark goes to storage before the batch, so a second failure inside 24 h
 //     sends nothing, also after a reload.

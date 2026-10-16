@@ -92,6 +92,21 @@ async function rowPrices(page: Page): Promise<Map<string, string | null>> {
   return new Map(rows);
 }
 
+/** The tiles of a deck guide: [name, the price that the tile shows]. */
+async function tilePrices(page: Page): Promise<Array<[string, string]>> {
+  return page.locator('.gv1-card-tile').evaluateAll((els) =>
+    els.map((el) => [el.getAttribute('data-card-name') ?? '', el.querySelector('.gv1-card-tile-foot .gv1-rune')?.textContent ?? ''] as [string, string]),
+  );
+}
+
+async function scrollToEnd(page: Page) {
+  const height = await page.evaluate(() => document.documentElement.scrollHeight);
+  for (let y = 0; y <= height; y += 600) {
+    await page.evaluate((top) => window.scrollTo(0, top), y);
+    await page.waitForTimeout(100);
+  }
+}
+
 test.describe('/shopping refreshes the prices older than 24 h', () => {
   test.use({ scryfallUsdBump: 1 });
 
@@ -413,35 +428,49 @@ test('a card-metadata.json that fails is not kept: the next load asks for it aga
   await expect.poll(kept).toHaveLength(1);
 });
 
-test('a deck guide: only the tiles with no highlight price ask for a refresh, and a reload inside 24 h sends nothing', async ({
-  page,
-  context,
-}) => {
-  test.setTimeout(60_000);
-  // A deck whose highlights give a price to some tiles and not to others.
-  const id = 'eternal-harvest';
-  const highlights = (read(`commanders/${id}/deck.json`) as { highlights?: Array<{ name: string; price?: string }> }).highlights ?? [];
-  const highlightPriced = new Set(highlights.filter((h) => h.price && h.price !== '—').map((h) => h.name.toLowerCase()));
-  const seen = watch(context);
-  await page.clock.install({ time: pricesAreOld() });
-  await page.goto(`/deck/${id}`);
-  await page.locator('.gv1-card-tile').first().waitFor();
-  await page.waitForTimeout(3_000);
+// DEC-1172 (the owner's answer A on DEC-1072): a deck page sends no price
+// refresh at any date; only /shopping refreshes a price older than 24 h.
+test.describe('a deck guide with prices older than 24 h', () => {
+  // A refresh, if one went out, would show a price $1.00 above the file's.
+  test.use({ scryfallUsdBump: 1 });
 
-  const tiles = [...new Set(await page.locator('.gv1-card-tile').evaluateAll((els) => els.map((el) => el.getAttribute('data-card-name') ?? '')))];
-  const priced = tiles.filter((name) => highlightPriced.has(name.toLowerCase()));
-  const unpriced = tiles.filter((name) => !highlightPriced.has(name.toLowerCase()) && USD.has(name.toLowerCase()));
-  expect(priced.length).toBeGreaterThan(0);
-  expect(unpriced.length).toBeGreaterThan(0);
-  const asked = new Set(seen.batches.flat().map(normalizeName));
-  expect(priced.filter((name) => asked.has(normalizeName(front(name))))).toEqual([]);
-  expect(unpriced.filter((name) => !asked.has(normalizeName(front(name))))).toEqual([]);
+  test("sends no batch: each tile shows its highlight price or the file's price, and a reload sends nothing", async ({
+    page,
+    context,
+  }) => {
+    test.setTimeout(60_000);
+    // A deck whose highlights give a price to some tiles and not to others.
+    const id = 'eternal-harvest';
+    const highlights = (read(`commanders/${id}/deck.json`) as { highlights?: Array<{ name: string; price?: string }> }).highlights ?? [];
+    const highlightPrice = new Map(
+      highlights.filter((h) => h.price && h.price !== '—').map((h) => [h.name.toLowerCase(), h.price!] as const),
+    );
+    const seen = watch(context);
+    await page.clock.install({ time: pricesAreOld() });
+    await page.goto(`/deck/${id}`);
+    await page.locator('.gv1-card-tile').first().waitFor();
+    await scrollToEnd(page);
+    await page.waitForTimeout(3_000);
 
-  const sent = seen.batches.length;
-  await page.reload();
-  await page.locator('.gv1-card-tile').first().waitFor();
-  await page.waitForTimeout(3_000);
-  expect(seen.batches).toHaveLength(sent);
+    // Every tile is a name of the file. The page names other cards outside the
+    // file (the Apothecary's remedies), which only a hover looks up: nothing goes.
+    const tiles = await tilePrices(page);
+    expect(tiles.filter(([name]) => !USD.has(name.toLowerCase())).map(([name]) => name)).toEqual([]);
+    expect(seen.batches).toEqual([]);
+    expect(seen.methods).toEqual([]);
+
+    const priced = tiles.filter(([name]) => highlightPrice.has(name.toLowerCase()));
+    const fromFile = tiles.filter(([name]) => !highlightPrice.has(name.toLowerCase()) && USD.get(name.toLowerCase()) != null);
+    expect(priced.length).toBeGreaterThan(0);
+    expect(fromFile.length).toBeGreaterThan(0);
+    expect(priced.filter(([name, price]) => price !== highlightPrice.get(name.toLowerCase()))).toEqual([]);
+    expect(fromFile.filter(([name, price]) => price !== usdText(USD.get(name.toLowerCase())!))).toEqual([]);
+
+    await page.reload();
+    await page.locator('.gv1-card-tile').first().waitFor();
+    await page.waitForTimeout(3_000);
+    expect(seen.methods).toEqual([]);
+  });
 });
 
 test('the Atlas sends no autocomplete while a stop holds, and keeps its own suggestions (N5)', async ({ page, context }) => {
