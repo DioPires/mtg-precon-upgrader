@@ -416,10 +416,40 @@ class ToughnessCutTests(unittest.TestCase):
         card = _card("Brashfire Rally", "Instant", "Target creature gets +2/-0 until end of turn.")
         self.assertNotEqual(atr.classify(card)[0], "removal-spot")
 
-    def test_cut_to_power_only_keeps_mains_read(self):
-        # PR #78 keeps main's read of "-N/-0" (DEC-1184 ruling R1); DEC-1191 changes this case.
+    def test_cut_to_power_only_is_not_removal_spot(self):
+        # A cut to power stops one attack; it does not answer the creature (DEC-1184 ruling R1).
         card = _card("Dullwit Hex", "Instant", "Target creature gets -3/-0 until end of turn.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_cut_to_power_that_then_destroys_the_creature_is_removal_spot(self):
+        card = _card(
+            "Crushing Depths",
+            "Instant",
+            "Target creature gets -3/-0 until end of turn. Then if that creature's power is 0 or less, destroy it.",
+        )
         self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_cut_to_toughness_of_a_qualified_target_is_removal_spot(self):
+        card = _card(
+            "Gloomfang Stalker",
+            "Creature — Beast Horror",
+            "When this creature enters, target creature an opponent controls gets -2/-2 until end of turn.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_cut_to_toughness_of_a_target_you_control_is_not_removal_spot(self):
+        card = _card("Reckless Overdrive", "Instant", "Target creature you control gets +2/-1 until end of turn.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_qualifier_with_a_comma_is_another_clause(self):
+        # The cut lands only on a creature that it cannot kill; the card is a pump.
+        card = _card(
+            "Giantsbane Fury",
+            "Instant",
+            "If target creature has toughness 5 or greater, it gets +4/-4 until end of turn. Otherwise, it gets "
+            "+4/-0 until end of turn.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
 
     def test_cut_to_the_toughness_of_this_creature_is_not_removal_spot(self):
         card = _card("Glassback Drake", "Creature — Drake", "Flying\n{R}: This creature gets +2/-2 until end of turn.")
