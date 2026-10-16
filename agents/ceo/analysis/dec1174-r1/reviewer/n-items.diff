@@ -1,0 +1,21 @@
+--- /tmp/dec1174/kill/dec1102-card-data.head.spec.ts	2026-10-16 10:50:29
++++ /tmp/dec1174/kill/dec1102-card-data.n-items.spec.ts	2026-10-16 10:51:18
+@@ -182,7 +182,7 @@
+   context,
+ }) => {
+   const seen = watch(context);
+-  await page.clock.install({ time: PRICES_ARE_FRESH });
++  await page.clock.install({ time: pricesAreOld() });
+   await page.goto('/deck/creeping-corruption');
+   const names = page.locator('.gv1-apo-pin[data-card-name], article[data-card-name]');
+   await names.first().waitFor();
+@@ -293,6 +293,9 @@
+     await page.locator('.gv1-card-tile').first().waitFor();
+     // The stub's seed runs again at each navigation; the app's seed follows it.
+     await expect.poll(async () => (await cardKeys()).filter((key) => USD.has(key)).length).toBe(0);
++    // No tile asks for a refresh, which would store a key for its name: look again after a batch's time.
++    await page.waitForTimeout(3_000);
++    expect((await cardKeys()).filter((key) => USD.has(key))).toEqual([]);
+     // Only the faces that the file does not hold as names stay.
+     const after = await cardKeys();
+     expect(after.length).toBeGreaterThan(0);

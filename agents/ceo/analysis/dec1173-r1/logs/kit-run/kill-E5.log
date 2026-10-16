@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /private/tmp/dec1173-ceo/sim/web
+
+ ❯ src/__tests__/components/dec1173-stopline-date.test.tsx (1 test | 1 failed) 1581ms
+   × the stop line at Shopping.tsx:804 (DEC-1173 kill case for E4 and E5) > gives the date of the prices shown, as the footer does, also when the file is older 1580ms
+     → expected 'Price refresh paused. Prices shown ar…' to match /^Price refresh paused\. Prices shown …/
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/dec1173-stopline-date.test.tsx > the stop line at Shopping.tsx:804 (DEC-1173 kill case for E4 and E5) > gives the date of the prices shown, as the footer does, also when the file is older
+AssertionError: expected 'Price refresh paused. Prices shown ar…' to match /^Price refresh paused\. Prices shown …/
+
+- Expected: 
+/^Price refresh paused\. Prices shown are from 16 Oct 2026\. Next try at /
+
++ Received: 
+"Price refresh paused. Prices shown are from 13 Oct 2026. Next try at 11:05:07."
+
+ ❯ src/__tests__/components/dec1173-stopline-date.test.tsx:96:30
+     94|     await waitFor(() => expect(screen.getByText(/Price refresh paused/…
+     95|     const line = container.querySelector('.gv1-shop-paused')!;
+     96|     expect(line.textContent).toMatch(new RegExp(`^Price refresh paused…
+       |                              ^
+     97|     expect(line.textContent).not.toContain(file);
+     98|     // The footer gives the same date.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  11:04:36
+   Duration  2.55s (transform 137ms, setup 62ms, collect 195ms, tests 1.58s, environment 312ms, prepare 78ms)
+

@@ -1,0 +1,256 @@
+(node:32287) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 8 tests using 3 workers
+
+(node:32419) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:32417) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:32418) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  3 [chromium] › tests/dec1177-empty-sigils.spec.ts:77:1 › the Combo Lab empty state reads its text alone (DEC-1177) (274ms)
+  ✘  2 [chromium] › tests/dec1177-empty-sigils.spec.ts:98:1 › each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177) (382ms)
+  ✘  1 [chromium] › tests/dec1177-empty-sigils.spec.ts:61:1 › /shopping with no deck selected reads its message alone (DEC-1177) (430ms)
+(node:32441) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:32442) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:32443) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  4 [chromium] › tests/dec1177-empty-sigils.spec.ts:122:1 › Compare with no decks loaded reads its message alone (DEC-1177) (216ms)
+  ✘  6 [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:79:1 › the Combo Lab empty state reads its text alone (DEC-1177) (160ms)
+  ✘  5 [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:63:1 › /shopping with no deck selected reads its message alone (DEC-1177) (318ms)
+(node:32471) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:32472) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  8 [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:124:1 › Compare with no decks loaded reads its message alone (DEC-1177) (114ms)
+  ✘  7 [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:100:1 › each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177) (202ms)
+
+
+  1) [chromium] › tests/dec1177-empty-sigils.spec.ts:61:1 › /shopping with no deck selected reads its message alone (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 0[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Array [[22m
+    [31m+   "◇",[39m
+    [31m+   "◇",[39m
+    [2m    "NO DECKS SELECTED. PICK AT LEAST ONE ABOVE TO BUILD A LIST.",[22m
+    [2m  ][22m
+
+      68 |
+      69 |   // `.gv1-mono-xs` sets text-transform: uppercase, and Chromium reads the text as shown.
+    > 70 |   expect(await spokenText(page, message)).toEqual([message.toUpperCase()]);
+         |                                           ^
+      71 |   // The two glyphs still show.
+      72 |   await expect(empty.locator('.gv1-rune')).toHaveText('◇');
+      73 |   expect(await beforeGlyph(page, message)).toMatch(/^"◇"/);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/dec1177-empty-sigils.spec.ts:70:43
+
+    Error Context: test-results/dec1177-empty-sigils--shop-b20f1-its-message-alone-DEC-1177--chromium/error-context.md
+
+  2) [chromium] › tests/dec1177-empty-sigils.spec.ts:77:1 › the Combo Lab empty state reads its text alone (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 0[39m
+    [31m+ Received  + 1[39m
+
+    [2m  Array [[22m
+    [31m+   "◇",[39m
+    [2m    "Paste a decklist to consult the corpus",[22m
+    [2m    "One card per line, quantities welcome. The match runs entirely in your browser.",[22m
+    [2m    "OR PRESS “LOAD EXAMPLE” FOR A CLASSIC COMBO PILE",[22m
+    [2m  ][22m
+
+      80 |   await expect(page.locator('.gv1-empty').filter({ hasText: title })).toHaveCount(1);
+      81 |
+    > 82 |   expect(await spokenText(page, title)).toEqual([
+         |                                         ^
+      83 |     title,
+      84 |     'One card per line, quantities welcome. The match runs entirely in your browser.',
+      85 |     // `.gv1-empty-hint` sets text-transform: uppercase.
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/dec1177-empty-sigils.spec.ts:82:41
+
+    Error Context: test-results/dec1177-empty-sigils-the-C-c3820-ds-its-text-alone-DEC-1177--chromium/error-context.md
+
+  3) [chromium] › tests/dec1177-empty-sigils.spec.ts:98:1 › each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 0[39m
+
+    [2m  Array [[22m
+    [2m    Object {[22m
+    [2m      "content": Array [[22m
+    [2m        "content:\"◇\"",[22m
+    [32m-       "content:\"◇\"/\"\"",[39m
+    [2m      ],[22m
+    [2m      "selector": ".gv1-empty:before",[22m
+    [2m    },[22m
+    [2m    Object {[22m
+    [2m      "content": Array [[22m
+    [2m        "content:\"◇\"",[22m
+    [32m-       "content:\"◇\"/\"\"",[39m
+    [2m      ],[22m
+    [2m      "selector": "[data-gv1-screen=combolab] .gv1-empty:before",[22m
+    [2m    },[22m
+    [2m  ][22m
+
+      113 |   }));
+      114 |
+    > 115 |   expect(rules).toEqual([
+          |                 ^
+      116 |     { selector: '.gv1-empty:before', content: ['content:"◇"', 'content:"◇"/""'] },
+      117 |     { selector: '[data-gv1-screen=combolab] .gv1-empty:before', content: ['content:"◇"', 'content:"◇"/""'] },
+      118 |   ]);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/dec1177-empty-sigils.spec.ts:115:17
+
+    Error Context: test-results/dec1177-empty-sigils-each--4cdb6--alternative-text-DEC-1177--chromium/error-context.md
+
+  4) [chromium] › tests/dec1177-empty-sigils.spec.ts:122:1 › Compare with no decks loaded reads its message alone (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 0[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Array [[22m
+    [31m+   "◇",[39m
+    [31m+   "◇",[39m
+    [2m    "NO DECKS LOADED.",[22m
+    [2m  ][22m
+
+      128 |
+      129 |   // `.gv1-mono-xs` sets text-transform: uppercase.
+    > 130 |   expect(await spokenText(page, message)).toEqual(['NO DECKS LOADED.']);
+          |                                           ^
+      131 |   // The two glyphs still show.
+      132 |   await expect(empty.locator('.gv1-rune')).toHaveText('◇');
+      133 |   expect(await beforeGlyph(page, message)).toMatch(/^"◇"/);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/dec1177-empty-sigils.spec.ts:130:43
+
+    Error Context: test-results/dec1177-empty-sigils-Compa-0721f-its-message-alone-DEC-1177--chromium/error-context.md
+
+  5) [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:63:1 › /shopping with no deck selected reads its message alone (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 0[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Array [[22m
+    [31m+   "◇",[39m
+    [31m+   "◇",[39m
+    [2m    "NO DECKS SELECTED. PICK AT LEAST ONE ABOVE TO BUILD A LIST.",[22m
+    [2m  ][22m
+
+      70 |
+      71 |   // `.gv1-mono-xs` sets text-transform: uppercase, and Chromium reads the text as shown.
+    > 72 |   expect(await spokenText(page, message)).toEqual([message.toUpperCase()]);
+         |                                           ^
+      73 |   // The two glyphs still show.
+      74 |   await expect(empty.locator('.gv1-rune')).toHaveText('◇');
+      75 |   expect(await beforeGlyph(page, message)).toMatch(/^"◇"/);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/zz-dec1185-kill-blocked.spec.ts:72:43
+
+    Error Context: test-results/zz-dec1185-kill-blocked--s-e9a27-its-message-alone-DEC-1177--chromium/error-context.md
+
+  6) [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:79:1 › the Combo Lab empty state reads its text alone (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 0[39m
+    [31m+ Received  + 1[39m
+
+    [2m  Array [[22m
+    [31m+   "◇",[39m
+    [2m    "Paste a decklist to consult the corpus",[22m
+    [2m    "One card per line, quantities welcome. The match runs entirely in your browser.",[22m
+    [2m    "OR PRESS “LOAD EXAMPLE” FOR A CLASSIC COMBO PILE",[22m
+    [2m  ][22m
+
+      82 |   await expect(page.locator('.gv1-empty').filter({ hasText: title })).toHaveCount(1);
+      83 |
+    > 84 |   expect(await spokenText(page, title)).toEqual([
+         |                                         ^
+      85 |     title,
+      86 |     'One card per line, quantities welcome. The match runs entirely in your browser.',
+      87 |     // `.gv1-empty-hint` sets text-transform: uppercase.
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/zz-dec1185-kill-blocked.spec.ts:84:41
+
+    Error Context: test-results/zz-dec1185-kill-blocked-th-7e030-ds-its-text-alone-DEC-1177--chromium/error-context.md
+
+  7) [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:100:1 › each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 0[39m
+
+    [2m  Array [[22m
+    [2m    Object {[22m
+    [2m      "content": Array [[22m
+    [2m        "content:\"◇\"",[22m
+    [32m-       "content:\"◇\"/\"\"",[39m
+    [2m      ],[22m
+    [2m      "selector": ".gv1-empty:before",[22m
+    [2m    },[22m
+    [2m    Object {[22m
+    [2m      "content": Array [[22m
+    [2m        "content:\"◇\"",[22m
+    [32m-       "content:\"◇\"/\"\"",[39m
+    [2m      ],[22m
+    [2m      "selector": "[data-gv1-screen=combolab] .gv1-empty:before",[22m
+    [2m    },[22m
+    [2m  ][22m
+
+      115 |   }));
+      116 |
+    > 117 |   expect(rules).toEqual([
+          |                 ^
+      118 |     { selector: '.gv1-empty:before', content: ['content:"◇"', 'content:"◇"/""'] },
+      119 |     { selector: '[data-gv1-screen=combolab] .gv1-empty:before', content: ['content:"◇"', 'content:"◇"/""'] },
+      120 |   ]);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/zz-dec1185-kill-blocked.spec.ts:117:17
+
+    Error Context: test-results/zz-dec1185-kill-blocked-ea-e0fa7--alternative-text-DEC-1177--chromium/error-context.md
+
+  8) [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:124:1 › Compare with no decks loaded reads its message alone (DEC-1177) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 0[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Array [[22m
+    [31m+   "◇",[39m
+    [31m+   "◇",[39m
+    [2m    "NO DECKS LOADED.",[22m
+    [2m  ][22m
+
+      130 |
+      131 |   // `.gv1-mono-xs` sets text-transform: uppercase.
+    > 132 |   expect(await spokenText(page, message)).toEqual(['NO DECKS LOADED.']);
+          |                                           ^
+      133 |   // The two glyphs still show.
+      134 |   await expect(empty.locator('.gv1-rune')).toHaveText('◇');
+      135 |   expect(await beforeGlyph(page, message)).toMatch(/^"◇"/);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1185-review/web/tests/zz-dec1185-kill-blocked.spec.ts:132:43
+
+    Error Context: test-results/zz-dec1185-kill-blocked-Co-aa11e-its-message-alone-DEC-1177--chromium/error-context.md
+
+  8 failed
+    [chromium] › tests/dec1177-empty-sigils.spec.ts:61:1 › /shopping with no deck selected reads its message alone (DEC-1177) 
+    [chromium] › tests/dec1177-empty-sigils.spec.ts:77:1 › the Combo Lab empty state reads its text alone (DEC-1177) 
+    [chromium] › tests/dec1177-empty-sigils.spec.ts:98:1 › each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177) 
+    [chromium] › tests/dec1177-empty-sigils.spec.ts:122:1 › Compare with no decks loaded reads its message alone (DEC-1177) 
+    [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:63:1 › /shopping with no deck selected reads its message alone (DEC-1177) 
+    [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:79:1 › the Combo Lab empty state reads its text alone (DEC-1177) 
+    [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:100:1 › each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177) 
+    [chromium] › tests/zz-dec1185-kill-blocked.spec.ts:124:1 › Compare with no decks loaded reads its message alone (DEC-1177) 
