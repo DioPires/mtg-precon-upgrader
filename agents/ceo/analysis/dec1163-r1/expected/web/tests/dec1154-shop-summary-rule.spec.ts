@@ -21,7 +21,7 @@ async function packing(page: Page) {
     const content = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     const gap = parseFloat(cs.columnGap);
     const stats = [...box.querySelectorAll<HTMLElement>('.gv1-shop-stat')];
-    const tops = stats.map((s) => Math.round(s.getBoundingClientRect().top));
+    const boxes = stats.map((s) => s.getBoundingClientRect());
     // The narrowest width of each stat: its min-content width, read with the stat taken out of the flex sizing.
     const narrowest = stats.map((s) => {
       const keep = s.getAttribute('style');
@@ -33,7 +33,9 @@ async function packing(page: Page) {
     });
     const lines: number[][] = [];
     stats.forEach((_, i) => {
-      if (i === 0 || tops[i] > tops[i - 1] + 1) lines.push([i]); else lines[lines.length - 1].push(i);
+      // A stat starts a line when its top is at or below the bottom of the stat before it. The stats
+      // of a line share their bottom edge (align-items: end), so a taller stat starts higher.
+      if (i === 0 || boxes[i].top >= boxes[i - 1].bottom - 0.5) lines.push([i]); else lines[lines.length - 1].push(i);
     });
     return lines.slice(0, -1).map((line, k) => {
       const next = lines[k + 1][0];

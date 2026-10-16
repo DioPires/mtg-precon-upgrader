@@ -1,0 +1,43 @@
+# R5 on a2379a00d8080d7aef72029e9c8b1f7df40854e2, test file blob 7523883af1d9d0d506b83ac323c3a2d2c2feff41
+diff --git a/scripts/generate_candidate_pool.py b/scripts/generate_candidate_pool.py
+index 5d1565d..2158d3f 100644
+--- a/scripts/generate_candidate_pool.py
++++ b/scripts/generate_candidate_pool.py
+@@ -931,7 +931,7 @@ def write_candidates(out_path: Path, out: dict) -> bool:
+     are parsed from JSON text, so a tuple and a list compare equal. Same shape as
+     write_metrics in compute_deck_metrics.py (DEC-1078).
+     """
+-    new_text = json.dumps(out, indent=2, ensure_ascii=False) + "\n"
++    new_text = json.dumps(out, indent=2, ensure_ascii=False)
+     if out_path.exists():
+         try:
+             old = json.loads(out_path.read_text())
+# pytest
+.............................................................F       [100%]
+=================================== FAILURES ===================================
+_ GapSeatWriteTests.test_written_text_has_two_space_indent_utf8_and_final_newline _
+
+self = <tests.test_generate_candidate_pool.GapSeatWriteTests testMethod=test_written_text_has_two_space_indent_utf8_and_final_newline>
+
+    def test_written_text_has_two_space_indent_utf8_and_final_newline(self):
+        """K3: the file is json.dumps(indent=2, ensure_ascii=False) plus a final newline."""
+        edhrec_dir = self.tmp / "no-edhrec"
+        edhrec_dir.mkdir()
+        source = "Invented page — Zoë"
+        (edhrec_dir / f"{self.DECK_ID}.json").write_text(json.dumps(
+            {"recorded_at": "2026-01-01", "source": source, "rates": {}},
+        ))
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        text = self.out_path.read_text(encoding="utf-8")
+        pool = json.loads(text)
+        self.assertEqual(pool["edhrec_rates"]["source"], source)
+        self.assertIn(source, text)
+>       self.assertEqual(text, json.dumps(pool, indent=2, ensure_ascii=False) + "\n")
+E       AssertionError: '{\n [6717 chars]null,\n      "seeded_for_gap": "removal-spot"\n    }\n  ]\n}' != '{\n [6717 chars]null,\n      "seeded_for_gap": "removal-spot"\n    }\n  ]\n}\n'
+E       Diff is 7032 characters long. Set self.maxDiff to None to see it.
+
+tests/test_generate_candidate_pool.py:1304: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_generate_candidate_pool.py::GapSeatWriteTests::test_written_text_has_two_space_indent_utf8_and_final_newline - AssertionError: '{\n [6717 chars]null,\n      "seeded_for_gap": "removal-spot"\n    }\n  ]\n}' != '{\n [6717 chars]null,\n      "seeded_for_gap": "removal-spot"\n    }\n  ]\n}\n'
+Diff is 7032 characters long. Set self.maxDiff to None to see it.
+1 failed, 61 passed, 4 subtests passed in 0.08s

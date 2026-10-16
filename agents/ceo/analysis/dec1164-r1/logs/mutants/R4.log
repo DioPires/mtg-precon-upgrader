@@ -1,0 +1,76 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..bab5683 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -38,7 +38,7 @@ export function readOwnedEntries(storage: Storage = localStorage): Array<[string
+   for (const entry of stored) {
+     if (!Array.isArray(entry) || entry.length !== 2) continue;
+     const [n, q]: unknown[] = entry;
+-    if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) continue;
++    if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) break;
+     out.push([n, q]);
+   }
+   return out;
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/data/ownedCards.test.ts (30 tests | 9 failed) 6ms
+   × readOwnedEntries (DEC-1150) > drops the entry [null,2] and keeps the entry beside it 3ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry [{"n":"Sol Ring"},2] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry [["Sol Ring"],2] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["  ",2] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",0] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",-1] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",0.5] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",1.5] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring","2"] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 21 passed (30)
+   Start at  23:51:05
+   Duration  329ms (transform 23ms, setup 22ms, collect 9ms, tests 6ms, environment 124ms, prepare 41ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry [null,2] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry [{"n":"Sol Ring"},2] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry [["Sol Ring"],2] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["  ",2] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",0] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",-1] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",0.5] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",1.5] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring","2"] and keeps the entry beside it
+AssertionError: expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+
+- Expected
++ Received
+
+- Array [
+-   Array [
+-     "Arcane Signet",
+-     1,
+-   ],
+- ]
++ Array []
+
+ ❯ src/__tests__/data/ownedCards.test.ts:138:65
+    136|     [null],
+    137|   ])('drops the entry %j and keeps the entry beside it', (entry) => {
+    138|     expect(read(JSON.stringify([entry, ['Arcane Signet', 1]]))).toEqua…
+       |                                                                 ^
+    139|   });
+    140| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+

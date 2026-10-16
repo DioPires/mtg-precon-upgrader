@@ -1,0 +1,101 @@
+[
+ {
+  "name": "R8",
+  "file": "src/routes/DeckGuide.tsx",
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation",
+  "edits": [
+   [
+    "<DeckSelector decks={stubs} activeIdx={deck.idx}",
+    "<DeckSelector key={deck.slug} decks={stubs} activeIdx={deck.idx}"
+   ]
+  ]
+ },
+ {
+  "name": "R9",
+  "file": "src/routes/DeckGuide.tsx",
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation",
+  "edits": [
+   [
+    "if (next && next.idx !== deck.idx) navigate(`/deck/",
+    "if (next && next.idx === deck.idx) navigate(`/deck/"
+   ]
+  ]
+ },
+ {
+  "name": "R10",
+  "file": "src/routes/Scrying.tsx",
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation",
+  "edits": [
+   [
+    "if (next && next.idx !== deck.idx) navigate(`/scrying/",
+    "if (next && next.idx === deck.idx) navigate(`/scrying/"
+   ]
+  ]
+ },
+ {
+  "name": "R17",
+  "file": "src/routes/DeckGuide.tsx",
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation",
+  "edits": [
+   [
+    "if (next && next.idx !== deck.idx) navigate(`/deck/${next.slug}`);",
+    "if (next!.idx !== deck.idx) navigate(`/deck/${next!.slug}`);"
+   ]
+  ]
+ },
+ {
+  "name": "R18",
+  "file": "src/routes/Scrying.tsx",
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation",
+  "edits": [
+   [
+    "if (next && next.idx !== deck.idx) navigate(`/scrying/${next.slug}`);",
+    "if (next!.idx !== deck.idx) navigate(`/scrying/${next!.slug}`);"
+   ]
+  ]
+ },
+ {
+  "name": "R1-e2e",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const left = !before.isConnected && (!now || now === document.body);",
+    "const left = !before.isConnected;"
+   ]
+  ],
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation"
+ },
+ {
+  "name": "R5-e2e",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    focusBefore.current = null;\n",
+    ""
+   ]
+  ],
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation"
+ },
+ {
+  "name": "R7-e2e",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    else if (before && strayed(",
+    "    if (before && strayed("
+   ]
+  ],
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation"
+ },
+ {
+  "name": "R13-e2e",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "(!now || now === document.body)",
+    "now === document.body"
+   ]
+  ],
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14849 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation"
+ }
+]

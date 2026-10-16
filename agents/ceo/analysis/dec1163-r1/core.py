@@ -19,7 +19,7 @@ HEAD = '5d1a3b5fff1b382e43e880ddb99577cb1f6f11bb'
 PATHS = {
     'web/src/__tests__/components/Shopping.test.tsx': '6acccce1',
     'web/src/__tests__/components/PricePausedLine.test.tsx': '35d0c93e',
-    'web/tests/dec1154-shop-summary-rule.spec.ts': 'db21d6b8',
+    'web/tests/dec1154-shop-summary-rule.spec.ts': '5e6f5302',  # db21d6b8 before ruling 6 (B5 line grouping)
 }
 here = os.path.dirname(os.path.abspath(__file__))
 

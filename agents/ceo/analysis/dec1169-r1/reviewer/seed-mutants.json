@@ -1,0 +1,64 @@
+[
+ {
+  "name": "M2",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "const renderedIdx = useRef(activeIdx);",
+    "const renderedIdx = useRef(-1);"
+   ]
+  ]
+ },
+ {
+  "name": "M3",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "  return left || onOldPill;",
+    "  return left;"
+   ]
+  ]
+ },
+ {
+  "name": "M4",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "  return left || onOldPill;",
+    "  return onOldPill;"
+   ]
+  ]
+ },
+ {
+  "name": "M6",
+  "file": "src/routes/DeckGuide.tsx",
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14846 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation",
+  "edits": [
+   [
+    "if (next && next.idx !== deck.idx) navigate(`/deck/",
+    "if (next) navigate(`/deck/"
+   ]
+  ]
+ },
+ {
+  "name": "M7",
+  "file": "src/routes/Scrying.tsx",
+  "cmd": "PLAYWRIGHT_BROWSERS_PATH=$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright GRIMOIRE_E2E_PORT=14846 npx playwright test tests/dec1146-selector-back-focus.spec.ts 2>&1 | grep -v DeprecationWarning | grep -v trace-deprecation",
+  "edits": [
+   [
+    "if (next && next.idx !== deck.idx) navigate(`/scrying/",
+    "if (next) navigate(`/scrying/"
+   ]
+  ]
+ },
+ {
+  "name": "RA-M4",
+  "file": "src/components/organisms/DeckSelector.tsx",
+  "edits": [
+   [
+    "    keyTarget.current = null;\n  }, [activeIdx, focusActive]);",
+    "  }, [activeIdx, focusActive]);"
+   ]
+  ]
+ }
+]
