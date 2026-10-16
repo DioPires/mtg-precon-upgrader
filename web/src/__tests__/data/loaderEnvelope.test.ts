@@ -3,8 +3,12 @@
 // synergy-candidates, tier-b-loops) are 11.7M chars fleet-wide against a ~5.2M
 // browser quota — caching them starved the user's owned-cards map (DEC-941).
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createCardCache } from '../../data/cardCache';
 import { createDeckLoader } from '../../data/loader';
+import { createScryfallLimiter } from '../../data/scryfallLimiter';
+import type { RawCardMetadata } from '../../data/types';
+import { cardJson, fakeScryfall, MemoryStorage } from './scryfallFakes';
 
 const INDEX = { commanders: [{ id: 'alpha', name: 'Alpha', theme: 'T', colors: ['G'] }] };
 const PRICES_AS_OF = '2026-10-13T21:56:40+00:00';
@@ -196,5 +200,177 @@ describe('deck loader seeds the card cache (DEC-1102)', () => {
     await loader().loadDeck('alpha');
     const keys = [...Array(storage.length).keys()].map((i) => storage.key(i)!);
     expect(keys.filter((k) => k.startsWith('gv1-deck-data-')).every((k) => k.startsWith('gv1-deck-data-v158:'))).toBe(true);
+  });
+});
+
+// DEC-1153 (N4 of DEC-1149): the loader fetches the meta file only with
+// card-metadata.json, and stores the file with the date of its prices in one
+// envelope. A load from storage takes the date from there and sends no request.
+describe('a stored card-metadata.json keeps its own date (DEC-1153)', () => {
+  const requests = (suffix: string) => fetchImpl.mock.calls.filter(([url]) => String(url).endsWith(suffix)).length;
+  const envelopeKey = () =>
+    [...Array(storage.length).keys()].map((i) => storage.key(i)!).find((k) => k.endsWith(':card-metadata'));
+
+  it('a cold load sends 1 meta request and stores the date; a load from storage sends none and seeds that date', async () => {
+    const seed = vi.fn();
+    const cold = createDeckLoader({ fetchImpl: fetchImpl as unknown as typeof fetch, storage, cardCache: { seed } });
+    await cold.loadCardMetadata();
+    expect(await cold.loadCardMetadataMeta()).toEqual({ prices_as_of: PRICES_AS_OF });
+    expect([requests('/card-metadata.json'), requests('/card-metadata.meta.json')]).toEqual([1, 1]);
+    expect(JSON.parse(storage.getItem(envelopeKey()!)!)).toMatchObject({ pricesAsOf: PRICES_AS_OF });
+
+    // A reload: a new loader on the same storage.
+    const reloaded = createDeckLoader({ fetchImpl: fetchImpl as unknown as typeof fetch, storage, cardCache: { seed } });
+    expect(await reloaded.loadCardMetadataMeta()).toEqual({ prices_as_of: PRICES_AS_OF });
+    await reloaded.loadDeck('alpha');
+    expect([requests('/card-metadata.json'), requests('/card-metadata.meta.json')]).toEqual([1, 1]);
+    expect(seed.mock.calls).toEqual([
+      [{ 'Sol Ring': { mana_cost: '{1}' } }, PRICES_AS_OF],
+      [{ 'Sol Ring': { mana_cost: '{1}' } }, PRICES_AS_OF],
+    ]);
+  });
+
+  for (const [label, envelope] of [
+    ['an envelope from before DEC-1153 (no date)', { payload: { 'Sol Ring': { mana_cost: '{1}' } } }],
+    ['an envelope with a date and an empty file', { pricesAsOf: PRICES_AS_OF, payload: {} }],
+    ['an envelope with a date and no file', { pricesAsOf: PRICES_AS_OF, payload: null }],
+  ] as const) {
+    it(`takes ${label} for none: it fetches the file and the meta file, and stores both`, async () => {
+      await loader().loadCardMetadata();
+      storage.setItem(envelopeKey()!, JSON.stringify({ fetchedAt: Date.now(), ...envelope }));
+      const seed = vi.fn();
+      const reloaded = createDeckLoader({ fetchImpl: fetchImpl as unknown as typeof fetch, storage, cardCache: { seed } });
+      expect(await reloaded.loadCardMetadata()).toEqual({ 'Sol Ring': { mana_cost: '{1}' } });
+      expect([requests('/card-metadata.json'), requests('/card-metadata.meta.json')]).toEqual([2, 2]);
+      expect(seed).toHaveBeenCalledWith({ 'Sol Ring': { mana_cost: '{1}' } }, PRICES_AS_OF);
+      expect(JSON.parse(storage.getItem(envelopeKey()!)!)).toMatchObject({
+        pricesAsOf: PRICES_AS_OF,
+        payload: { 'Sol Ring': { mana_cost: '{1}' } },
+      });
+    });
+  }
+
+  for (const [label, answer] of [
+    ['a 404', { ok: false, status: 404, json: async () => ({}) }],
+    ['a 500', { ok: false, status: 500, json: async () => ({}) }],
+    ['no date', { ok: true, status: 200, json: async () => ({ count: 1 }) }],
+  ] as const) {
+    it(`keeps the file without a date in memory after ${label} for the meta file, stores nothing, and the next load asks for both`, async () => {
+      fetchImpl.mockImplementation(async (url: string) =>
+        url.endsWith('/card-metadata.meta.json') ? answer : { ok: true, status: 200, json: async () => payloadFor(url) },
+      );
+      const seed = vi.fn();
+      const first = createDeckLoader({ fetchImpl: fetchImpl as unknown as typeof fetch, storage, cardCache: { seed } });
+      expect(await first.loadCardMetadata()).toEqual({ 'Sol Ring': { mana_cost: '{1}' } });
+      expect(seed).toHaveBeenCalledWith({ 'Sol Ring': { mana_cost: '{1}' } }, undefined);
+      expect(await first.loadCardMetadataMeta()).toEqual(label === 'no date' ? { count: 1 } : null);
+      expect(envelopeKey()).toBeUndefined();
+
+      fetchImpl.mockImplementation(async (url: string) => ({ ok: true, status: 200, json: async () => payloadFor(url) }));
+      const second = createDeckLoader({ fetchImpl: fetchImpl as unknown as typeof fetch, storage, cardCache: { seed } });
+      await second.loadCardMetadata();
+      expect([requests('/card-metadata.json'), requests('/card-metadata.meta.json')]).toEqual([2, 2]);
+      expect(seed).toHaveBeenLastCalledWith({ 'Sol Ring': { mana_cost: '{1}' } }, PRICES_AS_OF);
+    });
+  }
+
+  it('gives no meta when card-metadata.json fails, and the date of the next file after a reset', async () => {
+    fetchImpl.mockImplementation(async (url: string) => {
+      if (url.endsWith('/card-metadata.json')) throw new TypeError('Failed to fetch');
+      return { ok: true, status: 200, json: async () => payloadFor(url) };
+    });
+    const deckLoader = loader();
+    expect(await deckLoader.loadCardMetadataMeta()).toBeNull();
+
+    // A file that loads, then a reset and a file that is missing: no date stays from before.
+    fetchImpl.mockImplementation(async (url: string) => ({ ok: true, status: 200, json: async () => payloadFor(url) }));
+    expect(await deckLoader.loadCardMetadataMeta()).toEqual({ prices_as_of: PRICES_AS_OF });
+    deckLoader._reset();
+    storage.clear();
+    fetchImpl.mockImplementation(async (url: string) =>
+      url.endsWith('/card-metadata.json') ? { ok: false, status: 404, json: async () => ({}) } : { ok: true, status: 200, json: async () => payloadFor(url) },
+    );
+    expect(await deckLoader.loadCardMetadataMeta()).toBeNull();
+  });
+});
+
+// P2 of DEC-1149, the reviewer's case: a deploy changes card-metadata.json and
+// its meta file inside the hour of a stored file. Before DEC-1153 the stored
+// file's old prices took the new date, won over a stored refresh younger than
+// 24 h, and asked nothing until the stored file's hour ended.
+describe('P2: a deploy inside the hour of a stored card-metadata.json (DEC-1153)', () => {
+  const T0 = Date.UTC(2026, 9, 14, 12, 0, 0);
+  const HOUR_MS = 3_600_000;
+  const SOL_RING = {
+    cmc: 1,
+    colors: [],
+    image: 'front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446',
+    mana_cost: '{1}',
+    type_line: 'Artifact',
+    usd: 1.42,
+    eur: 1.06,
+  };
+  const OLD_FILE: RawCardMetadata = { 'Sol Ring': SOL_RING };
+  const NEW_FILE: RawCardMetadata = { 'Sol Ring': { ...SOL_RING, usd: 3 } };
+  const OLD_DATE = new Date(T0 - 30 * HOUR_MS).toISOString();
+  const NEW_DATE = new Date(T0 - 25 * 60_000).toISOString();
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("the stored file keeps its own date: the stored refresh wins and asks nothing; the new file comes when the hour ends", async () => {
+    const cardStorage = new MemoryStorage();
+    let deployed = false;
+    fetchImpl.mockImplementation(async (url: string) => {
+      const body = url.endsWith('/card-metadata.meta.json')
+        ? { prices_as_of: deployed ? NEW_DATE : OLD_DATE }
+        : url.endsWith('/card-metadata.json')
+          ? deployed ? NEW_FILE : OLD_FILE
+          : payloadFor(url);
+      return { ok: true, status: 200, json: async () => body };
+    });
+    const scry = fakeScryfall({ card: (name) => ({ ...cardJson(name), prices: { usd: '2.50' } }) });
+    const visit = () => {
+      const cache = createCardCache({
+        storage: cardStorage,
+        limiter: createScryfallLimiter({ fetchImpl: scry.fetch, storage: cardStorage, locks: null }),
+      });
+      const deckLoader = createDeckLoader({ fetchImpl: fetchImpl as unknown as typeof fetch, storage, cardCache: cache });
+      return { cache, deckLoader };
+    };
+    const requests = (suffix: string) => fetchImpl.mock.calls.filter(([url]) => String(url).endsWith(suffix)).length;
+
+    // Visit 1, 40 min before T0: the old file and its meta; the cache refreshes Sol Ring.
+    vi.setSystemTime(T0 - 40 * 60_000);
+    const first = visit();
+    await first.deckLoader.loadCardMetadata();
+    expect(first.cache.get('Sol Ring')).toMatchObject({ price: '$1.42', priceAsOf: Date.parse(OLD_DATE) });
+    first.cache.refreshPrice('Sol Ring');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(first.cache.get('Sol Ring')).toMatchObject({ price: '$2.50', priceAsOf: T0 - 40 * 60_000 });
+
+    // The deploy, then visit 2 at T0: the stored file is 40 min old.
+    deployed = true;
+    vi.setSystemTime(T0);
+    const second = visit();
+    await second.deckLoader.loadCardMetadata();
+    expect([requests('/card-metadata.json'), requests('/card-metadata.meta.json')]).toEqual([1, 1]);
+    expect(await second.deckLoader.loadCardMetadataMeta()).toEqual({ prices_as_of: OLD_DATE });
+    // The stored file's prices are 30 h old, so the refresh of 40 min ago shows.
+    expect(second.cache.get('Sol Ring')).toMatchObject({ price: '$2.50', priceAsOf: T0 - 40 * 60_000 });
+    second.cache.refreshPrice('Sol Ring');
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(scry.sends).toHaveLength(1);
+
+    // An hour after visit 1 the stored file goes, and the new file comes with its own date.
+    vi.setSystemTime(T0 + 21 * 60_000);
+    const third = visit();
+    await third.deckLoader.loadCardMetadata();
+    expect([requests('/card-metadata.json'), requests('/card-metadata.meta.json')]).toEqual([2, 2]);
+    expect(third.cache.get('Sol Ring')).toMatchObject({ price: '$3.00', priceAsOf: Date.parse(NEW_DATE) });
   });
 });

@@ -520,3 +520,50 @@ describe.each([0, 150])('cardCache.refreshPrice, answers after %i ms', (delay) =
     expect(scry.sends).toHaveLength(1);
   });
 });
+
+// DEC-1153 (P5 of DEC-1149): one blank identifier makes Scryfall refuse the
+// whole batch, so a name whose front face is blank goes in no batch.
+describe('cardCache: a name whose front face is blank', () => {
+  it('reads not_found with no request, and the batch carries only the two good names', async () => {
+    const { scry, cache } = setup();
+    cache.enqueue(' // Back');
+    cache.enqueue('Arcane Signet');
+    cache.enqueue('   ');
+    cache.enqueue('Mana Crypt');
+    await advance(0);
+    expect(scry.batches()).toEqual([['Arcane Signet', 'Mana Crypt']]);
+    for (const name of [' // Back', '   ']) {
+      expect(cache.get(name)).toEqual({ status: 'error', name, error: 'not_found', errorStatus: 404, fetchedAt: T0 });
+      expect(JSON.parse(storage.getItem(`gv1-card:${name.toLowerCase()}`)!)).toMatchObject({ status: 'error', errorStatus: 404 });
+    }
+    expect(cache.get('Arcane Signet')?.status).toBe('loaded');
+    expect(cache.get('Mana Crypt')?.status).toBe('loaded');
+    // Alone in the queue, it sends nothing at all.
+    cache.enqueue('  // ');
+    await advance(5_000);
+    expect(scry.sends).toHaveLength(1);
+    expect(cache.get('  // ')).toMatchObject({ status: 'error', errorStatus: 404 });
+  });
+
+  it('a price and a picture refresh of a blank name of the file send nothing, keep what is shown, and hold 24 h', async () => {
+    const { scry, cache } = setup();
+    cache.seed({ '   ': FILE['Sol Ring'] }, new Date(T0 - 2 * DAY_MS).toISOString());
+    const filePicture = cache.get('   ')?.image_normal;
+    cache.refreshPrice('   ');
+    cache.imageFailed('   ');
+    expect(cache.pricePending('   ')).toBe(true);
+    await advance(0);
+    expect(cache.pricePending('   ')).toBe(false);
+    expect(cache.get('   ')).toMatchObject({
+      status: 'loaded',
+      price: '$1.42',
+      priceCheckedAt: T0,
+      refreshedAt: T0,
+      image_normal: filePicture,
+    });
+    cache.refreshPrice('   ');
+    cache.imageFailed('   ');
+    await advance(5_000);
+    expect(scry.sends).toHaveLength(0);
+  });
+});

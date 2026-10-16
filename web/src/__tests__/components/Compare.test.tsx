@@ -88,6 +88,23 @@ describe('Compare', () => {
     expect(screen.getByText(/no decks loaded/i)).toBeInTheDocument();
   });
 
+  it('hides the sigil of the empty state from screen readers, so the state reads its message alone (DEC-1177)', () => {
+    // The state's text without the elements that aria-hidden takes out of the accessibility tree.
+    const spoken = (el: Element) => {
+      const copy = el.cloneNode(true) as Element;
+      copy.querySelectorAll('[aria-hidden="true"]').forEach((hidden) => hidden.remove());
+      return copy.textContent;
+    };
+    renderCompare([]);
+    const empty = screen.getByText('No decks loaded.').closest('.gv1-empty')!;
+    expect(empty.children).toHaveLength(2);
+    const [glyph, text] = empty.children;
+    expect(glyph).toHaveAttribute('aria-hidden', 'true');
+    expect(glyph.textContent).toBe('◇');
+    expect(text).not.toHaveAttribute('aria-hidden');
+    expect(spoken(empty)).toBe('No decks loaded.');
+  });
+
   it('renders one row per deck with sticky thead', () => {
     renderCompare(DECKS);
     const tbody = document.querySelector('tbody')!;

@@ -5,6 +5,9 @@
 //
 // Each case reads Chromium's own accessibility node of each region (CDP)
 // while it is empty, then shows that the same DOM node holds the text.
+//
+// DEC-1167 (DEC-1163 N1): the stop line's section stays in the page while no
+// deck is selected, so its region is one node through Clear and a new selection.
 
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -19,6 +22,9 @@ const BUCKET_ONE = /^https:\/\/api\.scryfall\.com\/cards\/(named|collection)(\?|
 const IMPORT_STATUS = '.gv1-shop-owned-bar ~ [role="status"]';
 const IMPORT_ALERT = '.gv1-shop-owned-bar ~ [role="alert"]';
 const STOP_LINE = '.gv1-shop-summary ~ [role="status"]';
+// The stop line's section follows the import's section, also while no deck is selected and no summary shows.
+const STOP_SECTION = 'section:has(.gv1-shop-owned-bar) + section';
+const STOP_REGION = `${STOP_SECTION} > [role="status"]`;
 
 const textFile = (name: string, body: string) => ({ name, mimeType: 'text/plain', buffer: Buffer.from(body, 'utf8') });
 
@@ -99,6 +105,41 @@ test.describe('the stop line', () => {
     const line = page.getByRole('status').filter({ hasText: 'Price refresh paused' });
     await expect(line).toHaveCount(1);
     await expect(region).toContainText('Price refresh paused.');
+    expect(await sameNode(region, regionNode)).toBe(true);
+  });
+
+  test('its region is one node through Clear and a new selection while the stop holds (DEC-1167)', async ({ page }) => {
+    test.setTimeout(60_000);
+    await page.clock.install({ time: Math.max(Date.now(), Date.parse(PRICES_AS_OF) + 25 * 3_600_000) });
+    await page.goto('/shopping');
+    await page.locator('.gv1-shop-row').first().waitFor();
+    const section = page.locator(STOP_SECTION);
+    const region = page.locator(STOP_REGION);
+    await expect(region).toContainText('Price refresh paused.');
+    // The clock stops before the stop ends, so the stop holds through every step.
+    await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 500);
+    const status = { role: 'status', ignored: false, live: 'polite', atomic: true };
+
+    // A deck is selected: the section has its class and holds the summary and the line.
+    await expect(section).toHaveAttribute('class', 'gv1-section gv1-shop-section');
+    await expect(section.locator('.gv1-shop-summary')).toHaveCount(1);
+    expect(await axNode(page, STOP_REGION)).toEqual(status);
+    const regionNode = await region.elementHandle();
+
+    // No deck is selected: the section has no class and no height, and the same region is empty.
+    await page.getByRole('button', { name: 'Clear', exact: true }).click();
+    await expect(page.locator('.gv1-shop-summary')).toHaveCount(0);
+    await expect(region).toBeEmpty();
+    expect(await section.evaluate((el) => [el.getAttribute('class'), el.getBoundingClientRect().height])).toEqual([null, 0]);
+    expect(await axNode(page, STOP_REGION)).toEqual(status);
+    expect(await sameNode(region, regionNode)).toBe(true);
+
+    // A deck is selected again: the same region holds the line.
+    await page.locator('.gv1-shop-chip').first().click();
+    await expect(section.locator('.gv1-shop-summary')).toHaveCount(1);
+    await expect(section).toHaveAttribute('class', 'gv1-section gv1-shop-section');
+    await expect(region).toContainText('Price refresh paused.');
+    expect(await axNode(page, STOP_REGION)).toEqual(status);
     expect(await sameNode(region, regionNode)).toBe(true);
   });
 });

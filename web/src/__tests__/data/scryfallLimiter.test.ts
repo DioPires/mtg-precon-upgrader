@@ -531,3 +531,100 @@ describe('delta N3: only the request that went after a stop can double or end it
     expect(cache.get('A')).toMatchObject({ status: 'loaded', name: cardJson('A').name });
   });
 });
+
+// DEC-1153 (N5 of DEC-1149): bucket 1 frees its lock only after the caller has
+// stored the answer, so the other tab's batch finds those names in storage. The
+// lock frees 20 s after the start at the latest.
+describe('DEC-1153: bucket 1 holds its lock until the answer is stored', () => {
+  const NAMES_16 = Array.from({ length: 16 }, (_, i) => `Held ${i + 1}`);
+
+  it('two tabs ask for the same 16 names, and the body of the answer takes 1,500 ms: each name goes once', async () => {
+    const sends: Array<{ at: number; names: string[] }> = [];
+    // The answer's head comes at once; its body (response.json()) comes 1,500 ms later.
+    const fetchImpl = (async (_url: string, init?: RequestInit) => {
+      const names = (JSON.parse(String(init?.body)) as { identifiers: Array<{ name: string }> }).identifiers.map((id) => id.name);
+      sends.push({ at: Date.now() - T0, names });
+      const body = collectionJson(names);
+      return {
+        ok: true,
+        status: 200,
+        json: () => new Promise((resolve) => setTimeout(() => resolve(body), 1_500)),
+      } as unknown as Response;
+    }) as unknown as typeof fetch;
+    const locks = fakeLocks();
+    const tabs = [0, 1].map(() =>
+      createCardCache({ storage, limiter: createScryfallLimiter({ fetchImpl, storage, locks }) }),
+    );
+    for (const tab of tabs) NAMES_16.forEach((name) => tab.enqueue(name));
+    await advance(10_000);
+    expect(sends).toEqual([{ at: 0, names: NAMES_16 }]);
+    for (const tab of tabs) {
+      expect(NAMES_16.map((name) => tab.get(name)?.status)).toEqual(NAMES_16.map(() => 'loaded'));
+    }
+  });
+
+  it('next() resolves with the answer after `settle` has run, and leaves no timer', async () => {
+    const { sends, fetchImpl } = manualFetch();
+    const limiter = createScryfallLimiter({ fetchImpl, storage, locks: fakeLocks() });
+    const order: string[] = [];
+    const out = limiter
+      .next('lookup', () => collectionRequest(['A']), {
+        settle: async ({ response }) => {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          order.push(`settled ${response.status}`);
+        },
+      })
+      .then((sent) => {
+        order.push('resolved');
+        return sent;
+      });
+    await advance(0);
+    sends[0].answer(batchOk(['A']));
+    await advance(499);
+    expect(order).toEqual([]);
+    await advance(1);
+    expect(order).toEqual(['settled 200', 'resolved']);
+    expect((await out)?.url).toBe(COLLECTION_URL);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("a caller that never settles frees the other tab's turn 20 s after its own start", async () => {
+    const scry = fakeScryfall({ delayMs: 150 });
+    const locks = fakeLocks();
+    const [left, right] = [0, 1].map(() => createScryfallLimiter({ fetchImpl: scry.fetch, storage, locks }));
+    let leftDone = false;
+    void left
+      .next('lookup', () => collectionRequest(['L']), { settle: () => new Promise<void>(() => undefined) })
+      .then(() => (leftDone = true));
+    await advance(0);
+    const rightOut = right.fetch(COLLECTION_URL, post(['R']));
+    await advance(20_000 - 1);
+    expect(scry.batches()).toEqual([['L']]);
+    await advance(1);
+    expect(scry.batches()).toEqual([['L'], ['R']]);
+    expect(scry.times().map((t) => t - T0)).toEqual([0, 20_000]);
+    await advance(150);
+    expect((await rightOut).status).toBe(200);
+    expect(leftDone).toBe(false);
+    expect(storedStop()).toBeNull();
+  });
+
+  it('a `settle` that throws rejects next() and frees the turn at once, with no stop', async () => {
+    const scry = fakeScryfall({ delayMs: 150 });
+    const locks = fakeLocks();
+    const [left, right] = [0, 1].map(() => createScryfallLimiter({ fetchImpl: scry.fetch, storage, locks }));
+    const leftOut = left.next('lookup', () => collectionRequest(['L']), {
+      settle: () => {
+        throw new Error('the cache could not store it');
+      },
+    });
+    const caught = leftOut.catch((err: Error) => err.message);
+    await advance(0);
+    const rightOut = right.fetch(COLLECTION_URL, post(['R']));
+    await advance(1_200 + 150);
+    expect(await caught).toBe('the cache could not store it');
+    expect(scry.times().map((t) => t - T0)).toEqual([0, 1_200]);
+    expect((await rightOut).status).toBe(200);
+    expect(storedStop()).toBeNull();
+  });
+});
