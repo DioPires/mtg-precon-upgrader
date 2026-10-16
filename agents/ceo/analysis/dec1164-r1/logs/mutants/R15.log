@@ -1,0 +1,24 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..5068335 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -29,7 +29,7 @@ export function isOwnedQuantity(q: unknown): q is number {
+ export function readOwnedEntries(storage: Storage = localStorage): Array<[string, number]> {
+   let stored: unknown;
+   try {
+-    stored = JSON.parse(storage.getItem(OWNED_KEY) ?? '');
++    stored = JSON.parse(storage.getItem(OWNED_KEY) ?? '[]');
+   } catch {
+     return [];
+   }
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ✓ src/__tests__/data/ownedCards.test.ts (30 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  30 passed (30)
+   Start at  23:51:13
+   Duration  330ms (transform 21ms, setup 21ms, collect 9ms, tests 2ms, environment 131ms, prepare 40ms)
+

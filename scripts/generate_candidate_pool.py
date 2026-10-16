@@ -709,7 +709,7 @@ def seat_gap_cards(
     pool += [c for _s, c, _b, _m in below if c.get("name") in pinned]
     seated: dict[str, str] = {}
     step2: list[tuple[float, dict, dict, list[str]]] = []
-    for gap in gap_roles:
+    for gap in dict.fromkeys(gap_roles):
         before = sum(1 for c in pool if role(c) == gap)
         if before >= GAP_SEAT_FLOOR:
             continue
@@ -922,6 +922,30 @@ def generate_for_deck(
     return output
 
 
+def write_candidates(out_path: Path, out: dict) -> bool:
+    """Write the pool unless the file equals it apart from generated_at.
+
+    Returns True when it writes. generated_at is the only field of the pool that
+    reads the clock, so any other change writes: a new deck_role, a score that
+    keeps the order, an owned flag or a role_pool median (DEC-1157). Both sides
+    are parsed from JSON text, so a tuple and a list compare equal. Same shape as
+    write_metrics in compute_deck_metrics.py (DEC-1078).
+    """
+    new_text = json.dumps(out, indent=2, ensure_ascii=False) + "\n"
+    if out_path.exists():
+        try:
+            old = json.loads(out_path.read_text())
+            new = json.loads(new_text)
+            for doc in (old, new):
+                doc.pop("generated_at", None)
+            if old == new:
+                return False
+        except json.JSONDecodeError:
+            pass
+    out_path.write_text(new_text)
+    return True
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Generate per-deck candidate pools")
     parser.add_argument("--deck", help="Single deck id; default is --all")
@@ -970,29 +994,9 @@ def main(argv: list[str]) -> int:
             continue
 
         out_path = COMMANDERS_DIR / deck_id / "candidates.json"
-        existing = json.loads(out_path.read_text()) if out_path.exists() else None
-        # idempotency: skip write if mirror, methodology, archetypes, decklist unchanged AND existing candidates identical
-        if (
-            existing
-            and existing.get("scryfall_mirror_updated_at") == out["scryfall_mirror_updated_at"]
-            and existing.get("methodology") == out["methodology"]
-            and existing.get("deck_gaps") == out.get("deck_gaps")
-            and existing.get("asymmetric_only") == out.get("asymmetric_only")
-        ):
-            # the pinned and seeded_for_gap flags are compared too, so a change of a seat writes
-            existing_names = [
-                (c.get("name"), bool(c.get("pinned")), c.get("seeded_for_gap"))
-                for c in existing.get("candidates", [])
-            ]
-            new_names = [
-                (c.get("name"), bool(c.get("pinned")), c.get("seeded_for_gap"))
-                for c in out["candidates"]
-            ]
-            if existing_names == new_names:
-                print(f"  [{deck_id}] no change ({len(new_names)} candidates).", file=sys.stderr)
-                continue
-
-        out_path.write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
+        if not write_candidates(out_path, out):
+            print(f"  [{deck_id}] no change ({len(out['candidates'])} candidates).", file=sys.stderr)
+            continue
         top = out["candidates"][:1]
         top_summary = f", top score {top[0]['score']:.1f}" if top else ""
         print(f"  [{deck_id}] wrote {len(out['candidates'])} candidates{top_summary}.", file=sys.stderr)

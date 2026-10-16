@@ -1,0 +1,475 @@
+diff --git a/web/src/routes/ComboLab.tsx b/web/src/routes/ComboLab.tsx
+index 87025fb..8fcf041 100644
+--- a/web/src/routes/ComboLab.tsx
++++ b/web/src/routes/ComboLab.tsx
+@@ -116,7 +116,7 @@ function loadOwnedCollection(): { keys: Set<string>; count: number } {
+   try {
+     const keys = new Set<string>();
+     let count = 0;
+-    for (const [n, q] of readOwnedEntries()) {
++    for (const [n, q] of readOwnedEntries(sessionStorage)) {
+       for (const k of nameKeys(n)) keys.add(k);
+       count += q;
+     }
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/routes/ComboLab.test.tsx (8 tests | 5 failed) 1142ms
+   × the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",2]]: 2 owned cards on file 26ms
+     → expect(element).toBeEnabled()
+
+Received element is not enabled:
+  <button
+  aria-pressed="false"
+  class="gv1-lab-filter-chip"
+  disabled=""
+  title="Import your collection in § IX Shopping first"
+  type="button"
+/>
+   × the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",1]]: 1 owned card on file 13ms
+     → expect(element).toBeEnabled()
+
+Received element is not enabled:
+  <button
+  aria-pressed="false"
+  class="gv1-lab-filter-chip"
+  disabled=""
+  title="Import your collection in § IX Shopping first"
+  type="button"
+/>
+   × the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",-1],["Arcane Signet",1]]: 1 owned card on file 9ms
+     → expect(element).toBeEnabled()
+
+Received element is not enabled:
+  <button
+  aria-pressed="false"
+  class="gv1-lab-filter-chip"
+  disabled=""
+  title="Import your collection in § IX Shopping first"
+  type="button"
+/>
+   × the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",2],["Arcane Signet",1]]: 3 owned cards on file 9ms
+     → expect(element).toBeEnabled()
+
+Received element is not enabled:
+  <button
+  aria-pressed="false"
+  class="gv1-lab-filter-chip"
+  disabled=""
+  title="Import your collection in § IX Shopping first"
+  type="button"
+/>
+   × the owned list in Complete a Near-Miss (DEC-1150) > keeps a completion that names the front face of a stored double-faced name 1012ms
+     → expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <span
+  data-card-name="Arcane Signet"
+>
+  Arcane Signet
+</span> instead
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div>
+      <div
+        data-gv1-screen="combolab"
+      >
+        <header
+          class="gv1-lab-hero"
+        >
+          <div>
+            <div
+              class="gv1-lab-hero-eyebrow"
+            >
+              <span
+                aria-hidden="true"
+                class="gv1-rune"
+              >
+                § XII
+              </span>
+              <span
+                class="gv1-mono-xs gv1-dim"
+              >
+                · curated combo detection · commander spellbook · three tiers of certainty
+              </span>
+            </div>
+            <h1
+              class="gv1-lab-title"
+            >
+              The 
+              <em>
+                Combo Lab
+              </em>
+            </h1>
+          </div>
+          <p
+            class="gv1-lab-lede"
+          >
+            Every chain the corpus knows about — what’s 
+            <strong>
+              present
+            </strong>
+            , what’s
+             
+            <strong>
+              one card away
+            </strong>
+            , and what would close it. Curated findings are cited; computed findings say which model verified them; heuristics never wear a verified badge.
+          </p>
+        </header>
+        <div
+          class="gv1-lab-layout"
+        >
+          <aside
+            aria-label="Combo Lab controls"
+            class="gv1-lab-rail"
+          >
+            <div
+              aria-label="Analysis mode"
+              class="gv1-lab-block gv1-lab-modes"
+              role="group"
+            >
+              <button
+                aria-pressed="true"
+                class="gv1-lab-mode"
+                type="button"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+                >
+                  ◈ mode i
+                </span>
+                <span
+                  class="gv1-lab-mode-name"
+                >
+                  Fleet deck
+                </span>
+              </button>
+              <button
+                aria-pressed="false"
+                class="gv1-lab-mode"
+                type="button"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+                >
+                  ◈ mode ii
+                </span>
+                <span
+                  class="gv1-lab-mode-name"
+                >
+                  Paste decklist
+                </span>
+              </button>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Select a tome
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  combos
+                </span>
+              </div>
+              <div
+                aria-label="Fleet decks"
+                class="gv1-lab-decks"
+                role="listbox"
+              >
+                <button
+                  aria-selected="true"
+                  class="gv1-lab-deck gv1-active"
+                  data-deck-id="alpha"
+                  role="option"
+                  title="Alpha — Alpha Commander"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-deck-idx"
+                  >
+                    №
+                    01
+                  </span>
+                  <span
+                    class="gv1-lab-deck-name"
+                  >
+                    Alpha
+                  </span>
+                  <span
+                    class="gv1-lab-deck-meta"
+                  >
+                    <span
+                      class="gv1-lab-deck-n"
+                    >
+                      —
+                    </span>
+                    <span
+                      aria-label="Color identity: 1 colors"
+                      class="gv1-pips"
+                      role="img"
+                    >
+                      <span
+                        aria-hidden="true"
+                        class="gv1-pip"
+                        style="background: rgb(184, 176, 160); border-color: rgb(128, 120, 104); color: rgb(26, 20, 16);"
+                      >
+                        C
+                      </span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div
+              class="gv1-lab-rail-pin"
+            >
+              <div
+                class="gv1-lab-block"
+              >
+                <div
+                  class="gv1-lab-block-head"
+                >
+                  <span
+                    class="gv1-mono-xs...
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 3 passed (8)
+   Start at  23:51:15
+   Duration  1.60s (transform 111ms, setup 21ms, collect 145ms, tests 1.14s, environment 117ms, prepare 40ms)
+
+stderr | src/__tests__/routes/ComboLab.test.tsx > the Combo Lab load message > reads `Loaded 1 card` for a deck of one card
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",2]]: 2 owned cards on file
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",1]]: 1 owned card on file
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",-1],["Arcane Signet",1]]: 1 owned card on file
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",2],["Arcane Signet",1]]: 3 owned cards on file
+Error: expect(element).toBeEnabled()
+
+Received element is not enabled:
+  <button
+  aria-pressed="false"
+  class="gv1-lab-filter-chip"
+  disabled=""
+  title="Import your collection in § IX Shopping first"
+  type="button"
+/>
+ ❯ src/__tests__/routes/ComboLab.test.tsx:177:18
+    175|     const panel = await openFleet(store);
+    176|     const chip = within(panel).getByRole('button', { name: 'Owned only…
+    177|     expect(chip).toBeEnabled();
+       |                  ^
+    178|     expect(chip).toHaveAttribute('title', text);
+    179|     expect(within(panel).getByText(`${text} — imported in § IX Shoppin…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the owned list in Complete a Near-Miss (DEC-1150) > keeps a completion that names the front face of a stored double-faced name
+Error: expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <span
+  data-card-name="Arcane Signet"
+>
+  Arcane Signet
+</span> instead
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div>
+      <div
+        data-gv1-screen="combolab"
+      >
+        <header
+          class="gv1-lab-hero"
+        >
+          <div>
+            <div
+              class="gv1-lab-hero-eyebrow"
+            >
+              <span
+                aria-hidden="true"
+                class="gv1-rune"
+              >
+                § XII
+              </span>
+              <span
+                class="gv1-mono-xs gv1-dim"
+              >
+                · curated combo detection · commander spellbook · three tiers of certainty
+              </span>
+            </div>
+            <h1
+              class="gv1-lab-title"
+            >
+              The 
+              <em>
+                Combo Lab
+              </em>
+            </h1>
+          </div>
+          <p
+            class="gv1-lab-lede"
+          >
+            Every chain the corpus knows about — what’s 
+            <strong>
+              present
+            </strong>
+            , what’s
+             
+            <strong>
+              one card away
+            </strong>
+            , and what would close it. Curated findings are cited; computed findings say which model verified them; heuristics never wear a verified badge.
+          </p>
+        </header>
+        <div
+          class="gv1-lab-layout"
+        >
+          <aside
+            aria-label="Combo Lab controls"
+            class="gv1-lab-rail"
+          >
+            <div
+              aria-label="Analysis mode"
+              class="gv1-lab-block gv1-lab-modes"
+              role="group"
+            >
+              <button
+                aria-pressed="true"
+                class="gv1-lab-mode"
+                type="button"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+                >
+                  ◈ mode i
+                </span>
+                <span
+                  class="gv1-lab-mode-name"
+                >
+                  Fleet deck
+                </span>
+              </button>
+              <button
+                aria-pressed="false"
+                class="gv1-lab-mode"
+                type="button"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim gv1-lab-mode-tag"
+                >
+                  ◈ mode ii
+                </span>
+                <span
+                  class="gv1-lab-mode-name"
+                >
+                  Paste decklist
+                </span>
+              </button>
+            </div>
+            <div
+              class="gv1-lab-block"
+            >
+              <div
+                class="gv1-lab-block-head"
+              >
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  Select a tome
+                </span>
+                <span
+                  class="gv1-mono-xs gv1-dim"
+                >
+                  combos
+                </span>
+              </div>
+              <div
+                aria-label="Fleet decks"
+                class="gv1-lab-decks"
+                role="listbox"
+              >
+                <button
+                  aria-selected="true"
+                  class="gv1-lab-deck gv1-active"
+                  data-deck-id="alpha"
+                  role="option"
+                  title="Alpha — Alpha Commander"
+                  type="button"
+                >
+                  <span
+                    class="gv1-lab-deck-idx"
+                  >
+                    №
+                    01
+                  </span>
+                  <span
+                    class="gv1-lab-deck-name"
+                  >
+                    Alpha
+                  </span>
+                  <span
+                    class="gv1-lab-deck-meta"
+                  >
+                    <span
+                      class="gv1-lab-deck-n"
+                    >
+                      —
+                    </span>
+                    <span
+                      aria-label="Color identity: 1 colors"
+                      class="gv1-pips"
+                      role="img"
+                    >
+                      <span
+                        aria-hidden="true"
+                        class="gv1-pip"
+                        style="background: rgb(184, 176, 160); border-color: rgb(128, 120, 104); color: rgb(26, 20, 16);"
+                      >
+                        C
+                      </span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div
+              class="gv1-lab-rail-pin"
+            >
+              <div
+                class="gv1-lab-block"
+              >
+                <div
+                  class="gv1-lab-block-head"
+                >
+                  <span
+                    class="gv1-mono-xs...
+ ❯ src/__tests__/routes/ComboLab.test.tsx:193:80
+    191|     expect(within(panel).getByText('Brazen Borrower')).toBeInTheDocume…
+    192|     fireEvent.click(within(panel).getByRole('button', { name: 'Owned o…
+    193|     await waitFor(() => expect(within(panel).queryByText('Arcane Signe…
+       |                                                                                ^
+    194|     expect(within(panel).getByText('Brazen Borrower')).toBeInTheDocume…
+    195|   });
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+

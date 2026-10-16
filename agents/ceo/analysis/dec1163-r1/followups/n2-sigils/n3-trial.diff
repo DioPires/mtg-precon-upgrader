@@ -1,0 +1,22 @@
+diff --git a/web/src/components/organisms/Shopping.tsx b/web/src/components/organisms/Shopping.tsx
+index a2041ba..b494cb7 100644
+--- a/web/src/components/organisms/Shopping.tsx
++++ b/web/src/components/organisms/Shopping.tsx
+@@ -730,7 +730,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
+         <div role="status">
+           {importMsg?.ok && (
+             <div className="gv1-shop-import-msg gv1-shop-import-ok">
+-              <span className="gv1-mono-xs">◆</span>
++              <span className="gv1-mono-xs" aria-hidden="true">◆</span>
+               <span className="gv1-mono-xs">{importMsg.text}</span>
+             </div>
+           )}
+@@ -738,7 +738,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
+         <div role="alert">
+           {importMsg && !importMsg.ok && (
+             <div className="gv1-shop-import-msg gv1-shop-import-err">
+-              <span className="gv1-mono-xs">⚠</span>
++              <span className="gv1-mono-xs" aria-hidden="true">⚠</span>
+               <span className="gv1-mono-xs">{importMsg.text}</span>
+             </div>
+           )}

@@ -1128,9 +1128,22 @@ class GapSeatTests(unittest.TestCase):
         _, stderr = self._generate(cards, limit=4)
         self.assertIn("gap-seat: removal-spot 4 -> 5 (1 below the cut, 0 from the EDHREC page)", stderr)
 
+    def test_role_listed_twice_gives_each_card_one_seat(self):
+        """DEC-1121 N3: a `gaps[]` that lists a role twice seats each card once."""
+        cards = self._cards(below_removal=2, off_archetype=["Listed Removal"])
+        rates = {"Listed Removal": 40.0}
+        once, _ = self._generate(cards, limit=3, rates=rates)
+        twice, stderr = self._generate(cards, limit=3, gaps=(self.ROLE, self.ROLE), rates=rates)
+        self.assertEqual(self._names(twice), self._names(once))
+        self.assertEqual(self._seats(twice), ["Removal 0", "Removal 1", "Listed Removal"])
+        self.assertEqual(stderr.count("gap-seat: removal-spot"), 1)
+
 
 class GapSeatWriteTests(unittest.TestCase):
-    """DEC-1078: main() writes a pool once, and a change of a seat writes."""
+    """DEC-1078: main() writes a pool once, and a change of a seat writes.
+
+    DEC-1157: a change of any field but generated_at writes.
+    """
 
     DECK_ID = GapSeatTests.DECK_ID
 
@@ -1214,6 +1227,81 @@ class GapSeatWriteTests(unittest.TestCase):
         self.assertEqual(
             [c["seeded_for_gap"] for c in pool["candidates"] if "seeded_for_gap" in c], ["removal-spot"] * 5,
         )
+
+    # DEC-1157: the guard compares the whole file apart from generated_at.
+
+    def _edit_pool(self, edit):
+        self._run()
+        pool = json.loads(self.out_path.read_text())
+        before = json.loads(json.dumps(pool))
+        edit(pool)
+        self.assertNotEqual(pool, before)
+        self.out_path.write_text(json.dumps(pool, indent=2, ensure_ascii=False) + "\n")
+        return before
+
+    def test_file_that_differs_only_in_generated_at_is_not_rewritten(self):
+        def edit(pool):
+            pool["generated_at"] = "2000-01-01T00:00:00+00:00"
+        self._edit_pool(edit)
+        edited = self.out_path.read_bytes()
+        self.assertIn(f"[{self.DECK_ID}] no change (8 candidates)", self._run())
+        self.assertEqual(self.out_path.read_bytes(), edited)
+
+    def test_file_that_differs_only_in_one_deck_role_is_rewritten(self):
+        def edit(pool):
+            pool["candidates"][0]["deck_role"] = "stale-role"
+        before = self._edit_pool(edit)
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(pool["candidates"][0]["deck_role"], before["candidates"][0]["deck_role"])
+
+    def test_file_that_differs_only_in_one_score_is_rewritten(self):
+        def edit(pool):
+            pool["candidates"][0]["score"] += 0.5  # the top card stays on top
+        before = self._edit_pool(edit)
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(pool["candidates"][0]["score"], before["candidates"][0]["score"])
+
+    def test_file_that_differs_only_in_role_pool_is_rewritten(self):
+        def edit(pool):
+            pool["role_pool"] = {"removal-spot": {"count": 1, "median": 10.0}}
+        before = self._edit_pool(edit)
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(pool["role_pool"], before["role_pool"])
+
+    def test_file_that_is_not_valid_json_is_rewritten(self):
+        """K1: a pool cut short in a write is written again, not kept and not a crash."""
+        self._run()
+        self.out_path.write_text('{"candidates": [\n')
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        pool = json.loads(self.out_path.read_text())
+        self.assertEqual(len(pool["candidates"]), 8)
+
+    def test_run_that_writes_nothing_prints_no_wrote_line(self):
+        """K2: a skip prints the `no change` line and no `wrote` line."""
+        def edit(pool):
+            pool["generated_at"] = "2000-01-01T00:00:00+00:00"
+        self._edit_pool(edit)
+        second = self._run()
+        self.assertIn(f"[{self.DECK_ID}] no change (8 candidates)", second)
+        self.assertNotIn(f"[{self.DECK_ID}] wrote", second)
+
+    def test_written_text_has_two_space_indent_utf8_and_final_newline(self):
+        """K3: the file is json.dumps(indent=2, ensure_ascii=False) plus a final newline."""
+        edhrec_dir = self.tmp / "no-edhrec"
+        edhrec_dir.mkdir()
+        source = "Invented page — Zoë"
+        (edhrec_dir / f"{self.DECK_ID}.json").write_text(json.dumps(
+            {"recorded_at": "2026-01-01", "source": source, "rates": {}},
+        ))
+        self.assertIn(f"[{self.DECK_ID}] wrote 8 candidates", self._run())
+        text = self.out_path.read_text(encoding="utf-8")
+        pool = json.loads(text)
+        self.assertEqual(pool["edhrec_rates"]["source"], source)
+        self.assertIn(source, text)
+        self.assertEqual(text, json.dumps(pool, indent=2, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":

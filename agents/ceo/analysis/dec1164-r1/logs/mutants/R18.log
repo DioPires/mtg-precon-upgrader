@@ -1,0 +1,54 @@
+diff --git a/web/src/routes/ComboLab.tsx b/web/src/routes/ComboLab.tsx
+index 87025fb..5cc803b 100644
+--- a/web/src/routes/ComboLab.tsx
++++ b/web/src/routes/ComboLab.tsx
+@@ -1800,7 +1800,7 @@ function CompletionSec({
+           title={
+             owned.count === 0
+               ? 'Import your collection in § IX Shopping first'
+-              : `${owned.count} owned ${cardNoun(owned.count)} on file`
++              : `${owned.count} owned ${cardNoun(owned.keys.size)} on file`
+           }
+           onClick={() => setOwnedOnly((v) => !v)}
+         >
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/routes/ComboLab.test.tsx (8 tests | 1 failed) 234ms
+   × the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",2]]: 2 owned cards on file 38ms
+     → expect(element).toHaveAttribute("title", "2 owned cards on file") // element.getAttribute("title") === "2 owned cards on file"
+
+Expected the element to have attribute:
+  title="2 owned cards on file"
+Received:
+  title="2 owned card on file"
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  23:51:17
+   Duration  744ms (transform 119ms, setup 21ms, collect 164ms, tests 234ms, environment 115ms, prepare 35ms)
+
+stderr | src/__tests__/routes/ComboLab.test.tsx > the Combo Lab load message > reads `Loaded 1 card` for a deck of one card
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the owned list in Complete a Near-Miss (DEC-1150) > counts the cards of the store [["Sol Ring",2]]: 2 owned cards on file
+Error: expect(element).toHaveAttribute("title", "2 owned cards on file") // element.getAttribute("title") === "2 owned cards on file"
+
+Expected the element to have attribute:
+  title="2 owned cards on file"
+Received:
+  title="2 owned card on file"
+ ❯ src/__tests__/routes/ComboLab.test.tsx:178:18
+    176|     const chip = within(panel).getByRole('button', { name: 'Owned only…
+    177|     expect(chip).toBeEnabled();
+    178|     expect(chip).toHaveAttribute('title', text);
+       |                  ^
+    179|     expect(within(panel).getByText(`${text} — imported in § IX Shoppin…
+    180|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

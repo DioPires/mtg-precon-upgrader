@@ -273,6 +273,11 @@ em { font-style: italic; color: var(--gv1-gold); }
   padding-bottom: 20px;
   border-bottom: 1px solid var(--gv1-line);
 }
+/* DEC-1046: with a partner, two names and the type do not fit one row of a
+   narrow dossier (345px at 769px), so the row wraps. Without the wrap the row
+   also passes the content edge on a phone, and at 1021px with the web fonts
+   blocked. */
+.gv1-cmd-grid-partner .gv1-cmd-commander-row { flex-wrap: wrap; }
 .gv1-cmd-commander-name {
   font-family: var(--gv1-serif);
   font-size: 22px;
@@ -3079,10 +3084,16 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-combo-grid { grid-template-columns: minmax(0, 1fr); }
 }
 /* Commander: beside the 420px art, the 88px deck name needs 1017px
-   (witherbloom-the-balancer). The art moves above the dossier. */
+   (witherbloom-the-balancer). DEC-1046: the art stays beside the dossier on a
+   narrower track (240px at 769px, 319px at 1020px), and the name scales from
+   60px at 769px to 88px from 1000px. At each size the longest word of every
+   deck name ("Witherbloom") fits the dossier whole in Georgia, which is wider
+   than the web font. No lower bound: the 768px block, later in the file, sets
+   the grid's tracks, its gap and the name's size again. A lower bound at 769px
+   left the widths between 768 and 769px (browser zoom) to the desktop tracks. */
 @media (max-width: 1020px) {
-  .gv1-cmd-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
-  .gv1-cmd-art { max-width: 320px; }
+  .gv1-cmd-grid { grid-template-columns: clamp(240px, 31.25vw, 320px) minmax(0, 1fr); gap: 40px; }
+  .gv1-cmd-deckname { font-size: clamp(56px, calc(12vw - 32px), 88px); }
 }
 /* Decklist: three columns need 1001px (witherbloom-the-balancer). */
 @media (max-width: 1010px) {
@@ -3094,11 +3105,12 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-engine-shell { grid-template-columns: 260px minmax(0, 1fr); }
   .gv1-engine-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-/* Beside the rail the panel can be as narrow as 301px, so the card count
-   drops under a role title too long to share its row ("Counteroffensive"
-   needs 329px). Bounded below because the 768px block has no rule for the
-   panel head to fall back on. */
-@media (min-width: 769px) and (max-width: 990px) {
+/* The card count drops under a role title too long to share its row.
+   Beside the rail the panel can be as narrow as 299px ("Counteroffensive"
+   and its card count need 327px); on a phone, under the tabs, it is the
+   screen less 66px (254px at 320px). The 768px block also makes the title
+   smaller there. */
+@media (max-width: 990px) {
   .gv1-engine-panel-head { flex-wrap: wrap; gap: 8px 16px; }
 }
 /* Shopping summary: four stats and the actions on one row, with the copy
@@ -3252,7 +3264,6 @@ em { font-style: italic; color: var(--gv1-gold); }
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px 14px;
   }
-  .gv1-shop-summary-stat .gv1-serif-xl { font-size: 28px; }
   .gv1-shop-summary-actions {
     grid-column: 1 / -1;
     flex-wrap: wrap;
@@ -3310,6 +3321,8 @@ em { font-style: italic; color: var(--gv1-gold); }
     box-shadow: inset 0 -2px 0 var(--gv1-rune);
   }
   .gv1-engine-panel { padding: 18px 16px; }
+  /* DEC-1156: at 42px "Counteroffensive" is wider than a 320px phone's panel. */
+  .gv1-engine-panel-head h3 { font-size: clamp(30px, 10vw, 42px); }
   .gv1-engine-cards { grid-template-columns: repeat(2, 1fr); }
   /* DEC-1116: a note's longest word widened its column, and the panel and
      tabs with it, past the phone. The name keeps `break-word`, so a card name
@@ -3360,6 +3373,23 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-apo-remedy { padding: 14px; }
   .gv1-apo-pins { gap: 12px; }
   .gv1-apo-pin { padding: 14px; }
+}
+
+/* Shopping summary on a phone (DEC-1154, DEC-1149 N7). <main> keeps its 64px
+   side padding here, so the box holds 126px of content at 320px and 236px at
+   430px. Three columns of 42px figures need up to 287px (every deck and the
+   brewing decks selected, in the fallback faces), and the third stat ran past
+   the box. Here the stats wrap: a line takes as many stats as their narrowest
+   widths allow, and they share the rest of it. The figures are 28px. The
+   768px rule for them named `.gv1-shop-summary-stat`, which no element has.
+   The action row now takes the box's width, not the width of three columns:
+   its buttons keep each label on one line, as they do on the 3-column grid. */
+@media (max-width: 480px) {
+  .gv1-shop-summary { display: flex; flex-wrap: wrap; }
+  .gv1-shop-stat { flex: 1 1 0; }
+  .gv1-shop-stat .gv1-serif-xl { font-size: 28px; }
+  .gv1-shop-summary-actions { flex: 1 1 100%; }
+  .gv1-shop-summary-actions button { white-space: nowrap; }
 }
 
 /* Scrying mobile banner — phones below 480px nudge to desktop for the
