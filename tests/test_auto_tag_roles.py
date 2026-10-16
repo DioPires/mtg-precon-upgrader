@@ -438,6 +438,63 @@ class ToughnessCutTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
 
 
+class CantripTests(unittest.TestCase):
+    """One draw of one card that the card gives once nets 0 cards, so it is not card-draw (DEC-478)."""
+
+    def test_one_shot_draw_of_one_card_is_not_card_draw(self):
+        for name, type_line, oracle_text in (
+            ("Millwater Glance", "Instant", "Target player mills two cards.\nDraw a card."),
+            ("Hearthward Scout", "Creature — Human Scout", "When this creature enters, draw a card."),
+            (
+                "Duneplod Beast",
+                "Creature — Beast",
+                "Trample\nCycling {2} ({2}, Discard this card: Draw a card.)",
+            ),
+            (
+                "Clueward Inspector",
+                "Creature — Human Detective",
+                'When this creature enters, investigate. (Create a Clue token. It\'s an artifact with "{2}, '
+                'Sacrifice this token: Draw a card.")',
+            ),
+            ("Brassleaf Trinket", "Artifact", "{1}, Sacrifice this artifact: Draw a card."),
+            (
+                # The cost before ":" is in reminder text: cycling of the cards in your hand.
+                "Tomeshade Heron",
+                "Creature — Bird Wizard",
+                "Flying\nEach creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw "
+                "a card.)",
+            ),
+            (
+                "Dusktide Stall",
+                "Instant",
+                "Tap target creature.\nAt the beginning of the next end step, draw a card.",
+            ),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, type_line, oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_repeatable_draw_or_a_draw_of_two_is_card_draw(self):
+        for name, type_line, oracle_text in (
+            ("Gravewatch Ledger", "Enchantment", "Whenever a creature you control dies, draw a card."),
+            ("Inkwell Lens", "Artifact", "{T}: Draw a card."),
+            (
+                "Skyrider Courier",
+                "Creature — Bird Scout",
+                "Flying\nWhenever this creature attacks, choose one —\n• Draw a card.\n• You gain 2 life.",
+            ),
+            ("Twofold Insight", "Sorcery", "Draw two cards."),
+            (
+                "Echoing Augury",
+                "Sorcery",
+                "Draw a card.\nDraw a card at the beginning of the next turn's upkeep.",
+            ),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, type_line, oracle_text)
+                self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 
@@ -586,7 +643,8 @@ class ProtectionExclusionTests(unittest.TestCase):
         card = _card(
             "Invented Ward",
             "Instant",
-            "Target creature you control gains hexproof until end of turn.\nDraw a card.",
+            # Two cards: one card is a cantrip, which is not card-draw (DEC-1191).
+            "Target creature you control gains hexproof until end of turn.\nDraw two cards.",
         )
         self.assertEqual(atr.classify(card), ("card-draw", 0.85))
 

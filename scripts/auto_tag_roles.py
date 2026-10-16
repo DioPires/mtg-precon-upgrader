@@ -251,15 +251,32 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
     return None
 
 
+_DRAW = re.compile(
+    r"draws? (?:a|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\d+) cards?|"
+    r"draw cards equal to"
+)
+# Read on the draw's own line. A cost before ":" makes the draw repeatable,
+# unless the cost spends the card itself (DEC-478).
+_REPEATABLE_DRAW = re.compile(
+    r"\bwhenever\b|\bat the beginning of (?!the next)|^(?:(?!sacrifice this|discard this)[^(\n])*:"
+)
+
+
+def _is_cantrip(oracle: str) -> bool:
+    """One draw of one card, outside a repeatable ability, nets 0 cards (DEC-478)."""
+    draws = list(_DRAW.finditer(oracle))
+    if len(draws) != 1 or not re.match(r"draws? (?:a|one) card\b(?! for each)", oracle[draws[0].start():]):
+        return False
+    start = oracle.rfind("\n", 0, draws[0].start()) + 1
+    while start > 0 and oracle.startswith("•", start):  # a mode: read from its header line
+        start = oracle.rfind("\n", 0, start - 1) + 1
+    end = oracle.find("\n", draws[0].start())
+    line = oracle[start : end if end >= 0 else len(oracle)]
+    return not _REPEATABLE_DRAW.search(line)
+
+
 def _detect_card_draw(oracle: str, type_line: str) -> tuple[str, float] | None:
-    has_draw = (
-        re.search(
-            r"draws? (?:a|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\d+) cards?",
-            oracle,
-        )
-        or "draw cards equal to" in oracle
-    )
-    if not has_draw:
+    if not _DRAW.search(oracle) or _is_cantrip(oracle):
         return None
     # Creature with an "enters" trigger that draws is more often classified
     # engine/value than pure card-draw — hand off to human review.
