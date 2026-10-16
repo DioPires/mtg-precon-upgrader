@@ -741,6 +741,42 @@ describe('Shopping organism', () => {
       expect(within(ownHead()).getByText('· 1 unique · 1 card')).toBeInTheDocument();
     });
   });
+
+  it('hides the sigil of each empty state from screen readers, so each state reads its message alone (DEC-1177)', () => {
+    // The state's text without the elements that aria-hidden takes out of the accessibility tree.
+    const spoken = (el: Element) => {
+      const copy = el.cloneNode(true) as Element;
+      copy.querySelectorAll('[aria-hidden="true"]').forEach((hidden) => hidden.remove());
+      return copy.textContent;
+    };
+    const expectHiddenSigil = (sigil: string, message: string) => {
+      const empty = screen.getByText(message).closest('.gv1-empty')!;
+      expect(empty.children).toHaveLength(2);
+      const [glyph, text] = empty.children;
+      expect(glyph).toHaveAttribute('aria-hidden', 'true');
+      expect(glyph.textContent).toBe(sigil);
+      expect(text).not.toHaveAttribute('aria-hidden');
+      expect(spoken(empty)).toBe(message);
+    };
+
+    // No deck is loaded.
+    const noDecks = renderShopping([]);
+    expectHiddenSigil('◇', 'No decks loaded.');
+    noDecks.unmount();
+
+    // The user owns every card that the selected deck needs.
+    const alphaCards = ['Alpha Commander', 'Sol Ring', 'Arcane Signet', 'Swords to Plowshares'];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(alphaCards.map((name) => [name, 1])));
+    const allOwned = renderShopping([ALPHA]);
+    expectHiddenSigil('◆', 'All cards owned. The grimoire is complete.');
+    allOwned.unmount();
+    localStorage.removeItem(STORAGE_KEY);
+
+    // No deck is selected.
+    renderShopping([ALPHA, BETA]);
+    fireEvent.click(screen.getByRole('button', { name: /^Clear$/i }));
+    expectHiddenSigil('◇', 'No decks selected. Pick at least one above to build a list.');
+  });
 });
 
 describe('the date of the prices in the footer (DEC-1102)', () => {

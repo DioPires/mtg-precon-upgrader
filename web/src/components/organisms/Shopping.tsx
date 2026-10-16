@@ -586,7 +586,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
     return (
       <section className="gv1-section">
         <div className="gv1-empty">
-          <span className="gv1-rune">◇</span>
+          <span className="gv1-rune" aria-hidden="true">◇</span>
           <span className="gv1-mono-xs">No decks loaded.</span>
         </div>
       </section>
@@ -813,7 +813,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
           </div>
           {buy.length === 0 ? (
             <div className="gv1-empty">
-              <span className="gv1-rune">◆</span>
+              <span className="gv1-rune" aria-hidden="true">◆</span>
               <span className="gv1-mono-xs">All cards owned. The grimoire is complete.</span>
             </div>
           ) : (
@@ -889,7 +889,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
       {selected.size === 0 && (
         <section className="gv1-section">
           <div className="gv1-empty">
-            <span className="gv1-rune">◇</span>
+            <span className="gv1-rune" aria-hidden="true">◇</span>
             <span className="gv1-mono-xs">No decks selected. Pick at least one above to build a list.</span>
           </div>
         </section>
