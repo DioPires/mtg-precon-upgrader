@@ -136,3 +136,25 @@ describe('DEC-1170 K2: a failed card-metadata.json', () => {
     });
   }
 });
+
+// K3: the kill case of the mutants H5 and H6 (DEC-1153 fix round 1): a date
+// that Date.parse reads as 0 or less is still a readable date, as in
+// cardCache.seed(). The loader stores the file with it.
+describe('DEC-1153 K3: a meta file whose prices_as_of is a readable date at or before 1970-01-01', () => {
+  for (const value of ['1970-01-01T00:00:00Z', '1969-12-31T00:00:00Z'] as const) {
+    it(`stores the file dated ${value}, and a load inside 1 h reads it and sends nothing`, async () => {
+      date = value;
+      const first = visit();
+      await first.deckLoader.loadCardMetadata();
+      expect(first.seed).toHaveBeenCalledWith(FILE, value);
+      expect(counts()).toEqual([1, 1]);
+      expect(envelope()).toMatchObject({ pricesAsOf: value, payload: FILE });
+
+      clock += 30 * 60_000;
+      const second = visit();
+      expect(await second.deckLoader.loadCardMetadataMeta()).toEqual({ prices_as_of: value });
+      expect(counts()).toEqual([1, 1]);
+      expect(second.seed.mock.calls).toEqual([[FILE, value]]);
+    });
+  }
+});
