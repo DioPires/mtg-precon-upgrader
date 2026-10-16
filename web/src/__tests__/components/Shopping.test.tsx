@@ -131,6 +131,15 @@ describe('parseOwnedFile', () => {
     expect(parseOwnedFile('Name,Quantity\nSol Ring,3\n').get('Sol Ring')).toBe(3);
     expect(parseOwnedFile('Name,Quantity\nSol Ring,2.5\n').get('Sol Ring')).toBe(2);
   });
+
+  // 400 digits read as Infinity, which is not a whole number (DEC-1150 N2).
+  it('counts a CSV quantity cell of 400 digits as 1 (DEC-1150)', () => {
+    expect(parseOwnedFile(`Name,Quantity\nSol Ring,${'1'.repeat(400)}\n`).get('Sol Ring')).toBe(1);
+  });
+
+  it('counts a text line count of 400 digits as 1 (DEC-1150)', () => {
+    expect(parseOwnedFile(`${'1'.repeat(400)}x Sol Ring\n`).get('Sol Ring')).toBe(1);
+  });
 });
 
 describe('aggregateCards', () => {
@@ -714,6 +723,25 @@ describe('Shopping organism', () => {
       loadStore(JSON.stringify([null, ['Sol Ring', 2, 'foil'], ['Arcane Signet', 1]]));
       expect(screen.getByText('1 card loaded — saved locally')).toBeInTheDocument();
     });
+
+    // Two decks each want Brazen Borrower. The store holds one copy under the
+    // double-faced name and one under the front face; the load adds them into
+    // one owned card of quantity 2 (DEC-1150).
+    it('adds a stored double-faced name and its front face into one card', () => {
+      const dfcDeck = (slug: string, idx: number) =>
+        makeDeck({
+          idx,
+          slug,
+          deckName: slug,
+          commander: `${slug} Commander`,
+          list: [group('Commander', [`${slug} Commander`]), group('Tempo (1)', ['Brazen Borrower // Petty Theft'])],
+        });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([['Brazen Borrower // Petty Theft', 1], ['Brazen Borrower', 1]]));
+      renderShopping([dfcDeck('dfc-a', 1), dfcDeck('dfc-b', 2)]);
+      fireEvent.click(screen.getByRole('button', { name: /Select all/i }));
+      const ownHead = screen.getByRole('button', { name: /Already own/ });
+      expect(within(ownHead).getByText('· 1 unique · 2 cards')).toBeInTheDocument();
+    });
   });
 
   describe('the count of cards in the Need to buy and Already own headers (DEC-1142)', () => {
@@ -776,6 +804,43 @@ describe('Shopping organism', () => {
       expect(within(buyHead()).getByText('· 2 unique · 3 cards')).toBeInTheDocument();
       expect(within(ownHead()).getByText('· 1 unique · 1 card')).toBeInTheDocument();
     });
+  });
+
+  it('hides the sigil of each empty state from screen readers, so each state reads its message alone (DEC-1177)', () => {
+    // The state's text without the elements that aria-hidden takes out of the accessibility tree.
+    const spoken = (el: Element) => {
+      const copy = el.cloneNode(true) as Element;
+      copy.querySelectorAll('[aria-hidden="true"]').forEach((hidden) => hidden.remove());
+      return copy.textContent;
+    };
+    const expectHiddenSigil = (sigil: string, message: string) => {
+      const empty = screen.getByText(message).closest('.gv1-empty')!;
+      expect(empty.children).toHaveLength(2);
+      const [glyph, text] = empty.children;
+      expect(glyph).toHaveAttribute('aria-hidden', 'true');
+      expect(glyph).toHaveClass('gv1-rune');
+      expect(glyph.textContent).toBe(sigil);
+      expect(text).not.toHaveAttribute('aria-hidden');
+      expect(spoken(empty)).toBe(message);
+    };
+
+    // No deck is loaded.
+    const noDecks = renderShopping([]);
+    expectHiddenSigil('◇', 'No decks loaded.');
+    noDecks.unmount();
+
+    // The user owns every card that the selected deck needs.
+    const alphaCards = ['Alpha Commander', 'Sol Ring', 'Arcane Signet', 'Swords to Plowshares'];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(alphaCards.map((name) => [name, 1])));
+    const allOwned = renderShopping([ALPHA]);
+    expectHiddenSigil('◆', 'All cards owned. The grimoire is complete.');
+    allOwned.unmount();
+    localStorage.removeItem(STORAGE_KEY);
+
+    // No deck is selected.
+    renderShopping([ALPHA, BETA]);
+    fireEvent.click(screen.getByRole('button', { name: /^Clear$/i }));
+    expectHiddenSigil('◇', 'No decks selected. Pick at least one above to build a list.');
   });
 });
 
