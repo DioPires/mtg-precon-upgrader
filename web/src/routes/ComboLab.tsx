@@ -1484,8 +1484,8 @@ function NearRow({ combo }: { combo: SpellbookCombo }) {
           </span>
         ))}
         <span className="gv1-lab-near-produce">
-          <GlyphWords words="produces">→</GlyphWords>
-          {` ${combo.produces.slice(0, 2).join(' · ')}`}
+          <GlyphWords words="produces ">→ </GlyphWords>
+          {combo.produces.slice(0, 2).join(' · ')}
           {combo.produces.length > 2 ? ` · +${combo.produces.length - 2}` : ''}
         </span>
       </span>
@@ -1877,10 +1877,7 @@ function CompletionSec({
       {status === 'ready' && result && (
         <>
           <p className="gv1-lab-note">
-            Color identity{' '}
-            <span className="gv1-rune" aria-hidden="true">
-              {result.deckColorIdentity}
-            </span>
+            Color identity <span className="gv1-rune" aria-hidden="true">{result.deckColorIdentity}</span>
             <span className="gv1-sr-only">{colorWords(result.deckColorIdentity)}</span> · legal in
             Commander · searched {result.poolSize.toLocaleString()} pool cards in{' '}
             {result.elapsedMs.toFixed(0)}ms · {result.counts.droppedByColor.toLocaleString()}{' '}

@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { cardCache, type CardEntry } from '../../data/cardCache';
 import { isGameChanger } from '../../data/gameChangers';
 import { useCard } from '../../hooks/useCard';
-import { Glyph, GlyphText } from '../atoms/Glyph';
+import { Glyph, GlyphText, GlyphWords } from '../atoms/Glyph';
 import {
   bottomCountFor,
   computeSwapDelta,
@@ -42,8 +42,8 @@ const SCRY_COLOR_NAMES: Record<string, string> = {
   C: 'Colorless',
 };
 
-// A screen reader hears "to" for each → of the swap delta, also in the gcDetail
-// strings of lib/scrying.ts (DEC-1190).
+// A screen reader hears "to" for the → of the gcDetail strings (lib/scrying.ts), as
+// for the → of the other delta rows (DEC-1190).
 const ARROW_TO = { '→': 'to' } as const;
 
 function deriveTypeShort(typeLine: string | undefined, fallback: string | undefined): string {
@@ -678,7 +678,9 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
           <span className="gv1-scry-delta-label">Mana value</span>
           <div className="gv1-scry-delta-values">
             <span className="gv1-scry-delta-detail">
-              <GlyphText text={`${delta.cutCmc} → ${delta.addCmc}`} words={ARROW_TO} />
+              {delta.cutCmc}
+              <GlyphWords words=" to ">{' → '}</GlyphWords>
+              {delta.addCmc}
             </span>
             <span className="gv1-scry-delta-change" data-dir={cmcDir}>
               {delta.cmcChange > 0 ? '+' : ''}
@@ -693,10 +695,9 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
           <span className="gv1-scry-delta-label">Avg mana value</span>
           <div className="gv1-scry-delta-values">
             <span className="gv1-scry-delta-detail">
-              <GlyphText
-                text={`${delta.avgCmcBefore.toFixed(2)} → ${delta.avgCmcAfter.toFixed(2)}`}
-                words={ARROW_TO}
-              />
+              {delta.avgCmcBefore.toFixed(2)}
+              <GlyphWords words=" to ">{' → '}</GlyphWords>
+              {delta.avgCmcAfter.toFixed(2)}
             </span>
             <span className="gv1-scry-delta-change" data-dir={avgDir}>
               {delta.avgCmcChange > 0 ? '+' : ''}
@@ -711,7 +712,9 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
           <span className="gv1-scry-delta-label">Lands</span>
           <div className="gv1-scry-delta-values">
             <span className="gv1-scry-delta-detail">
-              <GlyphText text={`${delta.landsBefore} → ${delta.landsAfter}`} words={ARROW_TO} />
+              {delta.landsBefore}
+              <GlyphWords words=" to ">{' → '}</GlyphWords>
+              {delta.landsAfter}
             </span>
             <span
               className="gv1-scry-delta-change"
@@ -743,7 +746,9 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
           <span className="gv1-scry-delta-label">Type</span>
           <div className="gv1-scry-delta-values">
             <span className="gv1-scry-delta-detail">
-              <GlyphText text={`${delta.cutType} → ${delta.addType}`} words={ARROW_TO} />
+              {delta.cutType}
+              <GlyphWords words=" to ">{' → '}</GlyphWords>
+              {delta.addType}
             </span>
           </div>
         </div>
