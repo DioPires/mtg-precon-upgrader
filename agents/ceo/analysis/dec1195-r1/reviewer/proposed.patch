@@ -1,0 +1,93 @@
+--- a/web/src/data/scryfallLimiter.ts	2026-10-16 20:17:17
++++ b/web/src/data/scryfallLimiter.ts	2026-10-16 20:17:17
+@@ -451,7 +451,8 @@
+       // After a timeout the aborted fetch rejects, and nobody waits for it.
+       fetching.catch(() => undefined);
+       const response = await Promise.race([fetching, timeout]);
+-      if (response && wholeBody) {
++      // A 429 is a stop at its head: nobody reads its body.
++      if (response && wholeBody && response.status !== 429) {
+         // A body that fails before the deadline fails the caller's own read in the same way.
+         await Promise.race([response.clone().arrayBuffer().catch(() => undefined), timeout]);
+       }
+--- a/web/src/__tests__/dec1188/body-timeout.test.ts	2026-10-16 20:17:17
++++ b/web/src/__tests__/dec1188/body-timeout.test.ts	2026-10-16 20:17:17
+@@ -7,6 +7,7 @@
+ // B1: a body that ends 1 ms before the deadline is an answer; one that ends at the deadline is not.
+ // B2: a body that fails before the deadline is the caller's to read: no stop, as before.
+ // B3: fetch() gives the answer at its head; the caller reads the body itself.
++// B4: a 400 or a 422 whose body never ends is no answer either; a 429 stops at its head.
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ import { createCardCache } from '../../data/cardCache';
+ import { collectionRequest, COLLECTION_URL, createScryfallLimiter, STOP_KEY } from '../../data/scryfallLimiter';
+@@ -32,11 +33,12 @@
+ type FirstBody =
+   | 'never ends'
+   | 'never ends, and errors at the abort'
++  | 'one chunk, and never ends'
+   | { endsAfter: number }
+   | { failsAfter: number };
+ 
+-/** A fetch whose head comes `headMs` after the send, and whose first body is `first`. */
+-function bodyFetch(first: FirstBody, headMs = 0) {
++/** A fetch whose head comes `headMs` after the send, and whose first answer has `status` and the body `first`. */
++function bodyFetch(first: FirstBody, headMs = 0, status = 200) {
+   const sends: Array<{ at: number; names: string[] }> = [];
+   const fetchImpl = ((_input: RequestInfo | URL, init?: RequestInit) => {
+     const names = identifiersOf(init?.body);
+@@ -52,12 +54,13 @@
+           controller.close();
+         };
+         if (kind === 'whole') end();
++        else if (kind === 'one chunk, and never ends') controller.enqueue(bytes.slice(0, 10));
+         // A browser's fetch errors the body when the request is aborted.
+         else if (kind === 'never ends, and errors at the abort') signal?.addEventListener('abort', () => controller.error(signal.reason));
+         else if (typeof kind === 'object' && 'endsAfter' in kind) setTimeout(end, kind.endsAfter);
+         else if (typeof kind === 'object') setTimeout(() => controller.error(new TypeError('network error')), kind.failsAfter);
+       },
+-    }), { status: 200 });
++    }), { status: kind === 'whole' ? 200 : status });
+     if (headMs === 0) return Promise.resolve(head());
+     return new Promise<Response>((resolve) => setTimeout(() => resolve(head()), headMs));
+   }) as typeof fetch;
+@@ -65,7 +68,7 @@
+ }
+ 
+ describe('DEC-1188 8a: an answer whose body never ends', () => {
+-  for (const first of ['never ends', 'never ends, and errors at the abort'] as const) {
++  for (const first of ['never ends', 'never ends, and errors at the abort', 'one chunk, and never ends'] as const) {
+     it(`(the body ${first}) stops the limiter at 20 s; the batch goes again first, and the tab's later name goes after it`, async () => {
+       const a = bodyFetch(first);
+       const scryB = fakeScryfall();
+@@ -156,3 +159,31 @@
+     expect(a.sends).toHaveLength(1);
+   });
+ });
++
++describe('DEC-1188 B4: an answer of another status whose body never ends', () => {
++  for (const status of [400, 422]) {
++    it(`a ${status}: no answer at 20 s, a stop, and the batch goes again first`, async () => {
++      const a = bodyFetch('never ends', 0, status);
++      const cache = createCardCache({ storage, limiter: createScryfallLimiter({ fetchImpl: a.fetchImpl, storage, locks: fakeLocks() }) });
++      cache.enqueue('Open Body');
++      await advance(20_000 - 1);
++      expect(storedStop()).toBeNull();
++      await advance(1);
++      expect(storedStop()).toMatchObject({ until: T0 + 50_000, ms: 30_000 });
++      await advance(31_000);
++      expect(a.sends.map((s) => s.at)).toEqual([0, 50_000]);
++      expect(cache.get('Open Body')?.status).toBe('loaded');
++    });
++  }
++
++  it('a 429: the stop starts at its head, as for any 429', async () => {
++    const a = bodyFetch('never ends', 0, 429);
++    const cache = createCardCache({ storage, limiter: createScryfallLimiter({ fetchImpl: a.fetchImpl, storage, locks: fakeLocks() }) });
++    cache.enqueue('Open Body');
++    await advance(0);
++    expect(storedStop()).toMatchObject({ until: T0 + 30_000, ms: 30_000 });
++    await advance(31_000);
++    expect(a.sends.map((s) => s.at)).toEqual([0, 30_000]);
++    expect(cache.get('Open Body')?.status).toBe('loaded');
++  });
++});

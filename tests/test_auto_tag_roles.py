@@ -100,6 +100,16 @@ class TutorRetagTests(unittest.TestCase):
         )
         self.assertIsNone(atr.classify_tutor_roles(card, "utility"))
 
+    def test_named_search_beside_an_open_search_gets_a_tutor_retag(self):
+        card = _card(
+            "Ilsa, Grove Warden",
+            "Legendary Planeswalker — Ilsa",
+            "+1: Search your library for a card named Ilsa's Chosen, put it onto the battlefield, "
+            "then shuffle.\n−7: Search your library for any number of Elf creature cards, put them "
+            "onto the battlefield, then shuffle.",
+        )
+        self.assertEqual(atr.classify_tutor_roles(card, None), ("engine", "tutor", 0.75))
+
 
 class GraveyardExileTests(unittest.TestCase):
     """A target that is a card in a graveyard is not removal-spot."""
@@ -169,6 +179,54 @@ class GraveyardExileTests(unittest.TestCase):
                 card = _card("Thornmere Exarch", "Creature — Elf Cleric", oracle_text)
                 self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
+    def test_graveyard_card_after_then_is_another_clause(self):
+        # ", then" ends the target; the graveyard card belongs to the next clause.
+        for oracle_text in (
+            "Exile target creature, then its controller returns a creature card from their "
+            "graveyard to the battlefield.",
+            "Exile target creature, then you may return a creature card from your graveyard to "
+            "your hand.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Gravewake Exchange", "Sorcery", oracle_text)
+                self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_graveyard_card_after_you_control_is_another_clause(self):
+        # "you control" ends the target too; the exile of your own creature is a sac outlet.
+        card = _card(
+            "Bonecall Offering",
+            "Instant",
+            "Exile target creature you control and return a creature card from your graveyard to your hand.",
+        )
+        self.assertEqual(atr.classify(card), ("utility", 0.6))
+
+    def test_word_that_begins_with_then_does_not_end_the_target(self):
+        # "then" ends the target only as a word; "Thenari" is a creature type here.
+        card = _card("Ashgrave Sifting", "Instant", "Exile target creature or Thenari card from a graveyard.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+
+class LandTargetTests(unittest.TestCase):
+    """A target that can be only a land is land destruction, not removal-spot."""
+
+    def test_destroy_target_land_is_not_removal_spot(self):
+        card = _card("Quarry Collapse", "Sorcery", "Destroy target land.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_land_beside_another_type_stays_removal_spot(self):
+        card = _card("Shattering Tremor", "Sorcery", "Destroy target artifact, enchantment, or land.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_attacking_or_blocking_creature_stays_removal_spot(self):
+        # The other words of the line that lost "land".
+        for name, oracle_text in (
+            ("Vanguard Reprisal", "Destroy target attacking creature."),
+            ("Shieldbreak Ambush", "Destroy target blocking creature."),
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card(name, "Instant", oracle_text)
+                self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
 
 class BlinkTests(unittest.TestCase):
     """A target that its own sentence returns to the battlefield is not removed."""
@@ -197,6 +255,187 @@ class BlinkTests(unittest.TestCase):
             "return it to the battlefield under its owner's control.",
         )
         self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_return_under_your_control_of_an_opponents_creature_is_removal_spot(self):
+        # The card comes back under your control: a steal, not a blink.
+        card = _card(
+            "Rivenmark Usurpation",
+            "Instant",
+            "Exile target creature an opponent controls, then return it to the battlefield under your control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_return_under_your_control_of_your_creature_is_protection(self):
+        card = _card(
+            "Hollowlight Return",
+            "Instant",
+            "Exile target creature you control, then return it to the battlefield under your control.",
+        )
+        self.assertEqual(atr.classify(card), ("protection", 0.8))
+
+    def test_blink_that_returns_those_cards_is_protection(self):
+        card = _card(
+            "Twinfold Shelter",
+            "Instant",
+            "Exile target artifact you control and target creature you control, then return those "
+            "cards to the battlefield under their owners' control.",
+        )
+        self.assertEqual(atr.classify(card), ("protection", 0.8))
+
+    def test_exile_of_your_creature_with_a_later_return_is_utility(self):
+        # The return is in another sentence, so this is no blink, and the exile is a sac outlet.
+        card = _card(
+            "Stasis Reliquary",
+            "Artifact",
+            "{2}, {T}: Exile target creature you control.\nSacrifice this artifact: Return each card "
+            "exiled with it to the battlefield under its owner's control.",
+        )
+        self.assertEqual(atr.classify(card), ("utility", 0.6))
+
+    def test_return_to_its_owners_hand_is_not_a_blink(self):
+        card = _card(
+            "Banishing Rebuke",
+            "Instant",
+            "Exile target creature an opponent controls, then return it to its owner's hand.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_tapped_return_under_your_control_of_an_opponents_creature_is_removal_spot(self):
+        card = _card(
+            "Ironveil Seizure",
+            "Instant",
+            "Exile target creature an opponent controls, then return it to the battlefield tapped under your "
+            "control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_return_under_your_control_of_a_creature_you_own_is_not_removal_spot(self):
+        card = _card(
+            "Kinbound Echo",
+            "Instant",
+            "Exile target creature you own, then return it to the battlefield under your control.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_you_control_after_then_does_not_name_the_target(self):
+        # "each creature you control" belongs to the next clause; the target is an opponent's.
+        card = _card(
+            "Graftcrown Theft",
+            "Sorcery",
+            "Exile target creature an opponent controls, then put a +1/+1 counter on each creature you "
+            "control, then return it to the battlefield under your control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_under_your_control_later_in_the_sentence_is_not_the_return(self):
+        # The target returns under its owner's control; "under your control" is another object's.
+        card = _card(
+            "Tidewrack Mirage",
+            "Instant",
+            "Exile target creature an opponent controls, then return it to the battlefield under its owner's "
+            "control and put a creature card from your hand onto the battlefield under your control.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_you_controlled_is_not_you_control(self):
+        card = _card(
+            "Oathbreak Reclaim",
+            "Instant",
+            "Exile target creature an opponent controls that you controlled earlier this turn, then return it "
+            "to the battlefield under your control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_blink_after_a_trigger_clause_is_not_a_sac_outlet(self):
+        card = _card(
+            "Dusklatch Wardrobe",
+            "Artifact",
+            "At the beginning of your end step, you may exile target creature you control, then return that "
+            "card to the battlefield under your control.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
+
+    def test_return_under_your_control_of_a_target_list_you_control_is_not_removal_spot(self):
+        # Probe P2: the commas of a target list do not end the target; ", then" does.
+        for oracle_text in (
+            "Exile target artifact, creature, or enchantment you control, then return it to the battlefield "
+            "under your control.",
+            "Exile target artifact, Thenari, or creature you control, then return it to the battlefield "
+            "under your control.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Glasswake Recall", "Instant", oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_you_control_before_the_target_does_not_name_the_target(self):
+        card = _card(
+            "Wizardsworn Seizure",
+            "Instant",
+            "If you control a Wizard, exile target creature an opponent controls, then return it to the "
+            "battlefield under your control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_return_under_your_control_of_an_opponents_target_list_is_removal_spot(self):
+        card = _card(
+            "Gildthief Snare",
+            "Instant",
+            "Exile target artifact or creature an opponent controls, then return it to the battlefield under "
+            "your control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_blink_under_your_control_beside_a_destroy_stays_removal_spot(self):
+        # The exile of your creature is a blink, not a sac outlet, so the destroy keeps removal-spot.
+        card = _card(
+            "Twinmark Edict",
+            "Sorcery",
+            "Exile target creature you control, then return it to the battlefield under your control. "
+            "Destroy target artifact.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+
+class ToughnessCutTests(unittest.TestCase):
+    """A cut to a target creature's toughness is removal-spot, also beside a gain to power."""
+
+    def test_gain_to_power_and_cut_to_toughness_is_removal_spot(self):
+        card = _card("Rendmaw Surge", "Instant", "Target creature gets +3/-3 until end of turn.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_x_cut_to_toughness_is_removal_spot(self):
+        for oracle_text in (
+            "Target creature gets +X/-X until end of turn, where X is the number of cards in your hand.",
+            "Target creature gets -X/-X until end of turn, where X is the number of cards in your graveyard.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Hollowing Decree", "Instant", oracle_text)
+                self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_gain_to_power_without_a_cut_to_toughness_is_not_removal_spot(self):
+        card = _card("Brashfire Rally", "Instant", "Target creature gets +2/-0 until end of turn.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_cut_to_power_only_keeps_mains_read(self):
+        # PR #78 keeps main's read of "-N/-0" (DEC-1184 ruling R1); DEC-1191 changes this case.
+        card = _card("Dullwit Hex", "Instant", "Target creature gets -3/-0 until end of turn.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_cut_to_the_toughness_of_this_creature_is_not_removal_spot(self):
+        card = _card("Glassback Drake", "Creature — Drake", "Flying\n{R}: This creature gets +2/-2 until end of turn.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_gain_of_ten_or_more_to_power_is_read(self):
+        card = _card("Overreach Surge", "Instant", "Target creature gets +10/-10 until end of turn.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_you_may_have_target_creature_get_is_removal_spot(self):
+        card = _card(
+            "Rotmire Herald",
+            "Creature — Zombie",
+            "When this creature dies, you may have target creature get -2/-2 until end of turn.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
 
 
 class ProtectionPatternTests(unittest.TestCase):

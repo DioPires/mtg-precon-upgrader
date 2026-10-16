@@ -13,7 +13,7 @@ The 15 roles are deliberately coarse. They power deterministic deck metrics (man
 | `mana-fixing` | Color-fixes without net acceleration (taplands, filter lands as utility, etc.). Use as **secondary** when a card both fixes and ramps. | Reflecting Pool, Path of Ancestry |
 | `card-draw` | Nets ≥ +1 card in hand, or draws repeatably. Net-zero loot/filter effects do not qualify (see Card-draw classification). | Rhystic Study, Night's Whisper, Esper Sentinel |
 | `tutor` | Searches library for a specific card or category. | Demonic Tutor, Worldly Tutor, Eladamri's Call |
-| `removal-spot` | Targeted answer to one permanent. | Swords to Plowshares, Beast Within, Pongify |
+| `removal-spot` | Targeted answer to one permanent. A spell that can target only a land is not `removal-spot`. | Swords to Plowshares, Beast Within, Pongify |
 | `removal-board` | Affects multiple permanents (sweeper / mass bounce). | Wrath of God, Cyclonic Rift, Toxic Deluge |
 | `counterspell` | Counters a spell. Only counted toward role coverage when blue ∈ color identity. | Counterspell, Force of Will, Mana Drain |
 | `protection` | Protects own permanents (hexproof, indestructible grants, regeneration, save effects). | Heroic Intervention, Teferi's Protection, Lightning Greaves |
