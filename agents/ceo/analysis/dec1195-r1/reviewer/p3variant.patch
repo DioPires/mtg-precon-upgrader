@@ -1,0 +1,15 @@
+--- a/web/src/data/scryfallLimiter.ts	2026-10-16 20:17:17
++++ b/web/src/data/scryfallLimiter.ts	2026-10-16 20:17:27
+@@ -452,8 +452,10 @@
+       fetching.catch(() => undefined);
+       const response = await Promise.race([fetching, timeout]);
+       if (response && wholeBody) {
+-        // A body that fails before the deadline fails the caller's own read in the same way.
+-        await Promise.race([response.clone().arrayBuffer().catch(() => undefined), timeout]);
++        // A body that fails before its end is a fetch that rejects.
++        const read = response.clone().arrayBuffer().then(() => null, (error: unknown) => ({ error }));
++        const failed = await Promise.race([read, timeout]);
++        if (failed && !timedOut) return { response: null, error: failed.error, timedOut };
+       }
+       return { response: timedOut ? null : response, error: null, timedOut };
+     } catch (error) {

@@ -1,0 +1,36 @@
+
+ RUN  v2.1.9 /private/tmp/dec1195-ceo/wt/web
+
+ ❯ src/__tests__/dec1188/body-timeout.test.ts (10 tests | 1 failed) 13ms
+   × DEC-1188 B4: an answer of another status whose body never ends > a 429: the stop starts at its head, as for any 429 2ms
+     → expected null to match object { until: 1792152030000, ms: 30000 }
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  20:53:20
+   Duration  341ms (transform 37ms, setup 20ms, collect 29ms, tests 13ms, environment 112ms, prepare 40ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/dec1188/body-timeout.test.ts > DEC-1188 B4: an answer of another status whose body never ends > a 429: the stop starts at its head, as for any 429
+AssertionError: expected null to match object { until: 1792152030000, ms: 30000 }
+
+- Expected: 
+Object {
+  "ms": 30000,
+  "until": 1792152030000,
+}
+
++ Received: 
+null
+
+ ❯ src/__tests__/dec1188/body-timeout.test.ts:184:26
+    182|     cache.enqueue('Open Body');
+    183|     await advance(0);
+    184|     expect(storedStop()).toMatchObject({ until: T0 + 30_000, ms: 30_00…
+       |                          ^
+    185|     await advance(31_000);
+    186|     expect(a.sends.map((s) => s.at)).toEqual([0, 30_000]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
