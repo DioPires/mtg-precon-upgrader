@@ -141,7 +141,8 @@ describe('DEC-1190: no rendered JSX text shows a glyph to a screen reader', () =
       export const D = () => <p><Glyph>◇ </Glyph>test</p>;
       export const E = () => <p>№ 01 · ×3 · −1</p>;
       export const F = () => <p title="◇">{fmt('◇')}</p>;
+      export const G = () => <p>a − b</p>;
     `;
-    expect(uncovered('x.tsx', code).map((s) => `${s.line} ${s.glyphs}`)).toEqual(['2 ◇', '3 ✓']);
+    expect(uncovered('x.tsx', code).map((s) => `${s.line} ${s.glyphs}`)).toEqual(['2 ◇', '3 ✓', '8 −']);
   });
 });

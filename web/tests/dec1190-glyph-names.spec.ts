@@ -3,7 +3,8 @@
 // Playwright computes.
 //
 // Each case brings a route to one state (the 23 states of the DEC-1182 census,
-// and one for a card's mana cost), waits for document.fonts.ready and reads
+// and three more: a card's mana cost, Compare with its sort turned, and a Scrying
+// swap that cuts a land for a Game Changer), waits for document.fonts.ready and reads
 // Accessibility.getFullAXTree. In every state:
 // - no node that Chromium does not ignore has a name that holds a glyph;
 // - no name of an element that holds a hidden glyph starts or ends with a space.
@@ -68,6 +69,7 @@ class Tree {
   /** Each node that Chromium does not ignore and whose name holds a glyph. */
   glyphNames(): string[] {
     return this.nodes
+      // RootWebArea's name is the document title, not page text. An InlineTextBox repeats the text of its StaticText, which this rule reads.
       .filter((n) => !n.ignored && !['InlineTextBox', 'RootWebArea'].includes(roleOf(n)))
       .filter((n) => glyphsIn(nameOf(n)).length > 0)
       .map((n) => `${roleOf(n)} "${nameOf(n)}"`);
@@ -168,6 +170,11 @@ async function holdData(page: Page) {
 }
 
 test.describe.configure({ mode: 'parallel' });
+
+test('glyphsIn: a minus sign is a glyph unless a digit follows it', () => {
+  expect(glyphsIn('a − b')).toEqual(['−']);
+  expect(glyphsIn('−1')).toEqual([]);
+});
 
 for (const [label, path, text] of [
   ['loading-codex', '/codex', 'scrying the codex'],
@@ -274,12 +281,9 @@ test('compare: "Sorted by" reads the direction, and the Scale legend reads three
   // The other direction: one click on the active column header turns it.
   await page.locator('.gv1-cmp-th--active .gv1-cmp-th-btn').click();
   await expect.poll(shown).not.toBe(first);
-  const tree = await Tree.read(page);
-  try {
+  await state(page, 'compare-turned', async (tree) => {
     expect(await tree.spoken(sorted)).toMatch(new RegExp(` ${words[await shown()]}$`));
-  } finally {
-    await tree.detach();
-  }
+  });
 });
 
 test('shopping: the list and Copy read no glyph', async ({ page, context }) => {
@@ -356,6 +360,10 @@ test('combos paste: Analyze reads its word, and a loop trace reads "then"', asyn
   });
 });
 
+/** The `part` of the Swap Analyzer's delta row whose label is `label`, as a page expression. */
+const deltaRow = (label: string, part: string) =>
+  `[...document.querySelectorAll('.gv1-scry-delta-row')].find((r) => r.querySelector('.gv1-scry-delta-label').textContent === ${JSON.stringify(label)}).querySelector(${JSON.stringify(part)})`;
+
 test('scrying: a swap reads "to" for each arrow and no star', async ({ page }) => {
   await page.goto(`/scrying/${DECK}`);
   await page.locator('[data-gv1-screen="scrying"]').waitFor();
@@ -367,13 +375,26 @@ test('scrying: a swap reads "to" for each arrow and no star', async ({ page }) =
   await result.waitFor();
   await result.click();
   await page.locator('.gv1-scry-delta').waitFor();
-  const row = (label: string, part: string) =>
-    `[...document.querySelectorAll('.gv1-scry-delta-row')].find((r) => r.querySelector('.gv1-scry-delta-label').textContent === ${JSON.stringify(label)}).querySelector(${JSON.stringify(part)})`;
   await state(page, 'scrying-delta', async (tree) => {
-    expect(await tree.spoken(row('Mana value', '.gv1-scry-delta-detail'))).toMatch(/^\d+ to \d+$/);
-    expect(await tree.spoken(row('Avg mana value', '.gv1-scry-delta-detail'))).toMatch(/^\d+\.\d\d to \d+\.\d\d$/);
-    expect(await tree.spoken(row('Game Changers', '.gv1-scry-delta-detail'))).toMatch(/^−1 GC · (\d+) to \d+$/);
-    expect(await tree.spoken(row('Game Changers', '.gv1-scry-delta-change'))).toBe('−1');
+    expect(await tree.spoken(deltaRow('Mana value', '.gv1-scry-delta-detail'))).toMatch(/^\d+ to \d+$/);
+    expect(await tree.spoken(deltaRow('Avg mana value', '.gv1-scry-delta-detail'))).toMatch(/^\d+\.\d\d to \d+\.\d\d$/);
+    expect(await tree.spoken(deltaRow('Game Changers', '.gv1-scry-delta-detail'))).toMatch(/^−1 GC · (\d+) to \d+$/);
+    expect(await tree.spoken(deltaRow('Type', '.gv1-scry-delta-detail'))).toMatch(/^\S+ to \S+$/);
+    expect(await tree.spoken(deltaRow('Game Changers', '.gv1-scry-delta-change'))).toBe('−1');
+  });
+});
+
+test('scrying: a swap that cuts a land and adds a Game Changer reads "to" for Lands and "+1"', async ({ page }) => {
+  await page.goto(`/scrying/${DECK}`);
+  await page.locator('[data-gv1-screen="scrying"]').waitFor();
+  // Cut a Swamp for Underworld Breach (a Game Changer that is not a land, from another deck): the delta shows the Lands row and ★ +1.
+  await page.getByLabel('Select a card to cut').selectOption({ label: 'Swamp' });
+  await page.getByLabel('Search for a card to add').fill('Underworld Breach');
+  await page.locator('.gv1-scry-search-result', { hasText: 'Underworld Breach' }).click();
+  await expect(page.locator('.gv1-scry-delta-label', { hasText: /^Lands$/ })).toBeVisible();
+  await state(page, 'scrying-delta-land', async (tree) => {
+    expect(await tree.spoken(deltaRow('Lands', '.gv1-scry-delta-detail'))).toMatch(/^\d+ to \d+$/);
+    expect(await tree.spoken(deltaRow('Game Changers', '.gv1-scry-delta-change'))).toBe('+1');
   });
 });
 
