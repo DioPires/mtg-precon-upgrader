@@ -218,8 +218,9 @@ def _is_blink(oracle: str, t: re.Match) -> bool:
     r = _BLINK_RETURN.search(oracle, t.end(), end)
     if r and re.match(r"(?: tapped)? under your control", oracle[r.end():end]):
         # A return "under your control" is a blink only of a card that was yours;
-        # of another player's card it is a steal (DEC-1184).
-        return bool(re.match(r"[^,]*? you (?:control|own)\b", oracle[t.end():r.start()]))
+        # of another player's card it is a steal (DEC-1184). Read from the start of
+        # the target (a sac outlet's match holds "you control") to ", then".
+        return bool(re.match(r"(?:[^,]|,(?! then\b))*? you (?:control|own)\b", oracle[t.start():r.start()]))
     return bool(r)
 
 
@@ -244,7 +245,8 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
     ):
         return ("removal-spot", 0.8)
     # "-2/-2", "-X/-X", and a cut to toughness beside a gain to power: "+3/-3", "+X/-X" (DEC-1184).
-    if re.search(r"target creature gets (?:-\d+/-\d+|[+-](?:\d+|x)/-(?:[1-9]\d*|x))", oracle):
+    # "you may have target creature get -2/-2" too.
+    if re.search(r"target creature gets? (?:-\d+/-\d+|[+-](?:\d+|x)/-(?:[1-9]\d*|x))", oracle):
         return ("removal-spot", 0.65)
     return None
 
