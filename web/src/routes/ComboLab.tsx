@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { cardCache } from '../data/cardCache';
 import { deckLoader } from '../data/loader';
+import { readOwnedEntries } from '../data/ownedCards';
 import { colorsToGlyphs } from '../data/normalize';
 import { GV1ManaPips } from '../components/atoms/GV1ManaPips';
 import { useCard } from '../hooks/useCard';
@@ -55,10 +56,6 @@ import { verifyDeck } from '../lib/comboVerify';
 const NEAR_COLLAPSE = 8;
 const SYN_COLLAPSE = 6;
 const COMPLETION_MAX = 10;
-
-// Same store § IX Shopping writes (SHOP_OWNED_KEY there) — ownership flags here
-// read it, never write it.
-const SHOP_OWNED_KEY = 'grimoire-owned-cards';
 
 const EXAMPLE_LIST = [
   '1 Gravecrawler',
@@ -110,16 +107,20 @@ async function fetchRailCounts(ids: string[]): Promise<Map<string, number | null
 }
 
 // ─── Owned collection (read-only view of the Shopping store) ─────────────────
+// Ownership flags here read the store that § IX Shopping writes, never write it.
 
+// `count` is the number of cards: the sum of the kept quantities, the same
+// number as the owned bar of § IX Shopping (DEC-1150). A stored double-faced
+// name keeps both of its keys (full and front face).
 function loadOwnedCollection(): { keys: Set<string>; count: number } {
   try {
-    const raw = localStorage.getItem(SHOP_OWNED_KEY);
-    if (raw) {
-      const entries = JSON.parse(raw) as Array<[string, number]>;
-      const keys = new Set<string>();
-      for (const [n] of entries) for (const k of nameKeys(String(n))) keys.add(k);
-      return { keys, count: entries.length };
+    const keys = new Set<string>();
+    let count = 0;
+    for (const [n, q] of readOwnedEntries()) {
+      for (const k of nameKeys(n)) keys.add(k);
+      count += q;
     }
+    return { keys, count };
   } catch {
     // ignore — treated as "no collection on file"
   }
@@ -1799,7 +1800,7 @@ function CompletionSec({
           title={
             owned.count === 0
               ? 'Import your collection in § IX Shopping first'
-              : `${owned.count} owned cards on file`
+              : `${owned.count} owned ${cardNoun(owned.count)} on file`
           }
           onClick={() => setOwnedOnly((v) => !v)}
         >
@@ -1807,7 +1808,7 @@ function CompletionSec({
         </button>
         <span className="gv1-lab-note">
           {owned.count > 0 ? (
-            `${owned.count} owned cards on file — imported in § IX Shopping`
+            `${owned.count} owned ${cardNoun(owned.count)} on file — imported in § IX Shopping`
           ) : (
             <>
               no collection on file — <Link to="/shopping">import in § IX Shopping</Link>
