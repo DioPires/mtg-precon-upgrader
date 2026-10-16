@@ -1,0 +1,96 @@
+
+ RUN  v2.1.9 /private/tmp/dec1174-ceo/b/web
+
+stderr | src/__tests__/components/DecklistNoRefresh.test.tsx > DEC-1174 kill: the deck list of a deck page > asks for no price for a name of the file that it looks up for its cmc, with prices older than 24 h
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+Warning: An update to Decklist inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Decklist (/private/tmp/dec1174-ceo/b/web/src/components/organisms/Decklist.tsx:128:21)
+    at Router (/private/tmp/dec1174-ceo/b/web/node_modules/react-router/dist/umd/react-router.development.js:1207:17)
+    at MemoryRouter (/private/tmp/dec1174-ceo/b/web/node_modules/react-router/dist/umd/react-router.development.js:1101:7)
+Warning: An update to Decklist inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Decklist (/private/tmp/dec1174-ceo/b/web/src/components/organisms/Decklist.tsx:128:21)
+    at Router (/private/tmp/dec1174-ceo/b/web/node_modules/react-router/dist/umd/react-router.development.js:1207:17)
+    at MemoryRouter (/private/tmp/dec1174-ceo/b/web/node_modules/react-router/dist/umd/react-router.development.js:1101:7)
+
+ ❯ src/__tests__/components/DecklistNoRefresh.test.tsx (1 test | 1 failed) 1514ms
+   × DEC-1174 kill: the deck list of a deck page > asks for no price for a name of the file that it looks up for its cmc, with prices older than 24 h 1513ms
+     → expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      "https://api.scryfall.com/cards/collection",
+      Object {
+        "body": "{"identifiers":[{"name":"Ancestral Vision"},{"name":"Sol Ring"}]}",
+        "headers": Object {
+          "Content-Type": "application/json",
+        },
+        "method": "POST",
+        "signal": AbortSignal {},
+      },
+    ]
+
+
+Number of calls: 1
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DecklistNoRefresh.test.tsx > DEC-1174 kill: the deck list of a deck page > asks for no price for a name of the file that it looks up for its cmc, with prices older than 24 h
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      "https://api.scryfall.com/cards/collection",
+      Object {
+        "body": "{"identifiers":[{"name":"Ancestral Vision"},{"name":"Sol Ring"}]}",
+        "headers": Object {
+          "Content-Type": "application/json",
+        },
+        "method": "POST",
+        "signal": AbortSignal {},
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/__tests__/components/DecklistNoRefresh.test.tsx:58:26
+     56|     );
+     57|     await new Promise((r) => setTimeout(r, LOOKUP_SPACING_MS + 300));
+     58|     expect(fetchSpy).not.toHaveBeenCalled();
+       |                          ^
+     59|     expect(refreshSpy).not.toHaveBeenCalled();
+     60|     expect(cardCache.pricePending('Ancestral Vision')).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  11:05:38
+   Duration  1.91s (transform 43ms, setup 22ms, collect 59ms, tests 1.51s, environment 122ms, prepare 42ms)
+

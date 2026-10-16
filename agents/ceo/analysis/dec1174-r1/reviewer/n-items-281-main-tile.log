@@ -1,0 +1,298 @@
+(node:27460) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 6 tests using 3 workers
+
+(node:27581) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:27580) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:27582) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once (3.6s)
+  ✘  2 [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once (3.6s)
+(node:27668) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:27667) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  3 [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once (5.5s)
+(node:27693) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  4 [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once (3.5s)
+  ✘  5 [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once (3.5s)
+  ✘  6 [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once (5.3s)
+
+
+  1) [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m34[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      293 |     await page.locator('.gv1-card-tile').first().waitFor();
+      294 |     // The stub's seed runs again at each navigation; the app's seed follows it.
+    > 295 |     await expect.poll(async () => (await cardKeys()).filter((key) => USD.has(key)).length).toBe(0);
+          |     ^
+      296 |     // No tile asks for a refresh, which would store a key for its name: look again after a batch's time.
+      297 |     await page.waitForTimeout(3_000);
+      298 |     expect((await cardKeys()).filter((key) => USD.has(key))).toEqual([]);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1174-review/web/tests/dec1102-card-data.spec.ts:295:5
+
+    Error Context: test-results/dec1102-card-data-the-seed-f6499-torage-holds-each-card-once-chromium/error-context.md
+
+  2) [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -  1[39m
+    [31m+ Received  + 36[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "bloated contaminator",[39m
+    [31m+   "wurmquake",[39m
+    [31m+   "hand of the praetors",[39m
+    [31m+   "vishgraz, the doomhive",[39m
+    [31m+   "blighted agent",[39m
+    [31m+   "glistener elf",[39m
+    [31m+   "vraska, betrayal's sting",[39m
+    [31m+   "skullclamp",[39m
+    [31m+   "plague stinger",[39m
+    [31m+   "skithiryx, the blight dragon",[39m
+    [31m+   "glistening sphere",[39m
+    [31m+   "infectious bite",[39m
+    [31m+   "ichor rats",[39m
+    [31m+   "skrelv's hive",[39m
+    [31m+   "vorinclex, monstrous raider",[39m
+    [31m+   "phyrexian swarmlord",[39m
+    [31m+   "inexorable tide",[39m
+    [31m+   "vraska's fall",[39m
+    [31m+   "fabled passage",[39m
+    [31m+   "expansion algorithm",[39m
+    [31m+   "contaminant grafter",[39m
+    [31m+   "triumph of the hordes",[39m
+    [31m+   "necrogen rotpriest",[39m
+    [31m+   "tekuthal, inquiry dominus",[39m
+    [31m+   "phyrexian crusader",[39m
+    [31m+   "thrummingbird",[39m
+    [31m+   "venerated rotpriest",[39m
+    [31m+   "skrelv, defector mite",[39m
+    [31m+   "corrupted conscience",[39m
+    [31m+   "atraxa, praetors' voice",[39m
+    [31m+   "evolution sage",[39m
+    [31m+   "sword of truth and justice",[39m
+    [31m+   "grateful apparition",[39m
+    [31m+   "whisper of the dross",[39m
+    [31m+ ][39m
+
+      296 |     // No tile asks for a refresh, which would store a key for its name: look again after a batch's time.
+      297 |     await page.waitForTimeout(3_000);
+    > 298 |     expect((await cardKeys()).filter((key) => USD.has(key))).toEqual([]);
+          |                                                              ^
+      299 |     // Only the faces that the file does not hold as names stay.
+      300 |     const after = await cardKeys();
+      301 |     expect(after.length).toBeGreaterThan(0);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1174-review/web/tests/dec1102-card-data.spec.ts:298:62
+
+    Error Context: test-results/dec1102-card-data-the-seed-f6499-torage-holds-each-card-once-chromium-repeat1/error-context.md
+
+  3) [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -  1[39m
+    [31m+ Received  + 36[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "bloated contaminator",[39m
+    [31m+   "wurmquake",[39m
+    [31m+   "hand of the praetors",[39m
+    [31m+   "vishgraz, the doomhive",[39m
+    [31m+   "blighted agent",[39m
+    [31m+   "glistener elf",[39m
+    [31m+   "vraska, betrayal's sting",[39m
+    [31m+   "skullclamp",[39m
+    [31m+   "plague stinger",[39m
+    [31m+   "skithiryx, the blight dragon",[39m
+    [31m+   "glistening sphere",[39m
+    [31m+   "infectious bite",[39m
+    [31m+   "ichor rats",[39m
+    [31m+   "skrelv's hive",[39m
+    [31m+   "vorinclex, monstrous raider",[39m
+    [31m+   "phyrexian swarmlord",[39m
+    [31m+   "inexorable tide",[39m
+    [31m+   "vraska's fall",[39m
+    [31m+   "fabled passage",[39m
+    [31m+   "expansion algorithm",[39m
+    [31m+   "contaminant grafter",[39m
+    [31m+   "triumph of the hordes",[39m
+    [31m+   "necrogen rotpriest",[39m
+    [31m+   "tekuthal, inquiry dominus",[39m
+    [31m+   "phyrexian crusader",[39m
+    [31m+   "thrummingbird",[39m
+    [31m+   "venerated rotpriest",[39m
+    [31m+   "skrelv, defector mite",[39m
+    [31m+   "corrupted conscience",[39m
+    [31m+   "atraxa, praetors' voice",[39m
+    [31m+   "evolution sage",[39m
+    [31m+   "sword of truth and justice",[39m
+    [31m+   "grateful apparition",[39m
+    [31m+   "whisper of the dross",[39m
+    [31m+ ][39m
+
+      296 |     // No tile asks for a refresh, which would store a key for its name: look again after a batch's time.
+      297 |     await page.waitForTimeout(3_000);
+    > 298 |     expect((await cardKeys()).filter((key) => USD.has(key))).toEqual([]);
+          |                                                              ^
+      299 |     // Only the faces that the file does not hold as names stay.
+      300 |     const after = await cardKeys();
+      301 |     expect(after.length).toBeGreaterThan(0);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1174-review/web/tests/dec1102-card-data.spec.ts:298:62
+
+    Error Context: test-results/dec1102-card-data-the-seed-f6499-torage-holds-each-card-once-chromium-repeat2/error-context.md
+
+  4) [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -  1[39m
+    [31m+ Received  + 36[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "bloated contaminator",[39m
+    [31m+   "wurmquake",[39m
+    [31m+   "hand of the praetors",[39m
+    [31m+   "vishgraz, the doomhive",[39m
+    [31m+   "blighted agent",[39m
+    [31m+   "glistener elf",[39m
+    [31m+   "vraska, betrayal's sting",[39m
+    [31m+   "skullclamp",[39m
+    [31m+   "plague stinger",[39m
+    [31m+   "skithiryx, the blight dragon",[39m
+    [31m+   "glistening sphere",[39m
+    [31m+   "infectious bite",[39m
+    [31m+   "ichor rats",[39m
+    [31m+   "skrelv's hive",[39m
+    [31m+   "vorinclex, monstrous raider",[39m
+    [31m+   "phyrexian swarmlord",[39m
+    [31m+   "inexorable tide",[39m
+    [31m+   "vraska's fall",[39m
+    [31m+   "fabled passage",[39m
+    [31m+   "expansion algorithm",[39m
+    [31m+   "contaminant grafter",[39m
+    [31m+   "triumph of the hordes",[39m
+    [31m+   "necrogen rotpriest",[39m
+    [31m+   "tekuthal, inquiry dominus",[39m
+    [31m+   "phyrexian crusader",[39m
+    [31m+   "thrummingbird",[39m
+    [31m+   "venerated rotpriest",[39m
+    [31m+   "skrelv, defector mite",[39m
+    [31m+   "corrupted conscience",[39m
+    [31m+   "atraxa, praetors' voice",[39m
+    [31m+   "evolution sage",[39m
+    [31m+   "sword of truth and justice",[39m
+    [31m+   "grateful apparition",[39m
+    [31m+   "whisper of the dross",[39m
+    [31m+ ][39m
+
+      296 |     // No tile asks for a refresh, which would store a key for its name: look again after a batch's time.
+      297 |     await page.waitForTimeout(3_000);
+    > 298 |     expect((await cardKeys()).filter((key) => USD.has(key))).toEqual([]);
+          |                                                              ^
+      299 |     // Only the faces that the file does not hold as names stay.
+      300 |     const after = await cardKeys();
+      301 |     expect(after.length).toBeGreaterThan(0);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1174-review/web/tests/dec1102-card-data.spec.ts:298:62
+
+    Error Context: test-results/dec1102-card-data-the-seed-f6499-torage-holds-each-card-once-chromium-repeat3/error-context.md
+
+  5) [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -  1[39m
+    [31m+ Received  + 36[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "bloated contaminator",[39m
+    [31m+   "wurmquake",[39m
+    [31m+   "hand of the praetors",[39m
+    [31m+   "vishgraz, the doomhive",[39m
+    [31m+   "blighted agent",[39m
+    [31m+   "glistener elf",[39m
+    [31m+   "vraska, betrayal's sting",[39m
+    [31m+   "skullclamp",[39m
+    [31m+   "plague stinger",[39m
+    [31m+   "skithiryx, the blight dragon",[39m
+    [31m+   "glistening sphere",[39m
+    [31m+   "infectious bite",[39m
+    [31m+   "ichor rats",[39m
+    [31m+   "skrelv's hive",[39m
+    [31m+   "vorinclex, monstrous raider",[39m
+    [31m+   "phyrexian swarmlord",[39m
+    [31m+   "inexorable tide",[39m
+    [31m+   "vraska's fall",[39m
+    [31m+   "fabled passage",[39m
+    [31m+   "expansion algorithm",[39m
+    [31m+   "contaminant grafter",[39m
+    [31m+   "triumph of the hordes",[39m
+    [31m+   "necrogen rotpriest",[39m
+    [31m+   "tekuthal, inquiry dominus",[39m
+    [31m+   "phyrexian crusader",[39m
+    [31m+   "thrummingbird",[39m
+    [31m+   "venerated rotpriest",[39m
+    [31m+   "skrelv, defector mite",[39m
+    [31m+   "corrupted conscience",[39m
+    [31m+   "atraxa, praetors' voice",[39m
+    [31m+   "evolution sage",[39m
+    [31m+   "sword of truth and justice",[39m
+    [31m+   "grateful apparition",[39m
+    [31m+   "whisper of the dross",[39m
+    [31m+ ][39m
+
+      296 |     // No tile asks for a refresh, which would store a key for its name: look again after a batch's time.
+      297 |     await page.waitForTimeout(3_000);
+    > 298 |     expect((await cardKeys()).filter((key) => USD.has(key))).toEqual([]);
+          |                                                              ^
+      299 |     // Only the faces that the file does not hold as names stay.
+      300 |     const after = await cardKeys();
+      301 |     expect(after.length).toBeGreaterThan(0);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1174-review/web/tests/dec1102-card-data.spec.ts:298:62
+
+    Error Context: test-results/dec1102-card-data-the-seed-f6499-torage-holds-each-card-once-chromium-repeat4/error-context.md
+
+  6) [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m34[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      293 |     await page.locator('.gv1-card-tile').first().waitFor();
+      294 |     // The stub's seed runs again at each navigation; the app's seed follows it.
+    > 295 |     await expect.poll(async () => (await cardKeys()).filter((key) => USD.has(key)).length).toBe(0);
+          |     ^
+      296 |     // No tile asks for a refresh, which would store a key for its name: look again after a batch's time.
+      297 |     await page.waitForTimeout(3_000);
+      298 |     expect((await cardKeys()).filter((key) => USD.has(key))).toEqual([]);
+        at /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1174-review/web/tests/dec1102-card-data.spec.ts:295:5
+
+    Error Context: test-results/dec1102-card-data-the-seed-f6499-torage-holds-each-card-once-chromium-repeat5/error-context.md
+
+  6 failed
+    [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+    [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+    [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+    [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+    [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
+    [chromium] › tests/dec1102-card-data.spec.ts:281:3 › the seed and storage › a deck page drops the gv1-card: entry of every name of the file, so storage holds each card once 
