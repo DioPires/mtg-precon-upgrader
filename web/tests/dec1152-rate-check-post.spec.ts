@@ -2,8 +2,9 @@
 // twice, for the CORS preflight that the browser sends before it, in both
 // clocks. Two batches 600 ms apart start 4 requests in 1 s, so the check must
 // fail the test: test.fail() expects that failure, as in the H7 case of
-// dec1131-card-batches.spec.ts. The last two cases read the error that the
-// fixture throws. The stub answers every request; nothing reaches the live API.
+// dec1131-card-batches.spec.ts. One case checks that the real clock counts no
+// other path. The last two cases read the error that the fixture throws. The
+// stub answers every request; nothing reaches the live API.
 import {
   expect,
   peakPerWindow,
@@ -16,6 +17,7 @@ import {
 
 const COLLECTION = 'https://api.scryfall.com/cards/collection';
 const LOOKUP = 'https://api.scryfall.com/cards/named?fuzzy=Sol%20Ring';
+const AUTOCOMPLETE = 'https://api.scryfall.com/cards/autocomplete?q=sol';
 const GAP_MS = 600;
 
 test.describe('the rate check, real clock: a POST counts twice', () => {
@@ -38,11 +40,29 @@ test.describe('the rate check, real clock: a POST counts twice', () => {
   });
 });
 
+test.describe('the rate check, real clock: only /cards/named and /cards/collection count', () => {
+  // Scryfall allows 10 requests a second on /cards/autocomplete (bucket 2), and
+  // the app spaces them 120 ms apart, so three at once must pass (DEC-1166 B1).
+  test('three autocompletes at once pass', async ({ page }) => {
+    await page.goto('/data/index.json');
+    await page.evaluate(
+      (url) => Promise.all([0, 1, 2].map(() => fetch(url).then((r) => r.status))),
+      AUTOCOMPLETE,
+    );
+  });
+});
+
 test.describe("the rate check, the page's clock: a POST counts twice", () => {
   test.use({ rateClock: 'page' });
 
-  // The page reads the method of each form of a fetch call.
-  for (const form of ['fetch(url, init)', 'fetch(request)', "fetch(url, init), method 'post'"] as const) {
+  // The page reads the method of each form of a fetch call. In fetch(request,
+  // init) the method of init wins over the Request's (DEC-1166 N1).
+  for (const form of [
+    'fetch(url, init)',
+    'fetch(request)',
+    'fetch(request, init)',
+    "fetch(url, init), method 'post'",
+  ] as const) {
     test(`two batches 600 ms apart of the page's clock fail the test: ${form}`, async ({ page }) => {
       test.fail();
       await page.clock.install();
@@ -56,7 +76,12 @@ test.describe("the rate check, the page's clock: a POST counts twice", () => {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ identifiers: [{ name: 'Sol Ring' }] }),
             };
-            const sent = form === 'fetch(request)' ? fetch(new Request(url, init)) : fetch(url, init);
+            const sent =
+              form === 'fetch(request)'
+                ? fetch(new Request(url, init))
+                : form === 'fetch(request, init)'
+                  ? fetch(new Request(url), init)
+                  : fetch(url, init);
             void sent.catch(() => undefined);
           },
           [COLLECTION, form] as const,

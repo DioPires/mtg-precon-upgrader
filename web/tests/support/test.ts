@@ -14,8 +14,9 @@
 // whether Scryfall counts the preflight, and neither a route nor the `request`
 // event shows it (DEC-1131 ruling 5, DEC-1149 N3). The check stamps each request
 // when the browser sends it (the context's `request` event), in real time, so
-// every case proves the app's limit, also a case whose own route holds an
-// answer (DEC-1131 N2).
+// it also counts the requests of a case whose own route holds an answer
+// (DEC-1131 N2). A case proves the app's limit only when the app has lookups
+// for two batches or more (web/README.md, "The rate check").
 //
 //   test.use({ cards: 'seeded' })        as 'repo', plus a `gv1-card:` entry for each name before first paint
 //   test.use({ cards: 'none' })          every lookup and picture fails, and card-metadata.json has no price
@@ -34,7 +35,7 @@ export interface StubOptions {
   /**
    * 'repo'    The app takes every name of data/card-metadata.json from that
    *           file (DEC-1102) and looks up only the names outside it; the stub
-   *           answers. The limiter paces the lookups, one every 600 ms or more.
+   *           answers. The limiter paces the lookups, one every 1,200 ms or more.
    * 'seeded'  As 'repo', and localStorage holds a `gv1-card:` entry for every
    *           name of the file, and for each face of a `//` name, before the
    *           first script runs. The app drops the entries of the file's names

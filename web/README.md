@@ -89,12 +89,13 @@ methods. A GET counts once. A POST counts twice: the browser sends a CORS prefli
 nor the `request` event shows it (DEC-1131 ruling 5, DEC-1149 N3). Playwright answers
 Chromium's preflight itself, so the double count is the only way the check sees it. The check
 stamps each request when the browser sends it (the context's `request` event), in real time.
-The app also counts each POST as two starts, and spaces its POSTs 1,200 ms apart, so two
-batches in 1 s fail the test. A case proves the app's limit only when the app has lookups for
-two batches or more. A case that sends one batch, or paces its own hovers, reads a low peak
-whatever the app does. The `scryfall-stub` attachment of each test that sent a Scryfall request
-gives the count of requests, the peak in 1 s (a POST counts twice) and the number of 429
-answers (`bucketOne`). The error lists each send of the context with its method.
+The app also counts each POST as two starts, and spaces its POSTs 1,200 ms apart. Two
+batches in 1 s start 4 requests and fail the test. A case proves the app's limit only when
+the app has lookups for two batches or more. A case that sends one batch, or paces its own
+hovers, reads a low peak whatever the app does. The `scryfall-stub` attachment of each test
+that sent a Scryfall request gives the count of requests, the peak in 1 s (a POST counts
+twice) and the number of 429 answers (`bucketOne`). The error lists each send of the context
+with its method.
 
 - A spec that moves `page.clock` can start several requests in one real second, because the
   page's timers run ahead of real time. Such a spec sets `rateClock: 'page'`. The check then
