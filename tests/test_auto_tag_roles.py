@@ -40,6 +40,24 @@ class NamedSearchTests(unittest.TestCase):
         )
         self.assertEqual(atr.classify(card), (None, 0.0))
 
+    def test_search_for_up_to_three_copies_is_not_tutor(self):
+        card = _card(
+            "Brindle Skyhawk",
+            "Creature — Bird",
+            "Flying\nWhen this creature enters, you may search your library for up to three cards named "
+            "Brindle Skyhawk, reveal them, put them into your hand, then shuffle.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
+
+    def test_named_search_that_ends_in_and_put_is_not_tutor(self):
+        card = _card(
+            "Mossgate Sentinel",
+            "Creature — Elf",
+            "When this creature enters, you may pay {1}{G}. If you do, search your library for a card "
+            "named Mossgate Sentinel and put that card onto the battlefield. Then shuffle.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
+
     def test_search_for_a_creature_card_stays_tutor(self):
         # "named" elsewhere in the text does not make the search a named search.
         card = _card(
@@ -70,6 +88,19 @@ class NamedSearchTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("tutor", 0.85))
 
 
+class TutorRetagTests(unittest.TestCase):
+    """`--retag-tutors` reads a named search as `classify` does."""
+
+    def test_named_search_gets_no_tutor_retag(self):
+        card = _card(
+            "Harrowfield Lookout",
+            "Creature — Human Scout",
+            "When this creature enters, you may search your library for a card named Harrowfield "
+            "Lookout, reveal it, put it into your hand, then shuffle.",
+        )
+        self.assertIsNone(atr.classify_tutor_roles(card, "utility"))
+
+
 class GraveyardExileTests(unittest.TestCase):
     """A target that is a card in a graveyard is not removal-spot."""
 
@@ -84,6 +115,22 @@ class GraveyardExileTests(unittest.TestCase):
             with self.subTest(oracle_text=oracle_text):
                 card = _card("Ashen Curator", "Artifact", oracle_text)
                 self.assertEqual(atr.classify(card), (None, 0.0))
+
+    def test_exile_of_a_card_that_is_in_a_graveyard_is_not_removal_spot(self):
+        card = _card(
+            "Echo of the Fallen Hour",
+            "Instant",
+            "Exile target nonland card in a graveyard that was put there from the battlefield this turn.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
+
+    def test_exile_from_target_players_graveyard_is_not_removal_spot(self):
+        card = _card(
+            "Cinderveil Archivist",
+            "Artifact",
+            "{1}, {T}: Exile target creature card from target player's graveyard.",
+        )
+        self.assertEqual(atr.classify(card), (None, 0.0))
 
     def test_exile_of_target_creature_stays_removal_spot(self):
         card = _card(
@@ -110,6 +157,46 @@ class GraveyardExileTests(unittest.TestCase):
         )
         self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
+    def test_graveyard_card_after_controls_is_another_clause(self):
+        # "an opponent controls" ends the target; the graveyard card belongs to the next clause.
+        for oracle_text in (
+            "When this creature enters, exile target creature an opponent controls, then you may "
+            "return a creature card from your graveyard to your hand.",
+            "When this creature enters, exile target creature an opponent controls and return a "
+            "creature card from your graveyard to your hand.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Thornmere Exarch", "Creature — Elf Cleric", oracle_text)
+                self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+
+class BlinkTests(unittest.TestCase):
+    """A target that its own sentence returns to the battlefield is not removed."""
+
+    def test_instant_blink_of_your_creature_is_protection(self):
+        card = _card(
+            "Glimmerstep Rescue",
+            "Instant",
+            "Exile target creature you control, then return it to the battlefield under its owner's control.",
+        )
+        self.assertEqual(atr.classify(card), ("protection", 0.8))
+
+    def test_blink_of_any_nonland_permanent_is_not_removal_spot(self):
+        card = _card(
+            "Shimmer of the Mistgate",
+            "Instant",
+            "Exile target nonland permanent, then return it to the battlefield tapped under its owner's control.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_blink_beside_a_destroy_stays_removal_spot(self):
+        card = _card(
+            "Edict of Dusk and Dawn",
+            "Sorcery",
+            "Choose one or both —\n• Destroy target creature.\n• Exile target creature you control, then "
+            "return it to the battlefield under its owner's control.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
 
 class ProtectionPatternTests(unittest.TestCase):
