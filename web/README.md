@@ -207,15 +207,16 @@ web-ci uploads it when the `e2e` job fails.
 - **Bucket 2** holds `/cards/autocomplete`, 120 ms apart. While a stop holds, the Atlas sends
   no autocomplete and keeps its own suggestions.
 - **The timeout.** A request with no answer after 20 s is aborted, and it counts as a rejected
-  `fetch`. The card cache's batch has its answer only when the body has ended, so a body that
-  has not ended 20 s after the start counts the same. An abort by the caller is no failure.
+  `fetch`. The card cache's batch has its answer only when the body has ended or failed, so a
+  body that has not ended 20 s after the start counts the same. An abort by the caller is no
+  failure.
 - **The stop.** A 429, a rejected `fetch` or the timeout stops both buckets for 30 s; the
-  request that met it goes first when the stop ends. If that one fails too, the stop doubles,
-  up to 300 s, and a success resets it. The stop record holds its end, its length and a
-  number: a request can double or end only the stop whose number it noted when it started. A
-  record that ended more than 300 s ago counts as none. A clock that went back cannot stretch
-  a stop past now plus its length, also when the stop lives in memory. The record lives in
-  `localStorage`, so a reload and a second tab obey it.
+  request that met it goes first in its tab when the stop ends. If that one fails too, the
+  stop doubles, up to 300 s, and a success resets it. The stop record holds its end, its
+  length and a number: a request can double or end only the stop whose number it noted when it
+  started. A record that ended more than 300 s ago counts as none. A clock that went back
+  cannot stretch a stop past now plus its length, also when the stop lives in memory. The
+  record lives in `localStorage`, so a reload and a second tab obey it.
 
 The card cache (`src/data/cardCache.ts`) takes every deck card from `data/card-metadata.json`
 before a page can show it: facts, USD price dated `prices_as_of`, and Scryfall's picture

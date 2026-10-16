@@ -107,8 +107,8 @@ export interface SendOptions {
    * next() only: runs with the answer, and the call resolves after it. Bucket 1
    * holds its lock while it runs, so the caller stores the answer before another
    * tab takes its turn (DEC-1153). The lock frees when it settles, or
-   * REQUEST_TIMEOUT_MS after the request started, whichever comes first. The
-   * body of the answer has ended when it runs (DEC-1188).
+   * REQUEST_TIMEOUT_MS after the request started, whichever comes first. When
+   * it runs, the body of the answer has ended or has failed (DEC-1188).
    */
   settle?: (sent: Sent) => Promise<void> | void;
 }
@@ -420,9 +420,9 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
    * One fetch with the timeout. Gives the answer; or `timedOut` when no answer
    * came inside REQUEST_TIMEOUT_MS (the timer aborts the fetch, and a flag, not
    * the order in which the promises settle, says so); or the error of a fetch
-   * that rejects. With `wholeBody`, the answer comes when its body has ended: a
-   * copy of the body is read inside the same REQUEST_TIMEOUT_MS (DEC-1188). The
-   * caller's abort aborts the fetch.
+   * that rejects. With `wholeBody`, an answer other than a 429 comes when its
+   * body has ended: a copy of the body is read inside the same
+   * REQUEST_TIMEOUT_MS (DEC-1188). The caller's abort aborts the fetch.
    */
   async function fetchWithTimeout(
     fetchImpl: typeof fetch,
@@ -451,7 +451,8 @@ export function createScryfallLimiter(deps: LimiterDeps = {}): ScryfallLimiter {
       // After a timeout the aborted fetch rejects, and nobody waits for it.
       fetching.catch(() => undefined);
       const response = await Promise.race([fetching, timeout]);
-      if (response && wholeBody) {
+      // A 429 is a stop at its head: nobody reads its body.
+      if (response && wholeBody && response.status !== 429) {
         // A body that fails before the deadline fails the caller's own read in the same way.
         await Promise.race([response.clone().arrayBuffer().catch(() => undefined), timeout]);
       }
