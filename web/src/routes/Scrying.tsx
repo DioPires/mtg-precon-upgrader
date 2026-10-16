@@ -41,9 +41,10 @@ export function Scrying() {
     );
   }
 
+  // DEC-1146: a pick of the open deck adds no history entry.
   const onSelect = (idx: number) => {
     const next = stubs.find((s) => s.idx === idx);
-    if (next) navigate(`/scrying/${next.slug}`);
+    if (next && next.idx !== deck.idx) navigate(`/scrying/${next.slug}`);
   };
 
   return (

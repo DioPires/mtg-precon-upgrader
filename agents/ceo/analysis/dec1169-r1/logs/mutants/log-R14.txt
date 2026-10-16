@@ -1,0 +1,100 @@
+
+ RUN  v2.1.9 /private/tmp/dec1169-ceo/wt/web
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx (34 tests | 2 failed) 212ms
+   × DeckSelector focus after a deck change that no key started (DEC-1146) > moves focus to the active pill when the focused element left the page 10ms
+     → expected "focus" to be called with arguments: [ { preventScroll: true } ]
+
+Received: 
+
+  1st focus call:
+
+- Array [
+-   Object {
+-     "preventScroll": true,
+-   },
+- ]
++ Array []
+
+
+Number of calls: 1
+
+   × DeckSelector focus after a deck change that no key started (DEC-1146) > moves focus to the active pill when focus is on a pill that is no longer active 5ms
+     → expected "focus" to be called with arguments: [ { preventScroll: true } ]
+
+Received: 
+
+  1st focus call:
+
+- Array [
+-   Object {
+-     "preventScroll": true,
+-   },
+- ]
++ Array []
+
+
+Number of calls: 1
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 32 passed (34)
+   Start at  00:00:29
+   Duration  661ms (transform 43ms, setup 31ms, collect 61ms, tests 212ms, environment 157ms, prepare 41ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a deck change that no key started (DEC-1146) > moves focus to the active pill when the focused element left the page
+AssertionError: expected "focus" to be called with arguments: [ { preventScroll: true } ]
+
+Received: 
+
+  1st focus call:
+
+- Array [
+-   Object {
+-     "preventScroll": true,
+-   },
+- ]
++ Array []
+
+
+Number of calls: 1
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:635:19
+    633|     expect(el.tabIndex).toBe(0);
+    634|     expect(focus).toHaveBeenCalledTimes(1);
+    635|     expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+       |                   ^
+    636|   });
+    637| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/components/DeckSelector.test.tsx > DeckSelector focus after a deck change that no key started (DEC-1146) > moves focus to the active pill when focus is on a pill that is no longer active
+AssertionError: expected "focus" to be called with arguments: [ { preventScroll: true } ]
+
+Received: 
+
+  1st focus call:
+
+- Array [
+-   Object {
+-     "preventScroll": true,
+-   },
+- ]
++ Array []
+
+
+Number of calls: 1
+
+ ❯ src/__tests__/components/DeckSelector.test.tsx:654:19
+    652|     expect(el.tabIndex).toBe(0);
+    653|     expect(focus).toHaveBeenCalledTimes(1);
+    654|     expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+       |                   ^
+    655|   });
+    656| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

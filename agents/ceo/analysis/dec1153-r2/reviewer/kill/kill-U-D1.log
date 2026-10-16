@@ -1,0 +1,40 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1170-mut/web
+
+ ❯ src/__tests__/dec1170/dec1170-loader-scratch.test.ts (7 tests | 1 failed | 4 skipped) 5ms
+   × DEC-1170 K1: a meta file whose prices_as_of is an empty string > stores the file with "" as its date, and a load inside 1 h reads it and sends nothing 4ms
+     → expected null to match object { pricesAsOf: '', payload: { …(1) } }
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed | 4 skipped (7)
+   Start at  23:47:44
+   Duration  375ms (transform 40ms, setup 23ms, collect 37ms, tests 5ms, environment 132ms, prepare 42ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/dec1170/dec1170-loader-scratch.test.ts > DEC-1170 K1: a meta file whose prices_as_of is an empty string > stores the file with "" as its date, and a load inside 1 h reads it and sends nothing
+AssertionError: expected null to match object { pricesAsOf: '', payload: { …(1) } }
+
+- Expected: 
+Object {
+  "payload": Object {
+    "Sol Ring": Object {
+      "mana_cost": "{1}",
+    },
+  },
+  "pricesAsOf": "",
+}
+
++ Received: 
+null
+
+ ❯ src/__tests__/dec1170/dec1170-loader-scratch.test.ts:101:24
+     99|     expect(first.seed).toHaveBeenCalledWith(FILE, '');
+    100|     expect(counts()).toEqual([1, 1]);
+    101|     expect(envelope()).toMatchObject({ pricesAsOf: '', payload: FILE }…
+       |                        ^
+    102| 
+    103|     clock += 30 * 60_000;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
