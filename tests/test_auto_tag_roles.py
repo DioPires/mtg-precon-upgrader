@@ -274,6 +274,27 @@ class BlinkTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
 
+class ToughnessCutTests(unittest.TestCase):
+    """A cut to a target creature's toughness is removal-spot, also beside a gain to power."""
+
+    def test_gain_to_power_and_cut_to_toughness_is_removal_spot(self):
+        card = _card("Rendmaw Surge", "Instant", "Target creature gets +3/-3 until end of turn.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_x_cut_to_toughness_is_removal_spot(self):
+        for oracle_text in (
+            "Target creature gets +X/-X until end of turn, where X is the number of cards in your hand.",
+            "Target creature gets -X/-X until end of turn, where X is the number of cards in your graveyard.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Hollowing Decree", "Instant", oracle_text)
+                self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_gain_to_power_without_a_cut_to_toughness_is_not_removal_spot(self):
+        card = _card("Brashfire Rally", "Instant", "Target creature gets +2/-0 until end of turn.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 

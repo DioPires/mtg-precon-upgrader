@@ -241,7 +241,8 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
         oracle,
     ):
         return ("removal-spot", 0.8)
-    if re.search(r"target creature gets -\d+/-\d+", oracle):
+    # "-2/-2", "-X/-X", and a cut to toughness beside a gain to power: "+3/-3", "+X/-X" (DEC-1184).
+    if re.search(r"target creature gets (?:-\d+/-\d+|[+-](?:\d+|x)/-(?:[1-9]\d*|x))", oracle):
         return ("removal-spot", 0.65)
     return None
 
