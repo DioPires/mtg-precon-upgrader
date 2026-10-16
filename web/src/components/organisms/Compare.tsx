@@ -4,6 +4,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GV1ManaPips } from '../atoms/GV1ManaPips';
+import { GlyphWords } from '../atoms/Glyph';
 import type { DeckFull } from '../../data/types';
 
 type Band = 'good' | 'mid' | 'poor' | null;
@@ -215,15 +216,25 @@ export function Compare({ decks }: CompareProps) {
           <div className="gv1-cmp-summary-stat">
             <div className="gv1-mono-xs gv1-dim">SORTED BY</div>
             <div className="gv1-serif-lg">
-              {sortLabel} <span className="gv1-dim gv1-mono-xs">{asc ? '▲' : '▼'}</span>
+              {sortLabel}{' '}
+              <span className="gv1-dim gv1-mono-xs" aria-hidden="true">
+                {asc ? '▲' : '▼'}
+              </span>
+              <span className="gv1-sr-only">{asc ? 'ascending' : 'descending'}</span>
             </div>
           </div>
           <div className="gv1-cmp-summary-stat">
             <div className="gv1-mono-xs gv1-dim">SCALE</div>
             <div className="gv1-cmp-legend">
-              <span className="gv1-cmp-legend-pill gv1-cmp-score--good">≥75</span>
-              <span className="gv1-cmp-legend-pill gv1-cmp-score--mid">50–74</span>
-              <span className="gv1-cmp-legend-pill gv1-cmp-score--poor">&lt;50</span>
+              <span className="gv1-cmp-legend-pill gv1-cmp-score--good">
+                <GlyphWords words="75 or more">≥75</GlyphWords>
+              </span>
+              <span className="gv1-cmp-legend-pill gv1-cmp-score--mid">
+                <GlyphWords words="50 to 74">50–74</GlyphWords>
+              </span>
+              <span className="gv1-cmp-legend-pill gv1-cmp-score--poor">
+                <GlyphWords words="under 50">&lt;50</GlyphWords>
+              </span>
             </div>
           </div>
         </div>

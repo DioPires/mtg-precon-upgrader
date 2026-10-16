@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useCard } from '../../hooks/useCard';
 import { cardCache } from '../../data/cardCache';
 import { ManaCost } from '../atoms/ManaCost';
+import { Glyph } from '../atoms/Glyph';
 
 export interface CardTileCard {
   /** Card name (REQUIRED). */
@@ -116,15 +117,19 @@ export function CardTile({ card, size = 'md' }: CardTileProps) {
           </div>
         )}
         <div className="gv1-card-tile-mv"><ManaCost mv={mv} /></div>
-        {card.gc && <div className="gv1-card-tile-gc">★</div>}
+        {card.gc && <div className="gv1-card-tile-gc" aria-hidden="true">★</div>}
       </div>
       <div className="gv1-card-tile-body">
         <div className="gv1-card-tile-name">{card.n}</div>
+        {/* The name element keeps the name alone; a reader hears the star's words after it (DEC-1190). */}
+        {card.gc && <span className="gv1-sr-only">&nbsp;(Game Changer)</span>}
         <div className="gv1-mono-xs gv1-dim gv1-card-tile-type">{typeLine}</div>
         {card.note && <div className="gv1-card-tile-note">{card.note}</div>}
         <div className="gv1-card-tile-foot">
           <span className="gv1-mono-xs gv1-rune">{price}</span>
-          <span className="gv1-mono-xs gv1-dim gv1-card-tile-hint">hover ◇</span>
+          <span className="gv1-mono-xs gv1-dim gv1-card-tile-hint">
+            hover<Glyph> ◇</Glyph>
+          </span>
         </div>
       </div>
     </div>

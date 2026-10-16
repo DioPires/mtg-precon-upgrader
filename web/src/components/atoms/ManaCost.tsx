@@ -4,6 +4,8 @@
 // CSS-only — no SVG / asset deps. Colors come from --gv1-mana-* tokens.
 
 import type { CSSProperties } from 'react';
+import { colorWords } from './colorWords';
+import { Glyph } from './Glyph';
 
 interface ManaCostProps {
   mv?: string;
@@ -63,39 +65,61 @@ function colorStrokeVar(c: Color): string {
   return `var(--gv1-mana-${c.toLowerCase()}-stroke)`;
 }
 
+// The words that a screen reader hears for one pip (DEC-1190).
+function pipWords(p: Pip): string {
+  switch (p.kind) {
+    case 'num':
+      return `${p.label} generic`;
+    case 'c':
+      return 'colorless';
+    case 's':
+      return 'snow';
+    case 'var':
+      return `${p.label} variable`;
+    case 'mono':
+      return colorWords(p.color);
+    case 'hybrid':
+      return `${colorWords(p.a)} or ${colorWords(p.b)} hybrid`;
+    case 'mono-hybrid':
+      return `2 or ${colorWords(p.color)} hybrid`;
+    case 'phy':
+      return `${colorWords(p.color)} or 2 life phyrexian`;
+    case 'phy-hybrid':
+      return `${colorWords(p.a)} or ${colorWords(p.b)} or 2 life phyrexian`;
+    case 'unknown':
+      return p.label;
+  }
+}
+
 function pipFor(p: Pip, key: number) {
   switch (p.kind) {
     case 'num':
       return (
-        <span key={key} className="gv1-mv-pip gv1-mv-n" aria-label={`${p.label} generic mana`}>
+        <span key={key} className="gv1-mv-pip gv1-mv-n">
           {p.label}
         </span>
       );
     case 'c':
       return (
-        <span key={key} className="gv1-mv-pip gv1-mv-c" aria-label="colorless mana">
+        <span key={key} className="gv1-mv-pip gv1-mv-c">
           C
         </span>
       );
     case 's':
       return (
-        <span key={key} className="gv1-mv-pip gv1-mv-s" aria-label="snow mana">
-          ❄
+        <span key={key} className="gv1-mv-pip gv1-mv-s">
+          <Glyph>❄</Glyph>
         </span>
       );
     case 'var':
       return (
-        <span key={key} className="gv1-mv-pip gv1-mv-x" aria-label={`${p.label} variable mana`}>
+        <span key={key} className="gv1-mv-pip gv1-mv-x">
           {p.label}
         </span>
       );
     case 'mono':
       return (
-        <span
-          key={key}
-          className={`gv1-mv-pip gv1-mv-${p.color}`}
-          aria-label={`${p.color} mana`}
-        >
+        <span key={key} className={`gv1-mv-pip gv1-mv-${p.color}`}>
           {p.color}
         </span>
       );
@@ -111,7 +135,6 @@ function pipFor(p: Pip, key: number) {
               '--gv1-mv-stroke': colorStrokeVar(p.a),
             } as CSSProperties
           }
-          aria-label={`${p.a} or ${p.b} hybrid mana`}
         >
           <span className="gv1-mv-hyb-a">{p.a}</span>
           <span className="gv1-mv-hyb-b">{p.b}</span>
@@ -129,7 +152,6 @@ function pipFor(p: Pip, key: number) {
               '--gv1-mv-stroke': colorStrokeVar(p.color),
             } as CSSProperties
           }
-          aria-label={`2 or ${p.color} hybrid mana`}
         >
           <span className="gv1-mv-hyb-a">2</span>
           <span className="gv1-mv-hyb-b">{p.color}</span>
@@ -137,11 +159,7 @@ function pipFor(p: Pip, key: number) {
       );
     case 'phy':
       return (
-        <span
-          key={key}
-          className={`gv1-mv-pip gv1-mv-phy gv1-mv-phy-${p.color}`}
-          aria-label={`${p.color} or 2 life phyrexian mana`}
-        >
+        <span key={key} className={`gv1-mv-pip gv1-mv-phy gv1-mv-phy-${p.color}`}>
           Φ
         </span>
       );
@@ -157,7 +175,6 @@ function pipFor(p: Pip, key: number) {
               '--gv1-mv-stroke': colorStrokeVar(p.a),
             } as CSSProperties
           }
-          aria-label={`${p.a}/${p.b} or 2 life phyrexian mana`}
         >
           <span className="gv1-mv-hyb-a">{p.a}</span>
           <span className="gv1-mv-hyb-b">{p.b}</span>
@@ -166,7 +183,7 @@ function pipFor(p: Pip, key: number) {
       );
     case 'unknown':
       return (
-        <span key={key} className="gv1-mv-pip gv1-mv-g" aria-label={`mana ${p.label}`}>
+        <span key={key} className="gv1-mv-pip gv1-mv-g">
           {p.label}
         </span>
       );
@@ -181,9 +198,11 @@ export function ManaCost({ mv }: ManaCostProps) {
   if (!parts.length) {
     return <span className="gv1-mv gv1-mv-land">—</span>;
   }
+  // One image with one label: a screen reader does not read the pips inside it.
+  const pips = parts.map((p) => classifySymbol(p.slice(1, -1)));
   return (
-    <span className="gv1-mv" aria-label={`mana cost ${mv}`}>
-      {parts.map((p, i) => pipFor(classifySymbol(p.slice(1, -1)), i))}
+    <span className="gv1-mv" role="img" aria-label={`Mana cost: ${pips.map(pipWords).join(', ')}`}>
+      {pips.map((p, i) => pipFor(p, i))}
     </span>
   );
 }

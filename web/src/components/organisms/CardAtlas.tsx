@@ -16,6 +16,7 @@ import {
   type CardUsage,
 } from '../../data/cardAtlas';
 import { frontFace } from '../../data/cardName';
+import { Glyph } from '../atoms/Glyph';
 
 const SCRYFALL_DEBOUNCE_MS = 220;
 const MAX_SUGGESTIONS = 10;
@@ -260,9 +261,16 @@ export function CardAtlas({ decks }: CardAtlasProps) {
           {usages.length === 0 ? (
             <div className="gv1-atlas-empty">
               <p className="gv1-mono-xs gv1-dim">
-                {brewingUsages.length > 0
-                  ? '◇ No built tome lists this card — it only appears in the brewing decks below.'
-                  : '◇ No tome currently lists this card. Pull it into a deck via the Apothecary or Shopping surfaces.'}
+                {brewingUsages.length > 0 ? (
+                  <>
+                    <Glyph>◇ </Glyph>No built tome lists this card — it only appears in the brewing decks below.
+                  </>
+                ) : (
+                  <>
+                    <Glyph>◇ </Glyph>No tome currently lists this card. Pull it into a deck via the Apothecary or
+                    Shopping surfaces.
+                  </>
+                )}
               </p>
             </div>
           ) : (
@@ -304,7 +312,7 @@ export function CardAtlas({ decks }: CardAtlasProps) {
       {!selected && (
         <div className="gv1-atlas-hint">
           <p className="gv1-mono-xs gv1-dim">
-            ◇ Start typing. Names that already appear in your tomes are highlighted; anything
+            <Glyph>◇ </Glyph>Start typing. Names that already appear in your tomes are highlighted; anything
             else falls through to Scryfall's full card index.
           </p>
         </div>

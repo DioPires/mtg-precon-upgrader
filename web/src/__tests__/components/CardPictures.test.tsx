@@ -115,7 +115,8 @@ describe('GV1CommanderArt', () => {
     expect(img.getAttribute('src')).toBe(`https://cards.scryfall.io/art_crop/${ATLA}`);
     fireEvent.load(img);
     expect(img.className).toContain('gv1-loaded');
-    expect(screen.getByText('◇ scryfall.com · art_crop')).toBeInTheDocument();
+    // The ◇ shows, in a span that a screen reader skips (DEC-1190).
+    expect(screen.getByText('scryfall.com · art_crop')).toHaveTextContent('◇ scryfall.com · art_crop');
     expect(fetchSpy).not.toHaveBeenCalled();
     noFormatImage();
   });

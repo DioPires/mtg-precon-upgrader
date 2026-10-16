@@ -5,6 +5,7 @@ import { useDeckColorTheme } from '../hooks/useDeckColorTheme';
 import { rememberLastDeck } from '../data/lastDeck';
 import { Commander } from '../components/organisms/Commander';
 import { DeckSelector } from '../components/organisms/DeckSelector';
+import { Glyph } from '../components/atoms/Glyph';
 import { WinCons } from '../components/organisms/WinCons';
 import { Engine } from '../components/organisms/Engine';
 import { Combos } from '../components/organisms/Combos';
@@ -25,7 +26,7 @@ export function DeckGuide() {
   if (status === 'loading') {
     return (
       <section className="gv1-stub" aria-busy="true">
-        <p className="gv1-mono-xs gv1-dim">◇ scrying {id ?? '—'} …</p>
+        <p className="gv1-mono-xs gv1-dim"><Glyph>◇ </Glyph>scrying {id ?? '—'} …</p>
       </section>
     );
   }

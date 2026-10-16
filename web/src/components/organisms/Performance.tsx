@@ -7,6 +7,7 @@ import type {
   RawDeckComposition,
   RawDeckHealthScore,
 } from '../../data/types';
+import { Glyph } from '../atoms/Glyph';
 
 interface PerformanceProps {
   curve: DeckCurveEntry[];
@@ -106,7 +107,9 @@ export function Performance({ curve, func, sources, health, composition, assessm
                 <span className="gv1-mono-xs gv1-dim">{String(i + 1).padStart(2, '0')}</span>
                 <span className="gv1-mono-xs gv1-rune">{s[0]}</span>
                 <span className="gv1-serif-sm">{s[1]}</span>
-                <span className="gv1-mono-xs gv1-dim gv1-src-link">open →</span>
+                <span className="gv1-mono-xs gv1-dim gv1-src-link">
+                  open<Glyph> →</Glyph>
+                </span>
               </div>
             ))}
           </div>

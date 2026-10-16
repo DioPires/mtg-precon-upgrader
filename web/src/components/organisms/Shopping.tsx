@@ -10,6 +10,7 @@ import {
   type ChangeEvent,
 } from 'react';
 import { GV1ManaPips } from '../atoms/GV1ManaPips';
+import { Glyph } from '../atoms/Glyph';
 import { PricePausedLine } from '../molecules/PricePausedLine';
 import { cardCache } from '../../data/cardCache';
 import {
@@ -791,7 +792,17 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
                 onClick={copyBuyList}
                 disabled={buy.length === 0}
               >
-                {copyState === 'ok' ? '✓ Copied' : copyState === 'err' ? '⚠ Failed' : 'Copy buy list'}
+                {copyState === 'ok' ? (
+                  <>
+                    <Glyph>✓ </Glyph>Copied
+                  </>
+                ) : copyState === 'err' ? (
+                  <>
+                    <Glyph>⚠ </Glyph>Failed
+                  </>
+                ) : (
+                  'Copy buy list'
+                )}
               </button>
             </div>
           </div>

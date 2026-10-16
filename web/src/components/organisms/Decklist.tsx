@@ -5,6 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ManaCost } from '../atoms/ManaCost';
+import { Glyph } from '../atoms/Glyph';
 import { TYPE_ORDER, typeBucket, type TypeBucket } from '../../lib/cardType';
 import { cardCache } from '../../data/cardCache';
 import type { DeckCardTile, DeckListGroup } from '../../data/types';
@@ -260,7 +261,17 @@ export function Decklist({ list, commander, partner }: DecklistProps) {
           }
           onClick={copyAll}
         >
-          {copyState === 'ok' ? '✓ Copied' : copyState === 'err' ? '⚠ Failed' : 'Copy decklist'}
+          {copyState === 'ok' ? (
+            <>
+              <Glyph>✓ </Glyph>Copied
+            </>
+          ) : copyState === 'err' ? (
+            <>
+              <Glyph>⚠ </Glyph>Failed
+            </>
+          ) : (
+            'Copy decklist'
+          )}
         </button>
       </div>
       <div className="gv1-sr-only" aria-live="polite" role="status">
@@ -281,8 +292,9 @@ export function Decklist({ list, commander, partner }: DecklistProps) {
                   data-card-name={c.n}
                 >
                   <span className="gv1-dl-name">
-                    {c.gc && <span className="gv1-dl-star">★</span>}
+                    {c.gc && <span className="gv1-dl-star" aria-hidden="true">★</span>}
                     {c.n}
+                    {c.gc && <span className="gv1-sr-only">&nbsp;(Game Changer)</span>}
                     {c.qty && c.qty > 1 ? (
                       <span className="gv1-dl-qty gv1-mono-xs gv1-dim"> ×{c.qty}</span>
                     ) : null}
