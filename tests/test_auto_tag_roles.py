@@ -201,6 +201,18 @@ class GraveyardExileTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("utility", 0.6))
 
 
+class LandTargetTests(unittest.TestCase):
+    """A target that can be only a land is land destruction, not removal-spot."""
+
+    def test_destroy_target_land_is_not_removal_spot(self):
+        card = _card("Quarry Collapse", "Sorcery", "Destroy target land.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_land_beside_another_type_stays_removal_spot(self):
+        card = _card("Shattering Tremor", "Sorcery", "Destroy target artifact, enchantment, or land.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+
 class BlinkTests(unittest.TestCase):
     """A target that its own sentence returns to the battlefield is not removed."""
 

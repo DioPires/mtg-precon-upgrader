@@ -189,10 +189,12 @@ def _detect_removal_board(oracle: str, type_line: str) -> tuple[str, float] | No
     return None
 
 
+# A target that can be only a land is land destruction, not removal-spot; "destroy
+# target artifact, enchantment, or land" matches at "artifact" (DEC-1184).
 _SPOT_TARGET = re.compile(
     r"(?:destroy|exile) target (?:creature|artifact|enchantment|planeswalker|"
     r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
-    r"attacking creature|blocking creature|land)"
+    r"attacking creature|blocking creature)"
 )
 
 # Read just after a _SPOT_TARGET match: "exile target creature card from your
