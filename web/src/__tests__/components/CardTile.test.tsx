@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { CardTile } from '../../components/molecules/CardTile';
 import { cardCache } from '../../data/cardCache';
 import type { RawCardMetadata } from '../../data/types';
-import { COLLECTION_URL } from '../../data/scryfallLimiter';
+import { COLLECTION_URL, LOOKUP_SPACING_MS } from '../../data/scryfallLimiter';
 import { cardJson, collectionJson, identifiersOf } from '../data/scryfallFakes';
 
 const SOL_RING = 'front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446';
@@ -42,7 +42,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  fetchSpy.mockRestore();
+  vi.restoreAllMocks();
 });
 
 describe('CardTile', () => {
@@ -95,17 +95,34 @@ describe('CardTile', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
-  // DEC-1131 R1, option B: the tile foot refreshes a price older than 24 h.
-  it("asks once for the cache's price when it is older than 24 h, and shows the new one", async () => {
-    fetchSpy.mockResolvedValue(batchAnswer([{ ...cardJson('Sol Ring'), prices: { usd: '2.50' } }]));
-    cardCache.seed(FILE, old());
-    render(<CardTile card={{ n: 'Sol Ring' }} />);
+  // DEC-1172 (the owner's answer A on DEC-1072): a tile shows the file's price at
+  // any date and asks nothing; only /shopping refreshes a price older than 24 h.
+  it("shows the file's price older than 24 h and asks for no refresh, also when the tile gets another card", async () => {
+    const file: RawCardMetadata = {
+      ...FILE,
+      'Arcane Signet': { cmc: 2, image: 'front/a/s/as.jpg?1', mana_cost: '{2}', type_line: 'Artifact', usd: 0.35, eur: 0.3 },
+    };
+    // A refresh, if one went out, would bring other prices.
+    fetchSpy.mockImplementation(async () =>
+      batchAnswer([
+        { ...cardJson('Sol Ring'), prices: { usd: '2.50' } },
+        { ...cardJson('Arcane Signet'), prices: { usd: '0.99' } },
+      ]),
+    );
+    const refreshSpy = vi.spyOn(cardCache, 'refreshPrice');
+    cardCache.seed(file, old());
+    const { rerender } = render(<CardTile card={{ n: 'Sol Ring' }} />);
     expect(screen.getByText('$1.42')).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByText('$2.50')).toBeInTheDocument());
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(identifiersOf(fetchSpy.mock.calls[0][1]?.body)).toEqual(['Sol Ring']);
-    // The picture stays the file's.
-    expect(tileImg()?.getAttribute('src')).toBe(`https://cards.scryfall.io/normal/${SOL_RING}`);
+    rerender(<CardTile card={{ n: 'Arcane Signet' }} />);
+    expect(screen.getByText('$0.35')).toBeInTheDocument();
+    // A queued name goes at the next turn of bucket 1, at most LOOKUP_SPACING_MS
+    // after the last start (cardCache.ts, pump; scryfallLimiter.ts, waitFor).
+    await new Promise((r) => setTimeout(r, LOOKUP_SPACING_MS + 300));
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(refreshSpy).not.toHaveBeenCalled();
+    expect(cardCache.pricePending('Sol Ring')).toBe(false);
+    expect(cardCache.pricePending('Arcane Signet')).toBe(false);
+    expect(screen.getByText('$0.35')).toBeInTheDocument();
   });
 
   it('asks nothing for a tile that shows the deck file\'s highlight price', async () => {
