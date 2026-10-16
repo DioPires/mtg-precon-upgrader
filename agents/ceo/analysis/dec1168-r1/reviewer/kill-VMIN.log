@@ -1,0 +1,87 @@
+fe65b829ee51e4727b78df74e825e62883e36bef
+port 14766
+Thu Oct 15 23:13:32 UTC 2026
+VMIN web/src/styles/styles.css clamp preferred 10vw -> 10vmin
+diff --git a/web/src/styles/styles.css b/web/src/styles/styles.css
+index 102a61e..dfdc002 100644
+--- a/web/src/styles/styles.css
++++ b/web/src/styles/styles.css
+@@ -3325 +3325 @@ em { font-style: italic; color: var(--gv1-gold); }
+-  .gv1-engine-panel-head h3 { font-size: clamp(30px, 10vw, 42px); }
++  .gv1-engine-panel-head h3 { font-size: clamp(30px, 10vmin, 42px); }
+(node:78127) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:78256) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  1 [chromium] › ../../../../../../.paperclip/instances/default/workspaces/8ea33a50-69a7-4a75-bcc1-245bd1e7c73a/dec1156-review/kill/specs/short-viewport.spec.ts:9:1 › on a viewport lower than it is wide, the role title follows the width (290ms)
+(node:78261) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+ "got": {
+  "769": "42px",
+  "990": "42px",
+  "1020": "42px",
+  "1100": "42px",
+  "1440": "42px"
+ },
+ "rules": {
+  "769": [
+   "h3 { font-size: 1.17em }",
+   ".gv1-serif-xl { font-size: 42px }"
+  ],
+  "990": [
+   "h3 { font-size: 1.17em }",
+   ".gv1-serif-xl { font-size: 42px }"
+  ],
+  "1020": [
+   "h3 { font-size: 1.17em }",
+   ".gv1-serif-xl { font-size: 42px }"
+  ],
+  "1100": [
+   "h3 { font-size: 1.17em }",
+   ".gv1-serif-xl { font-size: 42px }"
+  ],
+  "1440": [
+   "h3 { font-size: 1.17em }",
+   ".gv1-serif-xl { font-size: 42px }"
+  ]
+ }
+}
+  ✓  2 [chromium] › ../../../../../../.paperclip/instances/default/workspaces/8ea33a50-69a7-4a75-bcc1-245bd1e7c73a/dec1156-review/kill/specs/tout-widths.spec.ts:8:1 › TOUT: the role title from 769px up (455ms)
+
+
+  1) [chromium] › ../../../../../../.paperclip/instances/default/workspaces/8ea33a50-69a7-4a75-bcc1-245bd1e7c73a/dec1156-review/kill/specs/short-viewport.spec.ts:9:1 › on a viewport lower than it is wide, the role title follows the width 
+
+    Error: The engine title font-size by viewport width x height
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 3[39m
+    [31m+ Received  + 3[39m
+
+    [2m  Object {[22m
+    [32m-   "320x280": "32px",[39m
+    [32m-   "390x300": "39px",[39m
+    [32m-   "740x360": "42px",[39m
+    [31m+   "320x280": "30px",[39m
+    [31m+   "390x300": "30px",[39m
+    [31m+   "740x360": "36px",[39m
+    [2m  }[22m
+
+      18 |     got[size] = await page.evaluate(() => getComputedStyle(document.querySelector('.gv1-engine-panel-head h3')!).fontSize);
+      19 |   }
+    > 20 |   expect(got, 'The engine title font-size by viewport width x height').toEqual(want);
+         |                                                                        ^
+      21 | });
+      22 |
+        at /Users/dpires/.paperclip/instances/default/workspaces/8ea33a50-69a7-4a75-bcc1-245bd1e7c73a/dec1156-review/kill/specs/short-viewport.spec.ts:20:72
+
+    Error Context: ../../../../../../.paperclip/instances/default/workspaces/8ea33a50-69a7-4a75-bcc1-245bd1e7c73a/dec1156-review/kill/test-results/short-viewport-on-a-viewpo-daee8-ole-title-follows-the-width-chromium/error-context.md
+
+  1 failed
+    [chromium] › ../../../../../../.paperclip/instances/default/workspaces/8ea33a50-69a7-4a75-bcc1-245bd1e7c73a/dec1156-review/kill/specs/short-viewport.spec.ts:9:1 › on a viewport lower than it is wide, the role title follows the width 
+  1 passed (3.8s)
+exit 1
