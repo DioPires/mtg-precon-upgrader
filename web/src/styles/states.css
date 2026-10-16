@@ -113,28 +113,6 @@
   .gv1-skeleton { animation: none; }
 }
 
-/* Inline "scrying…" text indicator (less intrusive than skeleton) */
-.gv1-loading-inline {
-  display: inline-flex; align-items: baseline; gap: var(--gv1-space-2);
-  font-family: var(--gv1-mono);
-  font-size: var(--gv1-text-xs-size);
-  letter-spacing: var(--gv1-text-xs-tracking);
-  text-transform: uppercase;
-  color: var(--gv1-rune);
-  opacity: 0.85;
-}
-.gv1-loading-inline::before {
-  content: '◆';
-  animation: gv1-pulse 1.6s ease-in-out infinite;
-}
-@keyframes gv1-pulse {
-  0%, 100% { opacity: 0.3; }
-  50%      { opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .gv1-loading-inline::before { animation: none; }
-}
-
 /* ─── 4. Error state ──────────────────────────────────────────── */
 .gv1-error {
   display: flex; flex-direction: column; gap: var(--gv1-space-2);

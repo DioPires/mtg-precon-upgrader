@@ -1,4 +1,5 @@
 import { useAllDecks } from '../hooks/useAllDecks';
+import { Glyph } from '../components/atoms/Glyph';
 import { Shopping as ShoppingOrganism } from '../components/organisms/Shopping';
 
 export function Shopping() {
@@ -7,7 +8,7 @@ export function Shopping() {
   if (status === 'loading') {
     return (
       <section className="gv1-stub" aria-busy="true">
-        <p className="gv1-mono-xs gv1-dim">◇ shelving the tomes …</p>
+        <p className="gv1-mono-xs gv1-dim"><Glyph>◇ </Glyph>shelving the tomes …</p>
       </section>
     );
   }

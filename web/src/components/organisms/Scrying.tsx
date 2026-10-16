@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { cardCache, type CardEntry } from '../../data/cardCache';
 import { isGameChanger } from '../../data/gameChangers';
 import { useCard } from '../../hooks/useCard';
+import { Glyph, GlyphText, GlyphWords } from '../atoms/Glyph';
 import {
   bottomCountFor,
   computeSwapDelta,
@@ -40,6 +41,10 @@ const SCRY_COLOR_NAMES: Record<string, string> = {
   G: 'Green',
   C: 'Colorless',
 };
+
+// A screen reader hears "to" for the → of the gcDetail strings (lib/scrying.ts), as
+// for the → of the other delta rows (DEC-1190).
+const ARROW_TO = { '→': 'to' } as const;
 
 function deriveTypeShort(typeLine: string | undefined, fallback: string | undefined): string {
   const tl = (typeLine || fallback || '').toLowerCase();
@@ -673,7 +678,9 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
           <span className="gv1-scry-delta-label">Mana value</span>
           <div className="gv1-scry-delta-values">
             <span className="gv1-scry-delta-detail">
-              {delta.cutCmc} → {delta.addCmc}
+              {delta.cutCmc}
+              <GlyphWords words=" to ">{' → '}</GlyphWords>
+              {delta.addCmc}
             </span>
             <span className="gv1-scry-delta-change" data-dir={cmcDir}>
               {delta.cmcChange > 0 ? '+' : ''}
@@ -688,7 +695,9 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
           <span className="gv1-scry-delta-label">Avg mana value</span>
           <div className="gv1-scry-delta-values">
             <span className="gv1-scry-delta-detail">
-              {delta.avgCmcBefore.toFixed(2)} → {delta.avgCmcAfter.toFixed(2)}
+              {delta.avgCmcBefore.toFixed(2)}
+              <GlyphWords words=" to ">{' → '}</GlyphWords>
+              {delta.avgCmcAfter.toFixed(2)}
             </span>
             <span className="gv1-scry-delta-change" data-dir={avgDir}>
               {delta.avgCmcChange > 0 ? '+' : ''}
@@ -703,7 +712,9 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
           <span className="gv1-scry-delta-label">Lands</span>
           <div className="gv1-scry-delta-values">
             <span className="gv1-scry-delta-detail">
-              {delta.landsBefore} → {delta.landsAfter}
+              {delta.landsBefore}
+              <GlyphWords words=" to ">{' → '}</GlyphWords>
+              {delta.landsAfter}
             </span>
             <span
               className="gv1-scry-delta-change"
@@ -735,7 +746,9 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
           <span className="gv1-scry-delta-label">Type</span>
           <div className="gv1-scry-delta-values">
             <span className="gv1-scry-delta-detail">
-              {delta.cutType} → {delta.addType}
+              {delta.cutType}
+              <GlyphWords words=" to ">{' → '}</GlyphWords>
+              {delta.addType}
             </span>
           </div>
         </div>
@@ -745,14 +758,27 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
         <div className="gv1-scry-delta-row">
           <span className="gv1-scry-delta-label">Game Changers</span>
           <div className="gv1-scry-delta-values">
-            <span className="gv1-scry-delta-detail">{delta.gcDetail}</span>
+            <span className="gv1-scry-delta-detail">
+              {delta.gcDetail && <GlyphText text={delta.gcDetail} words={ARROW_TO} />}
+            </span>
             <span
               className="gv1-scry-delta-change"
               data-dir={
                 delta.gcKind === 'adding' ? 'warning' : delta.gcKind === 'removing' ? 'info' : 'neutral'
               }
             >
-              {delta.gcKind === 'adding' ? '★ +1' : delta.gcKind === 'removing' ? '★ −1' : '★ ↔'}
+              {/* The row label names the Game Changers; the detail says "GC for GC — count unchanged" (DEC-1190). */}
+              {delta.gcKind === 'adding' ? (
+                <>
+                  <Glyph>★ </Glyph>+1
+                </>
+              ) : delta.gcKind === 'removing' ? (
+                <>
+                  <Glyph>★ </Glyph>−1
+                </>
+              ) : (
+                <Glyph>★ ↔</Glyph>
+              )}
             </span>
           </div>
         </div>
@@ -765,7 +791,7 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
             <div className="gv1-scry-synergy-list">
               {delta.synergiesBroken.map((s, i) => (
                 <div key={i} className="gv1-scry-synergy-item" data-kind="broken">
-                  <span className="gv1-scry-synergy-icon">⚠</span>
+                  <span className="gv1-scry-synergy-icon" aria-hidden="true">⚠</span>
                   <div>
                     <span className="gv1-scry-synergy-title">{s.title}</span>
                     <span className="gv1-scry-synergy-cards">{(s.cards || []).join(' · ')}</span>
@@ -784,7 +810,7 @@ function DeltaPanel({ delta }: DeltaPanelProps) {
             <div className="gv1-scry-synergy-list">
               {delta.synergiesKept.map((s, i) => (
                 <div key={i} className="gv1-scry-synergy-item" data-kind="kept">
-                  <span className="gv1-scry-synergy-icon">✓</span>
+                  <span className="gv1-scry-synergy-icon" aria-hidden="true">✓</span>
                   <div>
                     <span className="gv1-scry-synergy-title">{s.title}</span>
                     <span className="gv1-scry-synergy-cards">{(s.cards || []).join(' · ')}</span>
@@ -1084,7 +1110,10 @@ export function Scrying({ deck, allDecks }: ScryingProps) {
         <p className="gv1-scry-mobile-banner" role="note">
           The Scrying Pool reflows to phones, but the swap analyzer sees more at desk
           width.{' '}
-          <Link to={`/deck/${deck.slug}`}>↗ Open the {deck.deckName} guide</Link> if you
+          <Link to={`/deck/${deck.slug}`}>
+            <Glyph>↗ </Glyph>Open the {deck.deckName} guide
+          </Link>{' '}
+          if you
           just need the deck overview.
         </p>
       </header>

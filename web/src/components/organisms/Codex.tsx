@@ -11,6 +11,9 @@ import type { DeckFull } from '../../data/types';
 type SortKey = 'idx' | 'health' | 'cmc' | 'wincons' | 'combos';
 type FilterKey = 'all' | 'mono' | 'multi' | 'bracket4';
 
+// The № chip sorts by deck order; a screen reader hears "deck number" (DEC-1190).
+const SORT_ARIA_LABEL: Partial<Record<SortKey, string>> = { idx: 'deck number' };
+
 const SORT_OPTIONS: Array<[SortKey, string]> = [
   ['idx', '№'],
   ['health', 'health'],
@@ -139,6 +142,7 @@ export function Codex({ decks }: CodexProps) {
               type="button"
               className={'gv1-mono-xs gv1-chip' + (sortKey === k ? ' gv1-chip-active' : '')}
               aria-pressed={sortKey === k}
+              aria-label={SORT_ARIA_LABEL[k]}
               onClick={() => setSortKey(k)}
             >
               {l}

@@ -135,9 +135,11 @@ describe('<ManaCost>', () => {
     expect(pip.textContent).toBe('HALF');
   });
 
-  it('renders an aria-label describing the full cost', () => {
+  it('renders one image whose label names the cost in words (DEC-1190)', () => {
     const { container } = render(<ManaCost mv="{2}{B}{G}" />);
     const root = container.querySelector('.gv1-mv')!;
-    expect(root.getAttribute('aria-label')).toBe('mana cost {2}{B}{G}');
+    expect(root.getAttribute('role')).toBe('img');
+    expect(root.getAttribute('aria-label')).toBe('Mana cost: 2 generic, black, green');
+    expect(root.querySelectorAll('[aria-label]')).toHaveLength(0);
   });
 });

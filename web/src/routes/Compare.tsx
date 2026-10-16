@@ -1,4 +1,5 @@
 import { useAllDecks } from '../hooks/useAllDecks';
+import { Glyph } from '../components/atoms/Glyph';
 import { Compare as CompareOrganism } from '../components/organisms/Compare';
 
 export function Compare() {
@@ -7,7 +8,7 @@ export function Compare() {
   if (status === 'loading') {
     return (
       <section className="gv1-stub" aria-busy="true">
-        <p className="gv1-mono-xs gv1-dim">◇ scrying the codex …</p>
+        <p className="gv1-mono-xs gv1-dim"><Glyph>◇ </Glyph>scrying the codex …</p>
       </section>
     );
   }

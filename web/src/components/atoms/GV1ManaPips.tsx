@@ -1,3 +1,5 @@
+import { colorWords } from './colorWords';
+
 interface PipConfig {
   fill: string;
   stroke: string;
@@ -20,7 +22,7 @@ interface GV1ManaPipsProps {
 export function GV1ManaPips({ colors }: GV1ManaPipsProps) {
   const chars = Array.from(colors || '');
   return (
-    <span className="gv1-pips" role="img" aria-label={`Color identity: ${chars.length} colors`}>
+    <span className="gv1-pips" role="img" aria-label={`Color identity: ${colorWords(colors || '')}`}>
       {chars.map((c, i) => {
         const cfg = COLOR_MAP[c] || COLOR_MAP['◇'];
         return (

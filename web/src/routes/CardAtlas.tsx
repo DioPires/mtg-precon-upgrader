@@ -1,4 +1,5 @@
 import { useAllDecks } from '../hooks/useAllDecks';
+import { Glyph } from '../components/atoms/Glyph';
 import { CardAtlas as CardAtlasOrganism } from '../components/organisms/CardAtlas';
 
 export function CardAtlas() {
@@ -7,7 +8,7 @@ export function CardAtlas() {
   if (status === 'loading') {
     return (
       <section className="gv1-stub" aria-busy="true">
-        <p className="gv1-mono-xs gv1-dim">◇ charting the atlas …</p>
+        <p className="gv1-mono-xs gv1-dim"><Glyph>◇ </Glyph>charting the atlas …</p>
       </section>
     );
   }
