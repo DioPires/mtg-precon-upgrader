@@ -74,9 +74,22 @@ for (const fonts of ['live', 'blocked'] as const) {
       await page.goto('/codex');
       await page.locator('.gv1-topbar').waitFor();
       const read = await readEnds(page);
-      console.log(`DEC-1171 topbar 1331px fonts ${fonts}: ${JSON.stringify(read)}`);
+      // When an end takes two lines here, name the narrowest width up to 1600px
+      // at which both take one: CI's Linux runner wraps them at 1331px with the
+      // web fonts, and macOS does not (DEC-1171).
+      let fits: number | null = 1331;
+      if (read.left.lines > 1 || read.right.lines > 1) {
+        fits = null;
+        for (let width = 1332; width <= 1600 && fits === null; width++) {
+          await page.setViewportSize({ width, height: 900 });
+          const at = await readEnds(page);
+          if (at.left.lines <= 1 && at.right.lines <= 1) fits = width;
+        }
+      }
+      const where = `both ends take one line from ${fits ?? 'beyond 1600'}px`;
+      console.log(`DEC-1171 topbar 1331px fonts ${fonts}: ${JSON.stringify(read)}; ${where}`);
       expect(read.right.shown, 'the right meta shows').toBe(true);
-      expect({ left: read.left.lines, right: read.right.lines }, JSON.stringify(read)).toEqual({ left: 1, right: 1 });
+      expect({ left: read.left.lines, right: read.right.lines }, `${JSON.stringify(read)}; ${where}`).toEqual({ left: 1, right: 1 });
     });
   });
 }
