@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import {
   Shopping,
   aggregateCards,
@@ -868,5 +868,49 @@ describe('the price refresh of /shopping (DEC-1131)', () => {
     await waitFor(() => expect(estimate()).toBe('$20'));
     expect(screen.getByText('$1.50')).toBeInTheDocument();
     expect(foot()).toContain('as of 10 Oct 2026.');
+  });
+});
+
+// DEC-1160: JSX drops the line break before the footer's date expression, so the
+// footer read `… in the buy list.Prices are USD …`. The cases read the whole text.
+describe("the footer's text (DEC-1160)", () => {
+  const FOOT_HEAD =
+    'Basic lands (Plains, Island, Swamp, Mountain, Forest, Wastes, snow-covered) are excluded. ' +
+    'Cards needed by multiple decks count once per deck — three decks each wanting Sol Ring shows 3 in the buy list. ';
+  let metaSpy: MockInstance<typeof deckLoader.loadCardMetadataMeta>;
+
+  // The loader keeps the fetch that it had at import, so a spy on globalThis.fetch
+  // does not reach the meta file: the cases answer for the loader. No row gets a
+  // price (the setup's fetch rejects a Scryfall host), so the footer gives the
+  // meta file's date.
+  beforeEach(() => {
+    cardCache._reset();
+    deckLoader._reset();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    metaSpy.mockRestore();
+    cardCache._reset();
+  });
+
+  const foot = () => document.querySelector('.gv1-shop-foot')!.textContent;
+
+  it('puts one space between `buy list.` and `Prices` when the prices have a date', async () => {
+    metaSpy = vi.spyOn(deckLoader, 'loadCardMetadataMeta').mockResolvedValue({ prices_as_of: '2026-10-10T08:00:00+00:00' });
+    render(<Shopping decks={[ALPHA]} />);
+    await waitFor(() => expect(foot()).toContain('as of'));
+    expect(foot()).toBe(`${FOOT_HEAD}Prices are USD from Scryfall, as of 10 Oct 2026.`);
+  });
+
+  it('puts one space between `buy list.` and `Prices` when the prices have no date', async () => {
+    metaSpy = vi.spyOn(deckLoader, 'loadCardMetadataMeta').mockResolvedValue(null);
+    render(<Shopping decks={[ALPHA]} />);
+    // The footer reads the same before the meta file answers: wait for its answer.
+    expect(metaSpy).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      await metaSpy.mock.results[0].value;
+    });
+    expect(foot()).toBe(`${FOOT_HEAD}Prices are USD from Scryfall.`);
   });
 });
