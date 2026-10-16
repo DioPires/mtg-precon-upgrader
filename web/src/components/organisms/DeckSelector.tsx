@@ -102,15 +102,33 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
   // WAI-ARIA tabs pattern does. The key handler names the deck; the focus
   // waits until that pill renders as active (tabIndex 0). A click leaves
   // focus on the clicked pill, and a route change that no key started
-  // clears the name and moves no focus. `preventScroll`: the centring above
-  // scrolls the track, and a focus scroll would also move `.gv1-root`
-  // (DEC-1008).
+  // clears the name (DEC-1146 below says when it moves focus).
+  // `preventScroll`: the centring above scrolls the track, and a focus
+  // scroll would also move `.gv1-root` (DEC-1008).
   const focusActive = useCallback(() => {
     trackRef.current?.querySelector<HTMLElement>('.gv1-active')?.focus({ preventScroll: true });
   }, []);
   const keyTarget = useRef<number | null>(null);
+
+  // DEC-1146: a deck change that no key started (browser Back or Forward)
+  // moves focus to the active pill in two cases. (a) The element that had
+  // focus left the page with the old deck (each deck mounts its own
+  // Apothecary): focus fell to `body`, and Chromium's next Tab would start
+  // where that element was. (b) Focus is on a pill that is no longer active.
+  // After the commit, a removed element and "nothing had focus" both read as
+  // `body`, so the render that brings the new deck reads the element first.
+  // The first render reads nothing: a page load moves no focus (DEC-1048).
+  const renderedIdx = useRef(activeIdx);
+  const focusBefore = useRef<Element | null>(null);
+  if (renderedIdx.current !== activeIdx) {
+    renderedIdx.current = activeIdx;
+    focusBefore.current = document.activeElement;
+  }
   useEffect(() => {
+    const before = focusBefore.current;
+    focusBefore.current = null;
     if (keyTarget.current === activeIdx) focusActive();
+    else if (before && strayed(before, trackRef.current)) focusActive();
     keyTarget.current = null;
   }, [activeIdx, focusActive]);
 
@@ -229,4 +247,13 @@ export function DeckSelector({ decks, activeIdx, onSelect }: DeckSelectorProps) 
       </div>
     </nav>
   );
+}
+
+// DEC-1146: case (a) or case (b) after a deck change. A click switch is
+// neither: the press focused the clicked pill, which is the active one now.
+function strayed(before: Element, track: HTMLElement | null): boolean {
+  const now = document.activeElement;
+  const left = !before.isConnected && (!now || now === document.body);
+  const onOldPill = !!now && !!track?.contains(now) && !now.classList.contains('gv1-active');
+  return left || onOldPill;
 }
