@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1173-review/web
+
+ ❯ src/__tests__/components/dec1173-stopline-date.test.tsx (1 test | 1 failed) 1553ms
+   × the stop line at Shopping.tsx:804 (DEC-1173 kill case for E4 and E5) > gives the date of the prices shown, as the footer does, also when the file is older 1552ms
+     → expected 'Price refresh paused. Next try at 10:…' to match /^Price refresh paused\. Prices shown …/
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/dec1173-stopline-date.test.tsx > the stop line at Shopping.tsx:804 (DEC-1173 kill case for E4 and E5) > gives the date of the prices shown, as the footer does, also when the file is older
+AssertionError: expected 'Price refresh paused. Next try at 10:…' to match /^Price refresh paused\. Prices shown …/
+
+- Expected: 
+/^Price refresh paused\. Prices shown are from 16 Oct 2026\. Next try at /
+
++ Received: 
+"Price refresh paused. Next try at 10:21:34."
+
+ ❯ src/__tests__/components/dec1173-stopline-date.test.tsx:96:30
+     94|     await waitFor(() => expect(screen.getByText(/Price refresh paused/…
+     95|     const line = container.querySelector('.gv1-shop-paused')!;
+     96|     expect(line.textContent).toMatch(new RegExp(`^Price refresh paused…
+       |                              ^
+     97|     expect(line.textContent).not.toContain(file);
+     98|     // The footer gives the same date.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  10:21:04
+   Duration  1.96s (transform 60ms, setup 21ms, collect 79ms, tests 1.55s, environment 116ms, prepare 42ms)
+

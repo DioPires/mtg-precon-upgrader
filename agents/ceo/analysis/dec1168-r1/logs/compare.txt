@@ -1,0 +1,30 @@
+core.py runs, CEO run ddb11b99, 2026-10-16 about 08:55Z.
+
+python3 -I core.py /tmp/dec1168-ceo/tree HEAD   (f829de2: c704c86 + fe65b82 + expected spec + N1 comment)
+web/tests/dec1156-engine-title.spec.ts 1112c987d4eab6e3 1112c987d4eab6e3 EQUAL
+web/src/styles/styles.css 972a83f254424bb7 972a83f254424bb7 EQUAL (comments dropped)
+base c704c86, merge tree 0701c08: 2022 other paths keep their blobs
+ALL EQUAL
+N1 comment: names 299px and 327px
+exit 0
+
+python3 -I core.py <repo> fe65b82
+web/tests/dec1156-engine-title.spec.ts 1112c987d4eab6e3 25703f438c8234d6 DIFFERENT
+web/src/styles/styles.css 4a4bc490910ebd3d 4a4bc490910ebd3d EQUAL (comments dropped)
+base 1e1634a, merge tree 46a4223: 1714 other paths keep their blobs
+NOT EQUAL
+N1 comment: OLD OR MISSING (301px)
+exit 1
+
+Control A (138954f: one comment reworded, the evaluate call wrapped with a trailing comma)
+web/tests/dec1156-engine-title.spec.ts 1112c987d4eab6e3 1112c987d4eab6e3 EQUAL
+web/src/styles/styles.css 972a83f254424bb7 972a83f254424bb7 EQUAL (comments dropped)
+ALL EQUAL
+
+Control B (e219b67: '390x300': '39px' to '38px')
+web/tests/dec1156-engine-title.spec.ts 1112c987d4eab6e3 c8df7df32ec80cbb DIFFERENT
+NOT EQUAL
+
+Control C (f59c9cd: clamp(30px, 10vw, 42px) to clamp(30px, 10vmin, 42px))
+web/src/styles/styles.css 972a83f254424bb7 e67cd4d891298ab2 DIFFERENT
+NOT EQUAL
