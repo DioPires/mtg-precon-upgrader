@@ -1,0 +1,86 @@
+(node:78842) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:79077) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/dec1156-engine-title.spec.ts:95:3 › DEC-1156 rules: where they act › the role title is 32px at 320px, 39px at 390px, and 42px from 420px (815ms)
+(node:79127) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✘  2 [chromium] › tests/dec1156-engine-title.spec.ts:117:3 › DEC-1156 rules: where they act › on a viewport lower than it is wide, the role title follows the width (380ms)
+(node:79148) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓  3 [chromium] › tests/dec1156-engine-title.spec.ts:131:3 › DEC-1156 rules: where they act › the panel head wraps with an 8px 16px gap up to 990px, and not from 991px (714ms)
+  ✓  4 [chromium] › tests/dec1156-engine-title.spec.ts:149:3 › DEC-1156 rules: where they act › at 320px the other users of .gv1-serif-xl keep 42px (308ms)
+  ✓  5 [chromium] › tests/dec1156-engine-title.spec.ts:170:5 › DEC-1156 @ 320px: the guides fit › web fonts › shield-doctrine tabs 4 and 7 fit the viewport (1.5s)
+  ✓  6 [chromium] › tests/dec1156-engine-title.spec.ts:188:5 › DEC-1156 @ 320px: the guides fit › Verdana and Menlo › the three guides whose title ran past the viewport fit it (1.6s)
+
+
+  1) [chromium] › tests/dec1156-engine-title.spec.ts:95:3 › DEC-1156 rules: where they act › the role title is 32px at 320px, 39px at 390px, and 42px from 420px 
+
+    Error: The engine title font-size by viewport width
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 3[39m
+    [31m+ Received  + 3[39m
+
+    [2m  Object {[22m
+    [2m    "1440": "42px",[22m
+    [2m    "280": "30px",[22m
+    [32m-   "320": "32px",[39m
+    [32m-   "390": "39px",[39m
+    [32m-   "420": "42px",[39m
+    [31m+   "320": "30px",[39m
+    [31m+   "390": "35.1px",[39m
+    [31m+   "420": "37.8px",[39m
+    [2m    "768": "42px",[22m
+    [2m    "769": "42px",[22m
+    [2m    "990": "42px",[22m
+    [2m  }[22m
+
+      110 |       got[width] = (await readHead(page)).title;
+      111 |     }
+    > 112 |     expect(got, 'The engine title font-size by viewport width').toEqual(want);
+          |                                                                 ^
+      113 |   });
+      114 |
+      115 |   // DEC-1168 B1: case 1's viewports are all 900px high, so 10vmin would read as
+        at /private/tmp/dec1168-ceo/tree/web/tests/dec1156-engine-title.spec.ts:112:65
+
+    Error Context: test-results/dec1156-engine-title-DEC-1-8d957-t-390px-and-42px-from-420px-chromium/error-context.md
+
+  2) [chromium] › tests/dec1156-engine-title.spec.ts:117:3 › DEC-1156 rules: where they act › on a viewport lower than it is wide, the role title follows the width 
+
+    Error: The engine title font-size by viewport width x height
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Object {[22m
+    [32m-   "320x280": "32px",[39m
+    [32m-   "390x300": "39px",[39m
+    [31m+   "320x280": "30px",[39m
+    [31m+   "390x300": "35.1px",[39m
+    [2m    "740x360": "42px",[22m
+    [2m  }[22m
+
+      126 |       got[size] = await page.evaluate(() => getComputedStyle(document.querySelector('.gv1-engine-panel-head h3')!).fontSize);
+      127 |     }
+    > 128 |     expect(got, 'The engine title font-size by viewport width x height').toEqual(want);
+          |                                                                          ^
+      129 |   });
+      130 |
+      131 |   test('the panel head wraps with an 8px 16px gap up to 990px, and not from 991px', async ({ page }) => {
+        at /private/tmp/dec1168-ceo/tree/web/tests/dec1156-engine-title.spec.ts:128:74
+
+    Error Context: test-results/dec1156-engine-title-DEC-1-68fc8-ole-title-follows-the-width-chromium/error-context.md
+
+  2 failed
+    [chromium] › tests/dec1156-engine-title.spec.ts:95:3 › DEC-1156 rules: where they act › the role title is 32px at 320px, 39px at 390px, and 42px from 420px 
+    [chromium] › tests/dec1156-engine-title.spec.ts:117:3 › DEC-1156 rules: where they act › on a viewport lower than it is wide, the role title follows the width 
+  4 passed (11.1s)
+exit 1

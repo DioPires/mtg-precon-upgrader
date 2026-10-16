@@ -1,0 +1,187 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..b08f1b9 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -14,7 +14,7 @@ export const OWNED_KEY = 'grimoire-owned-cards';
+ 
+ /** An owned quantity is a whole number of 1 or more (DEC-1141). `Infinity` is not one (DEC-1150 N2). */
+ export function isOwnedQuantity(q: unknown): q is number {
+-  return Number.isInteger(q) && (q as number) >= 1;
++  return Number.isInteger(q) && (q as number) > 1;
+ }
+ 
+ /**
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/data/ownedCards.test.ts (30 tests | 16 failed) 7ms
+   × readOwnedEntries (DEC-1150) > keeps the entries in store order with their names as stored, and writes nothing back 3ms
+     → expected [ [ …(2) ] ] to deeply equal [ [ …(2) ], [ 'Sol Ring', 1 ] ]
+   × readOwnedEntries (DEC-1150) > reads localStorage when no storage is given 0ms
+     → expected [] to deeply equal [ [ 'Sol Ring', 1 ] ]
+   × readOwnedEntries (DEC-1150) > keeps a stored name with spaces around it as stored 0ms
+     → expected [] to deeply equal [ [ ' Sol Ring ', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry [null,2] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry [{"n":"Sol Ring"},2] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry [["Sol Ring"],2] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["  ",2] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",0] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",-1] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",0.5] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",1.5] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring","2"] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring"] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",2,"foil"] and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × readOwnedEntries (DEC-1150) > drops the entry null and keeps the entry beside it 0ms
+     → expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+   × isOwnedQuantity (DEC-1150) > is true for a whole number of 1 or more 0ms
+     → expected false to be true // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  16 failed | 14 passed (30)
+   Start at  23:51:13
+   Duration  336ms (transform 19ms, setup 21ms, collect 8ms, tests 7ms, environment 121ms, prepare 35ms)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 16 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > keeps the entries in store order with their names as stored, and writes nothing back
+AssertionError: expected [ [ …(2) ] ] to deeply equal [ [ …(2) ], [ 'Sol Ring', 1 ] ]
+
+- Expected
++ Received
+
+  Array [
+    Array [
+      "Brazen Borrower // Petty Theft",
+      2,
+    ],
+-   Array [
+-     "Sol Ring",
+-     1,
+-   ],
+  ]
+
+ ❯ src/__tests__/data/ownedCards.test.ts:101:39
+     99|     const stored = JSON.stringify([['Brazen Borrower // Petty Theft', …
+    100|     const storage = makeStorage(0, { [OWNED_KEY]: stored });
+    101|     expect(readOwnedEntries(storage)).toEqual([['Brazen Borrower // Pe…
+       |                                       ^
+    102|     expect(storage.setCalls).toBe(0);
+    103|     expect(storage.getItem(OWNED_KEY)).toBe(stored);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > reads localStorage when no storage is given
+AssertionError: expected [] to deeply equal [ [ 'Sol Ring', 1 ] ]
+
+- Expected
++ Received
+
+- Array [
+-   Array [
+-     "Sol Ring",
+-     1,
+-   ],
+- ]
++ Array []
+
+ ❯ src/__tests__/data/ownedCards.test.ts:109:34
+    107|     localStorage.setItem(OWNED_KEY, JSON.stringify([['Sol Ring', 1]]));
+    108|     try {
+    109|       expect(readOwnedEntries()).toEqual([['Sol Ring', 1]]);
+       |                                  ^
+    110|     } finally {
+    111|       localStorage.removeItem(OWNED_KEY);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > keeps a stored name with spaces around it as stored
+AssertionError: expected [] to deeply equal [ [ ' Sol Ring ', 1 ] ]
+
+- Expected
++ Received
+
+- Array [
+-   Array [
+-     " Sol Ring ",
+-     1,
+-   ],
+- ]
++ Array []
+
+ ❯ src/__tests__/data/ownedCards.test.ts:118:34
+    116|     localStorage.setItem(OWNED_KEY, JSON.stringify([[' Sol Ring ', 1]]…
+    117|     try {
+    118|       expect(readOwnedEntries()).toEqual([[' Sol Ring ', 1]]);
+       |                                  ^
+    119|     } finally {
+    120|       localStorage.removeItem(OWNED_KEY);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry [null,2] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry [{"n":"Sol Ring"},2] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry [["Sol Ring"],2] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["  ",2] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",0] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",-1] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",0.5] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",1.5] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring","2"] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring"] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry ["Sol Ring",2,"foil"] and keeps the entry beside it
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > drops the entry null and keeps the entry beside it
+AssertionError: expected [] to deeply equal [ [ 'Arcane Signet', 1 ] ]
+
+- Expected
++ Received
+
+- Array [
+-   Array [
+-     "Arcane Signet",
+-     1,
+-   ],
+- ]
++ Array []
+
+ ❯ src/__tests__/data/ownedCards.test.ts:138:65
+    136|     [null],
+    137|   ])('drops the entry %j and keeps the entry beside it', (entry) => {
+    138|     expect(read(JSON.stringify([entry, ['Arcane Signet', 1]]))).toEqua…
+       |                                                                 ^
+    139|   });
+    140| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > isOwnedQuantity (DEC-1150) > is true for a whole number of 1 or more
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/__tests__/data/ownedCards.test.ts:144:32
+    142| describe('isOwnedQuantity (DEC-1150)', () => {
+    143|   it('is true for a whole number of 1 or more', () => {
+    144|     expect(isOwnedQuantity(1)).toBe(true);
+       |                                ^
+    145|     expect(isOwnedQuantity(2)).toBe(true);
+    146|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯
+

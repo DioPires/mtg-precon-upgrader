@@ -1,0 +1,31 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1163-review/web
+
+ ❯ src/__tests__/components/dec1163-kill-paused-line.test.tsx (2 tests | 1 failed) 37ms
+   × PricePausedLine (DEC-1163 kill cases) > shows the line as a paragraph in its region 35ms
+     → expected 'DIV' to be 'P' // Object.is equality
+ ✓ src/__tests__/components/dec1163-kill-import-style.test.tsx (1 test) 50ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 2 passed (3)
+   Start at  20:35:25
+   Duration  458ms (transform 76ms, setup 47ms, collect 131ms, tests 87ms, environment 261ms, prepare 79ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/components/dec1163-kill-paused-line.test.tsx > PricePausedLine (DEC-1163 kill cases) > shows the line as a paragraph in its region
+AssertionError: expected 'DIV' to be 'P' // Object.is equality
+
+Expected: "P"
+Received: "DIV"
+
+ ❯ src/__tests__/components/dec1163-kill-paused-line.test.tsx:33:47
+     31|     render(<PricePausedLine waiting pricesDate="13 Oct 2026" limiter={…
+     32|     expect(line().children).toHaveLength(1);
+     33|     expect(line().firstElementChild?.tagName).toBe('P');
+       |                                               ^
+     34|   });
+     35| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

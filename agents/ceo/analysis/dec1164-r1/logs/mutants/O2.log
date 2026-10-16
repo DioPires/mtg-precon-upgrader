@@ -1,0 +1,78 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..01559c5 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -26,7 +26,7 @@ export function isOwnedQuantity(q: unknown): q is number {
+  * back. An empty or missing store, a store that is not JSON and a store that is
+  * not an array give `[]` (DEC-1141, DEC-1150).
+  */
+-export function readOwnedEntries(storage: Storage = localStorage): Array<[string, number]> {
++export function readOwnedEntries(storage: Storage = sessionStorage): Array<[string, number]> {
+   let stored: unknown;
+   try {
+     stored = JSON.parse(storage.getItem(OWNED_KEY) ?? '');
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/data/ownedCards.test.ts (30 tests | 2 failed) 6ms
+   × readOwnedEntries (DEC-1150) > reads localStorage when no storage is given 4ms
+     → expected [] to deeply equal [ [ 'Sol Ring', 1 ] ]
+   × readOwnedEntries (DEC-1150) > keeps a stored name with spaces around it as stored 0ms
+     → expected [] to deeply equal [ [ ' Sol Ring ', 1 ] ]
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 28 passed (30)
+   Start at  23:50:58
+   Duration  322ms (transform 19ms, setup 20ms, collect 9ms, tests 6ms, environment 123ms, prepare 39ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > reads localStorage when no storage is given
+AssertionError: expected [] to deeply equal [ [ 'Sol Ring', 1 ] ]
+
+- Expected
++ Received
+
+- Array [
+-   Array [
+-     "Sol Ring",
+-     1,
+-   ],
+- ]
++ Array []
+
+ ❯ src/__tests__/data/ownedCards.test.ts:109:34
+    107|     localStorage.setItem(OWNED_KEY, JSON.stringify([['Sol Ring', 1]]));
+    108|     try {
+    109|       expect(readOwnedEntries()).toEqual([['Sol Ring', 1]]);
+       |                                  ^
+    110|     } finally {
+    111|       localStorage.removeItem(OWNED_KEY);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > keeps a stored name with spaces around it as stored
+AssertionError: expected [] to deeply equal [ [ ' Sol Ring ', 1 ] ]
+
+- Expected
++ Received
+
+- Array [
+-   Array [
+-     " Sol Ring ",
+-     1,
+-   ],
+- ]
++ Array []
+
+ ❯ src/__tests__/data/ownedCards.test.ts:118:34
+    116|     localStorage.setItem(OWNED_KEY, JSON.stringify([[' Sol Ring ', 1]]…
+    117|     try {
+    118|       expect(readOwnedEntries()).toEqual([[' Sol Ring ', 1]]);
+       |                                  ^
+    119|     } finally {
+    120|       localStorage.removeItem(OWNED_KEY);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

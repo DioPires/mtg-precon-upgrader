@@ -1,0 +1,406 @@
+diff --git a/web/src/routes/ComboLab.tsx b/web/src/routes/ComboLab.tsx
+index 87025fb..50d5074 100644
+--- a/web/src/routes/ComboLab.tsx
++++ b/web/src/routes/ComboLab.tsx
+@@ -117,7 +117,7 @@ function loadOwnedCollection(): { keys: Set<string>; count: number } {
+     const keys = new Set<string>();
+     let count = 0;
+     for (const [n, q] of readOwnedEntries()) {
+-      for (const k of nameKeys(n)) keys.add(k);
++      for (const k of nameKeys(n).slice(0, 1)) keys.add(k);
+       count += q;
+     }
+     return { keys, count };
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt/web
+
+ ❯ src/__tests__/routes/ComboLab.test.tsx (8 tests | 1 failed) 144ms
+   × the owned list in Complete a Near-Miss (DEC-1150) > keeps a completion that names the front face of a stored double-faced name 13ms
+     → Unable to find an element with the text: Brazen Borrower. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<section
+  aria-label="Complete a near-miss"
+  class="gv1-lab-sec"
+>
+  <div
+    class="gv1-lab-sec-head"
+    id="gv1-lab-sec-e"
+  >
+    <span
+      aria-hidden="true"
+      class="gv1-lab-sec-folio"
+    >
+      § XII·
+      e
+    </span>
+    <h3
+      class="gv1-lab-sec-title"
+    >
+      Complete a Near-Miss
+    </h3>
+    <span
+      class="gv1-lab-sec-note"
+    >
+      one card · most combos unlocked
+    </span>
+  </div>
+  <div
+    class="gv1-lab-framing gv1-lab-framing-b"
+  >
+    <span
+      class="gv1-lab-tier gv1-lab-tier-b"
+    >
+      Tier B · Computed
+    </span>
+    <p>
+      The mechanistic recommendation engine — pool cards that would 
+      <strong>
+        close
+      </strong>
+       the near-misses above. A report only: it never edits your deck. Confirm each interaction yourself.
+    </p>
+  </div>
+  <div
+    class="gv1-lab-filters"
+  >
+    <label
+      class="gv1-lab-field"
+      style="flex-direction: row; align-items: center; gap: 8px;"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        Max price
+      </span>
+      <input
+        class="gv1-lab-input"
+        inputmode="decimal"
+        min="0"
+        placeholder="any"
+        step="0.5"
+        type="number"
+        value=""
+      />
+    </label>
+    <label
+      class="gv1-lab-field"
+      style="flex-direction: row; align-items: center; gap: 8px;"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        Currency
+      </span>
+      <select
+        class="gv1-lab-input"
+      >
+        <option
+          value="eur"
+        >
+          EUR (Cardmarket)
+        </option>
+        <option
+          value="usd"
+        >
+          USD (TCGplayer)
+        </option>
+      </select>
+    </label>
+    <button
+      aria-pressed="true"
+      class="gv1-lab-filter-chip gv1-active"
+      title="1 owned card on file"
+      type="button"
+    >
+      Owned only
+    </button>
+    <span
+      class="gv1-lab-note"
+    >
+      1 owned card on file — imported in § IX Shopping
+    </span>
+  </div>
+  <p
+    class="gv1-lab-note"
+  >
+    Color identity 
+    <span
+      class="gv1-rune"
+    >
+      C
+    </span>
+     · legal in Commander · searched 
+    3
+     pool cards in
+     
+    0
+    ms · 
+    0
+     
+    off-color
+     · 
+    2
+     unowned
+     
+    filtered out.
+  </p>
+  <div>
+    <h4
+      class="gv1-lab-h3"
+    >
+      <span
+        class="gv1-lab-tier gv1-lab-tier-b"
+      >
+        Tier B
+      </span>
+       Computed completions
+       
+      <span
+        class="gv1-dim"
+      >
+        (
+        0
+        )
+      </span>
+    </h4>
+    <p
+      class="gv1-lab-note"
+    >
+      No computed loop deficits to complete under the current filters.
+    </p>
+  </div>
+  <div>
+    <h4
+      class="gv1-lab-h3"
+    >
+      <span
+        class="gv1-lab-tier gv1-lab-tier-c"
+      >
+        Tier C
+      </span>
+       Speculative completions
+       
+      <span
+        class="gv1-dim"
+      >
+        (
+        0
+        )
+      </span>
+    </h4>
+    <p
+      class="gv1-lab-note"
+    >
+      No half-edge completions under the current filters.
+    </p>
+  </div>
+</section>
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  23:51:01
+   Duration  584ms (transform 99ms, setup 20ms, collect 127ms, tests 144ms, environment 125ms, prepare 37ms)
+
+stderr | src/__tests__/routes/ComboLab.test.tsx > the Combo Lab load message > reads `Loaded 1 card` for a deck of one card
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/routes/ComboLab.test.tsx > the owned list in Complete a Near-Miss (DEC-1150) > keeps a completion that names the front face of a stored double-faced name
+TestingLibraryElementError: Unable to find an element with the text: Brazen Borrower. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<section
+  aria-label="Complete a near-miss"
+  class="gv1-lab-sec"
+>
+  <div
+    class="gv1-lab-sec-head"
+    id="gv1-lab-sec-e"
+  >
+    <span
+      aria-hidden="true"
+      class="gv1-lab-sec-folio"
+    >
+      § XII·
+      e
+    </span>
+    <h3
+      class="gv1-lab-sec-title"
+    >
+      Complete a Near-Miss
+    </h3>
+    <span
+      class="gv1-lab-sec-note"
+    >
+      one card · most combos unlocked
+    </span>
+  </div>
+  <div
+    class="gv1-lab-framing gv1-lab-framing-b"
+  >
+    <span
+      class="gv1-lab-tier gv1-lab-tier-b"
+    >
+      Tier B · Computed
+    </span>
+    <p>
+      The mechanistic recommendation engine — pool cards that would 
+      <strong>
+        close
+      </strong>
+       the near-misses above. A report only: it never edits your deck. Confirm each interaction yourself.
+    </p>
+  </div>
+  <div
+    class="gv1-lab-filters"
+  >
+    <label
+      class="gv1-lab-field"
+      style="flex-direction: row; align-items: center; gap: 8px;"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        Max price
+      </span>
+      <input
+        class="gv1-lab-input"
+        inputmode="decimal"
+        min="0"
+        placeholder="any"
+        step="0.5"
+        type="number"
+        value=""
+      />
+    </label>
+    <label
+      class="gv1-lab-field"
+      style="flex-direction: row; align-items: center; gap: 8px;"
+    >
+      <span
+        class="gv1-mono-xs gv1-dim"
+      >
+        Currency
+      </span>
+      <select
+        class="gv1-lab-input"
+      >
+        <option
+          value="eur"
+        >
+          EUR (Cardmarket)
+        </option>
+        <option
+          value="usd"
+        >
+          USD (TCGplayer)
+        </option>
+      </select>
+    </label>
+    <button
+      aria-pressed="true"
+      class="gv1-lab-filter-chip gv1-active"
+      title="1 owned card on file"
+      type="button"
+    >
+      Owned only
+    </button>
+    <span
+      class="gv1-lab-note"
+    >
+      1 owned card on file — imported in § IX Shopping
+    </span>
+  </div>
+  <p
+    class="gv1-lab-note"
+  >
+    Color identity 
+    <span
+      class="gv1-rune"
+    >
+      C
+    </span>
+     · legal in Commander · searched 
+    3
+     pool cards in
+     
+    0
+    ms · 
+    0
+     
+    off-color
+     · 
+    2
+     unowned
+     
+    filtered out.
+  </p>
+  <div>
+    <h4
+      class="gv1-lab-h3"
+    >
+      <span
+        class="gv1-lab-tier gv1-lab-tier-b"
+      >
+        Tier B
+      </span>
+       Computed completions
+       
+      <span
+        class="gv1-dim"
+      >
+        (
+        0
+        )
+      </span>
+    </h4>
+    <p
+      class="gv1-lab-note"
+    >
+      No computed loop deficits to complete under the current filters.
+    </p>
+  </div>
+  <div>
+    <h4
+      class="gv1-lab-h3"
+    >
+      <span
+        class="gv1-lab-tier gv1-lab-tier-c"
+      >
+        Tier C
+      </span>
+       Speculative completions
+       
+      <span
+        class="gv1-dim"
+      >
+        (
+        0
+        )
+      </span>
+    </h4>
+    <p
+      class="gv1-lab-note"
+    >
+      No half-edge completions under the current filters.
+    </p>
+  </div>
+</section>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/routes/ComboLab.test.tsx:194:26
+    192|     fireEvent.click(within(panel).getByRole('button', { name: 'Owned o…
+    193|     await waitFor(() => expect(within(panel).queryByText('Arcane Signe…
+    194|     expect(within(panel).getByText('Brazen Borrower')).toBeInTheDocume…
+       |                          ^
+    195|   });
+    196| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

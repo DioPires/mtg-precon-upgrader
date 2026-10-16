@@ -1,0 +1,52 @@
+diff --git a/web/src/data/ownedCards.ts b/web/src/data/ownedCards.ts
+index 11566ab..5776074 100644
+--- a/web/src/data/ownedCards.ts
++++ b/web/src/data/ownedCards.ts
+@@ -39,7 +39,7 @@ export function readOwnedEntries(storage: Storage = localStorage): Array<[string
+     if (!Array.isArray(entry) || entry.length !== 2) continue;
+     const [n, q]: unknown[] = entry;
+     if (typeof n !== 'string' || !n.trim() || !isOwnedQuantity(q)) continue;
+-    out.push([n, q]);
++    out.push([n.trim(), q]);
+   }
+   return out;
+ }
+
+
+ RUN  v2.1.9 /private/tmp/dec1164-ceo/wt2/web
+
+ ❯ src/__tests__/data/ownedCards.test.ts (30 tests | 1 failed) 5ms
+   × readOwnedEntries (DEC-1150) > keeps a stored name with spaces around it as stored 3ms
+     → expected [ [ 'Sol Ring', 1 ] ] to deeply equal [ [ ' Sol Ring ', 1 ] ]
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 29 passed (30)
+   Start at  23:54:36
+   Duration  342ms (transform 21ms, setup 22ms, collect 9ms, tests 5ms, environment 131ms, prepare 38ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/data/ownedCards.test.ts > readOwnedEntries (DEC-1150) > keeps a stored name with spaces around it as stored
+AssertionError: expected [ [ 'Sol Ring', 1 ] ] to deeply equal [ [ ' Sol Ring ', 1 ] ]
+
+- Expected
++ Received
+
+  Array [
+    Array [
+-     " Sol Ring ",
++     "Sol Ring",
+      1,
+    ],
+  ]
+
+ ❯ src/__tests__/data/ownedCards.test.ts:118:34
+    116|     localStorage.setItem(OWNED_KEY, JSON.stringify([[' Sol Ring ', 1]]…
+    117|     try {
+    118|       expect(readOwnedEntries()).toEqual([[' Sol Ring ', 1]]);
+       |                                  ^
+    119|     } finally {
+    120|       localStorage.removeItem(OWNED_KEY);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

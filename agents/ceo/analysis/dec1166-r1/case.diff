@@ -1,0 +1,119 @@
+diff --git a/web/README.md b/web/README.md
+index ac8f933..efe019e 100644
+--- a/web/README.md
++++ b/web/README.md
+@@ -89,12 +89,13 @@ methods. A GET counts once. A POST counts twice: the browser sends a CORS prefli
+ nor the `request` event shows it (DEC-1131 ruling 5, DEC-1149 N3). Playwright answers
+ Chromium's preflight itself, so the double count is the only way the check sees it. The check
+ stamps each request when the browser sends it (the context's `request` event), in real time.
+-The app also counts each POST as two starts, and spaces its POSTs 1,200 ms apart, so two
+-batches in 1 s fail the test. A case proves the app's limit only when the app has lookups for
+-two batches or more. A case that sends one batch, or paces its own hovers, reads a low peak
+-whatever the app does. The `scryfall-stub` attachment of each test that sent a Scryfall request
+-gives the count of requests, the peak in 1 s (a POST counts twice) and the number of 429
+-answers (`bucketOne`). The error lists each send of the context with its method.
++The app also counts each POST as two starts, and spaces its POSTs 1,200 ms apart. Two
++batches in 1 s start 4 requests and fail the test. A case proves the app's limit only when
++the app has lookups for two batches or more. A case that sends one batch, or paces its own
++hovers, reads a low peak whatever the app does. The `scryfall-stub` attachment of each test
++that sent a Scryfall request gives the count of requests, the peak in 1 s (a POST counts
++twice) and the number of 429 answers (`bucketOne`). The error lists each send of the context
++with its method.
+ 
+ - A spec that moves `page.clock` can start several requests in one real second, because the
+   page's timers run ahead of real time. Such a spec sets `rateClock: 'page'`. The check then
+diff --git a/web/tests/dec1152-rate-check-post.spec.ts b/web/tests/dec1152-rate-check-post.spec.ts
+index 2b209bf..50707b7 100644
+--- a/web/tests/dec1152-rate-check-post.spec.ts
++++ b/web/tests/dec1152-rate-check-post.spec.ts
+@@ -2,8 +2,9 @@
+ // twice, for the CORS preflight that the browser sends before it, in both
+ // clocks. Two batches 600 ms apart start 4 requests in 1 s, so the check must
+ // fail the test: test.fail() expects that failure, as in the H7 case of
+-// dec1131-card-batches.spec.ts. The last two cases read the error that the
+-// fixture throws. The stub answers every request; nothing reaches the live API.
++// dec1131-card-batches.spec.ts. One case checks that the real clock counts no
++// other path. The last two cases read the error that the fixture throws. The
++// stub answers every request; nothing reaches the live API.
+ import {
+   expect,
+   peakPerWindow,
+@@ -16,6 +17,7 @@ import {
+ 
+ const COLLECTION = 'https://api.scryfall.com/cards/collection';
+ const LOOKUP = 'https://api.scryfall.com/cards/named?fuzzy=Sol%20Ring';
++const AUTOCOMPLETE = 'https://api.scryfall.com/cards/autocomplete?q=sol';
+ const GAP_MS = 600;
+ 
+ test.describe('the rate check, real clock: a POST counts twice', () => {
+@@ -38,11 +40,29 @@ test.describe('the rate check, real clock: a POST counts twice', () => {
+   });
+ });
+ 
++test.describe('the rate check, real clock: only /cards/named and /cards/collection count', () => {
++  // Scryfall allows 10 requests a second on /cards/autocomplete (bucket 2), and
++  // the app spaces them 120 ms apart, so three at once must pass (DEC-1166 B1).
++  test('three autocompletes at once pass', async ({ page }) => {
++    await page.goto('/data/index.json');
++    await page.evaluate(
++      (url) => Promise.all([0, 1, 2].map(() => fetch(url).then((r) => r.status))),
++      AUTOCOMPLETE,
++    );
++  });
++});
++
+ test.describe("the rate check, the page's clock: a POST counts twice", () => {
+   test.use({ rateClock: 'page' });
+ 
+-  // The page reads the method of each form of a fetch call.
+-  for (const form of ['fetch(url, init)', 'fetch(request)', "fetch(url, init), method 'post'"] as const) {
++  // The page reads the method of each form of a fetch call. In fetch(request,
++  // init) the method of init wins over the Request's (DEC-1166 N1).
++  for (const form of [
++    'fetch(url, init)',
++    'fetch(request)',
++    'fetch(request, init)',
++    "fetch(url, init), method 'post'",
++  ] as const) {
+     test(`two batches 600 ms apart of the page's clock fail the test: ${form}`, async ({ page }) => {
+       test.fail();
+       await page.clock.install();
+@@ -56,7 +76,12 @@ test.describe("the rate check, the page's clock: a POST counts twice", () => {
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ identifiers: [{ name: 'Sol Ring' }] }),
+             };
+-            const sent = form === 'fetch(request)' ? fetch(new Request(url, init)) : fetch(url, init);
++            const sent =
++              form === 'fetch(request)'
++                ? fetch(new Request(url, init))
++                : form === 'fetch(request, init)'
++                  ? fetch(new Request(url), init)
++                  : fetch(url, init);
+             void sent.catch(() => undefined);
+           },
+           [COLLECTION, form] as const,
+diff --git a/web/tests/support/test.ts b/web/tests/support/test.ts
+index 738993c..3ed9f6d 100644
+--- a/web/tests/support/test.ts
++++ b/web/tests/support/test.ts
+@@ -14,8 +14,9 @@
+ // whether Scryfall counts the preflight, and neither a route nor the `request`
+ // event shows it (DEC-1131 ruling 5, DEC-1149 N3). The check stamps each request
+ // when the browser sends it (the context's `request` event), in real time, so
+-// every case proves the app's limit, also a case whose own route holds an
+-// answer (DEC-1131 N2).
++// it also counts the requests of a case whose own route holds an answer
++// (DEC-1131 N2). A case proves the app's limit only when the app has lookups
++// for two batches or more (web/README.md, "The rate check").
+ //
+ //   test.use({ cards: 'seeded' })        as 'repo', plus a `gv1-card:` entry for each name before first paint
+ //   test.use({ cards: 'none' })          every lookup and picture fails, and card-metadata.json has no price
+@@ -34,7 +35,7 @@ export interface StubOptions {
+   /**
+    * 'repo'    The app takes every name of data/card-metadata.json from that
+    *           file (DEC-1102) and looks up only the names outside it; the stub
+-   *           answers. The limiter paces the lookups, one every 600 ms or more.
++   *           answers. The limiter paces the lookups, one every 1,200 ms or more.
+    * 'seeded'  As 'repo', and localStorage holds a `gv1-card:` entry for every
+    *           name of the file, and for each face of a `//` name, before the
+    *           first script runs. The app drops the entries of the file's names
