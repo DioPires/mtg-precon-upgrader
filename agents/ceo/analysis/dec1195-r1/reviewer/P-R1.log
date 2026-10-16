@@ -1,0 +1,83 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1195/web
+
+ ❯ src/__tests__/dec1188/body-timeout.test.ts (10 tests | 1 failed) 21ms
+   × DEC-1188 8a: an answer whose body never ends > (the body one chunk, and never ends) stops the limiter at 20 s; the batch goes again first, and the tab's later name goes after it 5ms
+     → expected { …(8) } to deeply equal { …(8) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/dec1188/body-timeout.test.ts > DEC-1188 8a: an answer whose body never ends > (the body one chunk, and never ends) stops the limiter at 20 s; the batch goes again first, and the tab's later name goes after it
+AssertionError: expected { …(8) } to deeply equal { …(8) }
+
+- Expected
++ Received
+
+  Object {
+-   "A1": "loaded",
+-   "A2": "loaded",
++   "A1": "loading",
++   "A2": null,
+    "B1": "loaded",
+    "at20": Object {
+      "A1": Object {
+        "name": "A1",
+        "status": "loading",
+      },
+-     "stop": ObjectContaining {
+-       "ms": 30000,
+-       "until": 1792152050000,
++     "stop": null,
+    },
+-   },
+    "before": Object {
+      "stop": null,
+      "tabB": 0,
+    },
+    "stop": null,
+    "tabA": Array [
+      Object {
+        "at": 0,
+        "names": Array [
+          "A1",
+        ],
+      },
+-     Object {
+-       "at": 51200,
+-       "names": Array [
+-         "A1",
+    ],
+-     },
+-     Object {
+-       "at": 52400,
+-       "names": Array [
+-         "A2",
+-       ],
+-     },
+-   ],
+    "tabB": Array [
+      Object {
+-       "at": 50000,
++       "at": 20000,
+        "names": Array [
+          "B1",
+        ],
+      },
+    ],
+  }
+
+ ❯ src/__tests__/dec1188/body-timeout.test.ts:99:10
+     97|         B1: tabB.get('B1')?.status,
+     98|         stop: storedStop(),
+     99|       }).toEqual({
+       |          ^
+    100|         before: { stop: null, tabB: 0 },
+    101|         at20: { stop: expect.objectContaining({ until: T0 + 50_000, ms…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  20:22:31
+   Duration  404ms (transform 46ms, setup 23ms, collect 41ms, tests 21ms, environment 116ms, prepare 43ms)
+

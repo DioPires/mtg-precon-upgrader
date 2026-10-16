@@ -1,0 +1,39 @@
+
+ RUN  v2.1.9 /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1195/web
+
+ ❯ src/__tests__/dec1188/body-timeout.test.ts (10 tests | 2 failed) 14ms
+   × DEC-1188 B4: an answer of another status whose body never ends > a 400: no answer at 20 s, a stop, and the batch goes again first 3ms
+     → expected null to match object { until: 1792152050000, ms: 30000 }
+   × DEC-1188 B4: an answer of another status whose body never ends > a 422: no answer at 20 s, a stop, and the batch goes again first 0ms
+     → expected null to match object { until: 1792152050000, ms: 30000 }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/dec1188/body-timeout.test.ts > DEC-1188 B4: an answer of another status whose body never ends > a 400: no answer at 20 s, a stop, and the batch goes again first
+ FAIL  src/__tests__/dec1188/body-timeout.test.ts > DEC-1188 B4: an answer of another status whose body never ends > a 422: no answer at 20 s, a stop, and the batch goes again first
+AssertionError: expected null to match object { until: 1792152050000, ms: 30000 }
+
+- Expected: 
+Object {
+  "ms": 30000,
+  "until": 1792152050000,
+}
+
++ Received: 
+null
+
+ ❯ src/__tests__/dec1188/body-timeout.test.ts:172:28
+    170|       expect(storedStop()).toBeNull();
+    171|       await advance(1);
+    172|       expect(storedStop()).toMatchObject({ until: T0 + 50_000, ms: 30_…
+       |                            ^
+    173|       await advance(31_000);
+    174|       expect(a.sends.map((s) => s.at)).toEqual([0, 50_000]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  20:22:32
+   Duration  397ms (transform 41ms, setup 24ms, collect 37ms, tests 14ms, environment 137ms, prepare 40ms)
+
