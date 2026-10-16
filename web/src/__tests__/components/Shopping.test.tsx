@@ -754,6 +754,7 @@ describe('Shopping organism', () => {
       expect(empty.children).toHaveLength(2);
       const [glyph, text] = empty.children;
       expect(glyph).toHaveAttribute('aria-hidden', 'true');
+      expect(glyph).toHaveClass('gv1-rune');
       expect(glyph.textContent).toBe(sigil);
       expect(text).not.toHaveAttribute('aria-hidden');
       expect(spoken(empty)).toBe(message);
