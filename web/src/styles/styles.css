@@ -3062,8 +3062,10 @@ em { font-style: italic; color: var(--gv1-gold); }
 /* DEC-1008: the full topbar needs 1206px. Shed its two decorative ends before
    it can spill past the viewport — right meta first, then the prompt.
    DEC-1019: the two ends wrap to two lines below 1326px, so the right meta
-   goes first at 1330px. */
-@media (max-width: 1330px) {
+   goes first at 1330px.
+   DEC-1171: on Linux (CI's ubuntu-24.04 Chromium) with JetBrains Mono the two
+   ends wrap below 1373px, so the right meta goes first at 1380px. */
+@media (max-width: 1380px) {
   .gv1-topbar-right { display: none; }
 }
 @media (max-width: 1100px) {
@@ -3210,7 +3212,6 @@ em { font-style: italic; color: var(--gv1-gold); }
      Pre-DEC-181 we already collapsed `.gv1-shop-summary` and `.gv1-shop-row`;
      this completes the spec by making the deck-selection rail sticky and
      compressing the chip row. */
-  .gv1-shop-section { padding-top: 16px; }
   .gv1-shop-section.gv1-shop-rail {
     background: var(--gv1-bg);
     padding-bottom: 10px;
@@ -3219,8 +3220,8 @@ em { font-style: italic; color: var(--gv1-gold); }
   /* DEC-1019: the rail never pinned while `.gv1-root` was `overflow: hidden`
      (the root was its scroll container). Under `overflow: clip` it does, so
      pin it only where it takes a quarter of the screen or less. It is 222px
-     tall on a phone (39% of 320×568) and 200px at 600px wide, which leaves
-     tablet portrait. Phones keep the rail in the flow, as before. */
+     tall on a phone (39% of 320×568) and 148px at 600px wide (DEC-1171),
+     which leaves tablet portrait. Phones keep the rail in the flow, as before. */
   @media (min-width: 600px) and (min-height: 800px) {
     .gv1-shop-section.gv1-shop-rail {
       position: sticky;
@@ -3229,7 +3230,9 @@ em { font-style: italic; color: var(--gv1-gold); }
     }
     /* Keep keyboard focus out from under the pinned rail: a control that is
        already on screen, under the rail, does not scroll when it takes focus.
-       216px is the rail at its tallest (200px, 600–625px wide) plus 16px. */
+       216px was the rail at its tallest (200px, up to 632px wide) plus 16px.
+       Since DEC-1171 the rail is 148px at every width from 600 to 768px, in
+       every head state and with either font, so the margin clears it by 68px. */
     .gv1-shop-rail ~ .gv1-shop-section :is(a, button, input, select, label, [tabindex]) {
       scroll-margin-top: 216px;
     }
@@ -3375,15 +3378,16 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-apo-pin { padding: 14px; }
 }
 
-/* Shopping summary on a phone (DEC-1154, DEC-1149 N7). <main> keeps its 64px
-   side padding here, so the box holds 126px of content at 320px and 236px at
-   430px. Three columns of 42px figures need up to 287px (every deck and the
-   brewing decks selected, in the fallback faces), and the third stat ran past
-   the box. Here the stats wrap: a line takes as many stats as their narrowest
-   widths allow, and they share the rest of it. The figures are 28px. The
-   768px rule for them named `.gv1-shop-summary-stat`, which no element has.
-   The action row now takes the box's width, not the width of three columns:
-   its buttons keep each label on one line, as they do on the 3-column grid. */
+/* Shopping summary on a phone (DEC-1154, DEC-1149 N7). <main> pads 16px a
+   side here (DEC-1171; it was 64px), so the box holds 222px of content at
+   320px and 332px at 430px (126px and 236px before). Three columns of 42px
+   figures need up to 287px (every deck and the brewing decks selected, in the
+   fallback faces), and the third stat ran past the box. Here the stats wrap:
+   a line takes as many stats as their narrowest widths allow, and they share
+   the rest of it. The figures are 28px. The 768px rule for them named
+   `.gv1-shop-summary-stat`, which no element has. The action row now takes
+   the box's width, not the width of three columns: its buttons keep each
+   label on one line, as they do on the 3-column grid. */
 @media (max-width: 480px) {
   .gv1-shop-summary { display: flex; flex-wrap: wrap; }
   .gv1-shop-stat { flex: 1 1 0; }
