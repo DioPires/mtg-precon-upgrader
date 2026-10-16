@@ -4,9 +4,9 @@
 //
 // DEC-1131 and DEC-1172: only /shopping refreshes a price older than 24 h, so a
 // /shopping case that proves "no request" runs on a page clock less than 24 h
-// after the file's `prices_as_of`. A deck page sends no request for a deck card
-// at any date, so its cases run on a clock at which every price is older than
-// 24 h. tests/dec1131-card-batches.spec.ts holds the refresh.
+// after the file's `prices_as_of`. A deck page sends no price request for a
+// deck card at any date, so its cases run on a clock at which every price is
+// older than 24 h. tests/dec1131-card-batches.spec.ts holds the refresh.
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -182,7 +182,7 @@ test('a hover over names outside the file looks them up through the limiter, wit
   context,
 }) => {
   const seen = watch(context);
-  await page.clock.install({ time: PRICES_ARE_FRESH });
+  await page.clock.install({ time: pricesAreOld() });
   await page.goto('/deck/creeping-corruption');
   const names = page.locator('.gv1-apo-pin[data-card-name], article[data-card-name]');
   await names.first().waitFor();
@@ -293,6 +293,9 @@ test.describe('the seed and storage', () => {
     await page.locator('.gv1-card-tile').first().waitFor();
     // The stub's seed runs again at each navigation; the app's seed follows it.
     await expect.poll(async () => (await cardKeys()).filter((key) => USD.has(key)).length).toBe(0);
+    // No tile asks for a refresh, which would store a key for its name: look again after a batch's time.
+    await page.waitForTimeout(3_000);
+    expect((await cardKeys()).filter((key) => USD.has(key))).toEqual([]);
     // Only the faces that the file does not hold as names stay.
     const after = await cardKeys();
     expect(after.length).toBeGreaterThan(0);
