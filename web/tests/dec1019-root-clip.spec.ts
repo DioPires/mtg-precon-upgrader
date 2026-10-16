@@ -92,32 +92,37 @@ for (const { width, height, pins } of SHOPPING) {
   });
 }
 
-test.describe('DEC-1019 Shopping rail, keyboard @ 768×1024', () => {
-  test.use({ viewport: { width: 768, height: 1024 } });
+// At 768×1024 and at 600×960, the narrowest width where the rail pins
+// (DEC-1024 R2). The rail is 148px tall at both since DEC-1171; it was 200px
+// at 600px wide. The case fails if the rail grows past its 216px scroll margin.
+for (const { width, height } of [{ width: 768, height: 1024 }, { width: 600, height: 960 }]) {
+  test.describe(`DEC-1019 Shopping rail, keyboard @ ${width}×${height}`, () => {
+    test.use({ viewport: { width, height } });
 
-  // A control that already sits on screen, under the pinned rail, does not
-  // scroll when Tab reaches it unless it carries a scroll margin.
-  test('focus does not land under the pinned rail', async ({ page }) => {
-    await page.goto('/shopping');
-    const rail = page.locator('.gv1-shop-rail');
-    const sort = page.getByRole('button', { name: 'Type', exact: true });
-    await rail.waitFor();
-    await sort.waitFor();
+    // A control that already sits on screen, under the pinned rail, does not
+    // scroll when Tab reaches it unless it carries a scroll margin.
+    test('focus does not land under the pinned rail', async ({ page }) => {
+      await page.goto('/shopping');
+      const rail = page.locator('.gv1-shop-rail');
+      const sort = page.getByRole('button', { name: 'Type', exact: true });
+      await rail.waitFor();
+      await sort.waitFor();
 
-    // Put `Type` 40px down the screen, then Tab to it from the control before
-    // it. That is the owned-cards import button, the first control after the
-    // rail since DEC-1083; dec1083-shop-import-keyboard holds that one.
-    await sort.evaluate((el) => {
-      window.scrollTo(0, Math.round(el.getBoundingClientRect().top + window.scrollY) - 40);
+      // Put `Type` 40px down the screen, then Tab to it from the control before
+      // it. That is the owned-cards import button, the first control after the
+      // rail since DEC-1083; dec1083-shop-import-keyboard holds that one.
+      await sort.evaluate((el) => {
+        window.scrollTo(0, Math.round(el.getBoundingClientRect().top + window.scrollY) - 40);
+      });
+      expectWithin1px(await rail.evaluate((el) => el.getBoundingClientRect().top), 0);
+      await page.getByRole('button', { name: 'Import owned cards', exact: true })
+        .evaluate((el: HTMLElement) => el.focus({ preventScroll: true }));
+      await page.keyboard.press('Tab');
+      await expect(sort).toBeFocused();
+
+      const railBottom = await rail.evaluate((el) => el.getBoundingClientRect().bottom);
+      const sortTop = await sort.evaluate((el) => el.getBoundingClientRect().top);
+      expect(sortTop, `top of the focused control (the rail ends at ${railBottom})`).toBeGreaterThanOrEqual(railBottom);
     });
-    expectWithin1px(await rail.evaluate((el) => el.getBoundingClientRect().top), 0);
-    await page.getByRole('button', { name: 'Import owned cards', exact: true })
-      .evaluate((el: HTMLElement) => el.focus({ preventScroll: true }));
-    await page.keyboard.press('Tab');
-    await expect(sort).toBeFocused();
-
-    const railBottom = await rail.evaluate((el) => el.getBoundingClientRect().bottom);
-    const sortTop = await sort.evaluate((el) => el.getBoundingClientRect().top);
-    expect(sortTop, `top of the focused control (the rail ends at ${railBottom})`).toBeGreaterThanOrEqual(railBottom);
   });
-});
+}

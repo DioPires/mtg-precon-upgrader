@@ -10,6 +10,14 @@ body { background: var(--gv1-bg); color: var(--gv1-ink); }
    main's horizontal pad so the stat grid keeps full width — otherwise the
    BUDGET column wraps `$200-350` to two lines. */
 .gv1-app > main:has(.gv1-deck-guide) { padding-left: 0; padding-right: 0; }
+/* DEC-1024, DEC-1171: on a phone the 64px sides left a section, which adds
+   16px a side, a 160px column at 320px. 16px matches that section gutter and
+   the topbar's, and keeps a gutter on the screens that have none of their own
+   (the loading and error stubs, the 404 page). The guide's opt-out above and
+   the Combo Lab's are more specific, so they still win. */
+@media (max-width: 768px) {
+  .gv1-app > main { padding-left: var(--gv1-space-4); padding-right: var(--gv1-space-4); }
+}
 
 /* Phase 0 placeholder shell — replaced surface-by-surface in later phases. */
 .gv1-stub {
