@@ -1,10 +1,11 @@
 // DEC-1177 (DEC-1173 N2): a screen reader reads each empty state's message
 // alone. The ◇ of `.gv1-empty::before` has empty alternative text, and the
-// sigil span of each /shopping empty state has aria-hidden. Both still show.
+// sigil span of each /shopping empty state and of Compare's empty state has
+// aria-hidden. Both still show.
 //
-// The first two cases read Chromium's own accessibility tree (CDP), not the
-// name that Playwright computes: the text of a ::before is in Chromium's tree
-// only. The third reads the stylesheet that the page loads.
+// Every case but the third reads Chromium's own accessibility tree (CDP), not
+// the name that Playwright computes: the text of a ::before is in Chromium's
+// tree only. The third reads the stylesheet that the page loads.
 
 import { expect, test, type Page } from './support/test';
 
@@ -94,4 +95,19 @@ test('each `.gv1-empty::before` rule that the page loads keeps a plain `content`
     { selector: '.gv1-empty:before', content: ['content:"◇"', 'content:"◇"/""'] },
     { selector: '[data-gv1-screen=combolab] .gv1-empty:before', content: ['content:"◇"', 'content:"◇"/""'] },
   ]);
+});
+
+// Compare's "No decks loaded" state has the same sigil span as /shopping's.
+test('Compare with no decks loaded reads its message alone (DEC-1177)', async ({ page }) => {
+  await page.route('**/data/index.json', (route) => route.fulfill({ json: { commanders: [] } }));
+  await page.goto('/compare');
+  const message = 'No decks loaded.';
+  const empty = page.locator('.gv1-empty').filter({ hasText: message });
+  await expect(empty).toHaveCount(1);
+
+  // `.gv1-mono-xs` sets text-transform: uppercase.
+  expect(await spokenText(page, message)).toEqual(['NO DECKS LOADED.']);
+  // The two glyphs still show.
+  await expect(empty.locator('.gv1-rune')).toHaveText('◇');
+  expect(await beforeGlyph(page, message)).toMatch(/^"◇"/);
 });
