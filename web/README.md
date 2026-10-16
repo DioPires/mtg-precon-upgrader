@@ -30,9 +30,9 @@ Scryfall host from repository data, so a card gives the same answer on every run
   `prices_as_of` of `card-metadata.meta.json` every price of the file is that old, so /shopping
   sends batches. A /shopping case that proves "no request" sets `page.clock` to less than 24 h
   after `prices_as_of`; a case that proves the refresh sets it to more than 24 h after. A deck
-  page sends no price request for a deck card at any date, so a deck page case that proves
-  "no request" sets the clock to more than 24 h after. Write no date into a spec: read it from
-  the meta file.
+  page sends no request for a deck card at any date, so a deck page case that proves "no
+  request" sets the clock to more than 24 h after. Write no date into a spec: read it from the
+  meta file.
 - The app sends its card lookups as batches: `POST /cards/collection` with up to 75 names.
   The stub answers as Scryfall does: `{"object": "list", "not_found": [...], "data": [...]}`,
   with `data` in the order asked. A plain name, or the front face of a `//` card, matches
@@ -199,7 +199,10 @@ web-ci uploads it when the `e2e` job fails.
   POST counts as two starts: a request starts 1,200 ms or more after the last start, and only
   after the last answer has arrived. Inside a tab the spacing runs on `performance.now()`, so
   a step of the wall clock does not shorten it. The tabs of one origin share the bucket
-  through `navigator.locks` and the last start (wall time) in `localStorage`.
+  through `navigator.locks` and the last start (wall time) in `localStorage`. A tab keeps the
+  lock until the card cache has stored the answer, and 20 s after the start at most. After a
+  200, the next tab's batch finds those names in storage. After a 400 or a 422, the card cache
+  keeps the error in that tab's memory only, so the other tab asks again.
 - **Bucket 2** holds `/cards/autocomplete`, 120 ms apart. While a stop holds, the Atlas sends
   no autocomplete and keeps its own suggestions.
 - **The timeout.** A request with no answer after 20 s is aborted, and it counts as a rejected
@@ -214,20 +217,25 @@ web-ci uploads it when the `e2e` job fails.
 
 The card cache (`src/data/cardCache.ts`) takes every deck card from `data/card-metadata.json`
 before a page can show it: facts, USD price dated `prices_as_of`, and Scryfall's picture
-addresses on `cards.scryfall.io`.
+addresses on `cards.scryfall.io`. The loader fetches `card-metadata.meta.json` only with the
+file, and keeps the file 1 h in `localStorage` with that date, so a stored file keeps its own
+date after a deploy. A file without a readable date (no meta file, a failed one, or a
+`prices_as_of` that `Date.parse` cannot read) stays in memory and is not stored, so the next
+load asks again.
 
 - A name that the file lacks goes in the next batch. Names asked `first` (the hover, the
   commander art) go before the other lookups, and lookups go before refreshes. A `//` name
   goes out as its front face, two names with one front face go out once, and the answer is
-  matched by name, never by position. A name in `not_found` gets no other request for 24 h,
-  also after a reload. An answer with another status (a 400 or a 422) fails the batch's names
-  for 30 s and starts no stop.
-- /shopping alone asks again for a price older than 24 h. A deck page sends no price request
-  for a deck card at any date: a tile shows the deck file's highlight price first, else the
-  cache's price (the file's, or the price that /shopping refreshed in this browser inside
-  24 h). A refresh changes only the price and its date, and lives 24 h under `gv1-card:` next
-  to the file's entry; the file's price wins when the file is newer. A refresh that gets no
-  price keeps the price shown and is not asked again inside 24 h.
+  matched by name, never by position. A name whose front face is blank goes in no batch,
+  because one blank identifier fails the whole batch: it reads not found. A name in
+  `not_found` gets no other request for 24 h, also after a reload. An answer with another
+  status (a 400 or a 422) fails the batch's names for 30 s and starts no stop.
+- /shopping alone asks again for a price older than 24 h. A deck page sends no request for a
+  deck card at any date: a tile shows the deck file's highlight price first, else the cache's
+  price (the file's, or the price that /shopping refreshed in this browser inside 24 h). A
+  refresh changes only the price and its date, and lives 24 h under `gv1-card:` next to the
+  file's entry; the file's price wins when the file is newer. A refresh that gets no price
+  keeps the price shown and is not asked again inside 24 h.
 - A picture from the file that fails to load sends the card in a batch once; the answer's
   addresses replace the file's for 24 h.
 - /shopping shows the file's prices at first paint. Its estimate changes once, when the

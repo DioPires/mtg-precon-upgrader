@@ -30,9 +30,11 @@
 // At its turn a batch takes the waiting names in this order: the names asked
 // `first` (the hover, the commander art), the other lookups, then the refreshes.
 // A `//` name goes out as its front face, and two names with one front face go
-// out once. The answer is matched to the names by normalizeName() on the full
-// name and on the front face, never by position, and stored under the name that
-// the app asked for.
+// out once. A name whose front face is blank goes in no batch, as one blank
+// identifier makes Scryfall refuse the whole batch: at the batch's turn it
+// settles as not found, and nothing is sent for it (DEC-1153). The answer is
+// matched to the names by normalizeName() on the full name and on the front
+// face, never by position, and stored under the name that the app asked for.
 //
 // A name in the answer's `not_found` gets an error entry that lives 24 h in
 // storage: nobody asks for it again, also after a reload. An answer with another
@@ -489,6 +491,13 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
         continue;
       }
       const identifier = identifierOf(wanted.name);
+      // A blank identifier would fail the whole batch (a 400 or a 422).
+      if (!identifier) {
+        queue.splice(queue.indexOf(wanted), 1);
+        queued.delete(wanted.key);
+        settleName(wanted, null, true, 200, now());
+        continue;
+      }
       const id = normalizeName(identifier);
       if (!identifiers.has(id)) {
         if (identifiers.size >= BATCH_MAX) continue;
@@ -574,11 +583,15 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
     }
     for (const wanted of batch) {
       out.delete(wanted.key);
-      const card = answer ? cardFor(cards, wanted.name) : null;
-      if (wanted.lookup) settleLookup(wanted, card, answer !== null, status, t);
-      if (wanted.price) settlePrice(wanted, card, t);
-      if (wanted.pictures) settlePictures(wanted, card, t);
+      settleName(wanted, answer ? cardFor(cards, wanted.name) : null, answer !== null, status, t);
     }
+  }
+
+  /** Each part of one name: `answered` with no card is Scryfall's `not_found`. */
+  function settleName(wanted: Wanted, card: ScryfallCard | null, answered: boolean, status: number, t: number): void {
+    if (wanted.lookup) settleLookup(wanted, card, answered, status, t);
+    if (wanted.price) settlePrice(wanted, card, t);
+    if (wanted.pictures) settlePictures(wanted, card, t);
   }
 
   /** A batch that could not go (no fetch, or an address that the limiter refuses): its lookups fail. */
@@ -599,12 +612,17 @@ export function createCardCache(deps: CacheDeps = {}): CardCache {
         while (queue.length > 0) {
           const taken: { batch: Wanted[] } = { batch: [] };
           try {
-            const sent = await limiter.next('lookup', () => {
-              const { batch, identifiers } = takeBatch();
-              taken.batch = batch;
-              return batch.length > 0 ? collectionRequest(identifiers) : null;
-            });
-            if (sent) await settle(taken.batch, sent.response);
+            await limiter.next(
+              'lookup',
+              () => {
+                const { batch, identifiers } = takeBatch();
+                taken.batch = batch;
+                return batch.length > 0 ? collectionRequest(identifiers) : null;
+              },
+              // Bucket 1 holds its lock until the answer is stored, so the
+              // batch of another tab finds these names in storage (DEC-1153).
+              { settle: ({ response }) => settle(taken.batch, response) },
+            );
           } catch (err) {
             abandon(taken.batch, err);
           }
