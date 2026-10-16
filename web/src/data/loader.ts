@@ -264,6 +264,11 @@ interface PersistedEnvelope<T> {
   pricesAsOf?: string;
 }
 
+/** A price date counts only when Date.parse reads it, as in `cardCache.seed()` (DEC-1170). */
+function isReadableDate(value: unknown): value is string {
+  return typeof value === 'string' && Number.isFinite(Date.parse(value));
+}
+
 /** The four per-deck artifacts that are fetched but never persisted (DEC-942). */
 type DeckArtifacts = Pick<
   RawDeckBundle,
@@ -368,8 +373,8 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
       purgeStaleVersions();
     }
     try {
-      const env: PersistedEnvelope<T> = { fetchedAt: now(), payload };
-      if (pricesAsOf !== undefined) env.pricesAsOf = pricesAsOf;
+      // JSON.stringify drops `pricesAsOf` when it is undefined.
+      const env: PersistedEnvelope<T> = { fetchedAt: now(), payload, pricesAsOf };
       storage.setItem(STORAGE_PREFIX + key, JSON.stringify(env));
     } catch {
       // Quota exceeded — skip persistence; in-memory cache still works.
@@ -412,17 +417,19 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
   // and stores the file with that date in one envelope: a stored file keeps its
   // own date, also after a deploy that changes the meta file (DEC-1153).
   // A failed or empty file is neither kept nor persisted, and a file without a
-  // date (no meta file, or one that failed) is kept in memory but not
-  // persisted: the next load asks again (DEC-1131 N6).
+  // readable date (no meta file, a failed one, or a `prices_as_of` that
+  // Date.parse cannot read) is kept in memory but not persisted: the next load
+  // asks again (DEC-1131 N6, DEC-1170).
   async function loadCardMetadata(): Promise<RawCardMetadata> {
     if (memCardMetadata) return memCardMetadata;
     const existing = metadataInflight.get('card-metadata');
     if (existing) return existing;
     const promise = (async () => {
       const stored = readEnvelope<RawCardMetadata>('card-metadata');
-      // An envelope from before DEC-1153 has no date, and an empty file that an
+      // An envelope from before DEC-1153 has no date, an envelope whose date
+      // Date.parse cannot read has none either, and an empty file that an
       // earlier version kept has no card: each counts as none.
-      if (typeof stored?.pricesAsOf === 'string' && stored.payload && Object.keys(stored.payload).length > 0) {
+      if (isReadableDate(stored?.pricesAsOf) && stored.payload && Object.keys(stored.payload).length > 0) {
         memCardMetadata = stored.payload;
         memCardMetadataMeta = { prices_as_of: stored.pricesAsOf };
         seedCards(stored.payload, stored.pricesAsOf);
@@ -436,7 +443,7 @@ export function createDeckLoader(deps: LoaderDeps = {}): DeckLoader {
       memCardMetadata = data;
       memCardMetadataMeta = meta;
       seedCards(data, meta?.prices_as_of);
-      if (typeof meta?.prices_as_of === 'string') writePersisted('card-metadata', data, meta.prices_as_of);
+      if (isReadableDate(meta?.prices_as_of)) writePersisted('card-metadata', data, meta.prices_as_of);
       return data;
     })().finally(() => metadataInflight.delete('card-metadata'));
     metadataInflight.set('card-metadata', promise);
