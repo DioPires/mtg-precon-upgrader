@@ -2,6 +2,7 @@
 
 import { GV1CommanderArt } from '../molecules/GV1CommanderArt';
 import { GV1ManaPips } from '../atoms/GV1ManaPips';
+import { Glyph } from '../atoms/Glyph';
 import type { DeckFull } from '../../data/types';
 
 interface CommanderProps {
@@ -23,7 +24,7 @@ export function Commander({ deck }: CommanderProps) {
         <div className="gv1-cmd-body">
           <div className="gv1-cmd-eyebrow">
             <span className="gv1-mono-xs gv1-rune">
-              ◆ TOMUS №{String(deck.idx).padStart(2, '0')}
+              <Glyph>◆ </Glyph>TOMUS №{String(deck.idx).padStart(2, '0')}
             </span>
             <span className="gv1-mono-xs gv1-dim">· NOW SCRYING ·</span>
             <span className="gv1-mono-xs gv1-dim">BRACKET {deck.bracket}</span>

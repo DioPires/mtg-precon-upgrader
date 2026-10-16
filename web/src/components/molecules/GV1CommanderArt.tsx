@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { cardCache } from '../../data/cardCache';
 import { useCard } from '../../hooks/useCard';
+import { Glyph } from '../atoms/Glyph';
 
 type Status = 'loading' | 'loaded' | 'error';
 
@@ -81,7 +82,7 @@ export function GV1CommanderArt({ name, slug }: GV1CommanderArtProps) {
       </div>
       <div className="gv1-cmd-art-caption">
         <span className="gv1-mono-xs gv1-dim">
-          ◇ scryfall.com · art_crop
+          <Glyph>◇ </Glyph>scryfall.com · art_crop
         </span>
       </div>
     </div>

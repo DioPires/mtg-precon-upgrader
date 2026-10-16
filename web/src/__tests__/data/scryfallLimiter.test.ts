@@ -540,16 +540,20 @@ describe('DEC-1153: bucket 1 holds its lock until the answer is stored', () => {
 
   it('two tabs ask for the same 16 names, and the body of the answer takes 1,500 ms: each name goes once', async () => {
     const sends: Array<{ at: number; names: string[] }> = [];
-    // The answer's head comes at once; its body (response.json()) comes 1,500 ms later.
+    // The answer's head comes at once; its body ends 1,500 ms later.
     const fetchImpl = (async (_url: string, init?: RequestInit) => {
       const names = (JSON.parse(String(init?.body)) as { identifiers: Array<{ name: string }> }).identifiers.map((id) => id.name);
       sends.push({ at: Date.now() - T0, names });
-      const body = collectionJson(names);
-      return {
-        ok: true,
-        status: 200,
-        json: () => new Promise((resolve) => setTimeout(() => resolve(body), 1_500)),
-      } as unknown as Response;
+      const bytes = new TextEncoder().encode(JSON.stringify(collectionJson(names)));
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          setTimeout(() => {
+            controller.enqueue(bytes);
+            controller.close();
+          }, 1_500);
+        },
+      });
+      return new Response(body, { status: 200 });
     }) as unknown as typeof fetch;
     const locks = fakeLocks();
     const tabs = [0, 1].map(() =>

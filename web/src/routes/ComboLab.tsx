@@ -11,13 +11,15 @@
 // engine, completions). Everything data-side is the existing DEC-476 pipeline —
 // this file is presentation only.
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { cardCache } from '../data/cardCache';
 import { deckLoader } from '../data/loader';
 import { readOwnedEntries } from '../data/ownedCards';
 import { colorsToGlyphs } from '../data/normalize';
 import { GV1ManaPips } from '../components/atoms/GV1ManaPips';
+import { Glyph, GlyphText, GlyphWords } from '../components/atoms/Glyph';
+import { colorWords } from '../components/atoms/colorWords';
 import { useCard } from '../hooks/useCard';
 import { loadMatcherIndex } from '../data/spellbook';
 import type { SpellbookCombo, SpellbookComboTemplate } from '../data/spellbook';
@@ -56,6 +58,12 @@ import { verifyDeck } from '../lib/comboVerify';
 const NEAR_COLLAPSE = 8;
 const SYN_COLLAPSE = 6;
 const COMPLETION_MAX = 10;
+
+// What a screen reader hears for the arrows of strings from lib/ (DEC-1190):
+// → in a step or a verifier trace (lib/comboVerify.ts) reads "then", and ↔ in
+// a coupling label (lib/synergyMatch.ts, lib/nearMissComplete.ts) reads "pairs with".
+const STEP_WORDS = { '→': 'then' } as const;
+const COUPLING_WORDS = { '↔': 'pairs with' } as const;
 
 const EXAMPLE_LIST = [
   '1 Gravecrawler',
@@ -604,7 +612,9 @@ export function ComboLab() {
                 </div>
               ) : fleetStatus === 'loading' || !index ? (
                 <div className="gv1-empty gv1-lab-unscribed" aria-busy="true">
-                  <span>◇ consulting the curated corpus …</span>
+                  <span>
+                    <Glyph>◇ </Glyph>consulting the curated corpus …
+                  </span>
                 </div>
               ) : (
                 <div className="gv1-empty gv1-lab-unscribed">
@@ -618,7 +628,9 @@ export function ComboLab() {
               )
             ) : pastePhase === 'loading' ? (
               <div className="gv1-empty gv1-lab-unscribed" aria-busy="true">
-                <span>◇ consulting the corpus …</span>
+                <span>
+                  <Glyph>◇ </Glyph>consulting the corpus …
+                </span>
               </div>
             ) : (
               <div className="gv1-empty gv1-lab-unscribed">
@@ -701,7 +713,9 @@ function Rail({
           aria-pressed={mode === 'fleet'}
           onClick={() => setMode('fleet')}
         >
-          <span className="gv1-mono-xs gv1-dim gv1-lab-mode-tag">◈ mode i</span>
+          <span className="gv1-mono-xs gv1-dim gv1-lab-mode-tag">
+            <Glyph>◈ </Glyph>mode i
+          </span>
           <span className="gv1-lab-mode-name">Fleet deck</span>
         </button>
         <button
@@ -710,7 +724,9 @@ function Rail({
           aria-pressed={mode === 'paste'}
           onClick={() => setMode('paste')}
         >
-          <span className="gv1-mono-xs gv1-dim gv1-lab-mode-tag">◈ mode ii</span>
+          <span className="gv1-mono-xs gv1-dim gv1-lab-mode-tag">
+            <Glyph>◈ </Glyph>mode ii
+          </span>
           <span className="gv1-lab-mode-name">Paste decklist</span>
         </button>
       </div>
@@ -821,7 +837,7 @@ function Rail({
                 aria-busy={paste.phase === 'loading'}
                 onClick={paste.analyze}
               >
-                Analyze ⟶
+                Analyze<Glyph> ⟶</Glyph>
               </button>
               <button type="button" className="gv1-lab-more" onClick={paste.loadExample}>
                 Load example
@@ -849,12 +865,16 @@ function Rail({
         <div className="gv1-lab-block">
           <div className="gv1-lab-block-head">
             <span className="gv1-mono-xs gv1-dim">Contents</span>
-            <span className="gv1-mono-xs gv1-dim">§ XII</span>
+            <span className="gv1-mono-xs gv1-dim" aria-hidden="true">
+              § XII
+            </span>
           </div>
           <nav className="gv1-lab-toc" aria-label="Report contents">
             {toc.map((t) => (
               <button key={t.key} type="button" className="gv1-lab-toc-row" onClick={() => onToc(t.key)}>
-                <span className="gv1-lab-toc-folio">{t.folio}</span>
+                <span className="gv1-lab-toc-folio" aria-hidden="true">
+                  {t.folio}
+                </span>
                 <span className="gv1-lab-toc-label">{t.label}</span>
                 <span className="gv1-lab-toc-n">{t.n}</span>
               </button>
@@ -896,7 +916,13 @@ function Rail({
               disabled={!canExport}
               onClick={() => onExport('txt')}
             >
-              {copied === 'txt' ? 'Copied ◆' : 'Copy text'}
+              {copied === 'txt' ? (
+                <>
+                  Copied<Glyph> ◆</Glyph>
+                </>
+              ) : (
+                'Copy text'
+              )}
             </button>
             <button
               type="button"
@@ -904,7 +930,13 @@ function Rail({
               disabled={!canExport}
               onClick={() => onExport('md')}
             >
-              {copied === 'md' ? 'Copied ◆' : 'Copy markdown'}
+              {copied === 'md' ? (
+                <>
+                  Copied<Glyph> ◆</Glyph>
+                </>
+              ) : (
+                'Copy markdown'
+              )}
             </button>
             <button
               type="button"
@@ -912,7 +944,7 @@ function Rail({
               disabled={!canExport}
               onClick={() => onExport('dl-txt')}
             >
-              ⇣ .txt
+              <GlyphWords words="Download">⇣</GlyphWords> .txt
             </button>
             <button
               type="button"
@@ -920,7 +952,7 @@ function Rail({
               disabled={!canExport}
               onClick={() => onExport('dl-md')}
             >
-              ⇣ .md
+              <GlyphWords words="Download">⇣</GlyphWords> .md
             </button>
           </div>
         </div>
@@ -1244,7 +1276,9 @@ function Steps({ lines, label }: { lines: string[]; label: string }) {
       {lines.map((line, i) => (
         <div key={i} className="gv1-lab-step">
           <span className="gv1-lab-step-n">{String(i + 1).padStart(2, '0')}</span>
-          <p>{line}</p>
+          <p>
+            <GlyphText text={line} words={STEP_WORDS} />
+          </p>
         </div>
       ))}
     </div>
@@ -1298,7 +1332,8 @@ function ComboCard({ combo }: { combo: SpellbookCombo }) {
       )}
       <div className="gv1-lab-combo-foot">
         <a className="gv1-lab-link" href={combo.permalink} target="_blank" rel="noreferrer">
-          Why? — Commander Spellbook ↗
+          Why? — Commander Spellbook
+          <GlyphWords words=" (opens in a new tab)"> ↗</GlyphWords>
         </a>
       </div>
     </article>
@@ -1420,7 +1455,9 @@ function NearRow({ combo }: { combo: SpellbookCombo }) {
         className={'gv1-lab-dist' + (combo.distance > 1 ? ' gv1-lab-dist-2' : '')}
         title={`${combo.distance} piece${combo.distance > 1 ? 's' : ''} short`}
       >
-        −{combo.distance}
+        <GlyphWords words={`${combo.distance} piece${combo.distance > 1 ? 's' : ''} short`}>
+          −{combo.distance}
+        </GlyphWords>
       </span>
       <span className="gv1-lab-needs">
         {missing.cards.map((n, i) => (
@@ -1447,7 +1484,8 @@ function NearRow({ combo }: { combo: SpellbookCombo }) {
           </span>
         ))}
         <span className="gv1-lab-near-produce">
-          → {combo.produces.slice(0, 2).join(' · ')}
+          <GlyphWords words="produces ">→ </GlyphWords>
+          {combo.produces.slice(0, 2).join(' · ')}
           {combo.produces.length > 2 ? ` · +${combo.produces.length - 2}` : ''}
         </span>
       </span>
@@ -1456,7 +1494,8 @@ function NearRow({ combo }: { combo: SpellbookCombo }) {
           <span className="gv1-lab-pop">{combo.popularity.toLocaleString()} decks</span>
         )}
         <a className="gv1-lab-link" href={combo.permalink} target="_blank" rel="noreferrer">
-          spellbook ↗
+          spellbook
+          <GlyphWords words=" (opens in a new tab)"> ↗</GlyphWords>
         </a>
       </span>
     </div>
@@ -1497,8 +1536,13 @@ function SynRow({ cand, shape }: { cand: SynergyCandidate; shape: 'pair' | 'trip
         {cand.edges.map((e, i) => (
           <li key={`${e.from}-${e.to}-${e.fromFeature}-${e.toFeature}-${i}`} className="gv1-lab-edge">
             {e.from}
-            <span className="gv1-arrow">⟶</span>
-            {e.to} <span className="gv1-lab-edge-label">· {e.label}</span>
+            <span className="gv1-arrow">
+              <GlyphWords words=" to ">⟶</GlyphWords>
+            </span>
+            {e.to}{' '}
+            <span className="gv1-lab-edge-label">
+              · <GlyphText text={e.label} words={COUPLING_WORDS} />
+            </span>
           </li>
         ))}
       </ul>
@@ -1534,13 +1578,15 @@ function SynergySec({
     if (synergy?.deepAvailable) setShowDeep((v) => !v);
     else if (onDeepScan) onDeepScan();
   };
-  const deepLabel = deepScanning
-    ? '◇ scanning couplings …'
-    : synergy?.deepAvailable
-      ? showDeep
-        ? 'Hide triples & 4-cycles'
-        : `Deep couplings — triples & 4-cycles (${deepCount})`
-      : 'Deep couplings — scan triples & 4-cycles';
+  const deepLabel = deepScanning ? (
+    <>
+      <Glyph>◇ </Glyph>scanning couplings …
+    </>
+  ) : synergy?.deepAvailable ? (
+    showDeep ? 'Hide triples & 4-cycles' : `Deep couplings — triples & 4-cycles (${deepCount})`
+  ) : (
+    'Deep couplings — scan triples & 4-cycles'
+  );
 
   const pairsShown = synergy
     ? showAllSyn
@@ -1819,7 +1865,7 @@ function CompletionSec({
 
       {status === 'loading' && (
         <p className="gv1-lab-note" aria-busy="true">
-          ◇ loading the knowledge base &amp; prices …
+          <Glyph>◇ </Glyph>loading the knowledge base &amp; prices …
         </p>
       )}
       {status === 'error' && (
@@ -1831,7 +1877,8 @@ function CompletionSec({
       {status === 'ready' && result && (
         <>
           <p className="gv1-lab-note">
-            Color identity <span className="gv1-rune">{result.deckColorIdentity}</span> · legal in
+            Color identity <span className="gv1-rune" aria-hidden="true">{result.deckColorIdentity}</span>
+            <span className="gv1-sr-only">{colorWords(result.deckColorIdentity)}</span> · legal in
             Commander · searched {result.poolSize.toLocaleString()} pool cards in{' '}
             {result.elapsedMs.toFixed(0)}ms · {result.counts.droppedByColor.toLocaleString()}{' '}
             off-color
@@ -1932,7 +1979,12 @@ function CompSample({ t }: { t: TierCCompletion }) {
   const shown = t.couplings.slice(0, 2);
   return (
     <>
-      {shown.map((e) => e.label).join(' · ')}
+      {shown.map((e, i) => (
+        <Fragment key={i}>
+          {i > 0 && ' · '}
+          <GlyphText text={e.label} words={COUPLING_WORDS} />
+        </Fragment>
+      ))}
       {t.couplings.length > shown.length ? ` — and ${t.couplings.length - shown.length} more` : ''}
     </>
   );

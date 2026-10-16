@@ -6,6 +6,7 @@ import { useAllDecks } from '../hooks/useAllDecks';
 import { rememberLastDeck } from '../data/lastDeck';
 import { Scrying as ScryingOrganism } from '../components/organisms/Scrying';
 import { DeckSelector } from '../components/organisms/DeckSelector';
+import { Glyph } from '../components/atoms/Glyph';
 
 export function Scrying() {
   const { id } = useParams<{ id: string }>();
@@ -20,7 +21,7 @@ export function Scrying() {
   if (status === 'loading' || all.status === 'loading') {
     return (
       <section className="gv1-stub" aria-busy="true">
-        <p className="gv1-mono-xs gv1-dim">◇ scrying {id ?? '—'} …</p>
+        <p className="gv1-mono-xs gv1-dim"><Glyph>◇ </Glyph>scrying {id ?? '—'} …</p>
       </section>
     );
   }

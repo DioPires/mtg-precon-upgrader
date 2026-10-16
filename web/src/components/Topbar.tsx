@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { deckLoader } from '../data/loader';
 import { LAST_DECK_KEY } from '../data/lastDeck';
+import { Glyph } from './atoms/Glyph';
 
 function readLastDeck(): string | null {
   if (typeof window === 'undefined') return null;
@@ -136,7 +137,8 @@ export function Topbar() {
         >
           <span className="gv1-sigil-sm" aria-hidden="true">◈</span>
           <span className="gv1-mono-xs gv1-topbar-mobile-label">
-            §{activeItem.rune} <span className="gv1-rune">{activeItem.label}</span>
+            <Glyph>§{activeItem.rune} </Glyph>
+            <span className="gv1-rune">{activeItem.label}</span>
           </span>
           <span className="gv1-mono-xs gv1-dim" aria-hidden="true">{menuOpen ? '▴' : '▾'}</span>
         </button>

@@ -95,7 +95,10 @@ test('the Combo Lab empty state reads its text alone (DEC-1177)', async ({ page 
 // keeps the one before it. Vite's default build targets include Firefox 78 and
 // Safari 14; the form with alternative text came in Firefox 128 and Safari 17.4.
 // Chromium parses both, so only the shipped stylesheet shows the first one.
-test('each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177)', async ({ page }) => {
+// DEC-1190 widened the case from `.gv1-empty::before` to every `::before` and
+// `::after` rule that shows text: a screen reader reads that text unless the
+// rule gives it the alternative text ''.
+test('each `::before` and `::after` rule with text that the page loads keeps a plain `content` before the form with alternative text (DEC-1177, DEC-1190)', async ({ page }) => {
   await page.goto('/shopping');
   const css = await page.evaluate(async () => {
     // The app's own sheets only: the Google Fonts sheet is on another host, and a run with the fonts blocked cannot fetch it.
@@ -107,15 +110,23 @@ test('each `.gv1-empty::before` rule that the page loads keeps a plain `content`
   });
   // Quotes, `::` and spaces as the minifier writes them do not matter here.
   const tidy = (text: string) => text.trim().replace(/'/g, '"').replace(/::/g, ':').replace(/\s*([:/])\s*/g, '$1');
-  const rules = [...css.matchAll(/([^{}]*\.gv1-empty::?before)\s*\{([^}]*)\}/g)].map(([, selector, body]) => ({
-    selector: tidy(selector).replace(/"/g, ''),
-    content: body.split(';').map(tidy).filter((declaration) => declaration.startsWith('content:')),
-  }));
+  const rules = [...css.matchAll(/([^{}]*::?(?:before|after))\s*\{([^}]*)\}/g)]
+    .map(([, selector, body]) => ({
+      selector: tidy(selector).replace(/"/g, ''),
+      content: body.split(';').map(tidy).filter((declaration) => declaration.startsWith('content:')),
+    }))
+    // A rule with no `content`, or with `content: ''` or `none`, shows no text.
+    .filter(({ content }) => content.length > 0 && !['content:""', 'content:none'].includes(content[0]));
 
-  expect(rules).toEqual([
-    { selector: '.gv1-empty:before', content: ['content:"◇"', 'content:"◇"/""'] },
-    { selector: '[data-gv1-screen=combolab] .gv1-empty:before', content: ['content:"◇"', 'content:"◇"/""'] },
+  expect(rules.map((rule) => rule.selector)).toEqual([
+    '.gv1-empty:before',
+    '.gv1-lab-steps summary:before',
+    '[data-gv1-screen=combolab] .gv1-empty:before',
   ]);
+  for (const { selector, content } of rules) {
+    const shown = content[0].slice('content:'.length);
+    expect(content, selector).toEqual([`content:${shown}`, `content:${shown}/""`]);
+  }
 });
 
 // Compare's "No decks loaded" state has the same sigil span as /shopping's.
