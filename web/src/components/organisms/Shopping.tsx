@@ -892,7 +892,7 @@ export function Shopping({ decks: allDecksProp }: ShoppingProps) {
 
       <p className="gv1-mono-xs gv1-dim gv1-shop-foot">
         Basic lands (Plains, Island, Swamp, Mountain, Forest, Wastes, snow-covered) are excluded.
-        Cards needed by multiple decks count once per deck — three decks each wanting Sol Ring shows 3 in the buy list.
+        Cards needed by multiple decks count once per deck — three decks each wanting Sol Ring shows 3 in the buy list.{' '}
         {shownPricesDate ? `Prices are USD from Scryfall, as of ${shownPricesDate}.` : 'Prices are USD from Scryfall.'}
       </p>
     </>

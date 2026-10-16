@@ -1,0 +1,73 @@
+diff --git a/web/src/__tests__/components/Shopping.test.tsx b/web/src/__tests__/components/Shopping.test.tsx
+index fa3b07b..b7d916a 100644
+--- a/web/src/__tests__/components/Shopping.test.tsx
++++ b/web/src/__tests__/components/Shopping.test.tsx
+@@ -754,6 +754,7 @@ describe('Shopping organism', () => {
+       expect(empty.children).toHaveLength(2);
+       const [glyph, text] = empty.children;
+       expect(glyph).toHaveAttribute('aria-hidden', 'true');
++      expect(glyph).toHaveClass('gv1-rune');
+       expect(glyph.textContent).toBe(sigil);
+       expect(text).not.toHaveAttribute('aria-hidden');
+       expect(spoken(empty)).toBe(message);
+diff --git a/web/src/styles/combo-lab.css b/web/src/styles/combo-lab.css
+index bdcfb30..f9f39df 100644
+--- a/web/src/styles/combo-lab.css
++++ b/web/src/styles/combo-lab.css
+@@ -252,7 +252,7 @@
+ /* Empty states — ported from the prototype's gv1-states.css (production
+    styles.css has a different .gv1-empty), scoped to this screen. */
+ [data-gv1-screen="combolab"] .gv1-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:48px 32px;border:1px dashed var(--gv1-line);background:linear-gradient(180deg,rgba(124,200,146,0.02),transparent 60%);font-family:var(--gv1-serif);font-style:italic;font-size:15px;color:var(--gv1-ink-dim);text-align:center;text-wrap:balance}
+-[data-gv1-screen="combolab"] .gv1-empty::before{content:'◇';content:'◇' / '';font-style:normal;font-size:24px;color:var(--gv1-rune-dim);letter-spacing:0.4em}
++[data-gv1-screen="combolab"] .gv1-empty::before{content:'◇';content:'◇' / '';font-style:normal;font-size:24px;color:var(--gv1-rune);letter-spacing:0.4em}
+ [data-gv1-screen="combolab"] .gv1-empty-title{font-size:18px;color:var(--gv1-ink);font-style:normal}
+ [data-gv1-screen="combolab"] .gv1-empty-hint{font-family:var(--gv1-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;font-style:normal;color:var(--gv1-ink-dimmer)}
+ 
+diff --git a/web/tests/dec1177-empty-sigils.spec.ts b/web/tests/dec1177-empty-sigils.spec.ts
+index d63b2d2..18d5f24 100644
+--- a/web/tests/dec1177-empty-sigils.spec.ts
++++ b/web/tests/dec1177-empty-sigils.spec.ts
+@@ -35,6 +35,21 @@ async function spokenText(page: Page, text: string): Promise<string[]> {
+   }
+ }
+ 
++/** The size, style, spacing and colour of that `::before`, and the colour of `--gv1-rune-dim` in the same place. */
++async function beforeStyle(page: Page, text: string) {
++  return page
++    .locator('.gv1-empty')
++    .filter({ hasText: text })
++    .evaluate((el) => {
++      const before = getComputedStyle(el, '::before');
++      const probe = el.appendChild(document.createElement('i'));
++      probe.style.color = 'var(--gv1-rune-dim)';
++      const runeDim = getComputedStyle(probe).color;
++      probe.remove();
++      return { fontSize: before.fontSize, fontStyle: before.fontStyle, letterSpacing: before.letterSpacing, color: before.color, runeDim };
++    });
++}
++
+ /** The glyph that the `::before` of the `.gv1-empty` that holds `text` shows. */
+ async function beforeGlyph(page: Page, text: string): Promise<string> {
+   return page
+@@ -71,6 +86,9 @@ test('the Combo Lab empty state reads its text alone (DEC-1177)', async ({ page
+     'OR PRESS “LOAD EXAMPLE” FOR A CLASSIC COMBO PILE',
+   ]);
+   expect(await beforeGlyph(page, title)).toMatch(/^"◇"/);
++  // combo-lab.css rewrote the whole rule: its glyph keeps its size, style, spacing and colour.
++  const { runeDim, ...glyph } = await beforeStyle(page, title);
++  expect(glyph).toEqual({ fontSize: '24px', fontStyle: 'normal', letterSpacing: '9.6px', color: runeDim });
+ });
+ 
+ // A browser that cannot parse `content: '◇' / ''` drops that declaration and
+@@ -80,7 +98,10 @@ test('the Combo Lab empty state reads its text alone (DEC-1177)', async ({ page
+ test('each `.gv1-empty::before` rule that the page loads keeps a plain `content` before the form with alternative text (DEC-1177)', async ({ page }) => {
+   await page.goto('/shopping');
+   const css = await page.evaluate(async () => {
+-    const links = [...document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')];
++    // The app's own sheets only: the Google Fonts sheet is on another host, and a run with the fonts blocked cannot fetch it.
++    const links = [...document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')].filter(
++      (link) => new URL(link.href).origin === location.origin,
++    );
+     const files = await Promise.all(links.map((link) => fetch(link.href).then((r) => r.text())));
+     return [...files, ...[...document.querySelectorAll('style')].map((style) => style.textContent ?? '')].join('\n');
+   });
