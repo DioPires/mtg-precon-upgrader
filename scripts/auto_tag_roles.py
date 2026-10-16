@@ -189,18 +189,21 @@ def _detect_removal_board(oracle: str, type_line: str) -> tuple[str, float] | No
     return None
 
 
+# A target that can be only a land is land destruction, not removal-spot; "destroy
+# target artifact, enchantment, or land" matches at "artifact" (DEC-1184).
 _SPOT_TARGET = re.compile(
     r"(?:destroy|exile) target (?:creature|artifact|enchantment|planeswalker|"
     r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
-    r"attacking creature|blocking creature|land)"
+    r"attacking creature|blocking creature)"
 )
 
 # Read just after a _SPOT_TARGET match: "exile target creature card from your
 # graveyard" targets a card in a graveyard, not a permanent (DEC-1143).
 # "controls" ends the target's own noun phrase ("an opponent controls"), so a
 # later "return a creature card from your graveyard" is another clause (DEC-1161).
+# "then" starts another clause too (DEC-1184).
 _GRAVEYARD_CARD = re.compile(
-    r"(?:(?!target\b|controls?\b)[a-z\-/, ])*?\bcards? (?:with [^.;\n]*? )?(?:from|in) "
+    r"(?:(?!target\b|controls?\b|then\b)[a-z\-/, ])*?\bcards? (?:with [^.;\n]*? )?(?:from|in) "
     r"(?:a|your|an opponent's|target player's|that player's|their) graveyard"
 )
 
@@ -212,7 +215,13 @@ _SAC_OUTLET = re.compile(r"(?:destroy|exile) target (?:creature|permanent) you c
 
 def _is_blink(oracle: str, t: re.Match) -> bool:
     end = min(i for i in (oracle.find(".", t.end()), oracle.find("\n", t.end()), len(oracle)) if i >= 0)
-    return bool(_BLINK_RETURN.search(oracle, t.end(), end))
+    r = _BLINK_RETURN.search(oracle, t.end(), end)
+    if r and re.match(r"(?: tapped)? under your control", oracle[r.end():end]):
+        # A return "under your control" is a blink only of a card that was yours;
+        # of another player's card it is a steal (DEC-1184). Read from the start of
+        # the target (a sac outlet's match holds "you control") to ", then".
+        return bool(re.match(r"(?:[^,]|,(?! then\b))*? you (?:control|own)\b", oracle[t.start():r.start()]))
+    return bool(r)
 
 
 def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | None:
@@ -235,7 +244,9 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
         oracle,
     ):
         return ("removal-spot", 0.8)
-    if re.search(r"target creature gets -\d+/-\d+", oracle):
+    # "-2/-2", "-X/-X", and a cut to toughness beside a gain to power: "+3/-3", "+X/-X" (DEC-1184).
+    # "you may have target creature get -2/-2" too.
+    if re.search(r"target creature gets? (?:-\d+/-\d+|[+-](?:\d+|x)/-(?:[1-9]\d*|x))", oracle):
         return ("removal-spot", 0.65)
     return None
 
