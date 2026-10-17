@@ -1,0 +1,19 @@
+......................................................F.......................................            [100%]
+=================================== FAILURES ===================================
+___ ToughnessCutKillTests.test_qualifier_with_a_semicolon_is_another_clause ____
+
+self = <tests.test_auto_tag_roles.ToughnessCutKillTests testMethod=test_qualifier_with_a_semicolon_is_another_clause>
+
+    def test_qualifier_with_a_semicolon_is_another_clause(self):  # kills Y2: ";" dropped from the qualifier
+        card = _card(
+            "Gloomtether Brute",
+            "Creature — Ogre",
+            "{2}: Tap target creature an opponent controls; this creature gets +2/-2 until end of turn.",
+        )
+>       self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+E       AssertionError: 'removal-spot' == 'removal-spot'
+
+tests/test_auto_tag_roles.py:488: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_auto_tag_roles.py::ToughnessCutKillTests::test_qualifier_with_a_semicolon_is_another_clause
+1 failed, 93 passed, 39 subtests passed in 0.04s

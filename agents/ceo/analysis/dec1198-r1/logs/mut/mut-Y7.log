@@ -1,0 +1,27 @@
+....................................................F.........................................            [100%]
+=================================== FAILURES ===================================
+_ ToughnessCutKillTests.test_qualified_power_cut_that_then_destroys_is_removal_spot _
+
+self = <tests.test_auto_tag_roles.ToughnessCutKillTests testMethod=test_qualified_power_cut_that_then_destroys_is_removal_spot>
+
+    def test_qualified_power_cut_that_then_destroys_is_removal_spot(self):  # kills Y7: the guard without the qualifier
+        card = _card(
+            "Brineclutch Horror",
+            "Creature — Horror",
+            "When this creature enters, target creature an opponent controls gets -3/-0 until end of turn. "
+            "Then if that creature's power is 0 or less, destroy it.",
+        )
+>       self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+E       AssertionError: Tuples differ: (None, 0.0) != ('removal-spot', 0.65)
+E       
+E       First differing element 0:
+E       None
+E       'removal-spot'
+E       
+E       - (None, 0.0)
+E       + ('removal-spot', 0.65)
+
+tests/test_auto_tag_roles.py:515: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_auto_tag_roles.py::ToughnessCutKillTests::test_qualified_power_cut_that_then_destroys_is_removal_spot
+1 failed, 93 passed, 39 subtests passed in 0.04s

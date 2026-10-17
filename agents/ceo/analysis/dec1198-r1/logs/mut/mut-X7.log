@@ -1,0 +1,19 @@
+............................................................F.................................            [100%]
+=================================== FAILURES ===================================
+_ CantripKillTests.test_draw_at_the_beginning_of_the_next_upkeep_is_not_card_draw _
+
+self = <tests.test_auto_tag_roles.CantripKillTests testMethod=test_draw_at_the_beginning_of_the_next_upkeep_is_not_card_draw>
+
+    def test_draw_at_the_beginning_of_the_next_upkeep_is_not_card_draw(self):  # kills X7: (?!the next end step)
+        card = _card(
+            "Lantern of Tomorrow",
+            "Instant",
+            "Tap target creature.\nDraw a card at the beginning of the next turn's upkeep.",
+        )
+>       self.assertNotEqual(atr.classify(card)[0], "card-draw")
+E       AssertionError: 'card-draw' == 'card-draw'
+
+tests/test_auto_tag_roles.py:600: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_auto_tag_roles.py::CantripKillTests::test_draw_at_the_beginning_of_the_next_upkeep_is_not_card_draw
+1 failed, 93 passed, 39 subtests passed in 0.04s

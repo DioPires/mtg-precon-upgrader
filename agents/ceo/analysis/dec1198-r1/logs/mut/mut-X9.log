@@ -1,0 +1,15 @@
+...............................................................F..............................            [100%]
+=================================== FAILURES ===================================
+____ CantripKillTests.test_target_player_draws_a_card_once_is_not_card_draw ____
+
+self = <tests.test_auto_tag_roles.CantripKillTests testMethod=test_target_player_draws_a_card_once_is_not_card_draw>
+
+    def test_target_player_draws_a_card_once_is_not_card_draw(self):  # kills X9: the cantrip read takes "draw" only
+        card = _card("Quillfeather Gift", "Instant", "You gain 2 life. Target player draws a card.")
+>       self.assertNotEqual(atr.classify(card)[0], "card-draw")
+E       AssertionError: 'card-draw' == 'card-draw'
+
+tests/test_auto_tag_roles.py:604: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_auto_tag_roles.py::CantripKillTests::test_target_player_draws_a_card_once_is_not_card_draw
+1 failed, 93 passed, 39 subtests passed in 0.04s

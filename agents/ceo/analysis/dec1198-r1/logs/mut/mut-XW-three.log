@@ -1,0 +1,39 @@
+..............................................................................................            [100%]
+=================================== FAILURES ===================================
+___ DrawCountKillTests.test_each_count_word_reads_card_draw (label='three') ____
+
+self = <tests.test_auto_tag_roles.DrawCountKillTests testMethod=test_each_count_word_reads_card_draw>
+
+    def test_each_count_word_reads_card_draw(self):
+        for label, type_line, oracle_text in (
+            ("draws", "Sorcery", "Target player draws two cards."),  # kills X10
+            ("one", "Enchantment", "Whenever a creature you control dies, draw one card."),
+            ("three", "Sorcery", "Draw three cards."),
+            ("four", "Sorcery", "Draw four cards."),
+            ("five", "Sorcery", "Draw five cards."),
+            ("six", "Sorcery", "Draw six cards."),
+            ("seven", "Sorcery", "Draw seven cards."),
+            ("eight", "Sorcery", "Draw eight cards."),
+            ("nine", "Sorcery", "Draw nine cards."),
+            ("ten", "Sorcery", "Draw ten cards."),
+            ("x", "Sorcery", "Draw X cards."),
+            ("digits", "Sorcery", "Draw 3 cards."),
+            ("that many", "Sorcery", "Sacrifice any number of artifacts, then draw that many cards."),
+            ("equal to", "Sorcery", "Draw cards equal to the number of creatures you control."),  # kills X5
+        ):
+            with self.subTest(label=label):
+                card = _card("Countless Folio", type_line, oracle_text)
+>               self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+E               AssertionError: Tuples differ: (None, 0.0) != ('card-draw', 0.85)
+E               
+E               First differing element 0:
+E               None
+E               'card-draw'
+E               
+E               - (None, 0.0)
+E               + ('card-draw', 0.85)
+
+tests/test_auto_tag_roles.py:629: AssertionError
+=========================== short test summary info ============================
+SUBFAILED(label='three') tests/test_auto_tag_roles.py::DrawCountKillTests::test_each_count_word_reads_card_draw
+1 failed, 94 passed, 38 subtests passed in 0.04s

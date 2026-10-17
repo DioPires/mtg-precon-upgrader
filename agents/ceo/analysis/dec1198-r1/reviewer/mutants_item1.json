@@ -1,0 +1,142 @@
+[
+ [
+  "M1 header-line step removed",
+  "    while start > 0 and oracle.startswith(\"\u2022\", start):  # a mode: read from its header line\n        start = oracle.rfind(\"\\n\", 0, start - 1) + 1\n",
+  ""
+ ],
+ [
+  "M2 (?!the next) removed",
+  "\\bat the beginning of (?!the next)",
+  "\\bat the beginning of "
+ ],
+ [
+  "M3 sacrifice this|discard this removed",
+  "^(?:(?!sacrifice this|discard this)[^(\\n])*:",
+  "^(?:[^(\\n])*:"
+ ],
+ [
+  "M4 reminder-text exclusion removed",
+  "[^(\\n])*:",
+  "[^\\n])*:"
+ ],
+ [
+  "M5 len(draws) != 1 read as < 1",
+  "len(draws) != 1",
+  "len(draws) < 1"
+ ],
+ [
+  "A1 drop (?! for each)",
+  "card\\b(?! for each)\"",
+  "card\\b\""
+ ],
+ [
+  "A2 drop \\bwhenever\\b",
+  "r\"\\bwhenever\\b|\\bat the beginning",
+  "r\"\\bat the beginning"
+ ],
+ [
+  "A3 drop at the beginning of",
+  "|\\bat the beginning of (?!the next)|",
+  "|"
+ ],
+ [
+  "A4 cantrip reads 'a card' only",
+  "r\"draws? (?:a|one) card\\b(?! for each)\"",
+  "r\"draws? a card\\b(?! for each)\""
+ ],
+ [
+  "A5 drop 'draw cards equal to'",
+  "cards?|\"\n    r\"draw cards equal to\"",
+  "cards?\""
+ ],
+ [
+  "A6 drop 'discard this' from the cost lookahead",
+  "(?!sacrifice this|discard this)",
+  "(?!sacrifice this)"
+ ],
+ [
+  "A7 (?!the next) as (?!the next end step)",
+  "(?!the next)",
+  "(?!the next end step)"
+ ],
+ [
+  "A8 len(draws) != 1 read as > 1",
+  "len(draws) != 1",
+  "len(draws) > 1"
+ ],
+ [
+  "A9 cantrip reads 'draw' only, not 'draws'",
+  "r\"draws? (?:a|one) card\\b",
+  "r\"draw (?:a|one) card\\b"
+ ],
+ [
+  "A10 _DRAW reads 'draw' only, not 'draws'",
+  "r\"draws? (?:a|one|two|",
+  "r\"draw (?:a|one|two|"
+ ],
+ [
+  "A11 drop ^ from the cost alternative",
+  "|^(?:(?!sacrifice this",
+  "|(?:(?!sacrifice this"
+ ],
+ [
+  "D-one drop 'one' from _DRAW",
+  "|one|",
+  "|"
+ ],
+ [
+  "D-three drop 'three' from _DRAW",
+  "|three|",
+  "|"
+ ],
+ [
+  "D-four drop 'four' from _DRAW",
+  "|four|",
+  "|"
+ ],
+ [
+  "D-five drop 'five' from _DRAW",
+  "|five|",
+  "|"
+ ],
+ [
+  "D-six drop 'six' from _DRAW",
+  "|six|",
+  "|"
+ ],
+ [
+  "D-seven drop 'seven' from _DRAW",
+  "|seven|",
+  "|"
+ ],
+ [
+  "D-eight drop 'eight' from _DRAW",
+  "|eight|",
+  "|"
+ ],
+ [
+  "D-nine drop 'nine' from _DRAW",
+  "|nine|",
+  "|"
+ ],
+ [
+  "D-ten drop 'ten' from _DRAW",
+  "|ten|",
+  "|"
+ ],
+ [
+  "D-x drop 'x' from _DRAW",
+  "|x|",
+  "|"
+ ],
+ [
+  "D-that many drop 'that many' from _DRAW",
+  "|that many|",
+  "|"
+ ],
+ [
+  "D-digits drop \\d+ from _DRAW",
+  "|that many|\\d+)",
+  "|that many)"
+ ]
+]
