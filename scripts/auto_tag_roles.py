@@ -270,9 +270,11 @@ _DRAW = re.compile(
     r"draw cards equal to"
 )
 # Read on the draw's own line. A cost before ":" makes the draw repeatable,
-# unless the cost spends the card itself (DEC-478).
+# unless the cost spends the card itself: it sacrifices the card, discards it,
+# or exiles it from your graveyard (DEC-478, DEC-1198).
 _REPEATABLE_DRAW = re.compile(
-    r"\bwhenever\b|\bat the beginning of (?!the next)|^(?:(?!sacrifice this|discard this)[^(\n])*:"
+    r"\bwhenever\b|\bat the beginning of (?!the next)|"
+    r"^(?:(?!sacrifice this|discard this|exile this card from your graveyard)[^(\n])*:"
 )
 
 
