@@ -612,9 +612,7 @@ export function ComboLab() {
                 </div>
               ) : fleetStatus === 'loading' || !index ? (
                 <div className="gv1-empty gv1-lab-unscribed" aria-busy="true">
-                  <span>
-                    <Glyph>◇ </Glyph>consulting the curated corpus …
-                  </span>
+                  <span>consulting the curated corpus …</span>
                 </div>
               ) : (
                 <div className="gv1-empty gv1-lab-unscribed">
@@ -628,9 +626,7 @@ export function ComboLab() {
               )
             ) : pastePhase === 'loading' ? (
               <div className="gv1-empty gv1-lab-unscribed" aria-busy="true">
-                <span>
-                  <Glyph>◇ </Glyph>consulting the corpus …
-                </span>
+                <span>consulting the corpus …</span>
               </div>
             ) : (
               <div className="gv1-empty gv1-lab-unscribed">

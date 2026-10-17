@@ -194,6 +194,34 @@ for (const [label, path, text] of [
   });
 }
 
+/**
+ * DEC-1199 (owner card on DEC-1182): a Combo Lab loading line shows one mark,
+ * the ◇ of its box's `::before` (combo-lab.css). Its text holds no ◇.
+ */
+async function expectOneLabMark(page: Page, text: string) {
+  const box = page.locator('.gv1-empty').filter({ hasText: text });
+  await expect(box).toHaveText(text);
+  expect(await box.textContent()).not.toContain('◇');
+  expect(await box.evaluate((el) => getComputedStyle(el, '::before').content)).toMatch(/^"◇"/);
+}
+
+test('loading-combos-fleet: the loading line shows one ◇ (DEC-1199)', async ({ page }) => {
+  const release = await holdData(page);
+  await page.goto(`/combos?mode=fleet&deck=${DECK}`);
+  await expectOneLabMark(page, 'consulting the curated corpus …');
+  await release();
+});
+
+test('loading-combos-paste: the loading line shows one ◇ (DEC-1199)', async ({ page }) => {
+  await page.goto('/combos?mode=paste');
+  await expect(page.getByText('Paste a decklist to consult the corpus')).toBeVisible();
+  const release = await holdData(page);
+  await page.locator('.gv1-lab-textarea').fill('1 Basalt Monolith\n1 Forsaken Monument');
+  await page.getByRole('button', { name: /analyze/i }).click();
+  await expectOneLabMark(page, 'consulting the corpus …');
+  await release();
+});
+
 test('codex: the № sort chip reads "deck number"', async ({ page }) => {
   await page.goto('/codex');
   await page.locator('.gv1-codex-card').first().waitFor();
