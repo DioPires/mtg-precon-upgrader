@@ -189,10 +189,19 @@ def _detect_removal_board(oracle: str, type_line: str) -> tuple[str, float] | No
     return None
 
 
+# "Destroy up to one target nonland permanent", "exile up to one other target creature"
+# and an "up to" bounce name a target too (DEC-1191, DEC-1197). Behind "up to", a target that you
+# control matches nothing here: it is neither removal nor a sac outlet, and the later
+# detectors read it.
+_UP_TO = (
+    r"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\d+) (?:other )?"
+    r"(?!target (?:[a-z\-]+ ){1,3}?you control\b))?"
+)
+
 # A target that can be only a land is land destruction, not removal-spot; "destroy
 # target artifact, enchantment, or land" matches at "artifact" (DEC-1184).
 _SPOT_TARGET = re.compile(
-    r"(?:destroy|exile) target (?:creature|artifact|enchantment|planeswalker|"
+    r"(?:destroy|exile) " + _UP_TO + r"target (?:creature|artifact|enchantment|planeswalker|"
     r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
     r"attacking creature|blocking creature)"
 )
@@ -201,20 +210,29 @@ _SPOT_TARGET = re.compile(
 # graveyard" targets a card in a graveyard, not a permanent (DEC-1143).
 # "controls" ends the target's own noun phrase ("an opponent controls"), so a
 # later "return a creature card from your graveyard" is another clause (DEC-1161).
-# "then" starts another clause too (DEC-1184).
+# "then" starts another clause too (DEC-1184). A target "from the battlefield and/or
+# creature cards from graveyards" holds a permanent too (Angel of Serenity, DEC-1197).
 _GRAVEYARD_CARD = re.compile(
-    r"(?:(?!target\b|controls?\b|then\b)[a-z\-/, ])*?\bcards? (?:with [^.;\n]*? )?(?:from|in) "
-    r"(?:a|your|an opponent's|target player's|that player's|their) graveyard"
+    r"(?:(?!target\b|controls?\b|then\b|battlefield\b)[a-z\-/, ])*?\bcards? "
+    r"(?:with [^.;\n]*? |of each card type )?(?:from|in) "
+    r"(?:(?:a|your|an opponent's|target player's|that player's|their|defending player's) graveyard|graveyards)"
 )
 
 # Read in the target's own sentence: "exile target creature, then return it to
 # the battlefield" is a blink, and the target stays on the battlefield (DEC-1161).
 _BLINK_RETURN = re.compile(r"\breturn (?:it|that card|those cards) to the battlefield")
 _SAC_OUTLET = re.compile(r"(?:destroy|exile) target (?:creature|permanent) you control")
+# Read just after the sentence of an "up to" target: "exile up to one target creature. Return
+# that card to the battlefield … at the beginning of the next end step" is a blink (DEC-1197).
+_NEXT_RETURN = re.compile(
+    r"\. (?:at the beginning of the next end step, )?return (?:it|that card|those cards) to the battlefield"
+)
 
 
 def _is_blink(oracle: str, t: re.Match) -> bool:
     end = min(i for i in (oracle.find(".", t.end()), oracle.find("\n", t.end()), len(oracle)) if i >= 0)
+    if "up to" in t[0] and _NEXT_RETURN.match(oracle, end):
+        return True
     r = _BLINK_RETURN.search(oracle, t.end(), end)
     if r and re.match(r"(?: tapped)? under your control", oracle[r.end():end]):
         # A return "under your control" is a blink only of a card that was yours;
@@ -256,7 +274,7 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
             return ("utility", 0.6)
         return ("removal-spot", 0.85)
     if re.search(
-        r"return target (?:creature|nonland permanent|permanent) to (?:its|their) owner['’]?s? hand",
+        r"return " + _UP_TO + r"target (?:creature|nonland permanent|permanent) to (?:its|their) owner['’]?s? hand",
         oracle,
     ):
         return ("removal-spot", 0.8)
@@ -265,34 +283,125 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
     return None
 
 
+# "That player draws an additional card" is a draw too (Howling Mine, DEC-1197).
 _DRAW = re.compile(
     r"draws? (?:a|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\d+) cards?|"
+    r"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\d+) additional cards?|"
     r"draw cards equal to"
 )
 # Read on the draw's own line. A cost before ":" makes the draw repeatable,
 # unless the cost spends the card itself: it sacrifices the card, discards it,
-# or exiles it from your graveyard (DEC-478, DEC-1198).
+# or exiles it from any zone (DEC-478, DEC-1198, DEC-1197). A Saga line that names two
+# or more chapters ("i, ii — ") gives its draw once for each chapter, and a draw "if an
+# opponent would draw" comes on each of their draws (Notion Thief, DEC-1197).
 _REPEATABLE_DRAW = re.compile(
-    r"\bwhenever\b|\bat the beginning of (?!the next)|"
-    r"^(?:(?!sacrifice this|discard this|exile this card from your graveyard)[^(\n])*:"
+    r"\bwhenever\b|\bat the beginning of (?!the next)|^[ivx]+(?:, [ivx]+)+ — |\bif an opponent would draw\b|"
+    r"^(?:(?!sacrifice this|discard this|exile this (?:card|creature|artifact)\b)[^(\n])*:"
+)
+# The subject of a draw by another player, read in the draw's sentence just before the draw:
+# "each opponent draws", "whenever a player draws", "if an opponent would draw", and "that
+# player" after "each opponent's draw step". "You and target opponent each draw" stays yours,
+# and so does "that player" after "each player's draw step" (DEC-1197).
+_OTHER_DRAW = re.compile(
+    r"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|defending player|each other player|"
+    r"whenever (?:a|another|enchanted) player|if (?:a|another) player|"
+    r"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may |each )?$"
 )
 
 
-def _is_cantrip(oracle: str) -> bool:
-    """One draw of one card, outside a repeatable ability, nets 0 cards (DEC-478)."""
-    draws = list(_DRAW.finditer(oracle))
-    if len(draws) != 1 or not re.match(r"draws? (?:a|one) card\b(?! for each)", oracle[draws[0].start():]):
+def _my_draws(oracle: str) -> list[re.Match]:
+    """The draws of `_DRAW` whose subject may be you."""
+    draws = []
+    for m in _DRAW.finditer(oracle):
+        sentence = max(oracle.rfind(".", 0, m.start()), oracle.rfind("\n", 0, m.start())) + 1
+        if not _OTHER_DRAW.search(oracle, sentence, m.start()):
+            draws.append(m)
+    return draws
+
+
+def _own_names(card: dict) -> tuple[str, ...]:
+    """The names by which a card's text names itself: each face, and a legend's short name ("ed-e")."""
+    names = {card.get("name") or ""} | {face.get("name") or "" for face in card.get("card_faces") or []}
+    names |= {name.split(",")[0] for name in names}
+    return tuple(sorted({name.lower() for name in names if name}, key=len, reverse=True))
+
+
+_COUNT = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+_COUNT_WORD = "|".join(_COUNT)
+# "Draw two cards, then discard a card": the discard counts against the draw (DEC-1197).
+_LOOT = re.compile(rf"draws? ({_COUNT_WORD}) (?:additional )?cards?,? then discards? ({_COUNT_WORD}) cards?")
+_ONE_DRAW = re.compile(rf"draws? ({_COUNT_WORD}) (?:additional )?cards?\b(?! for each)")
+# A discard just before the draw counts against it too: "discard a card, then draw a card",
+# "you may discard a card. if you do, draw a card", and a cost "discard a card: draw a card",
+# also in a Blood token's reminder text. "Sacrifice an artifact or discard a card" may spend no
+# card from your hand, so it does not count (DEC-1197).
+_RUMMAGE = re.compile(
+    rf"(?<!\bor )discards? ({_COUNT_WORD}) cards?(?: at random)?(?:,? then|\. if (?:you|they) do,) "
+    r"(?:you |they )?(?:may )?$"
+)
+_COST_DISCARD = re.compile(rf"\bdiscard ({_COUNT_WORD}) cards?\b")
+# A card discarded to cast the spell counts against its draw too (Tormenting Voice, DEC-1197).
+_DISCARD_COST = re.compile(rf"as an additional cost to cast this spell, discard ({_COUNT_WORD}) cards?")
+# Words, outside reminder text, by which the card gives its one draw again (DEC-1198 probe P3, DEC-1197).
+_DRAW_AGAIN = re.compile(
+    r"\b(?:gravestorm|storm|replicate)\b|\bcopy (?:it|this spell)\b|same mode more than once|"
+    r"return this card from your graveyard to your hand|becomes prepared|"
+    r"\benters or (?:dies|is put into a graveyard)|"
+    r"\b(?:flashback|buyback|cipher|harmonize)\b|\bescape—|\binvestigate twice\b"
+)
+
+
+def _draw_net(oracle: str, m: re.Match) -> int | None:
+    """The cards that one use of the draw adds: N drawn less M discarded by its loot, its rummage
+    or its cost. None when N is no number ("x", "that many", "a card for each")."""
+    loot = _LOOT.match(oracle, m.start())
+    drawn = loot or _ONE_DRAW.match(oracle, m.start())
+    if not drawn:
+        return None
+    net = _COUNT[drawn[1]] - (_COUNT[loot[2]] if loot else 0)
+    start = oracle.rfind("\n", 0, m.start()) + 1
+    rummage = _RUMMAGE.search(oracle, start, m.start())
+    if rummage:
+        net -= _COUNT[rummage[1]]
+    colon = oracle.rfind(":", start, m.start())
+    if colon >= 0 and not re.search(r'[()"]', oracle[colon : m.start()]):
+        cost_start = max(oracle.rfind("(", start, colon), oracle.rfind('"', start, colon), start)
+        cost = _COST_DISCARD.search(oracle, cost_start, colon)
+        if cost:
+            net -= _COUNT[cost[1]]
+    return net
+
+
+def _adding_draws(oracle: str) -> list[re.Match]:
+    """Your draws that add a card on each use. A loot or rummage that discards as many cards as it
+    draws adds none, even when it repeats (DEC-1197)."""
+    return [m for m in _my_draws(oracle) if (net := _draw_net(oracle, m)) is None or net > 0]
+
+
+def _is_cantrip(oracle: str, draws: list[re.Match], names: tuple[str, ...] = ()) -> bool:
+    """One draw that adds one card or none, outside a repeatable ability, nets 0 cards or fewer (DEC-478):
+    a draw of N cards less the cards that its loot or its cost discards, N - M of 1 or less (DEC-1197).
+    A draw that the card gives again nets N - M once more, so it must add no card (DEC-1197)."""
+    if len(draws) != 1:
+        return False
+    net = _draw_net(oracle, draws[0])
+    cost = _DISCARD_COST.search(oracle)
+    again = _DRAW_AGAIN.search(re.sub(r"\([^)]*\)", "", oracle))
+    if net is None or net - (_COUNT[cost[1]] if cost else 0) > (0 if again else 1):
         return False
     start = oracle.rfind("\n", 0, draws[0].start()) + 1
     while start > 0 and oracle.startswith("•", start):  # a mode: read from its header line
         start = oracle.rfind("\n", 0, start - 1) + 1
     end = oracle.find("\n", draws[0].start())
     line = oracle[start : end if end >= 0 else len(oracle)]
+    for name in names:  # "sacrifice stone of erech" spends the card as "sacrifice this" does (DEC-1197)
+        line = re.sub(rf"\b{re.escape(name)}\b", "this", line)
     return not _REPEATABLE_DRAW.search(line)
 
 
-def _detect_card_draw(oracle: str, type_line: str) -> tuple[str, float] | None:
-    if not _DRAW.search(oracle) or _is_cantrip(oracle):
+def _detect_card_draw(oracle: str, type_line: str, card: dict) -> tuple[str, float] | None:
+    draws = _adding_draws(oracle)
+    if not draws or _is_cantrip(oracle, draws, _own_names(card)):
         return None
     # Creature with an "enters" trigger that draws is more often classified
     # engine/value than pure card-draw — hand off to human review.
@@ -407,7 +516,9 @@ def classify(card_data: dict) -> tuple[str | None, float]:
     type_lc = type_line.lower()
     for fn in DETECTORS:
         result = (
-            fn(oracle_lc, type_lc, card_data) if fn is _detect_land else fn(oracle_lc, type_lc)
+            fn(oracle_lc, type_lc, card_data)
+            if fn in (_detect_land, _detect_card_draw)
+            else fn(oracle_lc, type_lc)
         )
         if result:
             return result
