@@ -292,19 +292,21 @@ _COUNT = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
 _COUNT_WORD = "|".join(_COUNT)
 # "Draw two cards, then discard a card": the discard counts against the draw (DEC-1197).
 _LOOT = re.compile(rf"draws? ({_COUNT_WORD}) cards?,? then discards? ({_COUNT_WORD}) cards?")
+_ONE_DRAW = re.compile(rf"draws? ({_COUNT_WORD}) cards?\b(?! for each)")
+# A card discarded to cast the spell counts against its draw too (Tormenting Voice, DEC-1197).
+_DISCARD_COST = re.compile(rf"as an additional cost to cast this spell, discard ({_COUNT_WORD}) cards?")
 
 
 def _is_cantrip(oracle: str, names: tuple[str, ...] = ()) -> bool:
     """One draw that adds one card or none, outside a repeatable ability, nets 0 cards or fewer (DEC-478):
-    a draw of one card, or a loot of N cards that discards N - 1 or more (DEC-1197)."""
+    a draw of N cards less the cards that its loot or its cost discards, N - M of 1 or less (DEC-1197)."""
     draws = list(_DRAW.finditer(oracle))
     if len(draws) != 1:
         return False
     loot = _LOOT.match(oracle, draws[0].start())
-    if loot:
-        if _COUNT[loot[1]] - _COUNT[loot[2]] > 1:
-            return False
-    elif not re.match(r"draws? (?:a|one) card\b(?! for each)", oracle[draws[0].start():]):
+    drawn = loot or _ONE_DRAW.match(oracle, draws[0].start())
+    cost = _DISCARD_COST.search(oracle)
+    if not drawn or _COUNT[drawn[1]] - (_COUNT[loot[2]] if loot else 0) - (_COUNT[cost[1]] if cost else 0) > 1:
         return False
     start = oracle.rfind("\n", 0, draws[0].start()) + 1
     while start > 0 and oracle.startswith("•", start):  # a mode: read from its header line

@@ -723,6 +723,22 @@ class OneShotLootTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("card-draw", 0.85))
 
 
+class DiscardCostTests(unittest.TestCase):
+    """A card discarded to cast the spell counts against its draw (DEC-1197)."""
+
+    def test_discard_one_to_draw_two_is_not_card_draw(self):
+        card = _card(
+            "Restless Refrain", "Sorcery", "As an additional cost to cast this spell, discard a card.\nDraw two cards."
+        )
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_discard_one_to_draw_three_is_card_draw(self):
+        card = _card(
+            "Reckless Recital", "Sorcery", "As an additional cost to cast this spell, discard a card.\nDraw three cards."
+        )
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 

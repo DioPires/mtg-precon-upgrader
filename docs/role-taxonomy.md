@@ -47,7 +47,7 @@ Land-search convention: basic/typed land ramp and fetchlands stay `ramp` or `lan
 
 `card-draw` as a primary role requires one of:
 
-- **Net ≥ +1 card.** Count the card itself as spent. Night's Whisper spends one card and draws two, so it nets +1 and qualifies. Divination nets +1. A cantrip that draws exactly one card nets 0 and does not qualify. A draw of one card that the card gives once, such as an enters trigger, cycling or one Clue token, nets 0 too.
+- **Net ≥ +1 card.** Count the card itself as spent. Night's Whisper spends one card and draws two, so it nets +1 and qualifies. Divination nets +1. A cantrip that draws exactly one card nets 0 and does not qualify. A draw of one card that the card gives once, such as an enters trigger, cycling or one Clue token, nets 0 too. A card discarded as a cost counts as spent too: Tormenting Voice discards one card and draws two, so it nets 0.
 - **Repeatable draw.** A permanent or engine that draws over multiple turns qualifies regardless of per-trigger netting. Rhystic Study and Esper Sentinel qualify even when a single trigger only draws one card.
 
 **Net-zero loot and filter effects are not `card-draw`.** Faithless Looting-class effects (draw N, discard N) and pure filters (scry/surveil riders) select cards but do not add them. Tag them `utility` by default.
