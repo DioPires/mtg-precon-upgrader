@@ -663,6 +663,19 @@ class SagaChapterTests(unittest.TestCase):
         self.assertNotEqual(atr.classify(card)[0], "card-draw")
 
 
+class AdditionalDrawTests(unittest.TestCase):
+    """"Draws an additional card" is a draw (DEC-1197)."""
+
+    def test_additional_card_at_each_draw_step_is_card_draw(self):
+        for oracle_text in (
+            "At the beginning of each player's draw step, that player draws an additional card.",
+            "At the beginning of each player's draw step, that player draws two additional cards.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Clatterhorn Mine", "Artifact", oracle_text)
+                self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 

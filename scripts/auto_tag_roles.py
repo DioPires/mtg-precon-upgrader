@@ -265,8 +265,10 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
     return None
 
 
+# "That player draws an additional card" is a draw too (Howling Mine, DEC-1197).
 _DRAW = re.compile(
     r"draws? (?:a|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\d+) cards?|"
+    r"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\d+) additional cards?|"
     r"draw cards equal to"
 )
 # Read on the draw's own line. A cost before ":" makes the draw repeatable,
