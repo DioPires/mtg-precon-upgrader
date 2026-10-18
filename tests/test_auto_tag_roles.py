@@ -418,6 +418,46 @@ class UpToTargetTests(unittest.TestCase):
         self.assertNotEqual(atr.classify(card)[0], "removal-spot")
 
 
+class ExileUpToTests(unittest.TestCase):
+    """"Exile up to N target" names a target, with a graveyard guard and a next-sentence guard (DEC-1197)."""
+
+    def test_exile_up_to_one_other_target_creature_is_removal_spot(self):
+        card = _card("Stillwater Warden", "Creature — Elemental", "When this creature enters, exile up to one other "
+                     "target creature.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_exile_from_the_battlefield_and_or_from_graveyards_is_removal_spot(self):
+        card = _card(
+            "Seraph of Stillness",
+            "Creature — Angel",
+            "Flying\nWhen this creature enters, you may exile up to three other target creatures from the battlefield "
+            "and/or creature cards from graveyards until this creature leaves the battlefield.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_exile_up_to_n_cards_from_a_graveyard_is_not_removal_spot(self):
+        for oracle_text in (
+            "Whenever this creature attacks and isn't blocked, you may exile up to two target creature cards from "
+            "defending player's graveyard.",
+            "Exile up to five target creature cards from graveyards. You gain 1 life for each card exiled this way.",
+            "When this creature enters, exile up to one target nonland card of each card type from your graveyard.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Gravegnaw Badger", "Creature — Badger", oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_exile_up_to_one_target_that_the_next_sentence_returns_is_not_removal_spot(self):
+        for oracle_text in (
+            "Whenever this creature becomes tapped, exile up to one target nonland, nontoken permanent. Return that "
+            "card to the battlefield under its owner's control at the beginning of the next end step.",
+            "Whenever this creature attacks, exile up to one other target nonland permanent. At the beginning of the "
+            "next end step, return that card to the battlefield under its owner's control.",
+        ):
+            with self.subTest(oracle_text=oracle_text):
+                card = _card("Mistveil Herder", "Creature — Kithkin Wizard", oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+
 class ToughnessCutTests(unittest.TestCase):
     """A cut to a target creature's toughness is removal-spot, also beside a gain to power."""
 

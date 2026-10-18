@@ -189,8 +189,8 @@ def _detect_removal_board(oracle: str, type_line: str) -> tuple[str, float] | No
     return None
 
 
-# "Destroy up to one target nonland permanent" and "destroy up to one other target
-# creature" name a target too (DEC-1191, DEC-1197). Behind "up to", a target that you
+# "Destroy up to one target nonland permanent", "exile up to one other target creature"
+# and an "up to" bounce name a target too (DEC-1191, DEC-1197). Behind "up to", a target that you
 # control matches nothing here: it is neither removal nor a sac outlet, and the later
 # detectors read it.
 _UP_TO = (
@@ -201,7 +201,7 @@ _UP_TO = (
 # A target that can be only a land is land destruction, not removal-spot; "destroy
 # target artifact, enchantment, or land" matches at "artifact" (DEC-1184).
 _SPOT_TARGET = re.compile(
-    r"(?:destroy " + _UP_TO + r"|exile )target (?:creature|artifact|enchantment|planeswalker|"
+    r"(?:destroy|exile) " + _UP_TO + r"target (?:creature|artifact|enchantment|planeswalker|"
     r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
     r"attacking creature|blocking creature)"
 )
@@ -210,20 +210,29 @@ _SPOT_TARGET = re.compile(
 # graveyard" targets a card in a graveyard, not a permanent (DEC-1143).
 # "controls" ends the target's own noun phrase ("an opponent controls"), so a
 # later "return a creature card from your graveyard" is another clause (DEC-1161).
-# "then" starts another clause too (DEC-1184).
+# "then" starts another clause too (DEC-1184). A target "from the battlefield and/or
+# creature cards from graveyards" holds a permanent too (Angel of Serenity, DEC-1197).
 _GRAVEYARD_CARD = re.compile(
-    r"(?:(?!target\b|controls?\b|then\b)[a-z\-/, ])*?\bcards? (?:with [^.;\n]*? )?(?:from|in) "
-    r"(?:a|your|an opponent's|target player's|that player's|their) graveyard"
+    r"(?:(?!target\b|controls?\b|then\b|battlefield\b)[a-z\-/, ])*?\bcards? "
+    r"(?:with [^.;\n]*? |of each card type )?(?:from|in) "
+    r"(?:(?:a|your|an opponent's|target player's|that player's|their|defending player's) graveyard|graveyards)"
 )
 
 # Read in the target's own sentence: "exile target creature, then return it to
 # the battlefield" is a blink, and the target stays on the battlefield (DEC-1161).
 _BLINK_RETURN = re.compile(r"\breturn (?:it|that card|those cards) to the battlefield")
 _SAC_OUTLET = re.compile(r"(?:destroy|exile) target (?:creature|permanent) you control")
+# Read just after the sentence of an "up to" target: "exile up to one target creature. Return
+# that card to the battlefield … at the beginning of the next end step" is a blink (DEC-1197).
+_NEXT_RETURN = re.compile(
+    r"\. (?:at the beginning of the next end step, )?return (?:it|that card|those cards) to the battlefield"
+)
 
 
 def _is_blink(oracle: str, t: re.Match) -> bool:
     end = min(i for i in (oracle.find(".", t.end()), oracle.find("\n", t.end()), len(oracle)) if i >= 0)
+    if "up to" in t[0] and _NEXT_RETURN.match(oracle, end):
+        return True
     r = _BLINK_RETURN.search(oracle, t.end(), end)
     if r and re.match(r"(?: tapped)? under your control", oracle[r.end():end]):
         # A return "under your control" is a blink only of a card that was yours;
