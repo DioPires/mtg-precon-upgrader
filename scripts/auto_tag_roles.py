@@ -224,6 +224,22 @@ def _is_blink(oracle: str, t: re.Match) -> bool:
     return bool(r)
 
 
+# A short qualifier may stand between "target creature" and "gets": "target creature an
+# opponent controls gets", "target creature with flying gets". "you control" may not, nor
+# a comma, which starts another clause ("target creature becomes black, gets +1/-1") (DEC-1191).
+# "you may have target creature get -2/-2" reads too.
+_TARGET_CREATURE_GETS = r"target creature(?: (?:(?!you control\b)[^.,;\n]){1,40}?)? gets? "
+# A cut to toughness: "-2/-2", "-X/-X", and beside a gain to power "+3/-3", "+X/-X" (DEC-1184).
+# A cut to power alone ("-3/-0") stops one attack; it is no answer (DEC-1191).
+_TOUGHNESS_CUT = re.compile(_TARGET_CREATURE_GETS + r"[+-](?:\d+|x)/-(?:[1-9]\d*|x)")
+# A power cut is an answer when its sentence, or the next one, then destroys the creature
+# at power 0 or less (Depressurize, DEC-1191).
+_POWER_CUT_KILL = re.compile(
+    _TARGET_CREATURE_GETS
+    + r"-(?:\d+|x)/-0\b[^.\n]*(?:\. ?)?[^.\n]*?\bpower is 0 or less, destroy (?:it|that creature)\b"
+)
+
+
 def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | None:
     m = next(
         (
@@ -244,22 +260,39 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
         oracle,
     ):
         return ("removal-spot", 0.8)
-    # "-2/-2", "-X/-X", and a cut to toughness beside a gain to power: "+3/-3", "+X/-X" (DEC-1184).
-    # "you may have target creature get -2/-2" too.
-    if re.search(r"target creature gets? (?:-\d+/-\d+|[+-](?:\d+|x)/-(?:[1-9]\d*|x))", oracle):
+    if _TOUGHNESS_CUT.search(oracle) or _POWER_CUT_KILL.search(oracle):
         return ("removal-spot", 0.65)
     return None
 
 
+_DRAW = re.compile(
+    r"draws? (?:a|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\d+) cards?|"
+    r"draw cards equal to"
+)
+# Read on the draw's own line. A cost before ":" makes the draw repeatable,
+# unless the cost spends the card itself: it sacrifices the card, discards it,
+# or exiles it from your graveyard (DEC-478, DEC-1198).
+_REPEATABLE_DRAW = re.compile(
+    r"\bwhenever\b|\bat the beginning of (?!the next)|"
+    r"^(?:(?!sacrifice this|discard this|exile this card from your graveyard)[^(\n])*:"
+)
+
+
+def _is_cantrip(oracle: str) -> bool:
+    """One draw of one card, outside a repeatable ability, nets 0 cards (DEC-478)."""
+    draws = list(_DRAW.finditer(oracle))
+    if len(draws) != 1 or not re.match(r"draws? (?:a|one) card\b(?! for each)", oracle[draws[0].start():]):
+        return False
+    start = oracle.rfind("\n", 0, draws[0].start()) + 1
+    while start > 0 and oracle.startswith("•", start):  # a mode: read from its header line
+        start = oracle.rfind("\n", 0, start - 1) + 1
+    end = oracle.find("\n", draws[0].start())
+    line = oracle[start : end if end >= 0 else len(oracle)]
+    return not _REPEATABLE_DRAW.search(line)
+
+
 def _detect_card_draw(oracle: str, type_line: str) -> tuple[str, float] | None:
-    has_draw = (
-        re.search(
-            r"draws? (?:a|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\d+) cards?",
-            oracle,
-        )
-        or "draw cards equal to" in oracle
-    )
-    if not has_draw:
+    if not _DRAW.search(oracle) or _is_cantrip(oracle):
         return None
     # Creature with an "enters" trigger that draws is more often classified
     # engine/value than pure card-draw — hand off to human review.

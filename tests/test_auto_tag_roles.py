@@ -416,10 +416,40 @@ class ToughnessCutTests(unittest.TestCase):
         card = _card("Brashfire Rally", "Instant", "Target creature gets +2/-0 until end of turn.")
         self.assertNotEqual(atr.classify(card)[0], "removal-spot")
 
-    def test_cut_to_power_only_keeps_mains_read(self):
-        # PR #78 keeps main's read of "-N/-0" (DEC-1184 ruling R1); DEC-1191 changes this case.
+    def test_cut_to_power_only_is_not_removal_spot(self):
+        # A cut to power stops one attack; it does not answer the creature (DEC-1184 ruling R1).
         card = _card("Dullwit Hex", "Instant", "Target creature gets -3/-0 until end of turn.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_cut_to_power_that_then_destroys_the_creature_is_removal_spot(self):
+        card = _card(
+            "Crushing Depths",
+            "Instant",
+            "Target creature gets -3/-0 until end of turn. Then if that creature's power is 0 or less, destroy it.",
+        )
         self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_cut_to_toughness_of_a_qualified_target_is_removal_spot(self):
+        card = _card(
+            "Gloomfang Stalker",
+            "Creature — Beast Horror",
+            "When this creature enters, target creature an opponent controls gets -2/-2 until end of turn.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_cut_to_toughness_of_a_target_you_control_is_not_removal_spot(self):
+        card = _card("Reckless Overdrive", "Instant", "Target creature you control gets +2/-1 until end of turn.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_qualifier_with_a_comma_is_another_clause(self):
+        # The cut lands only on a creature that it cannot kill; the card is a pump.
+        card = _card(
+            "Giantsbane Fury",
+            "Instant",
+            "If target creature has toughness 5 or greater, it gets +4/-4 until end of turn. Otherwise, it gets "
+            "+4/-0 until end of turn.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
 
     def test_cut_to_the_toughness_of_this_creature_is_not_removal_spot(self):
         card = _card("Glassback Drake", "Creature — Drake", "Flying\n{R}: This creature gets +2/-2 until end of turn.")
@@ -436,6 +466,179 @@ class ToughnessCutTests(unittest.TestCase):
             "When this creature dies, you may have target creature get -2/-2 until end of turn.",
         )
         self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+
+class ToughnessCutKillTests(unittest.TestCase):
+    """Each part of `_TARGET_CREATURE_GETS` and `_POWER_CUT_KILL` has a case (DEC-1198 B3)."""
+
+    def test_qualifier_of_more_than_twenty_characters_is_read(self):  # kills Y1: {1,40} as {1,20}
+        card = _card(
+            "Skybane Hex",
+            "Instant",
+            "Target creature an opponent controls with flying gets -3/-3 until end of turn.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_qualifier_with_a_semicolon_is_another_clause(self):  # kills Y2: ";" dropped from the qualifier
+        card = _card(
+            "Gloomtether Brute",
+            "Creature — Ogre",
+            "{2}: Tap target creature an opponent controls; this creature gets +2/-2 until end of turn.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_power_cut_that_then_destroys_that_creature_is_removal_spot(self):  # kills Y4: "destroy it" only
+        card = _card(
+            "Crushing Tide",
+            "Instant",
+            "Target creature gets -3/-0 until end of turn. Then if that creature's power is 0 or less, "
+            "destroy that creature.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_x_power_cut_that_then_destroys_is_removal_spot(self):  # kills Y6: x dropped from the guard
+        card = _card(
+            "Wilting Undertow",
+            "Instant",
+            "Target creature gets -X/-0 until end of turn, where X is the number of cards in your hand. "
+            "Then if that creature's power is 0 or less, destroy it.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+    def test_qualified_power_cut_that_then_destroys_is_removal_spot(self):  # kills Y7: the guard without the qualifier
+        card = _card(
+            "Brineclutch Horror",
+            "Creature — Horror",
+            "When this creature enters, target creature an opponent controls gets -3/-0 until end of turn. "
+            "Then if that creature's power is 0 or less, destroy it.",
+        )
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.65))
+
+
+class CantripTests(unittest.TestCase):
+    """One draw of one card that the card gives once nets 0 cards, so it is not card-draw (DEC-478)."""
+
+    def test_one_shot_draw_of_one_card_is_not_card_draw(self):
+        for name, type_line, oracle_text in (
+            ("Millwater Glance", "Instant", "Target player mills two cards.\nDraw a card."),
+            ("Hearthward Scout", "Creature — Human Scout", "When this creature enters, draw a card."),
+            (
+                "Duneplod Beast",
+                "Creature — Beast",
+                "Trample\nCycling {2} ({2}, Discard this card: Draw a card.)",
+            ),
+            (
+                "Clueward Inspector",
+                "Creature — Human Detective",
+                'When this creature enters, investigate. (Create a Clue token. It\'s an artifact with "{2}, '
+                'Sacrifice this token: Draw a card.")',
+            ),
+            ("Brassleaf Trinket", "Artifact", "{1}, Sacrifice this artifact: Draw a card."),
+            (
+                # The cost before ":" is in reminder text: cycling of the cards in your hand.
+                "Tomeshade Heron",
+                "Creature — Bird Wizard",
+                "Flying\nEach creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw "
+                "a card.)",
+            ),
+            (
+                "Dusktide Stall",
+                "Instant",
+                "Tap target creature.\nAt the beginning of the next end step, draw a card.",
+            ),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, type_line, oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_repeatable_draw_or_a_draw_of_two_is_card_draw(self):
+        for name, type_line, oracle_text in (
+            ("Gravewatch Ledger", "Enchantment", "Whenever a creature you control dies, draw a card."),
+            ("Inkwell Lens", "Artifact", "{T}: Draw a card."),
+            (
+                "Skyrider Courier",
+                "Creature — Bird Scout",
+                "Flying\nWhenever this creature attacks, choose one —\n• Draw a card.\n• You gain 2 life.",
+            ),
+            ("Twofold Insight", "Sorcery", "Draw two cards."),
+            (
+                "Echoing Augury",
+                "Sorcery",
+                "Draw a card.\nDraw a card at the beginning of the next turn's upkeep.",
+            ),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, type_line, oracle_text)
+                self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
+class CantripKillTests(unittest.TestCase):
+    """Each part of `_is_cantrip` and `_REPEATABLE_DRAW` has a case (DEC-1198 B1)."""
+
+    def test_draw_a_card_for_each_is_card_draw(self):  # kills X1: (?! for each) dropped
+        card = _card("Tallyhorn Census", "Sorcery", "Draw a card for each creature you control.")
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+    def test_draw_at_the_beginning_of_your_upkeep_is_card_draw(self):  # kills X3: "at the beginning of" dropped
+        card = _card("Dawnquill Almanac", "Enchantment", "At the beginning of your upkeep, draw a card.")
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+    def test_draw_one_card_once_is_not_card_draw(self):  # kills X4: the cantrip read takes "a card" only
+        card = _card("Mistveil Nudge", "Instant", "Tap target creature.\nDraw one card.")
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_discard_this_card_outside_reminder_text_is_not_card_draw(self):  # kills X6: "discard this" dropped
+        card = _card("Tidewhisper Skiff", "Creature — Merfolk Scout", "Flying\n{1}{U}, Discard this card: Draw a card.")
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_draw_at_the_beginning_of_the_next_upkeep_is_not_card_draw(self):  # kills X7: (?!the next end step)
+        card = _card(
+            "Lantern of Tomorrow",
+            "Instant",
+            "Tap target creature.\nDraw a card at the beginning of the next turn's upkeep.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_target_player_draws_a_card_once_is_not_card_draw(self):  # kills X9: the cantrip read takes "draw" only
+        card = _card("Quillfeather Gift", "Instant", "You gain 2 life. Target player draws a card.")
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+
+class DrawCountKillTests(unittest.TestCase):
+    """Each count word of `_DRAW` reads card-draw (DEC-1198 B2)."""
+
+    def test_each_count_word_reads_card_draw(self):
+        for label, type_line, oracle_text in (
+            ("draws", "Sorcery", "Target player draws two cards."),  # kills X10
+            ("one", "Enchantment", "Whenever a creature you control dies, draw one card."),
+            ("three", "Sorcery", "Draw three cards."),
+            ("four", "Sorcery", "Draw four cards."),
+            ("five", "Sorcery", "Draw five cards."),
+            ("six", "Sorcery", "Draw six cards."),
+            ("seven", "Sorcery", "Draw seven cards."),
+            ("eight", "Sorcery", "Draw eight cards."),
+            ("nine", "Sorcery", "Draw nine cards."),
+            ("ten", "Sorcery", "Draw ten cards."),
+            ("x", "Sorcery", "Draw X cards."),
+            ("digits", "Sorcery", "Draw 3 cards."),
+            ("that many", "Sorcery", "Sacrifice any number of artifacts, then draw that many cards."),
+            ("equal to", "Sorcery", "Draw cards equal to the number of creatures you control."),  # kills X5
+        ):
+            with self.subTest(label=label):
+                card = _card("Countless Folio", type_line, oracle_text)
+                self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
+class GraveyardCostFaultTests(unittest.TestCase):
+    """Fault case of B4 (probe P2): it fails on the head and passes with the fix."""
+
+    def test_draw_behind_exile_this_card_from_your_graveyard_is_not_card_draw(self):
+        card = _card(
+            "Ashveil Courier",
+            "Creature — Spirit Scout",
+            "Menace\n{2}{B}, Exile this card from your graveyard: Draw a card.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
 
 
 class ProtectionPatternTests(unittest.TestCase):
@@ -586,7 +789,8 @@ class ProtectionExclusionTests(unittest.TestCase):
         card = _card(
             "Invented Ward",
             "Instant",
-            "Target creature you control gains hexproof until end of turn.\nDraw a card.",
+            # Two cards: one card is a cantrip, which is not card-draw (DEC-1191).
+            "Target creature you control gains hexproof until end of turn.\nDraw two cards.",
         )
         self.assertEqual(atr.classify(card), ("card-draw", 0.85))
 
