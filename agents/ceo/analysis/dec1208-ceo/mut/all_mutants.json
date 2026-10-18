@@ -1,0 +1,447 @@
+[
+[
+"I1-a one chapter repeats (+ as *)",
+"^[ivx]+(?:, [ivx]+)+ — ",
+"^[ivx]+(?:, [ivx]+)* — "
+],
+[
+"I1-b (?!the next) dropped on the rewritten line",
+"\\bat the beginning of (?!the next)|^[ivx]",
+"\\bat the beginning of |^[ivx]"
+],
+[
+"I1-c whenever dropped on the rewritten line",
+"r\"\\bwhenever\\b|\\bat the beginning",
+"r\"\\bat the beginning"
+],
+[
+"I2-one dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-three dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-four dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-five dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-six dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|five|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-seven dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|five|six|eight|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-eight dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-nine dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-ten dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-x dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|five|siseven|eight|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I2-that many dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) additional cards?|\""
+],
+[
+"I2-\\d+ dropped from the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many) additional cards?|\""
+],
+[
+"I2-draws? as draws in the additional alternative",
+"r\"draws? (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\"",
+"r\"draws (?:an|one|two|three|four|five|six|seven|eight|nine|ten|x|that many|\\d+) additional cards?|\""
+],
+[
+"I3-a creature dropped from G3",
+"exile this (?:card|creature|artifact)\\b",
+"exile this (?:card|artifact)\\b"
+],
+[
+"I3-b card dropped from G3",
+"exile this (?:card|creature|artifact)\\b",
+"exile this (?:creature|artifact)\\b"
+],
+[
+"I3-c face names dropped in _own_names",
+"{card.get(\"name\") or \"\"} | {face.get(\"name\") or \"\" for face in card.get(\"card_faces\") or []}",
+"{card.get(\"name\") or \"\"}"
+],
+[
+"I4-a discards? as discard in _LOOT",
+"cards?,? then discards? ({_COUNT_WORD}) cards?\")",
+"cards?,? then discard ({_COUNT_WORD}) cards?\")"
+],
+[
+"I4-b five dropped from _COUNT",
+", \"five\": 5}",
+"}"
+],
+[
+"I4-c an counts 2",
+"\"an\": 1",
+"\"an\": 2"
+],
+[
+"I5-a any discard cost counts as one",
+"net - (_COUNT[cost[1]] if cost else 0)",
+"net - (1 if cost else 0)"
+],
+[
+"I5-b (?! for each) dropped from _ONE_DRAW",
+"(?:additional )?cards?\\b(?! for each)\")",
+"(?:additional )?cards?\\b\")"
+],
+[
+"I6-a target opponent dropped",
+"r\"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|defending player|each other player|\"",
+"r\"(?<!you and )(?:(?:an|each|that) opponent|your opponents|defending player|each other player|\""
+],
+[
+"I6-b that opponent dropped",
+"r\"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|defending player|each other player|\"",
+"r\"(?<!you and )(?:(?:an|each|target) opponent|your opponents|defending player|each other player|\""
+],
+[
+"I6-c your opponents dropped",
+"r\"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|defending player|each other player|\"",
+"r\"(?<!you and )(?:(?:an|each|target|that) opponent|defending player|each other player|\""
+],
+[
+"I6-d defending player dropped",
+"r\"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|defending player|each other player|\"",
+"r\"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|each other player|\""
+],
+[
+"I6-e each other player dropped",
+"r\"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|defending player|each other player|\"",
+"r\"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|defending player|\""
+],
+[
+"I6-f whenever a/another/enchanted player dropped",
+"r\"whenever (?:a|another|enchanted) player|if (?:a|another) player|\"",
+"r\"if (?:a|another) player|\""
+],
+[
+"I6-g if a/another player dropped",
+"r\"whenever (?:a|another|enchanted) player|if (?:a|another) player|\"",
+"r\"whenever (?:a|another|enchanted) player|\""
+],
+[
+"I6-h |they dropped from the step form",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may |each )?$\"",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player)) (?:would |may |each )?$\""
+],
+[
+"I6-i each dropped from would/may/each",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may |each )?$\"",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may )?$\""
+],
+[
+"I6-j may dropped from would/may/each",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may |each )?$\"",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |each )?$\""
+],
+[
+"I6-k would dropped from would/may/each",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may |each )?$\"",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:may |each )?$\""
+],
+[
+"I6-l the $ anchor dropped",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may |each )?$\"",
+"r\"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may |each )?\""
+],
+[
+"I7-a (?:additional )? dropped from _ONE_DRAW",
+"_ONE_DRAW = re.compile(rf\"draws? ({_COUNT_WORD}) (?:additional )?cards?",
+"_ONE_DRAW = re.compile(rf\"draws? ({_COUNT_WORD}) cards?"
+],
+[
+"I7-b (?:additional )? dropped from _LOOT",
+"_LOOT = re.compile(rf\"draws? ({_COUNT_WORD}) (?:additional )?cards?",
+"_LOOT = re.compile(rf\"draws? ({_COUNT_WORD}) cards?"
+],
+[
+"I7-c (?: at random)? dropped from _RUMMAGE",
+"cards?(?: at random)?(?:,? then",
+"cards?(?:,? then"
+],
+[
+"I7-d (?:may )? dropped from _RUMMAGE",
+"r\"(?:you |they )?(?:may )?$\"",
+"r\"(?:you |they )?$\""
+],
+[
+"I7-e they dropped from if you/they do",
+"\\. if (?:you|they) do,",
+"\\. if you do,"
+],
+[
+"I7-f they dropped from (?:you |they )?",
+"r\"(?:you |they )?(?:may )?$\"",
+"r\"(?:you )?(?:may )?$\""
+],
+[
+"I7-g discards? as discard in _RUMMAGE",
+"rf\"(?<!\\bor )discards? (",
+"rf\"(?<!\\bor )discard ("
+],
+[
+"I7-h the [()\"] guard dropped in _draw_net",
+"if colon >= 0 and not re.search(r'[()\"]', oracle[colon : m.start()]):",
+"if colon >= 0:"
+],
+[
+"I7-i the ( term dropped from cost_start",
+"cost_start = max(oracle.rfind(\"(\", start, colon), oracle.rfind('\"', start, colon), start)",
+"cost_start = max(oracle.rfind('\"', start, colon), start)"
+],
+[
+"I7a-a gravestorm dropped",
+"\\b(?:gravestorm|storm|replicate)\\b",
+"\\b(?:storm|replicate)\\b"
+],
+[
+"I7a-b replicate dropped",
+"\\b(?:gravestorm|storm|replicate)\\b",
+"\\b(?:gravestorm|storm)\\b"
+],
+[
+"I7a-c copy this spell dropped",
+"\\bcopy (?:it|this spell)\\b",
+"\\bcopy (?:it)\\b"
+],
+[
+"I7a-d enters or dies dropped",
+"\\benters or (?:dies|is put into a graveyard)",
+"\\benters or (?:is put into a graveyard)"
+],
+[
+"I7a-e buyback dropped",
+"\\b(?:flashback|buyback|cipher|harmonize)\\b",
+"\\b(?:flashback|cipher|harmonize)\\b"
+],
+[
+"I7a-f cipher dropped",
+"\\b(?:flashback|buyback|cipher|harmonize)\\b",
+"\\b(?:flashback|buyback|harmonize)\\b"
+],
+[
+"I7a-g harmonize dropped",
+"\\b(?:flashback|buyback|cipher|harmonize)\\b",
+"\\b(?:flashback|buyback|cipher)\\b"
+],
+[
+"I8-a (?:other )? dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) \""
+],
+[
+"I8-two dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-three dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-four dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-five dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|six|seven|eight|nine|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-six dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|five|seven|eight|nine|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-seven dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|five|six|eight|nine|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-eight dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|nine|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-nine dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-ten dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|x|\\d+) (?:other )?\""
+],
+[
+"I8-x dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|five|siseven|eight|nine|ten|x|\\d+) (?:other )?\""
+],
+[
+"I8-\\d+ dropped from _UP_TO",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\\d+) (?:other )?\"",
+"r\"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x) (?:other )?\""
+],
+[
+"I8-c {1,3}? as {1}? in the you-control lookahead",
+"(?!target (?:[a-z\\-]+ ){1,3}?you control\\b)",
+"(?!target (?:[a-z\\-]+ ){1}?you control\\b)"
+],
+[
+"I8-d hyphen dropped in the you-control lookahead",
+"(?!target (?:[a-z\\-]+ ){1,3}?you control\\b)",
+"(?!target (?:[a-z]+ ){1,3}?you control\\b)"
+],
+[
+"I8-e nonland permanent dropped from the bounce",
+"target (?:creature|nonland permanent|permanent) to (?:its|their)",
+"target (?:creature|permanent) to (?:its|their)"
+],
+[
+"I8-f their dropped from the bounce",
+"to (?:its|their) owner",
+"to (?:its) owner"
+],
+[
+"I9-a those cards dropped from _NEXT_RETURN",
+"return (?:it|that card|those cards) to the battlefield\\\"\\n)",
+"return (?:it|that card) to the battlefield\\\"\\n)"
+],
+[
+"I9-b it dropped from _NEXT_RETURN",
+"return (?:it|that card|those cards) to the battlefield\\\"\\n)",
+"return (?:that card|those cards) to the battlefield\\\"\\n)"
+],
+[
+"I9-c that player's dropped from _GRAVEYARD_CARD",
+"target player's|that player's|their|defending player's",
+"target player's|their|defending player's"
+],
+[
+"I9-d their dropped from _GRAVEYARD_CARD",
+"target player's|that player's|their|defending player's",
+"target player's|that player's|defending player's"
+],
+[
+"I9-e with-clause dropped from _GRAVEYARD_CARD",
+"(?:with [^.;\\n]*? |of each card type )?",
+"(?:of each card type )?"
+],
+[
+"I9-f an opponent's dropped from _GRAVEYARD_CARD",
+"(?:a|your|an opponent's|target player's",
+"(?:a|your|target player's"
+],
+[
+"I9-a those cards dropped from _NEXT_RETURN",
+"(?:at the beginning of the next end step, )?return (?:it|that card|those cards)",
+"(?:at the beginning of the next end step, )?return (?:it|that card)"
+],
+[
+"I9-b it dropped from _NEXT_RETURN",
+"(?:at the beginning of the next end step, )?return (?:it|that card|those cards)",
+"(?:at the beginning of the next end step, )?return (?:that card|those cards)"
+],
+[
+"I9-g that card and those cards dropped from _NEXT_RETURN",
+"(?:at the beginning of the next end step, )?return (?:it|that card|those cards)",
+"(?:at the beginning of the next end step, )?return (?:it)"
+],
+[
+"I9-h target player's dropped from _GRAVEYARD_CARD",
+"an opponent's|target player's|that player's",
+"an opponent's|that player's"
+],
+[
+"I9-p the up-to condition dropped in _is_blink (probe)",
+"if \"up to\" in t[0] and _NEXT_RETURN.match(oracle, end):",
+"if _NEXT_RETURN.match(oracle, end):"
+],
+[
+"I4-d a dropped from _COUNT",
+"_COUNT = {\"a\": 1, \"an\": 1,",
+"_COUNT = {\"an\": 1,"
+],
+[
+"I4-e an dropped from _COUNT",
+"\"a\": 1, \"an\": 1, \"one\": 1,",
+"\"a\": 1, \"one\": 1,"
+],
+[
+"I4-f one dropped from _COUNT",
+"\"an\": 1, \"one\": 1, \"two\": 2,",
+"\"an\": 1, \"two\": 2,"
+],
+[
+"I4-g two dropped from _COUNT",
+"\"one\": 1, \"two\": 2, \"three\": 3,",
+"\"one\": 1, \"three\": 3,"
+],
+[
+"I4-h three dropped from _COUNT",
+"\"two\": 2, \"three\": 3, \"four\": 4,",
+"\"two\": 2, \"four\": 4,"
+],
+[
+"I4-i four dropped from _COUNT",
+"\"three\": 3, \"four\": 4, \"five\": 5}",
+"\"three\": 3, \"five\": 5}"
+],
+[
+"I6-m the sentence start reads newlines only",
+"sentence = max(oracle.rfind(\".\", 0, m.start()), oracle.rfind(\"\\n\", 0, m.start())) + 1",
+"sentence = oracle.rfind(\"\\n\", 0, m.start()) + 1"
+],
+[
+"I7-j _draw_net reads from the text start",
+"start = oracle.rfind(\"\\n\", 0, m.start()) + 1\n    rummage",
+"start = 0\n    rummage"
+],
+[
+"I7-k the $ anchor dropped from _RUMMAGE",
+"r\"(?:you |they )?(?:may )?$\"",
+"r\"(?:you |they )?(?:may )?\""
+],
+[
+"I7-l the first colon, not the last",
+"colon = oracle.rfind(\":\", start, m.start())",
+"colon = oracle.find(\":\", start, m.start())"
+]
+]
