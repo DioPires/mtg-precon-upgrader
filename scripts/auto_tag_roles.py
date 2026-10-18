@@ -274,11 +274,30 @@ _DRAW = re.compile(
 # Read on the draw's own line. A cost before ":" makes the draw repeatable,
 # unless the cost spends the card itself: it sacrifices the card, discards it,
 # or exiles it from any zone (DEC-478, DEC-1198, DEC-1197). A Saga line that names two
-# or more chapters ("i, ii — ") gives its draw once for each chapter (DEC-1197).
+# or more chapters ("i, ii — ") gives its draw once for each chapter, and a draw "if an
+# opponent would draw" comes on each of their draws (Notion Thief, DEC-1197).
 _REPEATABLE_DRAW = re.compile(
-    r"\bwhenever\b|\bat the beginning of (?!the next)|^[ivx]+(?:, [ivx]+)+ — |"
+    r"\bwhenever\b|\bat the beginning of (?!the next)|^[ivx]+(?:, [ivx]+)+ — |\bif an opponent would draw\b|"
     r"^(?:(?!sacrifice this|discard this|exile this (?:card|creature|artifact)\b)[^(\n])*:"
 )
+# The subject of a draw by another player, read in the draw's sentence just before the draw:
+# "each opponent draws", "whenever a player draws", "if an opponent would draw", and "that
+# player" after "each opponent's draw step". "You and target opponent each draw" stays yours,
+# and so does "that player" after "each player's draw step" (DEC-1197).
+_OTHER_DRAW = re.compile(
+    r"(?<!you and )(?:(?:an|each|target|that) opponent|your opponents|defending player|each other player|"
+    r"whenever (?:a|another|enchanted) player|if (?:a|another) player|"
+    r"(?:an|each|target) opponent's [^,]*, (?:that player|they)) (?:would |may |each )?$"
+)
+
+
+def _my_draws(oracle: str) -> list[re.Match]:
+    """The draws of `_DRAW` whose subject may be you."""
+    return [
+        m
+        for m in _DRAW.finditer(oracle)
+        if not _OTHER_DRAW.search(oracle, max(oracle.rfind(".", 0, m.start()), oracle.rfind("\n", 0, m.start())) + 1, m.start())
+    ]
 
 
 def _own_names(card: dict) -> tuple[str, ...]:
@@ -300,7 +319,7 @@ _DISCARD_COST = re.compile(rf"as an additional cost to cast this spell, discard 
 def _is_cantrip(oracle: str, names: tuple[str, ...] = ()) -> bool:
     """One draw that adds one card or none, outside a repeatable ability, nets 0 cards or fewer (DEC-478):
     a draw of N cards less the cards that its loot or its cost discards, N - M of 1 or less (DEC-1197)."""
-    draws = list(_DRAW.finditer(oracle))
+    draws = _my_draws(oracle)
     if len(draws) != 1:
         return False
     loot = _LOOT.match(oracle, draws[0].start())
@@ -319,7 +338,7 @@ def _is_cantrip(oracle: str, names: tuple[str, ...] = ()) -> bool:
 
 
 def _detect_card_draw(oracle: str, type_line: str, card: dict) -> tuple[str, float] | None:
-    if not _DRAW.search(oracle) or _is_cantrip(oracle, _own_names(card)):
+    if not _my_draws(oracle) or _is_cantrip(oracle, _own_names(card)):
         return None
     # Creature with an "enters" trigger that draws is more often classified
     # engine/value than pure card-draw — hand off to human review.

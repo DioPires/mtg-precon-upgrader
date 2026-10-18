@@ -739,6 +739,39 @@ class DiscardCostTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("card-draw", 0.85))
 
 
+class DrawSubjectTests(unittest.TestCase):
+    """Only a draw by you counts toward card-draw (DEC-1197)."""
+
+    def test_draw_by_another_player_is_not_card_draw(self):
+        for name, type_line, oracle_text in (
+            ("Glimmerwake Tithe", "Enchantment", "Whenever an opponent draws a card, you gain 1 life."),
+            ("Openhand Envoy", "Sorcery", "Each opponent draws a card."),
+            (
+                "Rotgrowth Bloom",
+                "Enchantment",
+                "At the beginning of your upkeep, put a growth counter on this enchantment.\nAt the beginning of "
+                "each opponent's draw step, that player draws an additional card for each growth counter on this "
+                "enchantment.",
+            ),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, type_line, oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_your_draw_on_an_opponents_draw_is_card_draw(self):
+        card = _card(
+            "Thoughtpilfer Rogue",
+            "Creature — Human Rogue",
+            "Flash\nIf an opponent would draw a card except the first one they draw in each of their draw steps, "
+            "instead that player skips that draw and you draw a card.",
+        )
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+    def test_you_and_target_opponent_each_draw_is_yours(self):
+        card = _card("Shared Counsel", "Sorcery", "You and target opponent each draw two cards.")
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 
