@@ -273,15 +273,22 @@ _DRAW = re.compile(
 )
 # Read on the draw's own line. A cost before ":" makes the draw repeatable,
 # unless the cost spends the card itself: it sacrifices the card, discards it,
-# or exiles it from your graveyard (DEC-478, DEC-1198). A Saga line that names two
+# or exiles it from any zone (DEC-478, DEC-1198, DEC-1197). A Saga line that names two
 # or more chapters ("i, ii — ") gives its draw once for each chapter (DEC-1197).
 _REPEATABLE_DRAW = re.compile(
     r"\bwhenever\b|\bat the beginning of (?!the next)|^[ivx]+(?:, [ivx]+)+ — |"
-    r"^(?:(?!sacrifice this|discard this|exile this card from your graveyard)[^(\n])*:"
+    r"^(?:(?!sacrifice this|discard this|exile this (?:card|creature|artifact)\b)[^(\n])*:"
 )
 
 
-def _is_cantrip(oracle: str) -> bool:
+def _own_names(card: dict) -> tuple[str, ...]:
+    """The names by which a card's text names itself: each face, and a legend's short name ("ed-e")."""
+    names = {card.get("name") or ""} | {face.get("name") or "" for face in card.get("card_faces") or []}
+    names |= {name.split(",")[0] for name in names}
+    return tuple(sorted({name.lower() for name in names if name}, key=len, reverse=True))
+
+
+def _is_cantrip(oracle: str, names: tuple[str, ...] = ()) -> bool:
     """One draw of one card, outside a repeatable ability, nets 0 cards (DEC-478)."""
     draws = list(_DRAW.finditer(oracle))
     if len(draws) != 1 or not re.match(r"draws? (?:a|one) card\b(?! for each)", oracle[draws[0].start():]):
@@ -291,11 +298,13 @@ def _is_cantrip(oracle: str) -> bool:
         start = oracle.rfind("\n", 0, start - 1) + 1
     end = oracle.find("\n", draws[0].start())
     line = oracle[start : end if end >= 0 else len(oracle)]
+    for name in names:  # "sacrifice stone of erech" spends the card as "sacrifice this" does (DEC-1197)
+        line = re.sub(rf"\b{re.escape(name)}\b", "this", line)
     return not _REPEATABLE_DRAW.search(line)
 
 
-def _detect_card_draw(oracle: str, type_line: str) -> tuple[str, float] | None:
-    if not _DRAW.search(oracle) or _is_cantrip(oracle):
+def _detect_card_draw(oracle: str, type_line: str, card: dict) -> tuple[str, float] | None:
+    if not _DRAW.search(oracle) or _is_cantrip(oracle, _own_names(card)):
         return None
     # Creature with an "enters" trigger that draws is more often classified
     # engine/value than pure card-draw — hand off to human review.
@@ -410,7 +419,9 @@ def classify(card_data: dict) -> tuple[str | None, float]:
     type_lc = type_line.lower()
     for fn in DETECTORS:
         result = (
-            fn(oracle_lc, type_lc, card_data) if fn is _detect_land else fn(oracle_lc, type_lc)
+            fn(oracle_lc, type_lc, card_data)
+            if fn in (_detect_land, _detect_card_draw)
+            else fn(oracle_lc, type_lc)
         )
         if result:
             return result

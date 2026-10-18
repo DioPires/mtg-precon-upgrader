@@ -641,6 +641,32 @@ class GraveyardCostFaultTests(unittest.TestCase):
         self.assertNotEqual(atr.classify(card)[0], "card-draw")
 
 
+class SpentCardCostTests(unittest.TestCase):
+    """A cost that sacrifices the card by its name, or exiles it, spends the card: its draw is once (DEC-1197)."""
+
+    def test_draw_behind_sacrifice_of_the_cards_own_name_is_not_card_draw(self):
+        for name, oracle_text in (
+            ("Cairn of Velloth", "{2}, {T}, Sacrifice Cairn of Velloth: Exile target player's graveyard. Draw a card."),
+            ("Brasswing, the Tinker", "Flying\n{2}, Sacrifice Brasswing: Draw a card."),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, "Legendary Artifact", oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_draw_behind_exile_this_artifact_is_not_card_draw(self):  # kills "exile this card from your graveyard"
+        card = _card("Ossuary Lamp", "Artifact", "{1}, Exile this artifact: Exile all graveyards. Draw a card.")
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_two_draws_behind_sacrifice_of_the_cards_name_are_card_draw(self):
+        card = _card(
+            "Quillbot",
+            "Artifact Creature — Robot",
+            "Flying\n{2}, Sacrifice Quillbot: Draw a card, then draw an additional card for each quest counter "
+            "on Quillbot.",
+        )
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
 class SagaChapterTests(unittest.TestCase):
     """A Saga line that names two or more chapters gives its draw once for each chapter (DEC-1197)."""
 
