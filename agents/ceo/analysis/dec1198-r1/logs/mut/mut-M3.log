@@ -1,0 +1,70 @@
+..........................................................F......F............................            [100%]
+=================================== FAILURES ===================================
+_ CantripTests.test_one_shot_draw_of_one_card_is_not_card_draw (name='Brassleaf Trinket') _
+
+self = <tests.test_auto_tag_roles.CantripTests testMethod=test_one_shot_draw_of_one_card_is_not_card_draw>
+
+    def test_one_shot_draw_of_one_card_is_not_card_draw(self):
+        for name, type_line, oracle_text in (
+            ("Millwater Glance", "Instant", "Target player mills two cards.\nDraw a card."),
+            ("Hearthward Scout", "Creature — Human Scout", "When this creature enters, draw a card."),
+            (
+                "Duneplod Beast",
+                "Creature — Beast",
+                "Trample\nCycling {2} ({2}, Discard this card: Draw a card.)",
+            ),
+            (
+                "Clueward Inspector",
+                "Creature — Human Detective",
+                'When this creature enters, investigate. (Create a Clue token. It\'s an artifact with "{2}, '
+                'Sacrifice this token: Draw a card.")',
+            ),
+            ("Brassleaf Trinket", "Artifact", "{1}, Sacrifice this artifact: Draw a card."),
+            (
+                # The cost before ":" is in reminder text: cycling of the cards in your hand.
+                "Tomeshade Heron",
+                "Creature — Bird Wizard",
+                "Flying\nEach creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw "
+                "a card.)",
+            ),
+            (
+                "Dusktide Stall",
+                "Instant",
+                "Tap target creature.\nAt the beginning of the next end step, draw a card.",
+            ),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, type_line, oracle_text)
+>               self.assertNotEqual(atr.classify(card)[0], "card-draw")
+E               AssertionError: 'card-draw' == 'card-draw'
+
+tests/test_auto_tag_roles.py:552: AssertionError
+_ CantripKillTests.test_discard_this_card_outside_reminder_text_is_not_card_draw _
+
+self = <tests.test_auto_tag_roles.CantripKillTests testMethod=test_discard_this_card_outside_reminder_text_is_not_card_draw>
+
+    def test_discard_this_card_outside_reminder_text_is_not_card_draw(self):  # kills X6: "discard this" dropped
+        card = _card("Tidewhisper Skiff", "Creature — Merfolk Scout", "Flying\n{1}{U}, Discard this card: Draw a card.")
+>       self.assertNotEqual(atr.classify(card)[0], "card-draw")
+E       AssertionError: 'card-draw' == 'card-draw'
+
+tests/test_auto_tag_roles.py:592: AssertionError
+_ GraveyardCostFaultTests.test_draw_behind_exile_this_card_from_your_graveyard_is_not_card_draw _
+
+self = <tests.test_auto_tag_roles.GraveyardCostFaultTests testMethod=test_draw_behind_exile_this_card_from_your_graveyard_is_not_card_draw>
+
+    def test_draw_behind_exile_this_card_from_your_graveyard_is_not_card_draw(self):
+        card = _card(
+            "Ashveil Courier",
+            "Creature — Spirit Scout",
+            "Menace\n{2}{B}, Exile this card from your graveyard: Draw a card.",
+        )
+>       self.assertNotEqual(atr.classify(card)[0], "card-draw")
+E       AssertionError: 'card-draw' == 'card-draw'
+
+tests/test_auto_tag_roles.py:641: AssertionError
+=========================== short test summary info ============================
+SUBFAILED(name='Brassleaf Trinket') tests/test_auto_tag_roles.py::CantripTests::test_one_shot_draw_of_one_card_is_not_card_draw
+FAILED tests/test_auto_tag_roles.py::CantripKillTests::test_discard_this_card_outside_reminder_text_is_not_card_draw
+FAILED tests/test_auto_tag_roles.py::GraveyardCostFaultTests::test_draw_behind_exile_this_card_from_your_graveyard_is_not_card_draw
+3 failed, 92 passed, 38 subtests passed in 0.05s

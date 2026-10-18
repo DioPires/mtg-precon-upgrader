@@ -1,7 +1,10 @@
 // DEC-1177 (DEC-1173 N2): a screen reader reads each empty state's message
 // alone. The ◇ of `.gv1-empty::before` has empty alternative text, and the
 // sigil span of each /shopping empty state and of Compare's empty state has
-// aria-hidden. Both still show.
+// aria-hidden.
+//
+// DEC-1199 (owner card on DEC-1182): each of those 4 boxes shows one mark, its
+// own `.gv1-rune` span. `.gv1-empty--own-rune` turns its `::before` off.
 //
 // Every case but the third reads Chromium's own accessibility tree (CDP), not
 // the name that Playwright computes: the text of a ::before is in Chromium's
@@ -58,6 +61,12 @@ async function beforeGlyph(page: Page, text: string): Promise<string> {
     .evaluate((el) => getComputedStyle(el, '::before').content);
 }
 
+/** The `.gv1-empty` that holds `text` shows one mark: its `.gv1-rune` span shows `glyph`, and its `::before` shows nothing (DEC-1199). */
+async function expectOneMark(page: Page, text: string, glyph: string) {
+  await expect(page.locator('.gv1-empty').filter({ hasText: text }).locator('.gv1-rune')).toHaveText(glyph);
+  expect(await beforeGlyph(page, text)).toBe('none');
+}
+
 test('/shopping with no deck selected reads its message alone (DEC-1177)', async ({ page }) => {
   await page.goto('/shopping');
   await page.locator('.gv1-shop-row').first().waitFor();
@@ -68,9 +77,27 @@ test('/shopping with no deck selected reads its message alone (DEC-1177)', async
 
   // `.gv1-mono-xs` sets text-transform: uppercase, and Chromium reads the text as shown.
   expect(await spokenText(page, message)).toEqual([message.toUpperCase()]);
-  // The two glyphs still show.
-  await expect(empty.locator('.gv1-rune')).toHaveText('◇');
-  expect(await beforeGlyph(page, message)).toMatch(/^"◇"/);
+  await expectOneMark(page, message, '◇');
+});
+
+test('/shopping with no decks loaded shows one mark (DEC-1199)', async ({ page }) => {
+  await page.route('**/data/index.json', (route) => route.fulfill({ json: { commanders: [] } }));
+  await page.goto('/shopping');
+  const message = 'No decks loaded.';
+  await expect(page.locator('.gv1-empty').filter({ hasText: message })).toHaveCount(1);
+  await expectOneMark(page, message, '◇');
+});
+
+test('/shopping with every card owned shows one mark (DEC-1199)', async ({ page }) => {
+  await page.goto('/shopping');
+  await page.locator('.gv1-shop-row').first().waitFor();
+  // Own every card of the deck that the page selects first, then load the page again.
+  const names = await page.locator('.gv1-shop-row').evaluateAll((rows) => rows.map((row) => (row as HTMLElement).dataset.cardName!));
+  await page.evaluate((list) => localStorage.setItem('grimoire-owned-cards', JSON.stringify(list.map((name) => [name, 99]))), names);
+  await page.reload();
+  const message = 'All cards owned. The grimoire is complete.';
+  await expect(page.locator('.gv1-empty').filter({ hasText: message })).toHaveCount(1);
+  await expectOneMark(page, message, '◆');
 });
 
 // combo-lab.css has its own `.gv1-empty::before` for the Combo Lab screen.
@@ -139,7 +166,5 @@ test('Compare with no decks loaded reads its message alone (DEC-1177)', async ({
 
   // `.gv1-mono-xs` sets text-transform: uppercase.
   expect(await spokenText(page, message)).toEqual(['NO DECKS LOADED.']);
-  // The two glyphs still show.
-  await expect(empty.locator('.gv1-rune')).toHaveText('◇');
-  expect(await beforeGlyph(page, message)).toMatch(/^"◇"/);
+  await expectOneMark(page, message, '◇');
 });

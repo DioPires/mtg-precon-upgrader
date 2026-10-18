@@ -815,6 +815,8 @@ describe('Shopping organism', () => {
     };
     const expectHiddenSigil = (sigil: string, message: string) => {
       const empty = screen.getByText(message).closest('.gv1-empty')!;
+      // The box shows its own sigil alone: the modifier turns its `::before` off (DEC-1199).
+      expect(empty).toHaveClass('gv1-empty--own-rune');
       expect(empty.children).toHaveLength(2);
       const [glyph, text] = empty.children;
       expect(glyph).toHaveAttribute('aria-hidden', 'true');

@@ -1,0 +1,97 @@
+[
+ [
+  "N1 the -N/-0 read put back",
+  "_TARGET_CREATURE_GETS + r\"[+-](?:\\d+|x)/-(?:[1-9]\\d*|x)\")",
+  "_TARGET_CREATURE_GETS + r\"(?:-\\d+/-\\d+|[+-](?:\\d+|x)/-(?:[1-9]\\d*|x))\")"
+ ],
+ [
+  "N2 the guard removed",
+  "if _TOUGHNESS_CUT.search(oracle) or _POWER_CUT_KILL.search(oracle):",
+  "if _TOUGHNESS_CUT.search(oracle):"
+ ],
+ [
+  "N3 the guard reads its own sentence only",
+  "[^.\\n]*(?:\\. ?)?[^.\\n]*?\\bpower",
+  "[^.\\n]*?\\bpower"
+ ],
+ [
+  "N4 the qualifier removed",
+  "r\"target creature(?: (?:(?!you control\\b)[^.,;\\n]){1,40}?)? gets? \"",
+  "r\"target creature gets? \""
+ ],
+ [
+  "N5 'you control' allowed in the qualifier",
+  "(?:(?!you control\\b)[^.,;\\n])",
+  "(?:[^.,;\\n])"
+ ],
+ [
+  "N6 a comma allowed in the qualifier",
+  "[^.,;\\n]",
+  "[^.;\\n]"
+ ],
+ [
+  "B1 {1,40} as {1,20}",
+  "{1,40}?",
+  "{1,20}?"
+ ],
+ [
+  "B2 drop ; from the qualifier",
+  "[^.,;\\n]",
+  "[^.,\\n]"
+ ],
+ [
+  "B3 drop (?:\\. ?)?",
+  "(?:\\. ?)?",
+  ""
+ ],
+ [
+  "B4 destroy (?:it|that creature) as destroy it",
+  "destroy (?:it|that creature)\\b",
+  "destroy it\\b"
+ ],
+ [
+  "B5 drop x of the toughness cut",
+  "/-(?:[1-9]\\d*|x)\")",
+  "/-(?:[1-9]\\d*)\")"
+ ],
+ [
+  "B6 drop x of the power cut kill",
+  "+ r\"-(?:\\d+|x)/-0\\b",
+  "+ r\"-(?:\\d+)/-0\\b"
+ ],
+ [
+  "B7 the guard without the qualifier",
+  "    _TARGET_CREATURE_GETS\n    + r\"-(?:",
+  "    r\"target creature gets? \"\n    + r\"-(?:"
+ ],
+ [
+  "B8 [1-9]\\d* as [1-9]",
+  "/-(?:[1-9]\\d*|x)",
+  "/-(?:[1-9]|x)"
+ ],
+ [
+  "B9 lazy {1,40}? as greedy {1,40}",
+  "{1,40}?",
+  "{1,40}"
+ ],
+ [
+  "B10 (?:\\. ?)? as (?:\\.)?",
+  "(?:\\. ?)?",
+  "(?:\\.)?"
+ ],
+ [
+  "B11 the guard's lazy [^.\\n]*? as greedy",
+  "[^.\\n]*?\\bpower",
+  "[^.\\n]*\\bpower"
+ ],
+ [
+  "B12 the guard's power cut -N only, not -X",
+  "+ r\"-(?:\\d+|x)/-0\\b",
+  "+ r\"-(?:x)/-0\\b"
+ ],
+ [
+  "B13 drop the guard's first [^.\\n]*",
+  "/-0\\b[^.\\n]*(?:\\. ?)?",
+  "/-0\\b(?:\\. ?)?"
+ ]
+]

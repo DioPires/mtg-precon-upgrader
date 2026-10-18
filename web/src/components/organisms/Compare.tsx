@@ -168,7 +168,7 @@ export function Compare({ decks }: CompareProps) {
   if (!decks.length) {
     return (
       <section className="gv1-section" aria-labelledby="compare-empty">
-        <div className="gv1-empty">
+        <div className="gv1-empty gv1-empty--own-rune">
           <span className="gv1-rune" aria-hidden="true">◇</span>
           <span id="compare-empty" className="gv1-mono-xs">No decks loaded.</span>
         </div>
