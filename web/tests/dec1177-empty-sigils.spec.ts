@@ -6,9 +6,10 @@
 // DEC-1199 (owner card on DEC-1182): each of those 4 boxes shows one mark, its
 // own `.gv1-rune` span. `.gv1-empty--own-rune` turns its `::before` off.
 //
-// Every case but the third reads Chromium's own accessibility tree (CDP), not
-// the name that Playwright computes: the text of a ::before is in Chromium's
-// tree only. The third reads the stylesheet that the page loads.
+// Each DEC-1177 case but the stylesheet case reads Chromium's own accessibility
+// tree (CDP), not the name that Playwright computes: the text of a ::before is in
+// Chromium's tree only. The stylesheet case reads the stylesheet that the page
+// loads. The DEC-1199 cases read the computed `::before` only.
 
 import { expect, test, type Page } from './support/test';
 
@@ -167,4 +168,19 @@ test('Compare with no decks loaded reads its message alone (DEC-1177)', async ({
   // `.gv1-mono-xs` sets text-transform: uppercase.
   expect(await spokenText(page, message)).toEqual(['NO DECKS LOADED.']);
   await expectOneMark(page, message, '◇');
+});
+
+// A box with no `.gv1-rune` span keeps the ◇ of `.gv1-empty::before`, its only mark (DEC-1199).
+// No deck in the repository has an empty `winConditions`, so the route empties it.
+test('the deck page with no win conditions keeps the ◇ of its empty state (DEC-1199)', async ({ page }) => {
+  await page.route('**/commanders/eternal-agony/deck.json', async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, json: { ...(await response.json()), winConditions: [] } });
+  });
+  await page.goto('/deck/eternal-agony');
+  const message = "No documented win conditions in this deck's dossier yet.";
+  const empty = page.locator('.gv1-empty').filter({ hasText: message });
+  await expect(empty).toHaveCount(1);
+  await expect(empty.locator('.gv1-rune')).toHaveCount(0);
+  expect(await beforeGlyph(page, message)).toMatch(/^"◇"/);
 });
