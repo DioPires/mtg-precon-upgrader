@@ -641,6 +641,28 @@ class GraveyardCostFaultTests(unittest.TestCase):
         self.assertNotEqual(atr.classify(card)[0], "card-draw")
 
 
+class SagaChapterTests(unittest.TestCase):
+    """A Saga line that names two or more chapters gives its draw once for each chapter (DEC-1197)."""
+
+    def test_draw_on_two_chapters_is_card_draw(self):
+        card = _card(
+            "The Tidebound Chronicle",
+            "Enchantment — Saga",
+            "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\n"
+            "I, II — Draw a card.\nIII — Create a 2/2 blue Bird creature token with flying.",
+        )
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+    def test_draw_on_one_chapter_is_not_card_draw(self):
+        card = _card(
+            "The Ashen Ballad",
+            "Enchantment — Saga",
+            "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\n"
+            "I — Draw a card.\nII, III — Create a 1/1 black Rat creature token.",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 

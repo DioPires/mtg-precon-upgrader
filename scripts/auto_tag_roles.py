@@ -271,9 +271,10 @@ _DRAW = re.compile(
 )
 # Read on the draw's own line. A cost before ":" makes the draw repeatable,
 # unless the cost spends the card itself: it sacrifices the card, discards it,
-# or exiles it from your graveyard (DEC-478, DEC-1198).
+# or exiles it from your graveyard (DEC-478, DEC-1198). A Saga line that names two
+# or more chapters ("i, ii — ") gives its draw once for each chapter (DEC-1197).
 _REPEATABLE_DRAW = re.compile(
-    r"\bwhenever\b|\bat the beginning of (?!the next)|"
+    r"\bwhenever\b|\bat the beginning of (?!the next)|^[ivx]+(?:, [ivx]+)+ — |"
     r"^(?:(?!sacrifice this|discard this|exile this card from your graveyard)[^(\n])*:"
 )
 
