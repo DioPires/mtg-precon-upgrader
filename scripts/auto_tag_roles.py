@@ -293,11 +293,12 @@ _OTHER_DRAW = re.compile(
 
 def _my_draws(oracle: str) -> list[re.Match]:
     """The draws of `_DRAW` whose subject may be you."""
-    return [
-        m
-        for m in _DRAW.finditer(oracle)
-        if not _OTHER_DRAW.search(oracle, max(oracle.rfind(".", 0, m.start()), oracle.rfind("\n", 0, m.start())) + 1, m.start())
-    ]
+    draws = []
+    for m in _DRAW.finditer(oracle):
+        sentence = max(oracle.rfind(".", 0, m.start()), oracle.rfind("\n", 0, m.start())) + 1
+        if not _OTHER_DRAW.search(oracle, sentence, m.start()):
+            draws.append(m)
+    return draws
 
 
 def _own_names(card: dict) -> tuple[str, ...]:
@@ -310,22 +311,56 @@ def _own_names(card: dict) -> tuple[str, ...]:
 _COUNT = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
 _COUNT_WORD = "|".join(_COUNT)
 # "Draw two cards, then discard a card": the discard counts against the draw (DEC-1197).
-_LOOT = re.compile(rf"draws? ({_COUNT_WORD}) cards?,? then discards? ({_COUNT_WORD}) cards?")
-_ONE_DRAW = re.compile(rf"draws? ({_COUNT_WORD}) cards?\b(?! for each)")
+_LOOT = re.compile(rf"draws? ({_COUNT_WORD}) (?:additional )?cards?,? then discards? ({_COUNT_WORD}) cards?")
+_ONE_DRAW = re.compile(rf"draws? ({_COUNT_WORD}) (?:additional )?cards?\b(?! for each)")
+# A discard just before the draw counts against it too: "discard a card, then draw a card",
+# "you may discard a card. if you do, draw a card", and a cost "discard a card: draw a card",
+# also in a Blood token's reminder text. "Sacrifice an artifact or discard a card" may spend no
+# card from your hand, so it does not count (DEC-1197).
+_RUMMAGE = re.compile(
+    rf"(?<!\bor )discards? ({_COUNT_WORD}) cards?(?: at random)?(?:,? then|\. if (?:you|they) do,) "
+    r"(?:you |they )?(?:may )?$"
+)
+_COST_DISCARD = re.compile(rf"\bdiscard ({_COUNT_WORD}) cards?\b")
 # A card discarded to cast the spell counts against its draw too (Tormenting Voice, DEC-1197).
 _DISCARD_COST = re.compile(rf"as an additional cost to cast this spell, discard ({_COUNT_WORD}) cards?")
 
 
-def _is_cantrip(oracle: str, names: tuple[str, ...] = ()) -> bool:
+def _draw_net(oracle: str, m: re.Match) -> int | None:
+    """The cards that one use of the draw adds: N drawn less M discarded by its loot, its rummage
+    or its cost. None when N is no number ("x", "that many", "a card for each")."""
+    loot = _LOOT.match(oracle, m.start())
+    drawn = loot or _ONE_DRAW.match(oracle, m.start())
+    if not drawn:
+        return None
+    net = _COUNT[drawn[1]] - (_COUNT[loot[2]] if loot else 0)
+    start = oracle.rfind("\n", 0, m.start()) + 1
+    rummage = _RUMMAGE.search(oracle, start, m.start())
+    if rummage:
+        net -= _COUNT[rummage[1]]
+    colon = oracle.rfind(":", start, m.start())
+    if colon >= 0 and not re.search(r'[()"]', oracle[colon : m.start()]):
+        cost_start = max(oracle.rfind("(", start, colon), oracle.rfind('"', start, colon), start)
+        cost = _COST_DISCARD.search(oracle, cost_start, colon)
+        if cost:
+            net -= _COUNT[cost[1]]
+    return net
+
+
+def _adding_draws(oracle: str) -> list[re.Match]:
+    """Your draws that add a card on each use. A loot or rummage that discards as many cards as it
+    draws adds none, even when it repeats (DEC-1197)."""
+    return [m for m in _my_draws(oracle) if (net := _draw_net(oracle, m)) is None or net > 0]
+
+
+def _is_cantrip(oracle: str, draws: list[re.Match], names: tuple[str, ...] = ()) -> bool:
     """One draw that adds one card or none, outside a repeatable ability, nets 0 cards or fewer (DEC-478):
     a draw of N cards less the cards that its loot or its cost discards, N - M of 1 or less (DEC-1197)."""
-    draws = _my_draws(oracle)
     if len(draws) != 1:
         return False
-    loot = _LOOT.match(oracle, draws[0].start())
-    drawn = loot or _ONE_DRAW.match(oracle, draws[0].start())
+    net = _draw_net(oracle, draws[0])
     cost = _DISCARD_COST.search(oracle)
-    if not drawn or _COUNT[drawn[1]] - (_COUNT[loot[2]] if loot else 0) - (_COUNT[cost[1]] if cost else 0) > 1:
+    if net is None or net - (_COUNT[cost[1]] if cost else 0) > 1:
         return False
     start = oracle.rfind("\n", 0, draws[0].start()) + 1
     while start > 0 and oracle.startswith("•", start):  # a mode: read from its header line
@@ -338,7 +373,8 @@ def _is_cantrip(oracle: str, names: tuple[str, ...] = ()) -> bool:
 
 
 def _detect_card_draw(oracle: str, type_line: str, card: dict) -> tuple[str, float] | None:
-    if not _my_draws(oracle) or _is_cantrip(oracle, _own_names(card)):
+    draws = _adding_draws(oracle)
+    if not draws or _is_cantrip(oracle, draws, _own_names(card)):
         return None
     # Creature with an "enters" trigger that draws is more often classified
     # engine/value than pure card-draw — hand off to human review.

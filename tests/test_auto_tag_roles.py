@@ -772,6 +772,53 @@ class DrawSubjectTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("card-draw", 0.85))
 
 
+class RepeatableLootTests(unittest.TestCase):
+    """A loot or rummage that discards as many cards as it draws adds no card, even when it repeats (DEC-1197)."""
+
+    def test_repeatable_loot_or_rummage_is_not_card_draw(self):
+        for name, oracle_text in (
+            ("Tidecaller Adept", "{T}: Draw a card, then discard a card."),
+            ("Ashfall Gambler", "Whenever this creature attacks, you may discard a card. If you do, draw a card."),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, "Creature — Human Wizard", oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_repeatable_draw_behind_a_discard_cost_is_not_card_draw(self):
+        for name, oracle_text in (
+            ("Cinderhand Scrounger", "{1}, {T}, Discard a card: Draw a card."),
+            (
+                "Crimson Bloodletter",
+                "Whenever this creature deals combat damage to a player, create a Blood token. (It's an artifact "
+                'with "{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.")',
+            ),
+        ):
+            with self.subTest(name=name):
+                card = _card(name, "Creature — Vampire Rogue", oracle_text)
+                self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_repeatable_loot_that_nets_one_card_is_card_draw(self):
+        card = _card("Archive Sifter", "Creature — Human Wizard", "{T}: Draw two cards, then discard a card.")
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+    def test_discard_cost_of_another_quoted_ability_does_not_count(self):
+        card = _card(
+            "Scholar's Mantle",
+            "Enchantment — Aura",
+            'Enchant creature\nEnchanted creature has "Discard a card: This creature gets +1/+0 until end of turn." '
+            'and "{T}: Draw a card."',
+        )
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+    def test_rummage_that_may_sacrifice_an_artifact_instead_is_card_draw(self):
+        card = _card(
+            "Scrapyard Sleuth",
+            "Creature — Human Detective",
+            "Whenever this creature attacks, you may sacrifice an artifact or discard a card. If you do, draw a card.",
+        )
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 
