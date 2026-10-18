@@ -819,6 +819,52 @@ class RepeatableLootTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("card-draw", 0.85))
 
 
+class DrawAgainTests(unittest.TestCase):
+    """A one-shot draw that the card gives again is card-draw (DEC-1198 probe P3, DEC-1197)."""
+
+    def test_one_shot_draw_that_the_card_gives_again_is_card_draw(self):
+        for label, type_line, oracle_text in (
+            ("storm", "Sorcery", "Storm (When you cast this spell, copy it for each spell cast before it this turn.)\n"
+             "Draw a card."),
+            ("copy it", "Sorcery", "When you cast this spell, copy it if you control a Wizard.\nDraw a card."),
+            ("same mode", "Instant", "Choose two. You may choose the same mode more than once.\n• Draw a card.\n"
+             "• You gain 2 life."),
+            ("return this card", "Creature — Zombie", "When this creature enters, draw a card.\n{2}{B}{B}: Return this "
+             "card from your graveyard to your hand."),
+            ("becomes prepared", "Creature — Gorgon Wizard", "Whenever a land you control enters, this creature "
+             "becomes prepared.\nYou draw a card and gain 1 life."),
+            ("enters or is put into a graveyard", "Artifact", "When this artifact enters or is put into a graveyard "
+             "from the battlefield, draw a card."),
+            ("flashback", "Sorcery", "Draw a card.\nFlashback {2}{U} (You may cast this card from your graveyard for "
+             "its flashback cost. Then exile it.)"),
+            ("escape", "Instant", "Draw a card.\nEscape—{2}{U}, Exile five other cards from your graveyard. (You may "
+             "cast this card from your graveyard for its escape cost.)"),
+            ("investigate twice", "Enchantment", 'When this enchantment enters, investigate twice. (To investigate, '
+             'create a Clue token. It\'s an artifact with "{2}, Sacrifice this token: Draw a card.")'),
+        ):
+            with self.subTest(label=label):
+                card = _card("Twicetold Omen", type_line, oracle_text)
+                self.assertEqual(atr.classify(card)[0], "card-draw")
+
+    def test_loot_with_flashback_is_not_card_draw(self):
+        card = _card(
+            "Cinder Rummage",
+            "Sorcery",
+            "Draw a card, then discard a card.\nFlashback {2}{R} (You may cast this card from your graveyard for its "
+            "flashback cost. Then exile it.)",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_word_in_reminder_text_does_not_count(self):
+        card = _card(
+            "Mirefed Grub",
+            "Creature — Insect",
+            "Dredge 3 (If you would draw a card, you may mill three cards instead. If you do, return this card from "
+            "your graveyard to your hand.)",
+        )
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 

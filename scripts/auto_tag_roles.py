@@ -324,6 +324,13 @@ _RUMMAGE = re.compile(
 _COST_DISCARD = re.compile(rf"\bdiscard ({_COUNT_WORD}) cards?\b")
 # A card discarded to cast the spell counts against its draw too (Tormenting Voice, DEC-1197).
 _DISCARD_COST = re.compile(rf"as an additional cost to cast this spell, discard ({_COUNT_WORD}) cards?")
+# Words, outside reminder text, by which the card gives its one draw again (DEC-1198 probe P3, DEC-1197).
+_DRAW_AGAIN = re.compile(
+    r"\b(?:gravestorm|storm|replicate)\b|\bcopy (?:it|this spell)\b|same mode more than once|"
+    r"return this card from your graveyard to your hand|becomes prepared|"
+    r"\benters or (?:dies|is put into a graveyard)|"
+    r"\b(?:flashback|buyback|cipher|harmonize)\b|\bescape—|\binvestigate twice\b"
+)
 
 
 def _draw_net(oracle: str, m: re.Match) -> int | None:
@@ -355,12 +362,14 @@ def _adding_draws(oracle: str) -> list[re.Match]:
 
 def _is_cantrip(oracle: str, draws: list[re.Match], names: tuple[str, ...] = ()) -> bool:
     """One draw that adds one card or none, outside a repeatable ability, nets 0 cards or fewer (DEC-478):
-    a draw of N cards less the cards that its loot or its cost discards, N - M of 1 or less (DEC-1197)."""
+    a draw of N cards less the cards that its loot or its cost discards, N - M of 1 or less (DEC-1197).
+    A draw that the card gives again nets N - M once more, so it must add no card (DEC-1197)."""
     if len(draws) != 1:
         return False
     net = _draw_net(oracle, draws[0])
     cost = _DISCARD_COST.search(oracle)
-    if net is None or net - (_COUNT[cost[1]] if cost else 0) > 1:
+    again = _DRAW_AGAIN.search(re.sub(r"\([^)]*\)", "", oracle))
+    if net is None or net - (_COUNT[cost[1]] if cost else 0) > (0 if again else 1):
         return False
     start = oracle.rfind("\n", 0, draws[0].start()) + 1
     while start > 0 and oracle.startswith("•", start):  # a mode: read from its header line
