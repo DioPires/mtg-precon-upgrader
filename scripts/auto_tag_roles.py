@@ -288,10 +288,23 @@ def _own_names(card: dict) -> tuple[str, ...]:
     return tuple(sorted({name.lower() for name in names if name}, key=len, reverse=True))
 
 
+_COUNT = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+_COUNT_WORD = "|".join(_COUNT)
+# "Draw two cards, then discard a card": the discard counts against the draw (DEC-1197).
+_LOOT = re.compile(rf"draws? ({_COUNT_WORD}) cards?,? then discards? ({_COUNT_WORD}) cards?")
+
+
 def _is_cantrip(oracle: str, names: tuple[str, ...] = ()) -> bool:
-    """One draw of one card, outside a repeatable ability, nets 0 cards (DEC-478)."""
+    """One draw that adds one card or none, outside a repeatable ability, nets 0 cards or fewer (DEC-478):
+    a draw of one card, or a loot of N cards that discards N - 1 or more (DEC-1197)."""
     draws = list(_DRAW.finditer(oracle))
-    if len(draws) != 1 or not re.match(r"draws? (?:a|one) card\b(?! for each)", oracle[draws[0].start():]):
+    if len(draws) != 1:
+        return False
+    loot = _LOOT.match(oracle, draws[0].start())
+    if loot:
+        if _COUNT[loot[1]] - _COUNT[loot[2]] > 1:
+            return False
+    elif not re.match(r"draws? (?:a|one) card\b(?! for each)", oracle[draws[0].start():]):
         return False
     start = oracle.rfind("\n", 0, draws[0].start()) + 1
     while start > 0 and oracle.startswith("•", start):  # a mode: read from its header line

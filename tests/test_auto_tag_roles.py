@@ -702,6 +702,27 @@ class AdditionalDrawTests(unittest.TestCase):
                 self.assertEqual(atr.classify(card), ("card-draw", 0.85))
 
 
+class OneShotLootTests(unittest.TestCase):
+    """A loot that the card gives once nets 0 cards when it discards all but one card or more (DEC-1197)."""
+
+    def test_one_shot_loot_of_two_for_one_is_not_card_draw(self):
+        card = _card("Mirewake Study", "Instant", "Draw two cards, then discard a card.")
+        self.assertNotEqual(atr.classify(card)[0], "card-draw")
+
+    def test_one_shot_loot_of_three_for_one_is_card_draw(self):
+        card = _card("Deepwell Study", "Sorcery", "Draw three cards, then discard a card.")
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+    def test_loot_on_two_saga_chapters_is_card_draw(self):
+        card = _card(
+            "The Sunken Almanac",
+            "Enchantment — Saga",
+            "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\n"
+            "I, II — Draw two cards, then discard a card.\nIII — Scry 2.",
+        )
+        self.assertEqual(atr.classify(card), ("card-draw", 0.85))
+
+
 class ProtectionPatternTests(unittest.TestCase):
     """One case for each pattern that `_detect_protection` keeps."""
 
