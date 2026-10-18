@@ -396,6 +396,28 @@ class BlinkTests(unittest.TestCase):
         self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
 
 
+class UpToTargetTests(unittest.TestCase):
+    """"Destroy up to N target" and "return up to N target … to its owner's hand" name a target (DEC-1197)."""
+
+    def test_destroy_up_to_one_target_is_removal_spot(self):
+        card = _card("Sunder the Gate", "Sorcery", "Destroy up to one target nonland permanent.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.85))
+
+    def test_bounce_up_to_one_target_is_removal_spot(self):
+        card = _card("Tideshove Adept", "Instant", "Return up to one target creature to its owner's hand.")
+        self.assertEqual(atr.classify(card), ("removal-spot", 0.8))
+
+    def test_return_up_to_one_card_from_your_graveyard_is_not_removal_spot(self):
+        card = _card(
+            "Gravebloom Rite", "Sorcery", "Return up to one target creature card from your graveyard to your hand."
+        )
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+    def test_destroy_up_to_one_target_you_control_is_not_removal_spot(self):
+        card = _card("Hollow Offering", "Sorcery", "Destroy up to one target creature you control.")
+        self.assertNotEqual(atr.classify(card)[0], "removal-spot")
+
+
 class ToughnessCutTests(unittest.TestCase):
     """A cut to a target creature's toughness is removal-spot, also beside a gain to power."""
 

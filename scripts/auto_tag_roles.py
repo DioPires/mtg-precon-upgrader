@@ -189,10 +189,19 @@ def _detect_removal_board(oracle: str, type_line: str) -> tuple[str, float] | No
     return None
 
 
+# "Destroy up to one target nonland permanent" and "destroy up to one other target
+# creature" name a target too (DEC-1191, DEC-1197). Behind "up to", a target that you
+# control matches nothing here: it is neither removal nor a sac outlet, and the later
+# detectors read it.
+_UP_TO = (
+    r"(?:up to (?:one|two|three|four|five|six|seven|eight|nine|ten|x|\d+) (?:other )?"
+    r"(?!target (?:[a-z\-]+ ){1,3}?you control\b))?"
+)
+
 # A target that can be only a land is land destruction, not removal-spot; "destroy
 # target artifact, enchantment, or land" matches at "artifact" (DEC-1184).
 _SPOT_TARGET = re.compile(
-    r"(?:destroy|exile) target (?:creature|artifact|enchantment|planeswalker|"
+    r"(?:destroy " + _UP_TO + r"|exile )target (?:creature|artifact|enchantment|planeswalker|"
     r"permanent|nonland permanent|nonland|battle|nontoken creature|tapped creature|"
     r"attacking creature|blocking creature)"
 )
@@ -256,7 +265,7 @@ def _detect_removal_spot(oracle: str, type_line: str) -> tuple[str, float] | Non
             return ("utility", 0.6)
         return ("removal-spot", 0.85)
     if re.search(
-        r"return target (?:creature|nonland permanent|permanent) to (?:its|their) owner['’]?s? hand",
+        r"return " + _UP_TO + r"target (?:creature|nonland permanent|permanent) to (?:its|their) owner['’]?s? hand",
         oracle,
     ):
         return ("removal-spot", 0.8)
