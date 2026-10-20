@@ -193,6 +193,12 @@ Decomposition (DEC-995, 2026-10-12): the Hound ties the pool's first card, Dwarv
 
 ---
 
-### Reveal-cheat decks (Atla Palani, Raph & Mikey): "if you cast it" text is off; Saga creatures are slow
+### Reveal-cheat decks (Atla Palani, Raph & Mikey): "if you cast it" text is off; a Saga creature pays from chapter I
 A card that a reveal puts onto the battlefield is not cast. Zacama, Primal Calamity's land untap reads "if you cast it", so a revealed Zacama is a 9/9 trampler whose abilities each cost {2} plus a color (the same {2} as an Egg). Galactus, Devourer of Worlds (MSC, {10}, 12/12 flying trample indestructible, ETB exile target permanent, forced attack on the highest-life opponent) is legendary: Annie Joins Up doubles its exile and Elesh Norn adds one more (3 exiles from one reveal). It is colorless, so Natural Order cannot find it. Summon: Bahamut (FIN, {9} Saga creature): lore counters go on as the precombat main phase begins (Scryfall ruling 2025-06-06), so chapter IV resolves at the third main phase after entry. A turn-6 reveal deals its damage on turn 9.
+- Correction (board, DEC-1215 round 2): judge a Saga creature by chapter I, not by its last chapter. Bahamut's chapter I destroys a nonland permanent as it enters, chapter II one turn later, and the 9/9 flyer attacks two times (three with haste or a Raph & Mikey reveal) before the sacrifice. Not legendary, so Annie Joins Up does not double it; Roaming Throne (Shaman) doubles every chapter under Maskwood Nexus. Mega Flare counts other permanents' mana value: about 31 to each opponent on a mid-game Broodfire board (lands and Eggs count 0).
 - Source: DEC-1215, 2026-10-20
+
+### Broodfire Hatchery: combat first, noncombat damage allowed as a second route (board, 2026-10-20)
+The board wants the deck to win mainly through combat with big creatures. Noncombat damage is fine when it makes sense, as long as the deck does not rely on it alone. DEC-935 ("big creature enters, big creatures attack") set combat as the main plan; it did not ban noncombat finishers. Do not reject a card only because its finisher is noncombat (my DEC-1215 round-1 error on Summon: Bahamut). Infect is a separate axis: Blightsteel's poison does not add to the team's life damage.
+- The board owns Summon: Bahamut although `priv_data/Owned.csv` (ManaBox export) does not list it (2026-10-20). Ask before calling a card "not owned" on price grounds when the board names it.
+- Source: DEC-1215 comments d51ad55a, 111d617b, 9edede25, 2026-10-20
