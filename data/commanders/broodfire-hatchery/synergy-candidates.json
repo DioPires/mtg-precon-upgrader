@@ -4,11 +4,11 @@
   ],
   "counts": {
     "cycles": 30,
-    "cyclesTotal": 3364,
+    "cyclesTotal": 2897,
     "pairs": 80,
-    "pairsTotal": 508,
+    "pairsTotal": 482,
     "triples": 40,
-    "triplesTotal": 49,
+    "triplesTotal": 41,
     "uncovered": 1
   },
   "cycles": [
@@ -17,16 +17,47 @@
       "cards": [
         "Ashnod's Altar",
         "High Market",
-        "Palani's Hatcher",
-        "Zacama, Primal Calamity"
+        "Maskwood Nexus",
+        "Palani's Hatcher"
       ],
       "economies": [
         "sacrifice",
-        "token",
-        "untap"
+        "token"
       ],
       "edges": [
         {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
           "from": "Palani's Hatcher",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
@@ -57,30 +88,181 @@
           "magnitude": 2,
           "to": "High Market",
           "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Goblin Bombardment",
+        "Maskwood Nexus",
+        "Palani's Hatcher"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 2,
           "to": "Ashnod's Altar",
-          "toFeature": "mana_add"
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "mana_add"
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "High Market",
+        "Maskwood Nexus",
+        "Nesting Dragon"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
           "to": "High Market",
-          "toFeature": "tap_ability"
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -89,17 +271,47 @@
       "cards": [
         "Goblin Bombardment",
         "High Market",
-        "Palani's Hatcher",
-        "Zacama, Primal Calamity"
+        "Maskwood Nexus",
+        "Palani's Hatcher"
       ],
       "economies": [
-        "damage",
         "sacrifice",
-        "token",
-        "untap"
+        "token"
       ],
       "edges": [
         {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
           "from": "Palani's Hatcher",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
@@ -130,38 +342,85 @@
           "magnitude": 2,
           "to": "High Market",
           "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Ghalta and Mavren",
+        "Goblin Bombardment",
+        "Maskwood Nexus"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
           "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "tap_ability"
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -266,17 +525,731 @@
       "cards": [
         "Ashnod's Altar",
         "Goblin Bombardment",
+        "Maskwood Nexus",
+        "Nesting Dragon"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Beast Within",
+        "High Market",
+        "Maskwood Nexus"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Beast Within",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Beast Within",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Ghalta and Mavren",
+        "Goblin Bombardment",
+        "Palani's Hatcher"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goblin Bombardment",
+        "High Market",
+        "Maskwood Nexus",
+        "Nesting Dragon"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Beast Within",
+        "High Market",
+        "Palani's Hatcher"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Beast Within",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Beast Within",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Ghalta and Mavren",
+        "Goblin Bombardment",
+        "Nesting Dragon"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Beast Within",
+        "Goblin Bombardment",
+        "Maskwood Nexus"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goblin Bombardment",
+        "High Market",
+        "Nesting Dragon",
+        "Palani's Hatcher"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Maskwood Nexus",
         "Palani's Hatcher",
-        "Zacama, Primal Calamity"
+        "Phyrexian Altar"
       ],
       "economies": [
-        "damage",
         "sacrifice",
-        "token",
-        "untap"
+        "token"
       ],
       "edges": [
         {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
           "from": "Palani's Hatcher",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
@@ -297,7 +1270,7 @@
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
+          "to": "Phyrexian Altar",
           "toFeature": "sac_outlet"
         },
         {
@@ -305,32 +1278,276 @@
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 2,
-          "to": "Goblin Bombardment",
+          "to": "Phyrexian Altar",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Ashnod's Altar",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Beast Within",
+        "High Market",
+        "Nesting Dragon"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Beast Within",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Beast Within",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Beast Within",
+        "Maskwood Nexus",
+        "Phyrexian Altar"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Ghalta and Mavren",
+        "Maskwood Nexus",
+        "Phyrexian Altar"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -339,50 +1556,33 @@
       "cards": [
         "Ashnod's Altar",
         "High Market",
-        "Nesting Dragon",
-        "Zacama, Primal Calamity"
+        "Maskwood Nexus",
+        "Worldspine Wurm"
       ],
       "economies": [
         "dies",
         "sacrifice",
-        "token",
-        "untap"
+        "token"
       ],
       "edges": [
         {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Nesting Dragon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
         },
         {
-          "from": "Nesting Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
+          "from": "Maskwood Nexus",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
@@ -390,7 +1590,7 @@
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Nesting Dragon",
+          "from": "Maskwood Nexus",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
@@ -398,134 +1598,156 @@
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
           "to": "Ashnod's Altar",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goblin Bombardment",
-        "High Market",
-        "Nesting Dragon",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "damage",
-        "dies",
-        "sacrifice",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Nesting Dragon",
+          "from": "Worldspine Wurm",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
+          "to": "Ashnod's Altar",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Nesting Dragon",
+          "from": "Worldspine Wurm",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
           "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
           "magnitude": 1,
           "to": "High Market",
-          "toFeature": "mana_add"
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Worldspine Wurm",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
           "to": "High Market",
-          "toFeature": "tap_ability"
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 3,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
         }
       ]
     },
     {
       "band": "strong",
       "cards": [
+        "Ashnod's Altar",
+        "Maskwood Nexus",
+        "Phyrexian Altar",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 3,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Phyrexian Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Phyrexian Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 3,
+          "to": "Phyrexian Altar",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
         "Goblin Bombardment",
-        "High Market",
         "Nesting Dragon",
         "Palani's Hatcher"
       ],
@@ -540,7 +1762,7 @@
           "fromFeature": "dies_trigger",
           "label": "Death payoff ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
+          "to": "Ashnod's Altar",
           "toFeature": "sac_outlet"
         },
         {
@@ -548,7 +1770,7 @@
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
+          "to": "Ashnod's Altar",
           "toFeature": "sac_outlet"
         },
         {
@@ -556,7 +1778,7 @@
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
+          "to": "Ashnod's Altar",
           "toFeature": "sac_outlet"
         },
         {
@@ -564,7 +1786,7 @@
           "fromFeature": "dies_trigger",
           "label": "Death payoff ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
+          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         },
         {
@@ -572,7 +1794,7 @@
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
+          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         },
         {
@@ -580,7 +1802,23 @@
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Ashnod's Altar",
           "toFeature": "sac_outlet"
         },
         {
@@ -597,22 +1835,6 @@
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 2,
           "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Palani's Hatcher",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Palani's Hatcher",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 2,
-          "to": "High Market",
           "toFeature": "sac_outlet"
         }
       ]
@@ -620,173 +1842,50 @@
     {
       "band": "strong",
       "cards": [
-        "Ashnod's Altar",
+        "Beast Within",
         "Goblin Bombardment",
-        "Nesting Dragon",
-        "Zacama, Primal Calamity"
+        "High Market",
+        "Maskwood Nexus"
       ],
       "economies": [
-        "damage",
-        "dies",
-        "sacrifice",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Ashnod's Altar",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Ashnod's Altar",
-        "Goblin Bombardment",
-        "Nesting Dragon",
-        "Palani's Hatcher"
-      ],
-      "economies": [
-        "dies",
         "sacrifice",
         "token"
       ],
       "edges": [
         {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
+          "from": "Beast Within",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Ashnod's Altar",
+          "to": "High Market",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Nesting Dragon",
+          "from": "Beast Within",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Ashnod's Altar",
+          "to": "High Market",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Nesting Dragon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
+          "to": "Beast Within",
+          "toFeature": "token_create"
         },
         {
-          "from": "Nesting Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Palani's Hatcher",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Palani's Hatcher",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 2,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Palani's Hatcher",
+          "from": "Maskwood Nexus",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
@@ -794,11 +1893,27 @@
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Palani's Hatcher",
+          "from": "Maskwood Nexus",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 2,
+          "magnitude": 1,
           "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
           "toFeature": "sac_outlet"
         }
       ]
@@ -1014,18 +2129,128 @@
     {
       "band": "strong",
       "cards": [
-        "Ashnod's Altar",
+        "Beast Within",
+        "Goblin Bombardment",
         "High Market",
-        "Worldspine Wurm",
-        "Zacama, Primal Calamity"
+        "Palani's Hatcher"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Beast Within",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Beast Within",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Goblin Bombardment",
+        "Maskwood Nexus",
+        "Worldspine Wurm"
       ],
       "economies": [
         "dies",
         "sacrifice",
-        "token",
-        "untap"
+        "token"
       ],
       "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Maskwood Nexus",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
         {
           "from": "Worldspine Wurm",
           "fromFeature": "dies_trigger",
@@ -1055,7 +2280,7 @@
           "fromFeature": "dies_trigger",
           "label": "Death payoff ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
+          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         },
         {
@@ -1063,7 +2288,7 @@
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
+          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         },
         {
@@ -1071,578 +2296,182 @@
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 3,
-          "to": "High Market",
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Maskwood Nexus",
+        "Nesting Dragon",
+        "Phyrexian Altar"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
           "to": "Ashnod's Altar",
-          "toFeature": "mana_add"
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "mana_add"
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "tap_ability"
+          "to": "Phyrexian Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Phyrexian Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Phyrexian Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
         }
       ]
     },
     {
       "band": "strong",
       "cards": [
-        "Arcane Signet",
-        "Seedborn Muse",
-        "Sol Ring",
-        "Zacama, Primal Calamity"
+        "Ashnod's Altar",
+        "Beast Within",
+        "Ghalta and Mavren",
+        "Goblin Bombardment"
       ],
       "economies": [
-        "untap"
+        "sacrifice"
       ],
       "edges": [
         {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
+          "to": "Beast Within",
+          "toFeature": "token_create"
         },
         {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Ashnod's Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bountiful Promenade",
-        "Seedborn Muse",
-        "Sol Ring",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        },
         {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Clifftop Retreat",
-        "Seedborn Muse",
-        "Sol Ring",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Command Tower",
-        "Seedborn Muse",
-        "Sol Ring",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Exotic Orchard",
-        "Seedborn Muse",
-        "Sol Ring",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Rogue's Passage",
-        "Seedborn Muse",
-        "Sol Ring",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Rootbound Crag",
-        "Seedborn Muse",
-        "Sol Ring",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -1738,478 +2567,10 @@
     {
       "band": "strong",
       "cards": [
-        "Arcane Signet",
-        "Bountiful Promenade",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Arcane Signet",
-        "Clifftop Retreat",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Arcane Signet",
-        "Command Tower",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Arcane Signet",
-        "Exotic Orchard",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Arcane Signet",
-        "Rogue's Passage",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Arcane Signet",
-        "Rootbound Crag",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Ashnod's Altar",
-        "Palani's Hatcher",
-        "Thornbite Staff",
-        "Worldspine Wurm"
+        "Beast Within",
+        "Goblin Bombardment",
+        "High Market",
+        "Nesting Dragon"
       ],
       "economies": [
         "dies",
@@ -2218,310 +2579,84 @@
       ],
       "edges": [
         {
-          "from": "Palani's Hatcher",
+          "from": "Beast Within",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Ashnod's Altar",
+          "to": "High Market",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Palani's Hatcher",
+          "from": "Beast Within",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 2,
-          "to": "Ashnod's Altar",
+          "magnitude": 1,
+          "to": "High Market",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Palani's Hatcher",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "dies_trigger"
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Palani's Hatcher",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Thornbite Staff",
-          "toFeature": "etb_trigger"
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
         },
         {
-          "from": "Worldspine Wurm",
+          "from": "Nesting Dragon",
           "fromFeature": "dies_trigger",
           "label": "Death payoff ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Ashnod's Altar",
+          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Worldspine Wurm",
+          "from": "Nesting Dragon",
           "fromFeature": "sac_fodder",
           "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Ashnod's Altar",
+          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Worldspine Wurm",
+          "from": "Nesting Dragon",
           "fromFeature": "token_create",
           "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 3,
-          "to": "Ashnod's Altar",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         },
         {
-          "from": "Worldspine Wurm",
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
           "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "dies_trigger"
+          "to": "High Market",
+          "toFeature": "sac_outlet"
         },
         {
-          "from": "Worldspine Wurm",
+          "from": "Nesting Dragon",
           "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 3,
-          "to": "Thornbite Staff",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bountiful Promenade",
-        "Clifftop Retreat",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
+          "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bountiful Promenade",
-        "Command Tower",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Bountiful Promenade",
-        "Exotic Orchard",
-        "Seedborn Muse",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "tap_ability"
+          "to": "High Market",
+          "toFeature": "sac_outlet"
         }
       ]
     }
@@ -2531,7 +2666,7 @@
     "crowdPriorApplied": true,
     "deckId": "broodfire-hatchery",
     "deepFocused": true,
-    "generatedAt": "2026-10-06T14:24:51.444049+00:00",
+    "generatedAt": "2026-10-20T15:45:55.671909+00:00",
     "matchingModel": "tier-c-synergy-v1 (provides/wants graph, idf-weighted, reduced-signal)",
     "note": "Tier C — heuristic / speculative synergy signals, never verified combos (EI-4). Ranking is provisional and unvalidated against RK-3 until the Phase-3 calibration; coarse bands only (RK-5). Crowd prior (EDHREC) folded into ranking; raw rates not shipped.",
     "ontologyVersion": "1.1.0",
@@ -2564,118 +2699,6 @@
           "magnitude": 2,
           "to": "Ashnod's Altar",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Sol Ring",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Sol Ring",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Sol Ring",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Arcane Signet",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Arcane Signet",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Command Tower",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Command Tower",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Exotic Orchard",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Exotic Orchard",
-          "toFeature": "tap_ability"
         }
       ]
     },
@@ -2768,34 +2791,6 @@
       "band": "strong",
       "cards": [
         "High Market",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "High Market",
         "Maskwood Nexus"
       ],
       "economies": [
@@ -2818,35 +2813,6 @@
           "magnitude": 1,
           "to": "High Market",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goblin Bombardment",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "damage",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
         }
       ]
     },
@@ -2885,138 +2851,6 @@
           "magnitude": 1,
           "to": "High Market",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Rogue's Passage",
-        "Seedborn Muse"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Clifftop Retreat",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Clifftop Retreat",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Rootbound Crag",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rootbound Crag",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Ghalta and Mavren",
-        "High Market"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Ghalta and Mavren",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "High Market",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Ghalta and Mavren",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Ashnod's Altar",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Ashnod's Altar",
-          "toFeature": "mana_add"
         }
       ]
     },
@@ -3051,29 +2885,56 @@
     {
       "band": "strong",
       "cards": [
-        "Goblin Bombardment",
-        "Palani's Hatcher"
+        "Ghalta and Mavren",
+        "High Market"
       ],
       "economies": [
-        "sacrifice",
-        "token"
+        "sacrifice"
       ],
       "edges": [
         {
-          "from": "Palani's Hatcher",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Palani's Hatcher",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 2,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
+          "from": "High Market",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Rogue's Passage",
+        "Seedborn Muse"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Rogue's Passage",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Rogue's Passage",
+          "toFeature": "tap_ability"
         }
       ]
     },
@@ -3111,6 +2972,35 @@
           "label": "Creates tokens ↔ Sacrifice outlet",
           "magnitude": 1,
           "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goblin Bombardment",
+        "Palani's Hatcher"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 2,
+          "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
         }
       ]
@@ -3391,35 +3281,6 @@
     {
       "band": "strong",
       "cards": [
-        "Maskwood Nexus",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "etb",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Maskwood Nexus",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Maskwood Nexus",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Goblin Bombardment",
         "Maskwood Nexus"
       ],
@@ -3481,43 +3342,6 @@
           "magnitude": 3,
           "to": "Ashnod's Altar",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Thornbite Staff",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "damage",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Thornbite Staff",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "tap_ability"
         }
       ]
     },
@@ -3602,34 +3426,6 @@
     {
       "band": "strong",
       "cards": [
-        "Bountiful Promenade",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Bountiful Promenade",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Maskwood Nexus",
         "Phyrexian Altar"
       ],
@@ -3652,6 +3448,26 @@
           "magnitude": 1,
           "to": "Maskwood Nexus",
           "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ashnod's Altar",
+        "Skullclamp"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Skullclamp",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -3744,55 +3560,6 @@
     {
       "band": "strong",
       "cards": [
-        "Ashnod's Altar",
-        "Skullclamp"
-      ],
-      "economies": [
-        "dies"
-      ],
-      "edges": [
-        {
-          "from": "Skullclamp",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Thornbite Staff",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 3,
-          "to": "Thornbite Staff",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Goblin Bombardment",
         "Nesting Dragon"
       ],
@@ -3831,76 +3598,29 @@
     {
       "band": "strong",
       "cards": [
-        "Rogue's Passage",
-        "Zacama, Primal Calamity"
+        "Thornbite Staff",
+        "Worldspine Wurm"
       ],
       "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Rogue's Passage",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Palani's Hatcher",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
+        "sacrifice",
         "token"
       ],
       "edges": [
         {
-          "from": "Palani's Hatcher",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Zacama, Primal Calamity",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Ghalta and Mavren",
-        "Goblin Bombardment"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Goblin Bombardment",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "from": "Worldspine Wurm",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
           "magnitude": 1,
-          "to": "Ghalta and Mavren",
-          "toFeature": "sac_fodder"
+          "to": "Thornbite Staff",
+          "toFeature": "dies_trigger"
         },
         {
-          "from": "Goblin Bombardment",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Ghalta and Mavren",
-          "toFeature": "token_create"
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Thornbite Staff",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -3950,6 +3670,34 @@
           "magnitude": 2,
           "to": "Phyrexian Altar",
           "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Ghalta and Mavren",
+        "Goblin Bombardment"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Goblin Bombardment",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4081,35 +3829,7 @@
       ]
     },
     {
-      "band": "strong",
-      "cards": [
-        "Ghalta and Mavren",
-        "Phyrexian Altar"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Phyrexian Altar",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Ghalta and Mavren",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Phyrexian Altar",
-          "fromFeature": "sac_outlet",
-          "label": "Sacrifice outlet ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Ghalta and Mavren",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
+      "band": "speculative",
       "cards": [
         "Palani's Hatcher",
         "Thornbite Staff"
@@ -4134,26 +3854,6 @@
           "magnitude": 2,
           "to": "Thornbite Staff",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Apex Altisaur",
-        "Maskwood Nexus"
-      ],
-      "economies": [
-        "etb"
-      ],
-      "edges": [
-        {
-          "from": "Apex Altisaur",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 1,
-          "to": "Maskwood Nexus",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -4198,68 +3898,68 @@
     {
       "band": "speculative",
       "cards": [
-        "Seedborn Muse",
-        "Windswept Heath"
+        "Ghalta and Mavren",
+        "Phyrexian Altar"
       ],
       "economies": [
-        "untap"
+        "sacrifice"
       ],
       "edges": [
         {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
           "magnitude": 1,
-          "to": "Windswept Heath",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Seedborn Muse",
-        "Wooded Foothills"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Wooded Foothills",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Battlefield Forge",
-        "Seedborn Muse"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Battlefield Forge",
-          "toFeature": "mana_add"
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
         },
         {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
           "magnitude": 1,
-          "to": "Battlefield Forge",
-          "toFeature": "tap_ability"
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Palani's Hatcher",
+        "Skullclamp"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Skullclamp",
+          "toFeature": "dies_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Apex Altisaur",
+        "Maskwood Nexus"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Apex Altisaur",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4295,27 +3995,7 @@
     {
       "band": "speculative",
       "cards": [
-        "Palani's Hatcher",
-        "Skullclamp"
-      ],
-      "economies": [
-        "sacrifice"
-      ],
-      "edges": [
-        {
-          "from": "Palani's Hatcher",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Skullclamp",
-          "toFeature": "dies_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Karplusan Forest",
+        "Battlefield Forge",
         "Seedborn Muse"
       ],
       "economies": [
@@ -4327,7 +4007,7 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Adds mana",
           "magnitude": 1,
-          "to": "Karplusan Forest",
+          "to": "Battlefield Forge",
           "toFeature": "mana_add"
         },
         {
@@ -4335,8 +4015,28 @@
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
           "magnitude": 1,
-          "to": "Karplusan Forest",
+          "to": "Battlefield Forge",
           "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Apex Altisaur",
+        "Palani's Hatcher"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 2,
+          "to": "Apex Altisaur",
+          "toFeature": "etb_trigger"
         }
       ]
     },
@@ -4410,54 +4110,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Apex Altisaur",
-        "Palani's Hatcher"
-      ],
-      "economies": [
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Palani's Hatcher",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 2,
-          "to": "Apex Altisaur",
-          "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "High Market",
-        "Seedborn Muse"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Seedborn Muse",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Annie Joins Up",
         "Goblin Bombardment"
       ],
@@ -4478,20 +4130,28 @@
     {
       "band": "speculative",
       "cards": [
-        "Ghalta and Mavren",
-        "Palani's Hatcher"
+        "Karplusan Forest",
+        "Seedborn Muse"
       ],
       "economies": [
-        "etb"
+        "untap"
       ],
       "edges": [
         {
-          "from": "Palani's Hatcher",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
           "magnitude": 1,
-          "to": "Ghalta and Mavren",
-          "toFeature": "token_create"
+          "to": "Karplusan Forest",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Karplusan Forest",
+          "toFeature": "tap_ability"
         }
       ]
     },
@@ -4530,6 +4190,94 @@
           "magnitude": 3,
           "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Seedborn Muse",
+        "Windswept Heath"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Windswept Heath",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Seedborn Muse",
+        "Wooded Foothills"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Wooded Foothills",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "High Market",
+        "Seedborn Muse"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Ghalta and Mavren",
+        "Palani's Hatcher"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
         }
       ]
     },
@@ -4592,62 +4340,6 @@
     {
       "band": "speculative",
       "cards": [
-        "The Great Henge",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "The Great Henge",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "The Great Henge",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Battlefield Forge",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Battlefield Forge",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Battlefield Forge",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Beast Within",
         "Nesting Dragon"
       ],
@@ -4671,34 +4363,6 @@
           "magnitude": 1,
           "to": "Beast Within",
           "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Karplusan Forest",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Karplusan Forest",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Karplusan Forest",
-          "toFeature": "tap_ability"
         }
       ]
     },
@@ -4734,20 +4398,114 @@
     {
       "band": "speculative",
       "cards": [
-        "Jetmir's Garden",
-        "Zacama, Primal Calamity"
+        "High Market",
+        "Vaultborn Tyrant"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Vaultborn Tyrant",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Vaultborn Tyrant",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Vaultborn Tyrant",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Apex Altisaur",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Apex Altisaur",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Beast Within",
+        "Phyrexian Altar"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Phyrexian Altar",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Seedborn Muse",
+        "The Great Henge"
       ],
       "economies": [
         "untap"
       ],
       "edges": [
         {
-          "from": "Zacama, Primal Calamity",
+          "from": "Seedborn Muse",
           "fromFeature": "untap_permanent",
           "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Jetmir's Garden",
+          "magnitude": 2,
+          "to": "The Great Henge",
           "toFeature": "mana_add"
+        },
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "The Great Henge",
+          "toFeature": "tap_ability"
         }
       ]
     },
@@ -4768,6 +4526,389 @@
           "magnitude": 2,
           "to": "Ashnod's Altar",
           "toFeature": "mana_add"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Boseiju, Who Endures",
+        "Seedborn Muse"
+      ],
+      "economies": [
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 1,
+          "to": "Boseiju, Who Endures",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Seedborn Muse",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "Boseiju, Who Endures",
+          "toFeature": "tap_ability"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Mondrak, Glory Dominus",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "sacrifice"
+      ],
+      "edges": [
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Mondrak, Glory Dominus",
+          "fromFeature": "sac_outlet",
+          "label": "Sacrifice outlet ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Beast Within",
+        "Thornbite Staff"
+      ],
+      "economies": [
+        "dies",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Beast Within",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Ghalta and Mavren",
+        "Thornbite Staff"
+      ],
+      "economies": [
+        "dies",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Maskwood Nexus",
+        "Thornbite Staff"
+      ],
+      "economies": [
+        "dies",
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Nesting Dragon",
+        "Thornbite Staff"
+      ],
+      "economies": [
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Thornbite Staff",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 1,
+          "to": "Thornbite Staff",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Ghalta and Mavren",
+        "Skullclamp"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Skullclamp",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Garruk's Uprising",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Garruk's Uprising",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Maskwood Nexus",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Maskwood Nexus",
+          "toFeature": "sac_fodder"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Garruk's Uprising",
+        "Ghalta and Mavren"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Garruk's Uprising",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Apex Altisaur",
+        "Ghalta and Mavren"
+      ],
+      "economies": [
+        "etb"
+      ],
+      "edges": [
+        {
+          "from": "Apex Altisaur",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 1,
+          "to": "Ghalta and Mavren",
+          "toFeature": "token_create"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Aggravated Assault",
+        "Sol Ring"
+      ],
+      "economies": [
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Sol Ring",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Sol Ring",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aggravated Assault",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Mondrak, Glory Dominus",
+        "Nesting Dragon"
+      ],
+      "economies": [
+        "dies",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Mondrak, Glory Dominus",
+          "toFeature": "sac_outlet"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Goblin Bombardment",
+        "Skullclamp"
+      ],
+      "economies": [
+        "dies"
+      ],
+      "edges": [
+        {
+          "from": "Skullclamp",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
         }
       ]
     }
@@ -4928,71 +5069,6 @@
     {
       "band": "strong",
       "cards": [
-        "High Market",
-        "Worldspine Wurm",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "sacrifice",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 3,
-          "to": "High Market",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "High Market",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Ashnod's Altar",
         "Nesting Dragon",
         "Worldspine Wurm"
@@ -5489,63 +5565,6 @@
     {
       "band": "strong",
       "cards": [
-        "Ashnod's Altar",
-        "Worldspine Wurm",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "sacrifice",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 3,
-          "to": "Ashnod's Altar",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "Ashnod's Altar",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Nesting Dragon",
         "Phyrexian Altar",
         "Worldspine Wurm"
@@ -5626,71 +5645,6 @@
     {
       "band": "strong",
       "cards": [
-        "Thornbite Staff",
-        "Worldspine Wurm",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "damage",
-        "etb",
-        "sacrifice",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Death payoff",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "dies_trigger"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 3,
-          "to": "Thornbite Staff",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Thornbite Staff",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Palani's Hatcher",
         "Phyrexian Altar",
         "Worldspine Wurm"
@@ -5757,77 +5711,6 @@
           "magnitude": 3,
           "to": "Phyrexian Altar",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goblin Bombardment",
-        "Thornbite Staff",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "damage",
-        "dies",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Thornbite Staff",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Thornbite Staff",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Thornbite Staff",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "tap_ability"
         }
       ]
     },
@@ -5898,72 +5781,6 @@
     {
       "band": "strong",
       "cards": [
-        "Goblin Bombardment",
-        "Worldspine Wurm",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "damage",
-        "dies",
-        "etb",
-        "sacrifice",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
         "Annie Joins Up",
         "Nesting Dragon",
         "Worldspine Wurm"
@@ -6029,6 +5846,86 @@
           "magnitude": 3,
           "to": "Annie Joins Up",
           "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "strong",
+      "cards": [
+        "Goblin Bombardment",
+        "Nesting Dragon",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Recurring sacrifice fodder",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "sac_fodder"
+        },
+        {
+          "from": "Nesting Dragon",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 3,
+          "to": "Goblin Bombardment",
+          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -6093,86 +5990,6 @@
           "magnitude": 3,
           "to": "Annie Joins Up",
           "toFeature": "etb_trigger"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "Goblin Bombardment",
-        "Nesting Dragon",
-        "Worldspine Wurm"
-      ],
-      "economies": [
-        "dies",
-        "etb",
-        "sacrifice",
-        "token"
-      ],
-      "edges": [
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Recurring sacrifice fodder",
-          "magnitude": 1,
-          "to": "Worldspine Wurm",
-          "toFeature": "sac_fodder"
-        },
-        {
-          "from": "Nesting Dragon",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "dies_trigger",
-          "label": "Death payoff ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "sac_fodder",
-          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
-        },
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ Sacrifice outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "sac_outlet"
         }
       ]
     },
@@ -6438,53 +6255,6 @@
           "magnitude": 1,
           "to": "Goblin Bombardment",
           "toFeature": "sac_outlet"
-        }
-      ]
-    },
-    {
-      "band": "strong",
-      "cards": [
-        "The Great Henge",
-        "Worldspine Wurm",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "etb",
-        "token",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Worldspine Wurm",
-          "fromFeature": "token_create",
-          "label": "Creates tokens ↔ ETB payoff",
-          "magnitude": 3,
-          "to": "The Great Henge",
-          "toFeature": "etb_trigger"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 2,
-          "to": "The Great Henge",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "The Great Henge",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "etb_trigger",
-          "label": "ETB payoff ↔ Creates tokens",
-          "magnitude": 3,
-          "to": "Worldspine Wurm",
-          "toFeature": "token_create"
         }
       ]
     },
@@ -7122,122 +6892,6 @@
     {
       "band": "speculative",
       "cards": [
-        "Eiganjo, Seat of the Empire",
-        "Thornbite Staff",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "damage",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Thornbite Staff",
-          "fromFeature": "ping_outlet",
-          "label": "Repeatable damage outlet ↔ Deals damage",
-          "magnitude": 4,
-          "to": "Eiganjo, Seat of the Empire",
-          "toFeature": "damage"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Eiganjo, Seat of the Empire",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Eiganjo, Seat of the Empire",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Thornbite Staff",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Thornbite Staff",
-          "toFeature": "tap_ability"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
-        "Eiganjo, Seat of the Empire",
-        "Goblin Bombardment",
-        "Zacama, Primal Calamity"
-      ],
-      "economies": [
-        "damage",
-        "untap"
-      ],
-      "edges": [
-        {
-          "from": "Goblin Bombardment",
-          "fromFeature": "ping_outlet",
-          "label": "Repeatable damage outlet ↔ Deals damage",
-          "magnitude": 4,
-          "to": "Eiganjo, Seat of the Empire",
-          "toFeature": "damage"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Adds mana",
-          "magnitude": 1,
-          "to": "Eiganjo, Seat of the Empire",
-          "toFeature": "mana_add"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
-          "magnitude": 1,
-          "to": "Eiganjo, Seat of the Empire",
-          "toFeature": "tap_ability"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "damage",
-          "label": "Deals damage ↔ Repeatable damage outlet",
-          "magnitude": 3,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        },
-        {
-          "from": "Zacama, Primal Calamity",
-          "fromFeature": "untap_permanent",
-          "label": "Untaps a permanent ↔ Repeatable damage outlet",
-          "magnitude": 1,
-          "to": "Goblin Bombardment",
-          "toFeature": "ping_outlet"
-        }
-      ]
-    },
-    {
-      "band": "speculative",
-      "cards": [
         "Greater Good",
         "Nesting Dragon",
         "Worldspine Wurm"
@@ -7503,6 +7157,441 @@
           "magnitude": 4,
           "to": "Eiganjo, Seat of the Empire",
           "toFeature": "damage"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Aurelia, the Warleader",
+        "Eiganjo, Seat of the Empire",
+        "Thornbite Staff"
+      ],
+      "economies": [
+        "damage",
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Eiganjo, Seat of the Empire",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aurelia, the Warleader",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Eiganjo, Seat of the Empire",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aurelia, the Warleader",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aurelia, the Warleader",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Aurelia, the Warleader",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Deals damage",
+          "magnitude": 4,
+          "to": "Eiganjo, Seat of the Empire",
+          "toFeature": "damage"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Eiganjo, Seat of the Empire",
+        "Moraug, Fury of Akoum",
+        "Thornbite Staff"
+      ],
+      "economies": [
+        "damage",
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Eiganjo, Seat of the Empire",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Eiganjo, Seat of the Empire",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Deals damage",
+          "magnitude": 4,
+          "to": "Eiganjo, Seat of the Empire",
+          "toFeature": "damage"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Eiganjo, Seat of the Empire",
+        "Thornbite Staff",
+        "Tifa, Martial Artist"
+      ],
+      "economies": [
+        "damage",
+        "mana",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Eiganjo, Seat of the Empire",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Tifa, Martial Artist",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Eiganjo, Seat of the Empire",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Tifa, Martial Artist",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Deals damage",
+          "magnitude": 4,
+          "to": "Eiganjo, Seat of the Empire",
+          "toFeature": "damage"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Tifa, Martial Artist",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Tifa, Martial Artist",
+          "toFeature": "untap_permanent"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "High Market",
+        "Moraug, Fury of Akoum",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "mana",
+        "sacrifice",
+        "token",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "High Market",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "High Market",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 3,
+          "to": "High Market",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Moraug, Fury of Akoum",
+        "Thornbite Staff",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "damage",
+        "sacrifice",
+        "token",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "ping_outlet",
+          "label": "Repeatable damage outlet ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Thornbite Staff",
+          "fromFeature": "tap_ability",
+          "label": "Has a tap-ability worth untapping ↔ Untaps a permanent",
+          "magnitude": 1,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Thornbite Staff",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Thornbite Staff",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Moraug, Fury of Akoum",
+        "The Great Henge",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "token",
+        "untap"
+      ],
+      "edges": [
+        {
+          "from": "Moraug, Fury of Akoum",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Adds mana",
+          "magnitude": 2,
+          "to": "The Great Henge",
+          "toFeature": "mana_add"
+        },
+        {
+          "from": "Moraug, Fury of Akoum",
+          "fromFeature": "untap_permanent",
+          "label": "Untaps a permanent ↔ Has a tap-ability worth untapping",
+          "magnitude": 1,
+          "to": "The Great Henge",
+          "toFeature": "tap_ability"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "etb_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "The Great Henge",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Ashnod's Altar",
+        "Moraug, Fury of Akoum",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "dies",
+        "mana",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Ashnod's Altar",
+          "fromFeature": "mana_add",
+          "label": "Adds mana ↔ Untaps a permanent",
+          "magnitude": 2,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "untap_permanent"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "dies_trigger",
+          "label": "Death payoff ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Sacrifice outlet",
+          "magnitude": 1,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Sacrifice outlet",
+          "magnitude": 3,
+          "to": "Ashnod's Altar",
+          "toFeature": "sac_outlet"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ ETB payoff",
+          "magnitude": 3,
+          "to": "Moraug, Fury of Akoum",
+          "toFeature": "etb_trigger"
+        }
+      ]
+    },
+    {
+      "band": "speculative",
+      "cards": [
+        "Fecund Greenshell",
+        "Palani's Hatcher",
+        "Worldspine Wurm"
+      ],
+      "economies": [
+        "etb",
+        "sacrifice",
+        "token"
+      ],
+      "edges": [
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 2,
+          "to": "Fecund Greenshell",
+          "toFeature": "anthem"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "etb_trigger",
+          "label": "ETB payoff ↔ Creates tokens",
+          "magnitude": 3,
+          "to": "Worldspine Wurm",
+          "toFeature": "token_create"
+        },
+        {
+          "from": "Palani's Hatcher",
+          "fromFeature": "sac_fodder",
+          "label": "Recurring sacrifice fodder ↔ Death payoff",
+          "magnitude": 1,
+          "to": "Worldspine Wurm",
+          "toFeature": "dies_trigger"
+        },
+        {
+          "from": "Worldspine Wurm",
+          "fromFeature": "token_create",
+          "label": "Creates tokens ↔ Anthem / static buff (ambient)",
+          "magnitude": 3,
+          "to": "Fecund Greenshell",
+          "toFeature": "anthem"
         }
       ]
     }

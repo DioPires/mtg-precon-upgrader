@@ -244,7 +244,10 @@ import type { DeckTierBLoops } from './tierB';
 // v157 -> v158 (DEC-1127 2026-10-15): slivers and stampede-acres winConditions and
 // witherbloom-the-balancer synergies gained `title` (8 renamed from `name`, 2 new).
 // deck.json is persisted, so an older copy keeps the empty titles until its TTL ends.
-const STORAGE_PREFIX = 'gv1-deck-data-v158:';
+// v158 -> v159 (DEC-1215 2026-10-20): broodfire-hatchery +Galactus, Devourer of Worlds /
+// -Zacama, Primal Calamity and +Summon: Bahamut / -Blightsteel Colossus; card-metadata.json
+// prices refreshed; the fleet's spellbook-combos.json re-emitted on corpus 2026-10-20.
+const STORAGE_PREFIX = 'gv1-deck-data-v159:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
