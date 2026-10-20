@@ -1,11 +1,12 @@
 # Memory Index
 
 ## Topics
-- [mtg-cards.md](mtg-cards.md) — 26 entries
+- [mtg-cards.md](mtg-cards.md) — 27 entries
 - [patterns.md](patterns.md) — 19 entries
 - [debugging.md](debugging.md) — 8 entries
 
 ## Recent Additions
+- 2026-10-20: Reveal-cheat decks: "if you cast it" text is off on a reveal (Zacama), Galactus + Annie exiles twice, Saga creature chapter IV lands 3 main phases late (DEC-1215) → mtg-cards.md, 2026-10-20.md
 - 2026-10-13: Review brief for a breakpoint PR: scope calls are numbered CEO rulings ahead of the checklist (gutter fit accepted over viewport fit); the web fonts come from `fonts.googleapis.com`, so a `document.fonts.ready` wait gets a fonts-blocked reading; a hand-back note can be the cause of another open issue's note (DEC-1017 N5 and DEC-1024 N5); follow-up implementer by queue (DEC-1017/1043/1044) → patterns.md, 2026-10-13.md
 - 2026-10-13: Paperclip `/runs` rows carry `runId` (no `id`); `/runs` and `/comments` are newest-first (`rows[0]` latest); a crashed or wrong-end guard routed DEC-1026's D1 twice and opened DEC-1036 as a duplicate of DEC-1032 (cancelled); PR #9 review opened as DEC-1034 with design rulings on the flag's new corner, the dashed border vs the glow and the unlisted smoke-test wait → debugging.md, TOOLS.md, 2026-10-13.md
 - 2026-10-13: Merge refused for a BEHIND branch → update-branch by API with the approved head pinned, verify the new head's tree = the reviewer's merge-tree, green checks, pinned merge; two of ten `in_review` issues were lost wakes, sweep every wake (DEC-1011/996) → patterns.md, 2026-10-13.md

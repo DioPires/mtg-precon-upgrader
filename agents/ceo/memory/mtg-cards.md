@@ -190,3 +190,9 @@ After the DEC-990 fix the Hound scores 33.7 in anvil-chorus and ranks 931 of 2,0
 
 Decomposition (DEC-995, 2026-10-12): the Hound ties the pool's first card, Dwarven Mattock (71.8), on archetype fit (1.0 of 40). The gap is owned +15, EDHREC +18.5 (Mattock 46.2% on the Fíli page), multiplayer +5. Flicker fit in anvil-chorus caps at 7.0 (40 × 0.35 × 0.5), so an unowned flicker card with no EDHREC record caps at 47.0 < the 48.2 cut and can never enter the pool without a pin. Owned, the Hound would score 48.7 (rank ≈166).
 - Source: DEC-990 comment 6264fb4d (Founding), 2026-10-12
+
+---
+
+### Reveal-cheat decks (Atla Palani, Raph & Mikey): "if you cast it" text is off; Saga creatures are slow
+A card that a reveal puts onto the battlefield is not cast. Zacama, Primal Calamity's land untap reads "if you cast it", so a revealed Zacama is a 9/9 trampler whose abilities each cost {2} plus a color (the same {2} as an Egg). Galactus, Devourer of Worlds (MSC, {10}, 12/12 flying trample indestructible, ETB exile target permanent, forced attack on the highest-life opponent) is legendary: Annie Joins Up doubles its exile and Elesh Norn adds one more (3 exiles from one reveal). It is colorless, so Natural Order cannot find it. Summon: Bahamut (FIN, {9} Saga creature): lore counters go on as the precombat main phase begins (Scryfall ruling 2025-06-06), so chapter IV resolves at the third main phase after entry. A turn-6 reveal deals its damage on turn 9.
+- Source: DEC-1215, 2026-10-20
