@@ -1,0 +1,40 @@
+{
+ "head": "ea4b890987dbdac6327c9926efd58d622c4ba84e",
+ "kill": "/tmp/dec1122/kills/test_kill_r8_r17_batch_order.py",
+ "rows": [
+  {
+   "id": "HEAD",
+   "mutant": "no mutant",
+   "file": "scripts/compute_tokens.py",
+   "killed": false,
+   "rc": 0,
+   "failed": [],
+   "tail": "2 passed in 0.04s",
+   "network": false
+  },
+  {
+   "id": "R8",
+   "mutant": "the front faces keep the input order (dict.fromkeys), not sorted",
+   "file": "scripts/compute_tokens.py",
+   "killed": true,
+   "rc": 1,
+   "failed": [
+    "KillBatchOrder::test_r8_batch_sorts_the_front_faces_not_the_full_names"
+   ],
+   "tail": "1 failed, 1 passed in 0.05s",
+   "network": false
+  },
+  {
+   "id": "R17",
+   "mutant": "the front faces sort without case (key=str.lower)",
+   "file": "scripts/compute_tokens.py",
+   "killed": true,
+   "rc": 1,
+   "failed": [
+    "KillBatchOrder::test_r17_batch_sorts_by_code_point_with_case"
+   ],
+   "tail": "1 failed, 1 passed in 0.04s",
+   "network": false
+  }
+ ]
+}

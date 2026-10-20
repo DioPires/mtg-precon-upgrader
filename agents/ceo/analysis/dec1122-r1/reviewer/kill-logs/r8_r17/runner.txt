@@ -1,0 +1,8 @@
+head ea4b890987dbdac6327c9926efd58d622c4ba84e kill /tmp/dec1122/kills/test_kill_r8_r17_batch_order.py
+HEAD | compute_tokens.py | no mutant | SURVIVED | network=False | 2 passed in 0.04s
+R8 | compute_tokens.py | the front faces keep the input order (dict.fromkeys), not sorted | KILLED | network=False | 1 failed, 1 passed in 0.05s
+       KillBatchOrder::test_r8_batch_sorts_the_front_faces_not_the_full_names
+R17 | compute_tokens.py | the front faces sort without case (key=str.lower) | KILLED | network=False | 1 failed, 1 passed in 0.04s
+       KillBatchOrder::test_r17_batch_sorts_by_code_point_with_case
+survivors: []
+network: []

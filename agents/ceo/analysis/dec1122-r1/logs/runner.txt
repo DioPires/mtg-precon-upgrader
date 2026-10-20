@@ -1,0 +1,16 @@
+head d2b86d7088be6459d7dfb90904bf5e492546fa57 kill None
+HEAD | compute_tokens.py | no mutant | SURVIVED | network=False | 444 passed, 1 skipped, 1174 subtests passed in 13.40s
+R1 | compute_tokens.py | _request wraps only a URLError or a ValueError: a timeout or a reset on read passes raw | KILLED | network=False | 15 failed, 444 passed, 1 skipped, 1159 subtests passed in 14.50s
+       ComputeTokensTests::test_failed_request_ends_the_run_at_each_request_kind
+R8 | compute_tokens.py | the front faces keep the input order (dict.fromkeys), not sorted | KILLED | network=False | 1 failed, 444 passed, 1 skipped, 1173 subtests passed in 14.96s
+R10 | compute_tokens.py | main catches every Exception as a failed request | KILLED | network=False | 1 failed, 443 passed, 1 skipped, 1174 subtests passed in 16.59s
+       ComputeTokensTests::test_deck_entry_without_a_name_is_not_reported_as_a_failed_request
+R11 | compute_tokens.py | the batch reads data['data'] (no default) | KILLED | network=False | 1 failed, 443 passed, 1 skipped, 1174 subtests passed in 19.18s
+       ComputeTokensTests::test_batch_answer_without_data_reads_as_no_card
+R12 | compute_tokens.py | the batch reads data['not_found'] (no default) | KILLED | network=False | 1 failed, 443 passed, 1 skipped, 1174 subtests passed in 16.72s
+       ComputeTokensTests::test_batch_answer_without_not_found_reads_as_every_card_found
+R13 | compute_tokens.py | the not_found filter on an empty name is gone | KILLED | network=False | 1 failed, 443 passed, 1 skipped, 1174 subtests passed in 14.84s
+       ComputeTokensTests::test_not_found_entry_without_a_name_costs_no_fuzzy_lookup
+R17 | compute_tokens.py | the front faces sort without case (key=str.lower) | KILLED | network=False | 1 failed, 444 passed, 1 skipped, 1173 subtests passed in 14.69s
+survivors: []
+network: []

@@ -1,0 +1,3 @@
+**FIX ROUND 1 is at the top of this description. Read it first.**
+
+The review ([DEC-1129](/DEC/issues/DEC-1129), verdict `4b648810`) passed every reading, and two mutants survive: M3 and M4 change the `min-height:700px` threshold at `combo-lab.css:246`, and no case reads a screen from 691 to 799 px tall. The round is tests only (route A). Merge `origin/main`, then copy the kit's spec, which adds a 1280×700 pinned case and moves the in-flow case from 1280×690 to 1280×699. Then reword the comment at `:93-94`, run the checks, commit, run the kit's file check and its four control mutants, and push once. CI should read 141 e2e cases. The kit is `dec1032-fix1-kit/` in your workspace folder. Port 14632, as in the first round. Budget about 30 minutes.

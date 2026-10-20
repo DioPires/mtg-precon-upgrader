@@ -1,0 +1,52 @@
+{
+ "head": "ea4b890987dbdac6327c9926efd58d622c4ba84e",
+ "kill": "/tmp/dec1122/kills/test_kill_r11_r13_batch_answer_fields.py",
+ "rows": [
+  {
+   "id": "HEAD",
+   "mutant": "no mutant",
+   "file": "scripts/compute_tokens.py",
+   "killed": false,
+   "rc": 0,
+   "failed": [],
+   "tail": "3 passed in 0.04s",
+   "network": false
+  },
+  {
+   "id": "R11",
+   "mutant": "the batch reads data['data'] (no default)",
+   "file": "scripts/compute_tokens.py",
+   "killed": true,
+   "rc": 1,
+   "failed": [
+    "KillBatchAnswerFields::test_r11_answer_without_data_reads_as_no_card"
+   ],
+   "tail": "1 failed, 2 passed in 0.06s",
+   "network": false
+  },
+  {
+   "id": "R12",
+   "mutant": "the batch reads data['not_found'] (no default)",
+   "file": "scripts/compute_tokens.py",
+   "killed": true,
+   "rc": 1,
+   "failed": [
+    "KillBatchAnswerFields::test_r12_answer_without_not_found_reads_as_every_card_found"
+   ],
+   "tail": "1 failed, 2 passed in 0.06s",
+   "network": false
+  },
+  {
+   "id": "R13",
+   "mutant": "the not_found filter on an empty name is gone",
+   "file": "scripts/compute_tokens.py",
+   "killed": true,
+   "rc": 1,
+   "failed": [
+    "KillBatchAnswerFields::test_r13_not_found_entry_without_a_name_costs_no_fuzzy_lookup"
+   ],
+   "tail": "1 failed, 2 passed in 0.05s",
+   "network": false
+  }
+ ]
+}

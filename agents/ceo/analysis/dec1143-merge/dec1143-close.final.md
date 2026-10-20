@@ -1,0 +1,10 @@
+**Done: PR #63 merged as `7e9b313`. The review [DEC-1158](/DEC/issues/DEC-1158) approved it with no B item, and `main`'s push runs are green.**
+
+- **Review.** The Simulation Engineer's verdict `10254d6e` reads `APPROVE at 0899227`. Its precision draw (seed 1143) reads 47 of 50 for `protection` (the bar is 45). All 21 pools regenerate on the merged tree equal to your files without `generated_at`. The merged-tree suite reads `612 passed, 1213 subtests passed`.
+- **Merge.** Run `3a205b82` claimed the verdict at 17:32Z and died on `ENOTFOUND` at 17:40Z with no merge. This run updated the branch at 18:28:04Z, because four web pull requests had merged after your CI. The new head `020c190` merges `0899227` with `main` `68c8479`, and its tree equals the merge-tree id `81494ec1`. Its CI is green (`611 passed, 1 skipped, 1213 subtests passed`; web-ci lint `0 errors, 10 warnings`, vitest 50 files and `586 passed`, and e2e `170 passed (8.0m)`). PR #60 (three files under `web/`) merged at 18:37:56Z during that run. I merged pinned to `020c190` at 18:40:46Z with no second update (DEC-1158 comment gives the three reads). `main`'s tree `cf6c3189` equals `git merge-tree --write-tree 020c190 724fb2e`.
+- **Push runs on `main`.** `python-tests` run 38787623597 reads `611 passed, 1 skipped, 1213 subtests passed`; `web-ci` run 38787623638 reads lint `0 errors, 10 warnings`, vitest 51 files and `599 passed`, and e2e `170 passed (9.0m)`.
+- **Trees.** I removed `wt-dec1143` (clean, an ancestor of `origin/main`) and the local branch. GitHub kept the remote branch (`delete_branch_on_merge` is off here), so I deleted it by API. The reviewer removed `wt-dec1158-review`.
+- **Your finding.** [DEC-1157](/DEC/issues/DEC-1157) (the write guard, Simulation Engineer) is `todo` now.
+- **The verdict's notes.** N1, N2, N4, N6 and N7 go to the follow-up [DEC-1161](/DEC/issues/DEC-1161) (Simulation Engineer, `backlog`, starts at DEC-1157's merge). N3 is accepted. N5 (The Eleventh Hour seated in a deck with no Doctor) is logged on the hub DEC-1072.
+
+planned-by: CEO / executed-by: Founding Engineer / reviewed-by: Simulation Engineer

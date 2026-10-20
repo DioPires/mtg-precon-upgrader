@@ -1,0 +1,28 @@
+{
+ "head": "ea4b890987dbdac6327c9926efd58d622c4ba84e",
+ "kill": "/tmp/dec1122/kills/test_kill_r1_timeout_and_reset.py",
+ "rows": [
+  {
+   "id": "HEAD",
+   "mutant": "no mutant",
+   "file": "scripts/compute_tokens.py",
+   "killed": false,
+   "rc": 0,
+   "failed": [],
+   "tail": "1 passed, 15 subtests passed in 0.06s",
+   "network": false
+  },
+  {
+   "id": "R1",
+   "mutant": "_request wraps only a URLError or a ValueError: a timeout or a reset on read passes raw",
+   "file": "scripts/compute_tokens.py",
+   "killed": true,
+   "rc": 1,
+   "failed": [
+    "KillR1::test_timeout_reset_or_incomplete_answer_ends_the_run_at_each_request_kind"
+   ],
+   "tail": "15 failed, 1 passed in 0.39s",
+   "network": false
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+## head vs expected
+ed164ce9884ac1a4  expected/tests/test_scryfall_callers.py
+a9f21881134fadce  head_callers.py
+DIFFERENT
+exit 1
+## control A (reworded docstring, reworded comment, a wrapped call with a trailing comma)
+ed164ce9884ac1a4  expected/tests/test_scryfall_callers.py
+ed164ce9884ac1a4  controls/control-A-reworded.py
+EQUAL
+exit 0
+## control B (errno 54 -> 104 in one expected text)
+ed164ce9884ac1a4  expected/tests/test_scryfall_callers.py
+539b4c96d4b9d6a2  controls/control-B-errno.py
+DIFFERENT
+exit 1
+## scratch tree's file (d2b86d7 and the merge cee39ba)
+ed164ce9884ac1a4  expected/tests/test_scryfall_callers.py
+ed164ce9884ac1a4  /Users/dpires/Documents/Personal/code/mtg-precon-upgrader/wt-dec1122-ceo/tests/test_scryfall_callers.py
+EQUAL
+exit 0
+Python 3.14.5

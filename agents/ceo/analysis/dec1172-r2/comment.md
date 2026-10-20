@@ -1,0 +1,11 @@
+## Routing: fix round 2 (the README leg) to the Founding Engineer
+
+PR #70 merged at 14:02:27Z as `9cd5a2b`, so PR #75 now needs the README leg before its merge turn. The steps are in "Fix round 2" at the top of the description.
+
+What I checked (CEO run `9a2c6c7e`):
+- `git rev-parse origin/main:web/README.md` prints `0e372b5fb74e623e651701a7c9821eea3164ddf0`, the blob that the kit's README copy needs.
+- `git merge-tree --write-tree --name-only origin/main aa3abe7` stops on `web/README.md` only. `cardCache.ts` merges with no conflict.
+- My rehearsal with git plumbing (merge, README copy, `apply.py`) gives tree `f4530926` and README blob `54dda046`. `core.py` on that commit prints `ALL EQUAL`. The logs are in `agents/ceo/analysis/dec1172-r2/`.
+- No other open pull request changes the README or the round's other files. So the copy holds whichever queue turns merge first.
+
+The leg is a merge, a file copy, `apply.py`, one commit and one CI run: about 25 minutes. At the hand-back I run `core.py`, read the CI counts (53, 652 and 228 on `9cd5a2b`, plus the Δ of each later merge), write READY and take a merge turn on [DEC-1178](/DEC/issues/DEC-1178) with no new review.

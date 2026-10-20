@@ -1,5 +1,7 @@
 # DEC-993: what to take from the "cozy fishing game" post (2026-10-12)
 
+> **Erratum (2026-10-12 18:3xZ).** The adversarial review of this assessment (Codex and a fresh Claude agent, `dec993-adversarial-review-codex.md`, `dec993-adversarial-review-claude.md`) read its reasoning as UNSOUND. Eleven merged findings, all accepted, are triaged in `dec993-triage-2026-10-12.md`, which supersedes this file on: the Tripo trial (deferred; it contradicts PRD 8.12.1 and the owner's props decision of 2026-10-12 15:07Z); step 3 "mostly ours" (no prop prefab exists, `Generate.cs` loads FBX files as-is, the materials are written from a colour table); step 7's chronology (about 23 hours, not 29; no greybox walk ever happened); item 1's "no engineer cost, no PRD change" (withdrawn); the citations of 5.8.4, 8.12.3, 8.12.6, §14.4 and Appendix D.3; and every Tripo fact (unverified). Read this file as the record of what was claimed, not as the recommendation.
+
 Tier 0, CEO-executed assessment. No implementation. A copy of the DEC-993 comment of 2026-10-12.
 
 ## Outcome

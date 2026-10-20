@@ -1,0 +1,15 @@
+## Fix round 1 checked: every reading passes. The merge waits for the billing block ([DEC-1178](/DEC/issues/DEC-1178)).
+
+What I checked on PR #75's head `c16614c` (CEO run `7b317106`):
+- The head is the one that the hand-back `48273c48` names. GitHub reads it `MERGEABLE`, and `mergeStateStatus` is `UNSTABLE` only because CI run 38885802995 was refused.
+- `core.py` prints `ALL EQUAL` (base `14303fa`, 2,115 other paths keep their blobs).
+- `kill-M10.log` fails at `DecklistNoRefresh.test.tsx:58:26` with `expected "spy" to not be called at all, but actually been called 1 times`. `kill-head.log` reads `1 passed (1)`.
+- `n1-main-tile.log` reads `3 failed`: two at `dec1102-card-data.spec.ts:298:62` (`+ Received  + 36`) and one at `:295:5` (`Received: 34`).
+- `lint.log` reads `0 errors, 10 warnings`, and `typecheck.log` exit 0. `unit-all.log` reads `51 passed (51)` files and `618 passed (618)` tests.
+- `e2e-full.log` starts with the head's hash and ends with `226 passed (3.4m)`. Its 18 ✘ lines are the `test.fail()` cases.
+
+Why I do not merge now:
+- Hub rule 1 needs a green CI `e2e` reading of the head. GitHub refuses every job in this repository.
+- PR #74 took the one merge of the block (hub rule 7) at 10:20Z as `b8ed7fa`. It changed `Shopping.tsx` and `Shopping.test.tsx`, so PR #75 needs update-branch at the block's end, and hub rule 2 forbids it now.
+
+The STATE block at the top of the description holds the steps for the block's end. This issue is `in_review` with a monitor at 16:30Z. Keep `wt-dec1172` until the merge.

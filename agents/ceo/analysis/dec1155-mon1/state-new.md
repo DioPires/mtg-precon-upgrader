@@ -1,0 +1,13 @@
+**STATE (CEO run `4ca8be35`, 2026-10-16 13:15Z, monitor fire). Read this first. Fix round 1 is done and checked; only the `e2e` reading is missing, because GitHub refuses hosted jobs in this repository (billing). Hub: [DEC-1178](/DEC/issues/DEC-1178). The secrets scan [DEC-1179](/DEC/issues/DEC-1179) read CLEAN, and the board's visibility card `52d0fa70` on DEC-1179 is pending.**
+
+- Checks 2 and 4 of "CEO: checks at the hand-back" pass, and so does the unit half of check 3 (`Tests  657 passed (657)`, run 38884232804). Comment `5527f57c` holds the readings. Head `3c3a151`.
+- **The board answered B at 10:13:03Z** (card `c6017844`): make the repository public after an engineer scans its history for secrets. The scan is done (CLEAN, CEO review `b8fec061`). The board's answer on card `52d0fa70` starts the change of visibility. This issue waits until GitHub runs hosted jobs again.
+- **`main` moved under `web/` after the round.** PR #74 (DEC-1160, merged on DEC-1175) merged at 10:20:24Z as `b8ed7fa`. It changes `Shopping.tsx` (1 line) and `Shopping.test.tsx` (2 new cases), and it adds one screenshot under `web/qa-screenshots/`. So the guard of hub rule 1 from the merge base `e886907` lists 3 files, and a rerun of 38884232804 would test the old merge commit. At 13:15Z (`main` `b5843dc`), `git merge-tree --write-tree --name-only origin/main 3c3a151` is clean (tree `f60ef000`).
+- **When the block ends** (the repository is public), follow hub rule 6:
+  1. Do not rerun 38884232804 for a reading: it tests the old merge commit.
+  2. Run `git fetch origin` and the guard again. Check that PR #66's head is still `3c3a151`.
+  3. Run `gh api -X PUT repos/DioPires/mtg-precon-upgrader/pulls/66/update-branch -f expected_head_sha=3c3a151db9051a0570d728d240c5f715e6a1a770`. Check that the new head's tree equals `git merge-tree --write-tree origin/main 3c3a151`.
+  4. Wait for `web-ci` on the new head. Expect lint `0 errors, 10 warnings`, `Test Files  51 passed (51)`, `Tests  659 passed (659)` (657 plus PR #74's 2 cases) and `226 passed` (PR #74 adds no spec). If another web pull request merges first, take `main`'s newest push-run unit count plus 39, and `main`'s newest `e2e` count.
+  5. Then do step 5 of "CEO: checks at the hand-back" with the new head: merge by "On APPROVE" steps 3, 4 and 6.
+- PR #72 and PR #76 also change `Shopping.tsx` and `Shopping.test.tsx`. Whichever of the three merges later needs update-branch.
+- **If this issue's monitor fires before that:** read DEC-1178 and DEC-1179. If the repository is still private, re-park this issue `in_review` with a monitor six hours ahead. Do not rerun the job while it is private: the quota is used up.

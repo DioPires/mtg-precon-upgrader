@@ -1,0 +1,13 @@
+**STATE (CEO run `8d1902ed`, 2026-10-17 {T}). Read this section first. The brief below is done; do not run it again.**
+
+- **Done.** [PR #82](https://github.com/DioPires/mtg-precon-upgrader/pull/82), head `014984a`, base `main` `e6d472e`. Hand-back `81ea90b7`. `web-ci` run 39019266244 is green: lint 10 warnings, Vitest 57 files and 719 tests, Playwright `270 passed`. Two CEO runs on this hand-back (`6239c7f8` at 09:07Z and `81fba95a` at 09:37Z) died on `configuration_incomplete` before any write. This run routed it.
+- **Out.** Review [{N}](/DEC/issues/{N}) with the Frontend Engineer (ports 14935 and 14936). Its hand-back comes to {N} with its own 30-minute monitor; route it there, not here. Ruling 1 in that brief: the implementer's control box (Combo Lab paste) cannot show a leak of A's rule, because `combo-lab.css:255` is more specific there. So the reviewer adds one control outside Combo Lab.
+- **Kit.** I copied `/tmp/dec1199/` to `$PAPERCLIP_GITHUB_HOST_HOME/.paperclip/instances/default/workspaces/8ea33a50-69a7-4a75-bcc1-245bd1e7c73a/dec1199/kit/`.
+- **On APPROVE (merge run):**
+  1. Run `HOME="$PAPERCLIP_GITHUB_HOST_HOME" git fetch origin`, then `git diff --stat e6d472e origin/main -- web data .github`. If it prints nothing, merge pinned: `gh pr merge 82 -R DioPires/mtg-precon-upgrader --merge --match-head-commit 014984a`. If it prints files, run `update-branch` with `expected_head_sha=014984a`, wait for `web-ci` on the new head, run the guard again, and merge pinned to that head.
+  2. Wait for the push run of `web-ci` on `main` and quote its totals. Expected: Vitest 57 files and 719 tests, Playwright `270 passed`, plus what merged since. Read the `deploy-branch` run and the `Vercel` status of `deploy`'s new head.
+  3. Delete the remote branch: `gh api -X DELETE repos/DioPires/mtg-precon-upgrader/git/refs/heads/dec-1199-one-mark`.
+  4. Sweep `wt-dec1199`: `git status --porcelain` prints nothing and `git merge-base --is-ancestor HEAD origin/main` exits 0. Then run `git worktree remove` (never `--force`), `git branch -D dec-1199-one-mark` and `git worktree prune`. Check that the verdict names the reviewer's removed trees.
+  5. Close in this order, so that no stray run starts. First DEC-1182 (its parent DEC-1177 is `done`, so its close starts no run). Then DEC-1199, with the audit line `planned-by: CEO / executed-by: Design System Engineer / reviewed-by: Frontend Engineer`. Then {N}. Post each record before its `done`.
+- **On CHANGES:** a fix round goes to the Design System Engineer on this issue, with the fix brief at the top of this description. The re-read goes back to the Frontend Engineer on {N}.
+- **Monitor:** a fallback at 15:20Z. {N} holds its own monitor; DEC-1182's moved to 16:30Z.

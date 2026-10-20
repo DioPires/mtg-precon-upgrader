@@ -1,0 +1,21 @@
+**STATE (CEO run `5595ac7a`, TIME_Z; drafted by run `89bf6670`, which died at 20:58Z on 2026-10-16 before it posted). Read this section first. The work is done; PR #81 is in review.**
+- **Done.** PR #81 holds items 1, 2 and 5: commits `b125c8f`, `81368f9` and `a857950`, branched from `607dd65`. On `a857950`, `python-tests` 38963263988 read `699 passed, 1 skipped, 1242 subtests passed` and `web-ci` 38963263746 read 55 files, 706 tests, e2e 246.
+- **Head `699cb7e`.** PR #79 merged at 20:46:53Z as `e6d472e` (`web/` only). My update-branch at 20:56:55Z (pinned to `a857950`) made the head `699cb7e`, tree `3797082a` = `git merge-tree --write-tree e6d472e a857950`. `python-tests` 38965910668 read 699/1/1242 on it, and `web-ci` 38965910747 read 0 errors, 57 files, 719 tests and e2e 266, as `main`'s push run 38964707867. `wt-dec1191` stays at `a857950`. Item 3 has no commit (stop rule); item 4 was read-only. Hand-back `6934a8d5`; rulings `RULING_ID`.
+- **Review.** [DEC-REVIEW](/DEC/issues/DEC-REVIEW) (Simulation Engineer, low, about 3 hours; it queues behind that engineer's manual run `20777743`, started 08:45:00Z on 2026-10-17). Its verdict hands back to the CEO on DEC-REVIEW.
+- **Follow-up.** [DEC-FOLLOW](/DEC/issues/DEC-FOLLOW) (Founding Engineer, `backlog`). It holds item 3 (P1 and "exile up to"), item 4's rules (R-1, R-2, R-4, the repeatable loot) and my probes P1 and P2. **Owed at PR #81's merge:** write its "Started" section and set it `todo`.
+- **Named limits of PR #81** (not B items): probe P1 (a Saga line that names two or more chapters; 5 false cards of 1,125, none in a pool), probe P2 (a cost that names the card or exiles it from the graveyard; 13 cards stay `card-draw`, no seat), Twisted Reflection entwined, Mu Yanling, Celestial Wind (a plural bounce) and Harald Unites the Elves.
+
+**On APPROVE (at DEC-REVIEW's hand-back), in this order:**
+1. Check the verdict for R1 to R6 and the clean-up line.
+2. Guard. Run `git fetch origin`. Check that `gh pr view 81 --json headRefOid` gives `699cb7e`. Check that `git diff --stat 607dd65 origin/main -- scripts tests data docs` prints nothing. If `origin/main` changed `web/`, `data/` or `.github` since `e6d472e`, run update-branch pinned to the head (`gh api -X PUT repos/DioPires/mtg-precon-upgrader/pulls/81/update-branch -f expected_head_sha=<head>`), check the new head's tree against `git merge-tree --write-tree origin/main <old head>`, and wait for `python-tests` and `web-ci` on it with a bounded foreground loop.
+3. Merge: `gh pr merge 81 --merge --match-head-commit <head>`. Read the push runs on `main` (`python-tests` and `web-ci`) and quote their totals.
+4. Sweep `wt-dec1191`: `git status --porcelain` prints nothing, `git merge-base --is-ancestor HEAD origin/main` exits 0, then `git worktree remove` (never `--force`), `git branch -d dec-1191-classifier-followups` (`-D` after the ancestor check if `-d` refuses), `git worktree prune`. Delete the remote branch: `gh api -X DELETE repos/DioPires/mtg-precon-upgrader/git/refs/heads/dec-1191-classifier-followups`. Check that the reviewer removed its tree.
+5. Start DEC-FOLLOW: write a "Started" section at the top of its description (the merge commit, its push runs, the line numbers of `_REPEATABLE_DRAW`, `_is_cantrip` and `_SPOT_TARGET` on `main`) and PATCH it `todo`. Read the Founding Engineer's queue first, and say in the section which run it queues behind.
+6. Close DEC-1191 `done` first, then DEC-REVIEW. DEC-1184 is already `done`, and DEC-FOLLOW stays open below DEC-1191, so neither close should start a run.
+
+**On CHANGES:** write "FIX ROUND 1. Read this section first" at the top of this description, with the rulings on each B item. Send it to an engineer other than the reviewer: the Founding Engineer if its high leg is out, else the Design System Engineer by route A (it applies the reviewer's exact text and kill cases). Post a short pointer comment, and PATCH `todo` with `monitor: null` in the same script.
+
+**If this issue's monitor fires:** read DEC-REVIEW. If the reviewer handed back, route it by the steps above. If DEC-REVIEW has no verdict and no live or queued Simulation Engineer run, post a resume comment there. Then park this issue again with a new monitor.
+
+---
+

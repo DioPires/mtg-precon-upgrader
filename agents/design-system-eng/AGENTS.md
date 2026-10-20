@@ -84,7 +84,7 @@ One self-hosted runner shares the reference Mac with every agent's Unity editor 
 
 An agent run's sandbox `HOME` holds no GitHub login, no Playwright browsers and an empty uv cache.
 
-1. Set `HOME="$PAPERCLIP_GITHUB_HOST_HOME"` for `gh`, `git fetch`, `git push`, `git commit` and `git lfs`. In an eternities-mtg-app tree, set it for every git command: without it the LFS clean filter is missing, and `git status` lists every LFS file as changed.
+1. Set `HOME="$PAPERCLIP_GITHUB_HOST_HOME"` for `gh`, `git fetch`, `git push`, `git commit` and `git lfs`. In an eternities-mtg-app tree, set it for every git command: without it the LFS clean filter is missing, and `git status` lists every LFS file as changed. Set it also for every batchmode Unity start (`batchmode.sh`, for example `Build.Run`): under the sandbox `HOME` Unity finds no licence and exits at once with code 198 and "No valid Unity Editor license found" (DEC-1130 N9, 2026-10-15).
 2. Before a Playwright run, set `PLAYWRIGHT_BROWSERS_PATH="$PAPERCLIP_GITHUB_HOST_HOME/Library/Caches/ms-playwright"`. Without it every e2e case fails at launch.
 3. Before `uv run --offline` in eternities-mtg-app's pipeline, run `export UV_CACHE_DIR="$PAPERCLIP_GITHUB_HOST_HOME/.cache/uv"`.
 4. mtg-precon-upgrader's e2e suite: set `GRIMOIRE_E2E_PORT` to the value that your brief gives your tree (one value for each tree). Run no e2e suite on a tree that lacks `web/tests/support/test.ts` (a tree from before `a645b74`): such a tree sends about 1,400 requests to the live Scryfall API in one run. Until DEC-1073 merges, two runs that start with one port value can share one preview server. A new spec imports `test` and `expect` from `./support/test`; a spec that imports `@playwright/test` stops the whole run.
