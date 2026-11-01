@@ -73,7 +73,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
    **The hand procedure (DEC-1218 R4).** Write it into `prose.json` as the `procedure` list (DEC-1219). Removal is information and a late tiebreak, not a gate. Start from this text and change only the splash step:
    1. Sort by colour. A hybrid card counts for either colour; put gold cards aside.
    2. For each colour, count the cards graded 6+, the cards graded 4+, and the bombs (★).
-   3. Pick the two colours with the most 6+ cards. A ★ counts as two.
+   3. Pick the two colours with the most 6+ cards. A ★ counts as two. Add the pair's gold cards (step 1 put them aside; Star Trek, DEC-1218).
    4. Check that you have 22 or 23 cards graded 4+ and 15 or more creatures. If not, look at the next colour or a splash.
    5. Splash: the set's own rule (below).
    6. Build 17 lands and 23 spells, with 7 or 8 two-drops. Play the removal you have, but do not pick colours for it.
@@ -102,6 +102,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
 - `dump_set.py` counts mechanics from Scryfall's keyword field. It misses a keyword that Scryfall does not list (Star Trek's beam me up, 11 cards) and lists mode labels as keywords. Count the set's mechanics by hand with a case-insensitive oracle-text regex until the fix lands (DEC-1218 R7).
 - A group of cards that sits below its results is not a grading error by itself. With weak grades, any group graded high shows that gap (regression to the mean). Compare at equal grade and rarity before you write a rule (DEC-1218: the removal finding did not survive this test).
 - Secondary fact sheets summarise WotC's article and drop treatments; read the primary text.
+- `set_facts.md` counts creature toughness over every card with a printed toughness, Spacecraft and vehicles included (Star Trek: 181). The sheet's section 3 counts creatures only (165). Quote the sheet's figures in `format_rules.md`, `prose.json` and the grade notes (DEC-1218: 72% against 75% for toughness 3 or less).
 - A CLI pool evaluator is not useful at an LGS with a phone; the cheat sheet's hand procedure replaces it.
 
 ## Issue template

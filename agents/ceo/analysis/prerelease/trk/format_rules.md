@@ -1,0 +1,10 @@
+- **Station: tap another creature, at sorcery speed, to put charge counters equal to its power on a Spacecraft.** At the number on its stripe it becomes an artifact creature. 17 Spacecraft, 3 of them common.
+- **A creature tapped to station stays tapped through your opponent's turn and cannot block.** It may have entered this turn. Attack with vigilance creatures first, then station in your second main phase.
+- **A Spacecraft below its number is not a creature.** Creature removal cannot hit it and it cannot block. 70,000 Light-Years from Home and Guidance Failure hit Spacecraft too.
+- **Face a dilemma = choose a mode.** Each modal spell or ability ("choose one —") counts once as you choose, even if it is countered later; with no legal mode it does not count. 39 cards have modes (14 commons); 9 cards pay off.
+- **Beam me up: cast the sorcery again from your graveyard and return one of your creatures to your hand as part of the cost.** The spell is then exiled. All 11 are sorceries (5 commons). Return a creature with an enters ability to use it again.
+- **Strange new worlds counts the different land names you control.** Each basic type counts once, each Planet dual once, all New Planet tokens once. A two-colour deck with one dual counts 3. 13 cards.
+- **Federation counts the creature types among your non-Borg creatures.** Officer tokens add Officer. 6 cards, none common; Saavik's damage uses it.
+- **A stun counter keeps a creature tapped through its next untap.** 6 cards; Constable Odo puts two.
+- **Planet duals enter tapped and gain you 1 life.** A pool holds about 3 (one in two packs, land slot only).
+- **3 damage kills 75% of creatures; 4 damage kills 88%.** In combat, respect open {W}, {1}{B} and {2}{R}: Set Phasers to . . ., Eject the Warp Core, Plasma Cascade.
