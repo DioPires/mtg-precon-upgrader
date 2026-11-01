@@ -1,5 +1,7 @@
 # DEC-925 back-test against 17Lands (FRA, fetched 2026-11-01)
 
+**Read this with `adversarial-review.md` (2026-11-01).** The numbers reproduce, but two readings do not hold: the removal gap in section 1 is mostly regression to the mean, and the Draftsim sim rerun in section 3 also dropped the synergy grades. Draftsim's lead over our grades is a rarity offset.
+
 Card metric: Premier Draft GIH WR (win rate in games where the card was drawn or in the opening hand), published for 113 of 290 cards. 17Lands' public card endpoint returns a sample (median 380 games a card) and withholds the win rate below its own floor, so it covers 65 commons and 48 uncommons and no rare or mythic. At 400 games one card's GIH WR carries about +/-2.5 points of noise. Sealed card data is not published (23 games in total). The comparison is therefore about commons and uncommons only.
 
 ## 1. Card grades against GIH WR
