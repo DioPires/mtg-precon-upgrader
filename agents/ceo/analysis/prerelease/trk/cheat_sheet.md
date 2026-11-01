@@ -18,7 +18,7 @@ Sealed grades, 0 to 10, from oracle text only. Draftsim's and Limited Resources'
 - **A creature tapped to station stays tapped through your opponent's turn and cannot block.** It may have entered this turn. Attack with vigilance creatures first, then station in your second main phase.
 - **A Spacecraft below its number is not a creature.** Creature removal cannot hit it and it cannot block. 70,000 Light-Years from Home and Guidance Failure hit Spacecraft too.
 - **Face a dilemma = choose a mode.** Each modal spell or ability ("choose one —") counts once as you choose, even if it is countered later; with no legal mode it does not count. 39 cards have modes (14 commons); 9 cards pay off.
-- **Beam me up: cast the sorcery again from your graveyard and return one of your creatures to your hand as part of the cost.** The spell is then exiled. All 11 are sorceries (5 commons). Return a creature with an enters ability to use it again.
+- **Beam me up: cast the sorcery again from your graveyard and return one of your creatures to your hand as part of the cost.** The spell is then exiled. 10 sorceries have it (5 commons); Scotty, Miracle Worker gives it to your graveyard. Return a creature with an enters ability to use it again.
 - **Strange new worlds counts the different land names you control.** Each basic type counts once, each Planet dual once, all New Planet tokens once. A two-colour deck with one dual counts 3. 13 cards.
 - **Federation counts the creature types among your non-Borg creatures.** Officer tokens add Officer. 6 cards, none common; Saavik's damage uses it.
 - **A stun counter keeps a creature tapped through its next untap.** 6 cards; Constable Odo puts two.
@@ -138,7 +138,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 - ⚪🔴 **WR Power 8** — Attack while your creatures total 8 or more power to turn on Kirk, Worf and the other attack triggers; Officer tokens and counters get you there.
     - Signposts: Kira Nerys, Firebrand [6.5]; Kirk, Commanding Officer [5.5]
     - Look for: U.S.S. Cerritos, Following Up [6], Hologram Janeway [5.5], Una Chin-Riley, Number One [5], La'An Noonien-Singh, Security [5], Academy Instructor [5], Cantankerous Captain [4], Tactical Officer [3.5], Worf, Honor-Bound Warrior [4.5].
-- 🔵🟢 **UG Strange New Worlds** — Play many differently named lands to grow The Traveler and cut the cost of your strange-new-worlds cards; this is the best home for a third colour.
+- 🔵🟢 **UG Strange New Worlds** — Play many differently named lands to grow The Traveler and cut the cost of your strange-new-worlds cards; green holds 4 of the 6 coloured common and uncommon fixers, so add a third colour here.
     - Signposts: All Good Things... [5.5]; The Traveler [5.5]
     - Look for: Species 8472 [6.5], Cloak and Phaser [5.5], Suus Mahna Practitioner [5], David and Carol Marcus, Creators [5], Xenobotanist [4.5], D'Vana Tendi, Optimistic Ensign [4.5], Astute Terraformer [4], Final Frontier [3.5].
 
