@@ -10,7 +10,12 @@ the shape of the set at a glance.
 
 It refuses to write when the grade file does not cover the set exactly: a
 missing name, a name that is not in the set, or a duplicate all stop the run.
-Basic lands are not graded.
+Basic lands are not graded. A grade may be a half (6.5); the role `cardadv`
+marks a card-advantage card (✚ on the cheat sheet).
+
+The summary ends with the mean grade by rarity over non-land cards and the
+uncommon - common gap. Published uncommons win more than commons, so a gap
+below 1.0 prints a CHECK line (DEC-1218 R2). The check never stops the run.
 """
 
 from __future__ import annotations
@@ -135,6 +140,33 @@ def summarise(entries: list, rules: list) -> None:
         f"{r['tag']}: {sum(r['tag'] in e['provides'] for e in entries)}" for r in rules
     )
     print("provides", counts)
+    rarity_gap(entries)
+
+
+RARITIES = ("common", "uncommon", "rare", "mythic")
+
+
+def rarity_gap(entries: list) -> None:
+    """Mean grade by rarity over non-land cards, then the uncommon - common gap."""
+    by_rarity = collections.defaultdict(list)
+    for entry in entries:
+        if "Land" not in entry["type_line"]:
+            by_rarity[entry["rarity"]].append(entry["grade"])
+    means = {r: sum(g) / len(g) for r, g in by_rarity.items() if g}
+    print(
+        "mean grade by rarity (non-land):",
+        ", ".join(
+            f"{r} {means[r]:.2f} (n={len(by_rarity[r])})" if r in means else f"{r} - (n=0)"
+            for r in RARITIES
+        ),
+    )
+    if "common" not in means or "uncommon" not in means:
+        print("uncommon - common gap: -")
+        return
+    gap = means["uncommon"] - means["common"]
+    print(f"uncommon - common gap: {gap:.2f}")
+    if gap < 1.0:
+        print("CHECK: the uncommon - common gap is below 1.0; re-read before shipping (playbook step 3)")
 
 
 def main() -> int:

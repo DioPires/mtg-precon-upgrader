@@ -45,11 +45,18 @@ Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
 - **`build_grades.py`** — turns `DIR/grades_src.py` into `DIR/grades.json`. Stops
   if the grade file misses a card, names a card that is not in the set, or lists
   one twice. Tag rules come from `DIR/tags.json`, falling back to
-  `tags_default.json` here.
+  `tags_default.json` here. Grades may be halves (6.5). The summary ends with
+  the mean grade by rarity over non-land cards and the `uncommon - common gap`;
+  below 1.0 it prints a `CHECK:` line to re-read the grades (the exit code
+  stays 0).
 - **`build_cheat_sheet.py`** — writes `DIR/cheat_sheet.md`. Section 2 is copied
   from `DIR/format_rules.md`, written by hand. The rest is generated from
   `grades.json` and whichever of `sim_results.json`,
   `sim_results_spec_splash.json` and `sim_results_nosplash.json` exist.
+  Without `sim_results.json`, section 5 lists the ten archetypes from
+  `prose.json`'s `pair_plans` (the named pairs first, then the rest in the
+  order WU, WB, WR, WG, UB, UR, UG, BR, BG, RG); with no `pair_plans` either,
+  there is no section 5. The role `cardadv` gets the tag ✚.
   `--print-tiers` prints just the tier reading.
 - **`compare_grades.py`** — fetches a Draftsim review, reads the `Rating: N/10`
   lines back to card names, writes `DIR/draftsim_grades.json` and prints the
@@ -65,3 +72,18 @@ Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
 | `DIR/format_rules.md` | section 2 of the cheat sheet: the set's rules that decide games |
 | `DIR/tags.json` | optional; the set's `provides` tag rules, from `tags_default.json` |
 | `DIR/prose.json` | optional; replaces the few cheat-sheet sentences that are judgement calls about the set rather than facts the tool can derive |
+
+### `prose.json` keys
+
+Every key is optional; a key that starts with `_` is a comment.
+
+| Key | Replaces |
+|---|---|
+| `title`, `intro` | the first heading and the legend sentence |
+| `procedure` | a list of lines: all seven steps of section 1, verbatim. Cannot be combined with the two keys below |
+| `procedure_splash`, `procedure_tiebreak` | steps 5 and 7 of the default procedure |
+| `removal_lead` | the sentence that opens section 3 |
+| `ranking_heading` | the section 5 heading (default with a sim: the Monte Carlo heading; without: `## 5. The ten archetypes`) |
+| `ranking_commentary` | the paragraph after the section 5 heading (default with a sim: the computed tier reading) |
+| `ranking_reading` | the paragraph after the ranking table (sim path only) |
+| `pair_plans` | per pair (`WU`, `WB`, …): `name`, `plan`, `look_for` |

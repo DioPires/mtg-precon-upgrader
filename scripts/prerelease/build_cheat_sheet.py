@@ -10,7 +10,8 @@ DIR/cheat_sheet.md with six sections:
   2. the set's format rules, copied from format_rules.md
   3. removal by colour
   4. tricks and instant-speed plays
-  5. the archetype ranking from the simulation
+  5. the archetype ranking from the simulation, or without a simulation the
+     ten archetypes from prose.json's pair_plans
   6. the full graded list
 
 Sections 1, 3, 4, 5 and 6 are generated from the data. A handful of sentences
@@ -18,6 +19,15 @@ in sections 1, 3 and 5 are judgement calls about a particular set rather than
 facts the tool can derive, so they can be replaced from an optional
 DIR/prose.json; without that file the tool writes a generic version of each.
 Run with --print-tiers to see the computed tier reading on its own.
+
+Without sim_results.json, section 5 is written only when prose.json has
+pair_plans: the heading, the optional ranking_commentary, then one block per
+pair, the named pairs first in their key order and the rest in PAIRS order.
+prose.json's `procedure` (a list of lines) replaces all seven step lines of
+section 1; it cannot be combined with procedure_splash or procedure_tiebreak.
+
+Grades may be halves (6.5); every comparison is `>=`, so 6.5 counts as 6+.
+Tags: ★ bomb, ✕ removal, ⚡ trick, ◆ fixing, ✚ card advantage (role cardadv).
 """
 
 from __future__ import annotations
@@ -43,6 +53,7 @@ SIM_FILES = [
 PROSE_KEYS = (
     "title",
     "intro",
+    "procedure",
     "procedure_splash",
     "procedure_tiebreak",
     "removal_lead",
@@ -66,6 +77,16 @@ def load_prose(set_dir: str) -> dict:
     unknown = sorted(k for k in prose if not k.startswith("_") and k not in PROSE_KEYS)
     if unknown:
         raise SystemExit(f"{path}: unknown keys {unknown}; allowed: {list(PROSE_KEYS)}")
+    if "procedure" in prose:
+        # `procedure` replaces every step line, so a per-step override beside it
+        # would be silently dropped.
+        clash = [k for k in ("procedure_splash", "procedure_tiebreak") if k in prose]
+        if clash:
+            raise SystemExit(f"{path}: 'procedure' replaces all of section 1; remove {clash}")
+        if not isinstance(prose["procedure"], list) or not all(
+            isinstance(line, str) for line in prose["procedure"]
+        ):
+            raise SystemExit(f"{path}: 'procedure' must be a list of strings, one per line")
     return prose
 
 
@@ -91,6 +112,8 @@ def mark(entry: dict) -> str:
         out += "⚡"
     if "fixing" in roles:
         out += "◆"
+    if "cardadv" in roles:
+        out += "✚"
     return out
 
 
@@ -206,6 +229,37 @@ def row(entry: dict) -> str:
     )
 
 
+PAIRS = ("WU", "WB", "WR", "WG", "UB", "UR", "UG", "BR", "BG", "RG")
+
+PAIR_PLANS_LEAD = (
+    "**Pair plans** (signposts = this pair's two-colour cards graded 5+; grades in brackets):"
+)
+
+
+def pair_blocks(order: list, plans: dict, graded: list) -> list:
+    """One block per pair: the title with name and plan, Signposts, Look for.
+
+    Both section 5 paths (with and without a simulation) print through here.
+    """
+    out = []
+    for key in order:
+        plan = plans.get(key, {})
+        pair_pips = "".join(COLOR_PIP[c] for c in key)
+        gold = sorted(
+            (e for e in graded
+             if "Land" not in e["type_line"] and len(e["colors"]) == 2
+             and set(e["colors"]) == set(key) and e["grade"] >= 5),
+            key=lambda e: (-e["grade"], e["name"]),
+        )
+        title = f"{pair_pips} **{key}{' ' + plan['name'] if plan.get('name') else ''}**"
+        out.append(f"- {title}" + (f" — {plan['plan']}" if plan.get("plan") else ""))
+        if gold:
+            out.append("    - Signposts: " + "; ".join(f"{e['name'].split(' // ')[0]} [{e['grade']}]" for e in gold))
+        if plan.get("look_for"):
+            out.append(f"    - Look for: {plan['look_for']}")
+    return out
+
+
 def tier_sentence(p_best: dict) -> str:
     """Read the ranking as tiers.
 
@@ -272,25 +326,32 @@ def build(set_dir: str) -> str:
         prose.get(
             "intro",
             "Grades are Sealed grades, 0 to 10, from oracle text. ★ bomb, ✕ removal, "
-            "⚡ trick or instant-speed interaction, ◆ fixing. A grade in parentheses "
-            "applies when your deck holds the listed number of enablers.",
+            "⚡ trick or instant-speed interaction, ◆ fixing, ✚ card advantage. A grade "
+            "in parentheses applies when your deck holds the listed number of enablers.",
         ),
         "",
         "## 1. Scoring your pool by hand (10 minutes)",
         "",
-        "1. **Sort by colour.** Hybrid cards go with either colour; gold cards aside.",
-        "2. **Count per colour:** cards graded 4+ (depth) and 6+ (quality). Write both on the deck box.",
-        "3. **Count ✕ per colour.** Target: 3+ across your two colours.",
-        "4. **Pick the two deepest colours, add their gold cards.** Need: 22-23 cards graded 4+, 3+ ✕, 1+ ★.",
-        prose.get(
-            "procedure_splash",
-            "5. **Splash only a 7+ card, only with 2+ lands that make its colour. Max 2 cards.**",
-        ),
-        "6. **Build 17 lands, 23 spells.** Curve: 1-2 one-drops, 7-8 two-drops, 5-6 three-drops. Play every ✕.",
-        prose.get(
-            "procedure_tiebreak",
-            f"7. **Tie between pairs?** More 6+ cards wins; then synergy counts ({synergy_list}); then more 2-drops.",
-        ),
+    ]
+    if "procedure" in prose:
+        out += prose["procedure"]
+    else:
+        out += [
+            "1. **Sort by colour.** Hybrid cards go with either colour; gold cards aside.",
+            "2. **Count per colour:** cards graded 4+ (depth) and 6+ (quality). Write both on the deck box.",
+            "3. **Count ✕ per colour.** Target: 3+ across your two colours.",
+            "4. **Pick the two deepest colours, add their gold cards.** Need: 22-23 cards graded 4+, 3+ ✕, 1+ ★.",
+            prose.get(
+                "procedure_splash",
+                "5. **Splash only a 7+ card, only with 2+ lands that make its colour. Max 2 cards.**",
+            ),
+            "6. **Build 17 lands, 23 spells.** Curve: 1-2 one-drops, 7-8 two-drops, 5-6 three-drops. Play every ✕.",
+            prose.get(
+                "procedure_tiebreak",
+                f"7. **Tie between pairs?** More 6+ cards wins; then synergy counts ({synergy_list}); then more 2-drops.",
+            ),
+        ]
+    out += [
         "",
         "## 2. Format rules that decide games",
         "",
@@ -434,23 +495,22 @@ def build(set_dir: str) -> str:
         out += ["", f"<sub>{footnote}</sub>"]
         if prose.get("ranking_reading"):
             out += ["", prose["ranking_reading"]]
-        out += ["", "**Pair plans** (signposts = this pair's two-colour cards graded 5+; grades in brackets):", ""]
-        plans = prose.get("pair_plans", {})
-        for key in order:
-            plan = plans.get(key, {})
-            pair_pips = "".join(COLOR_PIP[c] for c in key)
-            gold = sorted(
-                (e for e in graded
-                 if "Land" not in e["type_line"] and len(e["colors"]) == 2
-                 and set(e["colors"]) == set(key) and e["grade"] >= 5),
-                key=lambda e: (-e["grade"], e["name"]),
-            )
-            title = f"{pair_pips} **{key}{' ' + plan['name'] if plan.get('name') else ''}**"
-            out.append(f"- {title}" + (f" — {plan['plan']}" if plan.get("plan") else ""))
-            if gold:
-                out.append("    - Signposts: " + "; ".join(f"{e['name'].split(' // ')[0]} [{e['grade']}]" for e in gold))
-            if plan.get("look_for"):
-                out.append(f"    - Look for: {plan['look_for']}")
+        out += ["", PAIR_PLANS_LEAD, ""]
+        out += pair_blocks(order, prose.get("pair_plans", {}), graded)
+        out.append("")
+    elif prose.get("pair_plans"):
+        # No simulation (DEC-1218 R3): show the ten archetypes, unranked. The
+        # pairs prose.json names come first, in its key order; the rest follow.
+        plans = prose["pair_plans"]
+        unknown = [k for k in plans if k not in PAIRS]
+        if unknown:
+            raise SystemExit(f"prose.json pair_plans: unknown pairs {unknown}; use {list(PAIRS)}")
+        order = list(plans) + [p for p in PAIRS if p not in plans]
+        out += ["", prose.get("ranking_heading", "## 5. The ten archetypes"), ""]
+        if prose.get("ranking_commentary"):
+            out += [prose["ranking_commentary"], ""]
+        out += [PAIR_PLANS_LEAD, ""]
+        out += pair_blocks(order, plans, graded)
         out.append("")
 
     out += ["## 6. Full graded list", ""]
