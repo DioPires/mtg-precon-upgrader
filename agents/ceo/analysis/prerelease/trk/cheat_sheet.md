@@ -51,28 +51,28 @@ Commons and uncommons you will actually open (grade, what it kills):
 - ⚪ **W**
     - Malfunctioning Holodeck ({2}{W}, 7.5, all)
     - 70,000 Light-Years from Home ({1}{W}, 7.5, all)
-    - U.S.S. Excelsior, Cutting Edge ({3}{W}, 6.5, conditional)
+    - U.S.S. Excelsior, Cutting Edge ({3}{W}, 6.5, tapped only)
     - Saavik, Stoic Student ({4}{W}, 6, conditional)
-    - Command Decision ({1}{W}, 5.5, all)
-    - Set Phasers to . . . ({W}, 5.5, conditional)
+    - Command Decision ({1}{W}, 5.5, power 4+ only)
+    - Set Phasers to . . . ({W}, 5.5, ≤3 toughness (75%), attackers only)
 - 🔵 **U**
     - Rules of Acquisition ({3}{U}{U}, 6.5, conditional)
-    - Marooned ({U}, 6, conditional)
+    - Marooned ({U}, 6, lock)
     - Guidance Failure ({3}{U}, 5, all)
 - ⚫ **B**
     - He's Dead, Jim ({3}{B}, 7, all)
-    - Resistance Is Futile ({1}{B}, 7, conditional)
-    - Eject the Warp Core ({1}{B}, 6, ≤2 toughness (46%))
-    - De-evolve ({1}{B}, 6, ≤0 toughness (0%))
+    - Resistance Is Futile ({1}{B}, 7, nonartifact only)
+    - Eject the Warp Core ({1}{B}, 6, ≤2 toughness (46%) or ≤6 (100%))
+    - De-evolve ({1}{B}, 6, lock)
     - Impossible Choice ({2}{B}, 6, all)
 - 🔴 **R**
-    - Khaaaaaaaaaaaannn! ({X}{R}, 7.5, conditional)
+    - Khaaaaaaaaaaaannn! ({X}{R}, 7.5, all (2X damage))
     - Transporter Malfunction ({1}{R}, 7, ≤3 toughness (75%))
     - Genesis Effect ({4}{R}, 6.5, ≤6 toughness (100%))
     - Plasma Cascade ({2}{R}, 6.5, ≤3 toughness (75%))
-    - Planetary Bombardment ({R}, 5.5, ≤2 toughness (46%))
+    - Planetary Bombardment ({R}, 5.5, ≤2 toughness (46%) or ≤4 (88%))
 - 🟢 **G**
-    - Common Goal ({1}{G}, 6, conditional)
+    - Common Goal ({1}{G}, 6, fight (your creature's power))
     - Amok Time ({2}{G}, 6, fight (your creature's power))
 
 ## 4. Tricks and instant-speed plays to respect (by open mana)
