@@ -26,6 +26,7 @@ import setlib  # noqa: E402
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures" / "prerelease"
 DEC925 = ROOT / "agents" / "ceo" / "analysis" / "dec925"
+TRK = ROOT / "agents" / "ceo" / "analysis" / "prerelease" / "trk"
 
 
 @pytest.fixture(scope="module")
@@ -354,6 +355,26 @@ def test_half_grade_builds_and_prints(tmp_path, fixture_cards):
     out = {e["name"]: e for e in build_grades.build(fixture_cards, graded, _rules())}
     assert json.dumps(out["Memory Trap"]["grade"]) == "6.5"
     assert "bomb" not in out["Memory Trap"]["roles"]
+
+
+def test_kill_share_reads_star_trek_wordings():
+    # DEC-1220: the Star Trek dump in place; census 46% / 75% / 88% at toughness 2 / 3 / 4.
+    cards = {c["name"]: c for c in setlib.load_cards(str(TRK))}
+    _, cum, _, _ = build_cheat_sheet.toughness_census(cards)
+    expected = {
+        "Command Decision": "power 4+ only",
+        "De-evolve": "lock",
+        "Eject the Warp Core": "≤2 toughness (46%) or ≤6 (100%)",
+        "Planetary Bombardment": "≤2 toughness (46%) or ≤4 (88%)",
+        "Set Phasers to . . .": "≤3 toughness (75%), attackers only",
+        "U.S.S. Excelsior, Cutting Edge": "tapped only",
+        "Resistance Is Futile": "nonartifact only",
+        "Marooned": "lock",
+        "Khaaaaaaaaaaaannn!": "all (2X damage)",
+        "Common Goal": "fight (your creature's power)",
+    }
+    got = {name: build_cheat_sheet.kill_share({}, cards[name], cum) for name in expected}
+    assert got == expected
 
 
 # ------------------------------------------------------------ compare_grades

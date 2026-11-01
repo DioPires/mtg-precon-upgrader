@@ -179,8 +179,44 @@ def toughness_census(cards: dict) -> tuple:
 
 
 def kill_share(entry: dict, card: dict, cum: dict) -> str:
-    """What share of the set's creatures this removal spell answers, from its oracle text."""
+    """What share of the set's creatures this removal spell answers, from its oracle text.
+
+    The first rule that matches gives the label. Every percentage is the share
+    of the census with toughness N or less (`cum`, from toughness_census()).
+
+    1. Kill rules. The special cases: "all (no counters)", "flyers only",
+       "−X/−X, X = highest MV in your graveyard", "edict", "two colours only".
+       Destroy or exile with no restriction: "all", "toughness 4+ (P%)",
+       "MV 3+". Damage or a −N/−N change: "≤N toughness (P%)"; when the same
+       target can take a second, larger value (an "instead" clause or a
+       kicker), "≤A toughness (P%) or ≤B (Q%)". A −N/−0 change is not a kill.
+       Twice X damage: "all (2X damage)". A fight, or damage equal to your
+       creature's power: "fight (your creature's power)".
+    2. Qualifiers, a kill of part of the creatures only: "power 4+ only",
+       "tapped only", "nonartifact only", "≤N toughness (P%), attackers only".
+    3. "lock": the creature can't block or doesn't untap.
+    4. "conditional": anything else.
+    """
     text = oracle_text(card).split("//")[0]
+
+    def share(t: int) -> str:
+        return f"{100 * cum[min(t, 6)]:.0f}%"
+
+    def up_to(t: int) -> str:
+        """≤t toughness, or the "or" form when an instead or kicker clause gives the same target more."""
+        more = [
+            int(dmg or minus)
+            for clause in re.findall(r"[^.]*\b(?:instead|kicked)\b[^.]*", text)
+            for dmg, minus in re.findall(
+                r"deals (\d+) damage to that creature|that creature gets -\d+/-(\d+)", clause
+            )
+        ]
+        b = max(more, default=0)
+        if b > t:
+            return f"≤{t} toughness ({share(t)}) or ≤{b} ({share(b)})"
+        return f"≤{t} toughness ({share(t)})"
+
+    # 1. Kill rules.
     if re.search(r"base power and toughness 0/0", text):
         return "all (no counters)"
     if re.search(r"target creature with flying", text):
@@ -191,7 +227,8 @@ def kill_share(entry: dict, card: dict, cum: dict) -> str:
         return "edict"
     if re.search(r"(that's|target) (green|blue|black|red|white) or (green|blue|black|red|white)", text):
         return "two colours only"
-    if re.search(r"destroy target creature|exile target (creature|nonland permanent)|"
+    # "with power" is a qualifier (rule 2), not an unrestricted destroy.
+    if re.search(r"destroy target creature(?! with power)|exile target (creature|nonland permanent)|"
                  r"destroy target nonland permanent|"
                  r"put(s)? it on (the|their choice)|choose target nonland permanent|"
                  r"loses all abilities|destroy all creatures|exile all creatures|all creatures get -3/-3",
@@ -205,14 +242,30 @@ def kill_share(entry: dict, card: dict, cum: dict) -> str:
         return "all"
     damage = [int(m) for m in re.findall(r"deals (\d) damage to (?:any target|target creature)", text)]
     if damage:
-        d = max(damage)
-        return f"≤{d} toughness ({100 * cum[min(d, 6)]:.0f}%)"
-    m = re.search(r"-(\d)/-(\d)", text)
+        return up_to(max(damage))
+    # A −N/−0 change (no toughness loss) kills nothing.
+    m = re.search(r"-(\d)/-([1-9])", text)
     if m:
-        d = int(m.group(2))
-        return f"≤{d} toughness ({100 * cum[min(d, 6)]:.0f}%)"
-    if re.search(r"fights?|deals damage equal to its power", text):
+        return up_to(int(m.group(2)))
+    if re.search(r"deals twice x damage to (?:any target|target creature)", text):
+        return "all (2X damage)"
+    if re.search(r"fights?|deals? damage equal to (?:its|their) power", text):
         return "fight (your creature's power)"
+
+    # 2. Qualifiers: the kill reaches part of the creatures only.
+    m = re.search(r"destroy target creature with power (\d) or greater", text)
+    if m:
+        return f"power {m.group(1)}+ only"
+    m = re.search(r"(?:destroy|exile) target (tapped|nonartifact) creature", text)
+    if m:
+        return f"{m.group(1)} only"
+    m = re.search(r"deals (\d) damage to target attacking creature", text)
+    if m:
+        return f"{up_to(int(m.group(1)))}, attackers only"
+
+    # 3. No kill, but the creature stops blocking or stays tapped.
+    if re.search(r"can't block|doesn't untap", text):
+        return "lock"
     return "conditional"
 
 
