@@ -205,6 +205,39 @@ def test_build_grades_tags_bombs_and_synergies(fixture_cards):
     assert out["Memory Trap"]["provides"] == []
 
 
+def _rarity_entries(uncommon_grade) -> list:
+    def entry(rarity, grade, type_line="Creature — Human"):
+        return {"rarity": rarity, "grade": grade, "type_line": type_line}
+
+    return [
+        entry("common", 3), entry("common", 4),
+        entry("uncommon", uncommon_grade), entry("uncommon", uncommon_grade),
+        entry("rare", 6), entry("mythic", 8.5),
+        # Lands do not count: this one would pull the common mean down to 2.33.
+        entry("common", 0, "Land"),
+    ]
+
+
+def test_rarity_gap_at_1_or_more_prints_no_check(capsys):
+    build_grades.rarity_gap(_rarity_entries(4.5))
+    out = capsys.readouterr().out.split("\n")
+    assert out[0] == (
+        "mean grade by rarity (non-land): common 3.50 (n=2), uncommon 4.50 (n=2), "
+        "rare 6.00 (n=1), mythic 8.50 (n=1)"
+    )
+    assert out[1] == "uncommon - common gap: 1.00"
+    assert not any(l.startswith("CHECK:") for l in out)
+
+
+def test_rarity_gap_below_1_prints_the_check(capsys):
+    build_grades.rarity_gap(_rarity_entries(4))
+    out = capsys.readouterr().out.split("\n")
+    assert out[1] == "uncommon - common gap: 0.50"
+    assert out[2] == (
+        "CHECK: the uncommon - common gap is below 1.0; re-read before shipping (playbook step 3)"
+    )
+
+
 # --------------------------------------------------------- build_cheat_sheet
 
 
@@ -221,6 +254,106 @@ def test_tier_sentence_puts_pairs_below_8_percent_in_tier_3():
     )
     assert "Tier 2: BR." in sentence
     assert sentence.endswith("Tier 3: UG, RG.")
+
+
+def _dec925_without_sims(tmp_path, prose=None, grades=None) -> pathlib.Path:
+    """The DEC-925 inputs minus the three sim files, with an optional prose.json."""
+    work = tmp_path / "nosim"
+    work.mkdir()
+    for name in ("fra_all_cards.json", "grades.json", "collation.json", "format_rules.md"):
+        shutil.copy(DEC925 / name, work / name)
+    if prose is not None:
+        (work / "prose.json").write_text(json.dumps(prose), encoding="utf-8")
+    if grades is not None:
+        (work / "grades.json").write_text(json.dumps(grades, indent=1), encoding="utf-8")
+    return work
+
+
+def _section(text: str, number: int) -> list:
+    """The lines of section `number`, from its heading up to the next section."""
+    lines = text.split("\n")
+    start = next(i for i, l in enumerate(lines) if l.startswith(f"## {number}."))
+    end = next(i for i in range(start + 1, len(lines)) if lines[i].startswith("## "))
+    return lines[start:end]
+
+
+TWO_PLANS = {
+    "pair_plans": {
+        "BR": {"name": "Test Burn", "plan": "Burn them out.", "look_for": "Grim Repriser [5]."},
+        "WU": {"name": "Test Flyers", "plan": "Win in the air."},
+    }
+}
+
+
+def test_section_5_without_a_sim_lists_the_ten_archetypes(tmp_path):
+    work = _dec925_without_sims(tmp_path, prose=TWO_PLANS)
+    section = _section(build_cheat_sheet.build(str(work)), 5)
+    assert section[:3] == ["## 5. The ten archetypes", "", build_cheat_sheet.PAIR_PLANS_LEAD]
+    titles = [re.match(r"^- \S+ \*\*([WUBRG]{2})", l).group(1) for l in section if l.startswith("- ")]
+    # The named pairs first, in prose.json's key order; then the other eight.
+    assert titles == ["BR", "WU", "WB", "WR", "WG", "UB", "UR", "UG", "BG", "RG"]
+    assert "- ⚫🔴 **BR Test Burn** — Burn them out." in section
+    assert "    - Look for: Grim Repriser [5]." in section
+    assert "- ⚪🔵 **WU Test Flyers** — Win in the air." in section
+    assert "- ⚪⚫ **WB**" in section
+    assert "    - Signposts: Vindictive Triumph [8]; Twisted Fates [7]; Edgar, Ancient Bloodlord [5]" in section
+
+
+def test_section_5_without_a_sim_takes_the_heading_and_commentary_from_prose(tmp_path):
+    prose = dict(TWO_PLANS, ranking_heading="## 5. Archetypes", ranking_commentary="Unranked.")
+    work = _dec925_without_sims(tmp_path, prose=prose)
+    section = _section(build_cheat_sheet.build(str(work)), 5)
+    assert section[:5] == ["## 5. Archetypes", "", "Unranked.", "", build_cheat_sheet.PAIR_PLANS_LEAD]
+
+
+def test_no_section_5_without_a_sim_or_pair_plans(tmp_path):
+    work = _dec925_without_sims(tmp_path)
+    assert "\n## 5." not in build_cheat_sheet.build(str(work))
+
+
+def test_procedure_replaces_the_section_1_steps(tmp_path):
+    procedure = ["1. **Sort.** By colour.", "2. **Count** creatures.", "3. **Build.**"]
+    work = _dec925_without_sims(tmp_path, prose={"procedure": procedure})
+    section = _section(build_cheat_sheet.build(str(work)), 1)
+    assert section == ["## 1. Scoring your pool by hand (10 minutes)", ""] + procedure + [""]
+
+
+def test_procedure_with_a_step_override_stops(tmp_path):
+    prose = {"procedure": ["1. Sort."], "procedure_splash": "5. Splash."}
+    work = _dec925_without_sims(tmp_path, prose=prose)
+    with pytest.raises(SystemExit, match="procedure_splash"):
+        build_cheat_sheet.build(str(work))
+
+
+def _edgar_as(grade, roles) -> list:
+    graded = json.loads((DEC925 / "grades.json").read_text(encoding="utf-8"))
+    for entry in graded:
+        if entry["name"] == "Edgar, Ancient Bloodlord":
+            entry["grade"], entry["roles"] = grade, roles
+    return graded
+
+
+def test_cardadv_role_shows_the_card_advantage_mark(tmp_path):
+    assert build_cheat_sheet.mark({"roles": ["removal", "fixing", "cardadv"]}) == "✕◆✚"
+    work = _dec925_without_sims(tmp_path, grades=_edgar_as(5, ["threat", "cardadv"]))
+    edgar = next(l for l in build_cheat_sheet.build(str(work)).split("\n") if "Edgar, Ancient Bloodlord |" in l)
+    assert edgar.split(" | ")[4] == "✚"
+
+
+def test_half_grade_builds_and_prints(tmp_path, fixture_cards):
+    work = _dec925_without_sims(tmp_path, prose=TWO_PLANS, grades=_edgar_as(6.5, ["threat"]))
+    text = build_cheat_sheet.build(str(work))
+    assert "| 6.5 | 🟡 Edgar, Ancient Bloodlord |" in text
+    # 6.5 sorts between 7 and 6 and still counts for the 5+ signposts.
+    assert "    - Signposts: Vindictive Triumph [8]; Twisted Fates [7]; Edgar, Ancient Bloodlord [6.5]" in text
+    graded = [
+        (c["name"], 6.5 if c["name"] == "Memory Trap" else 4, ["threat"], "note", None)
+        for c in fixture_cards
+        if "Basic" not in c["type_line"]
+    ]
+    out = {e["name"]: e for e in build_grades.build(fixture_cards, graded, _rules())}
+    assert json.dumps(out["Memory Trap"]["grade"]) == "6.5"
+    assert "bomb" not in out["Memory Trap"]["roles"]
 
 
 # ------------------------------------------------------------ compare_grades
