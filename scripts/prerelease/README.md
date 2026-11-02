@@ -30,6 +30,9 @@ uv run python scripts/sealed_sim.py --config DIR/collation.json \
 
 # 7. Write DIR/format_rules.md by hand, then build the cheat sheet.
 uv run python scripts/prerelease/build_cheat_sheet.py --set-dir DIR
+
+# 7 (continued). Render the sheet to DIR/cheat_sheet.pdf; needs Google Chrome.
+uv run --with markdown python scripts/prerelease/build_pdf.py --set-dir DIR
 ```
 
 Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
@@ -57,7 +60,18 @@ Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
   `prose.json`'s `pair_plans` (the named pairs first, then the rest in the
   order WU, WB, WR, WG, UB, UR, UG, BR, BG, RG); with no `pair_plans` either,
   there is no section 5. The role `cardadv` gets the tag ✚.
-  `--print-tiers` prints just the tier reading.
+  Every card name on every line except headings links to the card's Scryfall
+  page: the card's `scryfall_uri` from the dump, without its query string. The
+  tool matches whole, case-sensitive names only, longer names first, and never
+  inside a link ("Eject the Warp Core" is one link, not two). A two-faced card
+  is linked by its full name and by its front face. `--no-scryfall-links`
+  writes the sheet without links. `--print-tiers` prints just the tier reading.
+- **`build_pdf.py`** — renders `DIR/cheat_sheet.md` to `DIR/cheat_sheet.pdf`
+  (A4) with python-markdown (`uv run --with markdown`; not a project
+  dependency) and headless Google Chrome, and removes the temporary HTML file.
+  The card links stay clickable in the PDF. If Chrome is not at
+  `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`, it stops and
+  names that path.
 - **`compare_grades.py`** — fetches a Draftsim review, reads the `Rating: N/10`
   lines back to card names, writes `DIR/draftsim_grades.json` and prints the
   means, the correlation, the mean absolute difference and every disagreement of

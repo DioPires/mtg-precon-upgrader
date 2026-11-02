@@ -67,6 +67,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `agents/ceo/analysis/prerelease
 7. **Cheat sheet.** Write `DIR/format_rules.md` by hand (the set's mechanics in plain words, the interactions that decide games, the damage-to-toughness census from `set_facts.md`). Then:
    ```bash
    uv run python scripts/prerelease/build_cheat_sheet.py --set-dir DIR
+   uv run --with markdown python scripts/prerelease/build_pdf.py --set-dir DIR
    ```
    Output `DIR/cheat_sheet.md`: hand-scoring procedure, format rules, removal and tricks per colour, the archetypes (or, with a sim, the ranking as tiers), the full graded list.
 
