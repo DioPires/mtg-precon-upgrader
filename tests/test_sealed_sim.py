@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import sealed_sim as ss  # noqa: E402
 
-DATA = ROOT / "agents" / "ceo" / "analysis" / "dec925"
+DATA = ROOT / "analysis" / "prerelease" / "fra"
 CARDS_PATH = DATA / "fra_all_cards.json"
 PAIRS_PATH = DATA / "echoed_pairs.json"
 CONFIG_PATH = DATA / "collation.json"

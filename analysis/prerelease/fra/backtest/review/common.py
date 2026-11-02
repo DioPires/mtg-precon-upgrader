@@ -1,7 +1,7 @@
 import json, math, os, random
 REPO = "/Users/dpires/Documents/Personal/code/mtg-precon-upgrader"
-R = REPO + "/agents/ceo/analysis/dec1218/fra-retro"
-D = REPO + "/agents/ceo/analysis/dec925"
+R = REPO + "/analysis/prerelease/fra/backtest"
+D = REPO + "/analysis/prerelease/fra"
 def load(p):
     with open(p) as f: return json.load(f)
 def norm(n): return n.split(" // ")[0].strip().lower()
