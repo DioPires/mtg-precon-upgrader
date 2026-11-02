@@ -68,7 +68,9 @@ Set `CODE` to the Scryfall set code and `DIR` to `analysis/prerelease/CODE`.
    ```bash
    uv run python scripts/prerelease/build_cheat_sheet.py --set-dir DIR
    uv run --with markdown python scripts/prerelease/build_pdf.py --set-dir DIR
+   uv run --with markdown python scripts/prerelease/build_html.py --set-dir DIR --publish
    ```
+   Rebuild the page each time the sheet changes: `DIR/cheat_sheet.html`, for a phone, and its copy for the site, `web/public/prerelease/CODE.html` (`--publish`). The tests check that the Star Trek page, its sheet and its copy agree.
    Output `DIR/cheat_sheet.md`: hand-scoring procedure, format rules, removal and tricks per colour, the archetypes (or, with a sim, the ranking as tiers), the full graded list.
 
    **The hand procedure (DEC-1218 R4).** Write it into `prose.json` as the `procedure` list (DEC-1219). Removal is information and a late tiebreak, not a gate. Start from this text and change only the splash step:

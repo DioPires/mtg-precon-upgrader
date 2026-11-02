@@ -274,17 +274,47 @@ def kill_share(entry: dict, card: dict, cum: dict) -> str:
     return "conditional"
 
 
-def row(entry: dict) -> str:
+def grade_text(entry: dict) -> str:
+    """The grade as section 6 prints it, with the synergy grade in brackets when there is one."""
     syn = (
         f" (→{entry['grade_synergy']} with {entry['needs_threshold']}+ {entry['needs']})"
         if "grade_synergy" in entry
         else ""
     )
-    cost = entry["mana_cost"].split(" // ")[0]
+    return f"{entry['grade']}{syn}"
+
+
+def front_cost(entry: dict) -> str:
+    """The mana cost of the front face."""
+    return entry["mana_cost"].split(" // ")[0]
+
+
+def row(entry: dict) -> str:
     return (
-        f"| {entry['grade']}{syn} | {pip(entry)} {entry['name']} | {cost} | "
+        f"| {grade_text(entry)} | {pip(entry)} {entry['name']} | {front_cost(entry)} | "
         f"{entry['rarity'][0].upper()} | {mark(entry)} | {entry['note']} |"
     )
+
+
+def full_list_groups(graded: list) -> list:
+    """Section 6: (group key, entries) in the sheet's order, best grade first in a group.
+
+    The groups: W, U, B, R, G, the gold pairs in alphabetical order, hybrid,
+    three or more colours, colourless, lands. build_html.py prints the same list.
+    """
+    groups: dict = collections.defaultdict(list)
+    for entry in graded:
+        groups[bucket(entry)].append(entry)
+    keys = (
+        list(WUBRG)
+        + sorted(k for k in groups if k.startswith("Gold"))
+        + ["Hybrid (either color)", "Three+ colors", "Colorless", "Lands"]
+    )
+    return [
+        (key, sorted(groups[key], key=lambda e: (-e["grade"], e["name"])))
+        for key in keys
+        if key in groups
+    ]
 
 
 PAIRS = ("WU", "WB", "WR", "WG", "UB", "UR", "UG", "BR", "BG", "RG")
@@ -572,19 +602,9 @@ def build(set_dir: str) -> str:
         out.append("")
 
     out += ["## 6. Full graded list", ""]
-    groups: dict = collections.defaultdict(list)
-    for entry in graded:
-        groups[bucket(entry)].append(entry)
-    keys = (
-        list(WUBRG)
-        + sorted(k for k in groups if k.startswith("Gold"))
-        + ["Hybrid (either color)", "Three+ colors", "Colorless", "Lands"]
-    )
-    for key in keys:
-        if key not in groups:
-            continue
+    for key, entries in full_list_groups(graded):
         out += [f"### {heading_pip(key)} {key}", "", "| Grade | Card | Cost | R | Tags | Why |", "|---|---|---|---|---|---|"]
-        out += [row(e) for e in sorted(groups[key], key=lambda e: (-e["grade"], e["name"]))]
+        out += [row(e) for e in entries]
         out.append("")
     return "\n".join(out) + "\n"
 

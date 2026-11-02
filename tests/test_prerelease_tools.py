@@ -7,11 +7,13 @@ example and compare byte for byte with what is committed.
 
 from __future__ import annotations
 
+import collections
 import json
 import pathlib
 import re
 import shutil
 import sys
+from html.parser import HTMLParser
 
 import pytest
 
@@ -20,6 +22,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "prerelease"))
 
 import build_cheat_sheet  # noqa: E402
 import build_grades  # noqa: E402
+import build_html  # noqa: E402
 import compare_grades  # noqa: E402
 import dump_set  # noqa: E402
 import setlib  # noqa: E402
@@ -436,6 +439,261 @@ def test_link_cards_links_the_front_face_and_only_whole_names():
         "[Blossom-Blessed Angel // Seed Suture](https://s/a); Hemmer loots; "
         "Warp Cores; [Warp Core](https://elsewhere)"
     )
+
+
+# ---------------------------------------------------------------- build_html
+# DEC-1223: the page for a phone. The pool counts by hand, the search, and the
+# committed Star Trek page against the committed sheet. These fail when the
+# sheet changes and the page is not rebuilt.
+
+# One of each kind of card the counts treat apart (grade, tags, kind).
+SAMPLE_POOL = {
+    "Captain Jean-Luc Picard": 1,  # W 8.5 ★ creature, MV 3
+    "Malfunctioning Holodeck": 2,  # W 7.5 ✕, two copies
+    "U.S.S. Excelsior, Cutting Edge": 1,  # W 6.5 ✕ Spacecraft: not a creature
+    "Command Decision": 1,  # W 5.5 ✕ sorcery, MV 2: 4+, not 6+
+    "Picard, Leading by Example": 1,  # W 5.5 creature, MV 2
+    "Marooned": 1,  # U 6 ✕, MV 1
+    "Guidance Failure": 1,  # U 5 ✕⚡, MV 4
+    "Constable Odo": 1,  # hybrid W/U 6 creature, MV 5
+    "The Duras Sisters": 1,  # hybrid B/R 5.5 creature, MV 2
+    "Locutus, the One Who Speaks": 1,  # gold WB 6 creature, MV 2
+    "Hemmer, Fixing What Is Broken": 1,  # gold WU 5.5 creature, MV 2
+    "Crystalline Entity": 1,  # colourless 8 ★ creature, MV 8
+    "Cybernetic Specialist": 1,  # colourless 3.5 creature: under 4
+    "Vulcan": 1,  # land 4 ◆
+    "Sarek, Federation Ambassador": 1,  # three colours 2.5
+}
+
+
+@pytest.fixture(scope="module")
+def trk_grades() -> list:
+    return json.loads((TRK / "grades.json").read_text(encoding="utf-8"))
+
+
+def test_pool_summary_counts_the_sample_pool_by_hand(trk_grades):
+    assert build_html.CHECK_POOLS["sample"] == SAMPLE_POOL  # check_html.mjs loads the same pool
+    s = build_html.pool_summary(SAMPLE_POOL, trk_grades)
+    assert s["cards"] == 16
+    # Step 2. W: Picard ★, Holodeck x2, Excelsior and Odo are 6+; the two 5.5s are 4+ only.
+    # U: Marooned and Odo 6+, Guidance Failure 4+. B and R: Duras Sisters (5.5).
+    assert s["colours"] == {
+        "W": {"six": 5, "four": 7, "bombs": 1},
+        "U": {"six": 2, "four": 3, "bombs": 0},
+        "B": {"six": 0, "four": 1, "bombs": 0},
+        "R": {"six": 0, "four": 1, "bombs": 0},
+        "G": {"six": 0, "four": 0, "bombs": 0},
+    }
+    # Step 3 score: Picard 2 + Holodeck 2 + Excelsior 1 + Odo 1 = 6 for every W pair; WU adds
+    # Marooned. Step 4: the pair's cards plus its gold card and Crystalline Entity (Cybernetic
+    # Specialist is under 4; Vulcan is a land; Sarek has three colours).
+    rows = [
+        (p["pair"], p["score"], p["four"], p["creatures"], p["bombs"], p["cardadv"], p["removal"], p["two_drops"])
+        for p in s["pairs"]
+    ]
+    assert rows == [
+        ("WU", 7, 11, 5, 2, 0, 6, 3),
+        ("WB", 6, 10, 6, 2, 0, 4, 4),
+        ("WR", 6, 9, 5, 2, 0, 4, 3),
+        ("WG", 6, 8, 4, 2, 0, 4, 2),
+        ("UB", 2, 5, 3, 1, 0, 2, 1),
+        ("UR", 2, 5, 3, 1, 0, 2, 1),
+        ("UG", 2, 4, 2, 1, 0, 2, 0),
+        ("BR", 0, 2, 2, 1, 0, 0, 1),
+        ("BG", 0, 2, 2, 1, 0, 0, 1),
+        ("RG", 0, 2, 2, 1, 0, 0, 1),
+    ]
+    assert [(t["above"], t["below"], t["by"]) for t in s["ties"]] == [
+        ("WB", "WR", "two-drops"),
+        ("WR", "WG", "two-drops"),
+        ("UB", "UR", "pair order"),
+        ("UR", "UG", "two-drops"),
+        ("BR", "BG", "pair order"),
+        ("BG", "RG", "pair order"),
+    ]
+
+
+def test_pool_summary_breaks_ties_on_bombs_card_advantage_removal(trk_grades):
+    pool = {
+        "Captain Jean-Luc Picard": 1,  # W 8.5 ★
+        "Marooned": 2,  # U 6 ✕
+        "Phlox, Unorthodox Doctor": 1,  # gold WG 6.5 ✚
+        "Borg Cube": 1,  # gold WB 7 ✕
+    }
+    assert build_html.CHECK_POOLS["ties"] == pool
+    s = build_html.pool_summary(pool, trk_grades)
+    # WB, WR, WG and the three U pairs all score 2. The W pairs hold Picard (★), WG has
+    # Phlox (✚), WB has Borg Cube (✕); the U pairs differ in nothing.
+    assert [(p["pair"], p["score"]) for p in s["pairs"]] == [
+        ("WU", 4), ("WG", 2), ("WB", 2), ("WR", 2), ("UB", 2), ("UR", 2), ("UG", 2),
+        ("BR", 0), ("BG", 0), ("RG", 0),
+    ]
+    assert [(t["above"], t["below"], t["by"]) for t in s["ties"]] == [
+        ("WG", "WB", "✚"),
+        ("WB", "WR", "✕"),
+        ("WR", "UB", "★"),
+        ("UB", "UR", "pair order"),
+        ("UR", "UG", "pair order"),
+        ("BR", "BG", "pair order"),
+        ("BG", "RG", "pair order"),
+    ]
+
+
+def test_pool_summary_skips_unknown_names_and_zero_counts(trk_grades):
+    s = build_html.pool_summary({"Not a card": 3, "Marooned": 0}, trk_grades)
+    assert s["cards"] == 0 and all(p["score"] == 0 for p in s["pairs"])
+
+
+def test_search_examples_find_their_cards(trk_grades):
+    names = [e["name"] for e in trk_grades]
+    assert [q for q, _ in build_html.SEARCH_EXAMPLES] == ["obrien", "uss ent", "spock", "khaan"]
+    for query, expected in build_html.SEARCH_EXAMPLES:
+        assert build_html.search(query, names) == [n for n in names if n in expected], query
+    assert build_html.SEARCH_EXAMPLES[2][1] == tuple(n for n in names if "spock" in n.lower())
+
+
+def test_normalize_name_drops_accents_apostrophes_and_full_stops():
+    assert build_html.normalize_name("Miles O’Brien, Transporter Ops") == "miles obrien transporter ops"
+    assert build_html.normalize_name("U.S.S. Enterprise-A, Free Spirit") == "uss enterprise a free spirit"
+    assert build_html.normalize_name("Khaaaaaaaaaaaannn!") == "khaann"
+    assert build_html.normalize_name("  Éowyn's  Ni'Var ") == "eowyns nivar"
+
+
+VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+FIELDS = ("gb", "syn", "cn", "cost", "rar", "tags", "note")
+
+
+class Page(HTMLParser):
+    """The committed page, read back: card blocks, groups, links and addresses."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack, self.cards, self.groups = [], [], []
+        self.ids, self.addresses = set(), []
+        self.links, self.mana = [], []  # in the intro and sections 1 to 5
+        self.in_main = self.past_5 = False
+        self.link = None
+
+    def field(self):
+        for _, classes, _ in reversed(self.stack):
+            for name in FIELDS:
+                if name in classes:
+                    return name
+        return None
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        self.addresses += [(k, a[k]) for k in ("href", "src") if k in a]
+        if "id" in a:
+            self.ids.add(a["id"])
+        if tag == "main":
+            self.in_main = True
+        if a.get("id") == "cards":
+            self.past_5 = True
+        classes = set((a.get("class") or "").split())
+        sheet_part = self.in_main and not self.past_5
+        if sheet_part and "data-mana" in a:
+            self.mana.append(a["data-mana"])
+        if tag == "li" and "card" in classes:
+            self.cards.append({"name": a["data-name"], **{f: "" for f in FIELDS}, "link": None})
+            self.groups[-1][1].append(a["data-name"])
+        field = self.field()
+        if self.cards and field == "cost" and "data-mana" in a:
+            self.cards[-1]["cost"] += a["data-mana"]
+        if tag == "a" and "cn" in classes:
+            self.cards[-1]["link"] = a["href"]
+        elif tag == "a" and field == "note":
+            self.cards[-1]["note"] += "["
+        if tag == "a" and sheet_part:
+            self.link = [a["href"], ""]
+        if tag not in VOID:
+            self.stack.append((tag, classes, a))
+
+    def handle_endtag(self, tag):
+        open_tag, _, a = self.stack.pop()
+        assert open_tag == tag, (open_tag, tag)
+        if tag == "a" and self.field() == "note":
+            self.cards[-1]["note"] += f"]({a['href']})"
+        if tag == "a" and self.link is not None:
+            self.links.append((self.link[1], self.link[0]))
+            self.link = None
+
+    def handle_data(self, data):
+        if self.link is not None:
+            self.link[1] += data
+        if self.stack and self.stack[-1][0] == "h3" and "list" in {x[2].get("id") for x in self.stack}:
+            self.groups.append([data, []])
+        field = self.field()
+        if self.cards and field and field != "cost" and not any("data-mana" in x[2] for x in self.stack):
+            self.cards[-1][field] += data
+
+
+@pytest.fixture(scope="module")
+def trk_page() -> tuple:
+    """(the page read back, its raw text, the committed sheet split at section 6)."""
+    raw = (TRK / "cheat_sheet.html").read_text(encoding="utf-8")
+    page = Page()
+    page.feed(raw)
+    page.close()
+    sheet = (TRK / "cheat_sheet.md").read_text(encoding="utf-8")
+    cut = sheet.index("\n## 6.")
+    return page, raw, sheet[:cut], sheet[cut:]
+
+
+def test_page_has_one_block_per_graded_card_equal_to_the_sheet_row(trk_page, trk_grades):
+    page, _, _, section6 = trk_page
+    names = collections.Counter(c["name"] for c in page.cards)
+    assert names == collections.Counter(e["name"] for e in trk_grades)
+    assert set(names.values()) == {1}
+    rows, groups = [], []
+    for line in section6.split("\n"):
+        if line.startswith("### "):
+            groups.append([line[4:], []])
+        elif line.startswith("| ") and not line.startswith(("| Grade |", "|---")):
+            grade, card, cost, rarity, tags, note = line[2:-2].split(" | ")
+            name, link = re.fullmatch(r"\S+ \[(.+)\]\((\S+)\)", card).groups()
+            rows.append({"name": name, "grade": grade, "cost": cost, "rarity": rarity,
+                         "tags": tags, "note": note, "link": link})
+            groups[-1][1].append(name)
+    got = [
+        {"name": c["cn"], "grade": c["gb"] + c["syn"], "cost": c["cost"], "rarity": c["rar"],
+         "tags": c["tags"], "note": c["note"], "link": c["link"]}
+        for c in page.cards
+    ]
+    assert len(rows) == len(trk_grades)
+    assert got == rows
+    assert page.groups == groups
+
+
+def test_page_keeps_the_links_of_the_intro_and_sections_1_to_5(trk_page):
+    page, _, head, _ = trk_page
+    links = LINK.findall(head)
+    assert len(links) > 100
+    assert page.links == links
+
+
+def test_page_keeps_the_mana_costs_of_the_intro_and_sections_1_to_5(trk_page):
+    page, _, head, _ = trk_page
+    assert page.mana == [f"{{{m}}}" for m in re.findall(r"\{([^}]+)\}", head)]
+
+
+def test_published_copy_equals_the_page():
+    # DEC-1223 C1: the site serves web/public/prerelease/trk.html; `build_html.py --publish` writes it.
+    copy = ROOT / "web" / "public" / "prerelease" / "trk.html"
+    assert copy.read_bytes() == (TRK / "cheat_sheet.html").read_bytes()
+
+
+def test_page_links_only_scryfall_card_pages_and_its_own_anchors(trk_page):
+    page, raw, _, _ = trk_page
+    assert not [a for a in page.addresses if a[0] == "src"]
+    hrefs = [v for k, v in page.addresses if k == "href"]
+    anchors = [h for h in hrefs if h.startswith("#")]
+    assert anchors and all(h[1:] in page.ids for h in anchors)
+    assert all(h.startswith("https://scryfall.com/card/") for h in hrefs if not h.startswith("#"))
+    # No other address anywhere: not in a style, a script or a text.
+    found = re.findall(r"[a-z][a-z0-9+.-]*://", raw)
+    assert found and set(found) == {"https://"}
+    assert len(found) == len(hrefs) - len(anchors)
 
 
 # ------------------------------------------------------------ compare_grades
