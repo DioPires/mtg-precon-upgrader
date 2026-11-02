@@ -33,6 +33,22 @@ uv run python scripts/prerelease/build_cheat_sheet.py --set-dir DIR
 
 # 7 (continued). Render the sheet to DIR/cheat_sheet.pdf; needs Google Chrome.
 uv run --with markdown python scripts/prerelease/build_pdf.py --set-dir DIR
+
+# 7 (continued). Write DIR/cheat_sheet.html, the page for a phone, and its copy
+# for the site, web/public/prerelease/CODE.html. Rebuild both each time the
+# sheet changes.
+uv run --with markdown python scripts/prerelease/build_html.py --set-dir DIR --publish
+uv run --with markdown python scripts/prerelease/build_html.py --set-dir DIR --check-text
+```
+
+Browser check of the Star Trek page: Chromium from disk, then WebKit (the
+engine of Chrome on an iPhone) from disk and over HTTP. Playwright from
+`web/node_modules`; no network; `--shots` also writes the screenshots with
+WebKit at 390 x 844, light and dark:
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH="$HOME/Library/Caches/ms-playwright" \
+  node scripts/prerelease/check_html.mjs --set-dir analysis/prerelease/trk --shots /tmp/shots
 ```
 
 Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
@@ -68,10 +84,43 @@ Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
   writes the sheet without links. `--print-tiers` prints just the tier reading.
 - **`build_pdf.py`** — renders `DIR/cheat_sheet.md` to `DIR/cheat_sheet.pdf`
   (A4) with python-markdown (`uv run --with markdown`; not a project
-  dependency) and headless Google Chrome, and removes the temporary HTML file.
+  dependency) and headless Google Chrome. Its temporary HTML file goes in a
+  temporary folder, never `DIR/cheat_sheet.html` (the page; DEC-1223).
   The card links stay clickable in the PDF. If Chrome is not at
   `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`, it stops and
   names that path.
+- **`build_html.py`** — writes `DIR/cheat_sheet.html`: the sheet as one page
+  for a phone, with inline CSS and JavaScript. It loads nothing from the network
+  and works opened from disk; its only addresses are the sheet's Scryfall card
+  links. The intro and sections 1 to 5 are the sheet's markdown, rendered with
+  python-markdown (`uv run --with markdown`; not a project dependency): every
+  word and link stays, mana costs show as CSS symbols that keep their source
+  text in `data-mana`, sections 3 and 4 show one block per colour, and section
+  5 shows one block per archetype with Signposts and Look for behind a tap.
+  Section 6 is one block per card from `grades.json`, in the sheet's groups and
+  order (`full_list_groups()` in `build_cheat_sheet.py`). A bar at the bottom of
+  the screen links each section. With JavaScript, section 6 gets a name search
+  and filter chips, each card a `−`/`+` pool counter (kept in the browser's
+  `localStorage`, one key per set code), and a Pool view counts steps 2, 3, 4
+  and 7 of the hand procedure. `pool_summary()` is the reference for those
+  counts. Two builds write the same bytes. `--publish` also writes the same
+  bytes to `web/public/prerelease/<set folder name>.html`; Vite copies
+  `web/public/` into the site as it is, so the page is served at
+  `/prerelease/CODE.html`. `--check-text` compares the text of the page's intro
+  and sections 1 to 5 with python-markdown's render of the sheet. Rebuild the
+  page and its copy each time the sheet changes: the tests compare the
+  committed Star Trek page with its sheet and its copy with the page.
+- **`check_html.mjs`** — drives the Star Trek page with Playwright
+  (`web/node_modules` of this tree, or of the main checkout from a worktree)
+  three times: Chromium from disk, WebKit with the iPhone 13 profile from disk,
+  and WebKit over HTTP from a static server on `web/public/` that it starts on
+  127.0.0.1. Each run prints: no sideways scroll at 360 and 390 px in light and
+  dark, text contrast, the bar, the search field's font size, tap targets of
+  44 x 44 px, the search examples and filter chips, the page with JavaScript
+  off, and the Pool view against `pool_summary()` for four pools. It refuses
+  every network request and exits 1 when a check fails. Its search
+  examples and two of its pools are Star Trek cards (`SEARCH_EXAMPLES` and
+  `CHECK_POOLS` in `build_html.py`).
 - **`compare_grades.py`** — fetches a Draftsim review, reads the `Rating: N/10`
   lines back to card names, writes `DIR/draftsim_grades.json` and prints the
   means, the correlation, the mean absolute difference and every disagreement of

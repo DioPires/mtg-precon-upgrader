@@ -11,6 +11,7 @@ import argparse
 import os
 import subprocess
 import sys
+import tempfile
 
 import markdown
 
@@ -42,18 +43,19 @@ def main() -> int:
     # Absolute, because Chrome reads the HTML from a file:// URL.
     set_dir = os.path.abspath(args.set_dir)
     src = os.path.join(set_dir, "cheat_sheet.md")
-    html_path = os.path.join(set_dir, "cheat_sheet.html")
     pdf_path = os.path.join(set_dir, "cheat_sheet.pdf")
     with open(src, encoding="utf-8") as fh:
         body = markdown.markdown(fh.read(), extensions=["tables", "sane_lists"])
-    with open(html_path, "w", encoding="utf-8") as fh:
-        fh.write(f"<!doctype html><html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{body}</body></html>")
-    subprocess.run(
-        [CHROME, "--headless=new", "--disable-gpu", "--no-pdf-header-footer",
-         f"--print-to-pdf={pdf_path}", f"file://{html_path}"],
-        check=True, capture_output=True,
-    )
-    os.remove(html_path)
+    # A temporary folder, not DIR: DIR/cheat_sheet.html is build_html.py's page (DEC-1223).
+    with tempfile.TemporaryDirectory() as tmp:
+        html_path = os.path.join(tmp, "cheat_sheet.html")
+        with open(html_path, "w", encoding="utf-8") as fh:
+            fh.write(f"<!doctype html><html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{body}</body></html>")
+        subprocess.run(
+            [CHROME, "--headless=new", "--disable-gpu", "--no-pdf-header-footer",
+             f"--print-to-pdf={pdf_path}", f"file://{html_path}"],
+            check=True, capture_output=True,
+        )
     print(f"wrote {pdf_path} ({os.path.getsize(pdf_path)} bytes)")
     return 0
 
