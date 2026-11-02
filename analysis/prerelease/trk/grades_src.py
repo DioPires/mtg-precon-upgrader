@@ -2,7 +2,10 @@
 Graded from oracle text only (grading_sheet.txt) under the DEC-1218 rules (playbook step 3:
 rarity check, card advantage, no default grade for removal, half grades), before reading any
 external grade. 0-10 scale: 10 game-winning bomb, 8-9 bomb or premium removal, 5-7 good
-playable, 2-4 filler, 1 weak, 0 unplayable. Role `cardadv` = repeated card advantage.
+playable, 2-4 filler, 1 weak, 0 unplayable. Role `cardadv` = repeated card advantage: cards, not tokens.
+Re-read 3 (2 November, after Draftsim's archetype guide, before any external grade): `cardadv` only
+for cards that draw, or play or return cards, again and again; repeated token makers lost the tag and
+were graded by board value (playbook step 3). grades_src_blind.py keeps the grades before this re-read.
 Tuple: (name, grade, roles, note, synergy); no synergy grades in this set (the sim is not run)."""
 
 G = [
@@ -26,7 +29,7 @@ G = [
 ('Assembly Specialist', 5, ['threat'], 'two artifact 1/1s for 2 (WB artifacts)', None),
 ('Brad Boimler, Eager Ensign', 5, ['threat'], '2-mana 2/2 lifelink; extra counters when tapped (GW)', None),
 ('Command Subadjunct', 3.5, ['threat'], '1-mana 2/1 artifact; vigilance for artifact creatures', None),
-('Conquest Mission', 5, ['engine', 'cardadv'], 'a 1/1 for every nontoken artifact you cast; needs 8+ artifacts', None),
+('Conquest Mission', 4.5, ['engine'], 'a 1/1 each time a nontoken artifact enters under your control; wants 8+ artifacts (WB)', None),
 ('Dr. McCoy, Surly Surgeon', 5, ['threat'], '4-mana 2/2 plus a counter; your countered creatures survive destroy', None),
 ('Ghost of Illyria', 6, ['threat'], '4-mana 3/3 flyer; re-buys an ETB', None),
 ('Hologram Janeway', 5.5, ['threat'], '3-mana 3/3 artifact; a counter each power-8 attack', None),
@@ -38,17 +41,17 @@ G = [
 ("There's Coffee in that Nebula", 4, ['filler'], 'finds a land or a 3-drop, twice with beam me up', None),
 ('U.S.S. Excelsior, Cutting Edge', 6.5, ['removal'], '4 mana: destroy a tapped creature (their last attacker); flying 4/4 at 8', None),
 ('Una Chin-Riley, Number One', 5, ['threat'], '5-mana 4/5; first strike for an attacker at power 8', None),
-('Antagonist Incorporator', 6, ['threat', 'cardadv'], '2-mana 2/3; your artifact creatures make 1/1s when they connect', None),
-('Captain Benjamin Sisko', 5, ['threat', 'cardadv'], '2-mana 2/2; a 1/1 at end step per dilemma faced (39 modal cards)', None),
+('Antagonist Incorporator', 5, ['threat'], '2-mana 2/3; your artifact creatures make a 1/1 for {1} when they connect', None),
+('Captain Benjamin Sisko', 4.5, ['threat'], '2-mana 2/2; a 1/1 at end step per dilemma faced (39 modal cards)', None),
 ('Deanna Troi, Psychic Counsel', 6.5, ['threat'], '2-mana 2/2; every later creature enters with a counter', None),
 ('Federation Resupply', 3, ['filler'], 'tutor for an Aura, Equipment or Spacecraft', None),
 ("Miles O'Brien, Transporter Ops", 5.5, ['threat'], '3-mana 3/3; re-buys an ETB and draws that turn', None),
 ('Peace in Our Time', 2, ['filler'], 'the opponent chooses; a win at 12 counters rarely comes', None),
 ('Primary Unimatrix Adjunct', 6, ['threat'], '4-mana 2/3 double strike; all artifact creatures double strike', None),
-('Sulu, Space Swashbuckler', 4.5, ['threat'], '2-mana 2/2 first strike; draws with Equipment or Spacecraft', None),
+('Sulu, Space Swashbuckler', 5, ['threat', 'cardadv'], '2-mana 2/2 first strike; draws when tapped on a turn an Equipment or Spacecraft entered', None),
 ('The Needs of the Many', 2, ['filler'], 'sacrifice a creature to fog and protect the team', None),
 ('Troubling Tribbles', 3, ['threat'], '0/1 that doubles each upkeep; cannot block; needs an anthem', None),
-('Captain Jean-Luc Picard', 8.5, ['bomb', 'cardadv'], '3-mana anthem; a 1/1 for every creature or Spacecraft you cast', None),
+('Captain Jean-Luc Picard', 8.5, ['bomb'], '3-mana anthem; a 1/1 for every creature or Spacecraft you cast', None),
 ('Dr. Beverly Crusher', 4.5, ['threat'], '3-mana 2/2 that grows with lifegain', None),
 ('Excalbian Gamemaster', 8, ['bomb'], '6-mana 6/6 plus a 1/1 per land name (usually 3); counters on deaths', None),
 ('U.S.S. Enterprise-A, Free Spirit', 8.5, ['bomb'], '5 mana: three 1/1s that station it at once into a 5/5 flying lifelink, ward 2', None),
@@ -138,7 +141,7 @@ G = [
 ('Kai Winn, Faithless Leader', 3, ['threat'], '2-mana 3/1; the named card rarely shows up', None),
 ('Overflow Submatrix', 6, ['threat', 'cardadv'], '3-mana 3/3; recasts an artifact creature from the graveyard each turn', None),
 ('Salt Vampire', 4.5, ['threat'], '2-mana 2/2 lifelink; swaps their best card for a random one', None),
-('Sela, Tal Shiar Paradox', 6.5, ['threat', 'cardadv'], '4-mana 3/3; a 2/2 each time cards leave your graveyard (each attack)', None),
+('Sela, Tal Shiar Paradox', 6, ['threat'], '4-mana 3/3; a 2/2 each time cards leave your graveyard (each attack)', None),
 ('The Destruction of Praxis', 6, ['removal'], '5-mana sweeper -X/-X, X = land names (usually 3)', None),
 ("U.S.S. Reliant, From Hell's Heart", 6, ['threat'], '4 mana: reanimate a 4-drop; flying 4/3 at 10', None),
 ('Death Is Irrelevant', 6.5, ['engine', 'cardadv'], '8 mana: a graveyard creature joins you every end step', None),
@@ -161,7 +164,7 @@ G = [
 ('Silicate Surveyor', 5, ['threat'], '5-mana 4/4 reach plus an impulse card', None),
 ('Starfleet Security', 2.5, ['filler'], '1-mana 1/1 haste; a Clue if it dies on your turn', None),
 ('Tal Shiar Analyst', 4, ['threat'], '3-mana 3/2 pinger of the opponent; untaps on noncreature spells (UR)', None),
-('Academy Instructor', 5, ['threat', 'cardadv'], '3-mana 0/3; a 1/1 per noncreature spell, +1/+0 per Officer token (UR)', None),
+('Academy Instructor', 4.5, ['threat'], '3-mana 0/3; a 1/1 per noncreature spell, +1/+0 per Officer token (UR)', None),
 ('Beckett Mariner, Impetuous Ensign', 4.5, ['threat'], '2-mana 2/1 first strike; 2 damage every third tap', None),
 ('Captain Michael Burnham', 5.5, ['threat'], '3-mana 3/3 trample; pings on landfall and grows (RG)', None),
 ('Erica Ortegas, Plucky Pilot', 4.5, ['threat'], '4-mana 3/3 haste; extra landfall when tapped (RG)', None),
@@ -187,9 +190,9 @@ G = [
 ('The Wrath of Khan', 8, ['bomb', 'removal'], '3-mana saga: 4 damage plus a threaten, a loot, then an edict of a nontoken permanent', None),
 ('Will Riker, First in the Field', 5.5, ['threat'], '4-mana 4/3; two temporary lands each combat (landfall, land names)', None),
 ('Worf, Intelligence Contractor', 4.5, ['threat'], '3-mana 3/2; steals a 3-drop for the turn (BR sacrifice)', None),
-('Captain James T. Kirk', 6.5, ['threat', 'cardadv'], '3-mana 2/2; a 1/1 or a loot on entry and on each attack', None),
+('Captain James T. Kirk', 6, ['threat'], '3-mana 2/2; a 1/1 or a loot on entry and on each attack', None),
 ('Infinite Diversity', 1.5, ['filler'], '9 mana; copies one spell from your graveyard', None),
-('Q, Stacking the Deck', 7, ['threat', 'cardadv'], '4-mana 4/4; exile a card from hand to cast a copy of the exiled card', None),
+('Q, Stacking the Deck', 6.5, ['threat'], '4-mana 4/4; trade a card in hand for a copy of the exiled card (no extra cards)', None),
 ('Quark, Humble Proprietor', 2, ['filler'], 'you cannot sacrifice the Treasures, so they make no mana', None),
 # ---------- GREEN ----------
 ('Astute Terraformer', 4, ['threat'], '2-mana 2/2; +2/+2 for about 3 mana with 3 land names', None),
@@ -211,7 +214,7 @@ G = [
 ('Amok Time', 6, ['removal'], '3-mana saga: a fight, 3 life, then a creature back', None),
 ('Culber and Stamets, Star-Crossed', 5.5, ['threat'], '4-mana 3/4 plus a counter (a 4/5), or two mana', None),
 ('David and Carol Marcus, Creators', 5, ['threat', 'fixing'], '3-mana 1/3 plus an any-colour land (a new land name)', None),
-('Hologram Stalker', 6, ['threat', 'cardadv'], '6 mana: a 2/2, a card back, and a 3/3 each turn a card leaves your graveyard', None),
+('Hologram Stalker', 6, ['threat'], '6 mana: a 2/2, a card back and a 3/3 at once; a 3/3 each turn a card leaves your graveyard', None),
 ('Jake Sisko, War Correspondent', 4, ['threat'], '2-mana 2/2; life on landfall, a Clue on the second', None),
 ('Mugato', 7, ['threat'], '5-mana 6/6 reach, vigilance, deathtouch', None),
 ('Neelix, Moral Support', 3.5, ['threat'], '2-mana 1/1 plus a Food; grows with lifegain', None),
@@ -265,7 +268,7 @@ G = [
 ("D'Vana Tendi, Optimistic Ensign", 4.5, ['threat'], '3-mana 2/4 hybrid untapper; surveil for 3', None),
 ('The Traveler', 5.5, ['threat'], '2-mana */3 reach vigilance, power = land names (usually 3)', None),
 ('All Good Things...', 5.5, ['engine', 'cardadv'], '5-mana saga: draw two and exile one, three times', None),
-('Cleveland Booker, Empath', 6.5, ['threat', 'cardadv'], '4-mana 2/2 hybrid; a 2/2 for every land you play', None),
+('Cleveland Booker, Empath', 6, ['threat'], '4-mana 2/2 hybrid; a 2/2 for every land you play', None),
 ("Dal R'El, Augment Orphan", 5.5, ['threat'], '3-mana 3/3; mana on landfall; trades a land for a card', None),
 ('Hit It!', 3, ['filler'], 'haste for your creatures and one land from the top five', None),
 ('Sarek, Federation Ambassador', 2.5, ['filler'], '3-colour 0/5; draws only at five creature types', None),
@@ -317,6 +320,6 @@ G = [
 ('U.S.S. Enterprise-D, Galaxy-Class', 7, ['threat', 'cardadv'], '3-mana colourless: an extra card each turn you station it; flying 4/5 at 7', None),
 ('Watery Grave', 4, ['fixing'], 'U/B shock land', None),
 ('Crystalline Entity', 8, ['bomb'], '8-mana 7/7 flyer that destroys every nonartifact creature', None),
-('Deep Space 9', 4, ['filler'], "9 mana: four cards' worth of permanents each upkeep", None),
+('Deep Space 9', 4, ['filler', 'cardadv'], "9 mana: four cards' worth of permanents each upkeep", None),
 ('Starfleet Academy', 2.5, ['filler'], 'colourless legendary land; Federation mana late', None),
 ]

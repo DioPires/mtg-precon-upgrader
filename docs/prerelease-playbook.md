@@ -43,7 +43,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `analysis/prerelease/CODE`.
 
    **Grading rules (DEC-1218, from the Reality Fracture back-test).** Apply them to every grade:
    - **Rarity check.** After the build, the mean uncommon grade over non-land cards must sit at least 1 grade above the mean common grade (`build_grades.py` prints the gap since DEC-1219). If the gap is under 1, re-read the uncommons before step 4. Basis: on 17Lands, Reality Fracture's uncommons won 2.1 points more than its commons; our gap was 0.5 and Draftsim's 1.4. Within each rarity, our grades and Draftsim's ranked the cards equally well.
-   - **Card advantage.** A card that draws or makes extra cards again and again (every turn, every attack, every activation) gets +1 over the same card without that ability. Give it the role `cardadv` (the sheet marks it ✚). A one-time draw is not `cardadv`. Basis: at equal grade, the 13 true card-advantage cards won 2.3 points more (+1.0 to +3.6).
+   - **Card advantage.** A card that gives you extra cards again and again (every turn, every attack, every activation) gets +1 over the same card without that ability. Extra cards are draws, cards put into your hand, and cards you play from your library or a graveyard. Give it the role `cardadv` (the sheet marks it ✚). A one-time draw is not `cardadv`. A looter is not `cardadv` until it draws without the discard. Tokens are not cards: a repeated token maker gets no tag and no +1; grade it by what its tokens do on the board. Basis: at equal grade, the 13 true card-advantage cards won 2.3 points more (+1.0 to +3.6). All 13 draw, return or replay cards. The back-test left out the one token maker in that group (Saheeli), and only 2 of its 103 cards were repeated token makers, so it cannot say whether token makers earn the +1.
    - **Removal has no default grade.** Grade each removal spell by what it kills (the toughness census in `set_facts.md`), its cost and its condition. The removal tag rule above does not change.
    - **Half grades** (6.5) are allowed, to break ties.
    - **Save the blind file.** Copy `grades_src.py` to `grades_src_blind.py` before you read any external grade. The next back-test scores the blind file too.
@@ -105,6 +105,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `analysis/prerelease/CODE`.
 - Secondary fact sheets summarise WotC's article and drop treatments; read the primary text.
 - `set_facts.md` counts creature toughness over every card with a printed toughness, Spacecraft and vehicles included (Star Trek: 181). The sheet's section 3 counts creatures only (165). Quote the sheet's figures in `format_rules.md`, `prose.json` and the grade notes (DEC-1218: 72% against 75% for toughness 3 or less).
 - A CLI pool evaluator is not useful at an LGS with a phone; the cheat sheet's hand procedure replaces it.
+- Tokens are not card advantage under the grading rule. Star Trek's first grades tagged 10 token makers and card converters `cardadv` (Captain Jean-Luc Picard, Conquest Mission and eight more) and left 3 other token makers untagged; the basis covers only cards that draw, return or replay cards (DEC-1218, 2 November).
 
 ## Issue template
 
