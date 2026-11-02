@@ -489,6 +489,16 @@ def card_block(entry: dict, urls: dict, cards: list) -> str:
     else:
         name = f'<span class="cn">{name}</span>'
     rarity = entry["rarity"]
+    # The rarity letter never stands alone on a line (DEC-1225): a no-break
+    # group holds it with the cost before it. A card without a cost joins the
+    # group to the last word of its name with a no-break space. The name may
+    # still wrap.
+    cost = mana_html(front_cost(entry))
+    rar = f'<abbr class="rar" title="{esc(rarity)}">{esc(rarity[0].upper())}</abbr>'
+    if cost:
+        group = f' <span class="nw"><span class="cost">{cost}</span> {rar}</span>'
+    else:
+        group = f'&nbsp;<span class="nw">{rar}</span>'
     tags = "".join(f'<span role="img" aria-label="{n}" title="{n}">{t}</span>' for t, n in TAGS if t in mark(entry))
     note = md_links(link_cards(entry["note"], cards)) if urls else esc(entry["note"])
     attrs = {
@@ -505,9 +515,7 @@ def card_block(entry: dict, urls: dict, cards: list) -> str:
     attr = " ".join(f'{k}="{esc(v)}"' for k, v in attrs.items())
     return (
         f'<li class="card" {attr}><div class="gr">{grade_html}</div>'
-        f'<div class="l1">{name} <span class="cost">{mana_html(front_cost(entry))}</span> '
-        f'<abbr class="rar" title="{esc(rarity)}">{esc(rarity[0].upper())}</abbr> '
-        f'<span class="tags">{tags}</span></div>'
+        f'<div class="l1">{name}{group} <span class="tags">{tags}</span></div>'
         f'<p class="note">{note}</p></li>'
     )
 
@@ -808,7 +816,7 @@ button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:va
 .card .note{grid-area:n;margin:2px 0 0;color:var(--muted)}
 .cn{font-weight:600;text-decoration:none}
 .cn:hover,.cn:focus{text-decoration:underline}
-.cost{white-space:nowrap}
+.cost,.nw{white-space:nowrap}
 .rar{text-decoration:none;font-weight:700;color:var(--muted);padding:0 2px}
 .tags span{margin-right:2px}
 .card.inpool{background:var(--pool);box-shadow:-8px 0 0 var(--pool),8px 0 0 var(--pool)}

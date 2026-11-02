@@ -280,7 +280,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 4.5 | ⚫ [Grand Nagus Zek](https://scryfall.com/card/trk/112/grand-nagus-zek) | {2}{B} | R |  | 3-mana 1/1 that makes a Treasure per death turn and grows |
 | 4.5 | ⚫ [Stray from History](https://scryfall.com/card/trk/130/stray-from-history) | {2}{B} | C |  | two creatures back from the graveyard, or take a card from their hand |
 | 4 | ⚫ [Battle-Scarred Survivalist](https://scryfall.com/card/trk/95/battle-scarred-survivalist) | {1}{B} | C |  | 2-mana 1/1 menace that grows on deaths |
-| 4 | ⚫ [Collective Drone](https://scryfall.com/card/trk/99/collective-drone) | {1}{B} | U |  | 2-mana */2 that counts artifact creatures, usually 2 or 3 power (WB) |
+| 4 | ⚫ [Collective Drone](https://scryfall.com/card/trk/99/collective-drone) | {1}{B} | U |  | 2-mana \*/2 that counts artifact creatures, usually 2 or 3 power (WB) |
 | 4 | ⚫ [Obsidian Order Operative](https://scryfall.com/card/trk/120/obsidian-order-operative) | {3}{B} | C |  | 4-mana 2/5; drains 1 per dilemma |
 | 4 | ⚫ [Organic Avulsion Unit](https://scryfall.com/card/trk/121/organic-avulsion-unit) | {2}{B} | U |  | 3-mana 2/3 artifact; menace for artifact creatures (WB) |
 | 4 | ⚫ [Storied Veteran](https://scryfall.com/card/trk/129/storied-veteran) | {B} | U |  | 1-mana 2/1 that cannot block; casts again from the graveyard (BR) |
@@ -356,7 +356,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 6 | 🟢 [Amok Time](https://scryfall.com/card/trk/183/amok-time) | {2}{G} | U | ✕ | 3-mana saga: a fight, 3 life, then a creature back |
 | 6 | 🟢 [Captain Jonathan Archer](https://scryfall.com/card/trk/186/captain-jonathan-archer) | {2}{G} | R |  | 3 mana: a 3/3 and a 1/1; pumps +X/+X before combat |
 | 6 | 🟢 [Captain Kathryn Janeway](https://scryfall.com/card/trk/187/captain-kathryn-janeway) | {3}{G} | M | ✚ | 4-mana 2/3; an extra land a turn; every creature explores |
-| 6 | 🟢 [Captain Pike, Fullness of Time](https://scryfall.com/card/trk/188/captain-pike-fullness-of-time) | {1}{G}{G} | R | ✚ | 3-mana */* (land names, usually 3); plays lands off the top |
+| 6 | 🟢 [Captain Pike, Fullness of Time](https://scryfall.com/card/trk/188/captain-pike-fullness-of-time) | {1}{G}{G} | R | ✚ | 3-mana \*/\* (land names, usually 3); plays lands off the top |
 | 6 | 🟢 [Common Goal](https://scryfall.com/card/trk/190/common-goal) | {1}{G} | C | ✕ | 2-mana sorcery: one or two of your creatures deal damage to theirs (one-sided bite) |
 | 6 | 🟢 [Dr. Leonard "Bones" McCoy](https://scryfall.com/card/trk/197/dr-leonard-bones-mccoy) | {1}{G}{G} | R | ⚡ | 3-mana 3/2 flash; a permanent card back (a 2-for-1), or saves a creature |
 | 6 | 🟢 [Hologram Stalker](https://scryfall.com/card/trk/202/hologram-stalker) | {4}{G}{G} | U |  | 6 mana: a 2/2, a card back and a 3/3 at once; a 3/3 each turn a card leaves your graveyard |
@@ -427,7 +427,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 | Grade | Card | Cost | R | Tags | Why |
 |---|---|---|---|---|---|
 | 5.5 | 🟡 [All Good Things...](https://scryfall.com/card/trk/226/all-good-things) | {3}{G}{U} | R | ✚ | 5-mana saga: draw two and exile one, three times |
-| 5.5 | 🟡 [The Traveler](https://scryfall.com/card/trk/254/the-traveler) | {G}{U} | U |  | 2-mana */3 reach vigilance, power = land names (usually 3) |
+| 5.5 | 🟡 [The Traveler](https://scryfall.com/card/trk/254/the-traveler) | {G}{U} | U |  | 2-mana \*/3 reach vigilance, power = land names (usually 3) |
 
 ### 🟡 Gold UR
 

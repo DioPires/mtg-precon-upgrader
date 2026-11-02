@@ -8,10 +8,12 @@ example and compare byte for byte with what is committed.
 from __future__ import annotations
 
 import collections
+import html
 import json
 import pathlib
 import re
 import shutil
+import subprocess
 import sys
 from html.parser import HTMLParser
 
@@ -441,6 +443,56 @@ def test_link_cards_links_the_front_face_and_only_whole_names():
     )
 
 
+# DEC-1225: a note prints as written. "3-mana */*" is a power, not emphasis, so
+# the sheet escapes each * of a note as \*.
+PIKE = "3-mana */* (land names, usually 3); plays lands off the top"
+
+
+def markdown_render(text: str) -> str:
+    """python-markdown's render of `text` with build_pdf.py's extensions.
+
+    python-markdown is not a project dependency: without it in this
+    environment, the render runs under `uv run --with markdown` like
+    build_pdf.py.
+    """
+    try:
+        import markdown
+    except ImportError:
+        code = (
+            "import sys, markdown; out = markdown.markdown(sys.stdin.buffer.read().decode('utf-8'), "
+            "extensions=['tables', 'sane_lists']); sys.stdout.buffer.write(out.encode('utf-8'))"
+        )
+        done = subprocess.run(
+            ["uv", "run", "--with", "markdown", "python", "-c", code],
+            input=text.encode("utf-8"), capture_output=True, check=True, cwd=ROOT,
+        )
+        return done.stdout.decode("utf-8")
+    return markdown.markdown(text, extensions=["tables", "sane_lists"])
+
+
+def test_sheet_escapes_each_asterisk_of_a_note(trk_sheets):
+    plain, _, _ = trk_sheets
+    sheet = (TRK / "cheat_sheet.md").read_text(encoding="utf-8")
+    graded = json.loads((TRK / "grades.json").read_text(encoding="utf-8"))
+    starred = [e["note"] for e in graded if "*" in e["note"]]
+    assert PIKE in starred
+    for text in (plain, sheet):
+        assert "| 3-mana \\*/\\* (land names, usually 3); plays lands off the top |" in text
+        for note in starred:
+            escaped = note.replace("*", "\\*")
+            assert f"| {escaped} |" in text
+            assert f"| {note} |" not in text
+
+
+def test_python_markdown_prints_the_asterisks_of_a_note_as_written():
+    out = markdown_render((TRK / "cheat_sheet.md").read_text(encoding="utf-8"))
+    assert f"<td>{PIKE}</td>" in out
+    assert "<em>/</em>" not in out
+    graded = json.loads((TRK / "grades.json").read_text(encoding="utf-8"))
+    for note in (e["note"] for e in graded if "*" in e["note"]):
+        assert f"<td>{html.escape(note, quote=False)}</td>" in out
+
+
 # ---------------------------------------------------------------- build_html
 # DEC-1223: the page for a phone. The pool counts by hand, the search, and the
 # committed Star Trek page against the committed sheet. These fail when the
@@ -652,8 +704,9 @@ def test_page_has_one_block_per_graded_card_equal_to_the_sheet_row(trk_page, trk
         elif line.startswith("| ") and not line.startswith(("| Grade |", "|---")):
             grade, card, cost, rarity, tags, note = line[2:-2].split(" | ")
             name, link = re.fullmatch(r"\S+ \[(.+)\]\((\S+)\)", card).groups()
+            # The sheet escapes each * of a note (DEC-1225); the page prints the note as written.
             rows.append({"name": name, "grade": grade, "cost": cost, "rarity": rarity,
-                         "tags": tags, "note": note, "link": link})
+                         "tags": tags, "note": note.replace("\\*", "*"), "link": link})
             groups[-1][1].append(name)
     got = [
         {"name": c["cn"], "grade": c["gb"] + c["syn"], "cost": c["cost"], "rarity": c["rar"],
@@ -663,6 +716,26 @@ def test_page_has_one_block_per_graded_card_equal_to_the_sheet_row(trk_page, trk
     assert len(rows) == len(trk_grades)
     assert got == rows
     assert page.groups == groups
+
+
+# DEC-1225: the rarity letter sits in a no-break group with the cost before it.
+# A card without a cost joins the group to its name with a no-break space.
+SYMBOL = r'<span class="ms[^"]*"[^>]*>(?:[^<]|<i [^>]*>[^<]*</i>)+</span>'
+RARITY = r'<abbr class="rar" title="[a-z]+">[A-Z]</abbr>'
+L1 = re.compile(
+    r'<div class="l1"><(?:a|span) class="cn"[^>]*>[^<]+</(?:a|span)>'
+    rf'(?: <span class="nw"><span class="cost">(?:{SYMBOL})+</span> {RARITY}</span>'
+    rf'|&nbsp;<span class="nw">{RARITY}</span>)'
+    r' <span class="tags">'
+)
+
+
+def test_rarity_letter_sits_in_the_no_break_group(trk_page, trk_grades):
+    _, raw, _, _ = trk_page
+    assert ".cost,.nw{white-space:nowrap}" in raw
+    assert len(L1.findall(raw)) == raw.count('<div class="l1">') == raw.count('class="rar"') == len(trk_grades)
+    no_cost = [e for e in trk_grades if not build_cheat_sheet.front_cost(e)]
+    assert raw.count('&nbsp;<span class="nw">') == len(no_cost) > 0
 
 
 def test_page_keeps_the_links_of_the_intro_and_sections_1_to_5(trk_page):

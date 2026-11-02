@@ -290,9 +290,11 @@ def front_cost(entry: dict) -> str:
 
 
 def row(entry: dict) -> str:
+    # "*/*" is a power, not emphasis: every markdown renderer prints \* as * (DEC-1225).
+    note = entry["note"].replace("*", r"\*")
     return (
         f"| {grade_text(entry)} | {pip(entry)} {entry['name']} | {front_cost(entry)} | "
-        f"{entry['rarity'][0].upper()} | {mark(entry)} | {entry['note']} |"
+        f"{entry['rarity'][0].upper()} | {mark(entry)} | {note} |"
     )
 
 
