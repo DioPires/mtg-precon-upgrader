@@ -3,10 +3,10 @@
 Everything a Sealed prerelease needs beyond a set code, a collation config and a
 grade file. The process these commands serve is in
 [`docs/prerelease-playbook.md`](../../docs/prerelease-playbook.md); the worked
-example is `agents/ceo/analysis/dec925/` (Reality Fracture).
+example is `analysis/prerelease/fra/` (Reality Fracture).
 
 Set `CODE` to the Scryfall set code and `DIR` to the set directory, normally
-`agents/ceo/analysis/prerelease/CODE`.
+`analysis/prerelease/CODE`.
 
 ## Run order
 

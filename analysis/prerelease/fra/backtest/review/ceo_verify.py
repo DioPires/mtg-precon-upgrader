@@ -1,7 +1,7 @@
 import json, math, os, sys
 from collections import defaultdict
 D = sys.argv[1]
-DEC925 = os.path.join(D, "..", "..", "dec925")
+DEC925 = os.path.join(D, "..")
 def load(p):
     with open(p) as f: return json.load(f)
 def ranks(xs):

@@ -7,12 +7,12 @@ Scryfall card dump, a grade file and -- if the set has a paired cycle -- a pair
 table. Nothing about `fra` is hard-coded here.
 
     uv run python scripts/sealed_sim.py \
-        --config agents/ceo/analysis/dec925/collation.json \
-        --cards  agents/ceo/analysis/dec925/fra_all_cards.json \
-        --pairs  agents/ceo/analysis/dec925/echoed_pairs.json \
-        --grades agents/ceo/analysis/dec925/grades.json \
+        --config analysis/prerelease/fra/collation.json \
+        --cards  analysis/prerelease/fra/fra_all_cards.json \
+        --pairs  analysis/prerelease/fra/echoed_pairs.json \
+        --grades analysis/prerelease/fra/grades.json \
         --pools 100000 --seed 20260925 \
-        --out agents/ceo/analysis/dec925/sim_results.json
+        --out analysis/prerelease/fra/sim_results.json
 
 Standard library only.
 """

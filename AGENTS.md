@@ -234,7 +234,7 @@ Board-approved via the DEC-369 next-steps interaction. Fleet assessments are **e
 ## Common Tasks
 
 ### Prepare for a Sealed prerelease
-Follow [`docs/prerelease-playbook.md`](docs/prerelease-playbook.md): verify the set on Scryfall, encode the WotC booster collation, grade blind, compare to two reviews, run `scripts/sealed_sim.py`, ship a phone-readable cheat sheet, self-review. Worked example: `agents/ceo/analysis/dec925/`.
+Follow [`docs/prerelease-playbook.md`](docs/prerelease-playbook.md): verify the set on Scryfall, encode the WotC booster collation, grade blind, compare to two reviews, run `scripts/sealed_sim.py`, ship a phone-readable cheat sheet, self-review. Worked example: `analysis/prerelease/fra/`. Each set's files go in `analysis/prerelease/<code>/` (index: `analysis/prerelease/README.md`).
 
 ### Add a New Commander Deck
 1. Create `data/commanders/{new-id}/deck.json` with flat structure (see data structure above)

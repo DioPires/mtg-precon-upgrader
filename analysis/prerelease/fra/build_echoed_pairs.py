@@ -27,7 +27,7 @@ Method (documented so the result is auditable rather than asserted):
     (Codie, Ravenous Codex, #168, also carries the `echoverse` watermark but
     sits outside the block; it is Echoverse-flavoured, not a cycle card.)
 
-Run: uv run python agents/ceo/analysis/dec925/build_echoed_pairs.py
+Run: uv run python analysis/prerelease/fra/build_echoed_pairs.py
 """
 
 from __future__ import annotations

@@ -25,8 +25,8 @@ import dump_set  # noqa: E402
 import setlib  # noqa: E402
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures" / "prerelease"
-DEC925 = ROOT / "agents" / "ceo" / "analysis" / "dec925"
-TRK = ROOT / "agents" / "ceo" / "analysis" / "prerelease" / "trk"
+DEC925 = ROOT / "analysis" / "prerelease" / "fra"
+TRK = ROOT / "analysis" / "prerelease" / "trk"
 
 
 @pytest.fixture(scope="module")

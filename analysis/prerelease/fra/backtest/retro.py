@@ -5,7 +5,7 @@ Inputs (all in this folder unless noted):
   17lands_fra_color_ratings_Sealed.json       color_ratings/data?expansion=FRA&event_type=Sealed&start_date=2026-09-29&end_date=2026-11-01&combine_splash=true (a pair includes its splash decks, as the sim does)
   17lands_fra_color_ratings_PremierDraft.json same, PremierDraft
   grades_v1_blind.json, grades_v2.json         git 3e034a7f and 2f2c0683
-  ../../dec925/grades.json                     v3 (final), ../../dec925/draftsim_grades.json, ../../dec925/sim_results.json
+  ../grades.json                               v3 (final), ../draftsim_grades.json, ../sim_results.json
 
 Run: python3 -I retro.py  (stdlib only)
 """
@@ -14,7 +14,7 @@ import math
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DEC925 = os.path.join(HERE, "..", "..", "dec925")
+DEC925 = os.path.join(HERE, "..")
 MIN_GAMES = 0  # 17Lands publishes a win rate only above its own game floor; take every card it publishes
 MISS_GAMES = 0
 
