@@ -7,7 +7,7 @@ Sealed grades, 0 to 10, from oracle text only. Draftsim's and Limited Resources'
 1. **Sort by colour.** A hybrid card counts for either colour; put gold cards aside.
 2. **Count per colour:** cards graded 6+, cards graded 4+, and bombs (★). Write them on the deck box.
 3. **Pick the two colours with the most 6+ cards.** A ★ counts as two. Add the pair's gold cards.
-4. **Check: 22-23 cards graded 4+ and 15+ creatures.** Spacecraft are not creatures. If short, look at the next colour or a splash.
+4. **Check: 22-23 cards graded 4+ and 15+ creatures.** Count the pair's two colours, its gold cards and your colourless cards. Spacecraft are not creatures. If short, look at the next colour or a splash.
 5. **Splash up to 3 cards graded 6+ with 3+ sources of their colour, at most 1 of them a basic.** Sources: duals and shock lands that make it, [Class-F Shuttlecraft](https://scryfall.com/card/trk/259/class-f-shuttlecraft), [Xenobotanist](https://scryfall.com/card/trk/224/xenobotanist). With 4+ non-basic sources, the third colour may also fill step 4, with cards of 3+ mana.
 6. **Build 17 lands and 23 spells, with 7-8 two-drops.** Play the ✕ you have, but do not pick colours for it.
 7. **Tie between pairs?** Pick more ★, then more ✚, then more ✕, then more two-drops.
