@@ -28,6 +28,11 @@ section 1; it cannot be combined with procedure_splash or procedure_tiebreak.
 
 Grades may be halves (6.5); every comparison is `>=`, so 6.5 counts as 6+.
 Tags: ★ bomb, ✕ removal, ⚡ trick, ◆ fixing, ✚ card advantage (role cardadv).
+
+Every card name in the written sheet links to its Scryfall page (link_cards(),
+one pass over the text that build() returns; the URL is the card's
+`scryfall_uri` from the dump, without its query). --no-scryfall-links writes
+the sheet without them.
 """
 
 from __future__ import annotations
@@ -584,6 +589,64 @@ def build(set_dir: str) -> str:
     return "\n".join(out) + "\n"
 
 
+# A markdown link or image, or an autolink, already in the text: link_cards()
+# leaves it as it is.
+EXISTING_LINK = re.compile(r"!?\[[^\]]*\]\([^)]*\)|<[A-Za-z][A-Za-z0-9+.-]*:[^>\s]*>")
+
+
+def card_urls(cards: list) -> dict:
+    """Card name -> Scryfall page: the card's `scryfall_uri` without its query.
+
+    A two-faced card is listed under its full name and under its front face
+    alone, because the signposts print the front face.
+    """
+    urls = {}
+    for card in cards:
+        if " // " in card["name"]:
+            urls[card["name"].split(" // ")[0]] = card["scryfall_uri"].split("?", 1)[0]
+    # A full card name wins over a front face of the same spelling.
+    for card in cards:
+        urls[card["name"]] = card["scryfall_uri"].split("?", 1)[0]
+    return urls
+
+
+def link_cards(text: str, cards: list) -> str:
+    """Link every card name in the sheet to its Scryfall page.
+
+    On every line that is not a heading (a line that starts with "#"), each
+    exact, case-sensitive occurrence of a card name from the dump `cards`
+    becomes [name](url). A match touches no letter or digit on either side,
+    so "Hemmer" alone stays plain beside "Hemmer, Fixing What Is Broken".
+    Longer names are matched first and a match never overlaps another or an
+    existing link: "Eject the Warp Core" is one link, and the card "Warp Core"
+    inside it gets none. Removing the links ([X](url) -> X) gives back `text`
+    byte for byte.
+    """
+    urls = card_urls(cards)
+    names = sorted(urls, key=lambda n: (-len(n), n))
+    patterns = {n: re.compile(r"(?<![^\W_])" + re.escape(n) + r"(?![^\W_])") for n in names}
+    out = []
+    for line in text.split("\n"):
+        if line.startswith("#"):
+            out.append(line)
+            continue
+        taken = [m.span() for m in EXISTING_LINK.finditer(line)]
+        links = []
+        for name in names:
+            if name not in line:
+                continue
+            for m in patterns[name].finditer(line):
+                start, end = m.span()
+                if all(end <= a or start >= b for a, b in taken):
+                    taken.append((start, end))
+                    links.append((start, end, name))
+        # Right to left, so the earlier offsets stay valid.
+        for start, end, name in sorted(links, reverse=True):
+            line = f"{line[:start]}[{name}]({urls[name]}){line[end:]}"
+        out.append(line)
+    return "\n".join(out)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--set-dir", required=True)
@@ -591,6 +654,11 @@ def main() -> int:
         "--print-tiers",
         action="store_true",
         help="print the tier reading computed from sim_results.json and stop",
+    )
+    ap.add_argument(
+        "--no-scryfall-links",
+        action="store_true",
+        help="write the sheet without the Scryfall link on each card name",
     )
     args = ap.parse_args()
 
@@ -603,6 +671,8 @@ def main() -> int:
         return 0
 
     text = build(args.set_dir)
+    if not args.no_scryfall_links:
+        text = link_cards(text, load_cards(args.set_dir))
     out_path = os.path.join(args.set_dir, "cheat_sheet.md")
     with open(out_path, "w", encoding="utf-8") as fh:
         fh.write(text)

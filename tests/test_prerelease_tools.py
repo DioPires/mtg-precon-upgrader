@@ -377,6 +377,67 @@ def test_kill_share_reads_star_trek_wordings():
     assert got == expected
 
 
+# DEC-1221: the Scryfall link on every card name, on the Star Trek sheet in place.
+LINK = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+
+
+@pytest.fixture(scope="module")
+def trk_sheets() -> tuple:
+    """(the sheet as build() returns it, the same sheet with links, card name -> page)."""
+    cards = setlib.load_cards(str(TRK))
+    plain = build_cheat_sheet.build(str(TRK))
+    pages = {c["name"]: c["scryfall_uri"].split("?")[0] for c in cards}
+    return plain, build_cheat_sheet.link_cards(plain, cards), pages
+
+
+def test_removing_the_links_gives_back_the_built_sheet(trk_sheets):
+    plain, linked, _ = trk_sheets
+    assert linked != plain
+    assert LINK.sub(r"\1", linked) == plain
+
+
+def test_every_graded_card_has_a_link_to_its_own_page(trk_sheets):
+    _, linked, pages = trk_sheets
+    links = LINK.findall(linked)
+    graded = json.loads((TRK / "grades.json").read_text(encoding="utf-8"))
+    assert {e["name"] for e in graded} <= {text for text, _ in links}
+    assert all(url == pages[text] for text, url in links)
+
+
+def test_eject_the_warp_core_is_one_link_with_none_inside(trk_sheets):
+    plain, linked, pages = trk_sheets
+    eject = f"[Eject the Warp Core]({pages['Eject the Warp Core']})"
+    assert linked.count(eject) == plain.count("Eject the Warp Core") > 0
+    # The card "Warp Core" is linked only where it stands alone (its own row).
+    assert linked.count("[Warp Core](") == plain.count("Warp Core") - plain.count("Eject the Warp Core")
+    assert all("[" not in text and "](" not in text for text, _ in LINK.findall(linked))
+
+
+def test_no_heading_holds_a_link(trk_sheets):
+    _, linked, _ = trk_sheets
+    headings = [line for line in linked.split("\n") if line.startswith("#")]
+    assert headings and not any("](" in line for line in headings)
+
+
+def test_link_cards_links_the_front_face_and_only_whole_names():
+    cards = [
+        {"name": "Blossom-Blessed Angel // Seed Suture", "scryfall_uri": "https://s/a?x=1"},
+        {"name": "Hemmer, Fixing What Is Broken", "scryfall_uri": "https://s/h?x=1"},
+        {"name": "Warp Core", "scryfall_uri": "https://s/w?x=1"},
+    ]
+    text = (
+        "# Warp Core\n"
+        "Blossom-Blessed Angel [5]; Blossom-Blessed Angel // Seed Suture; Hemmer loots; "
+        "Warp Cores; [Warp Core](https://elsewhere)"
+    )
+    assert build_cheat_sheet.link_cards(text, cards) == (
+        "# Warp Core\n"
+        "[Blossom-Blessed Angel](https://s/a) [5]; "
+        "[Blossom-Blessed Angel // Seed Suture](https://s/a); Hemmer loots; "
+        "Warp Cores; [Warp Core](https://elsewhere)"
+    )
+
+
 # ------------------------------------------------------------ compare_grades
 
 
