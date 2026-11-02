@@ -1,5 +1,40 @@
 **Implementer: the Frontend Engineer (`bc5c0753`). Tier 1, priority high. Budget: about 5 hours. Hand back by Tuesday 3 November 12:00Z: the Star Trek sheet is due on Thursday 5 November, and the event is on Friday 6 November. One pull request; do not merge it.** `<N>` is this issue's number.
 
+## Changes of 2 November 10:55Z: read these first (C1 to C3)
+The board answered the delivery card on DEC-1218 at 10:35Z: the page goes on the public site, and the phone at the store is an iPhone with Chrome. I also found a defect in this brief (C3). The due time stays Tuesday 3 November 12:00Z; C1 to C3 add about one hour. Point 5 of the Handoff still applies: Part A comes first.
+
+### C1. Publish the page on the site
+- Give `build_html.py` a `--publish` flag. With it, the builder also writes the same bytes to `web/public/prerelease/<set>.html`, where `<set>` is the set folder's name (`trk`). Do not publish Reality Fracture.
+- Commit `web/public/prerelease/trk.html` in the pull request. Add a test: the file equals `analysis/prerelease/trk/cheat_sheet.html` byte for byte.
+- Add `'web/public/prerelease/**'` to both path lists of `.github/workflows/python-tests.yml`, after `'analysis/prerelease/**'`. Then a change of the copy alone runs that test.
+- How it reaches the site: Vite copies `web/public/` into `web/dist/` as is. The SPA rewrite in `vercel.json` skips any path with a dot, so Vercel serves `/prerelease/trk.html` as a file. Change nothing in `vercel.json`, `web/vite.config.ts`, `web/package.json` or `web/index.html`.
+- The pull request also runs `web-ci` (it changes `web/**`). Quote its result beside `python-tests`. The merge deploys the site through `deploy-branch.yml`; that is wanted, and I merge.
+- Rules: you may now add `web/public/prerelease/trk.html` and change the two path lists of `python-tests.yml`. Touch nothing else under `web/**` or `.github/**`.
+- In the README and the playbook step, the page's command is the one with `--publish`, and "rebuild the page" means both files.
+
+### C2. Test for Chrome on an iPhone
+Chrome on an iPhone draws pages with Apple's WebKit engine, not with Chrome's own engine.
+- `check_html.mjs` runs every check on two engines: Chromium, and WebKit with Playwright's `devices['iPhone 13']` profile (touch, mobile viewport). WebKit build 2272 is in the Playwright cache, and it matches `web/node_modules` (`playwright-core` 1.59.1). Print the summary for each engine.
+- Run the WebKit checks twice: from disk (`file://`), and over `http://127.0.0.1:<port>/prerelease/trk.html` from a small static server that the script starts on `web/public/` (Node's `http` module; no new dependency). The site serves the page over HTTPS, and `localStorage` belongs to the page's origin, so the Part B pool check must pass over HTTP too.
+- Take the screenshots of "Checks", point 5, with WebKit at 390 × 844.
+- Design for iOS:
+  - The search field's font size is at least 16 px. iOS zooms the page when a smaller field takes focus.
+  - The `+` and `−` buttons and the chips are at least 44 × 44 px.
+  - Chrome on an iPhone has its own toolbar at the bottom of the screen. If you put the bar at the bottom, keep it clear of that toolbar and of the home indicator (`env(safe-area-inset-bottom)` with `viewport-fit=cover`), and say how in the hand-back.
+- Playwright's WebKit is not Chrome on a real iPhone. The board checks the page on the phone after the merge. In the hand-back, name anything that you could not test.
+
+### C3. A defect in this brief: the PDF builder deletes the page
+- `scripts/prerelease/build_pdf.py` writes its temporary HTML to `DIR/cheat_sheet.html`, prints the PDF from it, and then deletes it (lines 45 and 56 on `main` `815e1478`). So each PDF build would overwrite the committed page and then delete it.
+- Fix: in `build_pdf.py`, write the temporary HTML into a temporary directory (`tempfile.TemporaryDirectory()`). Change nothing else in that file. The page keeps its name.
+- Check: on the head, run `uv run --with markdown python scripts/prerelease/build_pdf.py --set-dir analysis/prerelease/trk`. Then `cmp` the page with its committed bytes, and quote the result. Do not commit the rebuilt PDF; restore it with `git restore analysis/prerelease/trk/cheat_sheet.pdf`.
+- Rules: you may now change `scripts/prerelease/build_pdf.py`, for this fix only.
+
+### What changes in the hand-back and in my checks
+- Handoff, point 1, also quotes: the `web-ci` result (C1), the browser check's summary for each engine and origin (C2), and the PDF check (C3).
+- My check 1 accepts the files of C1 and C3 beside the Rules' files.
+- At the review I build `web/dist` on the head and `cmp` its `prerelease/trk.html` with the committed page.
+- After the merge I read the `deploy-branch` run and the `Vercel` status of `deploy`'s new head. I compare the SHA-256 of `https://mtg-precon-upgrader.vercel.app/prerelease/trk.html` with the committed file. Then I give the board the address (check 9).
+
 ## Why
 - On DEC-1218 (2 November, 10:22Z) the board asked for an HTML page of the cheat sheet that is easier to navigate and read: "lets try and see what we can come up with".
 - The sheet is `analysis/prerelease/trk/cheat_sheet.md` (`main` `4f5ecdfe`), built by `scripts/prerelease/build_cheat_sheet.py`. It has an intro and six sections. Section 6, the full graded list, is 21 tables of 306 cards in six columns. The PDF (`scripts/prerelease/build_pdf.py`) is 12 A4 pages. On a phone, neither the tables nor the A4 pages fit the screen.
