@@ -11,7 +11,7 @@ mkdirSync(OUT, { recursive: true });
 
 const findings = [];
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ channel: 'chrome' });
 
 async function shoot(label, page, locator) {
   const path = `${OUT}${label}.png`;

@@ -48,7 +48,8 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], launchOptions: { args: [BLOCK_SCRYFALL_DNS] } },
+      // System Chrome (auto-updated) instead of Playwright's bundled Chromium build.
+      use: { ...devices['Desktop Chrome'], channel: 'chrome', launchOptions: { args: [BLOCK_SCRYFALL_DNS] } },
     },
   ],
   webServer,

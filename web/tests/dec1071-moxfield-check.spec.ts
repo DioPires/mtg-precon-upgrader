@@ -2,10 +2,13 @@
 // send their Moxfield request through a proxy that the test starts on 127.0.0.1.
 // That proxy answers a plain HTTP request itself and refuses every CONNECT, so a
 // request that gets past the stub stops there and never reaches a Moxfield host.
+// Chrome sends its own requests (CONNECT www.google.com:443) through the proxy as
+// well, so the proxy records a CONNECT only to a Moxfield host.
 // The third case opens no proxy: the DNS block (./support/guard) applies only
 // without one, and it fails the lookup of the request.
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
+import { isMoxfieldHost } from './support/guard';
 import { expect, test } from './support/test';
 
 async function localProxy(seen: string[]) {
@@ -14,7 +17,7 @@ async function localProxy(seen: string[]) {
     res.writeHead(200, { 'access-control-allow-origin': '*' }).end('{}');
   });
   server.on('connect', (req, socket) => {
-    seen.push(`CONNECT ${req.url}`);
+    if (isMoxfieldHost(new URL(`http://${req.url}`).hostname)) seen.push(`CONNECT ${req.url}`);
     socket.end('HTTP/1.1 403 Forbidden\r\n\r\n');
   });
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -44,7 +47,7 @@ for (const fonts of ['live', 'blocked'] as const) {
       expect(seen, 'Moxfield requests that reached the network').toEqual([]);
     });
 
-    test('the check names a Moxfield request that a route of the spec sends on and the network answers', async ({ browser, baseURL }) => {
+    test('the check names a Moxfield request that a route of the spec sends on and that Chrome answers with its HSTS redirect', async ({ browser, baseURL }) => {
       const seen: string[] = [];
       const local = await localProxy(seen);
       const context = await browser.newContext({ proxy: local.proxy });
@@ -56,9 +59,12 @@ for (const fonts of ['live', 'blocked'] as const) {
       );
       await context.close();
       await local.close();
-      // The proxy in the test answered, as the network would.
-      expect(status).toBe(200);
-      expect(seen).toEqual(['GET http://api2.moxfield.com/v3/decks/all/dec1071']);
+      // moxfield.com is on Chrome's HSTS preload list: Chrome answers the plain HTTP
+      // request with a redirect to HTTPS, which the check reads as an answer, and
+      // the proxy refuses the CONNECT that follows. Chrome applies the list only while
+      // its build is under 70 days old; an older one sends the plain request.
+      expect(status).toBe(0);
+      expect(seen).toEqual(['CONNECT api2.moxfield.com:443']);
       test.fail(true, 'the check names the request');
     });
 

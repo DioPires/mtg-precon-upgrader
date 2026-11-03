@@ -3,7 +3,7 @@
 //   PLAYWRIGHT_BROWSERS_PATH=... node scripts/prerelease/check_html.mjs \
 //     [--set-dir analysis/prerelease/trk] [--shots DIR]
 //
-// Runs every check three times: Chromium from disk; WebKit with Playwright's
+// Runs every check three times: system Chrome from disk; WebKit with Playwright's
 // iPhone 13 profile from disk; and the same over HTTP, from a static server
 // that this script starts on web/public/ (Chrome on an iPhone draws with
 // WebKit, and the site serves web/public/prerelease/<set>.html). Uses
@@ -73,7 +73,7 @@ const published = path.join(publicDir, "prerelease", `${setName}.html`);
 
 const phone = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true };
 const runs = [
-  { name: "Chromium, from disk", type: chromium, device: phone, url: fileUrl },
+  { name: "Chrome, from disk", type: chromium, launch: { channel: "chrome" }, device: phone, url: fileUrl },
   { name: "WebKit (iPhone 13), from disk", type: webkit, device: devices["iPhone 13"], url: fileUrl },
   { name: "WebKit (iPhone 13), over HTTP", type: webkit, device: devices["iPhone 13"], url: httpUrl },
 ];
@@ -425,7 +425,7 @@ console.log(`${copyOk ? "ok  " : "FAIL"} the copy that the HTTP run serves, ${pa
 for (const r of runs) {
   run = Object.assign(r, { checks: 0, failures: 0, blocked: 0 });
   console.log(`\n## ${r.name}: ${r.url}`);
-  r.browser = await r.type.launch();
+  r.browser = await r.type.launch(r.launch);
   await checks();
   report(r.blocked === 0, `network requests refused: ${r.blocked}`);
   await r.browser.close();

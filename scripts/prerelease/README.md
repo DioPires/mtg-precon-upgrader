@@ -41,7 +41,7 @@ uv run --with markdown python scripts/prerelease/build_html.py --set-dir DIR --p
 uv run --with markdown python scripts/prerelease/build_html.py --set-dir DIR --check-text
 ```
 
-Browser check of the Star Trek page: Chromium from disk, then WebKit (the
+Browser check of the Star Trek page: system Chrome from disk, then WebKit (the
 engine of Chrome on an iPhone) from disk and over HTTP. Playwright from
 `web/node_modules`; no network; `--shots` also writes the screenshots with
 WebKit at 390 x 844, light and dark:
@@ -112,7 +112,7 @@ Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
   committed Star Trek page with its sheet and its copy with the page.
 - **`check_html.mjs`** — drives the Star Trek page with Playwright
   (`web/node_modules` of this tree, or of the main checkout from a worktree)
-  three times: Chromium from disk, WebKit with the iPhone 13 profile from disk,
+  three times: system Chrome from disk, WebKit with the iPhone 13 profile from disk,
   and WebKit over HTTP from a static server on `web/public/` that it starts on
   127.0.0.1. Each run prints: no sideways scroll at 360 and 390 px in light and
   dark, text contrast, the bar, the search field's font size, tap targets of

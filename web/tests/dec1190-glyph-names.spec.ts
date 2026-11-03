@@ -4,8 +4,8 @@
 //
 // Each case brings a route to one state (the 23 states of the DEC-1182 census,
 // and three more: a card's mana cost, Compare with its sort turned, and a Scrying
-// swap that cuts a land for a Game Changer), waits for document.fonts.ready and reads
-// Accessibility.getFullAXTree. In every state:
+// swap that cuts a land for a Game Changer), waits for document.fonts.ready and two
+// frames, and reads Accessibility.getFullAXTree. In every state:
 // - no node that Chromium does not ignore has a name that holds a glyph;
 // - no name of an element that holds a hidden glyph starts or ends with a space.
 // The other checks read the words that stand in for a glyph that carries meaning.
@@ -58,7 +58,10 @@ class Tree {
   }
 
   static async read(page: Page): Promise<Tree> {
-    await page.evaluate(() => document.fonts.ready.then(() => undefined));
+    // Chrome brings its accessibility tree up to date with the DOM in the next frame.
+    await page.evaluate(() =>
+      document.fonts.ready.then(() => new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done())))),
+    );
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('Accessibility.enable');
     await cdp.send('DOM.enable');
