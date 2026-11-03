@@ -1,6 +1,6 @@
 # Star Trek grade review log (DEC-1218 R1)
 
-**Check of 2 November 2026: our grades against MTG Arena Zone's Limited set review.** I re-read the oracle text of all 49 cards that differ by 2 or more after the scale offset. I changed 20 grades and kept 29, each with the reason below. Draftsim's set review and the Limited Resources episode were not out at 14:00Z (Draftsim's set list: "Set Review (coming soon!)"; lrcast.com's latest episode, 877, is a Q&A of 30 October). When Draftsim's review comes out by the evening of 4 November, I run the same check against it. The check of 3 November against Draftsim's ratings (its pick order) is at the end of this file.
+**Check of 2 November 2026: our grades against MTG Arena Zone's Limited set review.** I re-read the oracle text of all 49 cards that differ by 2 or more after the scale offset. I changed 20 grades and kept 29, each with the reason below. Draftsim's set review and the Limited Resources episode were not out at 14:00Z (Draftsim's set list: "Set Review (coming soon!)"; lrcast.com's latest episode, 877, is a Q&A of 30 October). When Draftsim's review comes out by the evening of 4 November, I run the same check against it. The two checks of 3 November, against Draftsim's pick order and against Draftsim's set review, follow this one.
 
 ## Source
 
@@ -92,6 +92,8 @@ The table lists the grade before the check, the review's rating (with its mapped
 
 **I re-read the oracle text of all 18 cards that differ from Draftsim's ratings by 2 or more after the scale offset. I changed 11 grades and kept 7.** Draftsim's set review was still "coming soon" on its set list at 10:40Z, and lrcast.com's latest episode was still 877. The board pointed me to Draftsim's pick order on 3 November; I had seen the page on 2 November and called it not comparable without a test.
 
+**Correction (3 November, after this check):** the set review had been out since 2 November at 17:00Z, and on Star Trek the pick order does not hold the review's ratings (rank correlation 0.68). The next section checks the grades against the review itself.
+
 ## Source
 
 - **Page:** https://draftsim.com/TRK-pick-order/, a JavaScript page. Its app bundle (`index-Ctt7WR6J.js`, saved on 3 November at about 10:35Z, not committed) holds a table of ratings for every Star Trek card. `parse_draftsim_pick.py` read 311 ratings (306 cards and the 5 basics) into `draftsim_pick_ratings.json`. The 30 Stardates rows are left out.
@@ -160,3 +162,105 @@ The table lists the grade before the check, Draftsim's rating (with its mapped v
 | Resistance Is Futile | U | 7 | 2.8/5 (5.0) | 5.0 | 7 | Kept. A 2-mana kill of a nonartifact creature; 34 of the set's 166 creature cards are artifacts, and Spacecraft are artifacts too. See the removal section. |
 | Mugato | U | 7 | 2.5/5 (4.4) | 5.0 | 7 | Kept. A 5-mana 6/6 with deathtouch, reach and vigilance blocks every creature, fliers included, and attacks without leaving you open. I found nothing in the oracle text that the grade missed. |
 | Emergency Medical Hologram | C | 2 | 2.3/5 (4.0) | 3.0 | 2 | Kept. Not among the 18: the moved offset put it at 2.0 after the changes. A 1-mana 0/1; on itself it is a 1/2. |
+
+# Check of 3 November 2026: Draftsim's set review
+
+**I re-read the oracle text of all 62 cards that differ from Draftsim's set review by 2 or more after the scale offset. I changed 34 grades (20 up, 14 down) and kept 28.** The board pointed me to the review at 10:40Z. It was published on 2 November at 17:00Z (Andrew Quinn); Draftsim's set list still read "coming soon" on 3 November, so my check of the set list missed it.
+
+## Source
+
+- **Page:** https://draftsim.com/mtg-trk-limited-set-review/, saved on 3 November at about 11:00Z (not committed). `parse_draftsim_review.py` read 276 ratings into `draftsim_review_ratings.json`: every non-land card, plus Starfleet Academy and Unexplored Territory. The review rates the other lands by cycle: planet duals 4, anomaly lands 3, shock lands 4, the five rare surveil lands 5.
+- **Ratings:** 0 to 10, whole numbers, for Draft. Commons mostly sit at 2 to 4 on its scale ("the average Limited card").
+- **Mapping:** the rating as written plus the mean offset, +0.37 on the 274 shared non-land cards before the check.
+- **Files:** `grades_src_pre_review.py` keeps our grades before this check. `compare_draftsim.py --review` prints the comparison, with the pick order beside each gap.
+
+## The review is not the pick order on this set
+
+- On Reality Fracture, the pick order from before the Arena release ranked the cards as the review did (0.99). On Star Trek the pick order of 3 November and the review rank the 276 cards at 0.68, and the commons at 0.41. Only 19 cards have a review rating equal to twice the pick-order rating.
+- So the morning's check against the pick order (above) was a check against a different source, with no back-test of its own. The back-test figure of 0.33 belongs to the review.
+- The review does not contradict the morning's changes: none of the 11 cards that changed then differs from the review by 2 or more now. Primary Unimatrix Adjunct (ours 7, review 5.4 mapped) is the widest at 1.6.
+
+## Result
+
+- **Rank correlation with Draftsim's review:** 0.61 before the check, 0.69 after. By rarity after: commons 0.36, uncommons 0.56, rares 0.78, mythics 0.83. With MTG Arena Zone: 0.70 before, 0.76 after. With the pick order: 0.65 before, 0.68 after.
+- **Gaps of 2 or more:** 62 before, 40 after: the 28 kept cards, and 12 changed cards that moved toward the review but not all the way (for example Chang, Sisko and Overflow Submatrix).
+- **Rarity check (R2):** our uncommons sit 0.62 above our commons (0.58 before). The review's gap is 1.22 on its own scale. Its spread is wider (standard deviation 2.16 against our 1.42), so in standard deviations the two are 0.57 and 0.44. The review supports the 1.0 floor more than the other two sources did. I raised every uncommon the review flagged where MTG Arena Zone agreed. I do not force the floor with raises that I cannot give a reason for. The sheet's intro gives the three gaps.
+- **Bombs:** still 10. Holo-Engineer joins (8); Gul Dukat leaves (7). **✚:** 28 (Lieutenant Commander Data joins).
+- **Colours:** mono-colour cards graded 6+ are W 11, U 7, B 17, R 10, G 14 (before: 10, 5, 16, 10, 14).
+- **Archetype lists:** six grades changed in the look-for lines. Pure Energy (now 3) leaves WG's list.
+
+## How I decided
+
+- **Change** when the review and MTG Arena Zone sit on the same side of our grade, and the oracle text gives a reason that our note missed.
+- **Keep** when the two reviews bracket our grade, or MTG Arena Zone is within about half a grade of ours.
+- **Removal rule:** on Reality Fracture no source misjudged removal at equal grade (see the removal section above), so I kept the five removal spells among the 62: Impossible Choice, Genesis Effect, Marooned, Plasma Cascade and Command Decision.
+- **Removal, the morning's open disagreement:** the review grades 70,000 Light-Years from Home, Malfunctioning Holodeck and Khaaaaaaaaaaaannn! 6/10 and Resistance Is Futile 7/10 (6.4 and 7.4 mapped), against our 7 to 7.5. The pick order's 2.5 to 3 of 5 was not the review's view. None of the four is among the 62.
+
+## Decisions
+
+The table lists the grade before the check, the review's rating (with its mapped value), MTG Arena Zone's mapped value, and the grade after.
+
+| Card | Rarity | Before | Draftsim review (+ offset) | MTGAZ | After | Decision and reason |
+|---|---|---:|---:|---:|---:|---|
+| Gul Dukat, Colonial Prefect | M | 8 | 3/10 (3.4) | 7.1 | 7 | Lowered; no longer a bomb. It costs 7 and does nothing on the turn it enters: the doubling needs damage first. It stays a 6/6 menace that ends the game in two hits. MTG Arena Zone also grades it 7. |
+| Support Mission | U | 4.5 | 0/10 (0.4) | 6.1 | 4.5 | Kept. The two reviews bracket our grade (0 and 6.1). Each later creature gets a +1/+1 counter, about ten counters over a Sealed game, but it does nothing on turn 3. |
+| Captain Benjamin Sisko | R | 4.5 | 8/10 (8.4) | 5.1 | 5 | Raised half a grade, to MTG Arena Zone's level. A two-colour deck holds 2 to 7 modal cards, 4.3 on average, so expect two or three tokens a game, not Draftsim's build-around. |
+| General Chang, Cold Warrior | R | 4.5 | 8/10 (8.4) | 7.1 | 5.5 | Raised. All three Draftsim and MTG Arena Zone grades sit at 7 or more. A 1-mana sacrifice outlet that grows Chang himself each time. Below them: a BR deck holds about 3 other Klingons (creatures and token makers). |
+| Deep Space Scan | R | 5 | 1/10 (1.4) | 3.1 | 3.5 | Lowered. Two basic names plus about one non-basic land make it draw three for 6 mana at sorcery speed. Both reviews grade it 3 or less. |
+| Impossible Choice | U | 6 | 2/10 (2.4) | 5.1 | 6 | Kept (removal rule). Both modes are playable: an instant kill of any creature, the answer to a bomb, or draw two at instant speed. The two 1/1s are a real price against a small creature. |
+| Rules of Acquisition | U | 5 | 1/10 (1.4) | 4.1 | 4 | Lowered again. A steal that gives them three cards is a fair trade only against a bomb. MTG Arena Zone 4.1. |
+| Shuttle Ace | C | 5 | 1/10 (1.4) | 3.1 | 4.5 | Lowered half a grade. It flies only on your turn, so it never blocks a flier. Both reviews grade it 3 or less. |
+| Test of Conviction | U | 5 | 1/10 (1.4) | 3.1 | 4.5 | Lowered half a grade. The counters mode needs three creatures to beat a 2-mana creature, and the draw mode gives them a card too. |
+| Antagonist Incorporator | R | 5 | 8/10 (8.4) | 7.1 | 6 | Raised back to 6, without ✚ (tokens are not cards). Both reviews grade it 7 or more. A 2/3 for 2 is a good body, and a WB deck holds about 6 artifact creatures that each add a 1/1 when they connect. |
+| Overflow Submatrix | R | 6 | 9/10 (9.4) | 9.1 | 7 ✚ | Raised. Both reviews grade it 9. It recasts an artifact creature from your graveyard each turn: a black deck holds 3 to 6 artifact creatures, so it trades 1-for-1 removal into card advantage. |
+| The Destruction of Praxis | R | 6 | 9/10 (9.4) | 5.1 | 6 | Kept. The reviews bracket our grade (9.4 and 5.1). With the usual 3 land names it is a symmetrical -3/-3 sweeper (75% of creatures) for 5. |
+| The City on the Edge of Forever | R | 4 | 7/10 (7.4) | 4.1 | 4 | Kept. MTG Arena Zone agrees (4.1). Everything phases out, yours too, until chapter III or until they kill the 0/1. |
+| Cetacean Ops | C | 4.5 | 1/10 (1.4) | 3.1 | 4 | Lowered half a grade. A 4-mana 3/3 is below the rate; it grows only with your noncreature spells. |
+| Culber and Stamets, Star-Crossed | U | 5.5 | 2/10 (2.4) | 4.1 | 5.5 | Kept. A 4/5 for 4, or a counter on a better creature; half a grade above Dominion Assault Force (a 4/4 vigilance, now 5). |
+| DOT-7 Repair Squad | C | 5.5 | 2/10 (2.4) | 3.1 | 5.5 | Kept (also kept on 2 November). A 4-mana 3/3 flier is a top common body in Sealed, and the untap helps station. |
+| Dathon and Picard at El-Adrel | C | 4.5 | 1/10 (1.4) | 2.1 | 4 | Lowered half a grade. A 3-mana trick; the sacrifice mode hits only when they have few nontoken artifacts or enchantments. MTG Arena Zone 2.1. |
+| Dominion Assault Force | C | 5.5 | 2/10 (2.4) | 4.1 | 5 | Lowered half a grade. A 4/4 vigilance for 4 with a small bonus; both reviews grade it 4.1 or less. |
+| Genesis Effect | C | 6.5 | 3/10 (3.4) | 5.1 | 6.5 | Kept (removal rule). A 5-mana instant that kills every creature (6 damage), and the land swap fixes. |
+| Q, Stacking the Deck | M | 6.5 | 9/10 (9.4) | 8.1 | 7.5 | Raised. The ability stays after Q dies, and each turn it turns a spare land in hand into a copy of the exiled spell, so late in a game it works like one more spell a turn. Not ✚: a copy is not a card. Both reviews grade it 8 or more. |
+| The Inner Light | R | 5.5 | 8/10 (8.4) | 8.1 | 6.5 | Raised. Both reviews grade it 8. By turn 5 a green or white creature has usually died, so chapter I is a 2-for-1, and chapter II often draws two or more. |
+| Academy Instructor | U | 4.5 | 7/10 (7.4) | 6.1 | 5.5 | Raised. A UR or RW deck casts about 8 noncreature spells (Equipment and Spacecraft count), so it makes two or three 1/1s and grows with each. Both reviews grade it 6 or more. |
+| Conquest Mission | U | 4.5 | 7/10 (7.4) | 2.1 | 4.5 | Kept. The reviews bracket our grade (7.4 and 2.1). It needs eight or more nontoken artifacts. |
+| Tell Me What You See | U | 3.5 | 6/10 (6.4) | 5.1 | 4.5 | Raised. A 2-mana card or 4 damage, the opponent's choice, and each dilemma returns it to your hand to cast again. Both reviews grade it 5 or more. |
+| Branching Timeline | R | 3 | 0/10 (0.4) | 2.1 | 1.5 | Lowered. 8 mana for about two random permanents. Both reviews grade it 2 or less. |
+| Combadge | U | 3 | 0/10 (0.4) | 3.1 | 3 | Kept. MTG Arena Zone agrees (3.1). |
+| Dominion Infiltration | R | 3 | 0/10 (0.4) | 3.1 | 3 | Kept. MTG Arena Zone agrees (3.1). |
+| Live Long and Prosper | R | 3 | 0/10 (0.4) | 4.1 | 3 | Kept. The reviews bracket our grade (0.4 and 4.1). |
+| Marooned | C | 6 | 3/10 (3.4) | 6.1 | 6 | Kept (removal rule). MTG Arena Zone agrees (6.1). Draftsim notes that the creature keeps its abilities; the note says lock. |
+| Mirror Universe Intrusion | R | 6 | 3/10 (3.4) | 9.1 | 6 | Kept. The reviews bracket our grade (3.4 and 9.1). |
+| Mugato | U | 7 | 4/10 (4.4) | 5.1 | 6 | Lowered. All three external grades sit near 5. It does nothing beyond its stats, so it ranks below the engines and removal at 7. |
+| Pure Energy | C | 4 | 1/10 (1.4) | 2.1 | 3 | Lowered. Two counters at sorcery speed are weak, and the beam me up costs a creature's tempo. Both reviews grade it 2 or less. It leaves WG's look-for list. |
+| Rok-Tahk, Budding Scientist | M | 6 | 3/10 (3.4) | 7.1 | 6 | Kept. The reviews bracket our grade (3.4 and 7.1). |
+| The Wrath of Khan | R | 8 | 5/10 (5.4) | 8.1 | 8 ★ | Kept as a bomb. MTG Arena Zone agrees (8.1). Draftsim calls it a 3-mana removal spell with upsides; the threaten, the loot and the edict make it more. |
+| Troubling Tribbles | R | 3 | 0/10 (0.4) | 2.1 | 2 | Lowered. 0 power and no blocks; it needs an anthem or Holo-Engineer (each copy becomes a 3/3). |
+| Borg Cube | M | 7 | 9/10 (9.4) | 8.1 | 7.5 | Raised half a grade. With three artifact creatures out it costs 4 and exiles a creature on entry. Station 12 needs about four creature taps, so the later attacks come late. |
+| Death Is Irrelevant | M | 7 | 9/10 (9.4) | 7.1 | 7 ✚ | Kept. MTG Arena Zone agrees (7.1); it costs 8. |
+| Dr. Leonard "Bones" McCoy | R | 6 | 8/10 (8.4) | 8.1 | 7 | Raised. Both reviews grade it 8. A 3-mana flash 3/2 that returns a permanent card is a 2-for-1, and at instant speed it can save a creature instead. |
+| Elim Garak, Simple Tailor | R | 6 | 8/10 (8.4) | 8.1 | 7 | Raised. Both reviews grade it 8. A 3/3 menace for 3, and each dilemma is a 4-point life swing; a deck holds about 4 modal cards. |
+| Excalbian Gamemaster | M | 8 | 10/10 (10.4) | 9.1 | 8.5 ★ | Raised half a grade. Both reviews grade it 9 or more. Three or four bodies for 6, and each death grows the team. |
+| Holo-Engineer | R | 7 | 9/10 (9.4) | 9.1 | 8 ★ | Raised to bomb. Both reviews grade it 9. Two 3/3s for 4, and every later token you make (1/1s, Treasures, Food) is a 3/3 instead. |
+| Nog, Ambitious Cadet | R | 6 | 8/10 (8.4) | 8.1 | 7 | Raised. Both reviews grade it 8. For 3 mana in total it is a 3/4 menace that surveils 2 each time it taps. |
+| Sela, Tal Shiar Paradox | R | 6 | 8/10 (8.4) | 5.1 | 6 | Kept. The reviews bracket our grade (8.4 and 5.1). |
+| The Caretaker | R | 7 | 9/10 (9.4) | 7.1 | 7 ✚ | Kept. MTG Arena Zone agrees (7.1). |
+| U.S.S. Discovery, at Black Alert | R | 8 | 10/10 (10.4) | 9.1 | 8.5 ★ ✚ | Raised half a grade. Both reviews grade it 9 or more. Its entry alone is a 2-for-1 for 5; station 6 is easy, and each attack casts another free spell. |
+| Cloak and Phaser | U | 5 | 7/10 (7.4) | 3.1 | 5 | Kept. The reviews bracket our grade (7.4 and 3.1). |
+| David and Carol Marcus, Creators | U | 5 | 7/10 (7.4) | 5.1 | 5 | Kept. MTG Arena Zone agrees (5.1). |
+| Deep Space 9 | M | 4 | 6/10 (6.4) | 3.1 | 4 ✚ | Kept. The reviews bracket our grade (6.4 and 3.1); it costs 9. |
+| Engineered Explosives | R | 4 | 6/10 (6.4) | 6.1 | 5 | Raised. Both reviews grade it 6. At X=0 it kills every token, at 1 or 2 their cheap permanents. It hits yours too, so pick a value where they have more. |
+| Lieutenant Commander Data | M | 5 | 7/10 (7.4) | 7.1 | 6 ✚ | Raised and tagged ✚. It grows with every noncreature spell, the opponent's too, and {1} turns three counters into a card again and again. Both reviews grade it 7. |
+| Salt Vampire | R | 5 | 7/10 (7.4) | 8.1 | 6 | Raised. Both reviews grade it 7 or more. A 2-mana lifelink 2/2 that takes their best card in hand, often the removal spell they hold. |
+| Seven of Nine, Unassimilated | M | 5 | 7/10 (7.4) | 8.1 | 6 | Raised. Both reviews grade it 7 or more. A 0/4 for 2 that loots each turn without tapping, and draws at 5 land names. |
+| Subcommander T'Pol | R | 5 | 7/10 (7.4) | 5.1 | 5 | Kept. MTG Arena Zone agrees (5.1). |
+| Sulu, Space Swashbuckler | R | 5 | 7/10 (7.4) | 6.1 | 5.5 ✚ | Raised half a grade. A 2/2 first strike for 2; the draw needs an Equipment or Spacecraft that turn, and a white deck holds about 2 or 3. |
+| Command Decision | C | 5.5 | 3/10 (3.4) | 5.1 | 5.5 | Kept (removal rule). MTG Arena Zone 5.1. |
+| I'm a Doctor, Not a . . . | C | 3.5 | 1/10 (1.4) | 3.1 | 3.5 | Kept. MTG Arena Zone 3.1. |
+| Kira Nerys, Firebrand | R | 6.5 | 4/10 (4.4) | 5.1 | 6 | Lowered half a grade. The enter-attacking rule needs creatures cast during combat (flash or instant tokens); the 4/3 trample body is most of the value. |
+| Photosynthetic Physician | C | 5.5 | 3/10 (3.4) | 3.1 | 5 | Lowered half a grade, level with Dominion Assault Force. A 5/5 reach for 5 with a small graveyard bonus. |
+| Plasma Cascade | C | 6.5 | 4/10 (4.4) | 6.1 | 6.5 | Kept (removal rule). MTG Arena Zone 6.1. |
+| Red Alert! | U | 3.5 | 1/10 (1.4) | 3.1 | 3.5 | Kept. MTG Arena Zone 3.1. |
+| Tactical Officer | C | 3.5 | 1/10 (1.4) | 3.1 | 3.5 | Kept. MTG Arena Zone 3.1. |
+| Warp Speed | U | 3.5 | 1/10 (1.4) | 3.1 | 3.5 | Kept. MTG Arena Zone 3.1. |
