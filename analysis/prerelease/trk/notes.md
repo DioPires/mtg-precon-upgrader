@@ -7,6 +7,7 @@ Event: Friday 6 November 2026, Sealed, 6 Play Boosters plus 1 foil rare or mythi
 - WotC, "Magic: The Gathering | Star Trek Mechanics" (Matt Tabak, 20 October 2026): edge cases in `format_rules.md`. A beam-me-up spell is always exiled. A dilemma counts as you choose modes, even if the spell is countered later; choosing several modes counts once; with no legal mode there is no dilemma. A creature that entered this turn can station.
 - Draftsim, "Exploring All Ten Star Trek Limited Archetypes" (Peter Smith, updated 22 October 2026, https://draftsim.com/?p=326838): archetype names and two signposts per pair. Every plan sentence in `prose.json` was checked against oracle text. The Look for cards are our picks.
 - Not out on 1 November: Draftsim's full review, Limited Resources' episode, a WotC prerelease guide.
+- Draftsim, "Star Trek (TRK) Pick Order & Tier List" (https://draftsim.com/TRK-pick-order/, read 3 November 2026): 0 to 5 ratings for every card, the R1 check of 3 November (`grade_review_log.md`). On Reality Fracture the pre-release pick order held the set review's ratings (rank correlation 0.99). Draftsim's set review and a Limited Resources Star Trek episode were still not out at 10:40Z on 3 November.
 
 ## Fixing and the splash rule (N1)
 `python3 -I splash_sources.py` (200,000 pools, seed 20261106):

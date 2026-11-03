@@ -9,6 +9,10 @@ were graded by board value (playbook step 3). grades_src_blind.py keeps the grad
 Check (2 November, R1): against MTG Arena Zone's Draft review (Draftsim's and Limited Resources' were not
 out); 49 gaps of 2+ re-read, 20 grades changed, each reason in grade_review_log.md. grades_src_precheck.py
 keeps the grades before the check, mtgaz_grades.json the reviewer's raw 0-5 ratings.
+Check (3 November, R1): against Draftsim's pick-order ratings (its set review was still not out; on Reality
+Fracture the pre-release pick order held the review's ratings); 18 gaps of 2+ re-read, 11 grades changed,
+each reason in grade_review_log.md. grades_src_pre_draftsim.py keeps the grades before this check,
+draftsim_pick_ratings.json Draftsim's raw 0-5 ratings.
 Tuple: (name, grade, roles, note, synergy); no synergy grades in this set (the sim is not run)."""
 
 G = [
@@ -47,10 +51,10 @@ G = [
 ('Antagonist Incorporator', 5, ['threat'], '2-mana 2/3; your artifact creatures make a 1/1 for {1} when they connect', None),
 ('Captain Benjamin Sisko', 4.5, ['threat'], '2-mana 2/2; a 1/1 at end step per dilemma faced (39 modal cards)', None),
 ('Deanna Troi, Psychic Counsel', 6.5, ['threat'], '2-mana 2/2; every later creature enters with a counter', None),
-('Federation Resupply', 3, ['filler'], 'tutor for an Aura, Equipment or Spacecraft', None),
+('Federation Resupply', 2.5, ['filler'], 'tutor for an Aura, Equipment or Spacecraft; play it only with one graded 6+', None),
 ("Miles O'Brien, Transporter Ops", 5.5, ['threat'], '3-mana 3/3; re-buys an ETB and draws that turn', None),
 ('Peace in Our Time', 2, ['filler'], 'the opponent chooses; a win at 12 counters rarely comes', None),
-('Primary Unimatrix Adjunct', 6, ['threat'], '4-mana 2/3 double strike; all artifact creatures double strike', None),
+('Primary Unimatrix Adjunct', 7, ['threat'], '4-mana 2/3 double strike; all artifact creatures double strike', None),
 ('Sulu, Space Swashbuckler', 5, ['threat', 'cardadv'], '2-mana 2/2 first strike; draws when tapped on a turn an Equipment or Spacecraft entered', None),
 ('The Needs of the Many', 2, ['filler'], 'sacrifice a creature to fog and protect the team', None),
 ('Troubling Tribbles', 3, ['threat'], '0/1 that doubles each upkeep; cannot block; needs an anthem', None),
@@ -84,7 +88,7 @@ G = [
 ('Highly Illogical', 4.5, ['trick'], 'counter a 2-drop, or any spell for 4', None),
 ('Hoshi Sato, Exolinguist', 5, ['threat'], '5-mana 3/3; picks a card from the top X (creature types)', None),
 ('Jett Reno, Problem Solver', 4.5, ['threat', 'cardadv'], '2-mana 1/2; surveils or draws whenever tapped (station her)', None),
-('Rules of Acquisition', 6, ['removal'], '5 mana: steal their best nonland permanent (they draw three), or give a token and draw three', None),
+('Rules of Acquisition', 5, ['removal'], '5 mana: steal their best nonland permanent (they draw three), or give a token and draw three', None),
 ('Test of Priorities', 4, ['trick'], 'instant surveil 2 and draw, or blink your creature', None),
 ('Those Old Scientists', 4.5, ['filler'], 'loot two, then regrow a removal spell or an artifact; a 2-for-1', None),
 ("V'Ger, the Intruder", 6, ['threat', 'cardadv'], '7-mana 5/7 flyer; draws on entry and on each attack', None),
@@ -137,9 +141,9 @@ G = [
 ('Test of Loyalty', 4, ['filler'], '1 mana: regrow a creature, or exile a graveyard card and draw', None),
 ('Vengeance Mission', 3, ['filler'], 'drains 1 per creature death', None),
 ('Armus, Skin of Evil', 8, ['bomb', 'removal'], '7-mana 6/6 menace, two discards a turn; or discard it for -4/-4 at 3 mana', None),
-('Collation Trimatrix', 4.5, ['threat', 'cardadv'], '1-mana 1/1; taps itself and two artifact creatures to draw (WB)', None),
+('Collation Trimatrix', 5.5, ['threat', 'cardadv'], '1-mana 1/1; at their end step, tap it and two other artifact creatures to draw (WB)', None),
 ('Elim Garak, Simple Tailor', 6, ['threat'], '3-mana 3/3 menace; drains 2 per dilemma', None),
-('General Chang, Cold Warrior', 3.5, ['threat'], '1-mana 1/2 sacrifice outlet; counters on Klingons (BR)', None),
+('General Chang, Cold Warrior', 4.5, ['threat'], '1-mana 1/2 sacrifice outlet; counters on each Klingon, Chang included (BR)', None),
 ('Grand Nagus Zek', 4.5, ['threat'], '3-mana 1/1 that makes a Treasure per death turn and grows', None),
 ('Kai Winn, Faithless Leader', 3, ['threat'], '2-mana 3/1; the named card rarely shows up', None),
 ('Overflow Submatrix', 6, ['threat', 'cardadv'], '3-mana 3/3; recasts an artifact creature from the graveyard each turn', None),
@@ -147,8 +151,8 @@ G = [
 ('Sela, Tal Shiar Paradox', 6, ['threat'], '4-mana 3/3; a 2/2 each time cards leave your graveyard (each attack)', None),
 ('The Destruction of Praxis', 6, ['removal'], '5-mana sweeper -X/-X, X = land names (usually 3)', None),
 ("U.S.S. Reliant, From Hell's Heart", 6, ['threat'], '4 mana: reanimate a 4-drop; flying 4/3 at 10', None),
-('Death Is Irrelevant', 6.5, ['engine', 'cardadv'], '8 mana: a graveyard creature joins you every end step', None),
-('Georgiou, Terran Emperor', 7, ['threat', 'cardadv'], '6-mana 4/6 that draws each turn; ten 1/1s when you hit 0', None),
+('Death Is Irrelevant', 7, ['engine', 'cardadv'], '8 mana: a graveyard creature joins you every end step', None),
+('Georgiou, Terran Emperor', 8, ['threat', 'cardadv'], '6-mana 4/6 that draws each turn; ten 1/1s when you hit 0', None),
 ('Gul Dukat, Colonial Prefect', 8, ['bomb'], '7-mana 6/6 menace that doubles their life loss each turn', None),
 ('Khan, Vengeful Heart', 6.5, ['threat'], '4-mana 5/3; sacrifice fodder to draw two; recast from exile', None),
 # ---------- RED ----------
@@ -173,7 +177,7 @@ G = [
 ('Erica Ortegas, Plucky Pilot', 4.5, ['threat'], '4-mana 3/3 haste; extra landfall when tapped (RG)', None),
 ('Exploratory Mission', 5, ['engine', 'cardadv'], '4 mana: an extra card for every land you play, cast that turn', None),
 ('Khaaaaaaaaaaaannn!', 7.5, ['removal'], 'X+1 mana instant: 2X damage and exile; 3 mana kills 88% of creatures', None),
-('Khan, Despot by Design', 6.5, ['threat'], '5-mana 5/4 trample; 1 damage to each of their creatures', None),
+('Khan, Despot by Design', 6, ['threat'], '5-mana 5/4 trample; 1 damage to each of their creatures', None),
 ("La'An Noonien-Singh, Security", 5, ['threat'], '4-mana 4/3; a creature cannot block at power 8 (RW)', None),
 ('Munitions Enthusiast', 5, ['threat'], '2-mana 3/2 trample; pings 1 when it dies', None),
 ('Ravenous Cosmozoan', 4.5, ['threat'], '3/3 flying haste, cheaper per spell in the graveyard (UR)', None),
@@ -196,7 +200,7 @@ G = [
 ('Captain James T. Kirk', 6, ['threat'], '3-mana 2/2; a 1/1 or a loot on entry and on each attack', None),
 ('Infinite Diversity', 1.5, ['filler'], '9 mana; copies one spell from your graveyard', None),
 ('Q, Stacking the Deck', 6.5, ['threat'], '4-mana 4/4; trade a card in hand for a copy of the exiled card (no extra cards)', None),
-('Quark, Humble Proprietor', 2, ['filler'], 'you cannot sacrifice the Treasures, so they make no mana', None),
+('Quark, Humble Proprietor', 3, ['filler'], 'two Treasures a turn cycle, usable only after Quark leaves (chump block with him)', None),
 # ---------- GREEN ----------
 ('Astute Terraformer', 4, ['threat'], '2-mana 2/2; +2/+2 for about 3 mana with 3 land names', None),
 ('Cold-Blooded Crew', 5.5, ['threat'], '6-mana 4/4 plus two counters, evasive; or landcycle for 2', None),
@@ -274,7 +278,7 @@ G = [
 ('Cleveland Booker, Empath', 6, ['threat'], '4-mana 2/2 hybrid; a 2/2 for every land you play', None),
 ("Dal R'El, Augment Orphan", 5.5, ['threat'], '3-mana 3/3; mana on landfall; trades a land for a card', None),
 ('Hit It!', 4.5, ['filler'], '3-mana ramp: a land from the top five (almost always) plus haste for your creatures', None),
-('Sarek, Federation Ambassador', 2.5, ['filler'], '3-colour 0/5; draws only at five creature types', None),
+('Sarek, Federation Ambassador', 5, ['engine', 'cardadv'], '4-mana 0/5 in three colours; draws each combat at five creature types (two other creatures usually reach it)', None),
 ('Dathon, His Heart Open', 3.5, ['threat'], '3-colour 3/3; draws on enchantment spells', None),
 # ---------- COLOURLESS AND LANDS ----------
 ('Andoria', 4, ['fixing'], 'tapped U/R dual, 1 life; a new land name', None),
@@ -301,7 +305,7 @@ G = [
 ('Spatial Anomaly', 3.5, ['filler'], 'colourless land; late 2 damage to a creature plus an any-colour land', None),
 ('Subspace Anomaly', 3.5, ['filler'], 'colourless land; late two 1/1s plus an any-colour land', None),
 ('Temporal Anomaly', 3, ['filler'], 'colourless land; late mill four, take a permanent', None),
-('Type-2 Phaser', 5, ['threat'], '2 mana: stun a blocker, then +3/+0 Equipment', None),
+('Type-2 Phaser', 4, ['threat'], '2 mana: stun a blocker, then +3/+0 Equipment with equip 3', None),
 ('U.S.S. Cerritos, Following Up', 6, ['threat'], '5-mana colourless: two 1/1s that station it to a flying 4/4', None),
 ('Blood Crypt', 4, ['fixing'], 'B/R shock land', None),
 ('Breeding Pool', 4, ['fixing'], 'G/U shock land', None),
