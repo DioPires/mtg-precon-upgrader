@@ -264,3 +264,65 @@ The table lists the grade before the check, the review's rating (with its mapped
 | Red Alert! | U | 3.5 | 1/10 (1.4) | 3.1 | 3.5 | Kept. MTG Arena Zone 3.1. |
 | Tactical Officer | C | 3.5 | 1/10 (1.4) | 3.1 | 3.5 | Kept. MTG Arena Zone 3.1. |
 | Warp Speed | U | 3.5 | 1/10 (1.4) | 3.1 | 3.5 | Kept. MTG Arena Zone 3.1. |
+
+# Check of 4 November 2026: Limited Resources 878
+
+**I re-read the oracle text of all 27 cards that differ from Limited Resources by 2 or more after the scale offset. I changed 11 grades (7 up, 4 down) and kept 16.** The episode came out on 3 November; my check of 4 November at 09:00Z did not run (CLI version error, then a revoked login), so this check ran at 11:15Z.
+
+## Source
+
+- **Episode:** Limited Resources 878, "Star Trek Set Review: Commons and Uncommons" (Marshall Sutcliffe and Luis Scott-Vargas, published 3 November 2026; https://lrcast.com/limited-resources-878-star-trek-set-review-commons-and-uncommons/, YouTube `E8GMevAKQ9w`, 4 hours 1 minute). Commons and uncommons only.
+- **How I read it:** the episode's auto-captions (`yt-dlp --skip-download --write-auto-subs`, not committed), cut at the episode's section times (Gold 0:19:29, White 0:46:36, Blue 1:31:24, Black 2:10:10, Red 2:39:57, Green 3:06:20, Artifacts and Lands 3:39:51). Each section was read in full, and a script checked every quoted line against the captions.
+- **Grades:** letters as spoken, A to F. `lr_grades.json` keeps each card's letter, whether the hosts called it a build-around, the time, the quote and a confidence. 201 cards were discussed and 200 graded (Test of Courage got no letter). Where the hosts split and never settled, the file keeps both letters (for example "C+/B-") and the comparison uses their mean. For Worf, Honor-Bound Warrior and Pure Energy the hosts said "build around C, in other words a D"; I use D.
+- **Mapping:** a grade-point scale doubled (A 8, B 6, C 4, D 2, F 0; a plus or minus moves a third of a letter), plus the mean offset, +0.45 on the 184 shared non-land cards before the check. `compare_lr.py` prints the comparison, with Draftsim's review and MTG Arena Zone beside each gap. `grades_src_pre_lr.py` keeps our grades before this check.
+- **Limits:** a Draft review, read from auto-captions. Some letters are pick order in Draft rather than power: for Cha'DIch Investigator and Dominion Assault Force the hosts rate the power a C and give the D as a pick. No back-test scores this source: on Reality Fracture I read excerpts for 50 cards, not a full list. The back-test after Star Trek (R5) can score it.
+
+## Result
+
+- **Rank correlation with Limited Resources:** 0.55 before the check, 0.60 after (commons 0.37 to 0.41, uncommons 0.47 to 0.53). With Draftsim's review: 0.69 before, 0.71 after. With MTG Arena Zone: 0.76 before, 0.77 after. Limited Resources and Draftsim's review rank the same 184 cards at 0.66; Limited Resources and MTG Arena Zone at 0.52.
+- **Gaps of 2 or more:** 27 before, 19 after: the 16 kept cards, and DOT-7 Repair Squad, Dr. McCoy, Surly Surgeon and Melkotian Adjudicator, which moved half a grade toward the sources.
+- **Rarity check (R2):** our uncommons sit 0.63 above our commons (0.62 before). Limited Resources' gap on the same cards is 1.18 on its scale; in standard deviations it is 0.79 against our 0.62. Like Draftsim's review, it supports the 1.0 floor more than our grades do. I do not force the floor.
+- **Bombs:** still 10. **✚:** still 28.
+- **Colours:** mono-colour cards graded 6+ are W 11, U 7, B 17, R 10, G 15 (before: 11, 7, 17, 10, 14). David and Carol Marcus joins green; Spock (6) is gold.
+- **Archetype lists:** four grades changed in the look-for lines (Melkotian Adjudicator twice, Dr. McCoy, David and Carol Marcus). Organic Avulsion Unit (now 5) joins WB's list.
+
+## How I decided
+
+- **Change** when Limited Resources and at least one other source (Draftsim's review, MTG Arena Zone) sit 1 or more on the same side of our grade, no source sits 1 or more on the other side, and the card text or the Sealed format gives a reason that our note missed. Move half a grade or one grade, not all the way.
+- **Move half a grade** when all three sources sit 2 or more on the same side, even without a new reason: three reviews that agree outweigh my read (on the Reality Fracture back-test each review ranked the cards better than we did).
+- **Keep** when the sources bracket our grade, when only Limited Resources sits 1 or more away, or when the Sealed format explains the gap.
+- **Removal:** kept, as before. On Reality Fracture no source misjudged removal at equal grade.
+
+## Decisions
+
+The table lists the grade before the check, Limited Resources' letter (with its mapped value), Draftsim's review and MTG Arena Zone (mapped), and the grade after.
+
+| Card | Rarity | Before | Limited Resources (+ offset) | Draftsim review | MTGAZ | After | Decision and reason |
+|---|---|---:|---:|---:|---:|---:|---|
+| 70,000 Light-Years from Home | U | 7.5 | D/C+ (3.8) | 6.6 | 5.4 | 7.5 | Kept (removal rule). All three sources sit lower; the hosts split C+ and D and never settled. A 2-mana exile of any creature or Spacecraft; the land goes to their hand, not into play. 7 or 7.5 changes no count on the sheet. |
+| Cleveland Booker, Empath | U | 6 | D (2.5) | 6.6 | 5.4 | 6 | Kept. The sources bracket our grade (Draftsim 6.6, Limited Resources 2.5). |
+| Rules of Acquisition | U | 4 | F (0.5) | 1.6 | 4.4 | 4 | Kept. MTG Arena Zone agrees (4.4). In Sealed the steal answers a bomb, and the other mode gives away a token for three cards. |
+| Cha'DIch Investigator | C | 5.5 | D (2.5) | 4.6 | 3.4 | 5.5 | Kept (also kept on 2 and 3 November). The hosts rate its power "about a C" (4.5) and give the D as a Draft pick. In Sealed you play the cards you open: a 4/4 and a 2/1 haste for 5. |
+| DOT-7 Repair Squad | C | 5.5 | D (2.5) | 2.6 | 3.4 | 5 | Lowered half a grade: all three sources sit 2 or more below. The hosts say 4-mana 3/3 fliers like it play worse than they look. The untap is sorcery-speed, so the body is the card. |
+| Vengeance Mission | U | 3 | C+/B build-around (5.8) | 4.6 | 4.4 | 4 | Raised. Every creature that dies, theirs, yours or a token, drains 1 (2 after seven deaths), and a Sealed game has many trades. All three sources grade it 4.4 or more. |
+| Those Old Scientists | U | 4.5 | D- (1.8) | 3.6 | 3.4 | 3.5 | Lowered. Chapter I is card-neutral (draw two, discard two), so the saga is one card ahead over two turns for 3 mana, with no board. My note called it a 2-for-1. |
+| Dominion Assault Force | C | 5 | D (2.5) | 2.6 | 4.4 | 5 | Kept (lowered half a grade on 3 November). The hosts rate its power a C (4.5) and give the D as a Draft pick. A 4/4 vigilance for 4 is above the rate. |
+| Dr. McCoy, Surly Surgeon | U | 5 | D (2.5) | 3.6 | 4.4 | 4.5 | Lowered half a grade. The shield works only while McCoy lives, and McCoy is a 4-mana 2/2. |
+| Melkotian Adjudicator | C | 5 | D (2.5) | 3.6 | 4.4 | 4.5 | Lowered half a grade. A 2/1 dies to 1 damage, and a deck holds about 4 modal cards, so it often stays a 2/1. |
+| Suus Mahna Practitioner | C | 5 | D (2.5) | 4.6 | 4.4 | 5 | Kept. Draftsim and MTG Arena Zone sit within 0.6. The hosts call the tap too expensive, but with the usual 3 land names it costs {1}{U}. |
+| Andromedan Automatons | C | 3 | C+/B- (5.5) | 4.6 | 5.4 | 3.5 | Raised half a grade. The hosts' grade assumes two or three copies; a Sealed pool holds a second copy 11% of the time. It is a 3/1 artifact creature that counts for WB's payoffs. |
+| Emergency Medical Hologram | C | 2 | C (4.5) | 2.6 | 3.4 | 3 | Raised. It is the cheapest creature to return for beam me up (11 cards) and cast again for another counter, and it counts for WB's artifact payoffs. My note saw neither. |
+| Organic Avulsion Unit | U | 4 | B build-around (6.5) | 5.6 | 5.4 | 5 | Raised. A 2/3 for 3 blocks well early; later, {2} gives every artifact creature menace, which turns a WB board (about 6 artifact creatures) into a lethal attack. Joins WB's look-for list. |
+| Cloak and Phaser | U | 5 | B+ build-around (7.1) | 7.6 | 3.4 | 5 | Kept. The sources bracket our grade (Draftsim 7.6 and Limited Resources 7.1 above, MTG Arena Zone 3.4 below), as on 3 November. |
+| David and Carol Marcus, Creators | U | 5 | B+ (7.1) | 7.6 | 5.4 | 6 | Raised. The Planet token is a land: it puts you a land ahead, makes any colour, adds a land name for strange new worlds, and triggers landfall. My note counted the colour only. |
+| Federation Probe | C | 3 | C+ (5.1) | 4.6 | 4.4 | 4 | Raised. Its modes are a dilemma, it is an artifact creature, and at 1 mana it is the cheapest creature to return for beam me up. All three sources grade it 4.4 or more. |
+| Interstellar Effigy | C | 5 | B+ (7.1) | 5.6 | 4.4 | 5 | Kept. Draftsim and MTG Arena Zone sit within 0.6. The bounce is tempo, which counts for less in Sealed. |
+| Spock, Always Your Friend | U | 5 | B+ (7.1) | 6.6 | 7.4 | 6 | Raised. With 9 noncreature spells in 40 cards, the top four hold one 66% of the time, so two times in three it is a 2-for-1 for 2 mana. All three sources grade it 6.6 or more. |
+| Zefram Cochrane, Warp Pioneer | U | 5 | B+ build-around (7.1) | 5.6 | 4.4 | 5 | Kept. Only Limited Resources sits 1 or more away, and its grade is for the artifact deck. |
+| Class-F Shuttlecraft | C | 4.5 | D (2.5) | 3.6 | 3.4 | 4.5 | Kept. The sheet's splash rule counts it as a source; fixing matters more in Sealed than in Draft. |
+| Emergency Holographic Crew | C | 4.5 | D (2.5) | 4.6 | 3.4 | 4.5 | Kept. Draftsim agrees (4.6). The hosts call it replaceable in Draft; in Sealed a 3/4 for 4 with surveil 2 makes the deck. |
+| Highly Illogical | U | 4.5 | D (2.5) | 4.6 | 3.4 | 4.5 | Kept. Draftsim agrees (4.6), and the hosts say it is better in Sealed and long games. |
+| Shuttle Ace | C | 4.5 | D (2.5) | 1.6 | 3.4 | 4.5 | Kept (lowered half a grade on 3 November, because it never blocks a flier). MTG Arena Zone sits 1.1 below, not 2. |
+| Support Mission | U | 4.5 | D (2.5) | 0.6 | 6.4 | 4.5 | Kept. The sources bracket our grade (MTG Arena Zone 6.4 above). |
+| Worf, Honor-Bound Warrior | U | 4.5 | D build-around (2.5) | 6.6 | 4.4 | 4.5 | Kept. The sources bracket our grade (Draftsim 6.6 above), and MTG Arena Zone agrees (4.4). |
+| Xindi Surveyors | C | 4.5 | D (2.5) | 3.6 | 4.4 | 4.5 | Kept. MTG Arena Zone agrees (4.4); only Limited Resources sits 1 or more away. |
