@@ -1,22 +1,22 @@
 # Star Trek prerelease cheat sheet (DEC-1218)
 
-Sealed grades, 0 to 10, from oracle text. I checked them against MTG Arena Zone's Draft review on 2 November (49 cards re-read, 20 changed), against Draftsim's pick order on 3 November (18 re-read, 11 changed), against Draftsim's set review on 3 November (62 re-read, 34 changed), and against Limited Resources' commons and uncommons on 4 November (27 re-read, 11 changed). Our uncommons sit 0.63 grade above our commons, under the 1.0 target (Draftsim's review: 1.22; Limited Resources: 1.18; MTG Arena Zone: 0.51): between two cards half a grade apart, prefer the uncommon. ★ bomb · ✕ removal · ⚡ instant-speed · ◆ fixing · ✚ card advantage · ⚪🔵⚫🔴🟢 colour · 🟡 gold · ◇ colourless.
+Sealed grades, 0 to 10, from oracle text. I checked them against MTG Arena Zone's Draft review on 2 November (49 cards re-read, 20 changed), against Draftsim's pick order on 3 November (18 re-read, 11 changed), against Draftsim's set review on 3 November (62 re-read, 34 changed), and against Limited Resources' commons and uncommons on 4 November (27 re-read, 11 changed). On 5 November I checked every note and rule against the card text (23 notes fixed, 1 grade changed). Our uncommons sit 0.62 grade above our commons, under the 1.0 target (Draftsim's review: 1.22; Limited Resources: 1.18; MTG Arena Zone: 0.51): between two cards half a grade apart, prefer the uncommon. ★ bomb · ✕ removal · ⚡ trick · ◆ fixing · ✚ card advantage · ⚪🔵⚫🔴🟢 colour · 🟡 gold · ◇ colourless.
 
 ## 1. Scoring your pool by hand (10 minutes)
 
-1. **Sort by colour.** A hybrid card counts for either colour; put gold cards aside.
+1. **Sort by colour.** A hybrid card counts for either colour, once per pair; put gold cards aside.
 2. **Count per colour:** cards graded 6+, cards graded 4+, and bombs (★). Write them on the deck box.
-3. **Pick the two colours with the most 6+ cards.** A ★ counts as two. Add the pair's gold cards.
-4. **Check: 22-23 cards graded 4+ and 15+ creatures.** Count the pair's two colours, its gold cards and your colourless cards. Spacecraft are not creatures. If short, look at the next colour or a splash.
-5. **Splash up to 3 cards graded 6+ with 3+ sources of their colour, at most 1 of them a basic.** Sources: duals and shock lands that make it, [Class-F Shuttlecraft](https://scryfall.com/card/trk/259/class-f-shuttlecraft), [Xenobotanist](https://scryfall.com/card/trk/224/xenobotanist). With 4+ non-basic sources, the third colour may also fill step 4, with cards of 3+ mana.
+3. **Pick the two colours with the most 6+ cards.** A ★ counts as two 6+ cards. Add the pair's gold cards.
+4. **Check: 22-23 cards graded 4+ and 15+ creatures.** Count the pair's two colours, its gold cards and your colourless non-land cards. Spacecraft are not creatures. If short, look at the next colour or a splash.
+5. **Splash up to 3 cards graded 6+ with 3+ sources of their colour, at most 1 of them a basic.** Sources: duals and shock lands that make it, [Class-F Shuttlecraft](https://scryfall.com/card/trk/259/class-f-shuttlecraft), [Xenobotanist](https://scryfall.com/card/trk/224/xenobotanist), [David and Carol Marcus, Creators](https://scryfall.com/card/trk/193/david-and-carol-marcus-creators). With 4+ non-basic sources, the third colour may also fill step 4, with cards of 3+ mana.
 6. **Build 17 lands and 23 spells, with 7-8 two-drops.** Play the ✕ you have, but do not pick colours for it.
 7. **Tie between pairs?** Pick more ★, then more ✚, then more ✕, then more two-drops.
 
 ## 2. Format rules that decide games
 
-- **Station: tap another creature, at sorcery speed, to put charge counters equal to its power on a Spacecraft.** At the number on its stripe it becomes an artifact creature. 17 Spacecraft, 3 of them common.
+- **Station: tap another creature, at sorcery speed, to put charge counters equal to its power on a Spacecraft.** At the stripe that shows power and toughness, it becomes an artifact creature. 17 Spacecraft, 3 of them common.
 - **A creature tapped to station stays tapped through your opponent's turn and cannot block.** It may have entered this turn. Attack with vigilance creatures first, then station in your second main phase.
-- **A Spacecraft below its number is not a creature.** Creature removal cannot hit it and it cannot block. [70,000 Light-Years from Home](https://scryfall.com/card/trk/1/70000-light-years-from-home) and [Guidance Failure](https://scryfall.com/card/trk/60/guidance-failure) hit Spacecraft too.
+- **A Spacecraft below its number is not a creature.** Creature removal cannot hit it, and it cannot block. These hit it: [70,000 Light-Years from Home](https://scryfall.com/card/trk/1/70000-light-years-from-home), [Guidance Failure](https://scryfall.com/card/trk/60/guidance-failure), [Malfunctioning Holodeck](https://scryfall.com/card/trk/22/malfunctioning-holodeck), [Marooned](https://scryfall.com/card/trk/72/marooned), and artifact removal.
 - **Face a dilemma = choose a mode.** Each modal spell or ability ("choose one —") counts once as you choose, even if it is countered later; with no legal mode it does not count. 39 cards have modes (14 commons); 9 cards pay off.
 - **Beam me up: cast the sorcery again from your graveyard and return one of your creatures to your hand as part of the cost.** The spell is then exiled. 10 sorceries have it (5 commons); [Scotty, Miracle Worker](https://scryfall.com/card/trk/79/scotty-miracle-worker) gives it to your graveyard. Return a creature with an enters ability to use it again.
 - **Strange new worlds counts the different land names you control.** Each basic type counts once, each Planet dual once, all New Planet tokens once. A two-colour deck with one dual counts 3. 13 cards.
@@ -102,6 +102,7 @@ Commons and uncommons you will actually open (grade, what it kills):
     - [Test of Identity](https://scryfall.com/card/trk/177/test-of-identity) ({1}{R})
 - 🟢 **G**
     - [I'm a Doctor, Not a . . .](https://scryfall.com/card/trk/203/im-a-doctor-not-a-) ({G})
+    - [Test of Courage](https://scryfall.com/card/trk/220/test-of-courage) ({G})
     - [Dathon and Picard at El-Adrel](https://scryfall.com/card/trk/192/dathon-and-picard-at-el-adrel) ({2}{G})
     - [Saru, Unthreatened](https://scryfall.com/card/trk/212/saru-unthreatened) ({2}{G})
 
@@ -113,8 +114,8 @@ Commons and uncommons you will actually open (grade, what it kills):
 
 - ⚪🔵 **WU Spacecraft** — Station Spacecraft with creatures you do not need on defence; Hemmer loots each time it taps and gives your Spacecraft hexproof on your turn.
     - Signposts: [Constable Odo](https://scryfall.com/card/trk/230/constable-odo) [6]; [Hemmer, Fixing What Is Broken](https://scryfall.com/card/trk/239/hemmer-fixing-what-is-broken) [5.5]
-    - Look for: [U.S.S. Excelsior, Cutting Edge](https://scryfall.com/card/trk/44/uss-excelsior-cutting-edge) [6.5], [U.S.S. Cerritos, Following Up](https://scryfall.com/card/trk/272/uss-cerritos-following-up) [6], [Enterprise NX-01](https://scryfall.com/card/trk/58/enterprise-nx-01) [5], [Melkotian Adjudicator](https://scryfall.com/card/trk/73/melkotian-adjudicator) [4.5], [Shuttle Ace](https://scryfall.com/card/trk/36/shuttle-ace) [4.5], [Suurok-Class Science Vessel](https://scryfall.com/card/trk/83/suurok-class-science-vessel) [4.5], [Class-F Shuttlecraft](https://scryfall.com/card/trk/259/class-f-shuttlecraft) [4.5].
-- 🔵⚫ **UB Dilemmas** — Play cards with modes: each mode you choose triggers [Seven of Nine](https://scryfall.com/card/trk/252/seven-of-nine), [Melkotian Adjudicator](https://scryfall.com/card/trk/73/melkotian-adjudicator) and the other dilemma cards.
+    - Look for: [U.S.S. Excelsior, Cutting Edge](https://scryfall.com/card/trk/44/uss-excelsior-cutting-edge) [6.5], [U.S.S. Cerritos, Following Up](https://scryfall.com/card/trk/272/uss-cerritos-following-up) [5.5], [Enterprise NX-01](https://scryfall.com/card/trk/58/enterprise-nx-01) [5], [Melkotian Adjudicator](https://scryfall.com/card/trk/73/melkotian-adjudicator) [4.5], [Shuttle Ace](https://scryfall.com/card/trk/36/shuttle-ace) [4.5], [Suurok-Class Science Vessel](https://scryfall.com/card/trk/83/suurok-class-science-vessel) [4.5], [Class-F Shuttlecraft](https://scryfall.com/card/trk/259/class-f-shuttlecraft) [4.5].
+- 🔵⚫ **UB Dilemmas** — Play cards with modes: each modal spell or ability triggers [Seven of Nine](https://scryfall.com/card/trk/252/seven-of-nine), [Melkotian Adjudicator](https://scryfall.com/card/trk/73/melkotian-adjudicator) and the other dilemma cards once, however many modes you choose.
     - Signposts: [Mirror Universe Intrusion](https://scryfall.com/card/trk/248/mirror-universe-intrusion) [6]; [Seven of Nine](https://scryfall.com/card/trk/252/seven-of-nine) [6]; [Lore, Positronic Provocateur](https://scryfall.com/card/trk/246/lore-positronic-provocateur) [5]
     - Look for: [Resistance Is Futile](https://scryfall.com/card/trk/125/resistance-is-futile) [7], [Impossible Choice](https://scryfall.com/card/trk/116/impossible-choice) [6], [Gabriel Lorca, Mirror Menace](https://scryfall.com/card/trk/108/gabriel-lorca-mirror-menace) [5.5], [Consider the Prime Directive](https://scryfall.com/card/trk/51/consider-the-prime-directive) [5], [Rogue Artificial Intelligence](https://scryfall.com/card/trk/126/rogue-artificial-intelligence) [5], [Melkotian Adjudicator](https://scryfall.com/card/trk/73/melkotian-adjudicator) [4.5], [Tal Shiar Operative](https://scryfall.com/card/trk/131/tal-shiar-operative) [4], [Obsidian Order Operative](https://scryfall.com/card/trk/120/obsidian-order-operative) [4].
 - ⚫🔴 **BR Klingon Sacrifice** — Attack every turn with Klingon tokens and cheap creatures, and sacrifice the ones that would die anyway to draw or surveil.
@@ -137,8 +138,8 @@ Commons and uncommons you will actually open (grade, what it kills):
     - Look for: [Hologram Stalker](https://scryfall.com/card/trk/202/hologram-stalker) [6], [Sylvia Tilly, Joy of Discovery](https://scryfall.com/card/trk/217/sylvia-tilly-joy-of-discovery) [5.5], [Photosynthetic Physician](https://scryfall.com/card/trk/210/photosynthetic-physician) [5], [Dominion Assault Force](https://scryfall.com/card/trk/194/dominion-assault-force) [5], [Blastoneuron](https://scryfall.com/card/trk/96/blastoneuron) [5], [Stray from History](https://scryfall.com/card/trk/130/stray-from-history) [4.5], [Storied Veteran](https://scryfall.com/card/trk/129/storied-veteran) [4], [Relentless Drednok](https://scryfall.com/card/trk/124/relentless-drednok) [3.5].
 - ⚪🔴 **WR Power 8** — Attack while your creatures total 8 or more power to turn on Kirk, Worf and the other attack triggers; Officer tokens and counters get you there.
     - Signposts: [Kira Nerys, Firebrand](https://scryfall.com/card/trk/242/kira-nerys-firebrand) [6]; [Kirk, Commanding Officer](https://scryfall.com/card/trk/243/kirk-commanding-officer) [5.5]
-    - Look for: [U.S.S. Cerritos, Following Up](https://scryfall.com/card/trk/272/uss-cerritos-following-up) [6], [Academy Instructor](https://scryfall.com/card/trk/137/academy-instructor) [5.5], [Hologram Janeway](https://scryfall.com/card/trk/21/hologram-janeway) [5.5], [Una Chin-Riley, Number One](https://scryfall.com/card/trk/42/una-chin-riley-number-one) [5], [La'An Noonien-Singh, Security](https://scryfall.com/card/trk/156/laan-noonien-singh-security) [5], [Cantankerous Captain](https://scryfall.com/card/trk/141/cantankerous-captain) [4], [Tactical Officer](https://scryfall.com/card/trk/38/tactical-officer) [3.5], [Worf, Honor-Bound Warrior](https://scryfall.com/card/trk/256/worf-honor-bound-warrior) [4.5].
-- 🔵🟢 **UG Strange New Worlds** — Play many differently named lands to grow [The Traveler](https://scryfall.com/card/trk/254/the-traveler) and cut the cost of your strange-new-worlds cards; green holds 4 of the 6 coloured common and uncommon fixers, so add a third colour here.
+    - Look for: [Academy Instructor](https://scryfall.com/card/trk/137/academy-instructor) [5.5], [Hologram Janeway](https://scryfall.com/card/trk/21/hologram-janeway) [5.5], [U.S.S. Cerritos, Following Up](https://scryfall.com/card/trk/272/uss-cerritos-following-up) [5.5], [Una Chin-Riley, Number One](https://scryfall.com/card/trk/42/una-chin-riley-number-one) [5], [La'An Noonien-Singh, Security](https://scryfall.com/card/trk/156/laan-noonien-singh-security) [5], [Cantankerous Captain](https://scryfall.com/card/trk/141/cantankerous-captain) [4], [Tactical Officer](https://scryfall.com/card/trk/38/tactical-officer) [3.5], [Worf, Honor-Bound Warrior](https://scryfall.com/card/trk/256/worf-honor-bound-warrior) [4.5].
+- 🔵🟢 **UG Strange New Worlds** — Play many differently named lands to grow [The Traveler](https://scryfall.com/card/trk/254/the-traveler) and cut the cost of your strange-new-worlds cards; green has the most fixing ([Xenobotanist](https://scryfall.com/card/trk/224/xenobotanist), [David and Carol Marcus, Creators](https://scryfall.com/card/trk/193/david-and-carol-marcus-creators), [Final Frontier](https://scryfall.com/card/trk/198/final-frontier), [Warp Speed](https://scryfall.com/card/trk/223/warp-speed)), so add a third colour here.
     - Signposts: [All Good Things...](https://scryfall.com/card/trk/226/all-good-things) [5.5]; [The Traveler](https://scryfall.com/card/trk/254/the-traveler) [5.5]
     - Look for: [Species 8472](https://scryfall.com/card/trk/214/species-8472) [6.5], [David and Carol Marcus, Creators](https://scryfall.com/card/trk/193/david-and-carol-marcus-creators) [6], [Suus Mahna Practitioner](https://scryfall.com/card/trk/84/suus-mahna-practitioner) [5], [Cloak and Phaser](https://scryfall.com/card/trk/49/cloak-and-phaser) [5], [Xenobotanist](https://scryfall.com/card/trk/224/xenobotanist) [4.5], [D'Vana Tendi, Optimistic Ensign](https://scryfall.com/card/trk/236/dvana-tendi-optimistic-ensign) [4.5], [Astute Terraformer](https://scryfall.com/card/trk/184/astute-terraformer) [4], [Final Frontier](https://scryfall.com/card/trk/198/final-frontier) [3.5].
 
@@ -150,10 +151,10 @@ Commons and uncommons you will actually open (grade, what it kills):
 |---|---|---|---|---|---|
 | 8.5 | ⚪ [Captain Jean-Luc Picard](https://scryfall.com/card/trk/7/captain-jean-luc-picard) | {2}{W} | M | ★ | 3-mana anthem; a 1/1 for every creature or Spacecraft you cast |
 | 8.5 | ⚪ [Excalbian Gamemaster](https://scryfall.com/card/trk/16/excalbian-gamemaster) | {5}{W} | M | ★ | 6-mana 6/6 plus a 1/1 per land name (usually 3); counters on deaths |
-| 8.5 | ⚪ [U.S.S. Enterprise-A, Free Spirit](https://scryfall.com/card/trk/43/uss-enterprise-a-free-spirit) | {3}{W}{W} | M | ★ | 5 mana: three 1/1s that station it at once into a 5/5 flying lifelink, ward 2 |
+| 8.5 | ⚪ [U.S.S. Enterprise-A, Free Spirit](https://scryfall.com/card/trk/43/uss-enterprise-a-free-spirit) | {3}{W}{W} | M | ★ | 5 mana: three 1/1s now; a 5/5 flying lifelink at 6 counters (two turns with the tokens alone); ward 2 |
 | 7.5 | ⚪ [70,000 Light-Years from Home](https://scryfall.com/card/trk/1/70000-light-years-from-home) | {1}{W} | U | ✕ | 2-mana exile of any creature or Spacecraft; they get a basic land |
 | 7.5 | ⚪ [Malfunctioning Holodeck](https://scryfall.com/card/trk/22/malfunctioning-holodeck) | {2}{W} | C | ✕ | 3-mana exile of any nonland permanent, ward 2 protects it |
-| 7 | ⚪ [Primary Unimatrix Adjunct](https://scryfall.com/card/trk/30/primary-unimatrix-adjunct) | {3}{W} | R |  | 4-mana 2/3 double strike; all artifact creatures double strike |
+| 7 | ⚪ [Primary Unimatrix Adjunct](https://scryfall.com/card/trk/30/primary-unimatrix-adjunct) | {3}{W} | R |  | 4-mana 2/3 double strike; your artifact creatures have double strike |
 | 6.5 | ⚪ [Deanna Troi, Psychic Counsel](https://scryfall.com/card/trk/11/deanna-troi-psychic-counsel) | {1}{W} | R |  | 2-mana 2/2; every later creature enters with a counter |
 | 6.5 | ⚪ [U.S.S. Excelsior, Cutting Edge](https://scryfall.com/card/trk/44/uss-excelsior-cutting-edge) | {3}{W} | U | ✕ | 4 mana: destroy a tapped creature (their last attacker); flying 4/4 at 8 |
 | 6 | ⚪ [Antagonist Incorporator](https://scryfall.com/card/trk/3/antagonist-incorporator) | {1}{W} | R |  | 2-mana 2/3; your artifact creatures make a 1/1 for {1} when they connect |
@@ -162,7 +163,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 5.5 | ⚪ [Command Decision](https://scryfall.com/card/trk/8/command-decision) | {1}{W} | C | ✕ | 2-mana kill of power 4+, or draw a card; never dead; modal |
 | 5.5 | ⚪ [Hologram Janeway](https://scryfall.com/card/trk/21/hologram-janeway) | {2}{W} | U |  | 3-mana 3/3 artifact; a counter each power-8 attack |
 | 5.5 | ⚪ [Miles O'Brien, Transporter Ops](https://scryfall.com/card/trk/24/miles-obrien-transporter-ops) | {2}{W} | R |  | 3-mana 3/3; re-buys an ETB and draws that turn |
-| 5.5 | ⚪ [Picard, Leading by Example](https://scryfall.com/card/trk/29/picard-leading-by-example) | {1}{W} | U |  | 2-mana 2/2; +2/+2 to another creature every turn before combat |
+| 5.5 | ⚪ [Picard, Leading by Example](https://scryfall.com/card/trk/29/picard-leading-by-example) | {1}{W} | U |  | 2-mana 2/2; {1}, tap: another creature gets +X/+X (his power), at sorcery speed |
 | 5.5 | ⚪ [Set Phasers to . . .](https://scryfall.com/card/trk/34/set-phasers-to-) | {W} | C | ✕⚡ | 1 mana: 3 damage to an attacker (75% of creatures have toughness 3 or less) or stun; instant; modal |
 | 5.5 | ⚪ [Sulu, Space Swashbuckler](https://scryfall.com/card/trk/37/sulu-space-swashbuckler) | {1}{W} | R | ✚ | 2-mana 2/2 first strike; draws when tapped on a turn an Equipment or Spacecraft entered |
 | 5 | ⚪ [Assembly Specialist](https://scryfall.com/card/trk/4/assembly-specialist) | {1}{W} | U |  | two artifact 1/1s for 2 (WB artifacts) |
@@ -176,19 +177,19 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 4.5 | ⚪ [Conquest Mission](https://scryfall.com/card/trk/10/conquest-mission) | {2}{W} | U |  | a 1/1 each time a nontoken artifact enters under your control; wants 8+ artifacts (WB) |
 | 4.5 | ⚪ [Dr. Beverly Crusher](https://scryfall.com/card/trk/13/dr-beverly-crusher) | {2}{W} | M |  | 3-mana 2/2 that grows with lifegain |
 | 4.5 | ⚪ [Dr. McCoy, Surly Surgeon](https://scryfall.com/card/trk/14/dr-mccoy-surly-surgeon) | {2}{W}{W} | U |  | 4-mana 2/2 plus a counter; your countered creatures survive destroy only while McCoy lives |
-| 4.5 | ⚪ [Federation Field Medic](https://scryfall.com/card/trk/17/federation-field-medic) | {3}{W} | C |  | 4-mana 3/2 vigilance plus a counter or a card; modal |
+| 4.5 | ⚪ [Federation Field Medic](https://scryfall.com/card/trk/17/federation-field-medic) | {3}{W} | C |  | 4-mana 3/2 vigilance plus a counter, or a card if you already have a counter; modal |
 | 4.5 | ⚪ [Shuttle Ace](https://scryfall.com/card/trk/36/shuttle-ace) | {4}{W} | C |  | 5-mana 4/4 that flies on your turn only (it does not block fliers), gains 2 when tapped |
-| 4.5 | ⚪ [Test of Conviction](https://scryfall.com/card/trk/39/test-of-conviction) | {1}{W} | U | ⚡ | counter on each creature, or draw two (opponent draws one); modal |
+| 4.5 | ⚪ [Test of Conviction](https://scryfall.com/card/trk/39/test-of-conviction) | {1}{W} | U |  | sorcery: a counter on each of your creatures, or draw two (opponent draws one); modal |
 | 4 | ⚪ [Pet Sehlat](https://scryfall.com/card/trk/28/pet-sehlat) | {2}{W} | C |  | 3-mana 4/3 that cannot attack alone; good blocker |
 | 4 | ⚪ [Shields Up!](https://scryfall.com/card/trk/35/shields-up!) | {1}{W} | C | ⚡ | 2-mana protection plus a counter; saves a creature from removal |
-| 4 | ⚪ [There's Coffee in that Nebula](https://scryfall.com/card/trk/40/theres-coffee-in-that-nebula) | {1}{W} | U |  | finds a land or a 3-drop, twice with beam me up |
+| 4 | ⚪ [There's Coffee in that Nebula](https://scryfall.com/card/trk/40/theres-coffee-in-that-nebula) | {1}{W} | U |  | finds a [Plains](https://scryfall.com/card/trk/317/plains) or a permanent of mana value 3 or less; again with beam me up |
 | 4 | ⚪ [Vexing Drone](https://scryfall.com/card/trk/45/vexing-drone) | {1}{W} | C |  | 2-mana 2/2 artifact that taps a blocker on entry |
 | 3.5 | ⚪ [Andromedan Automatons](https://scryfall.com/card/trk/2/andromedan-automatons) | {2}{W} | C |  | 3-mana 3/1 artifact creature for WB payoffs; the tutor needs a second copy (11% of pools) |
 | 3.5 | ⚪ [Command Subadjunct](https://scryfall.com/card/trk/9/command-subadjunct) | {W} | U |  | 1-mana 2/1 artifact; vigilance for artifact creatures |
 | 3.5 | ⚪ [Oberth-Class Starship](https://scryfall.com/card/trk/26/oberth-class-starship) | {1}{W} | C |  | 2-mana fetches a [Plains](https://scryfall.com/card/trk/317/plains); flying 2/2 only at 6 counters |
 | 3.5 | ⚪ [Tactical Officer](https://scryfall.com/card/trk/38/tactical-officer) | {1}{W} | C |  | 2-mana 2/1 that grows with power 8 (RW) |
 | 3 | ⚪ [Emergency Medical Hologram](https://scryfall.com/card/trk/15/emergency-medical-hologram) | {W} | C |  | 1-mana 0/1 artifact plus a counter and 1 life; the cheapest creature to return for beam me up |
-| 3 | ⚪ [Pure Energy](https://scryfall.com/card/trk/31/pure-energy) | {1}{W} | C | ⚡ | two +1/+1 counters, then again with beam me up (bounce one of yours) |
+| 3 | ⚪ [Pure Energy](https://scryfall.com/card/trk/31/pure-energy) | {1}{W} | C |  | two +1/+1 counters, then again with beam me up (bounce one of yours) |
 | 2.5 | ⚪ [Federation Resupply](https://scryfall.com/card/trk/18/federation-resupply) | {1}{W} | R |  | tutor for an Aura, Equipment or Spacecraft; play it only with one graded 6+ |
 | 2 | ⚪ [Peace in Our Time](https://scryfall.com/card/trk/27/peace-in-our-time) | {3}{W} | R |  | the opponent chooses; a win at 12 counters rarely comes |
 | 2 | ⚪ [The Needs of the Many](https://scryfall.com/card/trk/25/the-needs-of-the-many) | {1}{W} | R |  | sacrifice a creature to fog and protect the team |
@@ -221,10 +222,10 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 5 | 🔵 [Romulan Bird-of-Prey](https://scryfall.com/card/trk/77/romulan-bird-of-prey) | {1}{U} | R |  | 2-mana hexproof Spacecraft; flying 4/4 at 8 |
 | 5 | 🔵 [Subcommander T'Pol](https://scryfall.com/card/trk/82/subcommander-tpol) | {2}{U} | R | ⚡ | 3-mana 3/1 flash; stuns a creature |
 | 5 | 🔵 [Suus Mahna Practitioner](https://scryfall.com/card/trk/84/suus-mahna-practitioner) | {2}{U} | C |  | 3-mana 3/2; a repeatable tapper for about 2 mana with 3 land names |
-| 5 | 🔵 [Zefram Cochrane, Warp Pioneer](https://scryfall.com/card/trk/90/zefram-cochrane-warp-pioneer) | {2}{U} | U | ✚ | 3-mana 2/3; casts artifacts off the top each turn |
+| 5 | 🔵 [Zefram Cochrane, Warp Pioneer](https://scryfall.com/card/trk/90/zefram-cochrane-warp-pioneer) | {2}{U} | U | ✚ | 3-mana 2/3; casts one artifact off the top each turn |
 | 4.5 | 🔵 [Anthropological Mission](https://scryfall.com/card/trk/46/anthropological-mission) | {2}{U} | U | ✚ | loot per noncreature spell, draw after three; needs 8+ spells (UR) |
 | 4.5 | 🔵 [Emergency Holographic Crew](https://scryfall.com/card/trk/55/emergency-holographic-crew) | {3}{U} | C |  | 4-mana 3/4 artifact; surveil 2 or a Spacecraft back |
-| 4.5 | 🔵 [Energize](https://scryfall.com/card/trk/56/energize) | {1}{U} | U | ⚡ | 2-mana bounce, again with beam me up |
+| 4.5 | 🔵 [Energize](https://scryfall.com/card/trk/56/energize) | {1}{U} | U |  | 2-mana sorcery bounce, again with beam me up |
 | 4.5 | 🔵 [Highly Illogical](https://scryfall.com/card/trk/62/highly-illogical) | {1}{U} | U | ⚡ | counter a 2-drop, or any spell for 4 |
 | 4.5 | 🔵 [Jett Reno, Problem Solver](https://scryfall.com/card/trk/67/jett-reno-problem-solver) | {1}{U} | U | ✚ | 2-mana 1/2; surveils or draws whenever tapped (station her) |
 | 4.5 | 🔵 [Make It So](https://scryfall.com/card/trk/71/make-it-so) | {3}{U} | C |  | 4 mana: a 1/1 and draw two |
@@ -249,7 +250,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 | Grade | Card | Cost | R | Tags | Why |
 |---|---|---|---|---|---|
 | 8 | ⚫ [Armus, Skin of Evil](https://scryfall.com/card/trk/91/armus-skin-of-evil) | {5}{B}{B} | R | ★✕ | 7-mana 6/6 menace, two discards a turn; or discard it for -4/-4 at 3 mana |
-| 8 | ⚫ [Georgiou, Terran Emperor](https://scryfall.com/card/trk/110/georgiou-terran-emperor) | {4}{B}{B} | M | ★✚ | 6-mana 4/6 that draws each turn; ten 1/1s when you hit 0 |
+| 8 | ⚫ [Georgiou, Terran Emperor](https://scryfall.com/card/trk/110/georgiou-terran-emperor) | {4}{B}{B} | M | ★✚ | 6-mana 4/6; each end step you lose 3 and draw; ten 1/1s at 0 life, and you lose if she leaves then |
 | 7 | ⚫ [Death Is Irrelevant](https://scryfall.com/card/trk/102/death-is-irrelevant) | {6}{B}{B} | M | ✚ | 8 mana: a graveyard creature joins you every end step |
 | 7 | ⚫ [Elim Garak, Simple Tailor](https://scryfall.com/card/trk/106/elim-garak-simple-tailor) | {2}{B} | R |  | 3-mana 3/3 menace; drains 2 per dilemma |
 | 7 | ⚫ [Gul Dukat, Colonial Prefect](https://scryfall.com/card/trk/113/gul-dukat-colonial-prefect) | {4}{B}{B}{B} | M |  | 7-mana 6/6 menace that doubles their life loss each turn |
@@ -257,10 +258,10 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 7 | ⚫ [Overflow Submatrix](https://scryfall.com/card/trk/122/overflow-submatrix) | {2}{B} | R | ✚ | 3-mana 3/3; recasts an artifact creature from the graveyard each turn |
 | 7 | ⚫ [Resistance Is Futile](https://scryfall.com/card/trk/125/resistance-is-futile) | {1}{B} | U | ✕ | 2-mana kill of a nonartifact creature, or reanimate a small artifact creature |
 | 6.5 | ⚫ [Khan, Vengeful Heart](https://scryfall.com/card/trk/119/khan-vengeful-heart) | {2}{B}{B} | M |  | 4-mana 5/3; sacrifice fodder to draw two; recast from exile |
-| 6 | ⚫ [De-evolve](https://scryfall.com/card/trk/104/de-evolve) | {1}{B} | U | ✕ | 2-mana aura: -4/-0 and cannot block (hard lock); exiles it at threshold 7 |
+| 6 | ⚫ [De-evolve](https://scryfall.com/card/trk/104/de-evolve) | {1}{B} | U | ✕ | 2-mana aura: -4/-0 and cannot block (it can still attack and use abilities); exiles it at threshold 7 |
 | 6 | ⚫ [Eject the Warp Core](https://scryfall.com/card/trk/105/eject-the-warp-core) | {1}{B} | C | ✕⚡ | 2-mana instant -2/-2 (46% of creatures), or -6/-6 with a sacrifice |
 | 6 | ⚫ [Impossible Choice](https://scryfall.com/card/trk/116/impossible-choice) | {2}{B} | U | ✕ | 3-mana instant kill (they get two 1/1s), or draw two; modal |
-| 6 | ⚫ [In the Pale Moonlight](https://scryfall.com/card/trk/117/in-the-pale-moonlight) | {3}{B}{B} | U |  | 5-mana saga: edict a nontoken creature, a Clue, then two 2/2s |
+| 6 | ⚫ [In the Pale Moonlight](https://scryfall.com/card/trk/117/in-the-pale-moonlight) | {3}{B}{B} | U |  | 5-mana saga: edict a nontoken creature, a Clue, then two 2/2s if you sacrifice an artifact or creature |
 | 6 | ⚫ [Salt Vampire](https://scryfall.com/card/trk/127/salt-vampire) | {1}{B} | R |  | 2-mana 2/2 lifelink; swaps their best card for a random one |
 | 6 | ⚫ [Sela, Tal Shiar Paradox](https://scryfall.com/card/trk/128/sela-tal-shiar-paradox) | {3}{B} | R |  | 4-mana 3/3; a 2/2 each time cards leave your graveyard (each attack) |
 | 6 | ⚫ [The Destruction of Praxis](https://scryfall.com/card/trk/103/the-destruction-of-praxis) | {3}{B}{B} | R | ✕ | 5-mana sweeper -X/-X, X = land names (usually 3) |
@@ -273,23 +274,23 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 5 | ⚫ [Automated Warfare System](https://scryfall.com/card/trk/93/automated-warfare-system) | {2}{B} | C |  | 3-mana 2/2 flyer; sacrifices fodder to draw on attack |
 | 5 | ⚫ [Bat'leth](https://scryfall.com/card/trk/94/batleth) | {2}{B} | U |  | 3 mana, sorcery speed: -2/-2 on entry (46% of creatures), then +2/+0 Equipment |
 | 5 | ⚫ [Blastoneuron](https://scryfall.com/card/trk/96/blastoneuron) | {3}{B} | U |  | 4-mana 2/2 flyer; replays a 3-drop from the graveyard for a turn |
-| 5 | ⚫ [Commander Raffi Musiker](https://scryfall.com/card/trk/100/commander-raffi-musiker) | {2}{B} | U |  | 3-mana 3/2 plus a Clue or 2 life |
-| 5 | ⚫ [D'Ghor Bloodletter](https://scryfall.com/card/trk/101/dghor-bloodletter) | {2}{B} | U |  | 3-mana 2/2; -1/-1 to all other creatures, or an edict |
+| 5 | ⚫ [Commander Raffi Musiker](https://scryfall.com/card/trk/100/commander-raffi-musiker) | {2}{B} | U |  | 3-mana 3/2 plus a Clue (lose 2 life), or 2 life and graveyard hate |
+| 5 | ⚫ [D'Ghor Bloodletter](https://scryfall.com/card/trk/101/dghor-bloodletter) | {2}{B} | U |  | 3-mana 2/2; -1/-1 to all other creatures, or each player (you too) sacrifices a creature |
 | 5 | ⚫ [Organic Avulsion Unit](https://scryfall.com/card/trk/121/organic-avulsion-unit) | {2}{B} | U |  | 3-mana 2/3 artifact; {2}: menace for every artifact creature, a finisher in WB |
 | 5 | ⚫ [Rogue Artificial Intelligence](https://scryfall.com/card/trk/126/rogue-artificial-intelligence) | {4}{B}{B} | C |  | 6-mana 6/5 plus 3 life or surveil 2, or landcycle for 2 |
 | 4.5 | ⚫ [Assault Drone](https://scryfall.com/card/trk/92/assault-drone) | {3}{B} | C |  | 4-mana 3/4 artifact; +1/+0 to artifact creatures |
 | 4.5 | ⚫ [Fugitive Listener](https://scryfall.com/card/trk/107/fugitive-listener) | {2}{B} | C |  | 3-mana 3/1 plus a discard |
 | 4.5 | ⚫ [Grand Nagus Zek](https://scryfall.com/card/trk/112/grand-nagus-zek) | {2}{B} | R |  | 3-mana 1/1 that makes a Treasure per death turn and grows |
-| 4.5 | ⚫ [Stray from History](https://scryfall.com/card/trk/130/stray-from-history) | {2}{B} | C |  | two creatures back from the graveyard, or take a card from their hand |
+| 4.5 | ⚫ [Stray from History](https://scryfall.com/card/trk/130/stray-from-history) | {2}{B} | C |  | two creature cards from your graveyard to your hand, or exile a nonland card from their hand |
 | 4.5 | ⚫ [Tell Me What You See](https://scryfall.com/card/trk/132/tell-me-what-you-see) | {1}{B} | U |  | a card or 4 damage, their choice; rebuys on a dilemma |
-| 4 | ⚫ [Battle-Scarred Survivalist](https://scryfall.com/card/trk/95/battle-scarred-survivalist) | {1}{B} | C |  | 2-mana 1/1 menace that grows on deaths |
+| 4 | ⚫ [Battle-Scarred Survivalist](https://scryfall.com/card/trk/95/battle-scarred-survivalist) | {1}{B} | C |  | 2-mana 1/1 menace that grows on deaths, once a turn |
 | 4 | ⚫ [Collective Drone](https://scryfall.com/card/trk/99/collective-drone) | {1}{B} | U |  | 2-mana \*/2 that counts artifact creatures, usually 2 or 3 power (WB) |
 | 4 | ⚫ [Obsidian Order Operative](https://scryfall.com/card/trk/120/obsidian-order-operative) | {3}{B} | C |  | 4-mana 2/5; drains 1 per dilemma |
 | 4 | ⚫ [Storied Veteran](https://scryfall.com/card/trk/129/storied-veteran) | {B} | U |  | 1-mana 2/1 that cannot block; casts again from the graveyard (BR) |
 | 4 | ⚫ [Tal Shiar Operative](https://scryfall.com/card/trk/131/tal-shiar-operative) | {1}{B} | C |  | 2-mana 2/2; deathtouch or surveil when it attacks |
 | 4 | ⚫ [Tenacious Drone](https://scryfall.com/card/trk/133/tenacious-drone) | {1}{B} | C |  | 2-mana 2/1 artifact that leaves a 1/1 |
 | 4 | ⚫ [Test of Loyalty](https://scryfall.com/card/trk/134/test-of-loyalty) | {B} | U |  | 1 mana: regrow a creature, or exile a graveyard card and draw |
-| 4 | ⚫ [Vengeance Mission](https://scryfall.com/card/trk/136/vengeance-mission) | {2}{B} | U |  | drains 1 each time any creature dies: theirs, yours and tokens |
+| 4 | ⚫ [Vengeance Mission](https://scryfall.com/card/trk/136/vengeance-mission) | {2}{B} | U |  | the opponent loses 1 each time any creature dies (2 at seven counters): theirs, yours and tokens; you gain nothing |
 | 3.5 | ⚫ [Relentless Drednok](https://scryfall.com/card/trk/124/relentless-drednok) | {B} | C |  | 1-mana 1/1 lifelink; trades its corpse for a card later |
 | 3 | ⚫ [A Good Day to Die](https://scryfall.com/card/trk/111/a-good-day-to-die) | {B} | C | ⚡ | +2/+0 and a card when it dies |
 | 3 | ⚫ [Kai Winn, Faithless Leader](https://scryfall.com/card/trk/118/kai-winn-faithless-leader) | {1}{B} | R |  | 2-mana 3/1; the named card rarely shows up |
@@ -301,7 +302,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 |---|---|---|---|---|---|
 | 8 | 🔴 [The Wrath of Khan](https://scryfall.com/card/trk/181/the-wrath-of-khan) | {2}{R} | R | ★✕ | 3-mana saga: 4 damage plus a threaten, a loot, then an edict of a nontoken permanent |
 | 7.5 | 🔴 [Khaaaaaaaaaaaannn!](https://scryfall.com/card/trk/154/khaaaaaaaaaaaannn!) | {X}{R} | U | ✕ | X+1 mana instant: 2X damage and exile; 3 mana kills 88% of creatures |
-| 7.5 | 🔴 [Q, Stacking the Deck](https://scryfall.com/card/trk/165/q-stacking-the-deck) | {2}{R}{R} | M |  | 4-mana 4/4; each turn, trade a card in hand (a spare land) for a copy of the exiled spell |
+| 7.5 | 🔴 [Q, Stacking the Deck](https://scryfall.com/card/trk/165/q-stacking-the-deck) | {2}{R}{R} | M |  | 4-mana 4/4; on your turn, exile a card from hand (a spare land) to cast a copy of the exiled spell, paying its cost |
 | 7 | 🔴 [Transporter Malfunction](https://scryfall.com/card/trk/178/transporter-malfunction) | {1}{R} | U | ✕ | 2-mana 3 damage to any target (75% of creatures); again for 6 with beam me up |
 | 6.5 | 🔴 [Genesis Effect](https://scryfall.com/card/trk/151/genesis-effect) | {4}{R} | C | ✕◆ | 5-mana instant: 6 damage; swaps a land for an any-colour land (a new land name) |
 | 6.5 | 🔴 [Pah-Wraith](https://scryfall.com/card/trk/160/pah-wraith) | {5}{R}{R} | R |  | 7-mana 4/4 first strike haste; +X/+0 to the team on attack |
@@ -324,7 +325,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 4.5 | 🔴 [Beckett Mariner, Impetuous Ensign](https://scryfall.com/card/trk/138/beckett-mariner-impetuous-ensign) | {1}{R} | U |  | 2-mana 2/1 first strike; 2 damage every third tap |
 | 4.5 | 🔴 [Erica Ortegas, Plucky Pilot](https://scryfall.com/card/trk/149/erica-ortegas-plucky-pilot) | {3}{R} | U |  | 4-mana 3/3 haste; extra landfall when tapped (RG) |
 | 4.5 | 🔴 [Perils of the Past](https://scryfall.com/card/trk/161/perils-of-the-past) | {1}{R} | C | ⚡ | instant +3/+2, or destroy an artifact; modal |
-| 4.5 | 🔴 [Ravenous Cosmozoan](https://scryfall.com/card/trk/167/ravenous-cosmozoan) | {5}{R} | U |  | 3/3 flying haste, cheaper per spell in the graveyard (UR) |
+| 4.5 | 🔴 [Ravenous Cosmozoan](https://scryfall.com/card/trk/167/ravenous-cosmozoan) | {5}{R} | U |  | 6-mana 3/3 flying haste, 1 less per noncreature spell in your graveyard (UR) |
 | 4.5 | 🔴 [Sarcophagus, Ship of the Dead](https://scryfall.com/card/trk/170/sarcophagus-ship-of-the-dead) | {2}{R} | U |  | 3 mana: +1/+0 to your other creatures; flying 4/4 at 10 |
 | 4.5 | 🔴 [Worf, Intelligence Contractor](https://scryfall.com/card/trk/180/worf-intelligence-contractor) | {2}{R} | R |  | 3-mana 3/2; steals a 3-drop for the turn (BR sacrifice) |
 | 4 | 🔴 [Boarding Action](https://scryfall.com/card/trk/139/boarding-action) | {1}{R} | C |  | 2-mana 2/1 haste token, again with beam me up |
@@ -388,10 +389,10 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 3.5 | 🟢 [I'm a Doctor, Not a . . .](https://scryfall.com/card/trk/203/im-a-doctor-not-a-) | {G} | C | ⚡ | 1-mana instant: a counter, +1/+1, untap |
 | 3.5 | 🟢 [MACO Strike Team](https://scryfall.com/card/trk/206/maco-strike-team) | {G} | R |  | 1-mana 2/1; a 1/1 when they target your creatures |
 | 3.5 | 🟢 [Neelix, Moral Support](https://scryfall.com/card/trk/209/neelix-moral-support) | {1}{G} | U |  | 2-mana 1/1 plus a Food; grows with lifegain |
-| 3.5 | 🟢 [Warp Speed](https://scryfall.com/card/trk/223/warp-speed) | {2}{G} | U | ◆ | finds a basic or a Planet; lands enter untapped; draws two late |
+| 3.5 | 🟢 [Warp Speed](https://scryfall.com/card/trk/223/warp-speed) | {2}{G} | U | ◆ | finds a basic or a Planet; lands enter untapped; the late draw two needs {U}{U} |
 | 3 | 🟢 [Genesis Device](https://scryfall.com/card/trk/200/genesis-device) | {2}{G} | R | ◆ | 3-mana artifact that ramps a land |
 | 3 | 🟢 [Stable Wormhole](https://scryfall.com/card/trk/215/stable-wormhole) | {2}{G} | R | ◆ | a tapped any-colour land each time you attack |
-| 3 | 🟢 [Test of Courage](https://scryfall.com/card/trk/220/test-of-courage) | {G} | U |  | 1-mana instant: destroy a small artifact or enchantment, or graveyard hate |
+| 3 | 🟢 [Test of Courage](https://scryfall.com/card/trk/220/test-of-courage) | {G} | U | ⚡ | 1-mana instant: destroy a small artifact or enchantment, or graveyard hate |
 | 1.5 | 🟢 [Branching Timeline](https://scryfall.com/card/trk/185/branching-timeline) | {6}{G}{G} | R |  | 8 mana: free permanents from the top X |
 
 ### 🟡 Gold BG
@@ -440,7 +441,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 
 | Grade | Card | Cost | R | Tags | Why |
 |---|---|---|---|---|---|
-| 7.5 | 🟡 [Borg Cube](https://scryfall.com/card/trk/227/borg-cube) | {5}{W}{B} | M | ✕ | 7 mana less affinity: exiles a creature on entry and on each attack |
+| 7.5 | 🟡 [Borg Cube](https://scryfall.com/card/trk/227/borg-cube) | {5}{W}{B} | M | ✕ | 7 mana less affinity: exiles a creature on entry; at 12 counters each attack steals it or exiles another |
 | 6 | 🟡 [Locutus, the One Who Speaks](https://scryfall.com/card/trk/245/locutus-the-one-who-speaks) | {W}{B} | U |  | 2-mana artifact lord; or discard it for 2 damage |
 | 4 | 🟡 [The City on the Edge of Forever](https://scryfall.com/card/trk/228/the-city-on-the-edge-of-forever) | {3}{W}{B} | R |  | phases out every artifact and creature for two turns, then draw two |
 
@@ -463,7 +464,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 | Grade | Card | Cost | R | Tags | Why |
 |---|---|---|---|---|---|
 | 5.5 | 🟡 [Hemmer, Fixing What Is Broken](https://scryfall.com/card/trk/239/hemmer-fixing-what-is-broken) | {W}{U} | U |  | 2-mana 2/3 that loots whenever tapped (attack or station) |
-| 3 | 🟡 [Live Long and Prosper](https://scryfall.com/card/trk/244/live-long-and-prosper) | {5}{W}{U} | R |  | 7 mana: refill your hand |
+| 3 | 🟡 [Live Long and Prosper](https://scryfall.com/card/trk/244/live-long-and-prosper) | {5}{W}{U} | R |  | 7 mana: double your life and draw as many cards as you hold (none with an empty hand) |
 
 ### ⚪🔵 Hybrid (either color)
 
@@ -493,7 +494,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 |---|---|---|---|---|---|
 | 8 | ◇ [Crystalline Entity](https://scryfall.com/card/trk/261/crystalline-entity) | {8} | M | ★ | 8-mana 7/7 flyer that destroys every nonartifact creature |
 | 7 | ◇ [U.S.S. Enterprise-D, Galaxy-Class](https://scryfall.com/card/trk/273/uss-enterprise-d-galaxy-class) | {3} | R | ✚ | 3-mana colourless: an extra card each turn you station it; flying 4/5 at 7 |
-| 6 | ◇ [U.S.S. Cerritos, Following Up](https://scryfall.com/card/trk/272/uss-cerritos-following-up) | {5} | U |  | 5-mana colourless: two 1/1s that station it to a flying 4/4 |
+| 5.5 | ◇ [U.S.S. Cerritos, Following Up](https://scryfall.com/card/trk/272/uss-cerritos-following-up) | {5} | U |  | 5-mana colourless: two 1/1s now; a flying 4/4 at 6 counters (three turns with the tokens alone) |
 | 5 | ◇ [Engineered Explosives](https://scryfall.com/card/trk/264/engineered-explosives) | {X} | R |  | sweeps one mana value (0 to 2 in two colours), yours too; X=0 kills every token for 2 |
 | 5 | ◇ [Replicator](https://scryfall.com/card/trk/267/replicator) | {2} | R |  | 2 mana: a Food; then copies your best token for 2 a turn |
 | 4.5 | ◇ [Class-F Shuttlecraft](https://scryfall.com/card/trk/259/class-f-shuttlecraft) | {3} | C | ◆ | 3-mana any-colour rock; flying 2/4 vigilance at 6 |
@@ -503,7 +504,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 | 4 | ◇ [Type-2 Phaser](https://scryfall.com/card/trk/271/type-2-phaser) | {2} | U |  | 2 mana: stun a blocker, then +3/+0 Equipment with equip 3 |
 | 3.5 | ◇ [Cybernetic Specialist](https://scryfall.com/card/trk/262/cybernetic-specialist) | {2} | C |  | 2-mana 2/1 artifact, surveil 1 |
 | 3 | ◇ [Combadge](https://scryfall.com/card/trk/260/combadge) | {3} | U |  | two Equipment for 3; unblockable when two equipped attack |
-| 3 | ◇ [Tea, Earl Grey, Hot](https://scryfall.com/card/trk/269/tea-earl-grey-hot) | {2} | C |  | 2-mana cantrip; 2 damage or 3 life later |
+| 3 | ◇ [Tea, Earl Grey, Hot](https://scryfall.com/card/trk/269/tea-earl-grey-hot) | {2} | C |  | 2-mana cantrip; 2 damage to the opponent or 3 life later |
 | 3 | ◇ [Tricorder](https://scryfall.com/card/trk/270/tricorder) | {1} | C |  | +1/+1 Equipment that surveils on attack |
 | 3 | ◇ [Warp Core](https://scryfall.com/card/trk/274/warp-core) | {2} | C | ◆ | 2-mana artifact that finds a basic (a splash) |
 | 2.5 | ◇ [Isolinear Processor](https://scryfall.com/card/trk/266/isolinear-processor) | {2} | U |  | artifact mana and a loot |

@@ -326,3 +326,24 @@ The table lists the grade before the check, Limited Resources' letter (with its 
 | Support Mission | U | 4.5 | D (2.5) | 0.6 | 6.4 | 4.5 | Kept. The sources bracket our grade (MTG Arena Zone 6.4 above). |
 | Worf, Honor-Bound Warrior | U | 4.5 | D build-around (2.5) | 6.6 | 4.4 | 4.5 | Kept. The sources bracket our grade (Draftsim 6.6 above), and MTG Arena Zone agrees (4.4). |
 | Xindi Surveyors | C | 4.5 | D (2.5) | 3.6 | 4.4 | 4.5 | Kept. MTG Arena Zone agrees (4.4); only Limited Resources sits 1 or more away. |
+
+# Self-review of 5 November 2026 (playbook step 9, DEC-1218 R6)
+
+**A cold read of every card note against the oracle text found 3 wrong notes and 11 misleading ones, plus 9 notes that left out a condition. I fixed 23 notes and changed 1 grade: U.S.S. Cerritos, Following Up, 6 to 5.5.** Two read-only reviewers did the cold read; each one saw only the files, not my conclusions. I checked each finding against the oracle text before I changed anything.
+
+## The grade change
+
+| Card | R | Ours before | Limited Resources | Draftsim review | MTG Arena Zone | Ours now | Decision |
+|---|---|---:|---|---:|---:|---:|---|
+| U.S.S. Cerritos, Following Up | U | 6 | B (6.5) | 4.4 | 4.1 | 5.5 | Lowered half a grade. My note said the two 1/1s station it to a flying 4/4. It becomes a creature at 6 counters, so the two tokens alone take three turns. The reviews bracket our grade (mean 5.0), so I took off only the misread. |
+
+## Grades kept after a wrong note
+
+- **U.S.S. Enterprise-A, Free Spirit (8.5 ★):** my note said the three 1/1s station it at once. They give 3 counters a turn and it needs 6, so it takes two turns with the tokens alone, or one with another creature of power 3. Draftsim's review gives it 10/10 and MTG Arena Zone 4.5/5, so the bomb grade stands.
+- **Georgiou, Terran Emperor (8 ★):** the note left out the 3 life you lose each end step, and that you lose the game if she leaves while you are at 0 or less. The grade already counted the draw against the life.
+- **Q, Stacking the Deck (7.5), Borg Cube (7.5), De-evolve (6), Picard, Leading by Example (5.5), Vengeance Mission (4):** each note now says what the card does; each grade's reason still holds.
+
+## Tags
+
+- **⚡ means trick.** The builder prints ⚡ for the role `trick`; my intro called it "instant-speed". The legend now says "⚡ trick". Three sorceries lost the role: Pure Energy, Test of Conviction and Energize. Test of Courage, a 1-mana instant, gained it and now shows in section 4.
+- **✚ edge cases, not changed:** Seven of Nine, Unassimilated draws each turn at 5 land names, and Dathon, His Heart Open draws on each enchantment spell. Neither has ✚, while Kirk, Commanding Officer (also conditional) has it. Only the tie-break (step 7) reads ✚, so I left them for the back-test.

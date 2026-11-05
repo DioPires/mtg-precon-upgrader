@@ -1,6 +1,6 @@
-- **Station: tap another creature, at sorcery speed, to put charge counters equal to its power on a Spacecraft.** At the number on its stripe it becomes an artifact creature. 17 Spacecraft, 3 of them common.
+- **Station: tap another creature, at sorcery speed, to put charge counters equal to its power on a Spacecraft.** At the stripe that shows power and toughness, it becomes an artifact creature. 17 Spacecraft, 3 of them common.
 - **A creature tapped to station stays tapped through your opponent's turn and cannot block.** It may have entered this turn. Attack with vigilance creatures first, then station in your second main phase.
-- **A Spacecraft below its number is not a creature.** Creature removal cannot hit it and it cannot block. 70,000 Light-Years from Home and Guidance Failure hit Spacecraft too.
+- **A Spacecraft below its number is not a creature.** Creature removal cannot hit it, and it cannot block. These hit it: 70,000 Light-Years from Home, Guidance Failure, Malfunctioning Holodeck, Marooned, and artifact removal.
 - **Face a dilemma = choose a mode.** Each modal spell or ability ("choose one —") counts once as you choose, even if it is countered later; with no legal mode it does not count. 39 cards have modes (14 commons); 9 cards pay off.
 - **Beam me up: cast the sorcery again from your graveyard and return one of your creatures to your hand as part of the cost.** The spell is then exiled. 10 sorceries have it (5 commons); Scotty, Miracle Worker gives it to your graveyard. Return a creature with an enters ability to use it again.
 - **Strange new worlds counts the different land names you control.** Each basic type counts once, each Planet dual once, all New Planet tokens once. A two-colour deck with one dual counts 3. 13 cards.

@@ -7,7 +7,7 @@ One folder per set, named by its Scryfall set code. The tools are in
 | Set | Folder | Event | Cheat sheet | Back-test |
 |---|---|---|---|---|
 | Reality Fracture | [`fra/`](fra/) | 25 or 26 September 2026 | [`cheat_sheet.md`](fra/cheat_sheet.md), [`cheat_sheet.pdf`](fra/cheat_sheet.pdf) | Done on 1 November 2026: [`backtest/retro.md`](fra/backtest/retro.md) and [`backtest/adversarial-review.md`](fra/backtest/adversarial-review.md) |
-| Star Trek | [`trk/`](trk/) | 6 November 2026 | [`cheat_sheet.md`](trk/cheat_sheet.md), [`cheat_sheet.pdf`](trk/cheat_sheet.pdf) | Due about 1 December 2026 |
+| Star Trek | [`trk/`](trk/) | 6 November 2026 | [`cheat_sheet.md`](trk/cheat_sheet.md), [`cheat_sheet.pdf`](trk/cheat_sheet.pdf) | Due about 1 December 2026; plan: [`backtest-plan.md`](trk/backtest-plan.md) |
 
 ## Where the folders came from
 

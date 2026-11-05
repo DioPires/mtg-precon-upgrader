@@ -30,3 +30,19 @@ Event: Friday 6 November 2026, Sealed, 6 Play Boosters plus 1 foil rare or mythi
 ## Corrections to my earlier figures
 - **Modal cards: 39, not 48.** 39 cards have modes (14 commons, 14 uncommons, 9 rares, 2 mythics); I could not reproduce the 48 in my comment of 1 November. The grade notes of Captain Benjamin Sisko and Seven of Nine said 48; both now say 39.
 - **Toughness shares: use the sheet's census.** `set_facts.md` counts 181 creatures, including 16 Spacecraft with a printed toughness. The sheet's section 3 counts 165 creatures. The grade notes and `format_rules.md` now quote the sheet: 46% have toughness 2 or less, 75% 3 or less, 88% 4 or less.
+
+## Self-review of 5 November (step 9, R6)
+- **Every number on the sheet holds against its source.** The rarity gaps in the intro come from the compare scripts (ours 0.62 after the Cerritos change; Draftsim's review 1.22; Limited Resources 1.18; MTG Arena Zone 0.51). Section 2's counts (17 Spacecraft, 39 modal cards, 9 dilemma payoffs, 10 beam-me-up sorceries, 13 strange-new-worlds cards, 6 Federation cards, 6 stun cards), the toughness shares (46%, 75%, 88% of 165 creatures) and the section-3 lead (black 7 removal spells, red's mean 6.8, white 6 at common and uncommon) all recount from the card file. All 76 look-for grades match `grades.json`. WotC's land slot still reads 40% plus 10% foil common duals, so 3.0 per pool.
+- **Card notes:** 23 fixed, 1 grade changed (`grade_review_log.md`, last section).
+- **Rules text fixed:**
+  - Station: a Spacecraft becomes a creature at the stripe that shows power and toughness, not at its first stripe (D-7 Battle Cruiser has a 3+ stripe and is a creature at 8+; Deep Space 9 never is).
+  - Spacecraft removal: Malfunctioning Holodeck, Marooned and artifact removal hit a Spacecraft too, beside 70,000 Light-Years from Home and Guidance Failure.
+  - UB plan: a modal spell or ability triggers the dilemma cards once, however many modes you choose.
+  - UG plan: the "4 of the 6 coloured fixers" figure depended on our tags; the plan now names green's four fixers.
+- **Procedure wording now matches the page's pool counter:** a hybrid card counts once per pair; a ★ counts as two 6+ cards; step 4 counts colourless non-land cards (the 20 lands are graded 4 and are not playables). The browser check still finds 0 of 382 numbers different.
+- **Splash sources:** David and Carol Marcus, Creators makes a New Planet token that taps for any colour, so step 5 now lists it. The table above counted only Class-F Shuttlecraft and Xenobotanist, so the shares with 4+ sources are a little higher than 40%. Saurian Explorer makes a New Planet only for {6}, so it is not listed.
+- **Builder issues left for the leg after the event (with R7 and the Chrome 156 exit):**
+  - Eject the Warp Core and Genesis Effect read "≤6 (100%)"; V'Ger, the Intruder and Crystalline Entity have toughness 7, so the share is 99% (163 of 165).
+  - Common Goal's label says "fight"; it is one-sided, and two of your creatures can add their power.
+  - Section 3's census leaves out Captain Pike (toughness */*): 165 creatures, not 166.
+  - Section 4 sorts by printed cost. Red Alert! costs {R} when a creature attacks you, and Guidance Failure {2}{U} on an attacker; the notes say so, the cost column does not.
