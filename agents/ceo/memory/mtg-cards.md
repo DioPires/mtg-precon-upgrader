@@ -202,3 +202,9 @@ A card that a reveal puts onto the battlefield is not cast. Zacama, Primal Calam
 The board wants the deck to win mainly through combat with big creatures. Noncombat damage is fine when it makes sense, as long as the deck does not rely on it alone. DEC-935 ("big creature enters, big creatures attack") set combat as the main plan; it did not ban noncombat finishers. Do not reject a card only because its finisher is noncombat (my DEC-1215 round-1 error on Summon: Bahamut). Infect is a separate axis: Blightsteel's poison does not add to the team's life damage.
 - The board owns Summon: Bahamut although `priv_data/Owned.csv` (ManaBox export) does not list it (2026-10-20). Ask before calling a card "not owned" on price grounds when the board names it.
 - Source: DEC-1215 comments d51ad55a, 111d617b, 9edede25, 2026-10-20
+
+---
+
+### Necklace of Girion and Dragon-Cursed Halls (DEC-1226, 2026-11-05)
+- Necklace of Girion ({2}{G} legendary artifact, taps for {G}) puts a +1/+1 counter on a creature you control for each green spell cast and each Forest that enters. In Verdant Tide its best use is Marwyn (each counter is +1 mana per tap, +2 a turn with Dionus). Eladamri cannot cast or reveal it (not a creature), and every tutor in the deck finds creatures only. Proposed for Patchwork Banner (same 3-mana artifact slot).
+- Dragon-Cursed Halls: DEC-543 rejected it for a lost colored source. That objection holds only when it replaces a colored land. For another colorless-only land (Fountainport) no source count changes. Its Treasure costs 2 mana (net 1) against Fountainport's 5 (net 4), but needs a creature to deal combat damage to a player.
