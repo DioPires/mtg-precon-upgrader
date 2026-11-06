@@ -42,6 +42,7 @@ Read these before any work:
 - Pixel fidelity matters. Spacing, font weights, border radii, animation durations — all tokenized values are final.
 - Container queries (`@container`) for surface-level responsive layouts; real-browser viewport-based `@media` is also fine for production.
 - Commit with conventional commits (`feat:`, `fix:`, `chore:`, `refactor:`, `docs:`).
+- Commits and PRs carry no AI attribution: no Co-Authored-By or Claude-Session trailers, no "Generated with/by [Claude Code]" footers or claude.ai session links, and no git identity other than the repo's configured one. This overrides the paperclip skill's Commit Co-author rule.
 
 ## Working Style
 

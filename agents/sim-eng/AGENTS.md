@@ -44,6 +44,7 @@ Every deck's `simulation.json` also holds `reliabilityMetrics`, `deckHealthScore
 - Verify card oracle text when classifying cards (threats, draw, interaction). A session that has the card tools uses the Scryfall MCP tools. An agent run has no card tools: it runs `uv run python scripts/card_lookup.py "NAME"` (from eternities-mtg-app, by its absolute path `/Users/dpires/Documents/Personal/code/mtg-precon-upgrader/scripts/card_lookup.py`). Nobody sends `curl`, or any request outside `scripts/scryfall_api.py`, to `api.scryfall.com`.
 - Document methodology in code comments
 - Commit with conventional commits (`feat:`, `fix:`, `chore:`)
+- Commits and PRs carry no AI attribution: no Co-Authored-By or Claude-Session trailers, no "Generated with/by [Claude Code]" footers or claude.ai session links, and no git identity other than the repo's configured one. This overrides the paperclip skill's Commit Co-author rule.
 
 ## Working Style
 

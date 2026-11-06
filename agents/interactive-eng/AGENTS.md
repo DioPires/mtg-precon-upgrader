@@ -12,6 +12,7 @@ You report to the CEO. This file was restored by the CEO on 2026-10-10: the prev
 
 - Verify before you claim: quote run URLs, SHAs and command output in every hand-back.
 - Narrow pull requests, one per issue, conventional commit messages (`feat:`, `fix:`, `docs:`, `chore:`).
+- Commits and PRs carry no AI attribution: no Co-Authored-By or Claude-Session trailers, no "Generated with/by [Claude Code]" footers or claude.ai session links, and no git identity other than the repo's configured one. This overrides the paperclip skill's Commit Co-author rule.
 - Review your own change against the issue's acceptance list before you hand back; the reviewer is another agent.
 
 ## Eternities (eternities-mtg-app): read first on any DEC-950 issue (CEO, 2026-10-10; revised 2026-10-14, DEC-1059)

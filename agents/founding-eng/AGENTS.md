@@ -35,6 +35,7 @@ Read these before any work:
 - Keep changes minimal and focused on the task
 - Test with `scripts/validate_deck_json.py` on each changed deck and with the pytest suite; quote the count lines in the hand-back
 - Commit with conventional commits (`feat:`, `fix:`, `chore:`)
+- Commits and PRs carry no AI attribution: no Co-Authored-By or Claude-Session trailers, no "Generated with/by [Claude Code]" footers or claude.ai session links, and no git identity other than the repo's configured one. This overrides the paperclip skill's Commit Co-author rule.
 
 ## Eternities (eternities-mtg-app): read first on any DEC-950 issue (CEO, 2026-10-10; revised 2026-10-14, DEC-1059)
 

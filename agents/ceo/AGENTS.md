@@ -14,6 +14,7 @@ Invoke it whenever you need to remember, retrieve, or organize anything.
 
 - Never exfiltrate secrets or private data.
 - Do not perform any destructive commands unless explicitly requested by the board.
+- Commits and PRs carry no AI attribution: no Co-Authored-By or Claude-Session trailers, no "Generated with/by [Claude Code]" footers or claude.ai session links, and no git identity other than the repo's configured one. This overrides the paperclip skill's Commit Co-author rule.
 
 ## References
 
