@@ -7,7 +7,7 @@ returned HTTP 429, and the `en-orig` track downloaded:
 The board sent the link on 6 November 2026 at 15:38Z, the day of the event.
 
 **Result.** Joel's set numbers hold against the card file, with one small miss. His card calls
-change no grade before the event: on every card where he differs a lot from us, at least one of
+changed one grade, at the board's request: Stable Wormhole, 3 to 4 (6 November, 15:56Z). On every other card where he differs a lot from us, at least one of
 Draftsim's review and MTG Arena Zone's review sits with our grade or above it. His pair order is
 not on the sheet. It ranks the pairs by their common removal, and the Reality Fracture back-test
 found that removal predicted the pairs' results poorly. Question 11 of `backtest-plan.md` scores it.
@@ -63,7 +63,7 @@ raw: MTG Arena Zone rates 0 to 5 and Draftsim's review 0 to 10.
 | Sarek, Federation Ambassador | 5 | 1.5 | 6 | Five creature types will not happen | Keep. The reviews bracket ours. Our count of 3 November found five types on 90% of boards with two other creatures. Joel gives no count. |
 | Collation Trimatrix | 5.5 | 3.0 | 7 | A 1/1 for 1 in most pools | Keep. The reviews bracket ours, and the note names its WB home. |
 | Dr. Joseph M'Benga | 5.5 | 3.0 | 4 | A 3/3 for 4 without counters | Keep. The reviews bracket ours. |
-| Stable Wormhole | 3 | 2.0 | 4 | B+ to A | No change before the event. Both reviews sit above ours, and our note misses that each New Planet also triggers landfall, and the first one adds a land name. A re-read would raise it to 4, which makes it a playable in step 4. It matters only if the board opens it. |
+| Stable Wormhole | 3 | 2.0 | 4 | B+ to A | Raised to 4 on 6 November at the board's request (comment of 15:56Z), and the sheet, the PDF and the page were rebuilt. Both reviews sit above ours, and our note missed that each New Planet also triggers landfall, and the first one adds a land name. It is now a playable in step 4, a splash source in step 5 and on RG's look-for list. |
 
 His other calls agree with our grades or sit near them: U.S.S. Enterprise-A (S+, ours 8.5 ★),
 U.S.S. Discovery (S, 8.5 ★), Borg Cube (7.5), Excalbian Gamemaster (A, 8.5 ★), Armus (8 ★),

@@ -347,3 +347,21 @@ The table lists the grade before the check, Limited Resources' letter (with its 
 
 - **⚡ means trick.** The builder prints ⚡ for the role `trick`; my intro called it "instant-speed". The legend now says "⚡ trick". Three sorceries lost the role: Pure Energy, Test of Conviction and Energize. Test of Courage, a 1-mana instant, gained it and now shows in section 4.
 - **✚ edge cases, not changed:** Seven of Nine, Unassimilated draws each turn at 5 land names, and Dathon, His Heart Open draws on each enchantment spell. Neither has ✚, while Kirk, Commanding Officer (also conditional) has it. Only the tie-break (step 7) reads ✚, so I left them for the back-test.
+
+# Change of 6 November 2026: Stable Wormhole (board request)
+
+**Stable Wormhole goes from 3 to 4.** I proposed the raise in the check of Joel Are Magic's guide
+(`joel_guide_check.md`) and held it back on the day of the event. The board asked for it at 15:56Z, so I
+made it and rebuilt the sheet, the PDF and the page.
+
+| Card | R | Ours before | Limited Resources | Draftsim review | MTG Arena Zone | Joel | Ours now | Decision |
+|---|---|---:|---|---:|---:|---|---:|---|
+| Stable Wormhole | R | 3 | not graded (rare) | 4.4 | 4.1 | B+ to A | 4 | Raised. Each attack makes a tapped New Planet that taps for any colour: ramp, fixing and a landfall trigger. My note counted the colour only. Only the first New Planet adds a land name, because every token has the same name. Both reviews sit about 1 above our old grade after the offset (Draftsim's review 4 of 10, MTG Arena Zone 2 of 5), and Joel grades it B+ to A. |
+
+Two text changes follow from the grade:
+
+- **Step 5's sources** now name Stable Wormhole. David and Carol Marcus, Creators is a source for one New Planet;
+  Stable Wormhole makes one on each attack.
+- **RG's look-for list** adds Stable Wormhole [4]. Each New Planet triggers landfall, as an extra land drop does.
+
+No ✚: a land token is not a card (playbook step 3). The grade sits under 6, so no count of 6+ cards changes.

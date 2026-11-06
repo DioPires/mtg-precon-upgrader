@@ -20,6 +20,7 @@ draftsim_review_ratings.json the review's raw 0-10 ratings.
 Check (4 November, R1): against Limited Resources 878 (commons and uncommons, published 3 November; grades
 read from the episode's auto-captions); 27 gaps of 2+ re-read, 11 grades changed, each reason in
 grade_review_log.md. grades_src_pre_lr.py keeps the grades before this check, lr_grades.json the hosts' letters.
+Change (6 November, board request on the Joel Are Magic check): Stable Wormhole 3 to 4; reason in grade_review_log.md.
 Tuple: (name, grade, roles, note, synergy); no synergy grades in this set (the sim is not run)."""
 
 G = [
@@ -247,7 +248,7 @@ G = [
 ('Genesis Device', 3, ['fixing'], '3-mana artifact that ramps a land', None),
 ('Holo-Engineer', 8, ['bomb'], '4 mana: two 3/3s; every later token is a 3/3', None),
 ('MACO Strike Team', 3.5, ['threat'], '1-mana 2/1; a 1/1 when they target your creatures', None),
-('Stable Wormhole', 3, ['fixing'], 'a tapped any-colour land each time you attack', None),
+('Stable Wormhole', 4, ['fixing'], '3-mana: a tapped any-colour New Planet each time you attack; ramp, fixing and a landfall trigger; the first adds a land name', None),
 ('U.S.S. Discovery, at Black Alert', 8.5, ['bomb', 'cardadv'], '5-mana Spacecraft: discover 5 on entry and on each attack; flying 5/5 at 6', None),
 ('Captain Kathryn Janeway', 6, ['threat', 'cardadv'], '4-mana 2/3; an extra land a turn; every creature explores', None),
 ("Dr. Joseph M'Benga", 5.5, ['threat'], '4-mana 3/3; doubles counters; countered creatures get hexproof (GW)', None),
