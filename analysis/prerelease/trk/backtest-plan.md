@@ -85,10 +85,23 @@ Written on 5 November 2026, before the event of 6 November and before Arena open
 10. **Your feedback after the event (step 10).** The pair you played, your record, and what in
     the sheet, the PDF or the page helped or misled you. It goes into `notes.md`. It changes the
     sheet's layout; it does not change a grading rule by itself.
+11. **A pair order by common removal (added 6 November).** Joel Are Magic's guide of 4 November
+    ranks the pairs RW, RG, GW, BR, WB, WU, UR, BG, GU, UB, by each pair's common removal
+    (`joel_guide_check.md`). WotC's prerelease guide advises at least five removal spells.
+    Score his order against the pairs' 17Lands Sealed win rates, as the Reality Fracture pair
+    ranking was scored. With 10 pairs the interval is wide: Reality Fracture's ranking scored
+    -0.09, with an interval of -0.68 to +0.57.
+    - Also count each pair's common and uncommon removal by our tags, and score that count
+      against the same win rates.
+    - If his order or the removal count scores +0.5 or more: re-open R4 (no removal floor) with
+      both sets' results, and the next sheet may print his order beside the archetypes as one
+      source's view, with its score.
+    - If both score under +0.5: the order stays off the sheet, and R4 stands.
 
 ## Not tested
 
-- Rares and mythics: 17Lands publishes no useful data for them.
+- Rares and mythics: 17Lands publishes no useful data for them. So Joel Are Magic's calls on
+  the rares and mythics (`joel_guide_check.md`) cannot be scored either.
 - The ten archetype plans and the hand procedure as a whole: one player's result cannot score
   them.
 - The pair simulation (R3): Star Trek has no collation config.
