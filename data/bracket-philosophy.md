@@ -100,7 +100,7 @@ A tutor plays as an extra copy of the best piece still in your library. The comb
 
 Any proposal that adds a T1 or T2 tutor to a deck labeled B3 or lower must include a "bracket implication" line with three parts:
 
-1. **GC accounting** — is the tutor a GC, and what is the deck's GC count after the add (cap 3 at ≤B3; verdant-tide capped at 1 per DEC-369)?
+1. **GC accounting** — is the tutor a GC, and what is the deck's GC count after the add (cap 3 at ≤B3; no deck has its own cap, DEC-687: over the cap, the label moves)?
 2. **Consistency shift** — projected comboLethal/lethalProxy movement, or a stated reason the tutor does not feed a win line.
 3. **Relabel exposure** — whether the add pushes the deck toward the next bracket, noting the relabel floor is GC-gated (DEC-374).
 

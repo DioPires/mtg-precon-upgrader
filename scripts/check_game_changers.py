@@ -13,8 +13,9 @@ Three checks, any failure exits 1:
 3. **Fleet recount** — every deck's `gameChangers` field must equal the count
    of its `decklist` names on the GC list (front face for MDFCs), and the
    count must respect the bracket cap: brackets 1-3 and 3+ cap at 3 GCs,
-   4-/4/4+/5 are uncapped, plus per-deck hard caps set by the board
-   (DEC-369: verdant-tide <= 1).
+   4-/4/4+/5 are uncapped. No deck has its own cap (the user, DEC-687,
+   superseding DEC-369's verdant-tide <= 1): a count over the bracket cap
+   means the label moves.
 
 Policy context: AGENTS.md "Fleet Re-Audit Policy". On list drift, update the
 JSON + TS copies together, then re-run for the corrected fleet recount.
@@ -40,9 +41,6 @@ INDEX_JSON = PROJECT_ROOT / "data" / "index.json"
 COMMANDERS_DIR = PROJECT_ROOT / "data" / "commanders"
 
 SCRYFALL_SEARCH = "https://api.scryfall.com/cards/search"
-
-# Board-set hard caps (DEC-369); bracket caps are derived from `bracket`.
-HARD_CAPS = {"verdant-tide": 1}
 
 
 def front_face(name: str) -> str:
@@ -98,11 +96,10 @@ def check_fleet(gc_names: set[str]) -> list[str]:
             problems.append(
                 f"{deck_id}: gameChangers field {field} != recount {len(actual)} ({actual})"
             )
-        cap = HARD_CAPS.get(deck_id, bracket_cap(deck.get("bracket")))
+        cap = bracket_cap(deck.get("bracket"))
         if cap is not None and len(actual) > cap:
-            cap_kind = "hard cap" if deck_id in HARD_CAPS else "bracket cap"
             problems.append(
-                f"{deck_id}: {len(actual)} GCs exceeds {cap_kind} {cap} "
+                f"{deck_id}: {len(actual)} GCs exceeds bracket cap {cap} "
                 f"(bracket {deck.get('bracket')}): {actual}"
             )
     return problems
