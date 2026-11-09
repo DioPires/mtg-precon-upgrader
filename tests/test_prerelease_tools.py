@@ -2,7 +2,9 @@
 
 No network: dump_set is exercised against a nine-card fixture cut from the
 Reality Fracture dump. The two regression tests rebuild the DEC-925 worked
-example and compare byte for byte with what is committed.
+example and compare byte for byte with what is committed: the grades with
+analysis/prerelease/fra/grades.json, the cheat sheet with its copy under
+tests/fixtures/prerelease (DEC-1227).
 """
 
 from __future__ import annotations
@@ -25,6 +27,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "prerelease"))
 import build_cheat_sheet  # noqa: E402
 import build_grades  # noqa: E402
 import build_html  # noqa: E402
+import build_pdf  # noqa: E402
 import compare_grades  # noqa: E402
 import dump_set  # noqa: E402
 import setlib  # noqa: E402
@@ -151,6 +154,84 @@ def test_set_facts_counts_mechanics_case_insensitively(fixture_cards, fixture_pr
     assert "empower jace" in setlib.oracle_text(
         next(c for c in fixture_cards if c["name"] == "Academic Ascent")
     )
+
+
+# DEC-1227 (R7): the keyword split and the set mechanics, on the Star Trek dumps in place.
+
+
+@pytest.fixture(scope="module")
+def trk_facts() -> str:
+    cards = json.loads((TRK / "trk_all_cards.json").read_text(encoding="utf-8"))
+    prints = json.loads((TRK / "trk_all_prints.json").read_text(encoding="utf-8"))
+    info = dump_set.info_from_dump(str(TRK), "trk", cards)
+    return dump_set.set_facts(cards, prints, info, dump_set.load_mechanics(str(TRK)))
+
+
+def _table(text: str, heading: str) -> dict:
+    """The rows of the table under `heading`: first cell -> the other cells."""
+    lines = text.split("\n")
+    start = lines.index(heading)
+    rows = {}
+    for line in lines[start + 1:]:
+        if line.startswith("## "):
+            break
+        if line.startswith("| ") and not line.startswith("|---"):
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            rows[cells[0]] = cells[1:]
+    return rows
+
+
+def test_set_facts_lists_no_mode_name_as_a_row(trk_facts):
+    for mode_name in ("Kill", "Stun", "Battle Stations", "Open a Channel", "Shoot to Kill", "Hail"):
+        assert f"| {mode_name} |" not in trk_facts
+    assert '35 more labels stand before " — " on one card each;' in trk_facts
+    assert "are not mechanics" in trk_facts
+
+
+def test_set_facts_puts_landfall_and_strange_new_worlds_under_ability_words(trk_facts):
+    words = _table(trk_facts, "## Ability words")
+    assert words == {"Ability word": ["Cards"], "Strange new worlds": ["13"], "Landfall": ["9"]}
+    keywords = _table(trk_facts, "## Keywords (Scryfall `keywords` field)")
+    assert "Landfall" not in keywords and "Strange new worlds" not in keywords
+    assert keywords["Surveil"] == ["22"] and keywords["Face a dilemma"] == ["8"]
+    # The oracle-text table counts the keywords and the ability words only.
+    terms = _table(trk_facts, "## Mechanics in oracle text (case-insensitive)")
+    assert set(terms) - {"Term"} == (set(keywords) | set(words)) - {"Keyword", "Ability word"}
+
+
+def test_set_facts_counts_the_set_mechanics_of_mechanics_json(trk_facts):
+    rows = _table(trk_facts, "## Set mechanics (from `mechanics.json`)")
+    assert rows == {
+        "Term": ["Cards", "C", "U", "R", "M"],
+        "Station": ["17", "3", "5", "6", "3"],
+        "Dilemma": ["9", "2", "4", "3", "0"],
+        "Beam me up": ["11", "5", "4", "1", "1"],
+        "Strange new worlds": ["13", "2", "5", "5", "1"],
+        "Assimilate": ["2", "0", "0", "0", "2"],
+        "Stun counter": ["6", "2", "3", "1", "0"],
+        "Modal": ["39", "14", "14", "9", "2"],
+    }
+
+
+def test_set_facts_without_mechanics_json_has_no_set_mechanics_table(fixture_cards, fixture_prints):
+    info = {"name": "x", "code": "x", "released_at": "", "card_count": 0}
+    assert "## Set mechanics" not in dump_set.set_facts(fixture_cards, fixture_prints, info)
+
+
+def test_is_label_needs_every_occurrence_before_the_dash():
+    stun = {"oracle_text": "Choose one —\n• Stun — Tap it and put a stun counter on it.\n• Kill — 3 damage."}
+    assert dump_set.is_label("Stun", [stun]) and dump_set.is_label("Kill", [stun])
+    flying = {"oracle_text": "Flying\nWhen this enters, draw a card."}
+    assert not dump_set.is_label("Flying", [flying])
+    # One card that prints it as a keyword makes it no label.
+    landfall = {"oracle_text": "Landfall — Whenever a land you control enters, scry 1."}
+    assert dump_set.is_label("Landfall", [landfall, landfall])
+    assert not dump_set.is_label("Landfall", [landfall, {"oracle_text": "It has landfall."}])
+
+
+def test_from_dump_rebuilds_the_committed_star_trek_set_facts(trk_facts):
+    assert trk_facts == (TRK / "set_facts.md").read_text(encoding="utf-8")
+    assert "| <= 2, common creatures with mana value 3 or less | 23 of 28 | 82% |" in trk_facts
 
 
 # --------------------------------------------------------------- build_grades
@@ -363,20 +444,25 @@ def test_half_grade_builds_and_prints(tmp_path, fixture_cards):
 
 
 def test_kill_share_reads_star_trek_wordings():
-    # DEC-1220: the Star Trek dump in place; census 46% / 75% / 88% at toughness 2 / 3 / 4.
+    # DEC-1220: the Star Trek dump in place; census 46% / 75% / 88% / 99% at toughness 2 / 3 / 4 / 6.
     cards = {c["name"]: c for c in setlib.load_cards(str(TRK))}
     _, cum, _, _ = build_cheat_sheet.toughness_census(cards)
     expected = {
         "Command Decision": "power 4+ only",
         "De-evolve": "lock",
-        "Eject the Warp Core": "≤2 toughness (46%) or ≤6 (100%)",
+        "Eject the Warp Core": "≤2 toughness (46%) or ≤6 (99%)",
+        # V'Ger, the Intruder and Crystalline Entity have toughness 7: 163 of 165 (DEC-1227).
+        "Genesis Effect": "≤6 toughness (99%)",
         "Planetary Bombardment": "≤2 toughness (46%) or ≤4 (88%)",
         "Set Phasers to . . .": "≤3 toughness (75%), attackers only",
         "U.S.S. Excelsior, Cutting Edge": "tapped only",
         "Resistance Is Futile": "nonartifact only",
         "Marooned": "lock",
         "Khaaaaaaaaaaaannn!": "all (2X damage)",
-        "Common Goal": "fight (your creature's power)",
+        # One-sided: only your creatures deal damage (DEC-1227).
+        "Common Goal": "bite (one or two of your creatures)",
+        # A real fight: both creatures deal damage.
+        "Amok Time": "fight (your creature's power)",
     }
     got = {name: build_cheat_sheet.kill_share({}, cards[name], cum) for name in expected}
     assert got == expected
@@ -441,6 +527,50 @@ def test_link_cards_links_the_front_face_and_only_whole_names():
         "[Blossom-Blessed Angel // Seed Suture](https://s/a); Hemmer loots; "
         "Warp Cores; [Warp Core](https://elsewhere)"
     )
+
+
+def test_kill_share_reads_a_bite_on_one_creature():
+    card = {"oracle_text": "Target creature you control deals damage equal to its power to "
+            "target creature you don't control."}
+    assert build_cheat_sheet.kill_share({}, card, {t: 0.5 for t in range(7)}) == "bite (your creature's power)"
+
+
+def test_census_line_names_the_creature_it_leaves_out(trk_sheets):
+    plain, _, _ = trk_sheets
+    assert (
+        "**What removal kills.** Toughness of the set's 165 creatures with a fixed toughness "
+        "(not counted: Captain Pike, Fullness of Time, \\*/\\*):"
+    ) in plain.split("\n")
+    # The table's "6+" column still counts 6 or more: every creature.
+    assert "| Cumulative | 20% | 46% | 75% | 88% | 94% | 100% |" in plain.split("\n")
+
+
+def test_cheap_commons_line_follows_the_colour_line(trk_sheets):
+    plain, _, _ = trk_sheets
+    lines = plain.split("\n")
+    i = next(i for i, l in enumerate(lines) if l.startswith("Share with toughness 3 or less, by colour:"))
+    assert lines[i + 1:i + 5] == [
+        "",
+        "Common creatures with mana value 3 or less: 2 damage kills 23 of 28 (82%).",
+        "",
+        "A fight: both creatures deal damage. A bite: only your creature deals damage.",
+    ]
+
+
+def test_section_4_prints_a_cost_reduction_and_sorts_by_the_reduced_cost(trk_sheets):
+    plain, _, _ = trk_sheets
+    section = _section(plain, 4)
+    red = section[section.index("- 🔴 **R**") + 1:section.index("- 🟢 **G**")]
+    assert red[0] == "    - Red Alert! ({2}{R}, or {R} if a creature is attacking you)"
+    assert "    - Guidance Failure ({3}{U}, or {2}{U} if it targets an attacking creature)" in section
+
+
+def test_reduced_cost_takes_generic_mana_only():
+    assert build_cheat_sheet.reduced_cost("{2}{R}", 2) == "{R}"
+    assert build_cheat_sheet.reduced_cost("{3}{U}", 1) == "{2}{U}"
+    assert build_cheat_sheet.reduced_cost("{1}{B}", 2) == "{B}"
+    assert build_cheat_sheet.reduced_cost("{W}{W}", 1) == "{W}{W}"
+    assert build_cheat_sheet.reduced_cost("{2}", 2) == "{0}"
 
 
 # DEC-1225: a note prints as written. "3-mana */*" is a power, not emphasis, so
@@ -769,6 +899,28 @@ def test_page_links_only_scryfall_card_pages_and_its_own_anchors(trk_page):
     assert len(found) == len(hrefs) - len(anchors)
 
 
+# ------------------------------------------------------------------ build_pdf
+# DEC-1227: Chrome 156 can exit with an error after it writes the whole PDF.
+
+
+def test_pdf_complete_accepts_a_whole_file():
+    assert build_pdf.pdf_complete(b"%PDF-1.4 body %%EOF", min_bytes=10)
+    assert build_pdf.pdf_complete(b"%PDF-1.4 body %%EOF\n\r\n ", min_bytes=10)
+    assert build_pdf.pdf_complete(b"%PDF-1.4\n" + b"x" * build_pdf.MIN_PDF_BYTES + b"\n%%EOF\n")
+
+
+def test_pdf_complete_rejects_a_short_cut_or_foreign_file():
+    assert not build_pdf.pdf_complete(b"")
+    assert not build_pdf.pdf_complete(b"%PDF-1.4 body %%EOF")  # 10 kB or less
+    assert not build_pdf.pdf_complete(b"%PDF-1.4 body cut here", min_bytes=10)
+    assert not build_pdf.pdf_complete(b"<html>body</html> %%EOF", min_bytes=10)
+    assert not build_pdf.pdf_complete(b"%PDF-1.4 %%EOF then more", min_bytes=10)
+
+
+def test_stderr_tail_keeps_the_last_lines():
+    assert build_pdf.stderr_tail(b"a\nb\nc\nd\n", lines=2) == "c\nd"
+
+
 # ------------------------------------------------------------ compare_grades
 
 
@@ -839,4 +991,6 @@ def test_build_cheat_sheet_reproduces_the_dec925_cheat_sheet(tmp_path):
     ):
         shutil.copy(DEC925 / name, work / name)
     built = build_cheat_sheet.build(str(work))
-    assert built == (DEC925 / "cheat_sheet.md").read_text(encoding="utf-8")
+    # The shipped analysis/prerelease/fra/cheat_sheet.md stays as it is; the
+    # fixture is its copy, rebuilt with the fixes of DEC-1227.
+    assert built == (FIXTURES / "fra_cheat_sheet_expected.md").read_text(encoding="utf-8")

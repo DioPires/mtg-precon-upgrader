@@ -29,6 +29,7 @@ Set `CODE` to the Scryfall set code and `DIR` to `analysis/prerelease/CODE`.
    uv run python scripts/prerelease/dump_set.py --set CODE --out-dir DIR
    ```
    Writes the card dump, the prints dump, the grading sheet, and `set_facts.md` (rarity and colour counts, keyword and oracle-text mechanic counts, toughness census, collector-number gaps, watermarks, two-colour uncommons per pair). Check the rarity totals against WotC's article. Collector gaps are usually showcase-first printings, not missing cards; the tool resolves each one against the prints dump. `--from-dump` rebuilds the two text files from dumps already on disk, without the network.
+   Write `DIR/mechanics.json` from WotC's mechanics article: one `{"term": ..., "pattern": ...}` per mechanic, a case-insensitive regular expression over the oracle text. `set_facts.md` then counts each mechanic by rarity; `--from-dump` rewrites it without the network.
 2. **Collation config.** Copy `scripts/prerelease/collation_template.json` to `DIR/collation.json`. Fill every slot from the WotC article's verbatim slot text. Rules:
    - Sum every treatment of the same card class inside a slot (non-foil plus foil plus showcase). A foil dual is still a dual. This was the DEC-925 error.
    - Booster-fun variants of rares and mythics are still rares and mythics; fold them proportionally.

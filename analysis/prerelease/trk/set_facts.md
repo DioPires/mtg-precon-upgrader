@@ -41,15 +41,29 @@ Colour here is Scryfall's `colors` field. Gold cards count once, under their pai
 | GRU | 0 | 0 | 1 | 0 | 1 |
 | C | 16 | 10 | 19 | 3 | 48 |
 
+## Set mechanics (from `mechanics.json`)
+
+Written by hand from WotC's mechanics article. Each pattern is a case-insensitive regular expression over the oracle text of every face; a card counts once.
+
+| Term | Cards | C | U | R | M |
+|---|---:|---:|---:|---:|---:|
+| Station | 17 | 3 | 5 | 6 | 3 |
+| Dilemma | 9 | 2 | 4 | 3 | 0 |
+| Beam me up | 11 | 5 | 4 | 1 | 1 |
+| Strange new worlds | 13 | 2 | 5 | 5 | 1 |
+| Assimilate | 2 | 0 | 0 | 0 | 2 |
+| Stun counter | 6 | 2 | 3 | 1 | 0 |
+| Modal | 39 | 14 | 14 | 9 | 2 |
+
 ## Keywords (Scryfall `keywords` field)
+
+A label that the text prints directly before " — " is an ability word or a mode name, under "Ability words" below.
 
 | Keyword | Cards |
 |---|---:|
 | Surveil | 22 |
 | Station | 17 |
-| Strange new worlds | 13 |
 | Flying | 9 |
-| Landfall | 9 |
 | Face a dilemma | 8 |
 | Flash | 7 |
 | Menace | 7 |
@@ -74,68 +88,37 @@ Colour here is Scryfall's `colors` field. Gold cards count once, under their pai
 | Deathtouch | 2 |
 | Double | 2 |
 | Food | 2 |
-| Abandon Ship | 1 |
 | Affinity | 1 |
-| Alter the Past | 1 |
-| Battle Stations | 1 |
-| Begin Negotiations | 1 |
-| Cloaking Device | 1 |
-| Come in Peace | 1 |
 | Defender | 1 |
-| Destroy the Relic | 1 |
 | Discover | 1 |
 | Explore | 1 |
 | Fight | 1 |
-| Follow the 98th Rule | 1 |
-| Hail | 1 |
-| Hailing Frequencies | 1 |
 | Heal | 1 |
-| I Am Klingon | 1 |
-| I Am Starfleet | 1 |
-| Interfere | 1 |
-| Kill | 1 |
-| Obliterate the Transwarp Network | 1 |
-| Observe | 1 |
-| Of the Obsidian Order | 1 |
-| Open a Channel | 1 |
-| Plain, Simple Garak | 1 |
-| Power to Engines | 1 |
-| Power to Life Support | 1 |
-| Reckless Behavior | 1 |
-| Remain Fused | 1 |
-| Repair the Timeline | 1 |
-| Rewrite the Past | 1 |
-| Sensors | 1 |
-| Shaka, When the Walls Fell | 1 |
-| Shoot to Kill | 1 |
-| Stun | 1 |
 | Sunburst | 1 |
-| Surgical Separation | 1 |
-| Temba, His Arms Wide | 1 |
-| Threshold | 1 |
-| Transfer Symbiont | 1 |
-| Transport | 1 |
-| Use the Relic | 1 |
+
+## Ability words
+
+Labels of the `keywords` field that the text prints directly before " — ", on 2 or more cards.
+
+| Ability word | Cards |
+|---|---:|
+| Strange new worlds | 13 |
+| Landfall | 9 |
+
+35 more labels stand before " — " on one card each; they name that card's modes or abilities and are not mechanics, so no table here counts them.
 
 ## Mechanics in oracle text (case-insensitive)
 
-Counted over all faces, lower-cased. Reminder text writes keyword actions in lower case, so a case-sensitive count undercounts them.
+Counted over all faces, lower-cased. Reminder text writes keyword actions in lower case, so a case-sensitive count undercounts them. The terms are the keywords and the ability words above.
 
 | Term | Cards |
 |---|---:|
-| Abandon Ship | 1 |
 | Affinity | 1 |
-| Alter the Past | 1 |
 | Assimilate | 2 |
 | Basic landcycling | 5 |
-| Battle Stations | 1 |
-| Begin Negotiations | 1 |
-| Cloaking Device | 1 |
-| Come in Peace | 1 |
 | Cycling | 5 |
 | Deathtouch | 3 |
 | Defender | 1 |
-| Destroy the Relic | 1 |
 | Discover | 1 |
 | Double | 4 |
 | Enchant | 16 |
@@ -146,52 +129,24 @@ Counted over all faces, lower-cased. Reminder text writes keyword actions in low
 | First strike | 5 |
 | Flash | 7 |
 | Flying | 27 |
-| Follow the 98th Rule | 1 |
 | Food | 2 |
-| Hail | 2 |
-| Hailing Frequencies | 1 |
 | Haste | 18 |
 | Heal | 1 |
-| I Am Klingon | 1 |
-| I Am Starfleet | 1 |
-| Interfere | 1 |
 | Investigate | 6 |
 | Kicker | 3 |
-| Kill | 2 |
 | Landcycling | 5 |
 | Landfall | 9 |
 | Lifelink | 5 |
 | Menace | 10 |
 | Mill | 3 |
-| Obliterate the Transwarp Network | 1 |
-| Observe | 1 |
-| Of the Obsidian Order | 1 |
-| Open a Channel | 1 |
-| Plain, Simple Garak | 1 |
-| Power to Engines | 1 |
-| Power to Life Support | 1 |
 | Reach | 5 |
-| Reckless Behavior | 1 |
-| Remain Fused | 1 |
-| Repair the Timeline | 1 |
-| Rewrite the Past | 1 |
-| Sensors | 1 |
-| Shaka, When the Walls Fell | 1 |
-| Shoot to Kill | 1 |
 | Station | 18 |
 | Strange new worlds | 13 |
-| Stun | 6 |
 | Sunburst | 1 |
-| Surgical Separation | 1 |
 | Surveil | 22 |
-| Temba, His Arms Wide | 1 |
-| Threshold | 1 |
 | Trample | 10 |
-| Transfer Symbiont | 1 |
-| Transport | 2 |
 | Treasure | 5 |
 | Typecycling | 0 |
-| Use the Relic | 1 |
 | Vigilance | 13 |
 | Ward | 5 |
 
@@ -205,6 +160,7 @@ Counted over all faces, lower-cased. Reminder text writes keyword actions in low
 | <= 3 | 130 | 72% |
 | <= 4 | 158 | 87% |
 | <= 5 | 170 | 94% |
+| <= 2, common creatures with mana value 3 or less | 23 of 28 | 82% |
 
 ## Collector-number gaps
 

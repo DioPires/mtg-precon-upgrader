@@ -14,6 +14,10 @@ Set `CODE` to the Scryfall set code and `DIR` to the set directory, normally
 # 1. Dump the set and get the facts to check against WotC's article.
 uv run python scripts/prerelease/dump_set.py --set CODE --out-dir DIR
 
+# 1 (continued). Write DIR/mechanics.json from WotC's mechanics article, then
+# rewrite set_facts.md from the dumps on disk. No request to Scryfall.
+uv run python scripts/prerelease/dump_set.py --set CODE --out-dir DIR --from-dump
+
 # 2. Copy the collation template and fill it from the article's slot text.
 cp scripts/prerelease/collation_template.json DIR/collation.json
 
@@ -60,7 +64,25 @@ Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
   non-basic card, sorted by colour then rarity) and `set_facts.md` (rarity and
   colour counts, keyword and oracle-text mechanic counts, creature toughness
   census, collector-number gaps, watermarks, two-colour uncommons per pair).
-  `--from-dump` rebuilds the two text files from dumps already on disk.
+  `--from-dump` rewrites `set_facts.md` alone from `DIR/CODE_all_cards.json`
+  and `DIR/CODE_all_prints.json`, and sends no request to Scryfall. The set's
+  name and release date come from the card dump (`set_name`, the most common
+  `released_at`). Scryfall's `card_count` is in no dump, so it comes from the
+  `set_facts.md` that the run replaces ("?" without that file).
+  With `DIR/mechanics.json`, `set_facts.md` opens its mechanic sections with
+  the table "Set mechanics (from `mechanics.json`)": each term, its cards, and
+  its cards by rarity (C, U, R, M). Each pattern is a case-insensitive regular
+  expression over the oracle text of every face; a card counts once. Without
+  the file there is no such table.
+  Scryfall's `keywords` field holds keywords, ability words and mode names
+  alike. A label is a keyword that each of its cards prints only directly
+  before " — " (whole word, Scryfall's spelling and case). Keywords that are
+  not labels fill "Keywords (Scryfall `keywords` field)"; labels on 2 or more
+  cards are "Ability words" (Landfall); labels on 1 card are mode names
+  ("Kill"), which one sentence counts and no table lists. "Mechanics in oracle
+  text" counts the keywords and the ability words. The toughness census ends
+  with the cheat sheet's cheap-commons figure: 2 damage against the common
+  creatures with mana value 3 or less.
 - **`build_grades.py`** — turns `DIR/grades_src.py` into `DIR/grades.json`. Stops
   if the grade file misses a card, names a card that is not in the set, or lists
   one twice. Tag rules come from `DIR/tags.json`, falling back to
@@ -88,7 +110,14 @@ Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
   temporary folder, never `DIR/cheat_sheet.html` (the page; DEC-1223).
   The card links stay clickable in the PDF. If Chrome is not at
   `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`, it stops and
-  names that path.
+  names that path. It deletes the old `DIR/cheat_sheet.pdf` before Chrome
+  starts, so a stale file never passes. Chrome 156 can write the whole PDF and
+  then exit with an error ("Teardown watchdog expired", exit code 2, in some
+  runs). On a non-zero exit the tool keeps the PDF only if the file is larger
+  than 10,000 bytes, starts with `%PDF-` and ends with `%%EOF` (trailing
+  whitespace allowed; `pdf_complete()`). Then it prints a warning with
+  Chrome's exit code and the last lines of its stderr, and exits 0. Otherwise
+  it prints the same details and exits 1.
 - **`build_html.py`** — writes `DIR/cheat_sheet.html`: the sheet as one page
   for a phone, with inline CSS and JavaScript. It loads nothing from the network
   and works opened from disk; its only addresses are the sheet's Scryfall card
@@ -131,6 +160,7 @@ Tests: `uv run --with pytest python -m pytest tests/test_prerelease_tools.py`.
 | File | What it is |
 |---|---|
 | `DIR/collation.json` | the booster model, from `collation_template.json` |
+| `DIR/mechanics.json` | optional; the set's mechanics from WotC's mechanics article, a list of `{"term": "...", "pattern": "..."}` (example: `analysis/prerelease/trk/mechanics.json`) |
 | `DIR/grades_src.py` | one tuple per non-basic card: name, grade, roles, note, optional synergy |
 | `DIR/format_rules.md` | section 2 of the cheat sheet: the set's rules that decide games |
 | `DIR/tags.json` | optional; the set's `provides` tag rules, from `tags_default.json` |
