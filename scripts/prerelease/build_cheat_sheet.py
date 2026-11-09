@@ -152,17 +152,37 @@ def heading_pip(key: str) -> str:
     return "◇"
 
 
-def toughness_census(cards: dict) -> tuple:
-    """(distribution, cumulative, per_colour_le3, n) over creatures with printed toughness."""
-    def front_face(card: dict) -> dict:
-        faces = card.get("card_faces")
-        return faces[0] if faces and "oracle_text" not in card else card
+def front_face(card: dict) -> dict:
+    """The face the census reads: the front face of a two-faced card, else the card."""
+    faces = card.get("card_faces")
+    return faces[0] if faces and "oracle_text" not in card else card
 
-    vals, by_colour = [], collections.defaultdict(list)
-    for card in cards.values():
+
+def census_creatures(cards) -> list:
+    """(card, front face) of every creature the census reads.
+
+    The rule of section 3's census: the front face's type line holds
+    "Creature", and the card is not a basic land. `cards` is any iterable of
+    card records.
+    """
+    out = []
+    for card in cards:
         face = front_face(card)
-        if "Creature" not in face["type_line"].split(" //")[0] or "Basic" in card["type_line"]:
-            continue
+        if "Creature" in face["type_line"].split(" //")[0] and "Basic" not in card["type_line"]:
+            out.append((card, face))
+    return out
+
+
+def toughness_census(cards: dict) -> tuple:
+    """(distribution, cumulative, per_colour_le3, n) over creatures with printed toughness.
+
+    `distribution` caps toughness at 6, for the table's "6+" column.
+    `cumulative[t]` is the true share with toughness t or less, from the
+    creatures' real toughness, for every t from 0 to the highest toughness
+    (at least 6). So a toughness of 7 does not count as "6 or less" (DEC-1227).
+    """
+    vals, by_colour = [], collections.defaultdict(list)
+    for card, face in census_creatures(cards.values()):
         t = face.get("toughness", "")
         if not t.isdigit():
             continue
@@ -172,15 +192,36 @@ def toughness_census(cards: dict) -> tuple:
             by_colour[cols[0]].append(int(t))
     n = len(vals)
     dist = collections.Counter(min(v, 6) for v in vals)
-    cum, running = {}, 0
-    for t in range(0, 7):
-        running += dist.get(t, 0)
-        cum[t] = running / n if n else 0.0
+    cum = {t: (sum(v <= t for v in vals) / n if n else 0.0) for t in range(0, max(vals + [6]) + 1)}
     per_colour = {
         c: (sum(v <= 3 for v in by_colour[c]) / len(by_colour[c]) if by_colour[c] else 0.0)
         for c in WUBRG
     }
     return dist, cum, per_colour, n
+
+
+def unfixed_toughness(cards) -> list:
+    """(name, "power/toughness") of each creature the census leaves out: its toughness is not a number."""
+    return [
+        (face.get("name", card["name"]), f"{face.get('power', '')}/{face.get('toughness', '')}")
+        for card, face in census_creatures(cards)
+        if not face.get("toughness", "").isdigit()
+    ]
+
+
+def cheap_commons(cards) -> tuple:
+    """(killed, total): common creatures with mana value 3 or less, and how many have toughness 2 or less.
+
+    The census's rule (census_creatures(), printed toughness of the front
+    face); a creature without a fixed toughness is left out, as in the census.
+    """
+    toughness = [
+        int(face["toughness"])
+        for card, face in census_creatures(cards)
+        if card["rarity"] == "common" and card.get("cmc", 0) <= 3
+        and face.get("toughness", "").isdigit()
+    ]
+    return sum(t <= 2 for t in toughness), len(toughness)
 
 
 def kill_share(entry: dict, card: dict, cum: dict) -> str:
@@ -196,7 +237,10 @@ def kill_share(entry: dict, card: dict, cum: dict) -> str:
        target can take a second, larger value (an "instead" clause or a
        kicker), "≤A toughness (P%) or ≤B (Q%)". A −N/−0 change is not a kill.
        Twice X damage: "all (2X damage)". A fight, or damage equal to your
-       creature's power: "fight (your creature's power)".
+       creature's power: "fight (your creature's power)" when the text says
+       "fight" or "fights" (both creatures deal damage); else a bite, where
+       only your creatures deal damage: "bite (your creature's power)", or
+       "bite (one or two of your creatures)" when it names how many.
     2. Qualifiers, a kill of part of the creatures only: "power 4+ only",
        "tapped only", "nonartifact only", "≤N toughness (P%), attackers only".
     3. "lock": the creature can't block or doesn't untap.
@@ -205,7 +249,8 @@ def kill_share(entry: dict, card: dict, cum: dict) -> str:
     text = oracle_text(card).split("//")[0]
 
     def share(t: int) -> str:
-        return f"{100 * cum[min(t, 6)]:.0f}%"
+        # `cum` runs up to the highest toughness; above it every creature dies.
+        return f"{100 * cum[min(t, max(cum))]:.0f}%"
 
     def up_to(t: int) -> str:
         """≤t toughness, or the "or" form when an instead or kicker clause gives the same target more."""
@@ -254,8 +299,13 @@ def kill_share(entry: dict, card: dict, cum: dict) -> str:
         return up_to(int(m.group(2)))
     if re.search(r"deals twice x damage to (?:any target|target creature)", text):
         return "all (2X damage)"
-    if re.search(r"fights?|deals? damage equal to (?:its|their) power", text):
+    if re.search(r"\bfights?\b", text):
         return "fight (your creature's power)"
+    m = re.search(r"(\w+ or \w+) target creatures you control each deal damage equal to their power", text)
+    if m:
+        return f"bite ({m.group(1)} of your creatures)"
+    if re.search(r"deals? damage equal to (?:its|their) power", text):
+        return "bite (your creature's power)"
 
     # 2. Qualifiers: the kill reaches part of the creatures only.
     m = re.search(r"destroy target creature with power (\d) or greater", text)
@@ -272,6 +322,42 @@ def kill_share(entry: dict, card: dict, cum: dict) -> str:
     if re.search(r"can't block|doesn't untap", text):
         return "lock"
     return "conditional"
+
+
+# "This spell costs {N} less to cast if <condition>." on the front face.
+COST_REDUCTION = re.compile(r"This spell costs \{(\d+)\} less to cast if ([^.]+)\.")
+
+
+def reduced_cost(cost: str, less: int) -> str:
+    """`cost` (front face) with `less` generic mana taken off: {2}{R} less 2 is {R}.
+
+    A reduction takes generic mana only, never a coloured pip.
+    """
+    out = []
+    for p in pips(cost):
+        if p.isdigit():
+            generic, less = int(p) - less, max(less - int(p), 0)
+            if generic > 0:
+                out.append(f"{{{generic}}}")
+        else:
+            out.append(f"{{{p}}}")
+    return "".join(out) or "{0}"
+
+
+def trick_cost(entry: dict, card: dict) -> tuple:
+    """(cost as section 4 prints it, cost it sorts by).
+
+    A trick that costs less on a condition prints both costs and the condition
+    from its text, and sorts by the reduced cost: "{2}{R}, or {R} if a creature
+    is attacking you" (DEC-1227).
+    """
+    cost = front_cost(entry)
+    m = COST_REDUCTION.search(front_face(card).get("oracle_text") or "")
+    if m:
+        cheaper = reduced_cost(cost, int(m.group(1)))
+        if cheaper != cost:
+            return f"{cost}, or {cheaper} if {m.group(2)}", cheaper
+    return cost, cost
 
 
 def grade_text(entry: dict) -> str:
@@ -478,22 +564,38 @@ def build(set_dir: str) -> str:
         )
 
     dist, cum, per_colour, n_creatures = toughness_census(cards)
+    census_line = f"**What removal kills.** Toughness of the set's {n_creatures} creatures:"
+    left_out = unfixed_toughness(cards.values())
+    if left_out:
+        # "*/*" is a power and toughness, not emphasis: escape each * (DEC-1225).
+        named = "; ".join(f"{name}, {pt}".replace("*", r"\*") for name, pt in left_out)
+        census_line = (
+            f"**What removal kills.** Toughness of the set's {n_creatures} creatures "
+            f"with a fixed toughness (not counted: {named}):"
+        )
     out += [
         "",
-        f"**What removal kills.** Toughness of the set's {n_creatures} creatures:",
+        census_line,
         "",
         "| Toughness | 1 | 2 | 3 | 4 | 5 | 6+ |",
         "|---|---:|---:|---:|---:|---:|---:|",
         "| Share | " + " | ".join(f"{100 * dist.get(t, 0) / n_creatures:.0f}%" for t in range(1, 7)) + " |",
-        "| Cumulative | " + " | ".join(f"{100 * cum[t]:.0f}%" for t in range(1, 7)) + " |",
+        # The "6+" column counts 6 or more, so its cumulative share is every creature.
+        "| Cumulative | " + " | ".join(f"{100 * cum[t]:.0f}%" for t in range(1, 6))
+        + f" | {100 * cum[max(cum)]:.0f}% |",
         "",
         "Share with toughness 3 or less, by colour: "
         + ", ".join(f"{COLOR_PIP[c]} {c} {100 * per_colour[c]:.0f}%" for c in WUBRG)
         + ".",
         "",
-        "Commons and uncommons you will actually open (grade, what it kills):",
-        "",
     ]
+    killed, cheap = cheap_commons(cards.values())
+    if cheap:
+        out += [
+            f"Common creatures with mana value 3 or less: 2 damage kills {killed} of {cheap} "
+            f"({100 * killed / cheap:.0f}%).",
+            "",
+        ]
     removal: dict = collections.defaultdict(list)
     for entry in graded:
         if (
@@ -502,14 +604,19 @@ def build(set_dir: str) -> str:
             and "Land" not in entry["type_line"]
         ):
             removal[bucket(entry)].append(entry)
+    removal_lines, labels = [], []
     for key in list(WUBRG) + sorted(k for k in removal if k not in WUBRG):
         if key in removal:
-            out.append(f"- {heading_pip(key)} **{key}**")
-            out += [
-                f"    - {e['name']} ({e['mana_cost'].split(' // ')[0]}, {e['grade']}, "
-                f"{kill_share(e, cards[e['name']], cum)})"
-                for e in sorted(removal[key], key=lambda e: -e["grade"])
-            ]
+            removal_lines.append(f"- {heading_pip(key)} **{key}**")
+            for e in sorted(removal[key], key=lambda e: -e["grade"]):
+                labels.append(kill_share(e, cards[e["name"]], cum))
+                removal_lines.append(
+                    f"    - {e['name']} ({e['mana_cost'].split(' // ')[0]}, {e['grade']}, {labels[-1]})"
+                )
+    if any(label.startswith(("fight (", "bite (")) for label in labels):
+        out += ["A fight: both creatures deal damage. A bite: only your creature deals damage.", ""]
+    out += ["Commons and uncommons you will actually open (grade, what it kills):", ""]
+    out += removal_lines
 
     out += ["", "## 4. Tricks and instant-speed plays to respect (by open mana)", ""]
     tricks: dict = collections.defaultdict(list)
@@ -529,9 +636,10 @@ def build(set_dir: str) -> str:
     for key in list(WUBRG) + sorted(k for k in tricks if k not in WUBRG):
         if key in tricks:
             out.append(f"- {heading_pip(key)} **{key}**")
+            costs = {e["name"]: trick_cost(e, cards[e["name"]]) for e in tricks[key]}
             out += [
-                f"    - {e['name']} ({e['mana_cost'].split(' // ')[0]})"
-                for e in sorted(tricks[key], key=lambda e: len(pips(e["mana_cost"])))
+                f"    - {e['name']} ({costs[e['name']][0]})"
+                for e in sorted(tricks[key], key=lambda e: len(pips(costs[e["name"]][1])))
             ]
 
     sims = load_sims(set_dir)

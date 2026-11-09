@@ -33,7 +33,7 @@ Sealed grades, 0 to 10, from oracle text, checked against Draftsim and Limited R
 | R | 3 | 3 | 2 | 8 | 6.6 |
 | G | 2 | 2 | 0 | 4 | 5.0 |
 
-**What removal kills.** Toughness of the set's 159 creatures:
+**What removal kills.** Toughness of the set's 159 creatures with a fixed toughness (not counted: Tarmogoyf, \*/1+\*):
 
 | Toughness | 1 | 2 | 3 | 4 | 5 | 6+ |
 |---|---:|---:|---:|---:|---:|---:|
@@ -41,6 +41,10 @@ Sealed grades, 0 to 10, from oracle text, checked against Draftsim and Limited R
 | Cumulative | 23% | 48% | 68% | 87% | 94% | 100% |
 
 Share with toughness 3 or less, by colour: ⚪ W 77%, 🔵 U 78%, ⚫ B 77%, 🔴 R 71%, 🟢 G 65%.
+
+Common creatures with mana value 3 or less: 2 damage kills 21 of 29 (72%).
+
+A fight: both creatures deal damage. A bite: only your creature deals damage.
 
 Commons and uncommons you will actually open (grade, what it kills):
 
@@ -65,11 +69,11 @@ Commons and uncommons you will actually open (grade, what it kills):
     - No Admittance ({1}{R}, 7, ≤3 toughness (68%))
     - Wrath of the Bloodmane ({2}{R}, 7, ≤4 toughness (87%))
     - Fulminous Forte ({2}{R}, 7, ≤5 toughness (94%))
-    - Violent Echoes ({2}{R}{R}, 7, ≤6 toughness (100%))
-    - Awaken the Inferno ({4}{R}, 6, ≤6 toughness (100%))
+    - Violent Echoes ({2}{R}{R}, 7, ≤6 toughness (97%))
+    - Awaken the Inferno ({4}{R}, 6, ≤6 toughness (97%))
     - Essence Burn ({1}{R}, 4, two colours only)
 - 🟢 **G**
-    - Compel Brutality ({1}{G}, 6, fight (your creature's power))
+    - Compel Brutality ({1}{G}, 6, bite (your creature's power))
     - Sureshot Sower ({1}{G}, 5, flyers only)
     - Yoshimaru, Scrappy Stray ({1}{G}, 5, fight (your creature's power))
     - Flourishing Grapple ({G}, 4, two colours only)
@@ -116,7 +120,7 @@ Commons and uncommons you will actually open (grade, what it kills):
     - Teyo, Diamondblade Mage ({3}{B})
 - 🔴 **R**
     - Blazing Crescendo ({1}{R})
-    - Wrath of the Bloodmane ({2}{R})
+    - Wrath of the Bloodmane ({2}{R}, or {1}{R} if you control a legendary creature)
     - Essence Burn ({1}{R})
     - Fulminous Forte ({2}{R})
     - Violent Echoes ({2}{R}{R})

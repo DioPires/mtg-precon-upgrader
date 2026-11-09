@@ -37,7 +37,7 @@ Sealed grades, 0 to 10, from oracle text. I checked them against MTG Arena Zone'
 | R | 3 | 2 | 1 | 6 | 6.8 |
 | G | 1 | 1 | 0 | 2 | 6.0 |
 
-**What removal kills.** Toughness of the set's 165 creatures:
+**What removal kills.** Toughness of the set's 165 creatures with a fixed toughness (not counted: [Captain Pike, Fullness of Time](https://scryfall.com/card/trk/188/captain-pike-fullness-of-time), \*/\*):
 
 | Toughness | 1 | 2 | 3 | 4 | 5 | 6+ |
 |---|---:|---:|---:|---:|---:|---:|
@@ -45,6 +45,10 @@ Sealed grades, 0 to 10, from oracle text. I checked them against MTG Arena Zone'
 | Cumulative | 20% | 46% | 75% | 88% | 94% | 100% |
 
 Share with toughness 3 or less, by colour: ⚪ W 86%, 🔵 U 69%, ⚫ B 70%, 🔴 R 80%, 🟢 G 71%.
+
+Common creatures with mana value 3 or less: 2 damage kills 23 of 28 (82%).
+
+A fight: both creatures deal damage. A bite: only your creature deals damage.
 
 Commons and uncommons you will actually open (grade, what it kills):
 
@@ -62,17 +66,17 @@ Commons and uncommons you will actually open (grade, what it kills):
 - ⚫ **B**
     - [He's Dead, Jim](https://scryfall.com/card/trk/114/hes-dead-jim) ({3}{B}, 7, all)
     - [Resistance Is Futile](https://scryfall.com/card/trk/125/resistance-is-futile) ({1}{B}, 7, nonartifact only)
-    - [Eject the Warp Core](https://scryfall.com/card/trk/105/eject-the-warp-core) ({1}{B}, 6, ≤2 toughness (46%) or ≤6 (100%))
+    - [Eject the Warp Core](https://scryfall.com/card/trk/105/eject-the-warp-core) ({1}{B}, 6, ≤2 toughness (46%) or ≤6 (99%))
     - [De-evolve](https://scryfall.com/card/trk/104/de-evolve) ({1}{B}, 6, lock)
     - [Impossible Choice](https://scryfall.com/card/trk/116/impossible-choice) ({2}{B}, 6, all)
 - 🔴 **R**
     - [Khaaaaaaaaaaaannn!](https://scryfall.com/card/trk/154/khaaaaaaaaaaaannn!) ({X}{R}, 7.5, all (2X damage))
     - [Transporter Malfunction](https://scryfall.com/card/trk/178/transporter-malfunction) ({1}{R}, 7, ≤3 toughness (75%))
-    - [Genesis Effect](https://scryfall.com/card/trk/151/genesis-effect) ({4}{R}, 6.5, ≤6 toughness (100%))
+    - [Genesis Effect](https://scryfall.com/card/trk/151/genesis-effect) ({4}{R}, 6.5, ≤6 toughness (99%))
     - [Plasma Cascade](https://scryfall.com/card/trk/164/plasma-cascade) ({2}{R}, 6.5, ≤3 toughness (75%))
     - [Planetary Bombardment](https://scryfall.com/card/trk/162/planetary-bombardment) ({R}, 5.5, ≤2 toughness (46%) or ≤4 (88%))
 - 🟢 **G**
-    - [Common Goal](https://scryfall.com/card/trk/190/common-goal) ({1}{G}, 6, fight (your creature's power))
+    - [Common Goal](https://scryfall.com/card/trk/190/common-goal) ({1}{G}, 6, bite (one or two of your creatures))
     - [Amok Time](https://scryfall.com/card/trk/183/amok-time) ({2}{G}, 6, fight (your creature's power))
 
 ## 4. Tricks and instant-speed plays to respect (by open mana)
@@ -84,7 +88,7 @@ Commons and uncommons you will actually open (grade, what it kills):
 - 🔵 **U**
     - [Cloistered Telepath](https://scryfall.com/card/trk/50/cloistered-telepath) ({1}{U})
     - [Consider the Prime Directive](https://scryfall.com/card/trk/51/consider-the-prime-directive) ({2}{U})
-    - [Guidance Failure](https://scryfall.com/card/trk/60/guidance-failure) ({3}{U})
+    - [Guidance Failure](https://scryfall.com/card/trk/60/guidance-failure) ({3}{U}, or {2}{U} if it targets an attacking creature)
     - [Highly Illogical](https://scryfall.com/card/trk/62/highly-illogical) ({1}{U})
     - [Test of Priorities](https://scryfall.com/card/trk/85/test-of-priorities) ({1}{U})
 - ⚫ **B**
@@ -93,12 +97,12 @@ Commons and uncommons you will actually open (grade, what it kills):
     - [He's Dead, Jim](https://scryfall.com/card/trk/114/hes-dead-jim) ({3}{B})
     - [Impossible Choice](https://scryfall.com/card/trk/116/impossible-choice) ({2}{B})
 - 🔴 **R**
+    - [Red Alert!](https://scryfall.com/card/trk/169/red-alert!) ({2}{R}, or {R} if a creature is attacking you)
     - [Captain's Tutelage](https://scryfall.com/card/trk/144/captains-tutelage) ({1}{R})
     - [Genesis Effect](https://scryfall.com/card/trk/151/genesis-effect) ({4}{R})
     - [Perils of the Past](https://scryfall.com/card/trk/161/perils-of-the-past) ({1}{R})
     - [Plasma Cascade](https://scryfall.com/card/trk/164/plasma-cascade) ({2}{R})
     - [Khaaaaaaaaaaaannn!](https://scryfall.com/card/trk/154/khaaaaaaaaaaaannn!) ({X}{R})
-    - [Red Alert!](https://scryfall.com/card/trk/169/red-alert!) ({2}{R})
     - [Test of Identity](https://scryfall.com/card/trk/177/test-of-identity) ({1}{R})
 - 🟢 **G**
     - [I'm a Doctor, Not a . . .](https://scryfall.com/card/trk/203/im-a-doctor-not-a-) ({G})
