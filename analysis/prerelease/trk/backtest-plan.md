@@ -87,8 +87,10 @@ Written on 5 November 2026, before the event of 6 November and before Arena open
     sheet's layout; it does not change a grading rule by itself.
     - **In on 9 November** (`notes.md`, "Event feedback"): the pool had few synergies; Spacecraft
       were too slow against many aggressive decks; strange new worlds and the Borg decks were
-      good. The pair, the record and the use of the sheet were not given. Question 12 tests the
-      three groups.
+      good. The pair, the record and the use of the sheet were not given, and the board skipped
+      the pair and the record when asked again. Question 12 tests the three groups.
+    - The board does not play Star Trek Sealed again before 1 December and kept the sheet as
+      it is, so the sheet carries no line from this feedback.
 11. **A pair order by common removal (added 6 November).** Joel Are Magic's guide of 4 November
     ranks the pairs RW, RG, GW, BR, WB, WU, UR, BG, GU, UB, by each pair's common removal
     (`joel_guide_check.md`). WotC's prerelease guide advises at least five removal spells.
