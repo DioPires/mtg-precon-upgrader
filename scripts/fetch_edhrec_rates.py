@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Fetch per-commander EDHREC inclusion rates into priv_data/edhrec/{deck-id}.json.
 
-Authorization: EDHREC's ToS bars automated queries (DEC-312). The board issued
+Authorization: EDHREC's ToS bars automated queries (DEC-312). The user issued
 an explicit, informed risk-acceptance override on DEC-410 (interaction
 7a8bc464, 2026-07-06) sanctioning a low-volume cached fetch. Keep the
 footprint minimal: one request per commander, 7-day cache TTL, identifying
 User-Agent, 1s spacing between decks. Do not widen this without a fresh
-board decision. See docs/discovery-playbook.md.
+decision by the user. See docs/discovery-playbook.md.
 
 The output file feeds the candidate-pool EDHREC boost (DEC-410):
     {"rates": {front-face card name: inclusion percent 0-100}, "fetched_at": ...}

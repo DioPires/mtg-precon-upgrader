@@ -37,7 +37,7 @@ A web application that provides recommended commander deck builds for Magic: The
 - **Frontend**: React 18 + Vite + TypeScript SPA (`web/`), react-router path routes in `web/src/App.tsx`: `/` (sends to `/codex`), `/codex`, `/atlas`, `/deck/:id`, `/compare`, `/shopping`, `/combos`, `/scrying/:id`, `/_dev` and a not-found page for any other path. Every surface is fully responsive at phone widths; the iPhone-bezel `/m/:id` artboard retired per DEC-183 — `/m/:id` now sends to `/deck/:id`, and `/mobile/:id` sends to `/m/:id`.
 - **Data**: JSON files in `data/commanders/{id}/`: `deck`, `simulation`, `metrics`, `candidates`, `spellbook-combos`, `synergy-candidates` and `tier-b-loops` (`.json`). `web/src/data/loader.ts` fetches all seven at runtime, with `data/index.json` and `data/card-metadata.json`; no file in a deck folder is read only by scripts. `web/src/data/normalize.ts` turns the deck bundle into the `DeckFull` shape; the Combo Lab reads the last three files
 - **Card metadata**: `data/card-metadata.json` (merged in `normalize.ts`) and Scryfall via `useCard()` hook (`web/src/hooks/useCard.ts`) — it reads `web/src/data/cardCache.ts`: dedupe + 24h localStorage cache; names the file lacks go out as `POST /cards/collection` batches of up to 75 names, 1,200 ms apart, through `scryfallLimiter`
-- **Styling**: CSS modules + global tokens in `web/src/styles/tokens.css` (3-layer: primitive → semantic → component). No Tailwind, no CSS-in-JS.
+- **Styling**: global stylesheets in `web/src/styles/` (imported in `web/src/main.tsx`; no CSS modules) + tokens in `web/src/styles/tokens.css` (3-layer: primitive → semantic → component). No Tailwind, no CSS-in-JS.
 - **Hosting**: Static `web/dist/` (no backend)
 
 ## Key Files

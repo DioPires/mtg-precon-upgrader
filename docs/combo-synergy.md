@@ -11,7 +11,7 @@ QE-1(a), NF-3 (enumeration slice), and plan decisions 4/6.
 ## 1. Two surfaces, one model
 
 Mirrors the Phase-0 split (fleet precompute + paste client-side) so both surfaces
-agree and EDHREC never reaches the browser:
+agree and `synergy-candidates.json` carries no EDHREC scalar:
 
 | Surface | Engine | Crowd prior | Input |
 |---|---|---|---|
@@ -88,11 +88,11 @@ regardless of band (RK-6).
 
 ### EDHREC exposure (decision 4 hard gate)
 
-Raw EDHREC rates live in gitignored `priv_data/edhrec/` and are **never shipped**.
+Raw EDHREC dumps live in gitignored `priv_data/edhrec/`.
 The fleet precompute folds the prior into the ranking; the committed
 `synergy-candidates.json` carries only the coarse band and the matched edges — no
-EDHREC-derived scalar. Public-deployment terms exposure remains a board
-re-review, out of this phase's scope.
+EDHREC-derived scalar. `candidates.json` does carry each card's `edhrec_rate` (and
+its `score_breakdown`) and ships with the app.
 
 ## 5. KB-gap caveat (DC-6)
 

@@ -1,63 +1,47 @@
 # MTG Precon Upgrader
 
-A static web application showcasing three custom-built Magic: The Gathering Commander decks. Built with Commander Brackets format compliance in mind.
+The Grimoire: a web app with recommended Magic: The Gathering Commander deck builds up to Bracket 4, with card recommendations, synergies, combos and shopping lists. Built with Commander Brackets format compliance in mind.
 
 ## Features
 
-- **Interactive Web Interface** - Browse commander deck guides with card hover previews
+- **Interactive Web Interface** - Browse commander deck guides with card previews
 - **Card Categorization** - Clear organization of additions, synergies, and their strategic purposes
+- **Combo Lab** - Per-deck combos from Commander Spellbook, plus synergy and loop candidates
 - **Commander Brackets Aware** - All decks are designed with the Commander Brackets format in mind
 - **Shopping Lists** - Pre-formatted lists ready for deck-building sites
 
 ## Quick Start
 
-Simply open `index.html` in your web browser - no build step or server required.
-
 ```bash
 # Clone the repository
 git clone https://github.com/DioPires/mtg-precon-upgrader.git
+cd mtg-precon-upgrader/web
 
-# Open in browser
-open index.html  # macOS
-# or
-start index.html  # Windows
+# Install and run the app
+npm install
+npm run dev      # http://localhost:5173
 ```
+
+Python scripts run from the repository root with `uv`; the card-pool, metrics and validator scripts need the local Scryfall mirror first: `uv run python scripts/refresh_scryfall_mirror.py`. `AGENTS.md` lists the build, test and data commands.
 
 ## Project Structure
 
 ```
 mtg-precon-upgrader/
-├── index.html              # Main web application
+├── web/                    # The Grimoire: Vite + React + TypeScript app
 ├── data/
 │   ├── index.json          # Deck catalog
-│   ├── game-changers.json  # High-impact cards reference
-│   └── commanders/         # Deck data per commander
-│       ├── titan-convergence/
-│       ├── eternal-agony/
-│       ├── gathering-shadow/
-│       └── ...
-└── scripts/                # Mana simulation scripts
+│   ├── game-changers.json  # Official Game Changers list
+│   └── commanders/{id}/    # Per-deck data: deck, simulation, metrics, candidates, Combo Lab files
+├── scripts/                # Python tools: card pool, simulation, metrics, validators
+├── mcp-servers/            # Local MCP servers: Scryfall, Commander Spellbook, Archidekt, YouTube
+├── docs/                   # Methodology docs
+└── legacy/                 # Archived vanilla-JS app from before the DEC-149 cutover
 ```
 
-## Featured Decks
+## Decks
 
-### Titan Convergence
-- **Commander:** Zhulodok, Void Gorger
-- **Colors:** Colorless
-- **Strategy:** Eldrazi Cascade -- ramp into high-cost Eldrazi with double cascade triggers
-- **Bracket:** 4
-
-### Eternal Agony
-- **Commander:** The Lord of Pain
-- **Colors:** Black/Red
-- **Strategy:** Group Slug -- life manipulation and punishing opponents for their actions
-- **Bracket:** 4
-
-### Gathering Shadow
-- **Commander:** Sauron, the Dark Lord
-- **Colors:** Blue/Black/Red
-- **Strategy:** Amass / Orc Tribal -- build an army of Orcs and overwhelm opponents
-- **Bracket:** 4
+`data/index.json` catalogs 21 decks: 12 built and 9 still brewing. The app lists them all.
 
 ## Commander Brackets
 
@@ -68,14 +52,14 @@ This project follows the [Commander Brackets](https://mtgcommander.net/index.php
 - **Bracket 3 (Upgraded)** - Enhanced precons
 - **Bracket 4 (Optimized)** - Highly tuned decks
 
-All three decks in this project are Bracket 4.
+The project's bar is Bracket 3+/4- (in-between labels; see [`data/bracket-philosophy.md`](data/bracket-philosophy.md)); a few decks are still labelled 3.
 
 ## Technical Details
 
-- **Frontend:** Vanilla HTML, CSS, JavaScript
-- **Fonts:** Cinzel (headings), Source Sans 3 (body), Fira Code (card names)
-- **Card Images:** Scryfall API integration
-- **No Dependencies:** Zero npm packages, just open and use
+- **Frontend:** React 18 + Vite + TypeScript single-page app in `web/`; global CSS with design tokens; no backend
+- **Data:** static JSON under `data/`, copied into the build
+- **Card Data:** Scryfall (a bulk mirror for the scripts; batched API lookups in the app)
+- **Hosting:** Vercel builds the `deploy` branch, which CI fast-forwards from `main` when `web/`, `data/` or `vercel.json` change
 
 ## Contributing
 

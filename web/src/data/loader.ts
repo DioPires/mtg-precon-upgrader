@@ -1,10 +1,11 @@
 // Deck JSON loader.
 //
-// Fetches data/index.json + per-deck {deck,simulation,metrics,candidates}.json
+// Fetches data/index.json, data/card-metadata.json + per-deck {deck,simulation,metrics,candidates}.json
 // plus the three Combo Lab artifacts, and returns the bundle shape that
 // normalize.ts expects.
 //
-// Only deck + simulation + metrics are persisted to localStorage (DEC-942).
+// Persisted to localStorage: index, card-metadata and, per deck, only
+// deck + simulation + metrics (DEC-942).
 // The four large artifacts (candidates, spellbook-combos, synergy-candidates,
 // tier-b-loops) are 11.7M chars fleet-wide against a ~5.2M browser quota, so
 // caching them starved user data — an imported owned-cards map had no room and

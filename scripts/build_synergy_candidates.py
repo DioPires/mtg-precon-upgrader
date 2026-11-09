@@ -7,11 +7,10 @@ a standalone per-deck file like `spellbook-combos.json`, loaded by the Combo Lab
 route in fleet mode.
 
 Crowd prior (RK-2, plan decision 4): fleet mode folds the deck's EDHREC inclusion
-rates into the ranking. The raw rates live in gitignored `priv_data/edhrec/` and
-are NEVER shipped; only the resulting coarse RK-5 band and the matched edges are
-committed. No EDHREC-derived scalar is written (the board's public-deployment
-terms-exposure gate stays maximally respected, and RK-5 forbids false-precision
-scalars anyway). Paste mode (the client engine) omits the prior entirely.
+rates into the ranking. The raw rates live in gitignored `priv_data/edhrec/`;
+this script commits only the resulting coarse RK-5 band and the matched edges.
+No EDHREC-derived scalar is written here (RK-5 forbids false-precision
+scalars). Paste mode (the client engine) omits the prior entirely.
 
 Usage:
   uv run python scripts/build_synergy_candidates.py [--deck ID ...]
