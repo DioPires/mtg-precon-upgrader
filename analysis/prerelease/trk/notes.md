@@ -48,3 +48,15 @@ Event: Friday 6 November 2026, Sealed, 6 Play Boosters plus 1 foil rare or mythi
   - Common Goal's label says "fight"; it is one-sided, and two of your creatures can add their power.
   - Section 3's census leaves out Captain Pike (toughness */*): 165 creatures, not 166.
   - Section 4 sorts by printed cost. Red Alert! costs {R} when a creature attacks you, and Guidance Failure {2}{U} on an attacker; the notes say so, the cost column does not.
+
+## Event feedback (the board, 9 November; back-test question 10)
+- **What the board reported** (DEC-1218, comment `7c924d32`, 9 November 10:09Z), on its prerelease of 6 November: "I didn't have a great pool of cards, not a lot of synergies. I tried to go for flying creatures with spacecrafts, since I didn't have any common or uncommon flyers. I played against many aggressive decks, and the spacecraft approach is too slow. the "strange new worlds" mechanic is good, as is the Borgs typal decks (play kind of like slivers)."
+- **Not reported:** the pair, the record, and whether the sheet, the PDF or the page helped or misled. I asked once more, as an optional question.
+- **Check against the three reviews** (`feedback_check.py`). Each figure is the reviews' consensus minus our grade on the group, against the same gap on the other cards of the same rarity band, with a bootstrap 95% interval:
+  - **Borg:** at common and uncommon, +0.60 on 10 cards (+0.21 to +0.97). At rare and mythic, +0.52 on 4 cards (-0.76 to +1.47). The reviews agree with the board: our grades sit low on the Borg.
+  - **Spacecraft:** +0.03 at common and uncommon (8 cards, -0.50 to +0.58). The reviews do not grade Spacecraft lower than we do. The slowness is the board's own finding.
+  - **Strange new worlds:** -0.20 at common and uncommon (7 cards, -0.77 to +0.44). We already grade it a little above the reviews.
+  - **Flying creatures:** 8 at common and uncommon, plus 8 Spacecraft at common and uncommon that fly once stationed (`joel_guide_check.md`). The board's pool held no flying creature at common or uncommon.
+- **Why our grades missed the Borg:** seven Borg cards give one ability to every artifact creature you control. They are Assault Drone (+1/+0), Locutus, the One Who Speaks (+1/+1), Primary Unimatrix Adjunct (double strike), Command Subadjunct (vigilance), Organic Avulsion Unit (menace), Hive Mind Coprocessor (a card on combat damage) and Antagonist Incorporator (a token on combat damage). They stack, as slivers do. I graded each one alone. The WB plan names Locutus and Assault Drone, but the format rules do not name the group. This is Reality Fracture's lesson again: a grade per card does not see a synergy (`../fra/backtest/retro.md`).
+- **Why the sheet did not warn about Spacecraft:** the WU plan says to station with creatures "you do not need on defence", and the format rules say that a stationing creature cannot block. The sheet says nothing about the format's speed.
+- **No grade changed,** so `grades_src.py` stays the back-test's final set. Question 12 of `backtest-plan.md` scores these groups against 17Lands.

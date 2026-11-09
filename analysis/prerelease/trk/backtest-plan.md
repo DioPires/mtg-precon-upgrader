@@ -85,6 +85,10 @@ Written on 5 November 2026, before the event of 6 November and before Arena open
 10. **Your feedback after the event (step 10).** The pair you played, your record, and what in
     the sheet, the PDF or the page helped or misled you. It goes into `notes.md`. It changes the
     sheet's layout; it does not change a grading rule by itself.
+    - **In on 9 November** (`notes.md`, "Event feedback"): the pool had few synergies; Spacecraft
+      were too slow against many aggressive decks; strange new worlds and the Borg decks were
+      good. The pair, the record and the use of the sheet were not given. Question 12 tests the
+      three groups.
 11. **A pair order by common removal (added 6 November).** Joel Are Magic's guide of 4 November
     ranks the pairs RW, RG, GW, BR, WB, WU, UR, BG, GU, UB, by each pair's common removal
     (`joel_guide_check.md`). WotC's prerelease guide advises at least five removal spells.
@@ -97,6 +101,32 @@ Written on 5 November 2026, before the event of 6 November and before Arena open
       both sets' results, and the next sheet may print his order beside the archetypes as one
       source's view, with its score.
     - If both score under +0.5: the order stays off the sheet, and R4 stands.
+12. **The board's three groups (added 9 November, after the event and before any Arena data).**
+    The board found Spacecraft too slow against aggressive decks, and strange new worlds and the
+    Borg decks good (`notes.md`, "Event feedback"). Before any results, the reviews already sit
+    0.60 above us on the 10 Borg commons and uncommons, against the other commons and uncommons
+    (interval +0.21 to +0.97; `feedback_check.py`). Score each group's residual at equal grade
+    and rarity, as in questions 4 and 5:
+    - **Borg** (the 10 commons and uncommons with Borg in the type line). If the interval sits
+      wholly above 0: the playbook adds a grading rule. A card that gives an ability to every
+      creature of a class ("artifact creatures you control") is graded with the number of that
+      class that its pair's pool holds, not alone. If it crosses 0: no new grading rule.
+    - **Spacecraft** (the 8 commons and uncommons). If the interval sits wholly below 0: the
+      playbook grades a Spacecraft by the turn it first becomes a creature, and the plan of a
+      station archetype names that cost. If it crosses 0: no rule.
+    - **Strange new worlds** (the 7 commons and uncommons): report only. We already grade it a
+      little above the reviews.
+    - **Format speed.** If 17Lands publishes Sealed game data for both sets
+      (`game_data_public.<SET>.Sealed.csv.gz`), compare the win rate on the play and the mean
+      number of turns per game. If Star Trek's win rate on the play is 2 points or more above
+      Reality Fracture's, and the difference's interval excludes 0: each sheet gets a line on the
+      format's speed, from the reviews before the event. If a file is missing, say so.
+    - **For the next sheet, whatever the result:** the format rules name each group of cards
+      that gives one ability to a whole class, as the seven Borg cards do. It costs one line and
+      needs no data.
+    - **Limits:** 10, 8 and 7 cards give wide intervals. GIH WR comes from Draft, where a player
+      can draft the Borg on purpose, so it may favour them more than Sealed does. One player's
+      games suggested this question after the event, so it is weaker than questions 1 to 9.
 
 ## Not tested
 
