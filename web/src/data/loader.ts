@@ -248,7 +248,9 @@ import type { DeckTierBLoops } from './tierB';
 // v158 -> v159 (DEC-1215 2026-10-20): broodfire-hatchery +Galactus, Devourer of Worlds /
 // -Zacama, Primal Calamity and +Summon: Bahamut / -Blightsteel Colossus; card-metadata.json
 // prices refreshed; the fleet's spellbook-combos.json re-emitted on corpus 2026-10-20.
-const STORAGE_PREFIX = 'gv1-deck-data-v159:';
+// v159 -> v160 (DEC-1226 2026-11-10): verdant-tide +Necklace of Girion / -Patchwork Banner and
+// hoard-and-bleed +Dragon-Cursed Halls / -Fountainport; card-metadata.json prices refreshed.
+const STORAGE_PREFIX = 'gv1-deck-data-v160:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the

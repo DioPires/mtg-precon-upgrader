@@ -100,6 +100,11 @@
       "type": "other",
       "name": "Board swap approval, DEC-929, 2026-09-28",
       "detail": "Board comment 7864d22d on DEC-929: IN Turbulent Crater, OUT one basic Mountain. Crater is a Swamp Mountain that enters tapped unless opponents control eight or more lands; under the four-player model that holds from your turn 3 (last seat) or turn 4 (first seat). Black sources go from 27.1 to 28.1, red stays at 27.0, basics go from 11 to 10 (Smoldering Marsh still finds two). Bloodstained Mire fetches it and Dragonskull Summit reads it. Same cut logic as DEC-543: the basic is the cheapest cut and Bojuka Bog stays. Gathering Shadow (minus a basic Swamp) was the offered alternative; the board chose Hoard and Bleed."
+    },
+    {
+      "type": "other",
+      "name": "User swap approval, DEC-1226, 2026-11-10",
+      "detail": "Swap round 2 since the DEC-930 Trigger-2 re-assessment (723ae74f); proposed 2026-11-05, approved 2026-11-10: IN Dragon-Cursed Halls, OUT Fountainport. Both are colorless-only lands that enter untapped, so no black or red source count moves. The Halls gives a creature \"Whenever this creature deals combat damage to a player, create a Treasure token\" for {1} and a tap, with no timing limit, so it can be activated after blockers on an unblocked attacker: 2 mana for a Treasure (net 1) against Fountainport's 5 (net 4). Smaug is the usual carrier (5/5 flyer); Goldspan Dragon, Mirkwood Bats and Hellkite Tyrant fly and Professional Face-Breaker has menace. Each Treasure feeds Smaug's draw when its mana is spent to cast a spell, Reckless Fireweaver and Weftstalker Ardent when it enters, Marionette Apprentice, Mayhem Devil and Mirkwood Bats when sacrificed, and Xorn and Academy Manufactor multiply it. Given up: Fountainport's no-combat uses ({2}, {T}, sacrifice a token: draw a card; {3}, {T}, pay 1 life: a 1/1 blue Fish). DEC-566 still holds: the deck does not pivot to attacking; the Halls pays off the Smaug and Goldspan attacks it already makes and takes a land slot, not a spell slot. The DEC-543 and DEC-930 rejections of the Halls applied to cutting a colored land for it; a colorless-land-for-colorless-land swap loses no source. Not offered: the Halls for a basic Swamp or Mountain (the swap DEC-543 rejected). Ownership and price: Dragon-Cursed Halls not owned, EUR 5.23 (Scryfall, 2026-11-05); Fountainport leaves the planned list; the deck is brewing, not built, so no physical swap follows. Measured after the swap (2026-11-10): metrics global_health 97 -> 97, gaps 0 -> 0, black sources 28.1 and red 27.0 unchanged; sim deckHealthScore 70.8 -> 70.8 (manaReliability 72.1 -> 72.3). The goldfish models neither land's activated ability. Combo Lab Tier C after the swap (synergy-candidates.json counts.pairsTotal, triplesTotal, cyclesTotal; the shown lists stay capped at 80, 40 and 30): 602 -> 589, 322 -> 359, 4281 -> 4105; a control rebuild on the pre-swap list reproduces the old counts, so the drop is Fountainport's token hub leaving, not the mirror or KB refresh. EDHREC closing diff (DEC-402) on the 2026-11-10 rates, cards at 40 percent or more that are not in the list and had no verdict in these sources: The Misty Mountains Cold 43.2, defer, carried from the DEC-930 re-assessment (agents/ceo/analysis/dec-930-reassessment.md: one Treasure per turn for four turns is below Storm-Kiln Artist and Professional Face-Breaker rates; no slot beats an incumbent), revisit if a Treasure-engine slot opens; Rakdos Signet 42.8, cut for Lotus Petal at DEC-687 by user approval (commit 393a6386); Seize the Spoils 42.1, cut by user approval at DEC-543 round 2 with no reason recorded, and below the bar at 38.1 when the 2026-08-20 closing diff ran; the DEC-930 re-assessment later listed it among the DEC-543 closing-diff rejects with the reason 'dead ritual', which that closing diff gave to Dark Ritual, not to Seize the Spoils, so no supported reason exists; reconciling that record is the one open closing-diff item, pending the user's call. The other twelve such cards carry a recorded REJECT or DEFER in the DEC-402 closing diff of 2026-08-20 or were cut with a reason in a DEC-543 round (Smaug the Magnificent, Cavern-Hoard Dragon, Grim Hireling, Magda, Brazen Outlaw, Alchemist's Talent, Nadier's Nightblade, Generous Plunderer, Terminate, Smaug the Impenetrable, Revel in Riches, Dark Ritual, The Reaver Cleaver)."
     }
   ],
   "guideContent": {
@@ -108,7 +113,7 @@
   "categories": [
     {
       "name": "Treasure Engines",
-      "description": "Repeatable Treasure production. These cards feed Smaug's cast trigger, the sacrifice payoffs and the mana base at the same time. Warren Soultrader converts a creature straight into an artifact for one life. Rain of Riches adds cascade to the first spell each turn that Treasure mana paid for, which is the same condition Smaug already rewards. Storm-Kiln Artist makes a Treasure on every instant or sorcery we cast or copy, and the deck runs twenty-one of them.",
+      "description": "Repeatable Treasure production. These cards feed Smaug's cast trigger, the sacrifice payoffs and the mana base at the same time. Warren Soultrader converts a creature straight into an artifact for one life. Rain of Riches adds cascade to the first spell each turn that Treasure mana paid for, which is the same condition Smaug already rewards. Storm-Kiln Artist makes a Treasure on every instant or sorcery we cast or copy, and the deck runs twenty-one of them. Dragon-Cursed Halls turns one unblocked attacker a turn, usually Smaug, into a Treasure for {1} and a tap.",
       "cards": [
         "Pitiless Plunderer",
         "Professional Face-Breaker",
@@ -117,7 +122,7 @@
         "Warren Soultrader",
         "Rain of Riches",
         "Treasure Vault",
-        "Fountainport",
+        "Dragon-Cursed Halls",
         "Storm-Kiln Artist"
       ]
     },
@@ -138,7 +143,6 @@
         "Goblin Bombardment",
         "Warren Soultrader",
         "High Market",
-        "Fountainport",
         "Oni-Cult Anvil"
       ]
     },
@@ -151,8 +155,7 @@
         "Reassembling Skeleton",
         "Marionette Apprentice",
         "Marionette Master",
-        "Black Market Connections",
-        "Fountainport"
+        "Black Market Connections"
       ]
     },
     {
@@ -238,7 +241,7 @@
     },
     {
       "name": "Mana Base",
-      "description": "Thirty-eight lands. Great Furnace and Vault of Whispers are artifact lands, so they trigger the artifacts-entering payoffs and count toward Hellkite Tyrant. High Market is a free sacrifice outlet on a land. Volatile Fault reads \"{1}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That player may search their library for a basic land card, put it onto the battlefield, then shuffle. You create a Treasure token.\" It is the deck's only answer to Ancient Tomb, Cabal Coffers, Urza's Saga and Gaea's Cradle, and the Treasure it leaves behind feeds Smaug's draw trigger. Fountainport makes a Treasure for {4} and turns a spare token into a card for {2}, both without using the stack for a spell. Mines of Moria enters untapped whenever Smaug or another legendary creature is out. The Mycosynth Gardens enters untapped, and for {X} and a tap it becomes a copy of a nontoken artifact we control with mana value X. Copying Academy Manufactor for {3} is the reason it is here; two Manufactors turn one Treasure instruction into three Clues, three Foods and three Treasures.",
+      "description": "Thirty-eight lands. Great Furnace and Vault of Whispers are artifact lands, so they trigger the artifacts-entering payoffs and count toward Hellkite Tyrant. High Market is a free sacrifice outlet on a land. Volatile Fault reads \"{1}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That player may search their library for a basic land card, put it onto the battlefield, then shuffle. You create a Treasure token.\" It is the deck's only answer to Ancient Tomb, Cabal Coffers, Urza's Saga and Gaea's Cradle, and the Treasure it leaves behind feeds Smaug's draw trigger. Dragon-Cursed Halls reads \"{1}, {T}: Until end of turn, target creature gains 'Whenever this creature deals combat damage to a player, create a Treasure token.'\" It has no timing limit, so activate it after blockers are declared on an unblocked attacker, usually Smaug: two mana for a Treasure, net one. Mines of Moria enters untapped whenever Smaug or another legendary creature is out. The Mycosynth Gardens enters untapped, and for {X} and a tap it becomes a copy of a nontoken artifact we control with mana value X. Copying Academy Manufactor for {3} is the reason it is here; two Manufactors turn one Treasure instruction into three Clues, three Foods and three Treasures.",
       "cards": [
         "Command Tower",
         "Blood Crypt",
@@ -262,7 +265,7 @@
         "Vault of Whispers",
         "Bojuka Bog",
         "High Market",
-        "Fountainport",
+        "Dragon-Cursed Halls",
         "Treasure Vault",
         "Mount Doom",
         "Reflecting Pool",
@@ -1133,7 +1136,7 @@
       "secondary_role": "utility"
     },
     {
-      "name": "Fountainport",
+      "name": "Dragon-Cursed Halls",
       "type": "Land",
       "primary_role": "land",
       "secondary_role": "engine"
@@ -1208,21 +1211,6 @@
       ]
     },
     {
-      "name": "Fish",
-      "type_line": "Token Creature — Fish",
-      "oracle_text": "",
-      "power": "1",
-      "toughness": "1",
-      "colors": [
-        "U"
-      ],
-      "scryfall_id": "de0d6700-49f0-4233-97ba-cef7821c30ed",
-      "image_uri": "https://cards.scryfall.io/normal/front/d/e/de0d6700-49f0-4233-97ba-cef7821c30ed.jpg?1783909771",
-      "produced_by": [
-        "Fountainport"
-      ]
-    },
-    {
       "name": "Food",
       "type_line": "Token Artifact — Food",
       "oracle_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
@@ -1291,8 +1279,8 @@
         "Big Score",
         "Black Market Connections",
         "Deadly Dispute",
+        "Dragon-Cursed Halls",
         "Fake Your Own Death",
-        "Fountainport",
         "Goldspan Dragon",
         "Mines of Moria",
         "Pitiless Plunderer",

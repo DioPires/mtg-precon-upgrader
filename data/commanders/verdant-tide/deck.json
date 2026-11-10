@@ -62,6 +62,11 @@
       "type": "ai-inferred",
       "name": "DEC-569 Trigger-2 package",
       "detail": "Board-approved 2026-08-28 (interaction 22fe250f): +Dionus, Elvish Archdruid / -Sakura-Tribe Elder (ramp oversaturated; Elder its weakest piece), +Disciple of Freyalise // Garden of Freyalise / -Last March of the Ents (hand-dump half redundant with Ghalta and underused under Eladamri topcast; Disciple covers the mass-draw half cheaper and adds a land face; all 25 Snow-Covered Forests stay). Both adds owned free copies. EDHREC: Dionus 32.6%, Disciple 40.4%, Last March 17.4% vs Ghalta 37.9%."
+    },
+    {
+      "type": "ai-inferred",
+      "name": "DEC-1226 Necklace of Girion swap",
+      "detail": "Swap round 2 since the DEC-569 baseline (e72efb5b); proposed 2026-11-05, user approved 2026-11-10: +Necklace of Girion / -Patchwork Banner. Same 3-mana artifact slot that taps for one mana. The Necklace puts a +1/+1 counter on a creature you control whenever you cast a green spell or a Forest you control enters (59 of 65 nonland cards and the commander are green; 25 of 34 lands are Snow-Covered Forests; Nature's Lore, Three Visits, Skyshroud Claim, Cultivate, Fabled Passage and Elven Passage put Forests onto the battlefield; Verdant Kraken tentacles are Forests). Its counters stay if it leaves, grow non-Elves, and feed Marwyn (one mana per counter per tap, two per turn with Dionus), Disciple of Freyalise, Tyvar and The Great Henge. The Banner's +1/+1 was Elves-only and ended when it left, its any-color mana does nothing in mono-green, and the deck already has four Elf lords (Elvish Archdruid, Imperious Perfect, Leaf-Crowned Visionary, Dwynen). Limits: no tutor in the deck finds it (Worldly Tutor, Finale of Devastation, Nature's Rhythm and Formidable Speaker find creatures), Eladamri cannot cast it from the top of the library, and his reveal puts only creature cards onto the battlefield, it competes with the commander on turn 3, and Skullclamp targets should not receive its counters. Ownership and price: Necklace of Girion not owned, EUR 11.53 (Scryfall, 2026-11-05); Patchwork Banner returns to the collection (5 owned). Lines not taken: none in this deck (DEC-1226 line B is the hoard-and-bleed Dragon-Cursed Halls swap). EDHREC closing diff (DEC-402) on the 2026-11-10 rates, cards at 40 percent or more that are not in the list: Fyndhorn Elves 68.4 and Arbor Elf 53.6, defer, carried from the DEC-931 closing diff of 2026-09-29 (the Elf core already sits at the DEC-569 count; revisit at the next dork slot); Beast Whisperer 60.1, defer, carried from DEC-931 (Glimpse of Nature, Guardian Project, The Great Henge and Leaf-Crowned Visionary cover cast-draw); Emerald Medallion 40.3, defer, carried from DEC-931, which gave no reason (revisit when a noncreature ramp slot opens). Those DEC-931 verdicts live in agents/ceo/analysis/dec931-apply-report.md and had not reached these sources before this entry. Forest 97.2 is the deck's basic, run as 25 Snow-Covered Forests, so it is not an omission; Fierce Empath 43.7 was cut at DEC-287 as the most restricted of five tutors and deferred again at DEC-931 (Worldly Tutor and Eladamri's top-of-library cast cover it), both recorded verdicts. Measured after the swap (2026-11-10): metrics global_health 89 -> 88, gaps 0 -> 0; ramp count 15.5 -> 16.5 against a target of 10 (score stays capped at 120); gameplan_cohesion 42 -> 40 because the Necklace's text matches no elf-tribal playbook pattern while the Banner's anthem did. Sim deckHealthScore 71.3 -> 71.5 (manaReliability 83.2 -> 84.0): the Necklace is modeled as a 3-mana rock with a {G} pip that taps for {G}, cast last in the ramp order; the Banner was never in the sim's rock table and the counter trigger is unmodeled, so the gain is mostly a modeling change."
     }
   ],
   "guideContent": {
@@ -80,7 +85,8 @@
         "Marwyn, the Nurturer",
         "Circle of Dreams Druid",
         "Llanowar Tribe",
-        "Dionus, Elvish Archdruid"
+        "Dionus, Elvish Archdruid",
+        "Necklace of Girion"
       ]
     },
     {
@@ -89,7 +95,6 @@
         "Ezuri, Renegade Leader",
         "Leaf-Crowned Visionary",
         "Champions of the Perfect",
-        "Patchwork Banner",
         "Tyvar, the Pummeler",
         "Imperious Perfect",
         "Elvish Warmaster",
@@ -450,14 +455,20 @@
       "cards": [
         "Marwyn, the Nurturer",
         "Imperious Perfect",
-        "Elvish Warmaster"
+        "Elvish Warmaster",
+        "Necklace of Girion"
       ],
-      "description": "Marwyn gains a +1/+1 counter every time another elf enters. Imperious Perfect and Elvish Warmaster create elf tokens, each triggering Marwyn. By turn 5, Marwyn often has 5-8 power and taps for an equivalent amount of green — a self-contained counter + ramp engine in a single card.",
+      "description": "Marwyn gains a +1/+1 counter every time another elf enters. Imperious Perfect and Elvish Warmaster create elf tokens, each triggering Marwyn. By turn 5, Marwyn often has 5-8 power and taps for an equivalent amount of green — a self-contained counter + ramp engine in a single card. Necklace of Girion (DEC-1226) adds a counter whenever you cast a green spell or a Forest you control enters; put it on Marwyn and every counter is one more mana per tap, two per turn with Dionus untapping her.",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Counter engine compressed into one card (DEC-83)"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "DEC-1226 Necklace of Girion",
+          "detail": "Counter source added 2026-11-10: 59 of 65 nonland cards and the commander are green, 25 of 34 lands are Snow-Covered Forests, and six ramp cards put seven Forests onto the battlefield."
         }
       ]
     },
@@ -560,7 +571,7 @@
         "Ghalta, Stampede Tyrant",
         "Heritage Druid"
       ],
-      "description": "Llanowar Tribe taps for a fixed {G}{G}{G} from a single 3/3 elf body — unique single-card GGG output (Heritage Druid requires 3 elves tapped). T3 cast + T4 tap enables Unnatural Growth ({1}{G}{G}{G}{G}) on T4 with just Tribe + 2 Forests, or stages T5 Ghalta Stampede Tyrant ({5}{G}{G}{G}) without leaning on Priest of Titania scaling. 3/3 body matters defensively (chump-block trades) and scales with Elvish Archdruid +1/+1, Imperious Perfect counters, and Patchwork Banner pump. Tyvar the Pummeler's X=power activation reads off Tribe's 3 base power, not Llanowar Elves' 1.",
+      "description": "Llanowar Tribe taps for a fixed {G}{G}{G} from a single 3/3 elf body — unique single-card GGG output (Heritage Druid requires 3 elves tapped). T3 cast + T4 tap enables Unnatural Growth ({1}{G}{G}{G}{G}) on T4 with just Tribe + 2 Forests, or stages T5 Ghalta Stampede Tyrant ({5}{G}{G}{G}) without leaning on Priest of Titania scaling. 3/3 body matters defensively (chump-block trades) and scales with Elvish Archdruid +1/+1, Imperious Perfect counters, and Necklace of Girion counters. Tyvar the Pummeler's X=power activation reads off Tribe's 3 base power, not Llanowar Elves' 1.",
       "sources": [
         {
           "type": "scryfall",
@@ -1358,9 +1369,10 @@
       "primary_role": "payoff"
     },
     {
-      "name": "Patchwork Banner",
+      "name": "Necklace of Girion",
       "type": "Artifact",
-      "primary_role": "payoff"
+      "primary_role": "ramp",
+      "secondary_role": "payoff"
     },
     {
       "name": "Champions of the Perfect",
@@ -1529,8 +1541,8 @@
       "colors": [
         "G"
       ],
-      "scryfall_id": "62facbb8-1a83-4731-b515-0f7759ee8c3b",
-      "image_uri": "https://cards.scryfall.io/normal/front/6/2/62facbb8-1a83-4731-b515-0f7759ee8c3b.jpg?1783902808",
+      "scryfall_id": "ca8e8a9a-d673-4644-9eec-f4f549307d9b",
+      "image_uri": "https://cards.scryfall.io/normal/front/c/a/ca8e8a9a-d673-4644-9eec-f4f549307d9b.jpg?1793363664",
       "produced_by": [
         "Beast Within"
       ]
@@ -1602,8 +1614,8 @@
       "colors": [
         "G"
       ],
-      "scryfall_id": "7dab2339-52d8-4e66-87a8-181a87ab0fd3",
-      "image_uri": "https://cards.scryfall.io/normal/front/7/d/7dab2339-52d8-4e66-87a8-181a87ab0fd3.jpg?1783909275",
+      "scryfall_id": "98d54f5e-1584-48e7-bb8e-5bb1520c2d93",
+      "image_uri": "https://cards.scryfall.io/normal/front/9/8/98d54f5e-1584-48e7-bb8e-5bb1520c2d93.jpg?1793363638",
       "produced_by": [
         "Scute Swarm",
         "Springheart Nantuko"

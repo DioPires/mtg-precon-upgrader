@@ -148,7 +148,7 @@ R_PRODUCING_LANDS = FLEXIBLE_LANDS | {
 
 # Colorless-only utility lands.
 C_ONLY_LANDS = {
-    "High Market", "Fountainport", "Treasure Vault", "The Mycosynth Gardens",
+    "High Market", "Dragon-Cursed Halls", "Treasure Vault", "The Mycosynth Gardens",
     "Volatile Fault",
 }
 
@@ -231,7 +231,7 @@ def land_enters_tapped(name: str, battlefield_lands: list[str], hand: list[str])
     # Blood Crypt (pay 2 life), Command Tower, Sulfurous Springs, Mount Doom,
     # City of Brass, Mana Confluence, Exotic Orchard, Reflecting Pool,
     # Spire of Industry, Shadowblood Ridge, The Mycosynth Gardens, Great Furnace,
-    # Vault of Whispers, High Market, Fountainport, Treasure Vault, basics:
+    # Vault of Whispers, High Market, Dragon-Cursed Halls, Treasure Vault, basics:
     # all enter untapped.
     return False
 

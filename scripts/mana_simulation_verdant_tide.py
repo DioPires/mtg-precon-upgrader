@@ -61,6 +61,9 @@ def parse_mana_cost(mana_cost: str) -> dict:
 
 ROCK_DEFS = {
     "Sol Ring":       {"cmc": 1, "C": 2, "burst": False},
+    # DEC-1226: taps for {G}; its +1/+1 counter trigger (green spell cast,
+    # Forest enters) is not modeled, so Marwyn output stays a floor.
+    "Necklace of Girion": {"cmc": 3, "G": 1, "burst": False, "G_pips": 1},
 }
 
 # --- Mana dork definitions ---
@@ -365,7 +368,7 @@ class GameState:
         """Try to cast ramp from hand in priority order.
 
         Priority: Sol Ring > 1-CMC dorks > 2-CMC sorcery ramp >
-        Priest of Titania > Elvish Archdruid
+        Priest of Titania > Elvish Archdruid > Necklace of Girion
         """
         priority_order = [
             ("rock", "Sol Ring"),
@@ -376,6 +379,7 @@ class GameState:
             ("sorcery_ramp", "Three Visits"),
             ("dork", "Priest of Titania"),
             ("dork", "Elvish Archdruid"),
+            ("rock", "Necklace of Girion"),
         ]
 
         for ramp_type, name in priority_order:
@@ -384,7 +388,8 @@ class GameState:
 
             if ramp_type == "rock":
                 rdef = ROCK_DEFS[name]
-                rock_pips = {"generic": rdef["cmc"], "G": 0}
+                g_pips = rdef.get("G_pips", 0)
+                rock_pips = {"generic": rdef["cmc"] - g_pips, "G": g_pips}
                 if pool.can_cast(rock_pips):
                     self.hand.remove(name)
                     self.battlefield_rocks.append(name)
