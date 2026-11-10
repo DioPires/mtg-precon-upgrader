@@ -252,7 +252,9 @@ import type { DeckTierBLoops } from './tierB';
 // hoard-and-bleed +Dragon-Cursed Halls / -Fountainport; card-metadata.json prices refreshed.
 // v160 -> v161 (DEC-1226 2026-11-10): verdant-tide and hoard-and-bleed sources ownership notes
 // corrected from the 2026-11-10 Owned.csv export (both adds owned since 2026-11-05).
-const STORAGE_PREFIX = 'gv1-deck-data-v161:';
+// v161 -> v162 (2026-11-10): titan-convergence combo records and prose fixes (one new
+// winCondition, three new synergies); simulation.json and metrics.json regenerated.
+const STORAGE_PREFIX = 'gv1-deck-data-v162:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the

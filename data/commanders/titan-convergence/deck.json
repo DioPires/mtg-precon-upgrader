@@ -164,7 +164,7 @@
         "Forsaken Monument",
         "Eye of Ugin"
       ],
-      "description": "Generate infinite colorless mana via Basalt Monolith + Forsaken Monument (tap for 4, untap for 3). Use Eye of Ugin repeatedly to tutor every Eldrazi from the library onto the battlefield. Alternatively, Rings of Brighthearth + Basalt Monolith or Voltaic Construct + Karn, the Great Creator + any mana rock achieve the same infinite mana.",
+      "description": "Generate infinite colorless mana via Basalt Monolith + Forsaken Monument (tap for 4, untap for 3). Eye of Ugin ({7}, {T}) then searches for a colorless creature card and puts it into your hand, and the mana casts it. Alternatively, Rings of Brighthearth + Basalt Monolith or Voltaic Construct + Karn, the Great Creator + any mana rock achieve the same infinite mana.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -246,6 +246,28 @@
       ]
     },
     {
+      "title": "Echoes Storm: Top + Fleshraker",
+      "cards": [
+        "Sensei's Divining Top",
+        "Echoes of Eternity",
+        "Glaring Fleshraker"
+      ],
+      "description": "With Echoes of Eternity and Glaring Fleshraker on the battlefield, cast Sensei's Divining Top from your hand for {1}. Echoes copies the spell, so a token Top enters beside the real one. Echoes also makes each Fleshraker trigger happen twice: the cast creates two Eldrazi Spawn, and each Spawn entering makes Fleshraker deal 2 damage to each opponent, 4 damage per cast. Tap the real Top to draw a card and put it on top of your library, tap the token to draw the real Top back, sacrifice a Spawn for {C} and recast. Each cast nets one mana and one card, and ten casts deal 40 damage to each opponent.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/5078-5642-5705/",
+          "detail": "Infinite card draw, near-infinite damage"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Echoes of Eternity also doubles Glaring Fleshraker's triggers (Fleshraker is another colorless permanent you control): two Spawn per cast and 2 damage per Spawn, 4 damage to each opponent per cast. Spellbook's steps count one Spawn and 1 damage."
+        }
+      ]
+    },
+    {
       "title": "Infinite Mana: Rings + Basalt",
       "kind": "combo",
       "pieces": [
@@ -257,7 +279,7 @@
         "Basalt Monolith",
         "Eye of Ugin"
       ],
-      "description": "Tap Basalt for 3, pay 3 to untap, copy the untap with Rings for 2 (needs 2 external mana to start). Each loop nets 1 colorless = infinite mana. Pour into Eye of Ugin to tutor every Eldrazi onto the battlefield.",
+      "description": "Tap Basalt for 3, pay 3 to untap, copy the untap with Rings for 2 (needs 2 external mana to start). Each loop nets 1 colorless = infinite mana. Pour it into Eye of Ugin ({7}, {T}: search for a colorless creature card and put it into your hand), then cast it.",
       "sources": [
         {
           "type": "commanderspellbook",
@@ -369,6 +391,24 @@
       ]
     },
     {
+      "title": "Infinite Mana: Key-Rings with Mana Vault",
+      "cards": [
+        "Voltaic Key",
+        "Rings of Brighthearth",
+        "Mana Vault",
+        "Forsaken Monument"
+      ],
+      "description": "With Forsaken Monument out, Mana Vault taps for 4 (3+1). Voltaic Key ({1}, {T}) targets itself, Rings of Brighthearth copies that ability for {2} targeting Mana Vault, and both untap. Each cycle costs 3 and makes 4 = infinite colorless mana.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/617-2364-4235-4547/",
+          "detail": "Infinite colorless mana"
+        }
+      ]
+    },
+    {
       "title": "Flash Cascade Storm",
       "cards": [
         "Liberator, Urza's Battlethopter",
@@ -398,7 +438,7 @@
         "Krark-Clan Ironworks",
         "Glaring Fleshraker"
       ],
-      "description": "Cast Colossus free, cascade twice, sac to KCI for 2 mana, sac 2 Fleshraker spawn tokens to return Colossus from graveyard, recast and repeat.",
+      "description": "Cast Colossus free, cascade twice, sac to KCI for 2 mana, sacrifice two artifacts to return Colossus from graveyard to hand, recast and repeat. Each recast triggers Glaring Fleshraker; its Eldrazi Spawn are creature tokens, not artifacts.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -485,6 +525,45 @@
           "type": "commanderspellbook",
           "name": "Commander Spellbook",
           "url": "https://commanderspellbook.com/combo/777-985-5078/",
+          "detail": "Infinite card draw"
+        }
+      ]
+    },
+    {
+      "title": "Echoes Storm: Top-Fleshraker Engine",
+      "cards": [
+        "Sensei's Divining Top",
+        "Echoes of Eternity",
+        "Glaring Fleshraker"
+      ],
+      "description": "With Echoes of Eternity out, each cast of Sensei's Divining Top from hand ({1}) makes a token copy of Top and triggers Glaring Fleshraker twice, so two Eldrazi Spawn enter and each makes Fleshraker deal 2 damage to each opponent. Tap the real Top, then the token copy, to draw a card and return the real Top to your hand, then sacrifice a Spawn to recast it. Each cast nets one mana, one card and 4 damage to each opponent.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/5078-5642-5705/",
+          "detail": "Infinite card draw, near-infinite damage"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Claude analysis",
+          "detail": "Echoes of Eternity also doubles Glaring Fleshraker's triggers (Fleshraker is another colorless permanent you control): two Spawn per cast and 2 damage per Spawn. Spellbook's steps count one Spawn and 1 damage."
+        }
+      ]
+    },
+    {
+      "title": "Infinite Draw: Echoes-Top Engine",
+      "cards": [
+        "Sensei's Divining Top",
+        "Echoes of Eternity",
+        "Ugin, the Ineffable"
+      ],
+      "description": "Ugin, the Ineffable makes Top cost {0}. Cast Top from your hand: Echoes of Eternity copies it, and the copy becomes a token Top. Tap the real Top to draw and put it on top, tap the token copy to draw it back, recast. Each loop draws one card; stop before your library runs out.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/2604-5078-5642/",
           "detail": "Infinite card draw"
         }
       ]
