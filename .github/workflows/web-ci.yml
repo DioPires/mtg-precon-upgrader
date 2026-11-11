@@ -43,7 +43,12 @@ jobs:
           cache: 'npm'
           cache-dependency-path: web/package-lock.json
       - run: npm ci
-      - run: npx playwright install --with-deps chrome
+      - name: Install Chrome for Playwright
+        # Without --with-deps: that flag also installs font packages through
+        # apt, and the hosted runner cannot always resolve the Ubuntu mirror.
+        # Playwright still reinstalls Chrome here; its .deb needs nothing from
+        # the mirror.
+        run: npx playwright install chrome
       - run: npm run test:e2e
       - if: failure()
         uses: actions/upload-artifact@v7
