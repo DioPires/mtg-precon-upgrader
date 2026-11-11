@@ -51,7 +51,7 @@
     }
   ],
   "guideContent": {
-    "strategyOverview": "Zhulodok cascade deck with infinite mana combos, flash cascade storms, and every Eldrazi titan. Cascades 4+ times per spell with Echoes of Eternity, wins with infinite mana loops, and locks opponents out with Void Winnower and Emrakul."
+    "strategyOverview": "Zhulodok cascade deck with infinite mana combos, flash cascade storms, and all three Eldrazi titans. With Echoes of Eternity, each colorless spell with mana value 7 or greater cast from hand cascades 4+ times, and Void Winnower and Emrakul, the Promised End restrict opponents."
   },
   "categories": [
     {
@@ -153,12 +153,7 @@
   ],
   "winConditions": [
     {
-      "title": "Infinite Mana into Eldrazi Army",
-      "kind": "combo",
-      "pieces": [
-        "Basalt Monolith",
-        "Forsaken Monument"
-      ],
+      "title": "Infinite Mana: Basalt + Monument",
       "cards": [
         "Basalt Monolith",
         "Forsaken Monument",
@@ -180,7 +175,7 @@
         "Echoes of Eternity",
         "Glaring Fleshraker"
       ],
-      "description": "Cast any 7+ mana spell to cascade twice via Zhulodok. Echoes of Eternity doubles each cascade trigger to four, and copies each cascaded spell. A single cast generates 9+ spells. Glaring Fleshraker triggers on each colorless cast, creating Spawn tokens and dealing 1 damage per opponent. One resolved chain deals 4+ damage and floods the board.",
+      "description": "Cast a colorless spell with mana value 7 or greater from your hand to cascade twice via Zhulodok. Echoes of Eternity doubles the two cascade triggers to four, and copies the original and each cascaded spell. A single cast generates 9 more spells (4 cascaded, 5 copies) when all four cascades are cast. With Echoes, Glaring Fleshraker triggers twice on each colorless spell you cast (copies are not cast), creating two Spawn; each Spawn entering makes it deal 2 damage to each opponent. One chain deals at least 4 damage to each opponent per spell cast (at least 20 if all four cascades are cast), plus 2 per other colorless creature entering under your control, and floods the board.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -213,7 +208,7 @@
         "Kozilek, Butcher of Truth",
         "Void Winnower"
       ],
-      "description": "Deploy multiple Eldrazi titans through cascade or infinite mana. Annihilator triggers force opponents to sacrifice permanents on each attack; Ulamog, the Ceaseless Hunger has no annihilator and instead exiles the top twenty cards of the defending player's library when it attacks. Void Winnower prevents opponents from casting spells with even mana values and blocking with creatures with even mana values. Two attack steps with multiple titans strips 10+ permanents and locks opponents out of the game.",
+      "description": "Deploy multiple Eldrazi titans through cascade or infinite mana. Annihilator triggers force opponents to sacrifice permanents on each attack; Ulamog, the Ceaseless Hunger has no annihilator and instead exiles the top twenty cards of the defending player's library when it attacks. Void Winnower prevents opponents from casting spells with even mana values and blocking with creatures with even mana values. Each attack by Kozilek, Butcher of Truth makes the defending player sacrifice four permanents (annihilator 4); Artisan of Kozilek adds two (annihilator 2).",
       "sources": [
         {
           "type": "ai-inferred",
@@ -236,6 +231,12 @@
           "type": "ai-inferred",
           "name": "Claude analysis",
           "detail": "Strategic win path identification"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/985-5078-5705/",
+          "detail": "Infinite card draw, near-infinite damage"
         }
       ],
       "kind": "combo",
@@ -243,7 +244,8 @@
         "Sensei's Divining Top",
         "Mystic Forge",
         "Glaring Fleshraker"
-      ]
+      ],
+      "startPiece": "Sensei's Divining Top"
     },
     {
       "title": "Echoes Storm: Top + Fleshraker",
@@ -253,6 +255,7 @@
         "Echoes of Eternity",
         "Glaring Fleshraker"
       ],
+      "startPiece": "Sensei's Divining Top",
       "cards": [
         "Sensei's Divining Top",
         "Echoes of Eternity",
@@ -275,11 +278,6 @@
     },
     {
       "title": "Infinite Mana: Rings + Basalt",
-      "kind": "combo",
-      "pieces": [
-        "Rings of Brighthearth",
-        "Basalt Monolith"
-      ],
       "cards": [
         "Rings of Brighthearth",
         "Basalt Monolith",
@@ -297,12 +295,6 @@
     },
     {
       "title": "Infinite Mana: Karn's Construct Engine",
-      "kind": "combo",
-      "pieces": [
-        "Karn, the Great Creator",
-        "Voltaic Construct",
-        "Basalt Monolith"
-      ],
       "cards": [
         "Karn, the Great Creator",
         "Voltaic Construct",
@@ -326,7 +318,7 @@
         "Echoes of Eternity",
         "Zhulodok, Void Gorger"
       ],
-      "description": "Each 7+ MV spell cascades 4 times instead of 2, AND each cascaded spell gets copied. One spell becomes 9+ spells.",
+      "description": "Each colorless 7+ MV spell you cast from hand cascades 4 times instead of 2, AND each spell cast gets copied. One spell produces 10 spells in total (itself, 4 cascaded, 5 copies) when all four cascades are cast.",
       "sources": [
         {
           "type": "edhrec",
@@ -376,7 +368,7 @@
         "Forsaken Monument",
         "Thran Dynamo"
       ],
-      "description": "Key untaps a mana rock for 1, Rings copies Key targeting itself for 2. With any rock that taps for 4+ (e.g., Basalt Monolith + Forsaken Monument), this nets infinite mana. Thran Dynamo produces 3, enabling infinite untaps but not net mana.",
+      "description": "Key untaps a mana rock for 1, Rings copies Key targeting itself for 2. With any rock that taps for 4+ (e.g., Basalt Monolith + Forsaken Monument), this nets infinite mana. Thran Dynamo taps for 4 with Forsaken Monument, netting 1 per loop; without Monument it only breaks even.",
       "sources": [
         {
           "type": "edhrec",
@@ -393,7 +385,7 @@
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Three-card infinite mana combo"
+          "detail": "Four-card infinite mana combo"
         }
       ]
     },
@@ -422,7 +414,7 @@
         "Vedalken Orrery",
         "Glaring Fleshraker"
       ],
-      "description": "Cast 7+ MV Eldrazi at instant speed on opponents' turns via Liberator or Orrery. Each cascade spawns tokens + 1 damage per opponent via Fleshraker. With Echoes, 4+ damage per chain.",
+      "description": "Cast 7+ MV Eldrazi from your hand at instant speed on opponents' turns via Liberator or Orrery. Each spell cast in the chain (the original and each cascade hit) creates a Spawn via Fleshraker, and each Spawn entering makes Fleshraker deal 1 damage to each opponent. With Echoes, at least 4 damage to each opponent per cast, at least 20 per chain if all four cascade hits are cast.",
       "sources": [
         {
           "type": "edhrec",
@@ -898,7 +890,7 @@
       "name": "Lithoform Engine",
       "price": "$5-7",
       "isGameChanger": false,
-      "reason": "Copy any triggered ability (cascade, Eldrazi cast triggers), activated ability (Eye of Ugin, mana rocks), instant/sorcery, or permanent spell. Multiplies everything the deck does",
+      "reason": "Copy a non-mana triggered ability you control (cascade, Eldrazi cast triggers), a non-mana activated ability you control (Eye of Ugin), an instant or sorcery spell you control, or a permanent spell you control.",
       "sources": [
         {
           "type": "edhrec",
@@ -923,7 +915,7 @@
       "name": "Echoes of Eternity",
       "price": "$5-8",
       "isGameChanger": false,
-      "reason": "Doubles cascade triggers (4 cascades per spell!) + copies every colorless spell",
+      "reason": "Doubles cascade triggers (4 cascades per colorless spell you cast from hand with mana value 7 or greater!) + copies every colorless spell you cast",
       "sources": [
         {
           "type": "edhrec",
@@ -1056,7 +1048,7 @@
       "name": "Voltaic Key",
       "price": "$1-2",
       "isGameChanger": false,
-      "reason": "Untap artifacts. Infinite mana with Rings + 4-mana rock",
+      "reason": "Untap artifacts. Infinite mana with Rings + a rock that taps for 4 or more (Basalt Monolith, Thran Dynamo or Mana Vault with Forsaken Monument)",
       "sources": [
         {
           "type": "edhrec",
@@ -1084,12 +1076,12 @@
       "name": "Krark-Clan Ironworks",
       "price": "$8-12",
       "isGameChanger": false,
-      "reason": "Sacrifice artifacts for 2 colorless. Loops with Metalwork Colossus",
+      "reason": "Sacrifice an artifact for {C}{C}. Repeats with Metalwork Colossus, which costs two artifacts per return",
       "sources": [
         {
           "type": "ai-inferred",
           "name": "Claude analysis",
-          "detail": "Enables Colossus recursion loop and mana generation"
+          "detail": "Enables Colossus recursion and mana generation"
         }
       ]
     },
@@ -1145,7 +1137,7 @@
       "name": "Glaring Fleshraker",
       "price": "$1-2",
       "isGameChanger": false,
-      "reason": "Casting colorless spells creates Spawn tokens. Each colorless creature entering (including Spawns) deals 1 damage to each opponent. Storm wincon",
+      "reason": "Casting your colorless spells creates Spawn tokens. Whenever another colorless creature you control enters (including Spawns), Fleshraker deals 1 damage to each opponent. Storm wincon",
       "sources": [
         {
           "type": "edhrec",
