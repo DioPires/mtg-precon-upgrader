@@ -164,7 +164,7 @@
         "Forsaken Monument",
         "Eye of Ugin"
       ],
-      "description": "Generate infinite colorless mana via Basalt Monolith + Forsaken Monument (tap for 4, untap for 3). Eye of Ugin ({7}, {T}) then searches for a colorless creature card and puts it into your hand, and the mana casts it. Alternatively, Rings of Brighthearth + Basalt Monolith or Voltaic Construct + Karn, the Great Creator + any mana rock achieve the same infinite mana.",
+      "description": "Generate infinite colorless mana via Basalt Monolith + Forsaken Monument (tap for 4, untap for 3). Eye of Ugin ({7}, {T}) then searches for a colorless creature card and puts it into your hand, and the mana casts it. Alternatively, Rings of Brighthearth + Basalt Monolith, or Voltaic Construct + Karn, the Great Creator + a rock that taps for three or more (Basalt Monolith, Thran Dynamo, Mana Vault), make the same infinite mana.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -213,7 +213,7 @@
         "Kozilek, Butcher of Truth",
         "Void Winnower"
       ],
-      "description": "Deploy multiple Eldrazi titans through cascade or infinite mana. Annihilator triggers force opponents to sacrifice permanents on each attack. Void Winnower prevents opponents from casting even-cost spells and blocking with even-power creatures. Two attack steps with multiple titans strips 10+ permanents and locks opponents out of the game.",
+      "description": "Deploy multiple Eldrazi titans through cascade or infinite mana. Annihilator triggers force opponents to sacrifice permanents on each attack; Ulamog, the Ceaseless Hunger has no annihilator and instead exiles the top twenty cards of the defending player's library when it attacks. Void Winnower prevents opponents from casting spells with even mana values and blocking with creatures with even mana values. Two attack steps with multiple titans strips 10+ permanents and locks opponents out of the game.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -230,7 +230,7 @@
         "Glaring Fleshraker",
         "Foundry Inspector"
       ],
-      "description": "Mystic Forge casts Top from library top. With a cost reducer (Ugin, the Ineffable or Foundry Inspector), Top costs 0. Tap Top to draw and place it back on top. Recast from library via Forge. Each cast triggers Glaring Fleshraker for 1 damage to each opponent plus a Spawn token. Repeat for infinite draw and lethal damage.",
+      "description": "Mystic Forge lets you cast Sensei's Divining Top from the top of your library. Tap Top to draw a card and put it on top, then recast it through Forge for {1}. Each cast triggers Glaring Fleshraker: an Eldrazi Spawn enters, Fleshraker deals 1 damage to each opponent, and the Spawn's mana pays for the next cast ({1} to start). Each loop draws one card and deals 1 damage to each opponent, so 40 loops kill a table at 40 life; stop before the library runs out. Foundry Inspector or Ugin, the Ineffable makes Top cost {0}, so the loop also runs without Fleshraker, drawing a card per loop but dealing no damage.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -242,11 +242,17 @@
       "pieces": [
         "Sensei's Divining Top",
         "Mystic Forge",
-        "Foundry Inspector"
+        "Glaring Fleshraker"
       ]
     },
     {
       "title": "Echoes Storm: Top + Fleshraker",
+      "kind": "combo",
+      "pieces": [
+        "Sensei's Divining Top",
+        "Echoes of Eternity",
+        "Glaring Fleshraker"
+      ],
       "cards": [
         "Sensei's Divining Top",
         "Echoes of Eternity",
@@ -341,7 +347,7 @@
         "Basalt Monolith",
         "Forsaken Monument"
       ],
-      "description": "Monolith taps for 4 (3+1 from Monument), untaps for 3 = infinite colorless mana. Feed into Eye of Ugin to tutor every Eldrazi.",
+      "description": "Monolith taps for 4 (3+1 from Monument), untaps for 3 = infinite colorless mana. Feed it into Eye of Ugin ({7}, {T}) to put a colorless creature card into your hand and cast it.",
       "sources": [
         {
           "type": "edhrec",
@@ -367,6 +373,7 @@
       "cards": [
         "Voltaic Key",
         "Rings of Brighthearth",
+        "Forsaken Monument",
         "Thran Dynamo"
       ],
       "description": "Key untaps a mana rock for 1, Rings copies Key targeting itself for 2. With any rock that taps for 4+ (e.g., Basalt Monolith + Forsaken Monument), this nets infinite mana. Thran Dynamo produces 3, enabling infinite untaps but not net mana.",
@@ -558,13 +565,19 @@
         "Echoes of Eternity",
         "Ugin, the Ineffable"
       ],
-      "description": "Ugin, the Ineffable makes Top cost {0}. Cast Top from your hand: Echoes of Eternity copies it, and the copy becomes a token Top. Tap the real Top to draw and put it on top, tap the token copy to draw it back, recast. Each loop draws one card; stop before your library runs out.",
+      "description": "Ugin, the Ineffable makes Top cost {0}. Cast Top from your hand: Echoes of Eternity copies it, and the copy becomes a token Top. Tap the real Top to draw and put it on top, tap the token copy to draw it back, recast. Each loop draws one card; stop before your library runs out. Foundry Inspector substitutes for Ugin.",
       "sources": [
         {
           "type": "commanderspellbook",
           "name": "Commander Spellbook",
           "url": "https://commanderspellbook.com/combo/2604-5078-5642/",
           "detail": "Infinite card draw"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook",
+          "url": "https://commanderspellbook.com/combo/777-5078-5642/",
+          "detail": "Infinite card draw with Foundry Inspector"
         }
       ]
     },
@@ -575,7 +588,7 @@
         "Karn, the Great Creator",
         "Basalt Monolith"
       ],
-      "description": "Karn's +1 animates Basalt Monolith (or Thran Dynamo, Mana Vault) into an artifact creature. Construct pays {2} to untap it. Rock taps for 3+ mana, netting 1+ per loop = infinite colorless mana. Feed into Eye of Ugin to tutor every Eldrazi.",
+      "description": "Karn's +1 animates Basalt Monolith (or Thran Dynamo, Mana Vault) into an artifact creature. Construct pays {2} to untap it. Rock taps for 3+ mana, netting 1+ per loop = infinite colorless mana. Feed it into Eye of Ugin ({7}, {T}) to put a colorless creature card into your hand and cast it.",
       "sources": [
         {
           "type": "commanderspellbook",

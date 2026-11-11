@@ -256,7 +256,10 @@ import type { DeckTierBLoops } from './tierB';
 // winCondition, three new synergies); simulation.json and metrics.json regenerated.
 // v162 -> v163 (2026-11-11): fleet candidate-pool refresh on the 2026-11-10T22:02 mirror; every deck's
 // metrics.json regenerated (mirror date and candidates age only).
-const STORAGE_PREFIX = 'gv1-deck-data-v163:';
+// v163 -> v164 (2026-11-11): titan-convergence owner-approved follow-up (Artifact Storm
+// pieces, Echoes Storm tagged as a combo, prose fixes); simulation.json regenerated
+// (metrics.json unchanged).
+const STORAGE_PREFIX = 'gv1-deck-data-v164:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
