@@ -1076,6 +1076,316 @@ class CastPriorityHoldTests(unittest.TestCase):
         _, casts = self._run_combo()
         self.assertEqual(casts[4], ["Bear 0"])
 
+    # --- the combo gate with a startPiece ------------------------------------
+
+    def _run_start_piece_combo(self, hand: list, library_top: list):
+        """Pinned game for a start piece and its partner on turn 1.
+
+        A free rock that adds {G}{G}{G} makes turn 1 a four-mana turn: the {1}
+        start piece and the {2} partner both fit with {1} left over. A free
+        cantrip can draw the partner mid-turn. Every other spell costs {9}, so
+        nothing else competes for the mana. ``library_top`` is drawn first.
+        """
+        metadata = {
+            "Forest": self._forest(),
+            self.COMBO_COMMANDER: {
+                "name": self.COMBO_COMMANDER,
+                "type_line": "Legendary Creature — Human",
+                "oracle_text": "", "mana_cost": "{9}", "cmc": 9,
+                "colors": [], "color_identity": ["G"],
+            },
+            "Triple Rock": {
+                "name": "Triple Rock", "type_line": "Artifact",
+                "oracle_text": "{T}: Add {G}{G}{G}.", "mana_cost": "", "cmc": 0,
+                "colors": [], "color_identity": ["G"],
+            },
+            "Start Top": {
+                "name": "Start Top", "type_line": "Artifact",
+                "oracle_text": "", "mana_cost": "{1}", "cmc": 1,
+                "colors": [], "color_identity": [],
+            },
+            "Partner Forge": {
+                "name": "Partner Forge", "type_line": "Artifact",
+                "oracle_text": "", "mana_cost": "{2}", "cmc": 2,
+                "colors": [], "color_identity": [],
+            },
+            "Cantrip": {
+                "name": "Cantrip", "type_line": "Sorcery",
+                "oracle_text": "Draw a card.", "mana_cost": "", "cmc": 0,
+                "colors": [], "color_identity": [],
+            },
+        }
+        fillers = [f"Filler {i}" for i in range(10)]
+        for name in fillers:
+            metadata[name] = {
+                "name": name, "type_line": "Sorcery", "oracle_text": "",
+                "mana_cost": "{9}", "cmc": 9, "colors": [], "color_identity": [],
+            }
+        decklist = (["Forest"] * 11
+                    + ["Triple Rock", "Start Top", "Partner Forge", "Cantrip"]
+                    + fillers)
+        deck_data = {
+            "decklist": [{"name": name} for name in decklist],
+            "winConditions": [{
+                "title": "Start Loop",
+                "kind": "combo",
+                "pieces": ["Start Top", "Partner Forge"],
+                "startPiece": "Start Top",
+            }],
+        }
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, metadata, self.COMBO_COMMANDER, ["G"],
+            self.COMBO_DECK_ID)
+        # library.pop() draws from the end: library_top first, then a Forest
+        # every turn.
+        library = fillers + ["Forest"] * 10 + list(reversed(library_top))
+
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          lambda *_: (list(library), list(hand))), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = exporter.simulate_goldfish_game(
+                decklist, metadata, context, 6)
+        return by_turn, casts
+
+    def test_start_piece_cast_before_its_partner_waits_a_turn(self):
+        by_turn, casts = self._run_start_piece_combo(
+            ["Forest", "Triple Rock", "Start Top", "Partner Forge"], [])
+        # Cheapest line member first: the start piece lands before its partner.
+        self.assertEqual(casts[1], ["Triple Rock", "Start Top", "Partner Forge"])
+        # {1} is left over, but the start piece entered before its partner, so
+        # the loop cannot be started this turn.
+        self.assertEqual(by_turn[1]["comboLethal"], 0)
+        # Turn 2: nothing else is cast and the start piece's {1} is available.
+        self.assertEqual(casts[2], [])
+        self.assertEqual(by_turn[2]["comboLethal"], 1)
+
+    def test_partner_drawn_after_the_start_piece_waits_a_turn(self):
+        # The partner is not in hand, so the start piece is cast; the cantrip
+        # then draws the partner, which is cast the same turn. The start piece
+        # entered before its partner, so the loop waits a turn although {1} is
+        # left over, and starts on turn 2 by paying the start piece again.
+        by_turn, casts = self._run_start_piece_combo(
+            ["Forest", "Triple Rock", "Start Top", "Cantrip"], ["Partner Forge"])
+        self.assertEqual(casts[1],
+                         ["Triple Rock", "Start Top", "Cantrip", "Partner Forge"])
+        self.assertEqual(by_turn[1]["comboLethal"], 0)
+        self.assertEqual(casts[2], [])
+        self.assertEqual(by_turn[2]["comboLethal"], 1)
+
+
+class ComboStartPieceTests(unittest.TestCase):
+    """A combo line's ``startPiece`` is cast to start the loop.
+
+    Shaped on titan-convergence's Sensei's Divining Top loops (Commander
+    Spellbook 985-5078-5705 and 5078-5642-5705, both ``manaNeeded`` {1}): the
+    loop starts with a Top cast while the other pieces are out. A Top on the
+    battlefield is free only when it was the last of the line's pieces to enter
+    and it entered this turn; one out since an earlier turn pays its cost
+    again; one that entered this turn before a partner cannot restart the loop
+    that turn, and neither can a Top that only reanimation could deliver.
+    Synthetic pieces: {1} start piece, {4} and {2} partners, a {3} unrelated
+    artifact, a {2} reanimation spell, a {1} to-graveyard tutor and a {2}
+    to-hand tutor. Every board is built through ``resolve_cast_effects``, the
+    path the goldfish uses to put a cast permanent on the battlefield, in the
+    order listed.
+    """
+
+    TURN = 5
+    COMMANDER = "Synthetic Commander"
+    DECKLIST = [
+        {"name": "Top Piece"},
+        {"name": "Forge Piece"},
+        {"name": "Raker Piece"},
+        {"name": "Other Artifact"},
+        {"name": "Reanimate Piece", "primary_role": "recursion"},
+        {"name": "Entomb Piece", "primary_role": "tutor",
+         "tutor_mode": "to_graveyard"},
+        {"name": "Tutor Piece", "primary_role": "tutor"},
+    ]
+    WINCON = {
+        "title": "Top Loop",
+        "kind": "combo",
+        "pieces": ["Top Piece", "Forge Piece", "Raker Piece"],
+        "startPiece": "Top Piece",
+    }
+    PLAIN = {"title": "Top Loop", "kind": "combo",
+             "pieces": ["Top Piece", "Forge Piece", "Raker Piece"]}
+    # A second line that is never ready: nothing can supply Other Artifact.
+    OTHER = {"title": "Other Loop", "kind": "combo",
+             "pieces": ["Other Artifact", "Forge Piece"]}
+    # A second start-piece line sharing the start piece.
+    SECOND = {"title": "Second Loop", "kind": "combo",
+              "pieces": ["Top Piece", "Other Artifact", "Raker Piece"],
+              "startPiece": "Top Piece"}
+
+    @staticmethod
+    def _metadata() -> dict:
+        def card(name, type_line, mana_cost, cmc):
+            return {
+                "name": name, "type_line": type_line, "oracle_text": "",
+                "mana_cost": mana_cost, "cmc": cmc, "colors": [],
+                "color_identity": [],
+            }
+
+        return {
+            "Synthetic Commander": card("Synthetic Commander",
+                                        "Legendary Creature — Eldrazi",
+                                        "{9}", 9),
+            "Top Piece": card("Top Piece", "Artifact", "{1}", 1),
+            "Forge Piece": card("Forge Piece", "Artifact", "{4}", 4),
+            "Raker Piece": card("Raker Piece", "Artifact", "{2}", 2),
+            "Other Artifact": card("Other Artifact", "Artifact", "{3}", 3),
+            "Reanimate Piece": card("Reanimate Piece", "Sorcery", "{2}", 2),
+            "Entomb Piece": card("Entomb Piece", "Instant", "{1}", 1),
+            "Tutor Piece": card("Tutor Piece", "Sorcery", "{2}", 2),
+        }
+
+    def _context(self, wincons: list) -> dict:
+        deck_data = {
+            "decklist": [dict(entry) for entry in self.DECKLIST],
+            "winConditions": [dict(wincon) for wincon in wincons],
+        }
+        return exporter.build_goldfish_context(
+            [entry["name"] for entry in self.DECKLIST], deck_data,
+            self._metadata(), self.COMMANDER, ["G"], "synthetic-start-piece")
+
+    def _board(self, context: dict, entries: list) -> list[dict]:
+        """Resolve each (name, cast turn) onto the battlefield, in order."""
+        permanents = []
+        for name, cast_turn in entries:
+            exporter.resolve_cast_effects(
+                name, context["profiles"][name], cast_turn,
+                exporter.GoldfishManaPool([]), [], [], permanents, [],
+                context["profiles"], self._metadata(), ["G"])
+        return permanents
+
+    EARLIER_BOARD = [("Top Piece", 3), ("Forge Piece", 4), ("Raker Piece", 4)]
+    PARTNERS_OUT = [("Forge Piece", 4), ("Raker Piece", 4)]
+    RAKER_MISSING = [("Top Piece", 3), ("Forge Piece", 3)]
+    TOP_LAST_LAST_TURN = [("Forge Piece", 3), ("Raker Piece", 3), ("Top Piece", 4)]
+    TOP_BEFORE_PARTNER = [("Raker Piece", 3), ("Top Piece", 5), ("Forge Piece", 5)]
+    SPARE = 9
+
+    # (label, win conditions, hand, battlefield [(name, cast turn)] in entry
+    #  order, mana in the pool, ready). TURN is 5.
+    READY_CASES = [
+        ("start piece out since turn 3, empty pool",
+         [WINCON], [], EARLIER_BOARD, 0, False),
+        ("start piece out since turn 3, pool holds its {1}",
+         [WINCON], [], EARLIER_BOARD, 1, True),
+        ("start piece last to enter but on turn 4, empty pool",
+         [WINCON], [], TOP_LAST_LAST_TURN, 0, False),
+        ("start piece last to enter but on turn 4, pool holds its {1}",
+         [WINCON], [], TOP_LAST_LAST_TURN, 1, True),
+        ("start piece out since turn 3, a partner cast this turn, empty pool",
+         [WINCON], [], [("Top Piece", 3), ("Raker Piece", 3), ("Forge Piece", 5)],
+         0, False),
+        ("start piece last to enter on turn 4, unrelated permanent cast this "
+         "turn, empty pool",
+         [WINCON], [], TOP_LAST_LAST_TURN + [("Other Artifact", 5)], 0, False),
+        ("start piece cast this turn before a partner cast this turn, spare mana",
+         [WINCON], [], TOP_BEFORE_PARTNER, SPARE, False),
+        ("start piece cast this turn after both partners from turn 3, empty pool",
+         [WINCON], [], [("Forge Piece", 3), ("Raker Piece", 3), ("Top Piece", 5)],
+         0, True),
+        ("start piece cast this turn after both partners cast this turn, "
+         "empty pool",
+         [WINCON], [], [("Forge Piece", 5), ("Raker Piece", 5), ("Top Piece", 5)],
+         0, True),
+        ("start piece cast this turn last, then an unrelated permanent cast "
+         "this turn, empty pool",
+         [WINCON], [], [("Forge Piece", 3), ("Raker Piece", 3), ("Top Piece", 5),
+                        ("Other Artifact", 5)], 0, True),
+        ("start piece cast this turn, {4} partner still in hand, spare mana",
+         [WINCON], ["Forge Piece"], [("Raker Piece", 3), ("Top Piece", 5)],
+         SPARE, False),
+        ("start piece out since turn 3, {4} piece in hand, pool {4}",
+         [WINCON], ["Forge Piece"], [("Top Piece", 3), ("Raker Piece", 4)], 4,
+         False),
+        ("start piece out since turn 3, {4} piece in hand, pool {5}",
+         [WINCON], ["Forge Piece"], [("Top Piece", 3), ("Raker Piece", 4)], 5,
+         True),
+        ("start piece only reachable by reanimation, spare mana",
+         [WINCON], ["Reanimate Piece"], PARTNERS_OUT, SPARE, False),
+        ("start piece only reachable by to_graveyard tutor + reanimation, "
+         "spare mana",
+         [WINCON], ["Entomb Piece", "Reanimate Piece"], PARTNERS_OUT, SPARE,
+         False),
+        ("start piece by to_hand tutor, to_graveyard tutor also in hand, "
+         "pool {2} + its {1}",
+         [WINCON], ["Entomb Piece", "Reanimate Piece", "Tutor Piece"],
+         PARTNERS_OUT, 3, True),
+        ("start piece by to_hand tutor, to_graveyard tutor also in hand, "
+         "pool holds only the {2} tutor",
+         [WINCON], ["Entomb Piece", "Reanimate Piece", "Tutor Piece"],
+         PARTNERS_OUT, 2, False),
+        ("start piece out since turn 3, partner reanimated, pool {2} + its {1}",
+         [WINCON], ["Reanimate Piece"], RAKER_MISSING, 3, True),
+        ("start piece in hand, pool holds its {1}",
+         [WINCON], ["Top Piece"], PARTNERS_OUT, 1, True),
+        ("start piece in hand, empty pool",
+         [WINCON], ["Top Piece"], PARTNERS_OUT, 0, False),
+        ("start line plus a line without startPiece, start piece out since "
+         "turn 3, empty pool",
+         [WINCON, OTHER], [], EARLIER_BOARD, 0, False),
+        ("start line plus a line without startPiece, start piece cast this "
+         "turn last, empty pool",
+         [WINCON, OTHER], [], [("Forge Piece", 3), ("Raker Piece", 3),
+                               ("Top Piece", 5)], 0, True),
+        ("first line refused, second line's start piece entered last, "
+         "empty pool",
+         [WINCON, SECOND], [], [("Raker Piece", 3), ("Other Artifact", 3),
+                                ("Top Piece", 5), ("Forge Piece", 5)], 0, True),
+        ("no startPiece, all pieces out since an earlier turn, empty pool",
+         [PLAIN], [], EARLIER_BOARD, 0, True),
+        ("no startPiece, Top cast this turn before a partner, empty pool",
+         [PLAIN], [], TOP_BEFORE_PARTNER, 0, True),
+        ("no startPiece, partner reanimated, pool holds exactly its {2}",
+         [PLAIN], ["Reanimate Piece"], RAKER_MISSING, 2, True),
+        ("no startPiece, partner entombed and reanimated, pool exactly {1} + {2}",
+         [PLAIN], ["Entomb Piece", "Reanimate Piece"], RAKER_MISSING, 3, True),
+    ]
+
+    def test_combo_ready_charges_a_start_piece_already_on_the_battlefield(self):
+        for label, wincons, hand, board, mana, expected in self.READY_CASES:
+            with self.subTest(label):
+                context = self._context(wincons)
+                ready = exporter.combo_ready_this_turn(
+                    turn=self.TURN, hand=list(hand),
+                    permanents=self._board(context, board),
+                    combo_lines=context["comboLines"],
+                    profiles=context["profiles"],
+                    tutor_meta=context["tutorMeta"],
+                    reanim_names=context["reanimationNames"],
+                    commander_in_play=False, commander_play_turn=None,
+                    pool=exporter.GoldfishManaPool([frozenset({"G"})] * mana),
+                    commander_name=self.COMMANDER)
+                self.assertEqual(ready, expected)
+
+    def test_extract_combo_lines_carries_the_start_piece(self):
+        lines = self._context([self.WINCON])["comboLines"]
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0]["startPiece"], "Top Piece")
+
+    def test_extract_combo_lines_line_without_start_piece_has_none(self):
+        lines = self._context([self.PLAIN])["comboLines"]
+        self.assertEqual(len(lines), 1)
+        self.assertIsNone(lines[0]["startPiece"])
+
+    def test_extract_combo_lines_rejects_a_start_piece_outside_pieces(self):
+        profiles = self._context([self.WINCON])["profiles"]
+        deck_data = {"winConditions": [
+            dict(self.WINCON, startPiece="Sensei's Divining Top")]}
+        with self.assertRaisesRegex(ValueError, "'Top Loop'"):
+            exporter.extract_combo_lines(deck_data, profiles)
+
 
 class ControlDeckGoldfishEqualityTests(unittest.TestCase):
     """DEC-944 — a deck with no combo and no engine config is untouched.

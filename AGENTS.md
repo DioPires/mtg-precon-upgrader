@@ -101,7 +101,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - `categories`, `guideContent.deckCategories` — optional deck theme groupings as `{name, cards}`; every deck has one or both, and `normalize.ts:196-199` reads `categories` first (`validate_deck_json.py:26`, `:29`)
 - `decklist` — full 99-card list as `{name, type, primary_role}` objects with optional `secondary_role` and `quantity` fields (`normalize.ts:116`; `validate_deck_json.py:23`)
 - `highlights` — optional; notable cards as `{name}` objects with optional `reason`, `price`, `isGameChanger` and `sources` (`normalize.ts:120`; `validate_deck_json.py:24`)
-- `winConditions` — `{title, description, cards}` objects with optional `kind`, `pieces` and `sources` (`normalize.ts:184`; `validate_deck_json.py:27`)
+- `winConditions` — `{title, description, cards}` objects with optional `kind`, `pieces`, `startPiece` and `sources` (`normalize.ts:184`; `validate_deck_json.py:27`). `startPiece` (on a `kind: "combo"` entry; must be one of its `pieces`) names the piece the loop starts by casting: free only if it was the last of the line's pieces to enter this turn; if it has been on the battlefield since an earlier turn its cost is paid again; if it entered this turn before a partner, or could only come from reanimation, the line is not ready that turn (`export_simulation_results.py:1710`)
 - `synergies` — card synergy pairs/groups (`normalize.ts:211`; `validate_deck_json.py:28`)
 - `tokens` — written by `compute_tokens.py` (DEC-403); read at `normalize.ts:298`
 - `candidate_pins` — optional; the user's picks that the pool generator seats below the cut, DEC-992 (`generate_candidate_pool.py:624`; `normalize.ts:237`)

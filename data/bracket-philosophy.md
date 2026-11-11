@@ -163,6 +163,7 @@ Honesty note: labels 3 through 4 overlap on T50 in our fleet — at the re-fit t
 The proxy lives in `scripts/export_simulation_results.py`. Its v2 model substitutes for missing combo pieces via: (1) bargain free-cast tutor (Beseech-style), (2) type-matched regular tutor, (3) reanimation for permanent pieces. Decks must tag the right fields to be read correctly:
 
 - `winConditions[].kind: "combo"` + `winConditions[].pieces: [card names]` — without these, comboLethal stays 0.
+- `winConditions[].startPiece: "card name"` (optional; one of `pieces`) — the piece the loop starts by casting (e.g., Sensei's Divining Top recast through Mystic Forge): free only if it was the last of the line's pieces to enter this turn; if it has been on the battlefield since an earlier turn its cost is paid again; if it entered this turn before a partner, or could only come from reanimation, the line is not ready that turn.
 - `decklist[].tutor_targets: ["instant", "sorcery"]` — restrict tutors that can't fetch creatures/planeswalkers (e.g., Mystical Tutor, Spellseeker). Default `["any"]`.
 - `decklist[].tutor_mv_cap: N` — restrict tutors that have an MV cap (e.g., Spellseeker MV ≤ 2). Default `null`.
 - `decklist[].tutor_free_cast_via_bargain: true` — Beseech the Mirror and similar bargain-tutor cards.

@@ -1690,14 +1690,28 @@ def combine_mana_costs(costs: list[dict]) -> dict:
 def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
     """Parse winConditions[] entries with kind=='combo' into combo-line specs.
 
-    Each combo line: {pieces: [name], costs: [pip_dict], permanentPieces: set[name]}.
+    Each combo line: {pieces: [name], costs: [pip_dict], permanentPieces: set[name],
+    startPiece: name | None}.
     Pieces not found in profiles are skipped (with the whole line dropped if any piece is missing).
+
+    ``startPiece`` is the optional piece the loop starts by casting (e.g. Sensei's
+    Divining Top recast through Mystic Forge). In ``combo_ready_this_turn`` it is free
+    only if it was the last of the line's pieces to enter this turn; if it has been on
+    the battlefield since an earlier turn its cost is paid again; if it entered this
+    turn before a partner, or could only come from reanimation, the line is not ready
+    that turn. A ``startPiece`` that is not one of the line's ``pieces`` raises
+    ``ValueError``.
     """
     lines = []
     for wincon in deck_data.get("winConditions", []) or []:
         if wincon.get("kind") != "combo":
             continue
         pieces = wincon.get("pieces") or []
+        start_piece = wincon.get("startPiece")
+        if start_piece is not None and start_piece not in pieces:
+            raise ValueError(
+                f"winConditions[] combo {wincon.get('title')!r}: startPiece "
+                f"{start_piece!r} is not one of its pieces")
         if not pieces:
             continue
         if not all(p in profiles for p in pieces):
@@ -1708,6 +1722,7 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
             "pieces": list(pieces),
             "costs": costs,
             "permanentPieces": permanent_pieces,
+            "startPiece": start_piece,
         })
     return lines
 
@@ -1980,6 +1995,30 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
     not satisfy the cost (the goldfish always casts commander early; counting it as a free
     sac target would neutralize the cost).
 
+    A piece on the battlefield costs nothing, except a line's ``startPiece``: the loop
+    starts with that piece being cast while the other pieces are out (e.g. Sensei's
+    Divining Top tapped onto the library and recast through Mystic Forge, or redrawn
+    and cast from hand with Echoes of Eternity). One conservative rule covers every
+    start-piece line:
+      - in hand, fetched by a to_hand tutor or cast free by the bargain path: it is
+        cast, and its cost is handled as for any other piece;
+      - on the battlefield and the last of the line's pieces to enter, this turn (its
+        record has ``enteredTurn == turn``, every other piece is on the battlefield,
+        and each of their records comes before it in ``permanents``): free;
+      - on the battlefield since an earlier turn: its cost is added;
+      - on the battlefield, entered this turn but not last: the line is not ready
+        this turn (it cannot get back to hand the same turn);
+      - missing: substitution path 3 (reanimation) and path 2's to_graveyard branch
+        are not used for it, because it must be cast; the tutor search goes on to a
+        later to_hand tutor as if the graveyard tutor were not in hand.
+    The rule cannot tell a line that recasts the piece from the battlefield (Mystic
+    Forge) from one that needs it in hand (Echoes), so it under-counts the former on
+    purpose: such a line could start the same turn by paying the cost again. The
+    goldfish does not plan its casts around the start piece: it casts line pieces
+    cheapest first, so a start piece cast from hand in the same turn as its last
+    partner lands first and the line waits a turn. The same happens when a cascade
+    hit or a later draw brings a partner after the start piece.
+
     Returns True if any combo line has all pieces resolved (via presence or substitution)
     AND the synthetic combined mana cost is payable from ``pool`` — the mana still
     unspent this turn after the main-phase casts (DEC-937), not a fresh turn pool.
@@ -2011,14 +2050,31 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
     reanims_in_hand = [name for name in hand if name in reanim_names]
     reanims_in_hand.sort(key=lambda n: profiles[n]["manaCost"].get("total", 0))
 
+    # Entry position of each non-land permanent (latest copy), for the startPiece rule.
+    entry_index = (
+        {p["name"]: idx for idx, p in enumerate(permanents) if p["kind"] != "land"}
+        if any(line["startPiece"] for line in combo_lines) else {}
+    )
+
     for line in combo_lines:
         to_cast_costs = []
         # Per-line copies so consumption doesn't bleed across lines.
         tutor_pool = list(tutors_in_hand)
         reanim_pool = list(reanims_in_hand)
         line_ok = True
+        start_piece = line["startPiece"]
+        start_recast = False
+        if start_piece in entry_index:
+            start_idx = entry_index[start_piece]
+            if permanents[start_idx].get("enteredTurn") != turn:
+                start_recast = True  # out since an earlier turn: cast it again
+            elif not all(other in entry_index and entry_index[other] < start_idx
+                         for other in line["pieces"] if other != start_piece):
+                continue  # entered this turn before a partner: no restart this turn
         for piece, piece_cost in zip(line["pieces"], line["costs"]):
             if piece in battlefield_names:
+                if piece == start_piece and start_recast:
+                    to_cast_costs.append(piece_cost)
                 continue
             if piece in hand_names:
                 to_cast_costs.append(piece_cost)
@@ -2068,6 +2124,8 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
                     continue
                 mode = meta.get("mode", "to_hand")
                 if mode == "to_graveyard":
+                    if piece == start_piece:
+                        continue  # a start piece must be cast, not reanimated
                     if not piece_is_permanent:
                         continue
                     if not reanim_pool:
@@ -2089,8 +2147,9 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
                     to_cast_costs.append(piece_cost)
                 continue
 
-            # Path 3: reanimation for permanent pieces (creature/planeswalker etc.)
-            if piece_is_permanent and reanim_pool:
+            # Path 3: reanimation for permanent pieces (creature/planeswalker etc.);
+            # never for a start piece, which must be cast to start the loop.
+            if piece_is_permanent and reanim_pool and piece != start_piece:
                 rname = reanim_pool.pop(0)
                 to_cast_costs.append(profiles[rname]["manaCost"])
                 # piece cast cost replaced by reanim cost (piece comes from graveyard)
@@ -2304,6 +2363,7 @@ def resolve_cast_effects(name: str, profile: dict, turn: int, pool: "GoldfishMan
             "impact": profile["impact"],
             "combat": profile["combat"],
             "isThreat": profile["isThreat"],
+            "enteredTurn": turn,
         })
 
     for _ in range(profile["immediateDraw"]):
@@ -3575,6 +3635,14 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "no stack-trigger ordering."
         ),
     }
+    if any(line["startPiece"] for line in combo_lines):
+        section["methodology"] += (
+            " A combo line's start piece (winConditions[].startPiece, the piece its loop "
+            "starts by casting) is free only if it was the last of the line's pieces to "
+            "enter this turn; if it has been on the battlefield since an earlier turn its "
+            "cost is paid again; if it entered this turn before a partner, or could only "
+            "come from reanimation, the line is not ready that turn."
+        )
     cascade = context.get("cascade")
     if cascade:
         section["methodology"] += (
