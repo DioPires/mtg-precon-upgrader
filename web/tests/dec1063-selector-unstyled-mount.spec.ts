@@ -54,6 +54,17 @@ async function openSettled(page: Page, deck: string): Promise<void> {
   await settled(page);
 }
 
+type IndexDeck = { id: string; name: string; status?: string };
+
+// The deck of the last pill, read from the index at run time. The rail lists
+// the built decks, then the brewing decks, each in index order (DeckSelector).
+async function lastDeck(page: Page): Promise<IndexDeck> {
+  const r = await page.request.get('/data/index.json');
+  const decks = ((await r.json()) as { commanders: IndexDeck[] }).commanders;
+  const brewing = decks.filter((d) => d.status === 'brewing');
+  return (brewing.length ? brewing : decks).at(-1)!;
+}
+
 // Load a deck with every author rule reverted, which is what WebKit lays out
 // while a stylesheet in <head> is still loading: the track is a block with
 // `overflow: visible`, and the body keeps its 8px margin. Once the selector's
@@ -247,7 +258,7 @@ for (const width of WIDTHS) {
 
     test('the fade returns when the selector narrows around a track at its end', async ({ page }) => {
       // The last pill: the selector scrolls the track to its end.
-      await openSettled(page, 'anvil-chorus');
+      await openSettled(page, (await lastDeck(page)).id);
       await expect.poll(async () => (await rail(page)).fade).toBe('0');
       const before = await rail(page);
 
@@ -274,12 +285,13 @@ for (const width of WIDTHS) {
       expect(r.atEnd).toBe(false);
     });
 
-    // hidden-legion's pill centres away from both ends; anvil-chorus is the
+    // hidden-legion's pill centres away from both ends; the last deck has the
     // last pill, and the track stops at its end.
-    for (const deck of ['hidden-legion', 'anvil-chorus']) {
-      test(`the active pill of ${deck} reaches its place when the selector mounts before the styles apply`, async ({
+    for (const pill of ['hidden-legion', 'the last deck']) {
+      test(`the active pill of ${pill} reaches its place when the selector mounts before the styles apply`, async ({
         page,
       }) => {
+        const deck = pill === 'the last deck' ? (await lastDeck(page)).id : pill;
         await countTrackScrolls(page);
         await openSettled(page, deck);
         const styled = await activePill(page);
@@ -306,11 +318,12 @@ for (const width of WIDTHS) {
       expect(await trackScrolls(page)).toBe(1);
 
       // A client-side route change: the selector stays mounted.
-      await page.evaluate(() => {
-        history.pushState({}, '', '/deck/anvil-chorus');
+      const last = await lastDeck(page);
+      await page.evaluate((id) => {
+        history.pushState({}, '', `/deck/${id}`);
         dispatchEvent(new PopStateEvent('popstate'));
-      });
-      await page.locator('.gv1-selector-track .gv1-active', { hasText: 'Anvil Chorus' }).waitFor();
+      }, last.id);
+      await page.locator('.gv1-selector-track .gv1-active', { hasText: last.name }).waitFor();
       await settled(page);
       expect(await trackScrolls(page)).toBe(2);
     });
@@ -372,13 +385,14 @@ test.describe('DEC-1063 @ 390px, the styles apply before the first observation',
     await expectWebKitOrder(page);
   });
 
-  test('the active pill of anvil-chorus reaches its place', async ({ page }) => {
+  test('the active pill of the last deck reaches its place', async ({ page }) => {
+    const deck = (await lastDeck(page)).id;
     await countTrackScrolls(page);
-    await openSettled(page, 'anvil-chorus');
+    await openSettled(page, deck);
     const styled = await activePill(page);
     expect(await trackScrolls(page)).toBe(1);
 
-    await mountUnstyledInWebKitOrder(page, 'anvil-chorus');
+    await mountUnstyledInWebKitOrder(page, deck);
 
     await expect
       .poll(async () => Math.abs((await activePill(page)).x - styled.x), {

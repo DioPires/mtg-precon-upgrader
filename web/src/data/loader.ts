@@ -262,7 +262,8 @@ import type { DeckTierBLoops } from './tierB';
 // v164 -> v165 (2026-11-11): titan-convergence text corrections, infinite-mana win conditions
 // untagged, startPiece on the two Top lines; simulation.json regenerated (metrics.json
 // unchanged).
-const STORAGE_PREFIX = 'gv1-deck-data-v165:';
+// v165 -> v166 (2026-11-16): hoard-and-bleed, broodfire-hatchery and anvil-chorus marked built (status removed; index reordered); broodfire-hatchery strategyOverview drops its brewing sentence.
+const STORAGE_PREFIX = 'gv1-deck-data-v166:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the

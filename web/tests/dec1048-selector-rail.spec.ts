@@ -31,6 +31,17 @@ async function deckIds(page: Page): Promise<string[]> {
   return ((await r.json()) as { commanders: { id: string }[] }).commanders.map((c) => c.id);
 }
 
+type IndexDeck = { id: string; name: string; status?: string };
+
+// The deck of the last pill, read from the index at run time. The rail lists
+// the built decks, then the brewing decks, each in index order (DeckSelector).
+async function lastDeck(page: Page): Promise<IndexDeck> {
+  const r = await page.request.get('/data/index.json');
+  const decks = ((await r.json()) as { commanders: IndexDeck[] }).commanders;
+  const brewing = decks.filter((d) => d.status === 'brewing');
+  return (brewing.length ? brewing : decks).at(-1)!;
+}
+
 // The selector's smooth scrolls are still running when the guide first
 // paints. Resolve once neither the track nor the page has moved for 300ms
 // and the web fonts are in.
@@ -126,11 +137,11 @@ for (const width of WIDTHS) {
       expect(offenders, `Active pills at ${width}px (viewport coordinates)`).toEqual([]);
     });
 
-    for (const deck of ['titan-convergence', 'anvil-chorus']) {
+    for (const deck of ['titan-convergence', 'the last deck']) {
       test(`the first Tab from load on ${deck} focuses the first topbar control`, async ({
         page,
       }) => {
-        await openSettled(page, deck);
+        await openSettled(page, deck === 'the last deck' ? (await lastDeck(page)).id : deck);
         const first = await page.evaluate(() => {
           const controls = document.querySelectorAll<HTMLElement>(
             '.gv1-topbar a[href], .gv1-topbar button, .gv1-topbar [tabindex]:not([tabindex="-1"])',
@@ -162,7 +173,7 @@ for (const width of WIDTHS) {
       expect(await fadeOpacity(page)).toBe('1');
 
       // The last pill: the selector scrolls the track to its end.
-      await openSettled(page, 'anvil-chorus');
+      await openSettled(page, (await lastDeck(page)).id);
       await expect.poll(() => fadeOpacity(page)).toBe('0');
 
       // Scrolled back from the end, the fade returns.
@@ -180,11 +191,12 @@ for (const width of WIDTHS) {
         .toBeLessThan(0);
 
       // A client-side route change: the selector stays mounted.
-      await page.evaluate(() => {
-        history.pushState({}, '', '/deck/anvil-chorus');
+      const last = await lastDeck(page);
+      await page.evaluate((id) => {
+        history.pushState({}, '', `/deck/${id}`);
         dispatchEvent(new PopStateEvent('popstate'));
-      });
-      await page.locator('.gv1-selector-track .gv1-active', { hasText: 'Anvil Chorus' }).waitFor();
+      }, last.id);
+      await page.locator('.gv1-selector-track .gv1-active', { hasText: last.name }).waitFor();
 
       await expect
         .poll(() =>
