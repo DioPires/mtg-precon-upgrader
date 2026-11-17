@@ -266,7 +266,8 @@ import type { DeckTierBLoops } from './tierB';
 // v166 -> v167 (2026-11-17): broodfire-hatchery +Deflecting Swat/-Smothering Tithe and +Terror of the Peaks/-Ajani's Anguish; gathering-shadow +The Theorist, Jace Beleren/-Night's Whisper; pools, sims, metrics and Combo Lab files regenerated.
 // v167 -> v168 (2026-11-17): broodfire-hatchery lastUpdatedSet in the index now matches its deck.json (Reality Fracture).
 // v168 -> v169 (2026-11-17): goldfish no longer counts a minus loyalty ability's draw as a cast-time draw; simulation.json regenerated for gathering-shadow and tidal-legion (metrics unchanged; tidal-legion's file also picks up the 2026-10-14 mana-sim seeding).
-const STORAGE_PREFIX = 'gv1-deck-data-v169:';
+// v169 -> v170 (2026-11-17): index lastUpdatedSet now matches the deck file for eternal-agony, eternal-harvest, verdant-tide, creeping-corruption and stampede-acres.
+const STORAGE_PREFIX = 'gv1-deck-data-v170:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
