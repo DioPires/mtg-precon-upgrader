@@ -263,7 +263,8 @@ import type { DeckTierBLoops } from './tierB';
 // untagged, startPiece on the two Top lines; simulation.json regenerated (metrics.json
 // unchanged).
 // v165 -> v166 (2026-11-16): hoard-and-bleed, broodfire-hatchery and anvil-chorus marked built (status removed; index reordered); broodfire-hatchery strategyOverview drops its brewing sentence.
-const STORAGE_PREFIX = 'gv1-deck-data-v166:';
+// v166 -> v167 (2026-11-17): broodfire-hatchery +Deflecting Swat/-Smothering Tithe and +Terror of the Peaks/-Ajani's Anguish; gathering-shadow +The Theorist, Jace Beleren/-Night's Whisper; pools, sims, metrics and Combo Lab files regenerated.
+const STORAGE_PREFIX = 'gv1-deck-data-v167:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
