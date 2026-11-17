@@ -1370,7 +1370,14 @@ def parse_land_ramp_profile(meta: dict) -> dict | None:
 
 def immediate_draw_count(meta: dict) -> int:
     """Best-effort immediate draw count from cast/ETB text."""
-    sentences = [sentence.strip() for sentence in re.split(r"[\n.]", meta.get("oracle_text", "")) if sentence.strip()]
+    # A minus loyalty ability (−N: or −X:) is not a cast-time draw. Floor: the
+    # card metadata carries no starting loyalty, so a minus ability the
+    # planeswalker could afford on entry is also counted as 0.
+    oracle = "\n".join(
+        line for line in meta.get("oracle_text", "").split("\n")
+        if not re.match(r"[\u2212-](\d+|X):", line.strip())
+    )
+    sentences = [sentence.strip() for sentence in re.split(r"[\n.]", oracle) if sentence.strip()]
     for sentence in sentences:
         lower = sentence.lower()
         if "draw" not in lower:

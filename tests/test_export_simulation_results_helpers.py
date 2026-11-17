@@ -690,6 +690,112 @@ class PrintedPowerProfileTests(unittest.TestCase):
                 self.assertEqual(self._profile(power=power)["combat"], 3)
 
 
+class CastTimeDrawTests(unittest.TestCase):
+    """Cards the goldfish draws when it casts a card, from the card's oracle text.
+
+    Each case builds the profile from the oracle text (build_goldfish_profile)
+    and casts it through resolve_cast_effects, the path the main-phase and
+    cascade casts share. Oracle text is copied from Scryfall; "−" in loyalty
+    costs is U+2212, as Scryfall prints it.
+    """
+
+    def _cards_drawn_on_cast(self, name, type_line, mana_cost, cmc, oracle_text):
+        meta = {"name": name, "type_line": type_line, "mana_cost": mana_cost,
+                "cmc": cmc, "oracle_text": oracle_text}
+        profile = exporter.build_goldfish_profile(
+            name=name, meta=meta, category_names=set(),
+            commander_colors=["U", "B", "R"], commander_name="Other")
+        library = [f"Library {i}" for i in range(10)]
+        hand = []
+        exporter.resolve_cast_effects(
+            name, profile, 1, exporter.GoldfishManaPool([]), library, hand,
+            [], [], {name: profile}, {name: meta}, ["U", "B", "R"])
+        return len(hand)
+
+    def test_an_unaffordable_minus_loyalty_draw_is_not_drawn_on_cast(self):
+        # Enters with 3 loyalty, so −6 cannot be activated on entry; its other
+        # draw is an opponent's-draw-step trigger. Neither happens on cast.
+        drawn = self._cards_drawn_on_cast(
+            "The Theorist, Jace Beleren", "Legendary Planeswalker — Jace",
+            "{2}{U}{U}", 4,
+            "At the beginning of each opponent's draw step, you draw a card.\n"
+            "+1: Create a 1/1 blue Illusion creature token.\n"
+            "−2: For each opponent, return up to one target artifact or creature "
+            "that player controls to its owner's hand.\n"
+            "−6: Draw three cards. Then put X +1/+1 counters on each creature you "
+            "control, where X is the number of cards in your hand.")
+        self.assertEqual(drawn, 0)
+
+    def test_a_plus_loyalty_draw_keeps_its_count(self):
+        # Enters with 7 loyalty; +2 can be activated the turn it is cast.
+        drawn = self._cards_drawn_on_cast(
+            "Ugin, Eye of the Storms", "Legendary Planeswalker — Ugin", "{7}", 7,
+            "When you cast this spell, exile up to one target permanent that's one "
+            "or more colors.\n"
+            "Whenever you cast a colorless spell, exile up to one target permanent "
+            "that's one or more colors.\n"
+            "+2: You gain 3 life and draw a card.\n"
+            "0: Add {C}{C}{C}.\n"
+            "−11: Search your library for any number of colorless nonland cards, "
+            "exile them, then shuffle. Until end of turn, you may cast those cards "
+            "without paying their mana costs.")
+        self.assertEqual(drawn, 1)
+
+    def test_a_zero_loyalty_draw_keeps_its_count(self):
+        # Enters with 6 loyalty; 0 can be activated the turn it is cast.
+        drawn = self._cards_drawn_on_cast(
+            "Vraska, Betrayal's Sting", "Legendary Planeswalker — Vraska",
+            "{4}{B}{B/P}", 6,
+            "Compleated ({B/P} can be paid with {B} or 2 life. If life was paid, "
+            "this planeswalker enters with two fewer loyalty counters.)\n"
+            "0: You draw a card and lose 1 life. Proliferate.\n"
+            "−2: Target creature becomes a Treasure artifact with \"{T}, Sacrifice "
+            "this artifact: Add one mana of any color\" and loses all other card "
+            "types and abilities.\n"
+            "−9: If target player has fewer than nine poison counters, they get a "
+            "number of poison counters equal to the difference.")
+        self.assertEqual(drawn, 1)
+
+    def test_floor_a_minus_loyalty_draw_counts_zero_even_when_affordable(self):
+        # Documents the floor: the card metadata carries no starting loyalty, so
+        # a minus ability is never counted, even one the walker could afford on
+        # entry (any starting loyalty of 1 or more pays this −1).
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Walker", "Legendary Planeswalker — Test", "{2}{U}", 3,
+            "−1: Draw a card.")
+        self.assertEqual(drawn, 0)
+
+    def test_a_hyphen_typed_in_place_of_the_minus_sign_is_a_minus_cost(self):
+        # Oracle text prints U+2212; a hyphen-minus in its place is the same cost.
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Walker", "Legendary Planeswalker — Test", "{2}{U}", 3,
+            "-2: Draw two cards.")
+        self.assertEqual(drawn, 0)
+
+    def test_a_minus_x_loyalty_draw_is_not_drawn_on_cast(self):
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Walker", "Legendary Planeswalker — Test", "{2}{U}", 3,
+            "−X: Draw a card.")
+        self.assertEqual(drawn, 0)
+
+    def test_a_draw_spell_draws_on_cast(self):
+        drawn = self._cards_drawn_on_cast(
+            "Night's Whisper", "Sorcery", "{1}{B}", 2,
+            "You draw two cards and lose 2 life.")
+        self.assertEqual(drawn, 2)
+
+    def test_an_enters_draw_keeps_its_count(self):
+        # "draw two cards, then discard two cards": the goldfish credits the two
+        # draws and models no discard; this pins that count.
+        drawn = self._cards_drawn_on_cast(
+            "Seasoned Cryomancer", "Creature — Human Wizard", "{1}{U}{U}", 3,
+            "When this creature enters, draw two cards, then discard two cards. "
+            "When you discard one or more nonland cards this way, tap up to that "
+            "many target creatures and put a stun counter on each of them.\n"
+            "{3}{U}{U}, Exile this card from your graveyard: Draw two cards.")
+        self.assertEqual(drawn, 2)
+
+
 class CombatModifierGoldfishTests(unittest.TestCase):
     """DEC-940 — extra combat phases inside a deterministic goldfish turn loop.
 
