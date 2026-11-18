@@ -706,8 +706,9 @@ CAST_TURN_ACTIVATION_DRAW = {
 # with {X} (none in the fleet) would fall under this rule and its holds; to be
 # decided when a deck has one. Effects at the paid X, and nothing else: a
 # creature's combat and impact read mana value + X (x_cast_profile), the
-# draws below, and AMASS_ARMY_ENGINE's amassXNames. Token, life-loss, damage,
-# tutor, pump and proliferate X spells are only re-timed. Floors: convoke,
+# draws below, AMASS_ARMY_ENGINE's amassXNames and TOKEN_MAKER_ENGINE's perX
+# token spells. Other token, life-loss, damage, tutor, pump and proliferate X
+# spells are only re-timed. Floors: convoke,
 # improvise and cost reducers (Zimone's discount) are not modelled.
 # Over-credit: a free put (cascade, hatch, deploy) resolves the printed
 # profile, so an X creature scores its printed mana value and an X draw spell
@@ -891,6 +892,193 @@ COMMANDER_HATCH_ENGINE = {
         "landfallEggNames": {"Nesting Dragon"},
         "combatHatchNames": {"Raph & Mikey, Troublemakers"},
         "legendaryTriggerDoublerName": "Annie Joins Up",
+    },
+}
+
+# Token makers (owner-approved 2026-11-18; sequel to DEC-404). The goldfish's
+# combat counts creature cards only, so a deck whose army is mostly tokens
+# reads as if its token makers did nothing. Model: the makers below mint into
+# the DEC-404 token ledger (swarm_tokens_new / swarm_tokens_ready in
+# simulate_goldfish_game) and its combat convention applies unchanged: each
+# creature token attacks every turn from the turn after it is made for
+# tokenPower plus one per anthem on the battlefield, and tokens made tapped
+# and attacking deal damage the turn they are made. Every creature token able
+# to attack attacks; no token is ever removed, sacrificed or spent. Food
+# counts only for the commander draw below.
+# Each resolution, trigger or activation is one creation event: Peregrin Took
+# adds one Food to it, then each doubler on the battlefield doubles every
+# token of it. The controller orders replacement effects (CR 616.1), and this
+# order makes the most. Peregrin Took's ruling: the Food gets whatever the
+# effect specifies for its tokens, so a Food made with tokens that enter
+# tapped and attacking enters tapped.
+# Commander draw. Baylen, the Haymaker: "Tap three untapped tokens you
+# control: Draw a card." The cost has no {T} symbol, so it works the turn he
+# is cast and summoning-sick tokens can pay; a token that attacked stays
+# tapped until your next untap step and cannot. So at the last opponent's end
+# step before each of your turns, while the commander is on the battlefield,
+# he draws one card per commanderDrawTokens untapped tokens: every Food
+# except any that entered tapped on your last turn, and the creature tokens
+# made on your last turn, which could not attack yet. Those tokens untap in
+# your untap step, and the cards arrive with the opponents'-turn draws,
+# before your upkeep.
+# Config keys (oracle text from data/card-metadata.json, 2026-11-18):
+#   onResolve — (creature tokens, Food) a card makes as it resolves or enters
+#   perX — creature tokens per X paid (the X spell rule, X_SPELL_MIN_X)
+#   attackMakers — "whenever you attack": creature tokens made tapped and
+#       attacking each attack, from the turn after the maker was cast
+#   growingAttackMakers — the same, with a +1/+1 counter first and then one
+#       token per counter (1, 2, 3 ...)
+#   landfallMakers — one creature token per natural land drop while on the
+#       battlefield; the drop comes before the turn's casts, so from the turn
+#       after the maker was cast
+#   activatedMakers — one creature token for this cost, at most once per
+#       turn, paid after combat out of the mana the turn's casts left, in
+#       name order. A land must be untapped this turn, and its own {T} is
+#       charged as one more mana of its colour: the pool does not record which
+#       land paid for what.
+#   needsTappedCreature — activated makers whose cost untaps a tapped
+#       creature you control: only on a turn something attacked
+#   doublerNames / extraFoodName — the replacements above
+#   artifactTokensReplacedBy — a permanent that turns artifact tokens into
+#       creatures the engine does not credit: while it is on the battlefield
+#       no new Food is credited
+#   tokenPower / anthemNames — the DEC-404 combat convention
+#   commanderDrawTokens — untapped tokens the commander taps per card
+#   excluded — (reason, cards) for every other card in the deck that makes
+#       or replaces tokens; a test fails when a deck card that does is in
+#       neither this config nor this list
+#   notCredited / notModeled — the deck's other floors, for the methodology
+# The commander's own mana ability is not modelled under this engine
+# (build_goldfish_context).
+TOKEN_MAKER_ENGINE = {
+    "stampede-acres": {
+        "onResolve": {
+            # "Choose one — • Create two 1/1 red Goblin creature tokens. •
+            # Target creature gets +X/+X ..." (the token mode)
+            "Frontline Rush": (2, 0),
+            # "When this enchantment enters, create two 1/1 green and white
+            # Citizen creature tokens." Its "Tap three untapped creatures you
+            # control: Create a Treasure token." is not modelled.
+            "Prosperous Partnership": (2, 0),
+            # "When this artifact enters, create a 1/1 white Spirit creature
+            # token with flying."
+            "Staff of the Storyteller": (1, 0),
+            # "When Rosie Cotton enters, create a Food token."
+            "Rosie Cotton of South Lane": (0, 1),
+        },
+        "perX": {
+            # "Create X 1/1 white Warrior creature tokens."
+            "Secure the Wastes": 1,
+            # "Create X 1/1 green and white Citizen creature tokens. ..."
+            "Grand Crescendo": 1,
+            # "Create X 1/1 white Soldier creature tokens with lifelink."
+            "March of the Multitudes": 1,
+            # "... Create twice X 1/1 black and green Pest creature tokens ..."
+            "Pest Infestation": 2,
+        },
+        # "Whenever you attack, for each opponent, create a 1/1 white Human
+        # creature token that's tapped and attacking that player ..."
+        # (three opponents)
+        "attackMakers": {"Adeline, Resplendent Cathar": 3},
+        # "Whenever you attack with one or more non-Gnome creatures, put a
+        # +1/+1 counter on Anim Pakal, then create X 1/1 colorless Gnome
+        # artifact creature tokens that are tapped and attacking, where X is
+        # the number of +1/+1 counters on Anim Pakal." (he attacks himself)
+        "growingAttackMakers": {"Anim Pakal, Thousandth Moon"},
+        "landfallMakers": {
+            # "Landfall — Whenever a land you control enters, create a 1/1
+            # green Insect creature token. If you control six or more lands,
+            # create a token that's a copy of this creature instead." One
+            # token either way; the copies' own landfall is not modelled.
+            "Scute Swarm",
+            # "Landfall — ... If you didn't create a token this way, create a
+            # 1/1 green Insect creature token." (cast as a creature, not
+            # bestowed)
+            "Springheart Nantuko",
+        },
+        "activatedMakers": {
+            # "{W}, {T}, Untap a tapped creature you control: Create a 1/1
+            # green and white Citizen creature token."
+            "Halo Fountain": {"W": 1},
+            # "{2}{W}{W}, {T}: Create a 1/1 white Human creature token." and
+            # "{T}: Add {W}.", so its own {T} is charged as a third {W}.
+            "Castle Ardenvale": {"generic": 2, "W": 3},
+        },
+        "needsTappedCreature": {"Halo Fountain"},
+        # "If an effect would create one or more tokens under your control,
+        # it creates twice that many of those tokens instead." and "If one
+        # or more tokens would be created under your control, twice that many
+        # of those tokens are created instead."
+        "doublerNames": {"Anointed Procession", "Mondrak, Glory Dominus"},
+        # "If one or more tokens would be created under your control, those
+        # tokens plus an additional Food token are created instead."
+        "extraFoodName": "Peregrin Took",
+        # "If one or more artifact tokens would be created under your control,
+        # that many 5/5 red Dragon creature tokens with flying are created
+        # instead." Its ruling: anything else the effect specifies (tapped,
+        # attacking) still applies. The Dragons are not credited (it is in
+        # `excluded`), so while it is on the battlefield no new Food is
+        # credited either; Anim Pakal's Gnomes (artifact creature tokens) stay
+        # 1/1 attackers where they would be 5/5 flying ones.
+        "artifactTokensReplacedBy": "Draconic Visitor",
+        "tokenPower": 1,
+        # "Creatures you control get +1/+1." The only static anthem credited
+        # (Caretaker's Talent's level 3 is in notModeled).
+        "anthemNames": {"Warleader's Call"},
+        "commanderDrawTokens": 3,
+        "excluded": (
+            # Tithe's opponent may pay {2}; the Queen recruits on an
+            # opponent's first noncreature spell.
+            ("their tokens depend on opponents' choices",
+             ("Smothering Tithe", "The Queen of Dale")),
+            # "Whenever an opponent draws their second card each turn, you
+            # create a Treasure token. / {2}{W}: Two target players each draw
+            # a card." The second draw can come on any turn, its own
+            # activations included.
+            ("its Treasure needs an opponent's second draw in a turn: the "
+             "goldfish models no opponent draws and never activates its {2}{W}",
+             ("Gleaming Splendor",)),
+            # Elspeth's "−3: Destroy target creature ...", the others'
+            # Interaction category or "Destroy" text: goldfish_never_casts.
+            ("never cast: read as interaction",
+             ("Elspeth, Storm Slayer", "Voice of Victory", "Artifact Mutation",
+              "The Battle of Bywater")),
+            # Flurry: "Whenever you cast your second spell each turn, ..."
+            ("tokens only on the second spell in a turn",
+             ("Aligned Heart", "Cori-Steel Cutter")),
+            # Level 2's copy of a token; the {8} sacrifice for an Eldrazi.
+            ("one-shot activations", ("Caretaker's Talent", "Idol of Oblivion")),
+            # "Whenever one or more +1/+1 counters are put on this creature,
+            # you may create a 1/1 green Squirrel creature token."
+            ("Squirrels from +1/+1 counters: with Rosie Cotton of South Lane "
+             "they are the infinite the combo gate scores", ("Scurry Oak",)),
+            # See artifactTokensReplacedBy above.
+            ("its 5/5 flying Dragons are not credited: while it is on the "
+             "battlefield no new Food is credited, and Anim Pakal's Gnomes "
+             "count as 1/1s", ("Draconic Visitor",)),
+        ),
+        # The rest of this deck's floors, as the methodology states them.
+        "notCredited": (
+            "token copies' own landfall",
+            "landfall from lands a fetch land or ramp spell puts onto the "
+            "battlefield",
+            "the makers' other abilities (Prosperous Partnership's Treasure)",
+            "an attack maker's trigger on the turn it is cast (another creature "
+            "attacking would trigger it)",
+        ),
+        "notModeled": (
+            "the commander's mana and +1/+1 counter abilities",
+            "Halo Fountain's untap",
+            "Treasure and Food being spent",
+            "untaps on opponents' turns (Seedborn Muse, Drumbellower)",
+            "Caretaker's Talent's level 3 anthem (\"Creature tokens you control "
+            "get +2/+2.\")",
+            "noncombat token payoffs (Impact Tremors, Purphoros, Warleader's "
+            "Call's ping)",
+            "token-draw payoffs (Caretaker's Talent, Bennie Bracks, Belladonna "
+            "Took, Staff of the Storyteller's story counters, Idol of Oblivion, "
+            "Peregrin Took's Foods)",
+        ),
     },
 }
 
@@ -2009,6 +2197,13 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
             commander_colors=commander_colors,
             commander_name=commander_name,
         )
+    # TOKEN_MAKER_ENGINE: the commander's "Tap two untapped tokens you
+    # control: Add one mana of any color." needs two untapped tokens, and the
+    # engine spends tokens only on attacking and on the commander draw, so the
+    # ability is not modelled: no mana atoms (mana_atoms_for_card reads it as
+    # mana from nothing).
+    if TOKEN_MAKER_ENGINE.get(deck_id) is not None:
+        profiles[commander_name] = dict(profiles[commander_name], manaAtoms=[])
     combo_lines = extract_combo_lines(deck_data, profiles)
     assembly_lines = build_combo_assembly_lines(deck_id, decklist, commander_name)
     # Tutor/reanim tables drive both the winConditions combo-readiness check and
@@ -2063,6 +2258,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "drawEngines": PERMANENT_DRAW_ENGINE.get(deck_id),
         "amassEngine": AMASS_ARMY_ENGINE.get(deck_id),
         "hatchEngine": COMMANDER_HATCH_ENGINE.get(deck_id),
+        "tokenMakers": TOKEN_MAKER_ENGINE.get(deck_id),
         "hasteSources": COMMANDER_HASTE_SOURCES.get(deck_id),
         "combatModifiers": COMBAT_MODIFIERS.get(deck_id),
     }
@@ -2550,7 +2746,7 @@ def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
     """Summarize goldfish board state at end of turn.
 
     ``extra_combat`` carries damage from sources outside the permanent list
-    (the DEC-404 commander token-swarm ledger).
+    (the DEC-404 token ledger, which the token makers also feed).
     """
     lands = sum(1 for permanent in permanents if permanent["kind"] == "land")
     ramp = sum(1 for permanent in permanents if permanent["kind"] == "ramp")
@@ -2861,6 +3057,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     draw_engines = context.get("drawEngines")
     amass_engine = context.get("amassEngine")
     hatch_engine = context.get("hatchEngine")
+    token_makers = context.get("tokenMakers")
     haste_sources = context.get("hasteSources")
     combat_modifiers = context.get("combatModifiers")
     # DEC-472 activated-draw bookkeeping: activations so far per engine name.
@@ -2880,6 +3077,39 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     # they migrate to the ready pool at the start of the next turn.
     swarm_tokens_ready = 0
     swarm_tokens_new = 0
+    # TOKEN_MAKER_ENGINE bookkeeping beside that ledger: the Food on the
+    # battlefield, the Food that entered tapped this turn, and the +1/+1
+    # counters on each growing attack maker.
+    food_tokens = 0
+    food_entered_tapped = 0
+    attack_maker_counters: dict[str, int] = {}
+
+    def make_tokens(creatures: int, food: int, attacking: bool = False) -> None:
+        """One TOKEN_MAKER_ENGINE creation event of creature tokens and Food.
+
+        extraFoodName adds one Food; under artifactTokensReplacedBy the Food
+        would be creatures the engine does not credit, so none is credited;
+        then each doubler doubles every token. Tokens made tapped and
+        attacking join the ready pool (they deal damage this turn); the Food
+        made with them enters tapped.
+        """
+        nonlocal swarm_tokens_ready, swarm_tokens_new, food_tokens, food_entered_tapped
+        if token_makers is None or creatures + food <= 0:
+            return
+        board = {permanent["name"] for permanent in permanents}
+        if token_makers["extraFoodName"] in board:
+            food += 1
+        if token_makers["artifactTokensReplacedBy"] in board:
+            food = 0
+        multiplier = 2 ** len(token_makers["doublerNames"] & board)
+        creatures *= multiplier
+        food *= multiplier
+        if attacking:
+            swarm_tokens_ready += creatures
+            food_entered_tapped += food
+        else:
+            swarm_tokens_new += creatures
+        food_tokens += food
     # DEC-533 amass-Army ledger: one Army creature as a counter total. The
     # Army is combat-ready the turn after it was first created (the same turn
     # when the start-of-turn opponent-cast amass created it); amassing onto
@@ -3130,11 +3360,20 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
 
     for turn in range(1, NUM_TURNS + 1):
         copy_gate_uses = 0
+        # TOKEN_MAKER_ENGINE commander draw: the tokens untapped at the last
+        # opponent's end step are every Food except any that entered tapped on
+        # your last turn, and the creature tokens made then, which could not
+        # attack.
+        commander_draw_tokens = 0
+        if token_makers is not None and commander_in_play:
+            commander_draw_tokens = food_tokens - food_entered_tapped + swarm_tokens_new
+        food_entered_tapped = 0
         swarm_tokens_ready += swarm_tokens_new
         swarm_tokens_new = 0
 
         # Turn order, as the game runs it: the opponents' turns since your
-        # last turn (recurring draw triggers, opponent-cast amass), then your
+        # last turn (recurring draw triggers, the token makers' commander
+        # draw at the last end step, opponent-cast amass), then your
         # upkeep (the Ring tempt), then your draw step, then your main phase
         # (The One Ring's activation, the land drop, casts). So the tempt
         # reads the hand before the draw step's card arrives.
@@ -3150,6 +3389,11 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 for _ in range(engine["drawsPerTurn"]):
                     if library:
                         hand.append(library.pop())
+        # TOKEN_MAKER_ENGINE commander draw, at the last opponent's end step.
+        if token_makers is not None:
+            for _ in range(commander_draw_tokens // token_makers["commanderDrawTokens"]):
+                if library:
+                    hand.append(library.pop())
 
         # DEC-533 — opponent-cast amass floor (3 opponent spells per turn
         # cycle) plus the Call of the Ring upkeep tempt. A tempt converts to
@@ -3216,6 +3460,13 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 "subtypes": land_profile["subtypes"],
                 "isBasic": land_profile["isBasic"],
             })
+            # TOKEN_MAKER_ENGINE landfall makers: one token per natural land
+            # drop (one creation event each); lands a fetch land or a ramp
+            # spell puts onto the battlefield are a floor.
+            if token_makers is not None:
+                for maker in sorted(token_makers["landfallMakers"]):
+                    if any(permanent["name"] == maker for permanent in permanents):
+                        make_tokens(1, 0)
             # DEC-938 — landfall Egg makers (Nesting Dragon) mint one Egg per
             # land drop, from the turn after the maker landed. Only the natural
             # land drop counts; lands fetched by ramp spells are a floor. These
@@ -3367,6 +3618,14 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                              and "Creature" in chosen_profile["typeLine"])):
                 swarm_tokens_new += chosen_profile["manaCost"].get(
                     token_engine["pipColor"], 0)
+
+            # TOKEN_MAKER_ENGINE — tokens the cast card makes as it resolves
+            # or enters; an X spell makes them at the X paid.
+            if token_makers is not None:
+                if chosen in token_makers["onResolve"]:
+                    make_tokens(*token_makers["onResolve"][chosen])
+                if chosen in token_makers["perX"] and chosen_x:
+                    make_tokens(token_makers["perX"][chosen] * chosen_x, 0)
 
             if hatch_engine is not None or haste_sources is not None:
                 on_permanent_entered(chosen, turn)
@@ -3659,18 +3918,34 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         # 0.0 for a deck with no COMBAT_MODIFIERS entry.
         combat_modifier_bonus = combat_total - sum(
             permanent["combat"] for permanent in ready_attackers(permanents, turn))
+        # TOKEN_MAKER_ENGINE attack makers: from the turn after the maker was
+        # cast it attacks, its trigger makes tokens tapped and attacking, and
+        # they join the ready tokens that swing below.
+        if token_makers is not None:
+            out_before_this_turn = {permanent["name"] for permanent in permanents
+                                    if permanent.get("enteredTurn", turn) < turn}
+            for maker, count in sorted(token_makers["attackMakers"].items()):
+                if maker in out_before_this_turn:
+                    make_tokens(count, 0, attacking=True)
+            for maker in sorted(token_makers["growingAttackMakers"]):
+                if maker in out_before_this_turn:
+                    attack_maker_counters[maker] = attack_maker_counters.get(maker, 0) + 1
+                    make_tokens(attack_maker_counters[maker], 0, attacking=True)
         # DEC-404 — token-swarm combat: ready tokens swing every turn, each
         # pumped by battlefield anthems; the commander's variable power adds
         # commanderPowerPerToken per ready token once he can attack himself.
+        # TOKEN_MAKER_ENGINE tokens swing on the same ledger and convention.
         swarm_combat = 0.0
-        if token_engine is not None and swarm_tokens_ready > 0:
+        swarm_config = token_engine if token_engine is not None else token_makers
+        if swarm_config is not None and swarm_tokens_ready > 0:
             anthem_count = sum(
                 1 for permanent in permanents
-                if permanent["name"] in token_engine["anthemNames"]
+                if permanent["name"] in swarm_config["anthemNames"]
             )
             swarm_combat = swarm_tokens_ready * (
-                token_engine["tokenPower"] + anthem_count)
-            if (commander_in_play and commander_play_turn is not None
+                swarm_config["tokenPower"] + anthem_count)
+            if (token_engine is not None
+                    and commander_in_play and commander_play_turn is not None
                     and commander_play_turn < turn):
                 swarm_combat += (token_engine["commanderPowerPerToken"]
                                  * swarm_tokens_ready)
@@ -3703,6 +3978,24 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 pool=pool,
             ):
                 assembly_turn[idx] = turn
+        # TOKEN_MAKER_ENGINE activated makers, once per turn each in name
+        # order, paid out of the mana the turn's casts left after the gates
+        # above have read the pool. A creature is tapped if any token or
+        # creature card attacked (stampede-acres' one vigilance creature,
+        # Adeline, makes tapped tokens when she attacks).
+        if token_makers is not None:
+            attacked = swarm_tokens_ready > 0 or bool(ready_attackers(permanents, turn))
+            for maker, cost in sorted(token_makers["activatedMakers"].items()):
+                record = next((permanent for permanent in permanents
+                               if permanent["name"] == maker), None)
+                if record is None or (maker in token_makers["needsTappedCreature"]
+                                      and not attacked):
+                    continue
+                if record["kind"] == "land" and record["manaActiveTurn"] > turn:
+                    continue
+                if pool.can_cast(cost):
+                    pool = pool.after_spending(cost)
+                    make_tokens(1, 0)
         by_turn[turn] = metrics_from_board(
             turn=turn,
             permanents=permanents,
@@ -3949,6 +4242,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
         # Only this deck's own X_SPELL_DRAW cards, in the table's words.
         draws = ", ".join(f"{name} {X_SPELL_DRAW[name][0]}"
                           for name in x_spells if name in X_SPELL_DRAW)
+        x_tokens = bool(context.get("tokenMakers")
+                        and set(x_spells) & set(context["tokenMakers"]["perX"]))
         section["methodology"] += (
             " X spells modeled (owner-approved 2026-11-18): a spell with {X} in its mana "
             "cost keeps its place in the cast order (never the ramp tier) and, when "
@@ -3962,7 +4257,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             + (f"; cards drawn: {draws}" if draws else "")
             + ("; amass X spells amass X, and Saruman, the White Hand's amass counts the X "
                "paid" if context.get("amassEngine") else "")
-            + ". Every other X effect (tokens, life loss, damage, tutoring, pumps, "
+            + ("; X token spells make their tokens at the X paid (token makers below)"
+               if x_tokens else "")
+            + ". Every other X effect (" + ("" if x_tokens else "tokens, ")
+            + "life loss, damage, tutoring, pumps, "
             "proliferate, recursion, manifest) is not credited: those spells are only "
             "re-timed. Floors: convoke, improvise and cost reducers are not modeled."
         )
@@ -4100,6 +4398,81 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "every creature into an Egg, the paid Zopandrel/Mondrak outlets and "
             "opponent-end-step hatching beyond Seedborn are unmodelled."
         )
+    token_makers = context.get("tokenMakers")
+    if token_makers:
+        # One phrase per maker kind the config holds; an empty one is left out.
+        on_resolve = sorted(token_makers["onResolve"].items())
+        makers = [
+            ("creature tokens as a card resolves or enters",
+             ", ".join(f"{name} {creatures}" for name, (creatures, _) in on_resolve
+                       if creatures)),
+            ("X spells at the X paid",
+             ", ".join(f"{name} {'X' if per_x == 1 else f'{per_x}X'}"
+                       for name, per_x in sorted(token_makers["perX"].items()))),
+            ("whenever you attack, tapped and attacking, from the turn after the maker "
+             "is cast",
+             ", ".join([f"{name} {count}"
+                        for name, count in sorted(token_makers["attackMakers"].items())]
+                       + [f"{name} one more each attack (1, 2, 3 ...)"
+                          for name in sorted(token_makers["growingAttackMakers"])])),
+            ("one per natural land drop while on the battlefield",
+             ", ".join(sorted(token_makers["landfallMakers"]))),
+            ("at most once per turn each, after combat, in this order, paid out of the "
+             "mana the turn's casts left",
+             ", ".join(f"{name} ("
+                       + " + ".join(f"{amount} {key}" for key, amount in cost.items())
+                       + ("; only on a turn something attacked, so a creature is tapped"
+                          if name in token_makers["needsTappedCreature"] else "")
+                       + ")"
+                       for name, cost in sorted(token_makers["activatedMakers"].items()))),
+            ("Food as a card resolves or enters",
+             ", ".join(f"{name} {food}" for name, (_, food) in on_resolve if food)),
+        ]
+        text = (" Token makers modeled (owner-approved 2026-11-18): this deck's token "
+                "makers feed the DEC-404 token ledger, one creation event per resolution, "
+                "trigger or activation. Credited: "
+                + "; ".join(f"{label}: {names}" for label, names in makers if names) + ".")
+        if token_makers["activatedMakers"]:
+            text += (" A land among the activated makers must be untapped, and its own "
+                     "{T} is charged as one more mana of its colour: the pool does not "
+                     "record which land paid for what.")
+        if token_makers["extraFoodName"]:
+            text += (f" {token_makers['extraFoodName']} adds one Food to each event before "
+                     "any doubler (the controller orders replacement effects, so the Food "
+                     "is doubled too); Food made with tokens that enter tapped enters "
+                     "tapped.")
+        if token_makers["doublerNames"]:
+            text += (f" {' and '.join(sorted(token_makers['doublerNames']))} each double "
+                     "every token of an event.")
+        if token_makers["artifactTokensReplacedBy"]:
+            text += (f" While {token_makers['artifactTokensReplacedBy']} is on the "
+                     "battlefield no new Food is credited: it would be a creature token "
+                     "the engine does not credit.")
+        anthems = ", ".join(sorted(token_makers["anthemNames"]))
+        text += (" Combat, the DEC-404 convention: each creature token deals "
+                 f"{token_makers['tokenPower']} plus one per anthem on the battlefield"
+                 + (f" ({anthems})" if anthems else "")
+                 + " every turn from the turn after it is made, tokens made tapped and "
+                 "attacking deal damage the turn they are made, every creature token able "
+                 "to attack attacks, and no token is ever removed or spent.")
+        draw_tokens = token_makers["commanderDrawTokens"]
+        text += (f" Commander draw: {context['commanderName']} taps {draw_tokens} "
+                 "untapped tokens to draw a card. The cost has no {T} symbol, so "
+                 "summoning-sick tokens can pay, and a token that attacked stays tapped "
+                 "until your untap step; so at the last opponent's end step before each of "
+                 "your turns, while it is on the battlefield, the commander draws one card "
+                 f"per {draw_tokens} untapped tokens: every Food except any that entered "
+                 "tapped on your last turn, and the creature tokens made on your last turn. "
+                 "The cards arrive before your upkeep.")
+        not_credited = ["; ".join(f"{', '.join(cards)} ({reason})"
+                                  for reason, cards in token_makers["excluded"]),
+                        ", ".join(token_makers["notCredited"])]
+        if any(not_credited):
+            text += (" The maker list is a floor; not credited: "
+                     + "; nor ".join(part for part in not_credited if part) + ".")
+        if token_makers["notModeled"]:
+            text += f" Not modeled: {', '.join(token_makers['notModeled'])}."
+        section["methodology"] += text
     haste_sources = context.get("hasteSources")
     if haste_sources:
         section["methodology"] += (

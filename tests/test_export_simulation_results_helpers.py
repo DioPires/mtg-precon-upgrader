@@ -1,6 +1,7 @@
 import importlib
 import json
 import random
+import re
 import tempfile
 import unittest
 from collections import Counter, defaultdict
@@ -690,9 +691,10 @@ class PrintedPowerProfileTests(unittest.TestCase):
                 self.assertEqual(self._profile(power=power)["combat"], 3)
 
 
-# Card data for CastTimeDrawTests, DrawEngineGoldfishTests, XSpellGoldfishTests
-# and ArmyReadinessGoldfishTests: type line, mana cost, mana value and oracle
-# text as data/card-metadata.json held them on 2026-11-18, pasted so these
+# Card data for CastTimeDrawTests, DrawEngineGoldfishTests, XSpellGoldfishTests,
+# ArmyReadinessGoldfishTests and TokenMakerGoldfishTests: type line, mana
+# cost, mana value and oracle text as data/card-metadata.json held them on
+# 2026-11-18, pasted so these
 # tests stay put when that file is refreshed or a deck drops a card. "−" in
 # loyalty costs is U+2212, as Scryfall prints it. "Zero Trinket" and "Probe
 # Commander" are made-up cards for the engine fixture.
@@ -1259,6 +1261,211 @@ CARDS = {
             "graveyard to your hand.\n"
             "Exile Divergent Equation."),
         "colors": ["U"],
+    },
+    # Token makers (TokenMakerGoldfishTests).
+    "Plains": {
+        "type_line": "Basic Land — Plains",
+        "mana_cost": "",
+        "cmc": 0.0,
+        "oracle_text": "({T}: Add {W}.)",
+        "colors": [],
+    },
+    "Baylen, the Haymaker": {
+        "type_line": "Legendary Creature — Rabbit Warrior",
+        "mana_cost": "{R}{G}{W}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Tap two untapped tokens you control: Add one mana of any color.\n"
+            "Tap three untapped tokens you control: Draw a card.\n"
+            "Tap four untapped tokens you control: Put three +1/+1 counters on "
+            "Baylen. It gains trample until end of turn."),
+        "colors": ["G", "R", "W"],
+        "power": "4",
+    },
+    "Frontline Rush": {
+        "type_line": "Instant",
+        "mana_cost": "{R}{W}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Choose one —\n"
+            "• Create two 1/1 red Goblin creature tokens.\n"
+            "• Target creature gets +X/+X until end of turn, where X is the "
+            "number of creatures you control."),
+        "colors": ["R", "W"],
+    },
+    "Warleader's Call": {
+        "type_line": "Enchantment",
+        "mana_cost": "{1}{R}{W}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Creatures you control get +1/+1.\n"
+            "Whenever a creature you control enters, this enchantment deals 1 "
+            "damage to each opponent."),
+        "colors": ["R", "W"],
+    },
+    "Secure the Wastes": {
+        "type_line": "Instant",
+        "mana_cost": "{X}{W}",
+        "cmc": 1.0,
+        "oracle_text": "Create X 1/1 white Warrior creature tokens.",
+        "colors": ["W"],
+    },
+    "Pest Infestation": {
+        "type_line": "Sorcery",
+        "mana_cost": "{X}{X}{G}",
+        "cmc": 1.0,
+        "oracle_text": (
+            "Destroy up to X target artifacts and/or enchantments. Create twice "
+            "X 1/1 black and green Pest creature tokens with \"When this token "
+            "dies, you gain 1 life.\""),
+        "colors": ["G"],
+    },
+    "Adeline, Resplendent Cathar": {
+        "type_line": "Legendary Creature — Human Knight",
+        "mana_cost": "{1}{W}{W}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Vigilance\n"
+            "Adeline's power is equal to the number of creatures you control.\n"
+            "Whenever you attack, for each opponent, create a 1/1 white Human "
+            "creature token that's tapped and attacking that player or a "
+            "planeswalker they control."),
+        "colors": ["W"],
+        "power": "*",
+    },
+    "Anim Pakal, Thousandth Moon": {
+        "type_line": "Legendary Creature — Human Soldier",
+        "mana_cost": "{1}{R}{W}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Whenever you attack with one or more non-Gnome creatures, put a "
+            "+1/+1 counter on Anim Pakal, then create X 1/1 colorless Gnome "
+            "artifact creature tokens that are tapped and attacking, where X is "
+            "the number of +1/+1 counters on Anim Pakal."),
+        "colors": ["R", "W"],
+        "power": "1",
+    },
+    "Scute Swarm": {
+        "type_line": "Creature — Insect",
+        "mana_cost": "{2}{G}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Landfall — Whenever a land you control enters, create a 1/1 green "
+            "Insect creature token. If you control six or more lands, create a "
+            "token that's a copy of this creature instead."),
+        "colors": ["G"],
+        "power": "1",
+    },
+    "Nature's Lore": {
+        "type_line": "Sorcery",
+        "mana_cost": "{1}{G}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Search your library for a Forest card, put that card onto the "
+            "battlefield, then shuffle."),
+        "colors": ["G"],
+    },
+    "Anointed Procession": {
+        "type_line": "Enchantment",
+        "mana_cost": "{3}{W}",
+        "cmc": 4.0,
+        "oracle_text": (
+            "If an effect would create one or more tokens under your control, it "
+            "creates twice that many of those tokens instead."),
+        "colors": ["W"],
+    },
+    "Peregrin Took": {
+        "type_line": "Legendary Creature — Halfling Citizen",
+        "mana_cost": "{2}{G}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "If one or more tokens would be created under your control, those "
+            "tokens plus an additional Food token are created instead. (It's an "
+            "artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n"
+            "Sacrifice three Foods: Draw a card."),
+        "colors": ["G"],
+        "power": "2",
+    },
+    "Halo Fountain": {
+        "type_line": "Artifact",
+        "mana_cost": "{2}{W}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "{W}, {T}, Untap a tapped creature you control: Create a 1/1 green "
+            "and white Citizen creature token.\n"
+            "{W}{W}, {T}, Untap two tapped creatures you control: Draw a card.\n"
+            "{W}{W}{W}{W}{W}, {T}, Untap fifteen tapped creatures you control: "
+            "You win the game."),
+        "colors": ["W"],
+    },
+    "Castle Ardenvale": {
+        "type_line": "Land",
+        "mana_cost": "",
+        "cmc": 0.0,
+        "oracle_text": (
+            "This land enters tapped unless you control a Plains.\n"
+            "{T}: Add {W}.\n"
+            "{2}{W}{W}, {T}: Create a 1/1 white Human creature token."),
+        "colors": [],
+    },
+    "Prosperous Partnership": {
+        "type_line": "Enchantment",
+        "mana_cost": "{1}{R}{W}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "When this enchantment enters, create two 1/1 green and white "
+            "Citizen creature tokens.\n"
+            "Tap three untapped creatures you control: Create a Treasure token."),
+        "colors": ["R", "W"],
+    },
+    "Staff of the Storyteller": {
+        "type_line": "Artifact",
+        "mana_cost": "{1}{W}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "When this artifact enters, create a 1/1 white Spirit creature token "
+            "with flying.\n"
+            "Whenever you create one or more creature tokens, put a story counter "
+            "on this artifact.\n"
+            "{W}, {T}, Remove a story counter from this artifact: Draw a card."),
+        "colors": ["W"],
+    },
+    "Rosie Cotton of South Lane": {
+        "type_line": "Legendary Creature — Halfling Peasant",
+        "mana_cost": "{2}{W}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "When Rosie Cotton enters, create a Food token. (It's an artifact "
+            "with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n"
+            "Whenever you create a token, put a +1/+1 counter on target creature "
+            "you control other than Rosie Cotton."),
+        "colors": ["W"],
+        "power": "1",
+    },
+    "Mondrak, Glory Dominus": {
+        "type_line": "Legendary Creature — Phyrexian Horror",
+        "mana_cost": "{2}{W}{W}",
+        "cmc": 4.0,
+        "oracle_text": (
+            "If one or more tokens would be created under your control, twice "
+            "that many of those tokens are created instead.\n"
+            "{1}{W/P}{W/P}, Sacrifice two other artifacts and/or creatures: Put "
+            "an indestructible counter on Mondrak. ({W/P} can be paid with "
+            "either {W} or 2 life.)"),
+        "colors": ["W"],
+        "power": "4",
+    },
+    "Draconic Visitor": {
+        "type_line": "Creature — Dragon",
+        "mana_cost": "{3}{R}{R}",
+        "cmc": 5.0,
+        "oracle_text": (
+            "Flying\n"
+            "If one or more artifact tokens would be created under your control, "
+            "that many 5/5 red Dragon creature tokens with flying are created "
+            "instead."),
+        "colors": ["R"],
+        "power": "5",
     },
     "Zero Trinket": {
         "type_line": "Artifact",
@@ -2158,6 +2365,498 @@ class ArmyReadinessGoldfishTests(unittest.TestCase):
             [0, 0, 0, 2, 4, 14, 27, 43, 62, 84])
 
 
+class TokenMakerGoldfishTests(unittest.TestCase):
+    """TOKEN_MAKER_ENGINE (owner-approved 2026-11-18) through the goldfish loop.
+
+    stampede-acres' shipped config. One simulate_goldfish_game run per case
+    with the opening fixed instead of shuffled, as in DrawEngineGoldfishTests;
+    card data from CARDS. Unless a case says otherwise the lands are Command
+    Towers (any of red, green and white), one played each turn, and the
+    commander is The Ur-Dragon, which they never cast. library.pop() draws
+    from the end. Combat: a creature card scores min(8, mana value) from the
+    turn after it is cast; a creature token deals 1, plus one per anthem, from
+    the turn after it is made, or from the turn it is made when it enters
+    tapped and attacking. Baylen, the Haymaker's cards are seen as drops in
+    the library size, read at each turn's land choice (after that turn's
+    draws) and once after turn 10.
+    """
+
+    DECK_ID = "stampede-acres"
+
+    def _run(self, hand, library, commander="The Ur-Dragon", colors=("R", "G", "W")):
+        """(cumulative damage on turns 1-10, library sizes)."""
+        decklist = hand + library
+        context = exporter.build_goldfish_context(
+            decklist, {"decklist": []}, CARDS, commander, list(colors), self.DECK_ID)
+        sizes = []
+        choose_land = exporter.choose_land_to_play
+
+        def record_then_choose(*args, **kwargs):
+            sizes.append(len(library))
+            return choose_land(*args, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          return_value=(library, hand)), \
+                patch.object(exporter, "choose_land_to_play",
+                             side_effect=record_then_choose):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, CARDS, context, 6)
+        return ([by_turn[turn]["cumulativeDamage"] for turn in range(1, 11)],
+                sizes + [len(library)])
+
+    @staticmethod
+    def _library_with(card, turn, land="Command Tower"):
+        """92 cards: `card` is drawn on `turn` (2-10), lands everywhere else."""
+        return [land] * (92 - (turn - 1)) + [card] + [land] * (turn - 2)
+
+    @staticmethod
+    def _sizes_with_extra_draws(extra):
+        """Library sizes when only the draw step and `extra` {turn: cards
+        drawn before that turn's land choice} take cards."""
+        drawn = 0
+        sizes = []
+        for turn in range(1, 11):
+            drawn += (1 if turn > 1 else 0) + extra.get(turn, 0)
+            sizes.append(92 - drawn)
+        return sizes + [sizes[-1]]
+
+    def test_a_fixed_makers_tokens_attack_from_the_next_turn_with_the_anthem(self):
+        # Frontline Rush ({R}{W}) on turn 2 makes two Goblins; Warleader's
+        # Call ({1}{R}{W}, "Creatures you control get +1/+1.") on turn 3.
+        # From turn 3 the Goblins deal 2 x (1 + 1) = 4 a turn.
+        damage, _ = self._run(["Frontline Rush", "Warleader's Call"]
+                              + ["Command Tower"] * 5, ["Command Tower"] * 92)
+        self.assertEqual(damage, [0, 0, 4, 8, 12, 16, 20, 24, 28, 32])
+
+    def test_each_fixed_maker_makes_its_tokens_and_food_never_attacks(self):
+        # Prosperous Partnership ({1}{R}{W}) on turn 3: two Citizens, 2 a turn
+        # from turn 4. Staff of the Storyteller ({1}{W}) on turn 2: one
+        # Spirit, 1 a turn from turn 3. Frontline Rush on turn 2 (two Goblins)
+        # and Rosie Cotton ({2}{W}, combat 3) on turn 3, whose Food never
+        # attacks: 2 on turn 3, then 2 + 3 a turn.
+        cases = {
+            "Prosperous Partnership": (["Prosperous Partnership"],
+                                       [0, 0, 0, 2, 4, 6, 8, 10, 12, 14]),
+            "Staff of the Storyteller": (["Staff of the Storyteller"],
+                                         [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]),
+            "Rosie Cotton's Food": (["Rosie Cotton of South Lane", "Frontline Rush"],
+                                    [0, 0, 2, 7, 12, 17, 22, 27, 32, 37]),
+        }
+        for label, (spells, damage) in cases.items():
+            with self.subTest(label):
+                hand = spells + ["Command Tower"] * (7 - len(spells))
+                self.assertEqual(self._run(hand, ["Command Tower"] * 92)[0], damage)
+
+    def test_x_token_spells_make_x_and_twice_x(self):
+        # Secure the Wastes ({X}{W}) drawn on turn 4 with four towers: X = 3,
+        # three Warriors. Pest Infestation ({X}{X}{G}) drawn on turn 5 with
+        # five: X = 2, twice X = four Pests. Each attacks from the next turn.
+        for card, turn, damage in (
+                ("Secure the Wastes", 4, [0, 0, 0, 0, 3, 6, 9, 12, 15, 18]),
+                ("Pest Infestation", 5, [0, 0, 0, 0, 0, 4, 8, 12, 16, 20])):
+            with self.subTest(card=card):
+                self.assertEqual(self._run(["Command Tower"] * 7,
+                                           self._library_with(card, turn))[0], damage)
+
+    def test_adelines_tokens_attack_the_turn_they_are_made_and_keep_attacking(self):
+        # Adeline ({1}{W}{W}, combat 3) is cast on turn 3 and attacks from
+        # turn 4; each attack makes three Humans tapped and attacking. Turn t
+        # (t >= 4) deals 3 + 3 x (t - 3): 6, 9, 12, 15, 18, 21, 24.
+        damage, _ = self._run(["Adeline, Resplendent Cathar"] + ["Command Tower"] * 6,
+                              ["Command Tower"] * 92)
+        self.assertEqual(damage, [0, 0, 0, 6, 15, 27, 42, 60, 81, 105])
+
+    def test_anim_pakal_makes_one_more_gnome_each_attack(self):
+        # Anim Pakal ({1}{R}{W}, combat 3) is cast on turn 3; his k-th attack
+        # (turn 3 + k) makes k Gnomes tapped and attacking, which keep
+        # attacking: turn t deals 3 + (1 + 2 + ... + (t - 3)): 4, 6, 9, 13, 18,
+        # 24, 31.
+        damage, _ = self._run(["Anim Pakal, Thousandth Moon"] + ["Command Tower"] * 6,
+                              ["Command Tower"] * 92)
+        self.assertEqual(damage, [0, 0, 0, 4, 10, 19, 32, 50, 74, 105])
+
+    def test_landfall_counts_only_the_natural_land_drop_after_the_cast(self):
+        # Forests only. Scute Swarm ({2}{G}, combat 3) is cast on turn 3,
+        # after that turn's land drop. Turn 4 draws Nature's Lore: the land
+        # drop makes an Insect, and the Forest the Lore puts onto the
+        # battlefield makes none. One Insect per drop from then on, each
+        # attacking from the next turn: turn t (t >= 4) deals 3 + (t - 4).
+        damage, _ = self._run(["Scute Swarm"] + ["Forest"] * 6,
+                              self._library_with("Nature's Lore", 4, "Forest"),
+                              colors=("G",))
+        self.assertEqual(damage, [0, 0, 0, 3, 7, 12, 18, 25, 33, 42])
+
+    def test_each_doubler_doubles_the_tokens(self):
+        # One doubler: Anointed Procession ({3}{W}) on turn 4; Frontline Rush,
+        # drawn on turn 5, makes 2 x 2 = four Goblins, attacking from turn 6.
+        # Two: Mondrak ({2}{W}{W}, combat 4 from turn 5) on turn 4, Anointed
+        # Procession on turn 5; Rush, drawn on turn 6, makes 2 x 2 x 2 = eight
+        # Goblins: 4 a turn, then 4 + 8 from turn 7.
+        cases = {
+            "one doubler": (["Anointed Procession"], 5,
+                            [0, 0, 0, 0, 0, 4, 8, 12, 16, 20]),
+            "two doublers": (["Anointed Procession", "Mondrak, Glory Dominus"], 6,
+                             [0, 0, 0, 0, 4, 8, 20, 32, 44, 56]),
+        }
+        for label, (doublers, turn, damage) in cases.items():
+            with self.subTest(label):
+                hand = doublers + ["Command Tower"] * (7 - len(doublers))
+                self.assertEqual(
+                    self._run(hand, self._library_with("Frontline Rush", turn))[0], damage)
+
+    def test_peregrin_adds_one_food_and_then_the_doubler_doubles_it(self):
+        # Commander Baylen. Turn 3 Baylen, turn 4 Peregrin Took, turn 5
+        # Anointed Procession; Frontline Rush, drawn on turn 6, is one event:
+        # two Goblins plus Peregrin's Food, then doubled: four Goblins and two
+        # Food. None attacked on turn 6, so Baylen draws 6 // 3 = 2 before
+        # turn 7. From turn 7 the Goblins attack and the two Food alone draw
+        # nothing. Doubling before the Food (four Goblins, one Food), no Food,
+        # or no doubling would each leave five tokens or fewer: one card.
+        _, sizes = self._run(
+            ["Peregrin Took", "Anointed Procession"] + ["Command Tower"] * 5,
+            self._library_with("Frontline Rush", 6), commander="Baylen, the Haymaker")
+        self.assertEqual(sizes, self._sizes_with_extra_draws({7: 2}))
+
+    def test_food_made_with_attacking_tokens_enters_tapped(self):
+        # Commander Baylen on turn 3, Adeline on turn 4 (she sorts ahead of
+        # Peregrin Took by name), Peregrin on turn 5. From turn 5 each attack
+        # makes three Humans, tapped and attacking, and one Food, which enters
+        # tapped. Untapped tokens at the end of turns 5-9: 0, 1, 2, 3, 4 Food
+        # (the Humans attacked), so Baylen draws one card before turn 9 and
+        # one before turn 10. Counting the tapped Food would draw before
+        # turns 8, 9 and 10.
+        # With Anointed Procession too (turn 6): from turn 6 each attack makes
+        # six Humans and two Food, both tapped. Food at the end of turns 5-9:
+        # 1, 3, 5, 7, 9, of which 1, 2, 2, 2, 2 entered tapped that turn, so
+        # 0, 1, 3, 5, 7 untapped: one card before turns 8 and 9, two before
+        # turn 10. Counting one tapped Food per event would give 0, 2, 4, 6, 8:
+        # one before turn 8, two before turns 9 and 10.
+        cases = {
+            "no doubler": (["Adeline, Resplendent Cathar", "Peregrin Took"],
+                           {9: 1, 10: 1}),
+            "a doubler": (["Adeline, Resplendent Cathar", "Peregrin Took",
+                           "Anointed Procession"], {8: 1, 9: 1, 10: 2}),
+        }
+        for label, (spells, extra) in cases.items():
+            with self.subTest(label):
+                _, sizes = self._run(
+                    spells + ["Command Tower"] * (7 - len(spells)),
+                    ["Command Tower"] * 92, commander="Baylen, the Haymaker")
+                self.assertEqual(sizes, self._sizes_with_extra_draws(extra))
+
+    def test_draconic_visitor_stops_new_food_and_keeps_the_old(self):
+        # Commander Baylen on turn 3. New Food: Peregrin Took on turn 4,
+        # Draconic Visitor ({3}{R}{R}) on turn 5; Frontline Rush, drawn on turn
+        # 6, makes two Goblins, and Peregrin's Food would be a Dragon the engine
+        # does not credit: two untapped tokens, no card (three, one card, if
+        # the Food counted). Old Food: Rosie Cotton on turn 4 makes a Food;
+        # Visitor is drawn and cast on turn 5 and Rush on turn 6: the Food and
+        # two Goblins are untapped at the end of turn 6, one card before turn 7.
+        tower = "Command Tower"
+        cases = {
+            "new Food": (["Peregrin Took", "Draconic Visitor"],
+                         self._library_with("Frontline Rush", 6), {}),
+            "old Food": (["Rosie Cotton of South Lane"],
+                         [tower] * 87 + ["Frontline Rush", "Draconic Visitor"] + [tower] * 3,
+                         {7: 1}),
+        }
+        for label, (spells, library, extra) in cases.items():
+            with self.subTest(label):
+                _, sizes = self._run(spells + [tower] * (7 - len(spells)), library,
+                                     commander="Baylen, the Haymaker")
+                self.assertEqual(sizes, self._sizes_with_extra_draws(extra))
+
+    def test_baylen_draws_per_three_tokens_that_did_not_attack_while_he_is_out(self):
+        # Secure the Wastes drawn on turn 7 with seven towers: X = 6, six
+        # Warriors. With Baylen cast on turn 3 they are untapped at the end of
+        # turn 7: 6 // 3 = 2 cards before turn 8; from turn 8 they attack and
+        # draw nothing. With a commander that is never cast, no cards.
+        library = self._library_with("Secure the Wastes", 7)
+        for commander, extra in (("Baylen, the Haymaker", {8: 2}), ("The Ur-Dragon", {})):
+            with self.subTest(commander=commander):
+                _, sizes = self._run(["Command Tower"] * 7, list(library),
+                                     commander=commander)
+                self.assertEqual(sizes, self._sizes_with_extra_draws(extra))
+
+    def test_baylen_draws_in_the_turn_cycle_he_is_cast(self):
+        # The towers make only red or white here, so Baylen ({R}{G}{W}) waits
+        # for the Forest drawn on turn 2, which is played only once the seven
+        # towers are down, on turn 8 (a tower adds two of the commander's
+        # colours, the Forest none). Turn 8: Baylen, then Secure the Wastes
+        # (drawn that turn) with the five mana left: X = 4, four Warriors. They
+        # are untapped at the end of turn 8, so Baylen draws 4 // 3 = 1 card
+        # before turn 9. Zero Trinkets fill the library.
+        library = (["Zero Trinket"] * 85 + ["Secure the Wastes"] + ["Zero Trinket"] * 5
+                   + ["Forest"])
+        _, sizes = self._run(["Command Tower"] * 7, library,
+                             commander="Baylen, the Haymaker", colors=("R", "W"))
+        self.assertEqual(sizes, self._sizes_with_extra_draws({9: 1}))
+
+    def test_anim_pakals_gnomes_stay_1_1_attackers_under_draconic_visitor(self):
+        # Anim Pakal (combat 3) on turn 3, Draconic Visitor ({3}{R}{R}, combat
+        # 5 + 1 for Flying = 6 from turn 6) on turn 5. The Gnomes are artifact
+        # creature tokens: under Visitor they would be 5/5 flying Dragons, and
+        # the engine keeps crediting them as 1/1 attackers (a floor). Gnomes
+        # made on turns 4-10: 1, 2, ..., 7, all attacking from the turn made.
+        # Turn 4: 3 + 1 = 4; turn 5: 3 + 3 = 6; turn 6: 3 + 6 + 6 = 15; turn 7:
+        # 3 + 6 + 10 = 19; then 24, 30, 37.
+        damage, _ = self._run(
+            ["Anim Pakal, Thousandth Moon", "Draconic Visitor"] + ["Command Tower"] * 5,
+            ["Command Tower"] * 92)
+        self.assertEqual(damage, [0, 0, 0, 4, 10, 25, 44, 68, 98, 135])
+
+    def test_the_commanders_mana_ability_adds_no_mana(self):
+        # Baylen's "Tap two untapped tokens you control: Add one mana of any
+        # color." is not modelled. Three towers and Baylen on turn 3, then
+        # Castle Ardenvale on turn 4, tapped (no Plains); Zero Trinkets after.
+        # From turn 5 four lands make four mana, one short of the Castle's
+        # five, so it never makes a Human: Baylen alone deals 3 a turn from
+        # turn 4. Mana from Baylen with no tokens would pay it every turn from
+        # turn 5.
+        damage, _ = self._run(
+            ["Command Tower"] * 3 + ["Castle Ardenvale"] + ["Zero Trinket"] * 3,
+            ["Zero Trinket"] * 92, commander="Baylen, the Haymaker")
+        self.assertEqual(damage, [0, 0, 0, 3, 6, 9, 12, 15, 18, 21])
+
+    def test_halo_fountain_uses_only_unspent_mana_after_an_attack(self):
+        # Frontline Rush on turn 2 (two Goblins, attacking from turn 3); Halo
+        # Fountain ({2}{W}) on turn 3 takes all three towers, so its {W}
+        # activation first comes on turn 4, then every turn: one Citizen a
+        # turn, attacking from the next. Damage 2, 2, 3, 4, 5, 6, 7, 8 on
+        # turns 3-10. With no creature to attack (Halo alone) nothing is ever
+        # tapped and it makes nothing.
+        cases = {
+            "after an attack": (["Halo Fountain", "Frontline Rush"],
+                                [0, 0, 2, 4, 7, 11, 16, 22, 29, 37]),
+            "no attack": (["Halo Fountain"], [0] * 10),
+        }
+        for label, (spells, damage) in cases.items():
+            with self.subTest(label):
+                hand = spells + ["Command Tower"] * (7 - len(spells))
+                self.assertEqual(self._run(hand, ["Command Tower"] * 92)[0], damage)
+
+    def test_castle_ardenvale_needs_three_white_sources_and_to_be_untapped(self):
+        # Castle Ardenvale: "{2}{W}{W}, {T}" with its own {T} charged as a
+        # third {W}. Zero Trinkets ({0}, no combat) are drawn on turns 2-3
+        # where a land would get in the way.
+        # Two Plains: Plains turns 1-2 (the Castle loses the name tie-break),
+        # the Castle turn 3, Forests after. Turn 5 has five lands, three of
+        # them white: one Human a turn from turn 5, attacking from the next.
+        # One Plains: the Castle turn 2, Forests after; only two white
+        # sources ever, so nothing (charging the {T} as generic mana would
+        # make a Human a turn from turn 5).
+        # Five towers first: the Castle comes turn 6 and enters tapped (no
+        # Plains), so its first Human comes turn 7, though the towers alone
+        # could pay on turn 6.
+        cases = {
+            "two Plains": (["Plains", "Plains", "Castle Ardenvale"] + ["Zero Trinket"] * 4,
+                           ["Forest"] * 90 + ["Zero Trinket"] * 2, ("W", "G"),
+                           [0, 0, 0, 0, 0, 1, 3, 6, 10, 15]),
+            "one Plains": (["Plains", "Castle Ardenvale"] + ["Zero Trinket"] * 5,
+                           ["Forest"] * 91 + ["Zero Trinket"], ("W", "G"), [0] * 10),
+            "enters tapped": (["Command Tower"] * 5 + ["Castle Ardenvale", "Zero Trinket"],
+                              ["Zero Trinket"] * 92, ("R", "G", "W"),
+                              [0, 0, 0, 0, 0, 0, 0, 1, 3, 6]),
+        }
+        for label, (hand, library, colors, damage) in cases.items():
+            with self.subTest(label):
+                self.assertEqual(self._run(hand, library, colors=colors)[0], damage)
+
+    # The token paragraph of stampede-acres' goldfish methodology, whole.
+    TOKEN_PARAGRAPH = (
+        " Token makers modeled (owner-approved 2026-11-18): this deck's token "
+        "makers feed the DEC-404 token ledger, one creation event per "
+        "resolution, trigger or activation. Credited: creature tokens as a card "
+        "resolves or enters: Frontline Rush 2, Prosperous Partnership 2, Staff "
+        "of the Storyteller 1; X spells at the X paid: Grand Crescendo X, March "
+        "of the Multitudes X, Pest Infestation 2X, Secure the Wastes X; "
+        "whenever you attack, tapped and attacking, from the turn after the "
+        "maker is cast: Adeline, Resplendent Cathar 3, Anim Pakal, Thousandth "
+        "Moon one more each attack (1, 2, 3 ...); one per natural land drop "
+        "while on the battlefield: Scute Swarm, Springheart Nantuko; at most "
+        "once per turn each, after combat, in this order, paid out of the mana "
+        "the turn's casts left: Castle Ardenvale (2 generic + 3 W), Halo "
+        "Fountain (1 W; only on a turn something attacked, so a creature is "
+        "tapped); Food as a card resolves or enters: Rosie Cotton of South Lane "
+        "1. A land among the activated makers must be untapped, and its own "
+        "{T} is charged as one more mana of its colour: the pool does not "
+        "record which land paid for what. Peregrin Took adds one Food to each "
+        "event before any doubler (the controller orders replacement effects, "
+        "so the Food is doubled too); Food made with tokens that enter tapped "
+        "enters tapped. Anointed Procession and Mondrak, Glory Dominus each "
+        "double every token of an event. While Draconic Visitor is on the "
+        "battlefield no new Food is credited: it would be a creature token the "
+        "engine does not credit. Combat, the DEC-404 convention: each "
+        "creature token deals 1 plus one per anthem on the battlefield "
+        "(Warleader's Call) every turn from the turn after it is made, tokens "
+        "made tapped and attacking deal damage the turn they are made, every "
+        "creature token able to attack attacks, and no token is ever removed or "
+        "spent. Commander draw: Baylen, the Haymaker taps 3 untapped tokens to "
+        "draw a card. The cost has no {T} symbol, so summoning-sick tokens can "
+        "pay, and a token that attacked stays tapped until your untap step; so "
+        "at the last opponent's end step before each of your turns, while it is "
+        "on the battlefield, the commander draws one card per 3 untapped "
+        "tokens: every Food except any that entered tapped on your last turn, "
+        "and the creature tokens made on your last turn. The cards arrive "
+        "before your upkeep. The maker list is a floor; not credited: "
+        "Smothering Tithe, The Queen of Dale (their tokens depend on opponents' "
+        "choices); Gleaming Splendor (its Treasure needs an opponent's second "
+        "draw in a turn: the goldfish models no opponent draws and never "
+        "activates its {2}{W}); Elspeth, Storm Slayer, Voice of "
+        "Victory, Artifact Mutation, The Battle of Bywater (never cast: read as "
+        "interaction); Aligned Heart, Cori-Steel Cutter (tokens only on the "
+        "second spell in a turn); Caretaker's Talent, Idol of Oblivion "
+        "(one-shot activations); Scurry Oak (Squirrels from +1/+1 counters: "
+        "with Rosie Cotton of South Lane they are the infinite the combo gate "
+        "scores); Draconic Visitor (its 5/5 flying Dragons are not credited: "
+        "while it is on the battlefield no new Food is credited, and Anim "
+        "Pakal's Gnomes count as 1/1s); nor token copies' own landfall, "
+        "landfall from lands a fetch land or ramp spell puts onto the "
+        "battlefield, the makers' other abilities (Prosperous Partnership's "
+        "Treasure), an attack maker's trigger on the turn it is cast (another "
+        "creature attacking would trigger it). Not modeled: the commander's "
+        "mana and +1/+1 counter abilities, Halo Fountain's untap, Treasure and "
+        "Food being spent, untaps on opponents' turns (Seedborn Muse, "
+        "Drumbellower), Caretaker's Talent's level 3 anthem (\"Creature tokens "
+        "you control get +2/+2.\"), noncombat token payoffs (Impact Tremors, "
+        "Purphoros, Warleader's Call's ping), token-draw payoffs (Caretaker's Talent, "
+        "Bennie Bracks, Belladonna Took, Staff of the Storyteller's story "
+        "counters, Idol of Oblivion, Peregrin Took's Foods).")
+    # Its X paragraph names the token X spells' credit and drops "tokens"
+    # from the effects it does not credit.
+    X_TOKEN_SENTENCE = (
+        "; X token spells make their tokens at the X paid (token makers below). "
+        "Every other X effect (life loss, damage, tutoring, pumps, proliferate, "
+        "recursion, manifest) is not credited")
+
+    def _methodology(self, deck_id):
+        decklist = ["Secure the Wastes"] + ["Command Tower"] * 98
+        with patch.object(exporter, "GOLDFISH_GAMES", 16), \
+                patch("multiprocessing.Pool", SerialPool):
+            goldfish, _ = exporter.compute_goldfish_section(
+                decklist=decklist, deck_data={"decklist": []}, metadata=CARDS,
+                commander_name="Baylen, the Haymaker",
+                commander_colors=["R", "G", "W"], deck_id=deck_id)
+        return goldfish["methodology"]
+
+    def test_methodology_leaves_out_the_sentences_of_empty_keys(self):
+        # The shipped config with every optional key emptied but one X maker:
+        # the paragraph keeps only the ledger, the X maker, combat and the
+        # commander draw, with no anthem list.
+        emptied = dict(exporter.TOKEN_MAKER_ENGINE[self.DECK_ID],
+                       onResolve={}, perX={"Secure the Wastes": 1}, attackMakers={},
+                       growingAttackMakers=set(), landfallMakers=set(),
+                       activatedMakers={}, needsTappedCreature=set(), doublerNames=set(),
+                       extraFoodName="", artifactTokensReplacedBy="", anthemNames=set(),
+                       excluded=(), notCredited=(), notModeled=())
+        with patch.dict(exporter.TOKEN_MAKER_ENGINE, {self.DECK_ID: emptied}):
+            methodology = self._methodology(self.DECK_ID)
+        self.assertEqual(methodology[methodology.find(" Token makers modeled"):], (
+            " Token makers modeled (owner-approved 2026-11-18): this deck's token "
+            "makers feed the DEC-404 token ledger, one creation event per "
+            "resolution, trigger or activation. Credited: X spells at the X paid: "
+            "Secure the Wastes X. Combat, the DEC-404 convention: each creature "
+            "token deals 1 plus one per anthem on the battlefield every turn from "
+            "the turn after it is made, tokens made tapped and attacking deal "
+            "damage the turn they are made, every creature token able to attack "
+            "attacks, and no token is ever removed or spent. Commander draw: "
+            "Baylen, the Haymaker taps 3 untapped tokens to draw a card. The cost "
+            "has no {T} symbol, so summoning-sick tokens can pay, and a token that "
+            "attacked stays tapped until your untap step; so at the last "
+            "opponent's end step before each of your turns, while it is on the "
+            "battlefield, the commander draws one card per 3 untapped tokens: "
+            "every Food except any that entered tapped on your last turn, and the "
+            "creature tokens made on your last turn. The cards arrive before your "
+            "upkeep."))
+
+    def test_methodology_states_the_token_makers_only_for_this_deck(self):
+        methodology = self._methodology(self.DECK_ID)
+        other = self._methodology("synthetic-x")
+        self.assertEqual(
+            (self.TOKEN_PARAGRAPH in methodology, self.X_TOKEN_SENTENCE in methodology,
+             "Token makers modeled" in other, self.X_TOKEN_SENTENCE in other,
+             "Every other X effect (tokens, life loss" in other),
+            (True, True, False, False, True))
+
+
+class TokenMakerTableGuardTests(unittest.TestCase):
+    """TOKEN_MAKER_ENGINE["stampede-acres"] against the deck as it stands.
+
+    The one token-engine test that reads data/: the live
+    data/commanders/stampede-acres/deck.json and data/card-metadata.json, so a
+    swap that adds or cuts a token card fails here until the engine's table
+    or its exclusion list follows. A card makes or replaces tokens when a line
+    of its oracle text says "create(s) ... token(s)" or "token(s) ... would be
+    created" within one sentence, or when it is a `produced_by` name of a
+    deck.json `tokens[]` entry whose type line starts with "Token"
+    (compute_tokens.py writes those from Scryfall's related cards; its "Card"
+    markers and "Emblem" entries are skipped). The oracle text here is the
+    front face's, so makers on a back face or an adventure face, and keyword
+    makers without reminder text (a bare "investigate"), are seen only
+    through `tokens[]`: after a swap, run `uv run python
+    scripts/compute_tokens.py --deck stampede-acres` before this test. A
+    `produced_by` name no longer in the deck is reported on its own: tokens[]
+    is stale. Through the deck's goldfish context, the exclusions whose
+    reason is that the goldfish never casts the card are never cast, and
+    every credited card that is not a land can be cast.
+    """
+
+    DECK_ID = "stampede-acres"
+    TOKEN_TEXT = re.compile(
+        r"\bcreates?\b[^.\n]*\btokens?\b|\btokens?\b[^.\n]*\bwould be created\b",
+        re.IGNORECASE)
+
+    @classmethod
+    def problems(cls, deck, metadata, token_engines, swarm_engines) -> tuple:
+        """(token cards in neither list, listed cards no longer in the deck,
+        cards both credited and excluded, "never cast" exclusions the goldfish
+        casts, credited non-land cards it never casts, deck ids in both
+        TOKEN_MAKER_ENGINE and COMMANDER_TOKEN_ENGINE, tokens[] producers no
+        longer in the deck: tokens[] is stale, re-run compute_tokens)."""
+        config = token_engines[cls.DECK_ID]
+        in_deck = {deck["commander"]} | {card["name"] for card in deck["decklist"]}
+        credited = (set(config["onResolve"]) | set(config["perX"])
+                    | set(config["attackMakers"]) | config["growingAttackMakers"]
+                    | config["landfallMakers"] | set(config["activatedMakers"])
+                    | config["doublerNames"] | {config["extraFoodName"]}
+                    | config["anthemNames"])
+        excluded = {name for _, names in config["excluded"] for name in names}
+        never_cast = {name for reason, names in config["excluded"]
+                      if reason.startswith("never cast") for name in names}
+        token_cards = {name for name in in_deck
+                       if cls.TOKEN_TEXT.search(metadata[name].get("oracle_text", ""))}
+        producers = {name for entry in deck.get("tokens") or []
+                     if entry["type_line"].startswith("Token")
+                     for name in entry["produced_by"]}
+        token_cards |= producers & in_deck
+        decklist = [card["name"] for card in deck["decklist"]
+                    for _ in range(card.get("quantity", 1))]
+        context = exporter.build_goldfish_context(
+            decklist, deck, metadata, deck["commander"],
+            metadata[deck["commander"]]["colors"], cls.DECK_ID)
+        profiles = context["profiles"]
+        return (sorted(token_cards - credited - excluded),
+                sorted((credited | excluded | {config["artifactTokensReplacedBy"]})
+                       - in_deck),
+                sorted(credited & excluded),
+                sorted(name for name in never_cast & in_deck
+                       if not exporter.goldfish_never_casts(name, profiles[name], context)),
+                sorted(name for name in credited & in_deck
+                       if not profiles[name]["isLand"]
+                       and exporter.goldfish_never_casts(name, profiles[name], context)),
+                sorted(set(token_engines) & set(swarm_engines)),
+                sorted(producers - in_deck))
+
+    def test_every_token_card_in_the_deck_is_credited_or_excluded(self):
+        root = Path(__file__).resolve().parent.parent
+        deck = json.loads(
+            (root / "data" / "commanders" / self.DECK_ID / "deck.json").read_text())
+        metadata = json.loads(Path(exporter.METADATA_FILE).read_text())
+        self.assertEqual(
+            self.problems(deck, metadata, exporter.TOKEN_MAKER_ENGINE,
+                          exporter.COMMANDER_TOKEN_ENGINE),
+            ([], [], [], [], [], [], []))
+
+
 class CombatModifierGoldfishTests(unittest.TestCase):
     """DEC-940 — extra combat phases inside a deterministic goldfish turn loop.
 
@@ -2901,6 +3600,7 @@ class ControlDeckGoldfishEqualityTests(unittest.TestCase):
         self.assertEqual(context["assemblyLines"], [])
         self.assertIsNone(context["hatchEngine"])
         self.assertIsNone(context["combatModifiers"])
+        self.assertIsNone(context["tokenMakers"])
 
         with patch("multiprocessing.Pool", SerialPool):
             goldfish, _ = exporter.compute_goldfish_section(
