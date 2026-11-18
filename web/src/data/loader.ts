@@ -268,7 +268,8 @@ import type { DeckTierBLoops } from './tierB';
 // v168 -> v169 (2026-11-17): goldfish no longer counts a minus loyalty ability's draw as a cast-time draw; simulation.json regenerated for gathering-shadow and tidal-legion (metrics unchanged; tidal-legion's file also picks up the 2026-10-14 mana-sim seeding).
 // v169 -> v170 (2026-11-17): index lastUpdatedSet now matches the deck file for eternal-agony, eternal-harvest, verdant-tide, creeping-corruption and stampede-acres.
 // v170 -> v171 (2026-11-18): goldfish cast-time draw no longer credits activated abilities, reminder text, triggers other than the card's own entering or casting, saga chapters after I, or modes under such a trigger; The Theorist, Jace Beleren draws three cards each later turn. simulation.json regenerated for armory-protocol, broodfire-hatchery, eternal-harvest, exponential-growth, gandalf-party-guest, gathering-shadow, grave-dividends, hidden-legion, hoard-and-bleed, stampede-acres, tidal-legion, titan-convergence, verdant-tide, witherbloom-the-balancer and zada-hedron-grinder (nine of them also pick up mana-sim drift since their last export); metrics.json win_turn moves for grave-dividends and stampede-acres; gathering-shadow's Jace source note corrected.
-const STORAGE_PREFIX = 'gv1-deck-data-v171:';
+// v171 -> v172 (2026-11-18): simulation.json regenerated for anvil-chorus, creeping-corruption, shield-doctrine, slivers and the-white-forge, last exported before the 2026-10-14 mana-sim seeding; mana-sim fields and manaReliability move, goldfish unchanged (metrics.json unchanged).
+const STORAGE_PREFIX = 'gv1-deck-data-v172:';
 /**
  * Every version this loader has ever used. A prefix bump alone only orphans the
  * old keys — it does not free their bytes — so returning users would carry the
