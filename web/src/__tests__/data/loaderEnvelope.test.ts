@@ -196,10 +196,12 @@ describe('deck loader seeds the card cache (DEC-1102)', () => {
     expect(fetchImpl.mock.calls.filter(([url]) => String(url).endsWith('/card-metadata.json'))).toHaveLength(2);
   });
 
-  it('writes its envelopes under v172', async () => {
+  it('writes its envelopes under v173', async () => {
     await loader().loadDeck('alpha');
     const keys = [...Array(storage.length).keys()].map((i) => storage.key(i)!);
-    expect(keys.filter((k) => k.startsWith('gv1-deck-data-')).every((k) => k.startsWith('gv1-deck-data-v172:'))).toBe(true);
+    const deckKeys = keys.filter((k) => k.startsWith('gv1-deck-data-'));
+    expect(deckKeys.length).toBeGreaterThan(0);
+    expect(deckKeys.every((k) => k.startsWith('gv1-deck-data-v173:'))).toBe(true);
   });
 });
 

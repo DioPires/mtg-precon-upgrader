@@ -1400,59 +1400,86 @@ def immediate_draw_count(name: str, meta: dict) -> int:
     before the line's first "draw", unless it is a plus or zero loyalty
     ability); a saga chapter line without chapter I; a trigger ("Whenever",
     "At the beginning", "When ") other than the card's own entering (first
-    sentence: "this <word>" or the card's name, then "enter" or "enters"
-    before any comma) or own casting ("When you cast this spell"). A "•"
-    mode line follows the line that introduces it. In a kept line the first
-    "draw N cards" / "draw a card" sentence counts; a sentence naming a
-    trigger (whenever, at the beginning, attacks, dies, combat damage, or
-    "when" without "enters") is passed over.
+    sentence: "this <word>" or the card's name, optionally " or ..." up to
+    the next comma, then "enter" or "enters") or own casting ("When you cast
+    this spell"). A "•" mode line follows the line that introduces it. In a
+    kept line the first sentence with "draw N cards", "draw a card" or
+    "target player draws N cards" counts. A sentence naming a trigger
+    (whenever, at the beginning, attacks, dies, combat damage, or "when"
+    without "enters") is passed over; in the first sentence of the card's
+    own entering or casting trigger only "at the beginning" (a delayed draw)
+    is. "Draws" with any other subject ("target opponent draws") counts 0.
 
     Floors (counts less): an affordable minus ability (the metadata carries
     no loyalty); activated draws on the cast turn (CAST_TURN_ACTIVATION_DRAW
-    names the exceptions); a draw in the trigger sentence of an own-entering
-    "Whenever" or of a cast trigger; a draw only in reminder text (connive,
-    recruit); an own name containing a period; "target player draws", counts
-    above five, and variable counts, which count 0 or 1. Over-credits (counts
-    more): a conditional draw counts as if the condition held, a modal spell
-    its draw mode, a static "If you would draw a card ..." as a draw, and a
-    later sentence of a trigger behind an ability word ("Landfall —
-    Whenever ...") as spell text; discards, put-backs and sacrifice costs are
-    not modelled.
+    names the exceptions); a draw only in reminder text (connive, recruit);
+    an own name containing a period; "each player draws" (the pilot is one
+    of them); an own entering trigger behind an ability word ("Constellation
+    — Whenever this creature ... enters, draw a card"); in a later sentence
+    of an own trigger, a same-resolution draw worded with "dies" or
+    "attacks", or after a reflexive "When you do"; spelled-out counts above
+    five ("draw 6 cards" counts 6), and variable counts, which count 0 or 1.
+    Over-credits (counts more): a conditional draw counts as if the
+    condition held, a modal spell its draw mode, "target player draws" as if
+    the pilot targets themself, "draw" after another subject ("target
+    opponent may draw a card") as the pilot's, a static "If you would draw a
+    card ..." as a draw, a later sentence of a trigger behind an ability word
+    ("Landfall — Whenever ...") as spell text, a draw inside a quoted granted
+    ability in an own trigger's first sentence, and a cast trigger's draw
+    also when a path puts the card onto the battlefield without casting it;
+    discards, put-backs and sacrifice costs are not modelled.
     """
     oracle = re.sub(r"\([^)]*\)", "", meta.get("oracle_text", ""))
     own_subjects = [r"this \w+"]
     for face in name.lower().split(" // "):
         own_subjects += [re.escape(face), re.escape(face.split(",", 1)[0])]
-    own_entering = re.compile(rf"(when|whenever) ({'|'.join(own_subjects)})\b[^,]*\benters?\b")
+    # The subject, then optionally " or <another subject>", then enter(s):
+    # "this creature or another creature you control ... enters" is its own
+    # entering; "this creature attacks or another creature ... enters" is not.
+    own_entering = re.compile(
+        rf"(when|whenever) ({'|'.join(own_subjects)})(?: or [^,]*)? enters?\b")
     skip_line = False
     for line in oracle.split("\n"):
         line = line.strip()
         lower = line.lower()
+        own_trigger = False
         if not line.startswith("\u2022"):
             first = lower.split(".", 1)[0]
             chapter = re.match(r"([IVX]+(?:, [IVX]+)*) \u2014 ", line)
+            trigger = first.startswith(("whenever", "at the beginning", "when "))
+            own_trigger = trigger and bool(
+                own_entering.match(first)
+                or first.startswith("when you cast this spell"))
             skip_line = bool(
                 (":" in lower.split("draw", 1)[0]
                  and not re.match(r"(\+(\d+|X)|0):", line))
                 or (chapter and "I" not in chapter.group(1).split(", "))
-                or (first.startswith(("whenever", "at the beginning", "when "))
-                    and not own_entering.match(first)
-                    and not first.startswith("when you cast this spell"))
+                or (trigger and not own_trigger)
             )
         if skip_line:
             continue
-        for sentence in line.split("."):
+        for index, sentence in enumerate(line.split(".")):
             lower = sentence.strip().lower()
             if "draw" not in lower:
                 continue
-            if "whenever" in lower or "at the beginning" in lower or "attacks" in lower:
+            # "At the beginning" marks a delayed or recurring draw anywhere. In
+            # the first sentence of the card's own entering or casting trigger
+            # the other trigger words are that trigger itself; any other
+            # sentence naming a trigger is treated as a later, recurring draw.
+            if "at the beginning" in lower:
                 continue
-            if "dies" in lower or "deals combat damage" in lower:
-                continue
-            if "enters" not in lower and lower.startswith("when "):
-                continue
+            if not (own_trigger and index == 0):
+                if "whenever" in lower or "attacks" in lower:
+                    continue
+                if "dies" in lower or "deals combat damage" in lower:
+                    continue
+                if "enters" not in lower and lower.startswith("when "):
+                    continue
 
-            match = re.search(r"draw (a|an|one|two|three|four|five|\d+) cards?", lower)
+            # "Target player draws": the pilot targets themself.
+            match = re.search(
+                r"(?:draw|target player draws) (a|an|one|two|three|four|five|\d+) cards?",
+                lower)
             if match:
                 token = match.group(1)
                 if token.isdigit():
@@ -2939,9 +2966,13 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         copy_gate_uses = 0
         swarm_tokens_ready += swarm_tokens_new
         swarm_tokens_new = 0
-        if turn > 1 and library:
-            hand.append(library.pop())
 
+        # Turn order, as the game runs it: the opponents' turns since your
+        # last turn (recurring draw triggers, opponent-cast amass), then your
+        # upkeep (the Ring tempt), then your draw step, then your main phase
+        # (The One Ring's activation, the land drop, casts). So the tempt
+        # reads the hand before the draw step's card arrives.
+        #
         # Recurring draw triggers (owner-approved 2026-11-17): their cards
         # come in the opponents' draw steps, so they are in hand before this
         # turn's upkeep tempt below.
@@ -2956,7 +2987,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
 
         # DEC-533 — opponent-cast amass floor (3 opponent spells per turn
         # cycle) plus the Call of the Ring upkeep tempt. A tempt converts to
-        # Sauron's discard-hand-draw-four only at hand size <= temptDrawHandMax.
+        # Sauron's discard-hand-draw-four only at hand size <= temptDrawHandMax,
+        # read at upkeep, before the draw step below.
         if amass_engine is not None and commander_in_play:
             for _ in range(amass_engine["opponentCastsPerTurn"]):
                 apply_amass(1, turn)
@@ -2970,6 +3002,10 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 for _ in range(4):
                     if library:
                         hand.append(library.pop())
+
+        # Draw step: after the upkeep tempt, before the main-phase activations.
+        if turn > 1 and library:
+            hand.append(library.pop())
 
         # DEC-472 activated draw engines: an engine cast on an earlier turn
         # activates again — counter total +1, draw that many — until its

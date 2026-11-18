@@ -1001,6 +1001,40 @@ CARDS = {
             "• Draw a card."),
         "colors": ["U"],
     },
+    "Kozilek, Butcher of Truth": {
+        "type_line": "Legendary Creature — Eldrazi",
+        "mana_cost": "{10}",
+        "cmc": 10.0,
+        "oracle_text": (
+            "When you cast this spell, draw four cards.\n"
+            "Annihilator 4 (Whenever this creature attacks, defending player "
+            "sacrifices four permanents of their choice.)\n"
+            "When Kozilek is put into a graveyard from anywhere, its owner "
+            "shuffles their graveyard into their library."),
+        "colors": [],
+        "power": "12",
+    },
+    "Vaultborn Tyrant": {
+        "type_line": "Creature — Dinosaur",
+        "mana_cost": "{5}{G}{G}",
+        "cmc": 7.0,
+        "oracle_text": (
+            "Trample\n"
+            "Whenever this creature or another creature you control with power "
+            "4 or greater enters, you gain 3 life and draw a card.\n"
+            "When this creature dies, if it's not a token, create a token "
+            "that's a copy of it, except it's an artifact in addition to its "
+            "other types."),
+        "colors": ["G"],
+        "power": "6",
+    },
+    "Sign in Blood": {
+        "type_line": "Sorcery",
+        "mana_cost": "{B}{B}",
+        "cmc": 2.0,
+        "oracle_text": "Target player draws two cards and loses 2 life.",
+        "colors": ["B"],
+    },
     "Zero Trinket": {
         "type_line": "Artifact",
         "mana_cost": "{0}",
@@ -1101,7 +1135,10 @@ class CastTimeDrawTests(unittest.TestCase):
             "-2: Draw two cards.")
         self.assertEqual(drawn, 0)
 
-    def test_a_minus_x_loyalty_draw_is_not_drawn_on_cast(self):
+    def test_floor_a_minus_x_loyalty_draw_counts_zero(self):
+        # Documents the floor: −X can be paid with X = 0 at any loyalty, so the
+        # walker can draw the turn it is cast, but a minus ability is never
+        # counted.
         drawn = self._cards_drawn_on_cast(
             "Synthetic Walker", "Legendary Planeswalker — Test", "{2}{U}", 3,
             "−X: Draw a card.")
@@ -1161,6 +1198,14 @@ class CastTimeDrawTests(unittest.TestCase):
         # Own entering, the draw in the trigger sentence itself.
         "Thought Monitor": 2,
         "Tataru Taru": 1,
+        # Own entering worded "Whenever this creature or another creature
+        # ... enters": the trigger sentence's draw is credited once, for its
+        # own entry.
+        "Vaultborn Tyrant": 1,
+        # Own casting, the draw in the trigger sentence itself.
+        "Kozilek, Butcher of Truth": 4,
+        # "Target player draws": the pilot targets themself.
+        "Sign in Blood": 2,
         # A mode line under "Choose two —".
         "Cryptic Command": 1,
     }
@@ -1188,6 +1233,66 @@ class CastTimeDrawTests(unittest.TestCase):
             "Synthetic Raider", "Creature — Test", "{2}{R}", 3,
             "Whenever this creature attacks, create a token that enters tapped. "
             "Draw a card.")
+        self.assertEqual(drawn, 0)
+
+    # Literal synthetic texts below (not fleet cards), expected values read off
+    # the text: what the caster draws as the card is cast or enters.
+
+    def test_an_own_entering_draw_with_a_plural_verb_in_the_trigger_sentence(self):
+        # "enter", not "enters": the trigger sentence itself holds the draw.
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Twins & Triplets", "Legendary Creature — Test", "{2}{B}", 3,
+            "When Synthetic Twins & Triplets enter, draw a card.")
+        self.assertEqual(drawn, 1)
+
+    def test_an_own_entering_or_attacking_trigger_draws_once_on_entry(self):
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Raider", "Creature — Test", "{2}{U}", 3,
+            "Whenever this creature enters or attacks, draw a card.")
+        self.assertEqual(drawn, 1)
+
+    def test_another_creature_entering_after_an_attack_is_not_own_entering(self):
+        # The card's own entry does not trigger this; only "this creature or
+        # another ... enters" names its own entering.
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Raider", "Creature — Test", "{2}{U}", 3,
+            "Whenever this creature attacks or another creature you control "
+            "enters, draw a card.")
+        self.assertEqual(drawn, 0)
+
+    def test_a_delayed_draw_in_the_entering_trigger_is_not_drawn_on_cast(self):
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Raider", "Creature — Test", "{2}{U}", 3,
+            "When this creature enters, draw a card at the beginning of the "
+            "next turn's upkeep.")
+        self.assertEqual(drawn, 0)
+
+    def test_a_draw_by_another_subject_counts_zero(self):
+        for text in ("Target opponent draws two cards.", "Each opponent draws a card."):
+            with self.subTest(text=text):
+                drawn = self._cards_drawn_on_cast(
+                    "Synthetic Gift", "Sorcery", "{1}{U}", 2, text)
+                self.assertEqual(drawn, 0)
+
+    def test_floor_each_player_draws_counts_zero(self):
+        # Documents the floor: the pilot is one of the players and draws two,
+        # but of the third-person draws only "target player draws" is counted.
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Gift", "Sorcery", "{1}{U}", 2, "Each player draws two cards.")
+        self.assertEqual(drawn, 0)
+
+    def test_an_attack_trigger_draw_is_not_drawn_on_cast(self):
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Raider", "Creature — Test", "{2}{U}", 3,
+            "Whenever this creature attacks, draw a card.")
+        self.assertEqual(drawn, 0)
+
+    def test_a_later_trigger_sentence_on_an_own_entering_line_is_not_drawn(self):
+        # One line, two sentences: only the first is the entering trigger.
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Raider", "Creature — Test", "{2}{U}", 3,
+            "When this creature enters, create a token. Whenever it attacks, "
+            "draw a card.")
         self.assertEqual(drawn, 0)
 
     def test_a_chapter_one_saga_draw_is_drawn_on_cast(self):
@@ -1249,7 +1354,9 @@ class DrawEngineGoldfishTests(unittest.TestCase):
     """
 
     def _library_sizes(self, deck_id, hand, library, commander="The Ur-Dragon",
-                       colors=("U",)):
+                       colors=("U",), hand_sizes=None):
+        """Library sizes at each land choice; `hand_sizes`, if given, gets the
+        hand size at each land choice (choose_land_to_play's first argument)."""
         decklist = hand + library
         context = exporter.build_goldfish_context(
             decklist, {"decklist": []}, CARDS, commander, list(colors), deck_id)
@@ -1258,6 +1365,8 @@ class DrawEngineGoldfishTests(unittest.TestCase):
 
         def record_then_choose(*args, **kwargs):
             sizes.append(len(library))
+            if hand_sizes is not None:
+                hand_sizes.append(len(args[0]))
             return choose_land(*args, **kwargs)
 
         with patch.object(exporter, "commander_mulligan_goldfish",
@@ -1294,10 +1403,12 @@ class DrawEngineGoldfishTests(unittest.TestCase):
         # are drawn, so the hand empties every turn); commander: Probe
         # Commander ({5}). Swamp turn 1, an Island each turn 2-5; Call of the
         # Ring turn 2, Jace turn 4, the commander turn 5.
-        # Turn 5 (commander not out yet, no tempt): 37 - 1 - 3 = 33.
-        # Turn 6: the draw step leaves 1 card in hand and Jace's 3 make it 4,
-        # so the tempt does not convert: 33 - 1 - 3 = 29. Were the tempt read
-        # before Jace's cards, it would discard 1 card and draw 4: 25.
+        # Turn 5 (commander not out yet, no tempt): 37 - 3 - 1 = 33.
+        # Turn 6: the hand is empty after turn 5; Jace's 3 cards make it 3, so
+        # the upkeep tempt does not convert, and the draw step adds 1:
+        # 33 - 3 - 1 = 29. Were the tempt read before Jace's cards, it would
+        # convert on the empty hand (draw 4), then Jace 3 and the draw step 1:
+        # 25.
         sizes = self._library_sizes(
             "gathering-shadow",
             hand=["The Theorist, Jace Beleren", "Call of the Ring", "Swamp",
@@ -1305,6 +1416,28 @@ class DrawEngineGoldfishTests(unittest.TestCase):
             library=["Zero Trinket"] * 40,
             commander="Probe Commander", colors=("U", "B"))
         self.assertEqual(sizes[:6], [40, 39, 38, 37, 33, 29])
+
+    def test_the_upkeep_tempt_reads_the_hand_before_the_draw_step(self):
+        # gathering-shadow, no Jace. Hand: Call of the Ring, a Swamp and five
+        # Islands; library: 39 Zero Trinkets with an Island on top;
+        # commander: Probe Commander ({5}). Swamp turn 1; turn 2 draws the
+        # Island, plays an Island and casts Call of the Ring; turns 3-5 each
+        # draw a Trinket, play an Island and cast the Trinket; turn 5's five
+        # lands cast the commander. Turn 6 upkeep: two Islands in hand, so the
+        # tempt converts (discard 2, draw 4) and then the draw step draws 1:
+        # 36 - 4 - 1 = 31, and the hand holds 4 + 1 = 5 at the land choice.
+        # Were the draw step first, the tempt would read 3 cards and not
+        # convert: 35 and a hand of 3. Were the discard-and-draw done after
+        # the draw step, the library would also read 31 but the hand 4.
+        # Hand at each land choice: 7, 7 (the Island drawn), 6, 5, 4, then 5.
+        hand_sizes = []
+        sizes = self._library_sizes(
+            "gathering-shadow",
+            hand=["Call of the Ring", "Swamp"] + ["Island"] * 5,
+            library=["Zero Trinket"] * 39 + ["Island"],
+            commander="Probe Commander", colors=("U", "B"), hand_sizes=hand_sizes)
+        self.assertEqual(sizes[:6], [40, 39, 38, 37, 36, 31])
+        self.assertEqual(hand_sizes[:6], [7, 7, 6, 5, 4, 5])
 
     # The draw-engine paragraphs of the goldfish methodology, whole.
     ACTIVATED_PARAGRAPH = (
