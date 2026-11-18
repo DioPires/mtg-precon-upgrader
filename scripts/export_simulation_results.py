@@ -695,6 +695,57 @@ CAST_TURN_ACTIVATION_DRAW = {
     "Azami, Lady of Scrolls": 1,
 }
 
+# X spells (owner-approved 2026-11-18): a card with {X} in its front-face mana
+# cost keeps its place in the cast order, and when the cast loop reaches it, X
+# is the largest value the mana left at that point pays after the coloured
+# pips and the DEC-944 holds ({X}{X} costs two per X). Below X_SPELL_MIN_X the
+# card stays in hand and the next candidate is tried. An X spell is never a
+# mana source (build_goldfish_profile). Combo-line pieces and KEY_COMBOS
+# assembly members are not under this rule: the loop casts them at X = 0, and
+# the combo gate prices its pieces at X = 0 (combine_mana_costs). A commander
+# with {X} (none in the fleet) would fall under this rule and its holds; to be
+# decided when a deck has one. Effects at the paid X, and nothing else: a
+# creature's combat and impact read mana value + X (x_cast_profile), the
+# draws below, and AMASS_ARMY_ENGINE's amassXNames. Token, life-loss, damage,
+# tutor, pump and proliferate X spells are only re-timed. Floors: convoke,
+# improvise and cost reducers (Zimone's discount) are not modelled.
+# Over-credit: a free put (cascade, hatch, deploy) resolves the printed
+# profile, so an X creature scores its printed mana value and an X draw spell
+# its printed-text draw (Kinetic Ooze 1), where by the rules X is 0 there.
+X_SPELL_MIN_X = 1
+
+# Cards an X spell draws as it is cast or enters: (the count in words, the
+# count from the paid X and the number of times the commander was cast from
+# the command zone; the goldfish casts it at most once). Oracle text from
+# data/card-metadata.json, 2026-11-18. A cast with X paid uses these in place
+# of immediateDraw; the methodology names each deck's own entries in words.
+X_SPELL_DRAW = {
+    # "you gain half X life and draw half X cards. Round down each time."
+    # (cast trigger)
+    "Hydroid Krasis": ("half X rounded down", lambda x, commander_casts: x // 2),
+    # "When Wan Shi Tong enters, put X +1/+1 counters on him. Then draw half
+    # X cards, rounded down."
+    "Wan Shi Tong, Librarian": ("half X rounded down",
+                                lambda x, commander_casts: x // 2),
+    # "Draw X cards. Then you may put a permanent card with mana value X or
+    # less from your hand onto the battlefield tapped." (the put is not
+    # modelled)
+    "Mind into Matter": ("X", lambda x, commander_casts: x),
+    # "Draw X cards, then discard a card." (the discard is not modelled)
+    "Pull from Tomorrow": ("X", lambda x, commander_casts: x),
+    # "Draw X cards." (convoke is not modelled)
+    "Transcendent Message": ("X", lambda x, commander_casts: x),
+    # "Target player draws X cards plus an additional card for each time
+    # they've cast a commander from the command zone this game."
+    "Commander's Insight": ("X plus one per commander cast",
+                            lambda x, commander_casts: x + commander_casts),
+    # "Target player draws 2ˣ cards."
+    "Mathemagics": ("2^X", lambda x, commander_casts: 2 ** x),
+    # "If X is 5 or more, you draw a card." (enters trigger)
+    "Kinetic Ooze": ("one card only at X 5 or more",
+                     lambda x, commander_casts: 1 if x >= 5 else 0),
+}
+
 # DEC-533 — commander amass-Army engine (sequel to DEC-385/393/404/405).
 # Sauron, the Dark Lord: "Whenever an opponent casts a spell, amass Orcs 1."
 # The goldfish is a solitaire — it can see neither opponent casts nor the
@@ -704,8 +755,9 @@ CAST_TURN_ACTIVATION_DRAW = {
 #    (3 batches/turn, vanilla 4-player model per DEC-477) while the commander
 #    is on the battlefield.
 #  * amassOnResolve: one-shot amass credited when the named card is cast
-#    (X-spells credited at a floor of X=2; Book of Mazarbul's chapter I+II
-#    credited once on cast).
+#    (Book of Mazarbul's chapter I+II credited once on cast).
+#  * amassXNames: amass X spells, credited with the X paid for them (see
+#    X_SPELL_MIN_X above).
 #  * amassPerTurn: repeatable attack/begin-of-combat/connect triggers, credited
 #    each turn starting the turn AFTER the permanent lands (no haste). March
 #    from the Black Gate additionally requires a combat-ready Army (its
@@ -715,7 +767,9 @@ CAST_TURN_ACTIVATION_DRAW = {
 #    on the battlefield.
 #  * The Army swings every turn from the turn after it was created (amass
 #    onto an existing Army never resets readiness); combat damage = counter
-#    total.
+#    total. An Army created by the opponent-cast amass credited at the start
+#    of your turn already existed before that turn began (the opponents cast
+#    those spells on their turns), so it swings that same turn.
 #  * Ring-temptation draw: each tempt with Sauron out may discard the hand
 #    and draw four. Floor: only Call of the Ring's guaranteed upkeep tempt
 #    plus one Army-connect tempt per attacking turn are converted, and only
@@ -737,20 +791,21 @@ AMASS_ARMY_ENGINE = {
             "March from the Black Gate": 1,
             "Book of Mazarbul": 3,
             "Treason of Isengard": 2,
-            "Summons of Saruman": 2,
             "Swarming of Moria": 2,
             "Gathering of Darkness": 3,
-            "Assault on Osgiliath": 2,
             "Foray of Orcs": 2,
             "Orcish Medicine": 1,
         },
+        # "Amass Orcs X" (Summons of Saruman; Assault on Osgiliath).
+        "amassXNames": {"Summons of Saruman", "Assault on Osgiliath"},
         "amassPerTurn": {
             "March from the Black Gate": 1,
             "Warg Rider": 2,
             "Great Goblin, Foul-Hearted": 3,
             "Corsairs of Umbar": 3,
         },
-        # Saruman, the White Hand: amass Orcs X per own noncreature cast (X = MV)
+        # Saruman, the White Hand: amass Orcs X per own noncreature cast (X =
+        # that spell's mana value, which on the stack counts the X paid)
         "perNoncreatureCastMV": "Saruman, the White Hand",
         "batchBonusName": "Mauh\u00far, Uruk-hai Captain",
         "batchDamageName": "The Great Goblin",
@@ -875,12 +930,14 @@ COMMANDER_HASTE_SOURCES = {
 
 # DEC-940 (DEC-935 Phase 2) — combat modifiers: extra combat phases and power
 # multipliers. The goldfish credits each ready creature `min(8, MV)` (+1 per
-# listed keyword) exactly once per turn, so a deck whose plan is "swing three
-# times with doubled power" is measured as a single unmodified combat. Generic
-# opt-in mechanism, one deck configured today (broodfire-hatchery).
+# listed keyword; MV + X for an X creature cast with X paid, X_SPELL_MIN_X)
+# exactly once per turn, so a deck whose plan is "swing three times with
+# doubled power" is measured as a single unmodified combat. Generic opt-in
+# mechanism, one deck configured today (broodfire-hatchery).
 #
 # THE BASE COMBAT PROXY IS UNCHANGED. Every deck's per-creature combat value is
-# still `min(8, MV)` + keyword bonus, so lethalProxy stays comparable across the
+# still `min(8, MV)` + keyword bonus (MV + X for an X creature cast with X
+# paid), so lethalProxy stays comparable across the
 # fleet; a deck with no COMBAT_MODIFIERS entry runs exactly one unmodified combat
 # phase, as before. Printed power (`profile["printedPower"]`, DEC-940 metadata)
 # is read only by the power gates below, never by the damage sum.
@@ -1168,7 +1225,11 @@ def hypergeom_at_least(deck_size: int, hits_in_deck: int, cards_seen: int,
 
 
 def parse_generic_mana_cost(mana_cost: str) -> dict:
-    """Parse WUBRG mana costs from Scryfall-style mana_cost strings."""
+    """Parse WUBRG mana costs from Scryfall-style mana_cost strings.
+
+    ``X`` counts the {X} symbols of the front face; ``total`` is the cost at
+    X = 0 (x_spell_cost adds the X paid).
+    """
     result = {
         "generic": 0,
         "W": 0,
@@ -1178,7 +1239,7 @@ def parse_generic_mana_cost(mana_cost: str) -> dict:
         "G": 0,
         "C": 0,
         "total": 0,
-        "X": False,
+        "X": 0,
     }
     if not mana_cost:
         return result
@@ -1187,7 +1248,7 @@ def parse_generic_mana_cost(mana_cost: str) -> dict:
 
     for symbol in re.findall(r"\{([^}]+)\}", mana_cost):
         if symbol == "X":
-            result["X"] = True
+            result["X"] += 1
         elif symbol.isdigit():
             result["generic"] += int(symbol)
         elif symbol in COLOR_SYMBOLS:
@@ -1418,7 +1479,8 @@ def immediate_draw_count(name: str, meta: dict) -> int:
     — Whenever this creature ... enters, draw a card"); in a later sentence
     of an own trigger, a same-resolution draw worded with "dies" or
     "attacks", or after a reflexive "When you do"; spelled-out counts above
-    five ("draw 6 cards" counts 6), and variable counts, which count 0 or 1.
+    five ("draw 6 cards" counts 6), and variable counts, which count 0 or 1
+    (X_SPELL_DRAW sets an X draw spell's count when it is cast with X paid).
     Over-credits (counts more): a conditional draw counts as if the
     condition held, a modal spell its draw mode, "target player draws" as if
     the pilot targets themself, "draw" after another subject ("target
@@ -1648,6 +1710,16 @@ def select_ramp_targets(library: list[str], metadata: dict, commander_colors: li
     return selected
 
 
+def mana_value_combat(mana_value: int) -> int:
+    """A creature's combat proxy before its keyword bonus: min(8, MV), at least 1."""
+    return max(1, min(8, mana_value))
+
+
+def mana_value_impact(mana_value: int) -> int:
+    """A threat's impact term: min(8, MV), at least 2."""
+    return max(2, min(8, mana_value))
+
+
 def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
                            commander_colors: list[str], commander_name: str) -> dict:
     """Compile per-card goldfish heuristics from metadata."""
@@ -1661,10 +1733,20 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
     land_ramp = None if is_land else parse_land_ramp_profile(meta)
     mana_atoms = mana_atoms_for_card(meta, commander_colors) if is_static_source_card(meta) else []
     source_delay = mana_source_delay(meta)
+    # An X spell is not a mana source in the goldfish: it is cast under the X
+    # rule (X_SPELL_MIN_X) with the mana left at its place in the cast order,
+    # so it neither sorts first as ramp, skips the DEC-944 holds, counts as
+    # the mulligan's cheap ramp nor as a ramp permanent. The one castable X
+    # card in the fleet with a mana-source classification (Springleaf Parade)
+    # reads as a source only through the "{T}: Add" it grants its creature
+    # tokens, which the goldfish does not model. Lands are outside the X rule:
+    # an MDFC whose front has {X} (Agadeem's Awakening) is played as its land.
+    if mana_cost["X"] and not is_land:
+        land_ramp, mana_atoms, source_delay = None, [], None
 
     impact = 0
     if is_threat:
-        impact += max(2, min(8, int(meta.get("cmc", 0) or mana_cost["total"] or 2)))
+        impact += mana_value_impact(int(meta.get("cmc", 0) or mana_cost["total"] or 2))
         if "Planeswalker" in type_line or "Battle" in type_line:
             impact += 1
     if is_draw:
@@ -1676,14 +1758,15 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
 
     combat = 0
     if "Creature" in type_line:
-        combat = max(1, min(8, int(meta.get("cmc", 0) or mana_cost["total"] or 1)))
+        combat = mana_value_combat(int(meta.get("cmc", 0) or mana_cost["total"] or 1))
         if any(keyword in oracle for keyword in ("Flying", "Trample", "Menace", "Double strike", "First strike")):
             combat += 1
 
     # DEC-940 — printed front-face power, for the combat modifiers' power gates
     # only (Tifa's "power 7 or greater"). It never feeds the combat proxy above,
-    # which stays min(8, MV) + keyword bonus fleet-wide. `*`-style printed power
-    # has no fixed value, so it reads as 0 rather than guessing.
+    # which stays min(8, MV) + keyword bonus fleet-wide (MV + X for an X
+    # creature cast with X paid, x_cast_profile). `*`-style printed power has
+    # no fixed value, so it reads as 0 rather than guessing.
     printed_power = meta.get("power")
     try:
         printed_power = int(printed_power)
@@ -1776,15 +1859,48 @@ def combine_mana_costs(costs: list[dict]) -> dict:
     """Sum a list of pip-cost dicts into one combined cost.
 
     Used to build a synthetic mana cost for casting multiple combo pieces in one turn.
-    Drops the X flag (combo pieces with X are not modeled).
+    Drops the X count: combo pieces with X are priced at X = 0.
     """
     combined = {
-        "generic": 0, "W": 0, "U": 0, "B": 0, "R": 0, "G": 0, "C": 0, "total": 0, "X": False,
+        "generic": 0, "W": 0, "U": 0, "B": 0, "R": 0, "G": 0, "C": 0, "total": 0, "X": 0,
     }
     for cost in costs:
         for key in ("generic", "W", "U", "B", "R", "G", "C", "total"):
             combined[key] += cost.get(key, 0)
     return combined
+
+
+def x_spell_cost(cost: dict, x: int) -> dict:
+    """An X spell's cost with X paid: each {X} adds x generic mana."""
+    paid = dict(cost)
+    paid["generic"] += x * cost["X"]
+    paid["total"] += x * cost["X"]
+    return paid
+
+
+def x_cast_profile(profile: dict, x: int, commander_casts: int) -> dict:
+    """The goldfish profile of an X spell cast with X paid.
+
+    The mana cost is the paid one, so a spell's mana value on the stack
+    (Saruman, the White Hand's amass) counts the X. A creature's combat and
+    impact read mana value + X where build_goldfish_profile reads mana value
+    (same cap of 8, same keyword bonus). X_SPELL_DRAW sets the cards drawn.
+    Nothing else changes: the sort keys, cascade and the DEC-404 pip count
+    still read the printed card.
+    """
+    cast = dict(profile)
+    cast["manaCost"] = x_spell_cost(profile["manaCost"], x)
+    if "Creature" in profile["typeLine"]:
+        mana_value = profile["cmc"] + x
+        cast["combat"] += (mana_value_combat(mana_value)
+                           - mana_value_combat(profile["cmc"]))
+        if profile["isThreat"]:
+            cast["impact"] += (mana_value_impact(mana_value)
+                               - mana_value_impact(profile["cmc"]))
+    if profile["name"] in X_SPELL_DRAW:
+        _, draw = X_SPELL_DRAW[profile["name"]]
+        cast["immediateDraw"] = draw(x, commander_casts)
+    return cast
 
 
 def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
@@ -1900,6 +2016,35 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     needs_substitution = bool(combo_lines or assembly_lines)
     tutor_meta = extract_tutor_metadata(deck_data) if needs_substitution else {}
     reanim_names = extract_reanimation_names(deck_data) if needs_substitution else set()
+    # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
+    # reanimation spells — never cast as filler. Permanent pieces (e.g. Thassa's Oracle)
+    # can still be cast proactively; once on the battlefield they remain available for
+    # the combo check. Non-permanent KEY_COMBOS assembly members are reserved too, so an
+    # instant/sorcery slot member is not spent before the slot is counted as filled.
+    reserved_pieces = {
+        piece
+        for line in combo_lines
+        for piece in line["pieces"]
+        if not profiles[piece].get("isPermanent")
+    } | {
+        member
+        for line in assembly_lines
+        for slot in line["slots"]
+        for member in slot["members"]
+        if not profiles[member].get("isPermanent")
+    } | set(tutor_meta) | reanim_names
+    # DEC-944 — every card the deck's two gates name: combo-gate pieces
+    # (winConditions[] kind:'combo') plus KEY_COMBOS assembly slot members.
+    # These are cast ahead of filler and are never held back by either hold
+    # in the cast loop, because casting a piece advances the line instead of
+    # spending it; an X piece among them is cast at X = 0.
+    line_members = frozenset(
+        {piece for line in combo_lines for piece in line["pieces"]}
+        | {member
+           for line in assembly_lines
+           for slot in line["slots"]
+           for member in slot["members"]}
+    )
     return {
         "profiles": profiles,
         "commanderName": commander_name,
@@ -1909,6 +2054,8 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "tutorNames": set(tutor_meta.keys()),
         "tutorMeta": tutor_meta,
         "reanimationNames": reanim_names,
+        "reservedPieces": reserved_pieces,
+        "lineMembers": line_members,
         "cascade": COMMANDER_CASCADE.get(deck_id),
         "copyEngine": COMMANDER_COPY_ENGINE.get(deck_id),
         "tokenEngine": COMMANDER_TOKEN_ENGINE.get(deck_id),
@@ -1919,6 +2066,26 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "hasteSources": COMMANDER_HASTE_SOURCES.get(deck_id),
         "combatModifiers": COMBAT_MODIFIERS.get(deck_id),
     }
+
+
+def goldfish_never_casts(name: str, profile: dict, context: dict) -> bool:
+    """Cards the goldfish cast loop never casts from hand.
+
+    Lands (played as lands), interaction (the goldfish has no targets), the
+    reserved combo pieces, tutors and reanimation spells, and the DEC-405
+    deploy engine's configured Equipment: the sim has no equip-cost path, so a
+    hard-cast copy would sit on the battlefield unattached forever, and a real
+    pilot holds them for the back face's free attach. The cast loop and the
+    X-spell methodology read this one rule.
+    """
+    if profile["isLand"] or profile["isInteraction"]:
+        return True
+    if name in context["reservedPieces"]:
+        return True
+    deploy_engine = context.get("deployEngine")
+    return (deploy_engine is not None
+            and (name in deploy_engine["equipmentPower"]
+                 or name in deploy_engine["doubleStrikeNames"]))
 
 
 def should_goldfish_mulligan(hand: list[str], profiles: dict) -> bool:
@@ -2685,7 +2852,6 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     combo_lines = context.get("comboLines", [])
     assembly_lines = context.get("assemblyLines", [])
 
-    tutor_names = context.get("tutorNames", set())
     tutor_meta = context.get("tutorMeta", {})
     reanim_names = context.get("reanimationNames", set())
     cascade = context.get("cascade")
@@ -2715,7 +2881,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     swarm_tokens_ready = 0
     swarm_tokens_new = 0
     # DEC-533 amass-Army ledger: one Army creature as a counter total. The
-    # Army is combat-ready the turn after it was first created; amassing onto
+    # Army is combat-ready the turn after it was first created (the same turn
+    # when the start-of-turn opponent-cast amass created it); amassing onto
     # an existing Army never resets readiness. amass_perm_entry records when a
     # repeatable amass permanent landed (its trigger starts the next turn).
     army_counters = 0
@@ -2723,8 +2890,12 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     amass_perm_entry: dict[str, int] = {}
     amass_ping_damage = 0.0
 
-    def apply_amass(n: int, current_turn: int) -> None:
-        """Credit one amass batch of n counters (Mauhur adds 1 per batch)."""
+    def apply_amass(n: int, current_turn: int, ready_turn: int | None = None) -> None:
+        """Credit one amass batch of n counters (Mauhur adds 1 per batch).
+
+        An Army this batch creates can attack from `ready_turn`, by default
+        the turn after `current_turn` (summoning sickness).
+        """
         nonlocal army_counters, army_ready_turn, amass_ping_damage
         if amass_engine is None or n <= 0:
             return
@@ -2732,7 +2903,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         if amass_engine["batchBonusName"] in names_on_board:
             n += 1
         if army_ready_turn is None:
-            army_ready_turn = current_turn + 1
+            army_ready_turn = current_turn + 1 if ready_turn is None else ready_turn
         army_counters += n
         if amass_engine["batchDamageName"] in names_on_board:
             amass_ping_damage += amass_engine["batchDamage"]
@@ -2839,34 +3010,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
     celebrant_exert_turn: int | None = None
     combo_ready_ever = False
     assembly_turn = [None] * len(assembly_lines)
-    # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
-    # reanimation spells — never cast as filler. Permanent pieces (e.g. Thassa's Oracle)
-    # can still be cast proactively; once on the battlefield they remain available for
-    # the combo check. Non-permanent KEY_COMBOS assembly members are reserved too, so an
-    # instant/sorcery slot member is not spent before the slot is counted as filled.
-    reserved_combo_pieces = {
-        piece
-        for line in combo_lines
-        for piece in line["pieces"]
-        if not profiles[piece].get("isPermanent")
-    } | {
-        member
-        for line in assembly_lines
-        for slot in line["slots"]
-        for member in slot["members"]
-        if not profiles[member].get("isPermanent")
-    } | tutor_names | reanim_names
-    # DEC-944 — every card the deck's two gates name: combo-gate pieces
-    # (winConditions[] kind:'combo') plus KEY_COMBOS assembly slot members.
-    # These are cast ahead of filler and are never held back by either hold
-    # below, because casting a piece advances the line instead of spending it.
-    line_members = frozenset(
-        {piece for line in combo_lines for piece in line["pieces"]}
-        | {member
-           for line in assembly_lines
-           for slot in line["slots"]
-           for member in slot["members"]}
-    )
+    reserved_combo_pieces = context["reservedPieces"]
+    line_members = context["lineMembers"]
     has_gates = bool(combo_lines or assembly_lines)
 
     def hatch_engine_state() -> dict:
@@ -2960,6 +3105,27 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         after = gate_reach(current_pool.after_spending(cost))
         return not any(was and not now for was, now in zip(baseline, after))
 
+    def spend_keeps_holds(current_pool: "GoldfishManaPool", cost: dict,
+                          held: dict | None, baseline: tuple) -> bool:
+        """Does paying `cost` still pay `held` and keep every reachable gate
+        (DEC-944)? Filler casts and X spells are both held by this."""
+        if (held is not None
+                and not current_pool.after_spending(cost).can_cast(held)):
+            return False
+        return spend_keeps_gates(current_pool, cost, baseline)
+
+    def x_to_pay(current_pool: "GoldfishManaPool", cost: dict,
+                 held: dict | None, baseline: tuple) -> int | None:
+        """Largest X >= X_SPELL_MIN_X `current_pool` pays for an X spell while
+        keeping the DEC-944 holds."""
+        top = (current_pool.total - cost["total"]) // cost["X"]
+        for x in range(top, X_SPELL_MIN_X - 1, -1):
+            paid = x_spell_cost(cost, x)
+            if (current_pool.can_cast(paid)
+                    and spend_keeps_holds(current_pool, paid, held, baseline)):
+                return x
+        return None
+
     by_turn = {}
 
     for turn in range(1, NUM_TURNS + 1):
@@ -2990,8 +3156,11 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         # Sauron's discard-hand-draw-four only at hand size <= temptDrawHandMax,
         # read at upkeep, before the draw step below.
         if amass_engine is not None and commander_in_play:
+            # These spells were cast on the opponents' turns since your last
+            # turn, so an Army they create has been under your control since
+            # before this turn began: it can attack this turn.
             for _ in range(amass_engine["opponentCastsPerTurn"]):
-                apply_amass(1, turn)
+                apply_amass(1, turn, ready_turn=turn)
             has_tempt_permanent = any(
                 permanent["name"] in amass_engine["temptPermanents"]
                 for permanent in permanents
@@ -3069,9 +3238,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             candidates = []
             for name in ordered_unique(hand):
                 profile = profiles[name]
-                if profile["isLand"] or profile["isInteraction"]:
-                    continue
-                if name in reserved_combo_pieces:
+                if goldfish_never_casts(name, profile, context):
                     continue
                 # DEC-393 — hold per_other_creature engine fuel (spells that
                 # target only the commander) until the commander is online;
@@ -3084,14 +3251,6 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                         and profile["targetsOnlyCreature"]
                         and ("Instant" in profile["typeLine"]
                              or "Sorcery" in profile["typeLine"])):
-                    continue
-                # DEC-405 — configured kill-piece Equipment are deploy fuel:
-                # the sim has no equip-cost path, so a hard-cast copy would
-                # sit on the battlefield unattached forever. A real pilot
-                # holds them for the back face's free attach.
-                if (deploy_engine is not None
-                        and (name in deploy_engine["equipmentPower"]
-                             or name in deploy_engine["doubleStrikeNames"])):
                     continue
                 if not pool.can_cast(profile["manaCost"]):
                     continue
@@ -3117,24 +3276,35 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if held is not None and not pool.can_cast(held):
                 held = None
             chosen = None
+            chosen_x = None
             for name in candidates:
                 profile = profiles[name]
+                # An X spell (X_SPELL_MIN_X) takes the mana left after the
+                # holds as X, or stays in hand. Line pieces are cast below at
+                # X = 0; an X spell is never a mana source (its profile says
+                # so), so nothing else exempts it from the holds.
+                if profile["manaCost"]["X"] and name not in line_members:
+                    chosen_x = x_to_pay(pool, profile["manaCost"], held, baseline)
+                    if chosen_x is None:
+                        continue
+                    chosen = name
+                    break
                 if (name == commander_name or name in line_members
                         or profile["landRamp"]
                         or profile["manaSourceDelay"] is not None):
                     chosen = name
                     break
-                if (held is not None
-                        and not pool.after_spending(
-                            profile["manaCost"]).can_cast(held)):
-                    continue
-                if not spend_keeps_gates(pool, profile["manaCost"], baseline):
+                if not spend_keeps_holds(pool, profile["manaCost"], held, baseline):
                     continue
                 chosen = name
                 break
             if chosen is None:
                 break
             chosen_profile = profiles[chosen]
+            if chosen_x is not None:
+                chosen_profile = x_cast_profile(
+                    chosen_profile, chosen_x,
+                    0 if commander_play_turn is None else 1)
             pool = pool.after_spending(chosen_profile["manaCost"])
             if chosen in hand:
                 hand.remove(chosen)
@@ -3170,11 +3340,13 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if copy_engine is not None:
                 token_creatures += chosen_profile["tokenCreatures"]
 
-            # DEC-533 — cast/ETB amass credits, Saruman's per-noncreature-cast
-            # amass X (X = mana value), and entry tracking for the repeatable
-            # amass permanents (their triggers start the next turn).
+            # DEC-533 — cast/ETB amass credits (an amass X spell amasses the X
+            # paid), Saruman's per-noncreature-cast amass X (X = the spell's
+            # mana value, X paid included), and entry tracking for the
+            # repeatable amass permanents (their triggers start the next turn).
             if amass_engine is not None:
-                on_resolve = amass_engine["amassOnResolve"].get(chosen, 0)
+                on_resolve = (chosen_x if chosen in amass_engine["amassXNames"]
+                              else amass_engine["amassOnResolve"].get(chosen, 0))
                 if on_resolve:
                     apply_amass(on_resolve, turn)
                 saruman = amass_engine["perNoncreatureCastMV"]
@@ -3686,6 +3858,14 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
     combo_lines = context.get("comboLines", [])
     combo_assembly = combo_assembly_from_goldfish(
         context.get("assemblyLines", []), stats["combo_assembled"])
+    # The deck's X spells the cast loop casts under the X rule (X_SPELL_MIN_X):
+    # every card it can cast from hand except the line pieces, which it casts
+    # at X = 0. They decide the X wording of the methodology below.
+    x_spells = sorted(
+        name for name, profile in context["profiles"].items()
+        if profile["manaCost"]["X"] and name not in context["lineMembers"]
+        and not goldfish_never_casts(name, profile, context))
+    x_creature_score = ", MV + X for an X creature cast with X paid" if x_spells else ""
     section = {
         "numGames": GOLDFISH_GAMES,
         "byTurn": by_turn,
@@ -3739,7 +3919,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             f"Meaningful board = pressure score >= {meaningful_threshold} or 2+ threats. "
             f"Lethal proxy = cumulative combat-pressure proxy >= {GOLDFISH_LETHAL_DAMAGE_PROXY}; "
             "combat pressure uses mana-value-based creature scoring (min(8, MV) plus one for a "
-            "listed combat keyword) so the curve stays comparable across the fleet — printed "
+            "listed combat keyword" + x_creature_score + ") so the curve stays comparable "
+            "across the fleet — printed "
             "power/toughness is in the card metadata since DEC-940 but is deliberately not used "
             "for the damage sum, only for the combat modifiers' power gates. "
             "Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces "
@@ -3763,6 +3944,27 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "enter this turn; if it has been on the battlefield since an earlier turn its "
             "cost is paid again; if it entered this turn before a partner, or could only "
             "come from reanimation, the line is not ready that turn."
+        )
+    if x_spells:
+        # Only this deck's own X_SPELL_DRAW cards, in the table's words.
+        draws = ", ".join(f"{name} {X_SPELL_DRAW[name][0]}"
+                          for name in x_spells if name in X_SPELL_DRAW)
+        section["methodology"] += (
+            " X spells modeled (owner-approved 2026-11-18): a spell with {X} in its mana "
+            "cost keeps its place in the cast order (never the ramp tier) and, when "
+            "reached, is cast with X = the largest value the mana left pays after its "
+            "coloured pips and the holds above, with no mana-source exemption; {X}{X} "
+            f"costs two per X. Below X = {X_SPELL_MIN_X} it stays in hand and the next "
+            "spell is tried. Combo-line pieces and KEY_COMBOS assembly members are still "
+            "cast at X = 0, and the combo gate prices its pieces at X = 0. "
+            "Credited at the paid X: a creature's combat, and a threat creature's pressure "
+            "score, read mana value + X (capped at 8, keyword bonus as before)"
+            + (f"; cards drawn: {draws}" if draws else "")
+            + ("; amass X spells amass X, and Saruman, the White Hand's amass counts the X "
+               "paid" if context.get("amassEngine") else "")
+            + ". Every other X effect (tokens, life loss, damage, tutoring, pumps, "
+            "proliferate, recursion, manifest) is not credited: those spells are only "
+            "re-timed. Floors: convoke, improvise and cost reducers are not modeled."
         )
     cascade = context.get("cascade")
     if cascade:
@@ -3919,7 +4121,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
         section["methodology"] += (
             " Combat modifiers modeled (DEC-940, DEC-935 Phase 2): the base combat "
             "proxy is unchanged — every creature still scores min(8, MV) plus one for "
-            "a listed keyword, so this deck's per-creature values stay comparable with "
+            "a listed keyword" + x_creature_score + ", so this deck's per-creature "
+            "values stay comparable with "
             "the rest of the fleet, and printed power is read only by the power gate "
             "below. What changes is that the turn can hold up to "
             f"{combat_modifiers['maxCombatPhases']} combat phases, and each phase "

@@ -690,11 +690,12 @@ class PrintedPowerProfileTests(unittest.TestCase):
                 self.assertEqual(self._profile(power=power)["combat"], 3)
 
 
-# Card data for CastTimeDrawTests and DrawEngineGoldfishTests: type line, mana
-# cost, mana value and oracle text as data/card-metadata.json held them on
-# 2026-11-18, pasted so these tests stay put when that file is refreshed or a
-# deck drops a card. "−" in loyalty costs is U+2212, as Scryfall prints it.
-# "Zero Trinket" and "Probe Commander" are made-up cards for the engine fixture.
+# Card data for CastTimeDrawTests, DrawEngineGoldfishTests, XSpellGoldfishTests
+# and ArmyReadinessGoldfishTests: type line, mana cost, mana value and oracle
+# text as data/card-metadata.json held them on 2026-11-18, pasted so these
+# tests stay put when that file is refreshed or a deck drops a card. "−" in
+# loyalty costs is U+2212, as Scryfall prints it. "Zero Trinket" and "Probe
+# Commander" are made-up cards for the engine fixture.
 CARDS = {
     "Island": {
         "type_line": "Basic Land — Island",
@@ -708,6 +709,29 @@ CARDS = {
         "mana_cost": "",
         "cmc": 0.0,
         "oracle_text": "({T}: Add {B}.)",
+        "colors": [],
+    },
+    "Forest": {
+        "type_line": "Basic Land — Forest",
+        "mana_cost": "",
+        "cmc": 0.0,
+        "oracle_text": "({T}: Add {G}.)",
+        "colors": [],
+    },
+    "Mountain": {
+        "type_line": "Basic Land — Mountain",
+        "mana_cost": "",
+        "cmc": 0.0,
+        "oracle_text": "({T}: Add {R}.)",
+        "colors": [],
+    },
+    "Command Tower": {
+        "type_line": "Land",
+        "mana_cost": "",
+        "cmc": 0.0,
+        "oracle_text": (
+            "{T}: Add one mana of any color in your commander's color "
+            "identity."),
         "colors": [],
     },
     "The Ur-Dragon": {
@@ -1034,6 +1058,207 @@ CARDS = {
         "cmc": 2.0,
         "oracle_text": "Target player draws two cards and loses 2 life.",
         "colors": ["B"],
+    },
+    # X spells (XSpellGoldfishTests).
+    "Primordial Hydra": {
+        "type_line": "Creature — Hydra",
+        "mana_cost": "{X}{G}{G}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "This creature enters with X +1/+1 counters on it.\n"
+            "At the beginning of your upkeep, double the number of +1/+1 "
+            "counters on this creature.\n"
+            "This creature has trample as long as it has ten or more +1/+1 "
+            "counters on it."),
+        "colors": ["G"],
+        "power": "0",
+    },
+    "Stonecoil Serpent": {
+        "type_line": "Artifact Creature — Snake",
+        "mana_cost": "{X}",
+        "cmc": 0.0,
+        "oracle_text": (
+            "Reach, trample, protection from multicolored\n"
+            "This creature enters with X +1/+1 counters on it."),
+        "colors": [],
+        "power": "0",
+    },
+    "Hydroid Krasis": {
+        "type_line": "Creature — Jellyfish Hydra Beast",
+        "mana_cost": "{X}{G}{U}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "When you cast this spell, you gain half X life and draw half X "
+            "cards. Round down each time.\n"
+            "Flying, trample\n"
+            "This creature enters with X +1/+1 counters on it."),
+        "colors": ["G", "U"],
+        "power": "0",
+    },
+    "Wan Shi Tong, Librarian": {
+        "type_line": "Legendary Creature — Bird Spirit",
+        "mana_cost": "{X}{U}{U}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Flash\n"
+            "Flying, vigilance\n"
+            "When Wan Shi Tong enters, put X +1/+1 counters on him. Then draw "
+            "half X cards, rounded down.\n"
+            "Whenever an opponent searches their library, put a +1/+1 counter "
+            "on Wan Shi Tong and draw a card."),
+        "colors": ["U"],
+        "power": "1",
+    },
+    "Kinetic Ooze": {
+        "type_line": "Creature — Ooze",
+        "mana_cost": "{X}{G}",
+        "cmc": 1.0,
+        "oracle_text": (
+            "This creature enters with X +1/+1 counters on it.\n"
+            "When this creature enters, destroy up to one target artifact or "
+            "enchantment with mana value X or less. If X is 5 or more, you draw"
+            " a card. If X is 10 or more, double the number of +1/+1 counters "
+            "on any number of other target creatures."),
+        "colors": ["G"],
+        "power": "0",
+    },
+    "Mind into Matter": {
+        "type_line": "Sorcery",
+        "mana_cost": "{X}{G}{U}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Draw X cards. Then you may put a permanent card with mana value X "
+            "or less from your hand onto the battlefield tapped."),
+        "colors": ["G", "U"],
+    },
+    "Pull from Tomorrow": {
+        "type_line": "Instant",
+        "mana_cost": "{X}{U}{U}",
+        "cmc": 2.0,
+        "oracle_text": "Draw X cards, then discard a card.",
+        "colors": ["U"],
+    },
+    "Transcendent Message": {
+        "type_line": "Instant",
+        "mana_cost": "{X}{U}{U}{U}{U}",
+        "cmc": 4.0,
+        "oracle_text": (
+            "Convoke (Your creatures can help cast this spell. Each creature "
+            "you tap while casting this spell pays for {1} or one mana of that "
+            "creature's color.)\n"
+            "Draw X cards."),
+        "colors": ["U"],
+    },
+    "Commander's Insight": {
+        "type_line": "Instant",
+        "mana_cost": "{X}{U}{U}{U}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Target player draws X cards plus an additional card for each time "
+            "they've cast a commander from the command zone this game."),
+        "colors": ["U"],
+    },
+    "Mathemagics": {
+        "type_line": "Sorcery",
+        "mana_cost": "{X}{X}{U}{U}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Target player draws 2ˣ cards. (2⁰ = 1, 2¹ = 2, 2² = 4, 2³ = 8, 2⁴ "
+            "= 16, 2⁵ = 32, and so on.)"),
+        "colors": ["U"],
+    },
+    "Springleaf Parade": {
+        "type_line": "Enchantment",
+        "mana_cost": "{X}{G}{G}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "When this enchantment enters, create X 1/1 colorless Shapeshifter "
+            "creature tokens with changeling. (They're every creature type.)\n"
+            "Creature tokens you control have \"{T}: Add one mana of any "
+            "color.\""),
+        "colors": ["G"],
+    },
+    "Summons of Saruman": {
+        "type_line": "Sorcery",
+        "mana_cost": "{X}{U}{R}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Amass Orcs X. Mill X cards. You may cast an instant or sorcery "
+            "spell with mana value X or less from among them without paying its"
+            " mana cost. (To amass Orcs X, put X +1/+1 counters on an Army you "
+            "control. It's also an Orc. If you don't control an Army, create a "
+            "0/0 black Orc Army creature token first.)\n"
+            "Flashback—{3}{U}{R}, Exile X cards from your graveyard."),
+        "colors": ["R", "U"],
+    },
+    "Assault on Osgiliath": {
+        "type_line": "Sorcery",
+        "mana_cost": "{X}{R}{R}{R}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Amass Orcs X, then Goblins and Orcs you control gain double strike"
+            " and haste until end of turn. (To amass Orcs X, put X +1/+1 "
+            "counters on an Army you control. It's also an Orc. If you don't "
+            "control an Army, create a 0/0 black Orc Army creature token "
+            "first.)"),
+        "colors": ["R"],
+    },
+    "Saruman, the White Hand": {
+        "type_line": "Legendary Creature — Avatar Wizard",
+        "mana_cost": "{1}{U}{B}{R}",
+        "cmc": 4.0,
+        "oracle_text": (
+            "Whenever you cast a noncreature spell, amass Orcs X, where X is "
+            "that spell's mana value. (Put X +1/+1 counters on an Army you "
+            "control. It's also an Orc. If you don't control an Army, create a "
+            "0/0 black Orc Army creature token first.)\n"
+            "Goblins and Orcs you control have ward {2}."),
+        "colors": ["B", "R", "U"],
+        "power": "2",
+    },
+    "Swarming of Moria": {
+        "type_line": "Sorcery",
+        "mana_cost": "{2}{R}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Create a Treasure token. (It's an artifact with \"{T}, Sacrifice "
+            "this token: Add one mana of any color.\")\n"
+            "Amass Orcs 2. (Put two +1/+1 counters on an Army you control. It's"
+            " also an Orc. If you don't control an Army, create a 0/0 black Orc"
+            " Army creature token first.)"),
+        "colors": ["R"],
+    },
+    "Syncopate": {
+        "type_line": "Instant",
+        "mana_cost": "{X}{U}",
+        "cmc": 1.0,
+        "oracle_text": (
+            "Counter target spell unless its controller pays {X}. If that spell"
+            " is countered this way, exile it instead of putting it into its "
+            "owner's graveyard."),
+        "colors": ["U"],
+    },
+    "Whir of Invention": {
+        "type_line": "Instant",
+        "mana_cost": "{X}{U}{U}{U}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Improvise (Your artifacts can help cast this spell. Each artifact "
+            "you tap after you're done activating mana abilities pays for {1}.)"
+            "\n"
+            "Search your library for an artifact card with mana value X or "
+            "less, put it onto the battlefield, then shuffle."),
+        "colors": ["U"],
+    },
+    "Divergent Equation": {
+        "type_line": "Instant",
+        "mana_cost": "{X}{X}{U}",
+        "cmc": 1.0,
+        "oracle_text": (
+            "Return up to X target instant and/or sorcery cards from your "
+            "graveyard to your hand.\n"
+            "Exile Divergent Equation."),
+        "colors": ["U"],
     },
     "Zero Trinket": {
         "type_line": "Artifact",
@@ -1481,6 +1706,458 @@ class DrawEngineGoldfishTests(unittest.TestCase):
         self.assertIn(self.RECURRING_PARAGRAPH, methodology)
 
 
+class XSpellGoldfishTests(unittest.TestCase):
+    """X spells through the goldfish turn loop (owner-approved 2026-11-18).
+
+    One simulate_goldfish_game run per case with the opening fixed instead of
+    shuffled, as in DrawEngineGoldfishTests; card data from CARDS. Unless a
+    case says otherwise the commander is The Ur-Dragon, which the lands here
+    can never cast, the deck has no engine config and every land enters
+    untapped. library.pop() draws from the end, so `_library_with(card, turn)`
+    puts `card` where the draw step of `turn` finds it. Combat: a creature
+    scores min(8, mana value) plus one for a listed keyword ("Flying"; the
+    lower-case "trample" of Primordial Hydra and Stonecoil Serpent is not
+    one), from the turn after it is cast.
+    """
+
+    def _run(self, hand, library, commander="The Ur-Dragon", colors=("G", "U"),
+             deck_id="synthetic-x", threats=()):
+        """One pinned game: (by_turn, library size at each land choice and
+        after turn 10). `threats` go in a guide category, which makes them
+        threats as a deck's categories do."""
+        decklist = hand + library
+        deck_data = {"decklist": [], "guideContent": {"deckCategories": [
+            {"name": "Big Creatures", "cards": list(threats)}]}}
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, CARDS, commander, list(colors), deck_id)
+        sizes = []
+        choose_land = exporter.choose_land_to_play
+
+        def record_then_choose(*args, **kwargs):
+            sizes.append(len(library))
+            return choose_land(*args, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          return_value=(library, hand)), \
+                patch.object(exporter, "choose_land_to_play",
+                             side_effect=record_then_choose):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, CARDS, context, 6)
+        return by_turn, sizes + [len(library)]
+
+    @staticmethod
+    def _library_with(card, turn, land):
+        """92 cards: `card` is drawn on `turn` (2-10), lands everywhere else."""
+        return [land] * (92 - (turn - 1)) + [card] + [land] * (turn - 2)
+
+    @staticmethod
+    def _damage(by_turn):
+        return [by_turn[turn]["cumulativeDamage"] for turn in range(1, 11)]
+
+    def test_an_x_spell_below_x_one_stays_in_hand(self):
+        # Forests only. Turn 2's {G}{G} pays the pips but leaves X = 0, so the
+        # Hydra stays in hand; turn 3 casts it with X = 1: combat and impact
+        # (a threat's impact is max(2, min(8, mana value)), nothing else on
+        # this card adds to it) read mana value 2 + 1 = 3.
+        by_turn, _ = self._run(["Primordial Hydra"] + ["Forest"] * 6,
+                               ["Forest"] * 92, threats=["Primordial Hydra"])
+        self.assertEqual(self._damage(by_turn), [0, 0, 0, 3, 6, 9, 12, 15, 18, 21])
+        self.assertEqual(by_turn[3]["pressure"], 3)
+
+    def test_x_is_the_mana_left_where_the_spell_sits_in_the_cast_order(self):
+        # Turn 3 draws Stonecoil Serpent with three Forests out. Neither is a
+        # threat here (mana value below 3, no category); both sort as
+        # permanents of impact 0 and the Hydra (mana value 2) goes first: it
+        # takes all three Forests (X = 1, combat 3) and leaves the Serpent
+        # X = 0, so it waits for turn 4 and four Forests (X = 4, combat 4).
+        # Damage: Hydra from turn 4, Serpent from turn 5.
+        by_turn, _ = self._run(["Primordial Hydra"] + ["Forest"] * 6,
+                               self._library_with("Stonecoil Serpent", 3, "Forest"))
+        self.assertEqual(self._damage(by_turn), [0, 0, 0, 3, 10, 17, 24, 31, 38, 45])
+
+    def test_pips_need_their_colour_and_x_takes_any_source(self):
+        # Hand lands: two Forests and four Islands; the library holds only
+        # Zero Trinkets ({0}, no combat), so the hand's six lands are all the
+        # lands. Land choice: Island turn 1 (a tie broken by name), Forest
+        # turn 2 (new colour), Islands turns 3-5, the second Forest turn 6.
+        # The {G}{G} is payable only on turn 6, and X takes the four Islands:
+        # X = 4, combat min(8, 2 + 4) = 6 from turn 7.
+        by_turn, _ = self._run(
+            ["Primordial Hydra", "Forest", "Forest", "Island", "Island",
+             "Island", "Island"],
+            ["Zero Trinket"] * 92)
+        self.assertEqual(self._damage(by_turn), [0, 0, 0, 0, 0, 0, 6, 12, 18, 24])
+
+    def test_xx_costs_two_per_x_and_mathemagics_draws_two_to_the_x(self):
+        # Mathemagics ({X}{X}{U}{U}) is drawn on turn 8 with eight Islands:
+        # X = (8 - 2) / 2 = 3, so it draws 2^3 = 8. Each turn's draw step
+        # takes one card from turn 2. The first of the eight is Stonecoil
+        # Serpent ({X}): Mathemagics paid 2 + 2 x 3 = 8, all eight Islands, so
+        # the Serpent gets X = 0 and waits for turn 9, where nine Islands make
+        # X = 9 (combat min(8, 9) = 8, from turn 10).
+        library = ["Island"] * 84 + ["Stonecoil Serpent", "Mathemagics"] + ["Island"] * 6
+        by_turn, sizes = self._run(["Island"] * 7, library, colors=("U",))
+        self.assertEqual(sizes, [92, 91, 90, 89, 88, 87, 86, 85, 76, 75, 75])
+        self.assertEqual(self._damage(by_turn), [0] * 9 + [8])
+
+    # (card, turn it is drawn and cast with that many Command Towers,
+    #  commander, cards it draws). Command Tower taps for either colour.
+    DRAW_CASES = [
+        # {X}{G}{U} with five lands: X = 3, "Draw X cards."
+        ("Mind into Matter", 5, "The Ur-Dragon", 3),
+        # {X}{U}{U}, five lands: X = 3, "Draw X cards, then discard a card."
+        ("Pull from Tomorrow", 5, "The Ur-Dragon", 3),
+        # {X}{U}{U}{U}{U}, six lands: X = 2, "Draw X cards."
+        ("Transcendent Message", 6, "The Ur-Dragon", 2),
+        # {X}{G}{U}, seven lands: X = 5, "draw half X cards. Round down".
+        ("Hydroid Krasis", 7, "The Ur-Dragon", 2),
+        # {X}{U}{U}, seven lands: X = 5, "draw half X cards, rounded down".
+        ("Wan Shi Tong, Librarian", 7, "The Ur-Dragon", 2),
+        # {X}{U}{U}{U}, six lands: X = 3, plus one per commander cast; The
+        # Ur-Dragon is never cast here.
+        ("Commander's Insight", 6, "The Ur-Dragon", 3),
+        # Probe Commander ({5}) is cast on turn 5, so X = 3 plus one.
+        ("Commander's Insight", 6, "Probe Commander", 4),
+        # {X}{G}, five lands: X = 4, below "If X is 5 or more, you draw".
+        ("Kinetic Ooze", 5, "The Ur-Dragon", 0),
+        # Six lands: X = 5.
+        ("Kinetic Ooze", 6, "The Ur-Dragon", 1),
+    ]
+
+    def test_draw_spells_draw_at_the_paid_x(self):
+        for card, turn, commander, drawn in self.DRAW_CASES:
+            with self.subTest(card=card, turn=turn, commander=commander):
+                _, sizes = self._run(
+                    ["Command Tower"] * 7,
+                    self._library_with(card, turn, "Command Tower"),
+                    commander=commander)
+                # One card per draw step from turn 2; the spell's cards leave
+                # the library after its turn's land choice.
+                expected = [92 - (t - 1) - (drawn if t > turn else 0)
+                            for t in range(1, 11)] + [83 - drawn]
+                self.assertEqual(sizes, expected)
+
+    def test_creature_combat_is_capped_at_eight_plus_the_keyword(self):
+        # Hydroid Krasis drawn on turn 9 with nine Command Towers: X = 7,
+        # mana value 2 + 7 = 9, capped at 8, plus one for Flying = 9 on turn 10.
+        by_turn, _ = self._run(["Command Tower"] * 7,
+                               self._library_with("Hydroid Krasis", 9, "Command Tower"))
+        self.assertEqual(self._damage(by_turn), [0] * 9 + [9])
+
+    def test_amass_x_spells_amass_the_x_paid(self):
+        # gathering-shadow's amass engine; the commander is never cast, so no
+        # opponent-cast amass. Summons of Saruman ({X}{U}{R}) on turn 5 with
+        # five towers: X = 3. Assault on Osgiliath ({X}{R}{R}{R}) on turn 6
+        # with six: X = 3. The Army attacks for 3 from the next turn.
+        for card, turn, damage in (
+                ("Summons of Saruman", 5, [0, 0, 0, 0, 0, 3, 6, 9, 12, 15]),
+                ("Assault on Osgiliath", 6, [0, 0, 0, 0, 0, 0, 3, 6, 9, 12])):
+            with self.subTest(card=card):
+                by_turn, _ = self._run(
+                    ["Command Tower"] * 7,
+                    self._library_with(card, turn, "Command Tower"),
+                    colors=("U", "R"), deck_id="gathering-shadow")
+                self.assertEqual(self._damage(by_turn), damage)
+
+    def test_saruman_amasses_the_mana_value_with_x(self):
+        # Saruman, the White Hand ({1}{U}{B}{R}, combat 4) is cast on turn 4.
+        # Summons of Saruman is drawn on turn 6 with six towers: X = 4. It
+        # amasses 4, and Saruman's trigger amasses its mana value on the
+        # stack, 2 + 4 = 6: an Army of 10 that attacks from turn 7.
+        # Damage: 4 on turns 5-6, then 4 + 10 a turn.
+        by_turn, _ = self._run(
+            ["Saruman, the White Hand"] + ["Command Tower"] * 6,
+            self._library_with("Summons of Saruman", 6, "Command Tower"),
+            colors=("U", "B", "R"), deck_id="gathering-shadow")
+        self.assertEqual(self._damage(by_turn), [0, 0, 0, 0, 4, 8, 22, 36, 50, 64])
+
+    # Springleaf Parade's text grants "{T}: Add" to creature tokens, which
+    # would read as a mana source; as an X spell it is none.
+
+    def _parade_game(self):
+        """(by_turn, [(turn, card, total mana paid) for each resolution]).
+
+        Springleaf Parade is drawn on turn 5 with five Forests and Probe
+        Commander ({5}) in the command zone. Turn 5 casts the commander and
+        leaves no mana; turn 6 casts the Parade with six Forests: {G}{G} and
+        X = 4, 6 mana in all."""
+        casts = []
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts.append((turn, name, profile["manaCost"]["total"]))
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = self._run(
+                ["Forest"] * 7, self._library_with("Springleaf Parade", 5, "Forest"),
+                commander="Probe Commander", colors=("G",))
+        return by_turn, casts
+
+    def test_an_x_spell_with_a_mana_ability_does_not_sort_ahead_of_the_commander(self):
+        # The commander is cast on turn 5 (combat 5 from turn 6) and the
+        # Parade waits for turn 6. Sorted as ramp it would take the turn-5
+        # mana as X = 3 and push the commander to turn 6.
+        by_turn, _ = self._parade_game()
+        self.assertEqual(self._damage(by_turn), [0, 0, 0, 0, 0, 5, 10, 15, 20, 25])
+
+    def test_an_x_spell_with_a_mana_ability_is_not_a_ramp_permanent(self):
+        # The Parade resolves once, on turn 6, for 6 mana, and is on the
+        # battlefield from then on; the ramp count stays 0.
+        by_turn, casts = self._parade_game()
+        self.assertEqual(
+            ([(turn, paid) for turn, name, paid in casts if name == "Springleaf Parade"],
+             [by_turn[turn]["ramp"] for turn in range(1, 11)]),
+            ([(6, 6)], [0] * 10))
+
+    def test_an_x_spell_with_a_mana_ability_is_not_cheap_ramp_for_the_mulligan(self):
+        # The mulligan rule: two lands and no cheap ramp (a mana source or
+        # land-ramp spell of mana value 2 or less) is a mulligan. With Mind
+        # Stone ({2}, "{T}: Add {C}.") as the third card the hand is kept;
+        # with Springleaf Parade in its place it is not.
+        hands = {
+            "Mind Stone": ["Forest", "Forest", "Mind Stone"] + ["Zero Trinket"] * 4,
+            "Springleaf Parade": ["Forest", "Forest", "Springleaf Parade"]
+            + ["Zero Trinket"] * 4,
+        }
+        context = exporter.build_goldfish_context(
+            hands["Mind Stone"] + hands["Springleaf Parade"], {"decklist": []},
+            CARDS, "Probe Commander", ["G"], "synthetic-x")
+        decisions = {card: exporter.should_goldfish_mulligan(hand, context["profiles"])
+                     for card, hand in hands.items()}
+        self.assertEqual(decisions, {"Mind Stone": False, "Springleaf Parade": True})
+
+    def test_a_copy_of_an_x_spell_keeps_the_x_paid(self):
+        # A tap_gate copy engine (one copy of each instant or sorcery while one
+        # untapped creature remains; local config, as no fleet deck has one).
+        # Probe Commander ({5}) is cast on turn 5 with five Command Towers.
+        # Mind into Matter is drawn on turn 6: X = 6 - 2 = 4, so it draws 4
+        # and its copy draws 4 more.
+        with patch.dict(exporter.COMMANDER_COPY_ENGINE,
+                        {"synthetic-copy": {"mode": "tap_gate", "tapCost": 1}}):
+            _, sizes = self._run(
+                ["Command Tower"] * 7,
+                self._library_with("Mind into Matter", 6, "Command Tower"),
+                commander="Probe Commander", deck_id="synthetic-copy")
+        self.assertEqual(sizes, [92, 91, 90, 89, 88, 87, 78, 77, 76, 75, 75])
+
+    # --- the DEC-944 gate and combo-line pieces ------------------------------
+
+    COMBO_DECK_ID = "synthetic-combo"
+
+    @staticmethod
+    def _combo_metadata() -> dict:
+        def card(name, type_line, mana_cost, cmc):
+            return {"name": name, "type_line": type_line, "oracle_text": "",
+                    "mana_cost": mana_cost, "cmc": cmc, "colors": [],
+                    "color_identity": []}
+
+        metadata = {
+            "Forest": CARDS["Forest"],
+            "Stonecoil Serpent": CARDS["Stonecoil Serpent"],
+            "Synthetic Commander": card("Synthetic Commander",
+                                        "Legendary Creature — Human", "{9}", 9),
+            "Piece Permanent": card("Piece Permanent", "Artifact", "{2}", 2),
+            "Piece Instant": card("Piece Instant", "Instant", "{2}", 2),
+            "X Piece Permanent": card("X Piece Permanent", "Artifact", "{X}{2}", 2),
+            "X Piece Instant": card("X Piece Instant", "Instant", "{X}{2}", 2),
+            "Bear": card("Bear", "Creature — Bear", "{2}", 2),
+        }
+        return metadata
+
+    def _run_line(self, pieces, hand, library):
+        """Pinned game with one combo win condition; (by_turn, casts by turn)."""
+        metadata = self._combo_metadata()
+        decklist = hand + library
+        deck_data = {
+            "decklist": [{"name": name} for name in decklist],
+            "winConditions": [{"kind": "combo", "pieces": list(pieces)}],
+        }
+        context = exporter.build_goldfish_context(
+            decklist, deck_data, metadata, "Synthetic Commander", ["G"],
+            self.COMBO_DECK_ID)
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          lambda *_: (list(library), list(hand))), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = exporter.simulate_goldfish_game(
+                decklist, metadata, context, 6)
+        return by_turn, casts
+
+    def test_an_x_spell_pays_x_only_out_of_mana_the_gate_does_not_need(self):
+        # Turn 2 casts the permanent piece. Turn 3 draws Stonecoil Serpent
+        # with three Forests: the gate still needs {2} for the instant piece,
+        # so the Serpent takes X = 1 (combat 1), not 3, and the gate fires.
+        by_turn, casts = self._run_line(
+            ["Piece Permanent", "Piece Instant"],
+            ["Forest"] * 3 + ["Piece Permanent", "Piece Instant"],
+            ["Forest"] * 16 + ["Stonecoil Serpent", "Forest"])
+        self.assertEqual(casts[3], ["Stonecoil Serpent"])
+        self.assertEqual(by_turn[3]["comboLethal"], 1)
+        self.assertEqual(by_turn[4]["combat"], 1)
+
+    def test_a_combo_line_piece_with_x_is_cast_at_x_zero(self):
+        # The line's permanent piece costs {X}{2}. Line pieces are cast freely
+        # at X = 0, so it lands on turn 2 out of two Forests; under the X rule
+        # it would need a third mana.
+        by_turn, casts = self._run_line(
+            ["X Piece Permanent", "Piece Instant"],
+            ["Forest"] * 3 + ["X Piece Permanent", "Piece Instant"],
+            ["Forest"] * 18)
+        # Cast on turn 2, and the gate fires on turn 3 with {2} for the
+        # instant piece.
+        self.assertEqual((casts[2], by_turn[3]["comboLethal"]),
+                         (["X Piece Permanent"], 1))
+
+    def test_the_gate_prices_a_combo_line_piece_with_x_at_x_zero(self):
+        # Two Forests in all (the library holds Bears). Turn 2 casts the
+        # permanent piece; on turn 3 the {X}{2} instant piece is priced at
+        # {2}, which the two Forests pay, so the Bear is held and the gate
+        # fires.
+        by_turn, casts = self._run_line(
+            ["Piece Permanent", "X Piece Instant"],
+            ["Forest"] * 2 + ["Piece Permanent", "X Piece Instant"],
+            ["Bear"] * 20)
+        self.assertEqual((casts[3], by_turn[3]["comboLethal"]), ([], 1))
+
+    # --- methodology ---------------------------------------------------------
+
+    # The X paragraph: the policy, then this deck's own credits, then the
+    # floors. Every deck gets the policy and the creature sentence; only a
+    # deck with X_SPELL_DRAW cards names them, only the amass deck gets the
+    # amass sentence.
+    X_POLICY = (
+        " X spells modeled (owner-approved 2026-11-18): a spell with {X} in its "
+        "mana cost keeps its place in the cast order (never the ramp tier) and, "
+        "when reached, is cast with X = the largest value the mana left pays "
+        "after its coloured pips and the holds above, with no mana-source "
+        "exemption; {X}{X} costs two per X. Below X = 1 it stays in hand and the "
+        "next spell is tried. Combo-line pieces and KEY_COMBOS assembly members "
+        "are still cast at X = 0, and the combo gate prices its pieces at X = 0. "
+        "Credited at the paid X: a creature's combat, and a threat creature's "
+        "pressure score, read mana value + X (capped at 8, keyword bonus as "
+        "before)")
+    X_FLOORS = (
+        ". Every other X effect (tokens, life loss, damage, tutoring, pumps, "
+        "proliferate, recursion, manifest) is not credited: those spells are only "
+        "re-timed. Floors: convoke, improvise and cost reducers are not "
+        "modeled.")
+    X_DRAWS = "; cards drawn: Mathemagics 2^X, Mind into Matter X"
+    X_AMASS = ("; amass X spells amass X, and Saruman, the White Hand's amass "
+               "counts the X paid")
+
+    def _methodology(self, decklist, win_conditions=(), roles=None,
+                     deck_id="synthetic-x"):
+        roles = roles or {}
+        deck_data = {"decklist": [dict({"name": name}, **roles.get(name, {}))
+                                  for name in decklist],
+                     "winConditions": list(win_conditions)}
+        with patch.object(exporter, "GOLDFISH_GAMES", 16), \
+                patch("multiprocessing.Pool", SerialPool):
+            goldfish, _ = exporter.compute_goldfish_section(
+                decklist=decklist, deck_data=deck_data, metadata=CARDS,
+                commander_name="The Ur-Dragon", commander_colors=["G", "U"],
+                deck_id=deck_id)
+        return goldfish["methodology"]
+
+    def test_methodology_names_only_the_decks_own_x_credits(self):
+        cases = {
+            # Stonecoil Serpent is in no table: the policy alone.
+            "no draw card": (["Stonecoil Serpent"] + ["Forest"] * 98,
+                             "synthetic-x", self.X_POLICY + self.X_FLOORS),
+            # Two X_SPELL_DRAW cards, named in the table's words, by name.
+            "draw cards": (["Mind into Matter", "Mathemagics", "Stonecoil Serpent"]
+                           + ["Forest"] * 96, "synthetic-x",
+                           self.X_POLICY + self.X_DRAWS + self.X_FLOORS),
+            # gathering-shadow's amass engine.
+            "amass deck": (["Summons of Saruman"] + ["Forest"] * 98,
+                           "gathering-shadow",
+                           self.X_POLICY + self.X_AMASS + self.X_FLOORS),
+        }
+        for label, (decklist, deck_id, paragraph) in cases.items():
+            with self.subTest(label):
+                self.assertIn(paragraph, self._methodology(decklist, deck_id=deck_id))
+
+    def test_methodology_scores_x_creatures_with_x_only_where_x_spells_are_cast(self):
+        with_x = self._methodology(["Stonecoil Serpent"] + ["Forest"] * 98)
+        without_x = self._methodology(["Forest"] * 99)
+        self.assertEqual(
+            ("plus one for a listed combat keyword, MV + X for an X creature cast "
+             "with X paid) so the curve" in with_x,
+             "plus one for a listed combat keyword) so the curve" in without_x),
+            (True, True))
+
+    # A combo line of two non-X permanents, so the deck builds its tutor and
+    # reanimation tables.
+    PLAIN_COMBO = [{"kind": "combo", "pieces": ["Zero Trinket", "Mind Stone"]}]
+
+    def test_methodology_leaves_the_x_rule_out_when_no_x_spell_is_cast(self):
+        cases = {
+            "no X card": (["Forest"] * 99, (), None),
+            "X cards that are combo-line pieces": (
+                ["Stonecoil Serpent", "Primordial Hydra"] + ["Forest"] * 97,
+                [{"kind": "combo",
+                  "pieces": ["Stonecoil Serpent", "Primordial Hydra"]}], None),
+            # "Counter target spell": interaction, never cast.
+            "an interaction X card": (["Syncopate"] + ["Forest"] * 98, (), None),
+            "a reserved X tutor": (
+                ["Whir of Invention", "Zero Trinket", "Mind Stone"] + ["Forest"] * 96,
+                self.PLAIN_COMBO,
+                {"Whir of Invention": {"primary_role": "tutor"}}),
+            "a reserved X reanimation spell": (
+                ["Divergent Equation", "Zero Trinket", "Mind Stone"] + ["Forest"] * 96,
+                self.PLAIN_COMBO,
+                {"Divergent Equation": {"primary_role": "recursion"}}),
+        }
+        for label, (decklist, win_conditions, roles) in cases.items():
+            with self.subTest(label):
+                self.assertNotIn("X spells modeled", self._methodology(
+                    decklist, win_conditions, roles))
+
+
+class ArmyReadinessGoldfishTests(unittest.TestCase):
+    """DEC-533 Army readiness: an Army made by the start-of-turn opponent-cast
+    amass attacks that turn; any other amass source's Army waits a turn.
+
+    gathering-shadow's amass engine (3 opponent batches of 1 a turn while the
+    commander is out), the opening fixed as in DrawEngineGoldfishTests, card
+    data from CARDS. Probe Commander ({5}, combat 5) is cast on turn 5 and
+    attacks from turn 6. The hand never drops to 2 cards, so no Ring tempt
+    converts.
+    """
+
+    def _damage(self, hand, library, colors):
+        decklist = hand + library
+        context = exporter.build_goldfish_context(
+            decklist, {"decklist": []}, CARDS, "Probe Commander", list(colors),
+            "gathering-shadow")
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          return_value=(library, hand)):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, CARDS, context, 6)
+        return [by_turn[turn]["cumulativeDamage"] for turn in range(1, 11)]
+
+    def test_an_army_from_opponent_casts_attacks_the_turn_it_is_made(self):
+        # Turn 6 starts with the commander out: three batches make an Army of
+        # 3 that swings with the commander (5 + 3); each later turn adds 3.
+        self.assertEqual(
+            self._damage(["Island"] * 7, ["Island"] * 92, ("U", "B")),
+            [0, 0, 0, 0, 0, 8, 19, 33, 50, 70])
+
+    def test_an_army_from_an_own_cast_still_waits_a_turn(self):
+        # Swarming of Moria ({2}{R}) is cast on turn 3 and amasses 2: the
+        # Army is made during turn 3 and first attacks on turn 4. From turn 6
+        # the opponent batches add 3 a turn and the commander swings for 5.
+        self.assertEqual(
+            self._damage(["Swarming of Moria"] + ["Mountain"] * 6,
+                         ["Mountain"] * 92, ("B", "R")),
+            [0, 0, 0, 2, 4, 14, 27, 43, 62, 84])
+
+
 class CombatModifierGoldfishTests(unittest.TestCase):
     """DEC-940 — extra combat phases inside a deterministic goldfish turn loop.
 
@@ -1726,18 +2403,22 @@ class CastPriorityHoldTests(unittest.TestCase):
             }
         return metadata
 
-    def _run_hatch(self, forests_in_hand: int):
-        """Pinned hatch-engine game; returns (hatch turns, casts by turn)."""
+    def _run_hatch(self, forests_in_hand: int, extra_hand: tuple = ()):
+        """Pinned hatch-engine game; returns (hatch turns, casts by turn).
+
+        `extra_hand` names CARDS entries added to the deck and the hand."""
         metadata = self._hatch_metadata()
+        metadata.update({name: CARDS[name] for name in extra_hand})
         two_drops = [f"Two Drop {i}" for i in range(10)]
         bears = [f"Bear {i}" for i in range(20)]
-        decklist = (["Forest"] * 12 + ["Ashnod's Altar"] + two_drops + bears)
+        decklist = (["Forest"] * 12 + ["Ashnod's Altar"] + two_drops + bears
+                    + list(extra_hand))
         deck_data = {"decklist": [{"name": name} for name in decklist]}
         context = exporter.build_goldfish_context(
             decklist, deck_data, metadata, self.HATCH_COMMANDER, ["G"],
             self.HATCH_DECK_ID)
         hand = (["Forest"] * forests_in_hand + ["Ashnod's Altar"]
-                + two_drops[:2])
+                + two_drops[:2] + list(extra_hand))
         # library.pop() draws from the end: Bears sit on top so a hatch finds one.
         library = ["Forest"] * (12 - forests_in_hand) + bears
 
@@ -1777,6 +2458,19 @@ class CastPriorityHoldTests(unittest.TestCase):
         hatch_turns, casts = self._run_hatch(forests_in_hand=4)
         self.assertIn("Two Drop 0", casts[4])
         self.assertIn(4, hatch_turns)
+
+    def test_an_x_spell_pays_x_only_out_of_mana_the_activation_does_not_need(self):
+        # Stonecoil Serpent ({X}) joins the hand. Turn 1's Forest casts the
+        # commander, so the Serpent gets X = 0 and waits. Turn 2: {2}, all of
+        # it held for the Egg activation, so X = 1 or 2 would break the hold
+        # and the Serpent waits again while the Egg is made. Turn 3: {3} pays
+        # X = 1 and keeps {2} for the activation.
+        hatch_turns, casts = self._run_hatch(
+            forests_in_hand=4, extra_hand=("Stonecoil Serpent",))
+        self.assertEqual(
+            ("Stonecoil Serpent" in casts[1] + casts[2], 2 in hatch_turns),
+            (False, True))
+        self.assertIn("Stonecoil Serpent", casts[3])
 
     # --- (b) the combo gate -------------------------------------------------
 
