@@ -690,6 +690,335 @@ class PrintedPowerProfileTests(unittest.TestCase):
                 self.assertEqual(self._profile(power=power)["combat"], 3)
 
 
+# Card data for CastTimeDrawTests and DrawEngineGoldfishTests: type line, mana
+# cost, mana value and oracle text as data/card-metadata.json held them on
+# 2026-11-18, pasted so these tests stay put when that file is refreshed or a
+# deck drops a card. "−" in loyalty costs is U+2212, as Scryfall prints it.
+# "Zero Trinket" and "Probe Commander" are made-up cards for the engine fixture.
+CARDS = {
+    "Island": {
+        "type_line": "Basic Land — Island",
+        "mana_cost": "",
+        "cmc": 0.0,
+        "oracle_text": "({T}: Add {U}.)",
+        "colors": [],
+    },
+    "Swamp": {
+        "type_line": "Basic Land — Swamp",
+        "mana_cost": "",
+        "cmc": 0.0,
+        "oracle_text": "({T}: Add {B}.)",
+        "colors": [],
+    },
+    "The Ur-Dragon": {
+        "type_line": "Legendary Creature — Dragon Avatar",
+        "mana_cost": "{4}{W}{U}{B}{R}{G}",
+        "cmc": 9.0,
+        "oracle_text": (
+            "Eminence — As long as The Ur-Dragon is in the command zone or on "
+            "the battlefield, other Dragon spells you cast cost {1} less to "
+            "cast.\n"
+            "Flying\n"
+            "Whenever one or more Dragons you control attack, draw that many "
+            "cards, then you may put a permanent card from your hand onto the "
+            "battlefield."),
+        "colors": ["B", "G", "R", "U", "W"],
+        "power": "10",
+    },
+    "The Theorist, Jace Beleren": {
+        "type_line": "Legendary Planeswalker — Jace",
+        "mana_cost": "{2}{U}{U}",
+        "cmc": 4.0,
+        "oracle_text": (
+            "At the beginning of each opponent's draw step, you draw a card.\n"
+            "+1: Create a 1/1 blue Illusion creature token.\n"
+            "−2: For each opponent, return up to one target artifact or "
+            "creature that player controls to its owner's hand.\n"
+            "−6: Draw three cards. Then put X +1/+1 counters on each creature "
+            "you control, where X is the number of cards in your hand."),
+        "colors": ["U"],
+    },
+    "The One Ring": {
+        "type_line": "Legendary Artifact",
+        "mana_cost": "{4}",
+        "cmc": 4.0,
+        "oracle_text": (
+            "Indestructible\n"
+            "When The One Ring enters, if you cast it, you gain protection "
+            "from everything until your next turn.\n"
+            "At the beginning of your upkeep, you lose 1 life for each burden "
+            "counter on The One Ring.\n"
+            "{T}: Put a burden counter on The One Ring, then draw a card for "
+            "each burden counter on The One Ring."),
+        "colors": [],
+    },
+    "Azami, Lady of Scrolls": {
+        "type_line": "Legendary Creature — Human Wizard",
+        "mana_cost": "{2}{U}{U}{U}",
+        "cmc": 5.0,
+        "oracle_text": "Tap an untapped Wizard you control: Draw a card.",
+        "colors": ["U"],
+        "power": "0",
+    },
+    "Call of the Ring": {
+        "type_line": "Enchantment",
+        "mana_cost": "{1}{B}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "At the beginning of your upkeep, the Ring tempts you.\n"
+            "Whenever you choose a creature as your Ring-bearer, you may pay "
+            "2 life. If you do, draw a card."),
+        "colors": ["B"],
+    },
+    "Long River's Pull": {
+        "type_line": "Instant",
+        "mana_cost": "{U}{U}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Gift a card (You may promise an opponent a gift as you cast this "
+            "spell. If you do, they draw a card before its other effects.)\n"
+            "Counter target creature spell. If the gift was promised, instead "
+            "counter target spell."),
+        "colors": ["U"],
+    },
+    "Mind Stone": {
+        "type_line": "Artifact",
+        "mana_cost": "{2}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "{T}: Add {C}.\n"
+            "{1}, {T}, Sacrifice this artifact: Draw a card."),
+        "colors": [],
+    },
+    "Hedron Archive": {
+        "type_line": "Artifact",
+        "mana_cost": "{4}",
+        "cmc": 4.0,
+        "oracle_text": (
+            "{T}: Add {C}{C}.\n"
+            "{2}, {T}, Sacrifice this artifact: Draw two cards."),
+        "colors": [],
+    },
+    "Commander's Sphere": {
+        "type_line": "Artifact",
+        "mana_cost": "{3}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "{T}: Add one mana of any color in your commander's color "
+            "identity.\n"
+            "Sacrifice this artifact: Draw a card."),
+        "colors": [],
+    },
+    "Ozolith, the Shattered Spire": {
+        "type_line": "Legendary Artifact",
+        "mana_cost": "{1}{G}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "If one or more +1/+1 counters would be put on an artifact or "
+            "creature you control, that many plus one +1/+1 counters are put "
+            "on it instead.\n"
+            "{1}{G}, {T}: Put a +1/+1 counter on target artifact or creature "
+            "you control. Activate only as a sorcery.\n"
+            "Cycling {2} ({2}, Discard this card: Draw a card.)"),
+        "colors": ["G"],
+    },
+    "Sauron, the Dark Lord": {
+        "type_line": "Legendary Creature — Avatar Horror",
+        "mana_cost": "{3}{U}{B}{R}",
+        "cmc": 6.0,
+        "oracle_text": (
+            "Ward—Sacrifice a legendary artifact or legendary creature.\n"
+            "Whenever an opponent casts a spell, amass Orcs 1.\n"
+            "Whenever an Army you control deals combat damage to a player, "
+            "the Ring tempts you.\n"
+            "Whenever the Ring tempts you, you may discard your hand. If you "
+            "do, draw four cards."),
+        "colors": ["B", "R", "U"],
+        "power": "7",
+    },
+    "Belladonna Took": {
+        "type_line": "Legendary Creature — Halfling Citizen",
+        "mana_cost": "{1}{W}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Whenever a token you control enters, you gain 1 life if this is "
+            "the first time this ability has resolved this turn. If it's the "
+            "second time, draw a card. If it's the third time, put a +1/+1 "
+            "counter on each creature you control."),
+        "colors": ["W"],
+        "power": "2",
+    },
+    "Braids, Arisen Nightmare": {
+        "type_line": "Legendary Creature — Nightmare",
+        "mana_cost": "{1}{B}{B}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "At the beginning of your end step, you may sacrifice an "
+            "artifact, creature, enchantment, land, or planeswalker. If you "
+            "do, each opponent may sacrifice a permanent of their choice that "
+            "shares a card type with it. For each opponent who doesn't, that "
+            "player loses 2 life and you draw a card."),
+        "colors": ["B"],
+        "power": "3",
+    },
+    "The Queen of Dale": {
+        "type_line": "Legendary Creature — Human Noble",
+        "mana_cost": "{1}{W}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "Whenever an opponent casts their first noncreature spell each "
+            "turn, you recruit. (Draw a card, then discard a card. If you "
+            "discarded a nonland card, create a 1/1 white Human Soldier "
+            "creature token.)"),
+        "colors": ["W"],
+        "power": "2",
+    },
+    "Summon: Bahamut": {
+        "type_line": "Enchantment Creature — Saga Dragon",
+        "mana_cost": "{9}",
+        "cmc": 9.0,
+        "oracle_text": (
+            "(As this Saga enters and after your draw step, add a lore "
+            "counter. Sacrifice after IV.)\n"
+            "I, II — Destroy up to one target nonland permanent.\n"
+            "III — Draw two cards.\n"
+            "IV — Mega Flare — This creature deals damage equal to the total "
+            "mana value of other permanents you control to each opponent.\n"
+            "Flying"),
+        "colors": [],
+        "power": "9",
+    },
+    "Black Market Connections": {
+        "type_line": "Enchantment",
+        "mana_cost": "{2}{B}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "At the beginning of your first main phase, choose one or more —\n"
+            "• Sell Contraband — Create a Treasure token. You lose 1 life.\n"
+            "• Buy Information — Draw a card. You lose 2 life.\n"
+            "• Hire a Mercenary — Create a 3/2 colorless Shapeshifter "
+            "creature token with changeling. You lose 3 life. (It is every "
+            "creature type.)"),
+        "colors": ["B"],
+    },
+    "Teval's Judgment": {
+        "type_line": "Enchantment",
+        "mana_cost": "{2}{B}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Whenever one or more cards leave your graveyard, choose one that "
+            "hasn't been chosen this turn —\n"
+            "• Draw a card.\n"
+            "• Create a Treasure token.\n"
+            "• Create a 2/2 black Zombie Druid creature token."),
+        "colors": ["B"],
+    },
+    "Archon of Cruelty": {
+        "type_line": "Creature — Archon",
+        "mana_cost": "{6}{B}{B}",
+        "cmc": 8.0,
+        "oracle_text": (
+            "Flying\n"
+            "Whenever this creature enters or attacks, target opponent "
+            "sacrifices a creature or planeswalker of their choice, discards "
+            "a card, and loses 3 life. You draw a card and gain 3 life."),
+        "colors": ["B"],
+        "power": "6",
+    },
+    "Sephiroth, Fabled SOLDIER": {
+        "type_line": "Legendary Creature — Human Avatar Soldier // Legendary Creature — Angel Nightmare Avatar",
+        "mana_cost": "{2}{B}",
+        "cmc": 3.0,
+        "oracle_text": (
+            "Whenever Sephiroth enters or attacks, you may sacrifice another "
+            "creature. If you do, draw a card.\n"
+            "Whenever another creature dies, target opponent loses 1 life and "
+            "you gain 1 life. If this is the fourth time this ability has "
+            "resolved this turn, transform Sephiroth."),
+        "colors": ["B"],
+        "power": "3",
+    },
+    "The Sackville-Bagginses": {
+        "type_line": "Legendary Creature — Halfling Citizen",
+        "mana_cost": "{1}{B}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "When The Sackville-Bagginses enter, you may sacrifice another "
+            "creature or artifact. If you do, draw a card and create a "
+            "Treasure token.\n"
+            "Whenever you sacrifice a token, target opponent loses 1 life."),
+        "colors": ["B"],
+        "power": "2",
+    },
+    "Kozilek, the Broken Reality": {
+        "type_line": "Legendary Creature — Eldrazi",
+        "mana_cost": "{9}",
+        "cmc": 9.0,
+        "oracle_text": (
+            "When you cast this spell, up to two target players each manifest "
+            "two cards from their hands. For each card manifested this way, "
+            "you draw a card. (To manifest a card, put it onto the "
+            "battlefield face down as a 2/2 creature. Turn it face up any "
+            "time for its mana cost if it's a creature card.)\n"
+            "Other colorless creatures you control get +3/+2."),
+        "colors": [],
+        "power": "9",
+    },
+    "Thought Monitor": {
+        "type_line": "Artifact Creature — Construct",
+        "mana_cost": "{6}{U}",
+        "cmc": 7.0,
+        "oracle_text": (
+            "Affinity for artifacts (This spell costs {1} less to cast for "
+            "each artifact you control.)\n"
+            "Flying\n"
+            "When this creature enters, draw two cards."),
+        "colors": ["U"],
+        "power": "2",
+    },
+    "Tataru Taru": {
+        "type_line": "Legendary Creature — Dwarf Advisor",
+        "mana_cost": "{1}{W}",
+        "cmc": 2.0,
+        "oracle_text": (
+            "When Tataru Taru enters, you draw a card and target opponent may "
+            "draw a card.\n"
+            "Scions' Secretary — Whenever an opponent draws a card, if it "
+            "isn't that player's turn, create a tapped Treasure token. This "
+            "ability triggers only once each turn."),
+        "colors": ["W"],
+        "power": "0",
+    },
+    "Cryptic Command": {
+        "type_line": "Instant",
+        "mana_cost": "{1}{U}{U}{U}",
+        "cmc": 4.0,
+        "oracle_text": (
+            "Choose two —\n"
+            "• Counter target spell.\n"
+            "• Return target permanent to its owner's hand.\n"
+            "• Tap all creatures your opponents control.\n"
+            "• Draw a card."),
+        "colors": ["U"],
+    },
+    "Zero Trinket": {
+        "type_line": "Artifact",
+        "mana_cost": "{0}",
+        "cmc": 0.0,
+        "oracle_text": "",
+        "colors": [],
+    },
+    "Probe Commander": {
+        "type_line": "Legendary Creature — Test",
+        "mana_cost": "{5}",
+        "cmc": 5.0,
+        "oracle_text": "",
+        "colors": [],
+        "power": "5",
+    },
+}
+
+
 class CastTimeDrawTests(unittest.TestCase):
     """Cards the goldfish draws when it casts a card, from the card's oracle text.
 
@@ -794,6 +1123,229 @@ class CastTimeDrawTests(unittest.TestCase):
             "many target creatures and put a stun counter on each of them.\n"
             "{3}{U}{U}, Exile this card from your graveyard: Draw two cards.")
         self.assertEqual(drawn, 2)
+
+    def _drawn(self, name):
+        card = CARDS[name]
+        return self._cards_drawn_on_cast(
+            name, card["type_line"], card["mana_cost"], card["cmc"], card["oracle_text"])
+
+    # Fleet cards (text in CARDS). Expected values are what each card draws
+    # as it is cast or enters, read off that text.
+    FLEET_CASES = {
+        # Reminder text: the gift reminder's draw is the opponent's.
+        "Long River's Pull": 0,
+        # Activated abilities.
+        "Mind Stone": 0,
+        "Hedron Archive": 0,
+        "Commander's Sphere": 0,
+        # Cycling: reminder text and an activated ability.
+        "Ozolith, the Shattered Spire": 0,
+        # Triggers other than the card's own entering or casting, follow-on
+        # sentences included.
+        "Sauron, the Dark Lord": 0,
+        "Belladonna Took": 0,
+        "Braids, Arisen Nightmare": 0,
+        "The Queen of Dale": 0,
+        # Saga: the draw is chapter III.
+        "Summon: Bahamut": 0,
+        # Mode lines under a recurring trigger.
+        "Black Market Connections": 0,
+        "Teval's Judgment": 0,
+        # Own entering, worded "Whenever this creature enters"; the draw is
+        # the next sentence.
+        "Archon of Cruelty": 1,
+        # Own entering by short name ("Whenever Sephiroth enters").
+        "Sephiroth, Fabled SOLDIER": 1,
+        # Own entering by full name, plural verb ("enter").
+        "The Sackville-Bagginses": 1,
+        # Own entering, the draw in the trigger sentence itself.
+        "Thought Monitor": 2,
+        "Tataru Taru": 1,
+        # A mode line under "Choose two —".
+        "Cryptic Command": 1,
+    }
+
+    def test_fleet_cards_draw_what_they_draw_on_cast(self):
+        for name, expected in self.FLEET_CASES.items():
+            with self.subTest(card=name):
+                self.assertEqual(self._drawn(name), expected)
+
+    def test_floor_a_variable_cast_trigger_draw_counts_one(self):
+        # Kozilek draws one card per card manifested, up to four. The cast
+        # trigger is the card's own casting, so the line is kept, and the next
+        # sentence's "you draw a card" is credited as 1.
+        self.assertEqual(self._drawn("Kozilek, the Broken Reality"), 1)
+
+    def test_an_enters_trigger_by_a_full_name_with_a_comma_keeps_its_count(self):
+        drawn = self._cards_drawn_on_cast(
+            "Example, the Sage", "Legendary Creature — Test", "{2}{U}", 3,
+            "When Example, the Sage enters, draw a card.")
+        self.assertEqual(drawn, 1)
+
+    def test_a_token_entering_after_an_attack_is_not_own_entering(self):
+        # "enters" after the trigger clause's comma belongs to the token.
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Raider", "Creature — Test", "{2}{R}", 3,
+            "Whenever this creature attacks, create a token that enters tapped. "
+            "Draw a card.")
+        self.assertEqual(drawn, 0)
+
+    def test_a_chapter_one_saga_draw_is_drawn_on_cast(self):
+        # No saga in the fleet draws at chapter I; literal text. The chapter
+        # list includes I, so the draw happens as the saga enters.
+        drawn = self._cards_drawn_on_cast(
+            "Synthetic Saga", "Enchantment — Saga", "{2}{U}", 3,
+            "(As this Saga enters and after your draw step, add a lore counter. "
+            "Sacrifice after III.)\n"
+            "I, II — Draw a card.\n"
+            "III — Scry 2.")
+        self.assertEqual(drawn, 1)
+
+    def test_an_enters_trigger_by_front_face_name_keeps_its_count(self):
+        # Literal text: a double-faced card's front face names itself.
+        drawn = self._cards_drawn_on_cast(
+            "Front Walker // Back Walker", "Creature — Test // Creature — Test",
+            "{2}{U}", 3,
+            "When Front Walker enters, draw a card.")
+        self.assertEqual(drawn, 1)
+
+    def test_cast_turn_activations_are_credited_by_name_only(self):
+        # The oracle parse skips both activated draws; CAST_TURN_ACTIVATION_DRAW
+        # credits the first activation on the cast turn.
+        for name in ("The One Ring", "Azami, Lady of Scrolls"):
+            with self.subTest(card=name):
+                self.assertEqual(exporter.immediate_draw_count(name, CARDS[name]), 0)
+                self.assertEqual(self._drawn(name), 1)
+
+
+class SerialPool:
+    """multiprocessing.Pool stand-in that maps in this process."""
+
+    def __init__(self, *_args, **_kwargs):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_exc):
+        return False
+
+    @staticmethod
+    def map(fn, iterable):
+        return [fn(item) for item in iterable]
+
+
+class DrawEngineGoldfishTests(unittest.TestCase):
+    """PERMANENT_DRAW_ENGINE through the goldfish turn loop.
+
+    One simulate_goldfish_game run with the opening fixed instead of shuffled
+    (the mulligan's shuffle is replaced by a given hand and library), under a
+    deck id whose shipped config holds the engine; card data from CARDS. The
+    library size is read at each turn's land choice, after that turn's draws,
+    and once after turn 10; each drop is what was drawn in between. The
+    default fixture: the engine card and six Islands in hand, 92 Islands in
+    the library and a commander the Islands cannot cast, so the engine card
+    is cast on turn 4, the first turn with four lands.
+    """
+
+    def _library_sizes(self, deck_id, hand, library, commander="The Ur-Dragon",
+                       colors=("U",)):
+        decklist = hand + library
+        context = exporter.build_goldfish_context(
+            decklist, {"decklist": []}, CARDS, commander, list(colors), deck_id)
+        sizes = []
+        choose_land = exporter.choose_land_to_play
+
+        def record_then_choose(*args, **kwargs):
+            sizes.append(len(library))
+            return choose_land(*args, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish",
+                          return_value=(library, hand)), \
+                patch.object(exporter, "choose_land_to_play",
+                             side_effect=record_then_choose):
+            exporter.simulate_goldfish_game(decklist, CARDS, context, 6)
+        return sizes + [len(library)]
+
+    def _engine_card_sizes(self, card, deck_id):
+        return self._library_sizes(deck_id, [card] + ["Island"] * 6, ["Island"] * 92)
+
+    def test_jace_draws_three_at_the_start_of_each_later_turn(self):
+        # Turns 2-4 draw 1 (draw step); Jace adds nothing on turn 4, his cast
+        # turn; turns 5-10 draw 1 + 3.
+        for deck_id in ("tidal-legion", "gathering-shadow"):
+            with self.subTest(deck=deck_id):
+                self.assertEqual(
+                    self._engine_card_sizes("The Theorist, Jace Beleren", deck_id),
+                    [92, 91, 90, 89, 85, 81, 77, 73, 69, 65, 65])
+
+    def test_one_ring_sequence_is_unchanged(self):
+        # Cast on turn 4 and draws 1 then (89 -> 88); turns 5, 6, 7 draw the
+        # draw step plus activations 2, 3, 4; then the draw step alone.
+        self.assertEqual(
+            self._engine_card_sizes("The One Ring", "gandalf-party-guest"),
+            [92, 91, 90, 89, 85, 81, 76, 75, 74, 73, 73])
+
+    def test_jace_cards_arrive_before_the_upkeep_tempt(self):
+        # gathering-shadow: Call of the Ring tempts at upkeep while the
+        # commander is out, and the tempt converts to discard-hand-draw-four
+        # only at hand size 2 or less. Hand: Jace, Call of the Ring, a Swamp
+        # and four Islands; library: 40 Zero Trinkets ({0}, cast the turn they
+        # are drawn, so the hand empties every turn); commander: Probe
+        # Commander ({5}). Swamp turn 1, an Island each turn 2-5; Call of the
+        # Ring turn 2, Jace turn 4, the commander turn 5.
+        # Turn 5 (commander not out yet, no tempt): 37 - 1 - 3 = 33.
+        # Turn 6: the draw step leaves 1 card in hand and Jace's 3 make it 4,
+        # so the tempt does not convert: 33 - 1 - 3 = 29. Were the tempt read
+        # before Jace's cards, it would discard 1 card and draw 4: 25.
+        sizes = self._library_sizes(
+            "gathering-shadow",
+            hand=["The Theorist, Jace Beleren", "Call of the Ring", "Swamp",
+                  "Island", "Island", "Island", "Island"],
+            library=["Zero Trinket"] * 40,
+            commander="Probe Commander", colors=("U", "B"))
+        self.assertEqual(sizes[:6], [40, 39, 38, 37, 33, 29])
+
+    # The draw-engine paragraphs of the goldfish methodology, whole.
+    ACTIVATED_PARAGRAPH = (
+        " Activated draw engines modeled (DEC-472): The One Ring (max 4 "
+        "activations). Each turn on the battlefield the engine activates once — "
+        "its counter total grows by one and that many cards are drawn (the "
+        "cast-turn draw stays on the immediateDraw path). maxActivations is the "
+        "stopping rule standing in for The One Ring's upkeep life loss, which the "
+        "goldfish does not track. Floors: the on-cast protection turn and "
+        "opponent-dependent draw taxes (Rhystic Study / Mystic Remora class) are "
+        "not modeled.")
+    RECURRING_PARAGRAPH = (
+        " Recurring draw triggers modeled (owner-approved 2026-11-17): The "
+        "Theorist, Jace Beleren (3 per turn). These stand in for draws on "
+        "opponents' turns (The Theorist, Jace Beleren: one card at the beginning "
+        "of each opponent's draw step), so the cards are drawn at the start of "
+        "each of your turns from the turn after the permanent is cast. Assumes "
+        "all three opponents stay in the game and the permanent survives; there "
+        "is no stopping rule.")
+
+    def _methodology(self, deck_id):
+        decklist = ["The Theorist, Jace Beleren"] + ["Island"] * 98
+        with patch.object(exporter, "GOLDFISH_GAMES", 16), \
+                patch("multiprocessing.Pool", SerialPool):
+            goldfish, _ = exporter.compute_goldfish_section(
+                decklist=decklist, deck_data={"decklist": []}, metadata=CARDS,
+                commander_name="The Ur-Dragon", commander_colors=["U"],
+                deck_id=deck_id)
+        return goldfish["methodology"]
+
+    def test_methodology_names_a_recurring_trigger_on_its_own(self):
+        # tidal-legion has a drawsPerTurn engine and no maxActivations one.
+        methodology = self._methodology("tidal-legion")
+        self.assertIn(self.RECURRING_PARAGRAPH, methodology)
+        self.assertNotIn("Activated draw engines", methodology)
+
+    def test_methodology_names_both_draw_engine_kinds(self):
+        # gathering-shadow has The One Ring and Jace.
+        methodology = self._methodology("gathering-shadow")
+        self.assertIn(self.ACTIVATED_PARAGRAPH, methodology)
+        self.assertIn(self.RECURRING_PARAGRAPH, methodology)
 
 
 class CombatModifierGoldfishTests(unittest.TestCase):
@@ -1522,20 +2074,6 @@ class ControlDeckGoldfishEqualityTests(unittest.TestCase):
         self.assertEqual(context["assemblyLines"], [])
         self.assertIsNone(context["hatchEngine"])
         self.assertIsNone(context["combatModifiers"])
-
-        class SerialPool:
-            def __init__(self, *_args, **_kwargs):
-                pass
-
-            def __enter__(self):
-                return self
-
-            def __exit__(self, *_exc):
-                return False
-
-            @staticmethod
-            def map(fn, iterable):
-                return [fn(item) for item in iterable]
 
         with patch("multiprocessing.Pool", SerialPool):
             goldfish, _ = exporter.compute_goldfish_section(

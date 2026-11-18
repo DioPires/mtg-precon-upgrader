@@ -648,8 +648,8 @@ COMMANDER_DEPLOY_ENGINE = {
 
 # DEC-472 — opponent-independent activated draw engines. The goldfish credits
 # draw only on cast resolution (immediateDraw), so a repeatable tap engine like
-# The One Ring reads as a one-shot cantrip: its oracle parse credits the
-# cast-turn activation (draw 1) and nothing after. Model: each turn a
+# The One Ring reads as a one-shot cantrip: CAST_TURN_ACTIVATION_DRAW credits
+# the cast-turn activation (draw 1) and nothing after. Model: each turn a
 # configured permanent is on the battlefield, activate it once — the counter
 # total grows by one and that many cards are drawn (activation n draws n).
 # The cast-turn activation stays on the immediateDraw path, so per-turn
@@ -659,8 +659,17 @@ COMMANDER_DEPLOY_ENGINE = {
 # real pilot stops tapping around 4 — activations 1+2+3+4 = 10 cards, then 0.
 # Floors, not ceilings: the on-cast protection turn and opponent-dependent
 # engines (Rhystic Study / Mystic Remora taxes) are not modeled.
+# Recurring draw triggers on opponents' turns (owner-approved 2026-11-17).
+# The Theorist, Jace Beleren draws a card at the beginning of each opponent's
+# draw step: 3 cards per turn cycle in the vanilla 4-player model (DEC-477).
+# The goldfish has no opponent turns, so those cards are drawn at the start of
+# each of your turns, from the turn after the permanent is cast (the first
+# opponent draw steps come after your cast turn). No stopping rule: all three
+# opponents stay in the game and the permanent survives (nothing attacks it
+# in a goldfish).
 # Config keys (per card name):
 #   maxActivations — total activations including the cast turn (One Ring: 4)
+#   drawsPerTurn — cards drawn at the start of each later turn (Jace: 3)
 PERMANENT_DRAW_ENGINE = {
     "gandalf-party-guest": {
         "The One Ring": {"maxActivations": 4},
@@ -668,7 +677,22 @@ PERMANENT_DRAW_ENGINE = {
     # DEC-533: same One Ring stopping rule as gandalf-party-guest.
     "gathering-shadow": {
         "The One Ring": {"maxActivations": 4},
+        "The Theorist, Jace Beleren": {"drawsPerTurn": 3},
     },
+    "tidal-legion": {
+        "The Theorist, Jace Beleren": {"drawsPerTurn": 3},
+    },
+}
+
+# Cards whose draw ability is activated the turn they are cast, credited as
+# their immediateDraw (immediate_draw_count skips activated abilities). The One
+# Ring: its first activation, per DEC-472 (the PERMANENT_DRAW_ENGINE loop still
+# seeds at 1). Azami, Lady of Scrolls: her cost is "Tap an untapped Wizard you
+# control", with no {T} symbol, so she pays with herself the turn she enters.
+# Floor: every other activated draw counts 0 on the cast turn.
+CAST_TURN_ACTIVATION_DRAW = {
+    "The One Ring": 1,
+    "Azami, Lady of Scrolls": 1,
 }
 
 # DEC-533 — commander amass-Army engine (sequel to DEC-385/393/404/405).
@@ -1368,43 +1392,82 @@ def parse_land_ramp_profile(meta: dict) -> dict | None:
     }
 
 
-def immediate_draw_count(meta: dict) -> int:
-    """Best-effort immediate draw count from cast/ETB text."""
-    # A minus loyalty ability (−N: or −X:) is not a cast-time draw. Floor: the
-    # card metadata carries no starting loyalty, so a minus ability the
-    # planeswalker could afford on entry is also counted as 0.
-    oracle = "\n".join(
-        line for line in meta.get("oracle_text", "").split("\n")
-        if not re.match(r"[\u2212-](\d+|X):", line.strip())
-    )
-    sentences = [sentence.strip() for sentence in re.split(r"[\n.]", oracle) if sentence.strip()]
-    for sentence in sentences:
-        lower = sentence.lower()
-        if "draw" not in lower:
-            continue
-        if "whenever" in lower or "at the beginning" in lower or "attacks" in lower:
-            continue
-        if "dies" in lower or "deals combat damage" in lower:
-            continue
-        if "enters" not in lower and lower.startswith("when "):
-            continue
+def immediate_draw_count(name: str, meta: dict) -> int:
+    """Cards drawn as the card is cast or enters, from its oracle text.
 
-        match = re.search(r"draw (a|an|one|two|three|four|five|\d+) cards?", lower)
-        if match:
-            token = match.group(1)
-            if token.isdigit():
-                return int(token)
-            return {
-                "a": 1,
-                "an": 1,
-                "one": 1,
-                "two": 2,
-                "three": 3,
-                "four": 4,
-                "five": 5,
-            }.get(token, 1)
-        if "draw a card" in lower:
-            return 1
+    Reminder text in parentheses is removed, then each oracle line is kept or
+    skipped. Skipped: an activated ability, minus loyalty included (a colon
+    before the line's first "draw", unless it is a plus or zero loyalty
+    ability); a saga chapter line without chapter I; a trigger ("Whenever",
+    "At the beginning", "When ") other than the card's own entering (first
+    sentence: "this <word>" or the card's name, then "enter" or "enters"
+    before any comma) or own casting ("When you cast this spell"). A "•"
+    mode line follows the line that introduces it. In a kept line the first
+    "draw N cards" / "draw a card" sentence counts; a sentence naming a
+    trigger (whenever, at the beginning, attacks, dies, combat damage, or
+    "when" without "enters") is passed over.
+
+    Floors (counts less): an affordable minus ability (the metadata carries
+    no loyalty); activated draws on the cast turn (CAST_TURN_ACTIVATION_DRAW
+    names the exceptions); a draw in the trigger sentence of an own-entering
+    "Whenever" or of a cast trigger; a draw only in reminder text (connive,
+    recruit); an own name containing a period; "target player draws", counts
+    above five, and variable counts, which count 0 or 1. Over-credits (counts
+    more): a conditional draw counts as if the condition held, a modal spell
+    its draw mode, a static "If you would draw a card ..." as a draw, and a
+    later sentence of a trigger behind an ability word ("Landfall —
+    Whenever ...") as spell text; discards, put-backs and sacrifice costs are
+    not modelled.
+    """
+    oracle = re.sub(r"\([^)]*\)", "", meta.get("oracle_text", ""))
+    own_subjects = [r"this \w+"]
+    for face in name.lower().split(" // "):
+        own_subjects += [re.escape(face), re.escape(face.split(",", 1)[0])]
+    own_entering = re.compile(rf"(when|whenever) ({'|'.join(own_subjects)})\b[^,]*\benters?\b")
+    skip_line = False
+    for line in oracle.split("\n"):
+        line = line.strip()
+        lower = line.lower()
+        if not line.startswith("\u2022"):
+            first = lower.split(".", 1)[0]
+            chapter = re.match(r"([IVX]+(?:, [IVX]+)*) \u2014 ", line)
+            skip_line = bool(
+                (":" in lower.split("draw", 1)[0]
+                 and not re.match(r"(\+(\d+|X)|0):", line))
+                or (chapter and "I" not in chapter.group(1).split(", "))
+                or (first.startswith(("whenever", "at the beginning", "when "))
+                    and not own_entering.match(first)
+                    and not first.startswith("when you cast this spell"))
+            )
+        if skip_line:
+            continue
+        for sentence in line.split("."):
+            lower = sentence.strip().lower()
+            if "draw" not in lower:
+                continue
+            if "whenever" in lower or "at the beginning" in lower or "attacks" in lower:
+                continue
+            if "dies" in lower or "deals combat damage" in lower:
+                continue
+            if "enters" not in lower and lower.startswith("when "):
+                continue
+
+            match = re.search(r"draw (a|an|one|two|three|four|five|\d+) cards?", lower)
+            if match:
+                token = match.group(1)
+                if token.isdigit():
+                    return int(token)
+                return {
+                    "a": 1,
+                    "an": 1,
+                    "one": 1,
+                    "two": 2,
+                    "three": 3,
+                    "four": 4,
+                    "five": 5,
+                }.get(token, 1)
+            if "draw a card" in lower:
+                return 1
     return 0
 
 
@@ -1430,10 +1493,13 @@ _CREATE_COUNT_WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 
 def creature_token_count(meta: dict) -> int:
     """Fixed creature-token count a card makes on resolution (DEC-393).
 
-    Feeds the copy-engine creature ledger only. Sentence filters mirror
-    immediate_draw_count so recurring triggers don't count; granted-ability
-    quotes are stripped so a token's own "Whenever ..." text doesn't hide the
-    create clause. X-counts and storm copies parse as 0 — the ledger is a floor.
+    Feeds the copy-engine creature ledger only. A sentence is skipped when it
+    names a trigger (whenever, at the beginning, attacks, dies, combat damage,
+    or "when" without "enters"), has a colon before "create" (an activated or
+    loyalty ability) or counts "for each", so recurring triggers don't count;
+    granted-ability quotes are stripped so a token's own "Whenever ..." text
+    doesn't hide the create clause. X-counts and storm copies parse as 0 —
+    the ledger is a floor.
     """
     oracle = re.sub(r'"[^"]*"', "", meta.get("oracle_text", ""))
     total = 0
@@ -1612,7 +1678,7 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
         "manaAtoms": mana_atoms,
         "manaSourceDelay": source_delay,
         "landRamp": land_ramp,
-        "immediateDraw": immediate_draw_count(meta),
+        "immediateDraw": CAST_TURN_ACTIVATION_DRAW.get(name, immediate_draw_count(name, meta)),
         "targetsOnlyCreature": targets_only_creatures(meta),
         "tokenCreatures": creature_token_count(meta),
         "impact": impact,
@@ -2876,6 +2942,18 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         if turn > 1 and library:
             hand.append(library.pop())
 
+        # Recurring draw triggers (owner-approved 2026-11-17): their cards
+        # come in the opponents' draw steps, so they are in hand before this
+        # turn's upkeep tempt below.
+        if draw_engines:
+            for permanent in permanents:
+                engine = draw_engines.get(permanent["name"])
+                if engine is None or "drawsPerTurn" not in engine:
+                    continue
+                for _ in range(engine["drawsPerTurn"]):
+                    if library:
+                        hand.append(library.pop())
+
         # DEC-533 — opponent-cast amass floor (3 opponent spells per turn
         # cycle) plus the Call of the Ring upkeep tempt. A tempt converts to
         # Sauron's discard-hand-draw-four only at hand size <= temptDrawHandMax.
@@ -2899,7 +2977,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         if draw_engines:
             for permanent in permanents:
                 engine = draw_engines.get(permanent["name"])
-                if engine is None:
+                if engine is None or "maxActivations" not in engine:
                     continue
                 activations = draw_engine_activations.setdefault(permanent["name"], 1)
                 if activations >= engine["maxActivations"]:
@@ -3715,11 +3793,13 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "Becoming's second deploy stream, backup attachers, and paid equips are "
             "not modeled."
         )
-    draw_engines = context.get("drawEngines")
-    if draw_engines:
+    draw_engines = context.get("drawEngines") or {}
+    activated_engines = {name: cfg for name, cfg in draw_engines.items() if "maxActivations" in cfg}
+    triggered_engines = {name: cfg for name, cfg in draw_engines.items() if "drawsPerTurn" in cfg}
+    if activated_engines:
         engine_list = ", ".join(
             f"{name} (max {cfg['maxActivations']} activations)"
-            for name, cfg in sorted(draw_engines.items())
+            for name, cfg in sorted(activated_engines.items())
         )
         section["methodology"] += (
             f" Activated draw engines modeled (DEC-472): {engine_list}. Each turn on the "
@@ -3729,6 +3809,19 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "upkeep life loss, which the goldfish does not track. Floors: the on-cast "
             "protection turn and opponent-dependent draw taxes (Rhystic Study / Mystic "
             "Remora class) are not modeled."
+        )
+    if triggered_engines:
+        engine_list = ", ".join(
+            f"{name} ({cfg['drawsPerTurn']} per turn)"
+            for name, cfg in sorted(triggered_engines.items())
+        )
+        section["methodology"] += (
+            f" Recurring draw triggers modeled (owner-approved 2026-11-17): {engine_list}. "
+            "These stand in for draws on opponents' turns (The Theorist, Jace Beleren: one "
+            "card at the beginning of each opponent's draw step), so the cards are drawn at "
+            "the start of each of your turns from the turn after the permanent is cast. "
+            "Assumes all three opponents stay in the game and the permanent survives; there "
+            "is no stopping rule."
         )
     hatch_engine = context.get("hatchEngine")
     if hatch_engine:
